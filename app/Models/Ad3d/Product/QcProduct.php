@@ -177,6 +177,12 @@ class QcProduct extends Model
     }
 
     //========== ========= ========= CAC MOI QUAN HE DU LIEU ========== ========= ==========
+    #----------- ANH thiet ke  ------------
+    public function productDesign()
+    {
+        return $this->hasMany('App\Models\Ad3d\ProductDesign\QcProductDesign', 'product_id', 'product_id');
+    }
+
     //---------- mua vat tu -----------
     public function importDetail()
     {
