@@ -1,0 +1,16 @@
+
+.qc-home-body {
+    padding: 0px 0 30px 0;
+    text-align: left;
+}
+
+
+
+/*article*/
+.qc-home-article {
+    /*border-top: 1px solid #D7D7D7;*/
+}
+
+.qc-home-article tr td {
+    border: none !important;
+}

@@ -1,0 +1,18 @@
+.xv-home-header{
+    text-align: right;
+    padding: 10px;
+    /*background-color: whitesmoke;*/
+}
+
+.xv-home-body{
+    padding: 30px 0 30px 0;
+    text-align: left;
+}
+
+/*article*/
+.xv-home-article{
+    border-top: 1px solid #D7D7D7;
+}
+.xv-home-article tr td{
+    border: none !important;
+}

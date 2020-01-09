@@ -1,0 +1,189 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: HUY
+ * Date: 12/28/2017
+ * Time: 2:32 PM
+ *
+ * modelStaff
+ * dataAccess
+ * dataTimekeeping
+ * dateFilter
+ *
+ */
+$hFunction = new Hfunction();
+$mobile = new Mobile_Detect();
+$mobileStatus = $mobile->isMobile();
+$dataStaffLogin = $modelStaff->loginStaffInfo();
+$totalNewLicenseLateWork = $modelStaff->totalNewLicenseLateWork();
+?>
+@extends('ad3d.work.license-late-work.index')
+@section('qc_ad3d_index_content')
+    <div class="row">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+             style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed brown;">
+            <div class="row">
+                <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
+                    <a class="qc-link-green-bold" href="{!! route('qc.ad3d.work.late-work.get') !!}">
+                        <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
+                    </a>
+                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
+                    <label class="qc-font-size-20">XIN VÔ TRỄ</label>
+                </div>
+                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
+                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="height: 25px;"
+                            data-href-filter="{!! route('qc.ad3d.work.late-work.get') !!}">
+                        @if($dataStaffLogin->checkRootManage())
+                            <option value="0">Tất cả</option>
+                        @endif
+                        @if(count($dataCompany)> 0)
+                            @foreach($dataCompany as $company)
+                                @if($dataStaffLogin->checkRootManage())
+                                    <option value="{!! $company->companyId() !!}"
+                                            @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
+                                @else
+                                    @if($companyFilterId == $company->companyId())
+                                        <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
+                                    @endif
+                                @endif
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="row">
+                <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
+                    <form name="" action="">
+                        <div class="row">
+                            {{--<div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6">--}}
+                            {{--<div class="input-group">--}}
+                            {{--<input type="text" class="textFilterName form-control" name="textFilterName"--}}
+                            {{--placeholder="Tìm theo tên" value="{!! $nameFiler !!}">--}}
+                            {{--<span class="input-group-btn">--}}
+                            {{--<button class="btFilterName btn btn-default" type="button"--}}
+                            {{--data-href="{!! route('qc.ad3d.work.time-keeping.get') !!}">Tìm--}}
+                            {{--</button>--}}
+                            {{--</span>--}}
+                            {{--</div>--}}
+                            {{--</div>--}}
+                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <select class="cbDayFilter" style="margin-top: 5px; height: 25px;" name="cbDayFilter"
+                                        data-href="{!! route('qc.ad3d.work.late-work.get') !!}">
+                                    <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >Tất cả
+                                    </option>
+                                    @for($i =1;$i<= 31; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if((int)$dayFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                                <span>/</span>
+                                <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;"
+                                        data-href="{!! route('qc.ad3d.work.late-work.get') !!}">
+                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >Tất cả
+                                    </option>
+                                    @for($i =1;$i<= 12; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                                <span>/</span>
+                                <select class="cbYearFilter" style="margin-top: 5px; height: 25px;"
+                                        data-href="{!! route('qc.ad3d.work.late-work.get') !!}">
+                                    @for($i =2017;$i<= 2050; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="qc_ad3d_list_content row"
+                 data-href-confirm="{!! route('qc.ad3d.work.late-work.confirm.get') !!}">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <tr style="background-color: whitesmoke;">
+                            <th class="text-center">STT</th>
+                            <th>Nhân viên</th>
+                            <th class="text-center">Thời gian xin</th>
+                            <th class="text-center">Ngày trễ</th>
+                            <th class="text-left">Chi chú xin</th>
+                            <th class="text-left">Chi chú duyệt</th>
+                            <th></th>
+                        </tr>
+                        @if(count($dataLicenseLateWork ) > 0)
+                            <?php
+                            $perPage = $dataLicenseLateWork->perPage();
+                            $currentPage = $dataLicenseLateWork->currentPage();
+                            $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
+                            ?>
+                            @foreach($dataLicenseLateWork as $licenseLateWork)
+                                <?php
+                                $licenseId = $licenseLateWork->licenseId();
+                                $dateLate = $licenseLateWork->dateLate();
+                                $note = $licenseLateWork->note();
+                                $confirmNote = $licenseLateWork->confirmNote();
+                                $createdAd = $licenseLateWork->createdAt();
+                                ?>
+                                <tr class="qc_ad3d_list_object" data-object="{!! $licenseId !!}">
+                                    <td class="text-center">
+                                        {!! $n_o += 1 !!}
+                                    </td>
+                                    <td>
+                                        {!! $licenseLateWork->staff->fullName() !!}
+                                    </td>
+                                    <td class="text-center">
+                                        <span style="color: black;">{!! date('d-m-Y', strtotime($createdAd)) !!}</span>&nbsp;
+                                        <span style="font-weight: bold; color: red;">{!! date('H:i', strtotime($createdAd)) !!}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if($licenseLateWork->checkConfirmStatus())
+                                            <span style="color: black;">{!! date('d-m-Y', strtotime($dateLate)) !!}</span>
+                                        @else
+                                            <span style="font-weight: bold; color: brown;">{!! date('d-m-Y', strtotime($dateLate)) !!}</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-right">
+                                        <em class="qc-color-grey">{!! $note !!}</em>
+                                    </td>
+                                    <td class="text-left">
+                                        <em class="qc-color-grey">{!! $licenseLateWork->confirmNote() !!}</em>
+                                    </td>
+                                    <td class="text-right">
+                                        @if(!$licenseLateWork->checkConfirmStatus())
+                                            <a class="qc_confirm qc-link-green">
+                                                Xác nhận
+                                            </a>
+                                        @else
+                                            @if($licenseLateWork->checkAgreeStatus())
+                                                <span class="qc-color-grey">Đồng ý</span>
+                                            @else
+                                                <span class="qc-color-grey">Không đồng ý</span>
+                                            @endif
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                            <tr>
+                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="7">
+                                    {!! $hFunction->page($dataLicenseLateWork) !!}
+                                </td>
+                            </tr>
+                        @else
+                            <tr>
+                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="7">
+                                    <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
+                                </td>
+                            </tr>
+                        @endif
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+@endsection

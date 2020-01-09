@@ -1,0 +1,35 @@
+/*datepicker*/
+.qc_container_table table tr th{
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+
+.qc_container_table table tr td{
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.qc-container-table table tr th{
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+}
+
+.qc-container-table table tr td{
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+.qc_work_list_content_object {
+    border-bottom: 1px solid #d7d7d7;
+}
+
+.qc_work_list_content_object:hover {
+    background-color: whitesmoke;
+}
+
+.qc-container-table-border-none table {
+    border: none !important;
+}
+
+.qc-container-table-border-none table tr td{
+    border: none !important;
+}
