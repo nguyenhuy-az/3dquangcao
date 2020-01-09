@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcProductDesign extends Model
 {
     protected $table = 'qc_product_design';
-    protected $fillable = ['design_id', 'design', 'description', 'applyStatus', 'confirmStatus', 'confirmDate', 'action', 'created_at', 'product_id', 'staff_id', 'confirmStaff_id'];
+    protected $fillable = ['design_id', 'image', 'description', 'applyStatus', 'confirmStatus', 'confirmDate', 'action', 'created_at', 'product_id', 'staff_id', 'confirmStaff_id'];
     protected $primaryKey = 'design_id';
     public $timestamps = false;
 
@@ -15,13 +15,12 @@ class QcProductDesign extends Model
 
     #========== ========== ========== THEM  - SỬA ========== ========== ==========
     #---------- Them ----------
-    public function insert($design, $description, $productId, $staffId)
+    public function insert($image, $description, $productId, $staffId)
     {
         $hFunction = new \Hfunction();
         $modelProductDesign = new QcProductDesign();
-        $modelProductDesign->design = $design;
+        $modelProductDesign->image = $image;
         $modelProductDesign->description = $description;
-        $modelProductDesign->design = $design;
         $modelProductDesign->product_id = $productId;
         $modelProductDesign->staff_id = $staffId;
         $modelProductDesign->created_at = $hFunction->createdAt();
@@ -37,6 +36,12 @@ class QcProductDesign extends Model
     public function insertGetId()
     {
         return $this->lastId;
+    }
+
+//kiem tra ID
+    public function checkIdNull($id = null)
+    {
+        return (empty($id)) ? $this->designId() : $id;
     }
 
     #----------- update ----------
@@ -69,6 +74,33 @@ class QcProductDesign extends Model
         if (!is_dir($pathFullImage)) mkdir($pathFullImage);
         if (!is_dir($pathSmallImage)) mkdir($pathSmallImage);
         return $hFunction->uploadSaveByFileName($file, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $size);
+    }
+
+    // xac nhan su dung
+    public function confirmApplyStatus($designId, $applyStatus, $confirmStatus, $confirmStaffId)
+    {
+        $hFunction = new \Hfunction();
+        # thiet ke dang ap dung
+        $dataApplyStatusActivity = $this->infoApplyStatusActivityOfProduct($this->productId($designId));
+        if (QcProductDesign::where('design_id', $designId)->update(
+            [
+                'applyStatus' => $applyStatus,
+                'confirmStatus' => $confirmStatus,
+                'confirmDate' => $hFunction->carbonNow(),
+                'confirmStaff_id' => $confirmStaffId
+            ])
+        ) {
+            if ($applyStatus == 1) { # su dung thiet ke
+                if (count($dataApplyStatusActivity) > 0) { # ton tai thiet ke dang app dung
+                    $this->disableApplyStatus($dataApplyStatusActivity->designId()); # vo hieu design cu
+                }
+            }
+        }
+    }
+
+    public function disableApplyStatus($designId = null)
+    {
+        return QcProductDesign::where('design_id', $this->checkIdNull($designId))->update(['applyStatus' => 0]);
     }
 
     //xoa anh thiet ke
@@ -108,7 +140,23 @@ class QcProductDesign extends Model
         return QcProductDesign::where('product_id', $productId)->get();
     }
 
+    public function infoLastOfProduct($productId)
+    {
+        return QcProductDesign::where('product_id', $productId)->orderBy('product_id', 'DESC')->first();
+    }
+
+    public function infoApplyStatusActivityOfProduct($productId)
+    {
+        return QcProductDesign::where('product_id', $productId)->where('applyStatus', 1)->where('action', 1)->first();
+    }
+
+    public function totalDesignOfProduct($productId)
+    {
+        return QcProductDesign::where('product_id', $productId)->count();
+    }
+
     #============ =========== ============ LAY THONG TIN ============= =========== ==========
+
     public function getInfo($designId = '', $field = '')
     {
         if (empty($designId)) {
@@ -133,6 +181,11 @@ class QcProductDesign extends Model
     }
 
     #----------- DEPARTMENT INFO -------------
+    public function checkApplyStatus($designId=null)
+    {
+        return ($this->applyStatus($designId) == 1) ? true : false;
+    }
+
     public function designId()
     {
         return $this->design_id;

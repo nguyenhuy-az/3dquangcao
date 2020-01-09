@@ -461,6 +461,12 @@ if (!$cancelStatus) {
                                         <?php
                                         $productId = $product->productId();
                                         $designImage = $product->designImage();
+                                        # thiet ke dang ap dung
+                                        $dataProductDesign = $product->productDesignInfoApplyActivity();
+                                        if (count($dataProductDesign) == 0) {
+                                            # thiet ke sau cung
+                                            $dataProductDesign = $product->productDesignInfoLast();
+                                        }
                                         ?>
                                         <tr>
                                             <td class="text-center">
@@ -475,33 +481,50 @@ if (!$cancelStatus) {
                                             <td>
                                                 {!! $product->description()  !!}
                                             </td>
-                                            <td>
-                                                @if(!empty($designImage))
-                                                    <div style="position: relative; margin-right: 10px; width: 70px; height: 70px; padding: 5px 5px; ">
+                                            <td class="text-center" style="padding-top: 5px !important;">
+                                                @if(count($dataProductDesign) > 0)
+                                                    @if($dataProductDesign->checkApplyStatus())
                                                         <a class="qc_work_order_product_design_image_view qc-link"
-                                                           data-href="{!! route('qc.work.orders.product.design.view.get', $productId) !!}">
-                                                            <img style="max-width: 100%; max-height: 100%;"
+                                                           data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
+                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px; border: 2px solid green;" title="Đang áp dụng"
+                                                                 src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                                                        </a>
+                                                        <br/>
+                                                    @else
+                                                        <a class="qc_work_order_product_design_image_view qc-link"
+                                                           data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
+                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px; border: 2px solid red;" title="Không được áp dụng"
+                                                                 src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                                                        </a>
+                                                        <br/>
+                                                    @endif
+                                                @else
+                                                    @if(!empty($designImage))
+                                                        <a title="HÌNH ẢNH TỪ PHIÊN BẢNG CŨ - KHÔNG XEM FULL">
+                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px; "
                                                                  src="{!! $product->pathSmallDesignImage($designImage) !!}">
                                                         </a>
-                                                        {{--<a class="qc_work_order_product_design_image_delete qc-link"
-                                                           data-href="#">
-                                                            <i style="position: absolute; font-weight: bold; padding: 0 3px; color: red; top: 3px; right: 3px; border: 1px solid #d7d7d7;">x</i>
-                                                        </a>--}}
-                                                    </div>
-                                                @else
-                                                    @if(!$product->checkCancelStatus())
-                                                        @if($product->checkFinishStatus())
-                                                            <em>---</em>
-                                                        @else
-                                                            <a class="qc_work_order_product_design_image_add qc-link-green"
-                                                               data-href="{!! route('qc.work.orders.product.design.add.get',$productId) !!}">
-                                                                Thêm thiết kế
-                                                            </a>
-                                                        @endif
-                                                    @else
-                                                        <em>---</em>
+                                                        <br/>
                                                     @endif
                                                 @endif
+                                                @if(!$product->checkCancelStatus())
+                                                    @if(!$product->checkFinishStatus())
+                                                        <a class="qc_work_order_product_design_image_add qc-link-red"
+                                                           data-href="{!! route('qc.work.orders.product.design.add.get',$productId) !!}">
+                                                            <i class="qc-font-size-14 glyphicon glyphicon-plus"
+                                                               title="Thêm thiết kế"></i>
+                                                        </a>
+                                                        &nbsp;|&nbsp;
+                                                    @endif
+                                                @endif
+                                                <a class="qc-link"
+                                                   data-href="{!! route('qc.work.orders.product.design.add.get',$productId) !!}">
+                                                    <i class="qc-font-size-14 glyphicon glyphicon-list-alt"
+                                                       title="Quản lý thiết kế"></i>
+                                                    <em title="Số mẫu thiết kế">({!! $product->totalProductDesign() !!}
+                                                        )</em>
+                                                </a>
+
                                             </td>
                                             <td class="text-right">
                                                 @if(!$product->checkCancelStatus())
@@ -572,7 +595,8 @@ if (!$cancelStatus) {
                         </div>
                     </div>
                     <div id="qc_work_order_info_payment_show" class="row">
-                        <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
+                        <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                             style="padding-top: 10px;">
                             <div class="table-responsive">
                                 <table class="table table-bordered" style="margin-bottom: 0px;">
                                     <tr style="background-color: whitesmoke;">

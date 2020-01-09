@@ -3,6 +3,7 @@
 namespace App\Models\Ad3d\Product;
 
 use App\Models\Ad3d\ProductCancel\QcProductCancel;
+use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use Illuminate\Database\Eloquent\Model;
@@ -181,6 +182,28 @@ class QcProduct extends Model
     public function productDesign()
     {
         return $this->hasMany('App\Models\Ad3d\ProductDesign\QcProductDesign', 'product_id', 'product_id');
+    }
+
+    #lay thiet ke dang ap dung
+    public function productDesignInfoApplyActivity($productId=null)
+    {
+        $modelProductDesign = new QcProductDesign();
+        return $modelProductDesign->infoApplyStatusActivityOfProduct($this->checkIdNull($productId));
+    }
+
+    #lay thiet ke sau cung
+    public function productDesignInfoLast($productId=null)
+    {
+        $modelProductDesign = new QcProductDesign();
+        return $modelProductDesign->infoLastOfProduct($this->checkIdNull($productId));
+    }
+
+
+    #tong so luong thiet ke cua san pham
+    public function totalProductDesign($productId=null)
+    {
+        $modelProductDesign = new QcProductDesign();
+        return $modelProductDesign->totalDesignOfProduct($this->checkIdNull($productId));
     }
 
     //---------- mua vat tu -----------

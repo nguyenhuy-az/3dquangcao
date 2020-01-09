@@ -9,6 +9,7 @@ use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
@@ -874,7 +875,8 @@ class OrdersController extends Controller
         }
     }
 
-    public function postProductCancel($productId){
+    public function postProductCancel($productId)
+    {
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
@@ -888,13 +890,14 @@ class OrdersController extends Controller
             return view('work.login');
         }
     }
+
     #---- ---  thiet ke san pam ---- -----
     public function getProductDesign($productId = null)
     {
         $modelProduct = new QcProduct();
         $dataProduct = $modelProduct->getInfo($productId);
         if (count($dataProduct) > 0) {
-            return view('work.orders.product.add-design', compact('dataProduct'));
+            return view('work.orders.orders.product.add-design', compact('dataProduct'));
         }
     }
 
@@ -903,14 +906,19 @@ class OrdersController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
+        $modelProductDesign = new QcProductDesign();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
         $txtDesignImage = Request::file('txtDesignImage');
-        if ($modelStaff->checkLogin()) {
+        if (count($dataStaffLogin) > 0) {
             if (count($txtDesignImage) > 0) {
                 $name_img = stripslashes($_FILES['txtDesignImage']['name']);
                 $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
                 $source_img = $_FILES['txtDesignImage']['tmp_name'];
-                if ($modelProduct->uploadDesignImage($source_img, $name_img)) {
-                    if (!$modelProduct->updateDesignImage($productId, $name_img)) {
+                if ($modelProductDesign->uploadImage($source_img, $name_img)) {
+                    if ($modelProductDesign->insert($name_img, null, $productId, $dataStaffLogin->staffId())) {
+                        $newId = $modelProductDesign->insertGetId();
+                        $modelProductDesign->confirmApplyStatus($newId, 1, 1, $dataStaffLogin->staffId());
+                    } else {
                         $modelProduct->dropDesignImage($name_img);
                         return "Tính năng đang cập nhật";
                     }
@@ -923,12 +931,13 @@ class OrdersController extends Controller
         }
     }
 
-    public function viewProductDesign($productId)
+    public function viewProductDesign($designId)
     {
-        $modelProduct = new QcProduct();
-        $dataProduct = $modelProduct->getInfo($productId);
-        if (count($dataProduct) > 0) {
-            return view('work.orders.product.view-design-image', compact('dataProduct'));
+        $modelProductDesign = new QcProductDesign();
+        $dataProductDesign = $modelProductDesign->getInfo($designId);
+        if (count($dataProductDesign) > 0) {
+            return view('work.orders.orders.product.view-design-image', compact('dataProductDesign'));
         }
     }
+
 }

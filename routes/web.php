@@ -735,8 +735,10 @@ Route::group(['prefix' => 'work'], function () {
         Route::group(['prefix' => 'product'], function () {
             # thiet ke
             Route::group(['prefix' => 'design'], function () {
-                Route::get('view/{productId?}', ['as' => 'qc.work.orders.product.design.view.get', 'uses' => 'Work\Orders\OrdersController@viewProductDesign']);
-                #xac nhan don hang
+                # du lieu moi
+                Route::get('view/{designId?}', ['as' => 'qc.work.orders.product_design.view.get', 'uses' => 'Work\Orders\OrdersController@viewProductDesign']);
+
+                #them thiet ke
                 Route::get('design/{productId?}', ['as' => 'qc.work.orders.product.design.add.get', 'uses' => 'Work\Orders\OrdersController@getProductDesign']);
                 Route::post('design/{productId?}', ['as' => 'qc.work.orders.product.design.add.post', 'uses' => 'Work\Orders\OrdersController@postProductDesign']);
             });

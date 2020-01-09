@@ -32,8 +32,6 @@ $mobileStatus = $mobile->isMobile();
 
                                 <div class="col-sm-9">
                                     <span style="color: brown;">{!! $dataProduct->productType->name()  !!}</span>
-                                    {!! $dataProduct->width() !!} <em>x</em> {!! $dataProduct->height() !!}
-                                    <em>x</em> {!! (empty($dataProduct->depth())?0:$dataProduct->depth()) !!} <em>mm</em>
                                 </div>
                             </div>
                         </div>
