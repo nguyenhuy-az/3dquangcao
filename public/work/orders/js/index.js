@@ -362,14 +362,29 @@ var qc_work_orders = {
         viewDesign: function (href) {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
         },
-        getDesignImage: function (href) {
-            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-        },
-        saveDesign: function (form) {
-            var notifyContent = $(form).find('.frm_notify');
-            qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
-            qc_main.scrollTop();
-        },
+        design: {
+            getDesignImage: function (href) {
+                qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+            },
+            saveDesign: function (form) {
+                var notifyContent = $(form).find('.frm_notify');
+                if (confirm('Tôi đồng ý thêm thiết kế này?')) {
+                    qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
+                    qc_main.scrollTop();
+                }
+            },
+            getApply: function (href) {
+                qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+            },
+            saveApply: function (form) {
+                var notifyContent = $(form).find('.frm_notify');
+                if (confirm('Tôi đồng ý sử dụng thiết kế này?')) {
+                    qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
+                    qc_main.scrollTop();
+                }
+            },
+        }
+
     },
     info: {
         saveEditInfoCustomer: function (frm) {
@@ -1127,16 +1142,24 @@ $(document).ready(function () {
 /* ---------- QL SAN PHAM DON HANG + BAO GIA  -----------------*/
 $(document).ready(function () {
     /*xem anh thiet ke chi tiet*/
-    $('#qc_work_order_info_product_show').on('click', '.qc_work_order_product_design_image_view', function () {
+    $('body').on('click', '.qc_work_order_product_design_image_view', function () {
         qc_work_orders.product.viewDesign($(this).data('href'));
     });
 
     /*------- ------ them anh thiet ke ----- ---- */
     $('#qc_work_order_info_product_show').on('click', '.qc_work_order_product_design_image_add', function () {
-        qc_work_orders.product.getDesignImage($(this).data('href'));
+        qc_work_orders.product.design.getDesignImage($(this).data('href'));
     });
     $('body').on('click', '.qc_frm_product_add_design .qc_save', function () {
-        qc_work_orders.product.saveDesign($(this).parents('.qc_frm_product_add_design'));
+        qc_work_orders.product.design.saveDesign($(this).parents('.qc_frm_product_add_design'));
+    });
+
+    /*------- ------ xac nhan ap dung thiet ke ----- ---- */
+    $('body').on('click', '.qc_orders_product_design_apply_act', function () {
+        qc_work_orders.product.design.getApply($(this).data('href'));
+    });
+    $('body').on('click', '.frmWorkOrderProductDesignApplyConfirm .qc_save', function () {
+        qc_work_orders.product.design.saveApply($(this).parents('.frmWorkOrderProductDesignApplyConfirm'));
     });
 
     /* ----- ------ huy san pham --- ------ ---- */

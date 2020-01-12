@@ -27,7 +27,7 @@ class OrdersController extends Controller
         if ($modelStaff->checkLogin()) {
             return true;
         } else {
-            return view('work.login');
+            return redirect()->route('qc.work.login.get');
         }
     }
 
@@ -891,7 +891,17 @@ class OrdersController extends Controller
         }
     }
 
-    #---- ---  thiet ke san pam ---- -----
+    #---- ---  THIET KE SAN PHAM ---- -----
+    #chi tiet thiet ke
+    public function getDesign($productId)
+    {
+        $modelStaff = new QcStaff();
+        $modelProduct = new QcProduct();
+        $dataProduct = $modelProduct->getInfo($productId);
+        return view('work.orders.orders.product.design', compact('modelStaff','dataProduct'));
+    }
+
+    #them anh thiet ke
     public function getProductDesign($productId = null)
     {
         $modelProduct = new QcProduct();
@@ -910,6 +920,8 @@ class OrdersController extends Controller
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $txtDesignImage = Request::file('txtDesignImage');
         if (count($dataStaffLogin) > 0) {
+            $loginStaffId = $dataStaffLogin->staffId();
+            $dataProduct = $modelProduct->getInfo($productId);
             if (count($txtDesignImage) > 0) {
                 $name_img = stripslashes($_FILES['txtDesignImage']['name']);
                 $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
@@ -917,7 +929,11 @@ class OrdersController extends Controller
                 if ($modelProductDesign->uploadImage($source_img, $name_img)) {
                     if ($modelProductDesign->insert($name_img, null, $productId, $dataStaffLogin->staffId())) {
                         $newId = $modelProductDesign->insertGetId();
-                        $modelProductDesign->confirmApplyStatus($newId, 1, 1, $dataStaffLogin->staffId());
+                        # nguoi quan ly don hang up thiet ke ===> Ap dụng
+                        if ($loginStaffId == $dataProduct->order->staffReceiveId()) {
+                            $modelProductDesign->confirmApplyStatus($newId, 1, 1, $dataStaffLogin->staffId());
+                        }
+
                     } else {
                         $modelProduct->dropDesignImage($name_img);
                         return "Tính năng đang cập nhật";
@@ -927,10 +943,31 @@ class OrdersController extends Controller
                 return "Chọn ảnh thiết kế";
             }
         } else {
-            return "Tính năng đang cập nhật";
+            return redirect()->route('qc.work.login.get');
         }
     }
 
+    #xac nhan su dung anh thiet ke
+    public function getConfirmApplyDesign($designId, $applyStatus)
+    {
+        $modelProductDesign = new QcProductDesign();
+        $dataProductDesign = $modelProductDesign->getInfo($designId);
+        return view('work.orders.orders.product.confirm-apply-design', compact('dataProductDesign', 'applyStatus'));
+    }
+
+    public function postConfirmApplyDesign($designId, $applyStatus)
+    {
+        $modelStaff = new QcStaff();
+        $modelProductDesign = new QcProductDesign();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        if (count($dataStaffLogin) > 0) {
+            $modelProductDesign->confirmApplyStatus($designId, $applyStatus, 1, $dataStaffLogin->staffId());
+        } else {
+            return redirect()->route('qc.work.login.get');
+        }
+    }
+
+    #xem chi tiet hinh anh thiet ke
     public function viewProductDesign($designId)
     {
         $modelProductDesign = new QcProductDesign();

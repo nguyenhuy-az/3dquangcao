@@ -64,6 +64,22 @@ class Hfunction
         return implode(' ', $words);
     }
 
+    function checkNull($dataCheck)
+    {
+        return ($dataCheck == null) ? true : false;
+    }
+
+    function checkEmpty($dataCheck)
+    {
+        return (empty($dataCheck)) ? true : false;
+    }
+
+    function checkCount($dataCheck = null)
+    {
+        $result = (empty($dataCheck)) ? 0 : count($dataCheck);
+        return ($result > 0) ? true : false;
+    }
+
 
     // alias
     function stripUnicode($str)
@@ -445,6 +461,11 @@ class Hfunction
         return date("H", strtotime($date));
     }
 
+    public function getMonthYearFromDate($date)
+    {
+        return date("m/Y", strtotime($date));
+    }
+
     // -------- plus year\month\day\ for current date (no time)--------
     function currentDatePlusYear($yearNumber = 0, $timeZoneDefault = 'HCM')
     {
@@ -515,6 +536,17 @@ class Hfunction
     }
 
     // -------- plus year\month\day\ for current date time--------
+    #dinh dang ngay viet nam
+    function convertDateDMYFromDatetime($dateTime)
+    {
+        return date('d/m/Y', strtotime($dateTime));
+    }
+
+    function convertDateDMYHISFromDatetime($dateTime)
+    {
+        return date('d/m/Y H:i:s', strtotime($dateTime));
+    }
+
     function currentDateTimePlusYear($yearNumber = 0, $timeZoneDefault = 'HCM')
     {
         $this->defaultTimezone($timeZoneDefault);
@@ -531,6 +563,12 @@ class Hfunction
     {
         $this->defaultTimezone($timeZoneDefault);
         return date('Y-m-d H:i:s', strtotime("+$dayNumber day", strtotime(date("Y-m-d H:i:s"))));
+    }
+
+    public function currentDateTime($timeZoneDefault = 'HCM')
+    {
+        $this->defaultTimezone($timeZoneDefault);
+        return date('Y-m-d H:i:j');
     }
 
     public function currentDate($timeZoneDefault = 'HCM')
@@ -606,6 +644,11 @@ class Hfunction
     }
 
     // ========== ========== ========== upload image file ========== ========== ==========
+    function getCountFromData($data)
+    {
+        return (empty($data)) ? 0 : count($data);
+    }
+
     public function getTypeImg($image)
     {
         $array = explode('.', $image);

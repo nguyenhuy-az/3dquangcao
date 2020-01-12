@@ -89,7 +89,7 @@ if ($provisionalStatus) {
                                 <input type="number" class="txtPhone form-control" name="txtPhone"
                                        data-href-check="{!! route('qc.work.orders.add.customer.check.phone') !!}"
                                        data-href-replace="{!! route('qc.work.orders.add.get',$orderType) !!}"
-                                       placeholder="Số điện thoại" @if(count($dataCustomer) > 0) readonly="true"
+                                       placeholder="Số điện thoại" @if($hFunction->checkCount($dataCustomer)) readonly="true"
                                        @endif
                                        style="height: 25px;" value="{!! $customerPhone !!}">
                             </div>
@@ -116,7 +116,7 @@ if ($provisionalStatus) {
                                        placeholder="Nhập tên khách hàng"
                                        data-href-check-name="{!! route('qc.work.orders.add.customer.check.name') !!}"
                                        data-href-replace="{!! route('qc.work.orders.add.get',$orderType) !!}"
-                                       @if(count($dataCustomer) > 0) readonly="true"
+                                       @if($hFunction->checkCount($dataCustomer)) readonly="true"
                                        @endif value="{!! $customerName !!}">
                             </div>
                             <div id="qc_customer_name_suggestions_wrap"
@@ -148,7 +148,7 @@ if ($provisionalStatus) {
                                        style="height: 25px;" value="{!! $customerAddress !!}">
                             </div>
                         </div>
-                        @if(count($dataCustomer) > 0)
+                        @if($hFunction->checkCount($dataCustomer))
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group form-group-sm qc-margin-none">
                                     <a class="qc-link-green" href="{!! route('qc.work.orders.add.get',$orderType) !!}">
@@ -237,7 +237,7 @@ if ($provisionalStatus) {
                                     <select class="cbDiscount form-control" name="cbDiscount" style="height: 25px;">
                                         @for($i = 0; $i <= 10;$i++)
                                             <option value="{!! $i !!}"
-                                                    @if(count($dataCustomer) > 0 && $i == 5) selected="selected" @endif >
+                                                    @if($hFunction->checkCount($dataCustomer) > 0 && $i == 5) selected="selected" @endif >
                                                 {!! $i !!}
                                             </option>
                                         @endfor
@@ -292,7 +292,7 @@ if ($provisionalStatus) {
                                     <label>Ngày Nhận:<i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                                     <input id="txtDateReceive" type="text" name="txtDateReceive" class="form-control"
                                            disabled="disabled"
-                                           value="{!! date('Y-m-d',strtotime($currentDate)) !!}" style="height: 25px;"
+                                           value="{!! $hFunction->convertDateDMYFromDatetime($currentDate) !!}" style="height: 25px;"
                                            placeholder="Ngày nhận">
                                 </div>
                             </div>
@@ -319,7 +319,7 @@ if ($provisionalStatus) {
                                     <select class="cbDiscount form-control" name="cbDiscount" style="height: 25px;">
                                         @for($i = 0; $i <= 10;$i++)
                                             <option value="{!! $i !!}"
-                                                    @if(count($dataCustomer) > 0 && $i == 5) selected="selected" @endif >
+                                                    @if($hFunction->checkCount($dataCustomer) && $i == 5) selected="selected" @endif >
                                                 {!! $i !!}
                                             </option>
                                         @endfor

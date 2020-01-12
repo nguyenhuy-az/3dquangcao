@@ -24,7 +24,7 @@ $orderId = $dataOrders->orderId();
                 <div class="qc-margin-bot-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            @if(!empty($dataCompany->logo()))
+                            @if(!$hFunction->checkEmpty($dataCompany->logo()))
                                 <img alt="..." src="{!! $dataCompany->pathSmallImage($dataCompany->logo()) !!}"
                                      style="width: 100px; height: auto;">
                             @endif
@@ -67,7 +67,7 @@ $orderId = $dataOrders->orderId();
                                     <em class="qc-color-grey">Ngày nhận:</em>
                                 </td>
                                 <td class="text-right">
-                                    <b>{!! date('d/m/Y', strtotime($dataOrders->receiveDate())) !!}</b>
+                                    <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->receiveDate()) !!}</b>
                                 </td>
                             </tr>
                             <tr>
@@ -75,7 +75,7 @@ $orderId = $dataOrders->orderId();
                                     <em class="qc-color-grey">Ngày giao:</em>
                                 </td>
                                 <td class="text-right">
-                                    <b>{!! date('d/m/Y', strtotime($dataOrders->deliveryDate())) !!}</b>
+                                    <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->deliveryDate()) !!}</b>
                                 </td>
                             </tr>
                             <tr>
@@ -165,7 +165,7 @@ $orderId = $dataOrders->orderId();
                                     $dataProduct = $dataOrders->allProductOfOrder();
                                     $n_o = 0;
                                     ?>
-                                    @if(count($dataProduct) > 0)
+                                    @if($hFunction->checkCount($dataProduct))
                                         @foreach($dataProduct as $product)
                                             <?php
                                             $designImage = $product->designImage();
@@ -234,7 +234,7 @@ $orderId = $dataOrders->orderId();
                         $dataOrderPay = $dataOrders->infoOrderPayOfOrder();
                         $n_o = 0;
                         ?>
-                        @if(count($dataOrderPay) > 0)
+                        @if($hFunction->checkCount($dataOrderPay))
                             <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" style="margin-bottom: 0;">
@@ -251,7 +251,7 @@ $orderId = $dataOrders->orderId();
                                                     {!! $n_o+=1  !!}
                                                 </td>
                                                 <td>
-                                                    {!! date('d/m/Y',strtotime($orderPay->datePay()))  !!}
+                                                    {!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}
                                                 </td>
                                                 <td>
                                                     @if(!empty($orderPay->payerName()))
@@ -268,7 +268,7 @@ $orderId = $dataOrders->orderId();
                                                     @endif
                                                 </td>
                                                 <td class="text-right">
-                                                    {!! $hFunction->dotNumber($orderPay->money()) !!}
+                                                    {!! $hFunction->currencyFormat($orderPay->money()) !!}
                                                 </td>
                                             </tr>
                                         @endforeach

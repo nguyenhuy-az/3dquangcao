@@ -8,6 +8,7 @@
  * dataProductType
  *
  */
+$hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 ?>

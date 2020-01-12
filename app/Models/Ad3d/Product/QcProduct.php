@@ -184,15 +184,21 @@ class QcProduct extends Model
         return $this->hasMany('App\Models\Ad3d\ProductDesign\QcProductDesign', 'product_id', 'product_id');
     }
 
+    public function productDesignInfoAll($productId = null)
+    {
+        $modelProductDesign = new QcProductDesign();
+        return $modelProductDesign->infoAllOfProduct($this->checkIdNull($productId));
+    }
+
     #lay thiet ke dang ap dung
-    public function productDesignInfoApplyActivity($productId=null)
+    public function productDesignInfoApplyActivity($productId = null)
     {
         $modelProductDesign = new QcProductDesign();
         return $modelProductDesign->infoApplyStatusActivityOfProduct($this->checkIdNull($productId));
     }
 
     #lay thiet ke sau cung
-    public function productDesignInfoLast($productId=null)
+    public function productDesignInfoLast($productId = null)
     {
         $modelProductDesign = new QcProductDesign();
         return $modelProductDesign->infoLastOfProduct($this->checkIdNull($productId));
@@ -200,7 +206,7 @@ class QcProduct extends Model
 
 
     #tong so luong thiet ke cua san pham
-    public function totalProductDesign($productId=null)
+    public function totalProductDesign($productId = null)
     {
         $modelProductDesign = new QcProductDesign();
         return $modelProductDesign->totalDesignOfProduct($this->checkIdNull($productId));

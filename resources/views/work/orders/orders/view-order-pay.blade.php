@@ -41,7 +41,7 @@ $mobileStatus = $mobile->isMobile();
                             $n_o = 0;
                             $totalMoney = 0;
                             ?>
-                            @if(count($dataOrderPay) > 0)
+                            @if($hFunction->checkCount($dataOrderPay))
                                 @foreach($dataOrderPay as $orderPay)
                                     <?php
                                     $money = $orderPay->money();
@@ -69,7 +69,7 @@ $mobileStatus = $mobile->isMobile();
                                             @endif
                                         </td>
                                         <td>
-                                            {!! date('d/m/Y',strtotime($orderPay->datePay()))  !!}
+                                            {!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}
                                         </td>
                                         <td class="text-right">
                                             {!! $hFunction->currencyFormat($money) !!}

@@ -155,6 +155,15 @@ class QcProductDesign extends Model
         return QcProductDesign::where('product_id', $productId)->count();
     }
 
+    //---------- Nhan vien thiet ke -----------
+    public function staff()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
+    }
+    public function confirmStaff()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'confirmStaff_id', 'staff_id');
+    }
     #============ =========== ============ LAY THONG TIN ============= =========== ==========
 
     public function getInfo($designId = '', $field = '')

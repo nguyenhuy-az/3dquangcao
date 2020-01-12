@@ -330,7 +330,11 @@ class QcStaff extends Model
         $modelStaffSalaryBasic = new QcStaffSalaryBasic();
         return $modelStaffSalaryBasic->infoActivityOfStaff($this->checkIdNull($staffId));
     }
-
+    #----------- ANH thiet ke  ------------
+    public function productDesign()
+    {
+        return $this->hasMany('App\Models\Ad3d\ProductDesign\QcProductDesign', 'staff_id', 'staff_id');
+    }
     #----------- thanh toán lương ------------
     public function salaryPay()
     {

@@ -741,6 +741,13 @@ Route::group(['prefix' => 'work'], function () {
                 #them thiet ke
                 Route::get('design/{productId?}', ['as' => 'qc.work.orders.product.design.add.get', 'uses' => 'Work\Orders\OrdersController@getProductDesign']);
                 Route::post('design/{productId?}', ['as' => 'qc.work.orders.product.design.add.post', 'uses' => 'Work\Orders\OrdersController@postProductDesign']);
+
+                #xac nhan su dung thiet ke
+                Route::get('confirm-apply/{designId?}/{applyStatus?}', ['as' => 'qc.work.orders.product.design.apply.get', 'uses' => 'Work\Orders\OrdersController@getConfirmApplyDesign']);
+                Route::post('confirm-apply/{designId?}/{applyStatus?}', ['as' => 'qc.work.orders.product.design.apply.post', 'uses' => 'Work\Orders\OrdersController@postConfirmApplyDesign']);
+
+                #thiet ke
+                Route::get('/{productId?}', ['as' => 'qc.work.orders.product.design.get', 'uses' => 'Work\Orders\OrdersController@getDesign']);
             });
 
             #thay do thong tin san phan

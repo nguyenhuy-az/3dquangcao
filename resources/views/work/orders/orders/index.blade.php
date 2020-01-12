@@ -35,7 +35,7 @@ $hrefIndex = route('qc.work.orders.get');
                                 <a class="qc-link" href="{!! route('qc.work.orders.provisional.get') !!}">
                                     <label class="qc-font-size-20">BÁO GIÁ</label>
                                     <em class="qc-font-size-20"
-                                        style="color: red;">({!! count($dataOrdersProvisional) !!})</em>
+                                        style="color: red;">({!! $hFunction->getCountFromData($dataOrdersProvisional) !!})</em>
                                 </a>
                             </li>
                         </ul>
@@ -106,15 +106,15 @@ $hrefIndex = route('qc.work.orders.get');
                                     <th class="text-right">
                                         Doanh thu <br>
                                         @if($monthFilter == 100)
-                                            <span class="qc-color-red">{!! date('Y', strtotime($dateFilter)) !!}</span>
+                                            <span class="qc-color-red">{!! $hFunction->getYearFromDate($dateFilter) !!}</span>
                                         @else
-                                            <span class="qc-color-red">{!! date('m/Y', strtotime($dateFilter)) !!}</span>
+                                            <span class="qc-color-red">{!! $hFunction->getMonthYearFromDate($dateFilter) !!}</span>
                                         @endif
                                     </th>
                                 </tr>
                                 <tr>
                                     <td class="text-center qc-color-red">
-                                        <b>{!! count($dataOrders) !!}</b>
+                                        <b>{!! $hFunction->getCountFromData($dataOrders) !!}</b>
                                     </td>
                                     <td></td>
                                     <td style="padding: 0px;">
@@ -195,7 +195,7 @@ $hrefIndex = route('qc.work.orders.get');
                                     <td class="text-right qc-color-green"></td>
                                     <td class="text-right qc-color-green"></td>
                                 </tr>
-                                @if(count($dataOrders) > 0)
+                                @if($hFunction->checkCount($dataOrders))
                                     <?php
                                     $n_o = 0;
                                     $sumOrderMoney = 0;
@@ -249,8 +249,7 @@ $hrefIndex = route('qc.work.orders.get');
                                             <td>
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                        <a class="qc-link" title="Click xem menu"
-                                                           onclick="qc_main.toggle('#order_menu_{!! $orderId !!}');">
+                                                        <a class="qc-link" title="Click xem menu">
                                                             {!! $orders->name() !!}
                                                         </a>
                                                         @if(!$checkOrderOfReceiveStaff)
@@ -260,23 +259,23 @@ $hrefIndex = route('qc.work.orders.get');
                                                         @endif
                                                     </div>
                                                 </div>
-                                                <div id="order_menu_{!! $orderId !!}" class="row qc-display-none">
+                                                <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         @if($checkOrderOfReceiveStaff)
                                                             <a class="qc-link" title="Quản lý ĐH"
                                                                href="{!! route('qc.work.orders.info.get',$orderId) !!}">
-                                                                <i class="qc-font-size-16 glyphicon glyphicon-pencil"></i>
+                                                                <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
                                                             </a>
                                                             &nbsp;&nbsp;
                                                         @endif
                                                         <a class="qc-link-green" title="Xem chi tiết Đơn hàng"
                                                            href="{!! route('qc.work.orders.view.get',$orderId) !!}">
-                                                            <i class="qc-font-size-16 glyphicon glyphicon-eye-open"></i>
+                                                            <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
                                                         </a>
                                                         &nbsp;&nbsp;
                                                         <a class="qc-link" target="_blank" title="In đơn hàng"
                                                            href="{!! route('qc.work.orders.print.get', $orderId) !!}">
-                                                            <i class="qc-font-size-16 fa fa-print"></i>
+                                                            <i class="qc-font-size-14 fa fa-print"></i>
                                                         </a>
                                                         @if(!$cancelStatus)
                                                             @if(!$finishStatus)
@@ -317,12 +316,12 @@ $hrefIndex = route('qc.work.orders.get');
                                                 </a>
                                             </td>
                                             <td class="text-center">
-                                                <b>{!! date('d/m/Y', strtotime($orderReceiveDate)) !!}</b>
+                                                <b>{!! $hFunction->convertDateDMYFromDatetime($orderReceiveDate) !!}</b>
                                                 <br/>
-                                                <em class="qc-color-grey">{!! date('d/m/Y', strtotime($orders->deliveryDate())) !!}</em>
+                                                <em class="qc-color-grey">{!! $hFunction->convertDateDMYFromDatetime($orders->deliveryDate()) !!}</em>
                                             </td>
                                             <td class="text-center">
-                                                @if(empty($orderFinishDate))
+                                                @if($hFunction->checkEmpty($orderFinishDate))
                                                     <em class="qc-color-grey">Null</em>
                                                 @else
                                                     {!! date('d/m/Y', strtotime($orderFinishDate)) !!}

@@ -123,7 +123,7 @@ if (!$cancelStatus) {
                                             <em class="qc-color-grey">Ngày nhận:</em>
                                         </td>
                                         <td class="text-right">
-                                            <b>{!! date('d/m/Y', strtotime($dataOrder->receiveDate())) !!}</b>
+                                            <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->receiveDate()) !!}</b>
                                         </td>
                                     </tr>
                                     <tr>
@@ -131,7 +131,7 @@ if (!$cancelStatus) {
                                             <em class="qc-color-grey">Ngày giao:</em>
                                         </td>
                                         <td class="text-right">
-                                            <b>{!! date('d/m/Y', strtotime($dataOrder->deliveryDate())) !!}</b>
+                                            <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->deliveryDate()) !!}</b>
                                         </td>
                                     </tr>
                                 @else
@@ -140,7 +140,7 @@ if (!$cancelStatus) {
                                             <em class="qc-color-grey">Ngày báo:</em>
                                         </td>
                                         <td class="text-right">
-                                            <b>{!! date('d/m/Y', strtotime($dataOrder->provisionalDate())) !!}</b>
+                                            <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->provisionalDate()) !!}</b>
                                         </td>
                                     </tr>
                                 @endif
@@ -163,7 +163,7 @@ if (!$cancelStatus) {
                                         <em class="qc-color-grey">Xuất VAT:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b>@if(count($orderVat) > 0)
+                                        <b>@if($hFunction->checkNull($orderVat) > 0)
                                                 Có
                                             @else
                                                 Không
@@ -365,8 +365,7 @@ if (!$cancelStatus) {
                 <form id="qc_work_order_frm_customer_edit" class="qc-display-none"
                       name="qc_work_order_frm_customer_edit" role="form"
                       method="post" action="{!! route('qc.work.orders.info.customer.edit.post',$customerId) !!}">
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                         @if($mobileStatus) style="padding: 0 0;" @endif>
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="frm_info_edit_notify text-center form-group form-group-sm qc-color-red"></div>
                     </div>
                     <div class="row">
@@ -453,7 +452,7 @@ if (!$cancelStatus) {
                                         Giá/SP(VNĐ)
                                     </th>
                                 </tr>
-                                @if(count($dataProduct) > 0)
+                                @if($hFunction->checkCount($dataProduct))
                                     <?php
                                     $n_o = 0;
                                     ?>
@@ -463,7 +462,7 @@ if (!$cancelStatus) {
                                         $designImage = $product->designImage();
                                         # thiet ke dang ap dung
                                         $dataProductDesign = $product->productDesignInfoApplyActivity();
-                                        if (count($dataProductDesign) == 0) {
+                                        if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                             # thiet ke sau cung
                                             $dataProductDesign = $product->productDesignInfoLast();
                                         }
@@ -473,7 +472,7 @@ if (!$cancelStatus) {
                                                 {!! $n_o+=1  !!}
                                             </td>
                                             <td>
-                                                <b>{!! date('d/m/Y', strtotime($product->createdAt())) !!}</b>
+                                                <b>{!! $hFunction->convertDateDMYFromDatetime($product->createdAt()) !!}</b>
                                             </td>
                                             <td>
                                                 {!! $product->productType->name()  !!}
@@ -482,11 +481,11 @@ if (!$cancelStatus) {
                                                 {!! $product->description()  !!}
                                             </td>
                                             <td class="text-center" style="padding-top: 5px !important;">
-                                                @if(count($dataProductDesign) > 0)
+                                                @if($hFunction->checkCount($dataProductDesign))
                                                     @if($dataProductDesign->checkApplyStatus())
                                                         <a class="qc_work_order_product_design_image_view qc-link"
                                                            data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
-                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px; border: 2px solid green;" title="Đang áp dụng"
+                                                            <img style="width: 70px; height: auto; margin-bottom: 5px; border: 2px solid green;" title="Đang áp dụng"
                                                                  src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                         </a>
                                                         <br/>
@@ -499,7 +498,7 @@ if (!$cancelStatus) {
                                                         <br/>
                                                     @endif
                                                 @else
-                                                    @if(!empty($designImage))
+                                                    @if(!$hFunction->checkEmpty($designImage))
                                                         <a title="HÌNH ẢNH TỪ PHIÊN BẢNG CŨ - KHÔNG XEM FULL">
                                                             <img style="width: 70px; height: 70px; margin-bottom: 5px; "
                                                                  src="{!! $product->pathSmallDesignImage($designImage) !!}">
@@ -517,12 +516,12 @@ if (!$cancelStatus) {
                                                         &nbsp;|&nbsp;
                                                     @endif
                                                 @endif
-                                                <a class="qc-link"
-                                                   data-href="{!! route('qc.work.orders.product.design.add.get',$productId) !!}">
+                                                <a class="qc-link" href="{!! route('qc.work.orders.product.design.get',$productId) !!}">
                                                     <i class="qc-font-size-14 glyphicon glyphicon-list-alt"
                                                        title="Quản lý thiết kế"></i>
-                                                    <em title="Số mẫu thiết kế">({!! $product->totalProductDesign() !!}
-                                                        )</em>
+                                                    <em title="Số mẫu thiết kế">
+                                                        ({!! $product->totalProductDesign() !!})
+                                                    </em>
                                                 </a>
 
                                             </td>
@@ -611,14 +610,14 @@ if (!$cancelStatus) {
                                     <?php
                                     $dataOrderPay = $dataOrder->infoOrderPayOfOrder();
                                     ?>
-                                    @if(count($dataOrderPay) > 0)
+                                    @if($hFunction->checkCount($dataOrderPay))
                                         @foreach($dataOrderPay as $orderPay)
                                             <tr>
                                                 <td class="text-center">
                                                     {!! $n_o_pay =(isset($n_o_pay)?$n_o_pay+1: 1) !!}
                                                 </td>
                                                 <td>
-                                                    {!! date('d/m/Y',strtotime($orderPay->datePay()))  !!}
+                                                    {!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}
                                                 </td>
                                                 <td>
                                                     @if(!empty($orderPay->payerName()))
@@ -668,7 +667,7 @@ if (!$cancelStatus) {
             @endif
 
             @if($cancelStatus)
-                @if(count($dataOrderCancel) > 0)
+                @if($hFunction->checkCount($dataOrderCancel))
                     {{-- thong tin huy --}}
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                         <div class="row">
@@ -690,7 +689,7 @@ if (!$cancelStatus) {
                                         </tr>
                                         <tr>
                                             <td>
-                                                {!! date('d/m/Y',strtotime($dataOrderCancel->cancelDate()))  !!}
+                                                {!! $hFunction->convertDateDMYFromDatetime($dataOrderCancel->cancelDate())  !!}
                                             </td>
                                             <td>
                                                 {!! $dataOrderCancel->reason() !!}

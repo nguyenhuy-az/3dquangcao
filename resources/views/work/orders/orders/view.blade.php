@@ -44,7 +44,7 @@ $orderId = $dataOrders->orderId();
                             <em class="qc-color-grey">Ngày nhận:</em>
                         </td>
                         <td class="text-right">
-                            <b>{!! date('d/m/Y', strtotime($dataOrders->receiveDate())) !!}</b>
+                            <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->receiveDate()) !!}</b>
                         </td>
                     </tr>
                     <tr>
@@ -52,7 +52,7 @@ $orderId = $dataOrders->orderId();
                             <em class="qc-color-grey">Ngày giao:</em>
                         </td>
                         <td class="text-right">
-                            <b>{!! date('d/m/Y', strtotime($dataOrders->deliveryDate())) !!}</b>
+                            <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->deliveryDate()) !!}</b>
                         </td>
                     </tr>
                     <tr>
@@ -144,8 +144,18 @@ $orderId = $dataOrders->orderId();
                             $dataProduct = $dataOrders->allProductOfOrder();
                             $n_o = 0;
                             ?>
-                            @if(count($dataProduct) > 0)
+                            @if($hFunction->checkCount($dataProduct))
                                 @foreach($dataProduct as $product)
+                                    <?php
+                                    $productId = $product->productId();
+                                    $designImage = $product->designImage();
+                                    # thiet ke dang ap dung
+                                    $dataProductDesign = $product->productDesignInfoApplyActivity();
+                                    if ($hFunction->getCountFromData($dataProductDesign) == 0) {
+                                        # thiet ke sau cung
+                                        $dataProductDesign = $product->productDesignInfoLast();
+                                    }
+                                    ?>
                                     <tr>
                                         <td class="text-center">
                                             {!! $n_o+=1  !!}
@@ -154,13 +164,34 @@ $orderId = $dataOrders->orderId();
                                             {!! $product->productType->name()  !!}
                                         </td>
                                         <td>
-                                            @if(!empty($designImage))
-                                                <div style="margin-right: 10px; max-width: 70px; max-height: 70px; padding: 5px 5px; ">
-                                                    <img style="max-width: 100%; max-height: 100%;"
-                                                         src="{!! $product->pathSmallDesignImage($designImage) !!}">
-                                                </div>
+                                            @if($hFunction->checkCount($dataProductDesign))
+                                                @if($dataProductDesign->checkApplyStatus())
+                                                    <a class="qc_work_order_product_design_image_view qc-link"
+                                                       data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
+                                                        <img style="width: 70px; height: auto; margin-bottom: 5px; border: 2px solid green;"
+                                                             title="Đang áp dụng"
+                                                             src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                                                    </a>
+                                                    <br/>
+                                                @else
+                                                    <a class="qc_work_order_product_design_image_view qc-link"
+                                                       data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
+                                                        <img style="width: 70px; height: 70px; margin-bottom: 5px; border: 2px solid red;"
+                                                             title="Không được áp dụng"
+                                                             src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                                                    </a>
+                                                    <br/>
+                                                @endif
                                             @else
-                                                <em class="qc-color-grey">Gửi thiết kế sau</em>
+                                                @if(!$hFunction->checkEmpty($designImage))
+                                                    <a title="HÌNH ẢNH TỪ PHIÊN BẢNG CŨ - KHÔNG XEM FULL">
+                                                        <img style="width: 70px; height: 70px; margin-bottom: 5px; "
+                                                             src="{!! $product->pathSmallDesignImage($designImage) !!}">
+                                                    </a>
+                                                    <br/>
+                                                @else
+                                                    <em class="qc-color-grey">Gửi thiết kế sau</em>
+                                                @endif
                                             @endif
                                         </td>
                                         <td>
@@ -179,10 +210,10 @@ $orderId = $dataOrders->orderId();
                                             {!! $product->amount() !!}
                                         </td>
                                         <td class="text-right">
-                                            {!! $hFunction->dotNumber($product->price()) !!}
+                                            {!! $hFunction->currencyFormat($product->price()) !!}
                                         </td>
                                         <td class="text-right">
-                                            {!! $hFunction->dotNumber($product->price()*$product->amount()) !!}
+                                            {!! $hFunction->currencyFormat($product->price()*$product->amount()) !!}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -222,31 +253,31 @@ $orderId = $dataOrders->orderId();
                             $dataOrdersPay = $dataOrders->infoOrderPayOfOrder();
                             $n_o = 0;
                             ?>
-                            @if(count($dataOrdersPay) > 0)
+                            @if($hFunction->checkCount($dataOrdersPay))
                                 @foreach($dataOrdersPay as $orderPay)
                                     <tr>
                                         <td class="text-center">
                                             {!! $n_o+=1  !!}
                                         </td>
                                         <td>
-                                            {!! date('d/m/Y',strtotime($orderPay->datePay()))  !!}
+                                            {!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}
                                         </td>
                                         <td>
-                                            @if(!empty($orderPay->payerName()))
+                                            @if(!$hFunction->checkEmpty($orderPay->payerName()))
                                                 <span>{!! $orderPay->payerName() !!}</span>
                                             @else
                                                 <span>{!! $orderPay->order->customer->name() !!}</span>
                                             @endif
                                         </td>
                                         <td>
-                                            @if(!empty($orderPay->payerPhone()))
+                                            @if(!$hFunction->checkEmpty($orderPay->payerPhone()))
                                                 <span>{!! $orderPay->payerPhone() !!}</span>
                                             @else
                                                 <span>{!! $orderPay->order->customer->phone() !!}</span>
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            {!! $hFunction->dotNumber($orderPay->money()) !!}
+                                            {!! $hFunction->currencyFormat($orderPay->money()) !!}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -326,7 +357,7 @@ $orderId = $dataOrders->orderId();
                 </div>
             </div>
         </div>
-        <div class="qc-padding-top-10 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12" >
+        <div class="qc-padding-top-10 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <a class="btn btn-sm btn-primary" href="{!! $hFunction->getUrlReferer() !!}">Đóng</a>
         </div>
     </div>
