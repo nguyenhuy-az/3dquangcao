@@ -19,7 +19,7 @@ use Request;
 
 class WorkAllocationController extends Controller
 {
-    public function index($dayFilter = null, $monthFilter = null, $yearFilter = null, $finishStatus = 2, $nameFiler = null)
+    public function index($dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $finishStatus = 2, $nameFiler = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -43,17 +43,33 @@ class WorkAllocationController extends Controller
             $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
         }
 
-        #xem tất cả các ngày trong tháng
-        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 0) {
-            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-        } elseif ($dayFilter == 0 && $monthFilter > 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
+        $currentMonth = $hFunction->currentMonth();
+        $currentYear = $hFunction->currentYear();
+        $dateFilter = null;
+        if ($yearFilter == 100) { # lay tat ca thong tin
+            $dayFilter = null;
+            $dayFilter = 100;
+            $monthFilter = 100;
+        } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter > 0 && $monthFilter > 0 && $yearFilter > 0) {
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $monthFilter = $currentMonth;
+            $yearFilter = $currentYear;
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+            $dateFilter = null;
         } else {
-            $dateFilter = null;// date('Y-m');
-            $monthFilter = 0;// date('m');
-            $yearFilter = 0;// date('Y');
+            $dateFilter = date('Y-m');
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
         }
         #tat ca dang thi cong va ket thuc
         $dataWorkAllocation = $modelWorkAllocation->selectInfoOfReceiveListStaff($listStaffId, $finishStatus, $dateFilter)->paginate(30);

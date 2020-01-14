@@ -17,39 +17,31 @@ $mobileStatus = $mobile->isMobile();
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
             <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-                <h3>XÁC NHẬN HOÀN THÀNH CÔNG TRÌNH  </h3>
+                <h3>DUYỆT LOẠI SẢN PHẨM</h3>
             </div>
         </div>
         <div class="row">
             <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <form id="frmAd3dOrderAllocationConfirm" class="frmAd3dOrderAllocationConfirm" role="form" method="post"
-                      action="{!! route('qc.ad3d.order.allocation.confirm.post', $dataOrderAllocation->allocationId()) !!}">
+                <form id="frmAd3dOrderProductTypeConfirm" class="frmAd3dOrderProductTypeConfirm" role="form" method="post"
+                      action="{!! route('qc.ad3d.order.product_type.confirm.post', $dataProductType->typeId()) !!}">
                     <div class="row">
                         <div class="frm_notify qc-color-red text-center col-xs-12 col-sm-12 col-md-12 col-lg-12"></div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm">
-                                <label>Công trình:</label>
-                                <span>{!! $dataOrderAllocation->orders->name() !!}</span>
+                                <label>Tên lại SP:</label>
+                                <span class="qc-color-red qc-font-size-20">{!! $dataProductType->name() !!}</span>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm ">
-                                <select class="form-control" name="cbConfirmAgree" style="height: 25px;">
-                                    <option value="1">Đồng ý</option>
-                                    <option value="0">Không đồng ý</option>
+                                <select class="form-control" name="cbApplyStatus">
+                                    <option value="1">Áp dụng cho hệ thống</option>
+                                    <option value="0">Không áp dụng cho hệ thống</option>
                                 </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                             @if($mobileStatus) style="padding: 0 0;" @endif>
-                            <div class="text-center form-group form-group-sm ">
-                                <em class="qc-color-red">Sau khi xác nhận là sẽ không được thay đổi</em>
                             </div>
                         </div>
                     </div>

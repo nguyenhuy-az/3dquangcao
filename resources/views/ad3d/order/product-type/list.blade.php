@@ -55,16 +55,16 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
                             <th class="text-center">STT</th>
-                            <th>Tên</th>
                             <th class="text-center">Mã loại</th>
-                            <th class="text-center">Đơn vị tính</th>
+                            <th>Tên</th>
                             <th>Mô tả</th>
                             <th>Ảnh mẫu</th>
+                            <th class="text-center">Đơn vị tính</th>
                             <th class="text-center">Áp dụng</th>
                             <th class="text-center">Duyệt</th>
                             <th></th>
                         </tr>
-                        @if(count($dataProductType) > 0)
+                        @if($hFunction->checkCount($dataProductType))
                             <?php
                             $perPage = $dataProductType->perPage();
                             $currentPage = $dataProductType->currentPage();
@@ -78,12 +78,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 $description = $productType->description();
                                 $dataProductTypeImage = $productType->infoProductTypeImage();
                                 ?>
-                                <tr class="qc_ad3d_list_object" data-object="{!! $typeId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $typeId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
-                                    </td>
-                                    <td>
-                                        {!! $productType->name() !!}
                                     </td>
                                     <td class="text-center">
                                         @if(!empty($typeCode))
@@ -92,22 +89,18 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             <em class="qc-color-grey">---</em>
                                         @endif
                                     </td>
-                                    <td class="text-center">
-                                        @if(!empty($unit))
-                                            {!! $unit !!}
-                                        @else
-                                            <em class="qc-color-grey">---</em>
-                                        @endif
+                                    <td>
+                                        {!! $productType->name() !!}
                                     </td>
                                     <td class="qc-color-grey">
-                                        @if(!empty($description))
+                                        @if(!$hFunction->checkEmpty($description))
                                             {!! $description !!}
                                         @else
                                             <em class="qc-color-grey">---</em>
                                         @endif
                                     </td>
                                     <td>
-                                        @if(count($dataProductTypeImage) > 0)
+                                        @if($hFunction->checkCount($dataProductTypeImage))
                                             @foreach($dataProductTypeImage as $productTypeImage)
                                                 <div style="position: relative; float: left; margin: 5px 10px 5px 10px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                     <a class="qc_image_view qc-link"
@@ -131,6 +124,13 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         @endif
 
                                     </td>
+                                    <td class="text-center">
+                                        @if(!$hFunction->checkEmpty($unit))
+                                            {!! $unit !!}
+                                        @else
+                                            <em class="qc-color-grey">---</em>
+                                        @endif
+                                    </td>
                                     <td class="text-center qc-color-grey">
                                         @if($productType->checkApplyStatus())
                                             <i class="qc-color-red glyphicon glyphicon-ok-circle" title="Được sử dụng"></i>
@@ -143,7 +143,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             <i class="qc-color-green glyphicon glyphicon-ok-circle" title="Đã duyệt"></i>
                                         @else
                                             <i class="qc-color-grey glyphicon glyphicon-ok-circle" title="Chưa duyệt"></i>
-                                            <a class="qc-link-green-bold" title="Đang cập nhật">Duyệt</a>
+                                            <a class="qc_confirm_apply qc-link-green-bold" data-href="{!! route('qc.ad3d.order.product_type.confirm.get',$typeId) !!}" title="Click để xác nhận">
+                                                Duyệt
+                                            </a>
                                         @endif
                                     </td>
                                     <td class="text-right">

@@ -16,8 +16,9 @@ use Input;
 
 class ProductController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = null, $monthFilter = null, $yearFilter = null, $finishStatus = 2, $keywordFiler = null)
+    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $finishStatus = 2, $keywordFiler = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelOrder = new QcOrder();
@@ -27,35 +28,40 @@ class ProductController extends Controller
             'accessObject' => 'product'
         ];
 
-        /*if ($dataStaffLogin->checkRootManage()) {
-            if (empty($companyFilterId)) {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            } else {
-                $searchCompanyFilterId = [$companyFilterId];
-            }
+        $currentMonth = $hFunction->currentMonth();
+        $currentYear = $hFunction->currentYear();
+        $dateFilter = null;
+        if ($yearFilter == 100) { # lay tat ca thong tin
+            $dayFilter = null;
+            $dayFilter = 100;
+            $monthFilter = 100;
+        } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $monthFilter = $currentMonth;
+            $yearFilter = $currentYear;
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+            $dateFilter = null;
         } else {
-            $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-            $companyFilterId = $dataStaffLogin->companyId();
-        }*/
-
+            $dateFilter = date('Y-m');
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+        }
         if (empty($companyFilterId)) {
             $companyFilterId = $dataStaffLogin->companyId();
         }
         $searchCompanyFilterId = [$companyFilterId];
         $dataCompany = $modelCompany->getInfo($companyFilterId);
 
-        //dd($dataCompany);
-        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
-            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-        } elseif ($dayFilter == 0 && $monthFilter > 0 && $yearFilter > 0) {
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter > 0 && $monthFilter > 0 && $yearFilter > 0) {
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
-        } else {
-            $dateFilter = null;// date('Y-m');
-            $monthFilter = 0;// date('m');
-            $yearFilter = 0;// date('Y');
-        }
         $listOrderId = $modelOrder->listIdOfListCompanyAndReceiveDateName($searchCompanyFilterId, $dateFilter, $keywordFiler);
         if ($finishStatus == 2) {
             $dataProduct = QcProduct::whereIn('order_id', $listOrderId)->orderBy('product_id', 'DESC')->select('*')->paginate(30);

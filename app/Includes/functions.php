@@ -466,6 +466,10 @@ class Hfunction
         return date("m/Y", strtotime($date));
     }
 
+    public function getTimeFromDate($date)
+    {
+        return date("H:i:s", strtotime($date));
+    }
     // -------- plus year\month\day\ for current date (no time)--------
     function currentDatePlusYear($yearNumber = 0, $timeZoneDefault = 'HCM')
     {

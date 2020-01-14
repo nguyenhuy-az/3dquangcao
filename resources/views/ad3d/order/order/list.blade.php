@@ -31,7 +31,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                         @if($dataStaffLogin->checkRootManage())
                             <option value="1000">Tất cả</option>
                         @endif
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"
@@ -53,8 +53,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     <form name="" action="">
                         <div class="row">
                             <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <select class="cbDayFilter" style="height: 25px;"
-                                        data-href="{!! $hrefIndex !!}">
+                                <select class="cbDayFilter" style="height: 25px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -90,25 +89,26 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     </form>
                 </div>
             </div>
-            <div class="qc_ad3d_list_content qc-order-order-object row"
+            <div class="qc_ad3d_list_content qc-ad3d-table-container row"
                  data-="{!! route('qc.ad3d.order.order.confirm.get') !!}"
                  data-href-view="{!! route('qc.ad3d.order.order.view.get') !!}"
                  data-href-view-customer="{!! route('qc.ad3d.order.order.view_customer.get') !!}"
                  data-href-del="{!! route('qc.ad3d.order.order.delete') !!}">
-
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center"></th>
+                            <th class="text-center" style="width:20px;"></th>
                             <th>Mã</th>
-                            <th style="min-width: 200px;">Tên ĐH</th>
-                            <th style="min-width: 100px;">Thiết kế</th>
-                            <th style="min-width: 200px;">Khách hàng</th>
+                            <th style="min-width: 150px;">Tên ĐH</th>
+                            {{--<th>Thiết kế</th>--}}
+                            <th style="min-width: 150px;">Khách hàng</th>
                             <th style="min-width: 100px;">NV nhận</th>
-                            <th style="min-width: 150px;">NV & Thi công</th>
-                            <th class="text-center" style="min-width: 100px;">Hình tiến độ</th>
-                            <th class="text-center">TG nhận</th>
-                            <th class="text-center">TG Giao</th>
+                            <th>NV & Thi công</th>
+                            <th class="text-center">Hình tiến độ</th>
+                            <th class="text-center">
+                                TG nhận <br/>
+                                Giao
+                            </th>
                             <th class="text-center" style="min-width: 100px;">Thu tiền</th>
                             <th class="text-right">Tổng tiền</th>
                             <th class="text-right">Giảm</th>
@@ -128,7 +128,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     <input type="text" class="txtOrderFilterKeyword form-control"
                                            name="txtOrderFilterKeyword"
                                            data-href-check-name="{!! route('qc.ad3d.work.orders.filter.order.check.name') !!}"
-                                           placeholder="Tìm tên đơn hàng" value="{!! $orderFilterName !!}">
+                                           placeholder="Tên đơn hàng" value="{!! $orderFilterName !!}">
                                               <span class="input-group-btn">
                                                     <button class="btOrderFilterKeyword btn btn-default" type="button"
                                                             style="border: none;" data-href="{!! $hrefIndex !!}">
@@ -149,13 +149,12 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </div>
                                 </div>
                             </td>
-                            <td></td>
                             <td style="padding: 0px; min-width: 100px;">
                                 <div class="input-group">
                                     <input type="text" class="txtOrderCustomerFilterKeyword form-control"
                                            name="txtOrderCustomerFilterKeyword"
                                            data-href-check-name="{!! route('qc.ad3d.work.orders.filter.customer.check.name') !!}"
-                                           placeholder="Tìm tên khách hàng"
+                                           placeholder="Tên khách hàng"
                                            value="{!! $orderCustomerFilterName !!}">
                                               <span class="input-group-btn">
                                                     <button class="btOrderCustomerFilterKeyword btn btn-default"
@@ -180,11 +179,11 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             </td>
                             <td class="text-center" style="padding: 0px;">
                                 <select class="cbStaffFilterId form-control"
-                                        data-href="{!! route('qc.ad3d.order.order.get') !!}">
+                                        data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
                                         Tất cả
                                     </option>
-                                    @if(count($dataStaff)> 0)
+                                    @if($hFunction->checkCount($dataStaff))
                                         @foreach($dataStaff as $staff)
                                             <option @if($staff->staffId() == $staffFilterId) selected="selected"
                                                     @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
@@ -205,10 +204,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </option>
                                 </select>--}}
                             </td>
-                            <td></td>
-                            <td class="text-center">
-
-                            </td>
+                            <td class="text-center"></td>
                             <td class="text-center"></td>
                             <td style="padding: 0px;">
                                 <select class="cbPaymentStatus form-control"
@@ -237,7 +233,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             </td>
 
                         </tr>
-                        @if(count($dataOrder) > 0)
+                        @if($hFunction->checkCount($dataOrder))
                             <?php
                             $perPage = $dataOrder->perPage();
                             $currentPage = $dataOrder->currentPage();
@@ -315,11 +311,6 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center qc-color-red">
-                                        <a class="qc_view qc-link-green">
-                                            Xem thiết kế
-                                        </a>
-                                    </td>
                                     <td>
                                         <a class="qc_view_customer qc-link"
                                            data-customer="{!! $order->customer->customerId() !!}"
@@ -358,16 +349,16 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                 Đã hủy
                                             </em>
                                         @endif
-                                        @if(count($dataProduct) >0)
+                                        @if($hFunction->checkCount($dataProduct))
                                             <br/>
                                         @endif
                                     </td>
                                     <td class="text-center qc-color-red">
-                                        @if(count($orderWorkAllocationAllInfo)> 0)
+                                        @if($hFunction->checkCount($orderWorkAllocationAllInfo))
                                             <?php
                                             $dataWorkAllocationReportImage = $order->workAllocationReportImage($orderId, 1);
                                             ?>
-                                            @if(count($dataWorkAllocationReportImage)> 0)
+                                            @if($hFunction->checkCount($dataWorkAllocationReportImage))
                                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                     @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
                                                         <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
@@ -394,12 +385,10 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        {!! date('d/m/Y', strtotime($order->receiveDate())) !!}
+                                        {!! $hFunction->convertDateDMYFromDatetime($order->receiveDate()) !!}
+                                        <br/>
+                                        <em class="qc-color-grey">{!! $hFunction->convertDateDMYFromDatetime($order->deliveryDate()) !!}</em>
                                     </td>
-                                    <td class="text-center qc-padding-top-none qc-padding-bot-none">
-                                        {!! date('d/m/Y', strtotime($order->deliveryDate())) !!}
-                                    </td>
-
                                     <td class="text-center">
                                         @if(!$cancelStatus)
                                             @if($checkFinishPayment)
@@ -438,7 +427,6 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         <a class="qc_view qc-link-green" title="Click xem chi tiết" href="#">
                                             {!! $hFunction->currencyFormat($totalPaid) !!}
                                         </a>
-
                                     </td>
                                     <td class="text-right qc-color-red">
                                         {!! $hFunction->currencyFormat($totalUnPaid) !!}
@@ -446,13 +434,13 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="14">
+                                <td class="text-center" colspan="12">
                                     {!! $hFunction->page($dataOrder) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="14">
+                                <td class="text-center" colspan="12">
                                     <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                 </td>
                             </tr>

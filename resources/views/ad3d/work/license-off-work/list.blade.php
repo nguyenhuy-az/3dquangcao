@@ -16,7 +16,7 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
-
+$indexHref = route('qc.ad3d.work.off-work.get');
 ?>
 @extends('ad3d.work.license-off-work.index')
 @section('qc_ad3d_index_content')
@@ -25,7 +25,7 @@ $totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
              style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed brown;">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! route('qc.ad3d.work.off-work.get') !!}">
+                    <a class="qc-link-green-bold" href="{!! $indexHref !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
@@ -33,11 +33,11 @@ $totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
-                            data-href-filter="{!! route('qc.ad3d.work.off-work.get') !!}">
+                            data-href-filter="{!! $indexHref !!}">
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
                         @endif
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"
@@ -58,21 +58,10 @@ $totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
                 <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
                     <form name="" action="">
                         <div class="row">
-                            {{--<div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6">--}}
-                            {{--<div class="input-group">--}}
-                            {{--<input type="text" class="textFilterName form-control" name="textFilterName"--}}
-                            {{--placeholder="Tìm theo tên" value="{!! $nameFiler !!}">--}}
-                            {{--<span class="input-group-btn">--}}
-                            {{--<button class="btFilterName btn btn-default" type="button"--}}
-                            {{--data-href="{!! route('qc.ad3d.work.time-keeping.get') !!}">Tìm--}}
-                            {{--</button>--}}
-                            {{--</span>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
                             <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <select class="cbDayFilter" style="margin-top: 5px; height: 25px;" name="cbDayFilter"
-                                        data-href="{!! route('qc.ad3d.work.off-work.get') !!}">
-                                    <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >Tất cả
+                                <select class="cbDayFilter" style="margin-top: 5px; height: 25px;" name="cbDayFilter" data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
+                                        Tất cả
                                     </option>
                                     @for($i =1;$i<= 31; $i++)
                                         <option value="{!! $i !!}"
@@ -80,9 +69,9 @@ $totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
                                     @endfor
                                 </select>
                                 <span>/</span>
-                                <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.work.off-work.get') !!}">
-                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >Tất cả
+                                <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;" data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                        Tất cả
                                     </option>
                                     @for($i =1;$i<= 12; $i++)
                                         <option value="{!! $i !!}"
@@ -90,8 +79,10 @@ $totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
                                     @endfor
                                 </select>
                                 <span>/</span>
-                                <select class="cbYearFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.work.off-work.get') !!}">
+                                <select class="cbYearFilter" style="margin-top: 5px; height: 25px;" data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
                                     @for($i =2017;$i<= 2050; $i++)
                                         <option value="{!! $i !!}"
                                                 @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
@@ -107,7 +98,7 @@ $totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
                             <th>Nhân viên</th>
                             <th class="text-center">Thời gian xin</th>
                             <th class="text-center">Ngày nghỉ</th>
@@ -115,7 +106,7 @@ $totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
                             <th class="text-left">Chi chú duyệt</th>
                             <th></th>
                         </tr>
-                        @if(count($dataLicenseOffWork ) > 0)
+                        @if($hFunction->checkCount($dataLicenseOffWork ))
                             <?php
                             $perPage = $dataLicenseOffWork->perPage();
                             $currentPage = $dataLicenseOffWork->currentPage();
@@ -129,7 +120,7 @@ $totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
                                 $confirmNote = $licenseOffWork->confirmNote();
                                 $createdAd = $licenseOffWork->createdAt();
                                 ?>
-                                <tr class="qc_ad3d_list_object" data-object="{!! $licenseId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $licenseId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
@@ -137,14 +128,14 @@ $totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
                                         {!! $licenseOffWork->staff->fullname() !!}
                                     </td>
                                     <td class="text-center">
-                                        <span style="color: black;">{!! date('d-m-Y', strtotime($createdAd)) !!}</span>&nbsp;
+                                        <span style="color: black;">{!! $hFunction->convertDateDMYFromDatetime($createdAd) !!}</span>&nbsp;
                                         <span style="font-weight: bold; color: red;">{!! date('H:i', strtotime($createdAd)) !!}</span>
                                     </td>
                                     <td class="text-center">
                                         @if($licenseOffWork->checkConfirmStatus())
-                                            <span style="color: black;">{!! date('d-m-Y', strtotime($dateOff)) !!}</span>
+                                            <span style="color: black;">{!! $hFunction->convertDateDMYFromDatetime($dateOff) !!}</span>
                                         @else
-                                            <span style="font-weight: bold; color: brown;">{!! date('d-m-Y', strtotime($dateOff)) !!}</span>
+                                            <span style="font-weight: bold; color: brown;">{!! $hFunction->convertDateDMYFromDatetime($dateOff) !!}</span>
                                         @endif
                                     </td>
                                     <td class="text-left">

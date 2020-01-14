@@ -81,7 +81,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         <em class="qc-color-grey">Ngày nhận:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b>{!! date('d/m/Y', strtotime($dataOrder->receiveDate())) !!}</b>
+                                        <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->receiveDate()) !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -89,7 +89,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         <em class="qc-color-grey">Ngày giao:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b>{!! date('d/m/Y', strtotime($dataOrder->deliveryDate())) !!}</b>
+                                        <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->deliveryDate()) !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -133,7 +133,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         Hoạt động
                                     </th>
                                 </tr>
-                                @if(count($dataOrderAllocation)> 0)
+                                @if($hFunction->checkCount($dataOrderAllocation))
                                     @foreach($dataOrderAllocation as $ordersAllocation)
                                         <?php
                                         $ordersAllocationId = $ordersAllocation->allocationId();
@@ -148,10 +148,10 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                 {!! $ordersAllocation->receiveStaff->fullname() !!}
                                             </td>
                                             <td>
-                                                {!! date('d/m/Y H:i', strtotime($ordersAllocation->allocationDate())) !!}
+                                                {!! $hFunction->convertDateDMYHISFromDatetime($ordersAllocation->allocationDate()) !!}
                                             </td>
                                             <td>
-                                                {!! date('d/m/Y H:i', strtotime($ordersAllocation->receiveDeadline())) !!}
+                                                {!! $hFunction->convertDateDMYHISFromDatetime($ordersAllocation->receiveDeadline()) !!}
                                             </td>
                                             <td class="text-center">
                                                 @if($allocationStatus)
@@ -218,7 +218,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         <select class="cbReceiveStaff form-control" name="cbReceiveStaff"
                                                 style="height: 30px;">
                                             <option value="">Chọn nhân viên</option>
-                                            @if(count($dataReceiveStaff) > 0)
+                                            @if($hFunction->checkCount($dataReceiveStaff))
                                                 @foreach($dataReceiveStaff as $receiveStaff)
                                                     <option value="{!! $receiveStaff->staffId() !!}">{!! $receiveStaff->fullName() !!}</option>
                                                 @endforeach
@@ -370,7 +370,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                 <h4>THÔNG TIN TRIỂN KHAI THI CÔNG</h4>
             </div>
         </div>
-        @if(count($dataProduct)>0)
+        @if($hFunction->checkCount($dataProduct))
             <div class="qc-container-table qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="table-responsive">
@@ -397,7 +397,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         </a>
                                     </td>
                                 </tr>
-                                @if(count($dataWorkAllocation)>0)
+                                @if($hFunction->checkCount($dataWorkAllocation))
                                     @foreach($dataWorkAllocation as $workAllocation)
                                         <?php
                                         $allocationId = $workAllocation->allocationId();
@@ -416,17 +416,17 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             <td>
                                                 <em>TG nhận:</em>
                                                 <b>
-                                                    {!! date('d/m/Y', strtotime($workAllocation->allocationDate())) !!}
+                                                    {!! $hFunction->convertDateDMYFromDatetime($workAllocation->allocationDate()) !!}
                                                     &nbsp;
-                                                    {!! date('H:i', strtotime($workAllocation->allocationDate())) !!}
+                                                    {!! $hFunction->getTimeFromDate($workAllocation->allocationDate()) !!}
                                                 </b>
                                             </td>
                                             <td>
                                                 <em>TG giao:</em>
                                                 <b>
-                                                    {!! date('d/m/Y', strtotime($workAllocation->receiveDeadline())) !!}
+                                                    {!! $hFunction->convertDateDMYFromDatetime($workAllocation->receiveDeadline()) !!}
                                                     &nbsp;
-                                                    {!! date('H:i', strtotime($workAllocation->receiveDeadline())) !!}
+                                                    {!! $hFunction->getTimeFromDate($workAllocation->receiveDeadline()) !!}
                                                 </b>
                                             </td>
                                             <td class="text-right">
@@ -443,7 +443,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                 </a>
                                             </td>
                                         </tr>
-                                        @if(count($dataWorkAllocationReport)>0)
+                                        @if($hFunction->checkCount($dataWorkAllocationReport))
                                             @foreach($dataWorkAllocationReport as $workAllocationReport)
                                                 <?php
                                                 $dataWorkAllocationReportImage = $workAllocationReport->workAllocationReportImageInfo();
@@ -455,7 +455,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                     <td style="background-color: whitesmoke;"></td>
                                                     <td colspan="2">
                                                         <i class="glyphicon glyphicon-calendar"></i>&nbsp;
-                                                        <b>{!! date('d/m/Y H:j', strtotime($workAllocationReport->reportDate())) !!}</b>
+                                                        <b>{!! $hFunction->convertDateDMYHISFromDatetime($workAllocationReport->reportDate()) !!}</b>
                                                         <br/>
                                                         <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
                                                     </td>

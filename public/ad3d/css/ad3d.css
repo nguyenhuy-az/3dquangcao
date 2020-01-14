@@ -1,3 +1,9 @@
+* {
+    font-size: 12px;
+    font-family: Arial, Times New Roman, Verdana, Sans-serif;
+    margin: 0px;
+    padding: 0px;
+}
 /*datepicker*/
 .ui-datepicker {
     background: #d7d7d7;
@@ -54,10 +60,15 @@
     background-color: #d7d7d7;
 }
 
+.qc-ad3d-table-container table {
+    /*table-layout: fixed;*/
+}
+
 .qc-ad3d-table-container table tr th {
     padding-top: 3px !important;
     padding-bottom: 3px !important;
 }
+
 .qc-ad3d-table-container table tr td {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
@@ -67,24 +78,26 @@
     padding-top: 3px !important;
     padding-bottom: 3px !important;
 }
+
 .qc_ad3d_list_content table tr td {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
 }
 
-.qc-container-table table tr th{
+.qc-container-table table tr th {
     padding-top: 3px !important;
     padding-bottom: 3px !important;
 }
 
-.qc-container-table table tr td{
+.qc-container-table table tr td {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
 }
+
 .qc-container-table-border-none table {
     border: none !important;
 }
 
-.qc-container-table-border-none table tr td{
+.qc-container-table-border-none table tr td {
     border: none !important;
 }

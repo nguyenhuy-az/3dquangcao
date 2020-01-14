@@ -51,6 +51,20 @@ var qc_ad3d_order_product_type = {
             })
         }
     },
+    confirm: {
+        get: function (href) {
+            qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
+            qc_main.scrollTop();
+        },
+        save: function (formObject) {
+            var containNotify = $(formObject).find('.frm_notify');
+            if(confirm('Tôi đồng ý với xác nhận này.')){
+                qc_ad3d_submit.ajaxFormHasReload(formObject, containNotify, true);
+                qc_main.scrollTop();
+            }
+
+        }
+    },
     image: {
         getAdd: function (listObject) {
             qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-add-img') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
@@ -88,26 +102,35 @@ $(document).ready(function () {
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_delete', function () {
         qc_ad3d_order_product_type.delete($(this).parents('.qc_ad3d_list_object'));
-    })
+    });
+});
+//-------------------- Duyet loai san pham ------------
+$(document).ready(function () {
+    $('.qc_ad3d_list_object').on('click', '.qc_confirm_apply', function () {
+        qc_ad3d_order_product_type.confirm.get($(this).data('href'));
+    });
+    $('body').on('click', '.frmAd3dOrderProductTypeConfirm .qc_save', function () {
+        qc_ad3d_order_product_type.confirm.save($(this).parents('.frmAd3dOrderProductTypeConfirm'));
+    });
 });
 //-------------------- ANH MAU ------------
 $(document).ready(function () {
     // xem anh
     $('.qc_ad3d_list_object').on('click', '.qc_image_view', function () {
         qc_ad3d_order_product_type.image.view($(this).data('href'));
-    })
+    });
     // them
     $('.qc_ad3d_list_object').on('click', '.qc_add_image_action', function () {
         qc_ad3d_order_product_type.image.getAdd($(this).parents('.qc_ad3d_list_object'));
-    })
+    });
 
     $('body').on('click', '.frmAddImage .qc_save', function () {
         qc_ad3d_order_product_type.image.save($(this).parents('.frmAddImage'));
-    })
+    });
     // xoa anh
     $('.qc_ad3d_list_object').on('click', '.qc_delete_image_action', function () {
         qc_ad3d_order_product_type.image.delete($(this).data('href'));
-    })
+    });
 });
 //-------------------- sua thong tin ------------
 $(document).ready(function () {

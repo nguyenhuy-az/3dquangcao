@@ -58,6 +58,14 @@ class QcProductType extends Model
         return (empty($typeId)) ? $this->typeId() : $typeId;
     }
 
+    public function confirmApplyStatus($typeId, $applyStatusId)
+    {
+        return QcProductType::where('type_id', $typeId)->update([
+            'applyStatus' => $applyStatusId,
+            'confirmStatus' => 1
+        ]);
+    }
+
     # xóa
     public function actionDelete($typeId = null)
     {

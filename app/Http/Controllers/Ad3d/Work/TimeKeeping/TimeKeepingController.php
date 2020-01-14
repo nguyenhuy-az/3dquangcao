@@ -25,7 +25,7 @@ use Request;
 
 class TimeKeepingController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = null, $monthFilter = null, $yearFilter = null, $nameFiler = null)
+    public function index($companyFilterId = null, $dayFilter = 0,$monthFilter = 0, $yearFilter = 0, $nameFiler = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -37,16 +37,33 @@ class TimeKeepingController extends Controller
         $dataAccess = [
             'accessObject' => 'timeKeeping'
         ];
-        if (empty($dayFilter) && empty($monthFilter) && empty($yearFilter)) {
-            //$dateFilter = date('Y-m-d');
-            $dayFilter = 0;//date('d');
+        $currentMonth = $hFunction->currentMonth();
+        $currentYear = $hFunction->currentYear();
+        $dateFilter = null;
+        if ($yearFilter == 100) { # lay tat ca thong tin
+            $dayFilter = null;
+            $dayFilter = 100;
+            $monthFilter = 100;
+        } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+            $dayFilter = 100;
             $monthFilter = date('m');
             $yearFilter = date('Y');
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter == 0) { //xem tất cả các ngày trong tháng
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $monthFilter = $currentMonth;
+            $yearFilter = $currentYear;
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+            $dateFilter = null;
         } else {
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
+            $dateFilter = date('Y-m');
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
         }
         $dataCompany = $modelCompany->getInfo();
         if (empty($companyFilterId)) {

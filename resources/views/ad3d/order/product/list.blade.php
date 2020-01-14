@@ -9,6 +9,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$indexHref = route('qc.ad3d.order.product.get');
 ?>
 @extends('ad3d.order.product.index')
 @section('qc_ad3d_index_content')
@@ -17,7 +18,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
              style="margin-bottom: 10px; padding-top : 2px;padding-bottom: 2px; border-bottom: 2px dashed brown;">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! route('qc.ad3d.order.product.get') !!}">
+                    <a class="qc-link-green-bold" href="{!! $indexHref !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     <label class="qc-font-size-20">SẢN PHẨM</label>
@@ -25,7 +26,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
-                            data-href-filter="{!! route('qc.ad3d.order.product.get') !!}">
+                            data-href-filter="{!! $indexHref !!}">
                         <option value="{!! $dataCompany->companyId() !!}">{!! $dataCompany->name() !!}</option>
                     </select>
                 </div>
@@ -36,23 +37,10 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0;">
                     <form name="" action="">
                         <div class="row">
-                            <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                <div class="input-group">
-                                    <input type="text" class="textKeywordFilter form-control" name="textKeywordFilter"
-                                           placeholder="Tìm theo tên đơn hàng" style="height: 25px;"
-                                           value="{!! $keywordFiler !!}">
-                                      <span class="input-group-btn">
-                                            <button class="btFilterAction btn btn-sm btn-default" type="button"
-                                                    style="height: 25px;"
-                                                    data-href="{!! route('qc.ad3d.order.product.get') !!}">Tìm
-                                            </button>
-                                      </span>
-                                </div>
-                            </div>
-                            <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <select class="cbDayFilter" style="height: 25px;"
-                                        data-href="{!! route('qc.ad3d.order.product.get') !!}">
-                                    <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
+                                        data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($i =1;$i<= 31; $i++)
@@ -62,8 +50,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </select>
                                 <span>/</span>
                                 <select class="cbMonthFilter" style="height: 25px;"
-                                        data-href="{!! route('qc.ad3d.order.product.get') !!}">
-                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
+                                        data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($i =1;$i<= 12; $i++)
@@ -72,28 +60,16 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     @endfor
                                 </select>
                                 <span>/</span>
-                                <select class="cbYearFilter" style="height: 25px;"
-                                        data-href="{!! route('qc.ad3d.order.product.get') !!}">
-                                    <option value="0" @if((int)$yearFilter == 0) selected="selected" @endif >
+                                <select class="cbYearFilter" style="height: 25px;" data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($i =2017;$i<= 2050; $i++)
                                         <option value="{!! $i !!}"
                                                 @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
                                     @endfor
-                                </select> &nbsp;
-                                <select class="cbFinishStatus" style="height: 25px;"
-                                        data-href="{!! route('qc.ad3d.order.product.get') !!}">
-                                    <option value="2" @if($finishStatus == 2) selected="selected" @endif>
-                                        Tất cả
-                                    </option>
-                                    <option value="1" @if($finishStatus == 1) selected="selected" @endif>
-                                        Đã hoàn thanh
-                                    </option>
-                                    <option value="0" @if($finishStatus == 0) selected="selected" @endif>
-                                        Đang xử lý
-                                    </option>
                                 </select>
+
                                 {{--
                                     <a class="btn btn-sm btn-primary"
                                        href="{!! route('qc.ad3d.order.product.add.get') !!}">
@@ -112,7 +88,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
                             <th>Sản phảm</th>
                             <th>Đơn hàng</th>
                             <th class="text-center">Số lượng</th>
@@ -121,7 +97,40 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             <th class="text-center">Thi công</th>
                             <th></th>
                         </tr>
-                        @if(count($dataProduct) > 0)
+                        <tr>
+                            <td class="text-center" style="width: 20px;"></td>
+                            <td></td>
+                            <td style="padding: 0;">
+                                <div class="input-group">
+                                    <input type="text" class="textKeywordFilter form-control" name="textKeywordFilter"
+                                           placeholder="Tìm theo tên đơn hàng" value="{!! $keywordFiler !!}">
+                                      <span class="input-group-btn">
+                                            <button class="btFilterAction btn btn-default" type="button"
+                                                    data-href="{!! route('qc.ad3d.order.product.get') !!}">
+                                                <i class="glyphicon glyphicon-search"></i>
+                                            </button>
+                                      </span>
+                                </div>
+                            </td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td style="padding: 0;">
+                                <select class="cbFinishStatus form-control" data-href="{!! $indexHref !!}">
+                                    <option value="2" @if($finishStatus == 2) selected="selected" @endif>
+                                        Tất cả
+                                    </option>
+                                    <option value="1" @if($finishStatus == 1) selected="selected" @endif>
+                                        Đã hoàn thanh
+                                    </option>
+                                    <option value="0" @if($finishStatus == 0) selected="selected" @endif>
+                                        Đang xử lý
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="text-center"></td>
+                        </tr>
+                        @if($hFunction->checkCount($dataProduct))
                             <?php
                             $perPage = $dataProduct->perPage();
                             $currentPage = $dataProduct->currentPage();
@@ -131,7 +140,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 <?php
                                 $productId = $product->productId();
                                 ?>
-                                <tr class="qc_ad3d_list_object" data-object="{!! $productId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $productId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
@@ -145,10 +154,10 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         {!! $product->amount() !!}
                                     </td>
                                     <td class="text-center">
-                                        {!! date('d/m/Y',strtotime($product->order->receiveDate())) !!}
+                                        {!! $hFunction->convertDateDMYFromDatetime($product->order->receiveDate()) !!}
                                     </td>
                                     <td class="text-center">
-                                        {!! date('d/m/Y',strtotime($product->order->deliveryDate())) !!}
+                                        {!! $hFunction->convertDateDMYFromDatetime($product->order->deliveryDate()) !!}
                                     </td>
                                     <td class="text-center">
                                         @if($product->workAllocationActivityOfProduct())

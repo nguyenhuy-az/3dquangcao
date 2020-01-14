@@ -140,6 +140,24 @@ class ProductTypeController extends Controller
         }
     }
 
+    #xac nhan loai san pham
+    public function getConfirm($typeId)
+    {
+        $modelProductType = new QcProductType();
+        $dataProductType = $modelProductType->getInfo($typeId);
+        if (count($dataProductType) > 0) {
+            return view('ad3d.order.product-type.confirm-type', compact('dataProductType'));
+        }
+    }
+
+    public function postConfirm($typeId)
+    {
+        $modelProductType = new QcProductType();
+        $applyStatus = Request::input('cbApplyStatus');
+        $modelProductType->confirmApplyStatus($typeId, $applyStatus);
+    }
+
+    # xoa anh
     public function deleteImage($imageId)
     {
         $modelProductTypeImage = new QcProductTypeImage();
@@ -191,6 +209,7 @@ class ProductTypeController extends Controller
             }
         }
     }
+
     public function viewImage($imageId)
     {
         $modelProductTypeImage = new QcProductTypeImage();

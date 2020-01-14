@@ -685,6 +685,10 @@ Route::group(['prefix' => 'ad3d'], function () {
             //xoa anh
             Route::get('delete/img/{imageId?}', ['as' => 'qc.ad3d.order.product_type_img.delete', 'uses' => 'Ad3d\Order\ProductType\ProductTypeController@deleteImage']);
 
+            # duyet loai san pham
+            Route::get('confirm/{typeId?}', ['as' => 'qc.ad3d.order.product_type.confirm.get', 'uses' => 'Ad3d\Order\ProductType\ProductTypeController@getConfirm']);
+            Route::post('confirm/{typeId?}', ['as' => 'qc.ad3d.order.product_type.confirm.post', 'uses' => 'Ad3d\Order\ProductType\ProductTypeController@postConfirm']);
+
             //xoa
             Route::get('delete/{typeId?}', ['as' => 'qc.ad3d.order.product_type.delete', 'uses' => 'Ad3d\Order\ProductType\ProductTypeController@deleteType']);
 

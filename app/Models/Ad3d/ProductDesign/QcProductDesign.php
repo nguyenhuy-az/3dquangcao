@@ -137,7 +137,7 @@ class QcProductDesign extends Model
 
     public function infoAllOfProduct($productId)
     {
-        return QcProductDesign::where('product_id', $productId)->get();
+        return QcProductDesign::where('product_id', $productId)->orderBy('design_id', 'DESC')->get();
     }
 
     public function infoLastOfProduct($productId)

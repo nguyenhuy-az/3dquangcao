@@ -11,6 +11,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$indexHref = route('qc.ad3d.order.allocation.get');
 ?>
 @extends('ad3d.order.allocation.index')
 @section('qc_ad3d_order_allocation')
@@ -19,18 +20,18 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
              style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed brown;">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! route('qc.ad3d.order.allocation.get') !!}">
+                    <a class="qc-link-green-bold" href="{!! $indexHref !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     <label class="qc-font-size-20">ĐƠN HÀNG BÀN GIAO</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 20px;"
-                            data-href-filter="{!! route('qc.ad3d.order.allocation.get') !!}">
+                            data-href-filter="{!! $indexHref !!}">
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
                         @endif
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"
@@ -65,8 +66,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             </div>--}}
                             <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <select class="cbDayFilter" style="height: 20px;"
-                                        data-href="{!! route('qc.ad3d.order.allocation.get') !!}">
-                                    <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
+                                        data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($i =1;$i<= 31; $i++)
@@ -76,8 +77,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </select>
                                 <span>/</span>
                                 <select class="cbMonthFilter" style="height: 20px;"
-                                        data-href="{!! route('qc.ad3d.order.allocation.get') !!}">
-                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
+                                        data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($i =1;$i<= 12; $i++)
@@ -87,27 +88,14 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </select>
                                 <span>/</span>
                                 <select class="cbYearFilter" style="height: 20px;"
-                                        data-href="{!! route('qc.ad3d.order.allocation.get') !!}">
-                                    <option value="0" @if((int)$yearFilter == 0) selected="selected" @endif >
+                                        data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($i =2017;$i<= 2050; $i++)
                                         <option value="{!! $i !!}"
                                                 @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
                                     @endfor
-                                </select>
-                                &nbsp;
-                                <select class="cbFinishStatus" style="height: 20px;"
-                                        data-href="{!! route('qc.ad3d.order.allocation.get') !!}">
-                                    <option value="2" @if($finishStatus == 2) selected="selected" @endif>
-                                        Tất cả
-                                    </option>
-                                    <option value="1" @if($finishStatus == 1) selected="selected" @endif>
-                                        Đã kết thúc
-                                    </option>
-                                    <option value="0" @if($finishStatus == 0) selected="selected" @endif>
-                                        Đang thi công
-                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -119,15 +107,39 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
+                            <th class="text-center">Mã ĐH</th>
                             <th>Đơn hàng</th>
-                            <th class="text-center">Khách hàng</th>
+                            <th>Khách hàng</th>
                             <th>NV Nhận</th>
                             <th class="text-center">TG Nhận</th>
                             <th class="text-center">TG Giao</th>
                             <th></th>
                         </tr>
-                        @if(count($dataOrderAllocation) > 0)
+                        <tr>
+                            <td class="text-center" style="width: 20px;"></td>
+                            <td class="text-center"></td>
+                            <td></td>
+                            <td class="text-center"></td>
+                            <td></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td style="padding: 0;">
+                                <select class="cbFinishStatus form-control"
+                                        data-href="{!! $indexHref !!}">
+                                    <option value="2" @if($finishStatus == 2) selected="selected" @endif>
+                                        Tất cả
+                                    </option>
+                                    <option value="1" @if($finishStatus == 1) selected="selected" @endif>
+                                        Đã kết thúc
+                                    </option>
+                                    <option value="0" @if($finishStatus == 0) selected="selected" @endif>
+                                        Đang thi công
+                                    </option>
+                                </select>
+                            </td>
+                        </tr>
+                        @if($hFunction->checkCount($dataOrderAllocation))
                             <?php
                             $perPage = $dataOrderAllocation->perPage();
                             $currentPage = $dataOrderAllocation->currentPage();
@@ -140,25 +152,28 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 $orderId = $dataOrders->orderId();
                                 $dataCustomer = $dataOrders->customer;
                                 ?>
-                                <tr class="qc_ad3d_list_object" data-object="{!! $allocationId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
+                                    data-object="{!! $allocationId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
+                                    <td class="text-center">
+                                        <span class="qc-color-grey">{!! $dataOrders->orderCode() !!}</span>
+                                    </td>
                                     <td>
-                                        <em class="qc-color-grey">{!! $dataOrders->orderCode() !!} - </em>
                                         <span>{!! $dataOrders->name() !!}</span>
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <span class="qc-color-grey">{!! $dataOrders->customer->name() !!}</span>
                                     </td>
                                     <td class="qc-color-grey">
                                         {!! $orderAllocation->receiveStaff->fullname() !!}
                                     </td>
                                     <td class="text-center">
-                                        {!! date('d/m/Y', strtotime($orderAllocation->allocationDate())) !!}
+                                        {!! $hFunction->convertDateDMYFromDatetime($orderAllocation->allocationDate()) !!}
                                     </td>
                                     <td class="text-center">
-                                        {!! date('d/m/Y', strtotime($orderAllocation->receiveDeadline())) !!}
+                                        {!! $hFunction->convertDateDMYFromDatetime($orderAllocation->receiveDeadline()) !!}
                                     </td>
                                     <td class="text-right">
                                         @if($orderAllocation->checkActivity())
@@ -197,22 +212,22 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </td>
                                 </tr>
                             @endforeach
+                            <tr>
+                                <td class="text-center" colspan="8">
+                                    {!! $hFunction->page($dataOrderAllocation) !!}
+                                </td>
+                            </tr>
                         @else
                             <tr>
-                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="7">
+                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="8">
                                     <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                 </td>
                             </tr>
                         @endif
                     </table>
                 </div>
+            </div>
 
-            </div>
-            <div class="row">
-                <div class="text-center qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    {!! $hFunction->page($dataOrderAllocation) !!}
-                </div>
-            </div>
         </div>
     </div>
 @endsection()

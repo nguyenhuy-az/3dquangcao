@@ -9,6 +9,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$indexHref = route('qc.ad3d.work.work.get');
 ?>
 @extends('ad3d.work.work.index')
 @section('qc_ad3d_index_content')
@@ -17,19 +18,18 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
              style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed brown;">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! route('qc.ad3d.work.work.get') !!}">
+                    <a class="qc-link-green-bold" href="{!! $indexHref !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
                     <label class="qc-font-size-20">THÔNG TIN LÀM VIỆC</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
-                            data-href-filter="{!! route('qc.ad3d.work.work.get') !!}">
+                            data-href-filter="{!! $indexHref !!}">
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
                         @endif
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany)> 0)
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"
@@ -46,7 +46,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="active">
-                            <a href="{!! route('qc.ad3d.work.work.get') !!}">Mới (Sau tháng 7/2019)</a>
+                            <a href="{!! $indexHref !!}">Mới (Sau tháng 7/2019)</a>
                         </li>
                         <li>
                             <a href="{!! route('qc.ad3d.work.work.old.get') !!}">Cũ (Trước tháng 8/2019)</a>
@@ -60,22 +60,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0;">
                     <form name="" action="">
                         <div class="row">
-                            <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                <div class="input-group">
-                                    <input type="text" class="textFilterName form-control" name="textFilterName"
-                                           style="height: 25px;"
-                                           placeholder="Tìm theo tên" value="{!! $nameFiler !!}">
-                                      <span class="input-group-btn">
-                                            <button class="btFilterName btn btn-default" type="button"
-                                                    style="height: 25px;"
-                                                    data-href="{!! route('qc.ad3d.work.work.get') !!}">Tìm
-                                            </button>
-                                      </span>
-                                </div>
-                            </div>
-                            <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.work.work.get') !!}">
+                                        data-href="{!! $indexHref !!}">
                                     <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >Tất cả
                                     </option>
                                     @for($i =1;$i<= 12; $i++)
@@ -85,7 +72,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </select>
                                 <span>/</span>
                                 <select class="cbYearFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.work.work.get') !!}">
+                                        data-href="{!! $indexHref !!}">
                                     @for($i =2017;$i<= 2050; $i++)
                                         <option value="{!! $i !!}"
                                                 @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
@@ -99,35 +86,55 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
             <div class="qc_ad3d_list_content row"
                  data-href-view="{!! route('qc.ad3d.work.work.view.get') !!}"
                  data-href-end="{!! route('qc.ad3d.work.work.make_salary.get') !!}">
-                @if(count($dataWork) > 0)
-                    <?php
-                    $perPage = $dataWork->perPage();
-                    $currentPage = $dataWork->currentPage();
-                    $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
-                    ?>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered">
-                            <tr style="background-color: whitesmoke;">
-                                <th class="text-center">STT</th>
-                                <th >Nhân viên</th>
-                                <th class="text-center">Từ ngày</th>
-                                <th class="text-center">Đến ngày</th>
-                                <th class="text-center">Giờ chính(h)</th>
-                                <th class="text-center">Tăng ca (h)</th>
-                                <th ></th>
-                            </tr>
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <tr style="background-color: whitesmoke;">
+                            <th class="text-center" style="width: 20px;">STT</th>
+                            <th>Nhân viên</th>
+                            <th class="text-center">Từ ngày</th>
+                            <th class="text-center">Đến ngày</th>
+                            <th class="text-center">Giờ chính(h)</th>
+                            <th class="text-center">Tăng ca (h)</th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td class="text-center"></td>
+                            <td style="padding: 0;">
+                                <div class="input-group">
+                                    <input type="text" class="textFilterName form-control" name="textFilterName"
+                                           placeholder="Tìm theo tên" value="{!! $nameFiler !!}">
+                                      <span class="input-group-btn">
+                                            <button class="btFilterName btn btn-default" type="button"
+                                                    data-href="{!! $indexHref !!}">
+                                                <i class="glyphicon glyphicon-search"></i>
+                                            </button>
+                                      </span>
+                                </div>
+                            </td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td class="text-center"></td>
+                            <td></td>
+                        </tr>
+                        @if($hFunction->checkCount($dataWork))
+                            <?php
+                            $perPage = $dataWork->perPage();
+                            $currentPage = $dataWork->currentPage();
+                            $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
+                            ?>
                             @foreach($dataWork as $work)
                                 <?php
                                 $workId = $work->workId();
                                 $companyStaffWorkId = $work->companyStaffWorkId();
                                 $dataCompanyStaffWork = $work->companyStaffWork;
                                 ?>
-                                <tr class="qc_ad3d_list_object" data-object="{!! $workId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $workId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        @if(!empty($companyStaffWorkId))
+                                        @if(!$hFunction->checkEmpty($companyStaffWorkId))
                                             {!! $work->companyStaffWork->staff->fullName() !!}
                                         @else
                                             {!! $work->staff->fullName() !!}
@@ -135,10 +142,10 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 
                                     </td>
                                     <td class="text-center">
-                                        {!! date('d-m-Y', strtotime($work->fromDate())) !!}
+                                        {!! $hFunction->convertDateDMYFromDatetime($work->fromDate()) !!}
                                     </td>
                                     <td class="text-center">
-                                        {!! date('d-m-Y', strtotime($work->toDate())) !!}
+                                        {!! $hFunction->convertDateDMYFromDatetime($work->toDate()) !!}
                                     </td>
                                     <td class="text-center">
                                         {!! floor(($work->sumMainMinute()- $work->sumMainMinute()%60)/60) !!}
@@ -170,15 +177,16 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </td>
                                 </tr>
                             @endforeach
-                        </table>
-                    </div>
-                @else
-                    <div class="qc_ad3d_list_object qc-ad3d-list-object row">
-                        <div class="qc-padding-top-5 qc-padding-bot-5 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
-                        </div>
-                    </div>
-                @endif
+                        @else
+                            <tr>
+                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12" colspan="7">
+                                    <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
+                                </td>
+                            </tr>
+                        @endif
+                    </table>
+                </div>
+
             </div>
             <div class="row">
                 <div class="text-center qc-padding-top-20 qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
