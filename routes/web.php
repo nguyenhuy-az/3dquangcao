@@ -478,7 +478,15 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('add/date', ['as' => 'qc.ad3d.system.system_date_off.add.date.get', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@getAddDate']);
             Route::get('add', ['as' => 'qc.ad3d.system.system_date_off.add.get', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@getAdd']);
             Route::post('add', ['as' => 'qc.ad3d.system.system_date_off.add.post', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@postAdd']);
-            //xoa danh muc
+            # sua
+            Route::get('edit/{dateOffId?}', ['as' => 'qc.ad3d.system.system_date_off.edit.get', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@getEdit']);
+            Route::post('edit/{dateOffId?}', ['as' => 'qc.ad3d.system.system_date_off.edit.post', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@postEdit']);
+
+            # sao chep ngay nghi
+            Route::get('copy/{companyId?}/{year?}', ['as' => 'qc.ad3d.system.system_date_off.copy.get', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@getCopyDateOff']);
+            Route::post('copy', ['as' => 'qc.ad3d.system.system_date_off.copy.post', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@postCopyDateOff']);
+
+            //xoa ngay nghi
             Route::get('delete/{dateOffId?}', ['as' => 'qc.ad3d.system.system_date_off.delete', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@deleteDateOff']);
             //danh muc chi
             Route::get('/{companyFilterId?}/{monthFilter?}/{yearFilter?}', ['as' => 'qc.ad3d.system.system_date_off.get', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@index']);
@@ -607,7 +615,7 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('customer/{phone?}', ['as' => 'qc.ad3d.order.order.customer.check.phone', 'uses' => 'Ad3d\Order\Order\OrderController@checkPhoneCustomer']);
 
             #them san pham vao don hang
-           // Route::get('add/product', ['as' => 'qc.ad3d.order.order.product.get', 'uses' => 'Ad3d\Order\Order\OrderController@addProduct']);
+            // Route::get('add/product', ['as' => 'qc.ad3d.order.order.product.get', 'uses' => 'Ad3d\Order\Order\OrderController@addProduct']);
             //Route::get('add/{customerId?}/{orderId?}', ['as' => 'qc.ad3d.order.order.add.get', 'uses' => 'Ad3d\Order\Order\OrderController@getAdd']);
             //Route::post('add', ['as' => 'qc.ad3d.order.order.add.post', 'uses' => 'Ad3d\Order\Order\OrderController@postAdd']);
             # sua don hang
@@ -696,6 +704,10 @@ Route::group(['prefix' => 'ad3d'], function () {
         });
         //bang gia loai SP
         Route::group(['prefix' => 'product-type-price'], function () {
+            # sao chep bang gia
+            Route::get('copy/{companySelectedId?}', ['as' => 'qc.ad3d.order.product_type_price.copy.get', 'uses' => 'Ad3d\Order\ProductTypePrice\ProductTypePriceController@getCopyPrice']);
+            Route::post('copy', ['as' => 'qc.ad3d.order.product_type_price.copy.post', 'uses' => 'Ad3d\Order\ProductTypePrice\ProductTypePriceController@postCopyPrice']);
+
             # them bang gia
             Route::get('add', ['as' => 'qc.ad3d.order.product_type_price.add.get', 'uses' => 'Ad3d\Order\ProductTypePrice\ProductTypePriceController@getAdd']);
             Route::post('add', ['as' => 'qc.ad3d.order.product_type_price.add.post', 'uses' => 'Ad3d\Order\ProductTypePrice\ProductTypePriceController@postAdd']);
@@ -755,7 +767,7 @@ Route::group(['prefix' => 'work'], function () {
             });
 
             #thay do thong tin san phan
-            Route::group(['prefix'=>'info'], function(){
+            Route::group(['prefix' => 'info'], function () {
                 Route::get('edit/{productId?}', ['as' => 'qc.work.orders.orders.product.info.edit.get', 'uses' => 'Work\Orders\OrdersController@getProductInfoEdit']);
                 Route::post('edit/{productId?}', ['as' => 'qc.work.orders.orders.product.info.edit.post', 'uses' => 'Work\Orders\OrdersController@postProductInfoEdit']);
             });

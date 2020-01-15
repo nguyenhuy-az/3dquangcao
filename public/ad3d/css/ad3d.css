@@ -70,19 +70,10 @@
 }
 
 .qc-ad3d-table-container table tr td {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-}
-
-.qc_ad3d_list_content table tr th {
     padding-top: 3px !important;
     padding-bottom: 3px !important;
 }
 
-.qc_ad3d_list_content table tr td {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-}
 
 .qc-container-table table tr th {
     padding-top: 3px !important;

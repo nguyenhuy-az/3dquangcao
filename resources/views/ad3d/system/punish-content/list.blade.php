@@ -38,16 +38,16 @@ $dataPunishType = $modelPunishType->getInfo();
                                         style="margin-top: 5px; height: 25px;"
                                         data-href="{!! route('qc.ad3d.system.punish-content.get') !!}">
                                     <option value="0">Tất cả</option>
-                                    @if(count($dataPunishType)> 0)
+                                    @if($hFunction->checkCount($dataPunishType))
                                         @foreach($dataPunishType as $punishType)
                                             <option value="{!! $punishType->typeId() !!}"
                                                     @if($punishTypeId == $punishType->typeId()) selected="selected" @endif >{!! $punishType->name() !!}</option>
                                         @endforeach
                                     @endif
                                 </select>
-                                <a class="btn btn-sm btn-primary" style="height: 25px;"
-                                   href="{!! route('qc.ad3d.system.punish-content.add.get') !!}">
-                                    + Thêm
+                                <a class="qc-link-green-bold" href="{!! route('qc.ad3d.system.punish-content.add.get') !!}">
+                                    <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
+                                    Thêm
                                 </a>
                             </div>
                         </div>
@@ -61,14 +61,14 @@ $dataPunishType = $modelPunishType->getInfo();
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
                             <th>Mã</th>
                             <th>Tên</th>
                             <th>Mô tả</th>
-                            <th class="text-center">Số tiền</th>
+                            <th class="text-right">Số tiền</th>
                             <th></th>
                         </tr>
-                        @if(count($dataPunishContent) > 0)
+                        @if($hFunction->checkCount($dataPunishContent))
                             <?php
                             $perPage = $dataPunishContent->perPage();
                             $currentPage = $dataPunishContent->currentPage();
@@ -78,7 +78,7 @@ $dataPunishType = $modelPunishType->getInfo();
                                 <?php
                                 $punishId = $punishContent->punishId();
                                 ?>
-                                <tr class="qc_ad3d_list_object" data-object="{!! $punishId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $punishId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
@@ -91,17 +91,21 @@ $dataPunishType = $modelPunishType->getInfo();
                                     <td>
                                         {!! $punishContent->note() !!}
                                     </td>
-                                    <td class="text-center">
+                                    <td class="text-right">
                                         {!! $hFunction->currencyFormat($punishContent->money()) !!}
                                     </td>
                                     <td class="text-right">
-                                        <a class="qc_view qc-link-green" href="#">
-                                            Chi tiết
+                                        <a class="qc_view qc-link" href="#">
+                                            <i class="qc-font-size-16 glyphicon glyphicon-eye-open"></i>
                                         </a>
                                         &nbsp;|&nbsp;
-                                        <a class="qc_edit qc-link-green" href="#">Sửa</a>
+                                        <a class="qc_edit qc-link-green" href="#">
+                                            <i class="qc-font-size-16 glyphicon glyphicon-pencil"></i>
+                                        </a>
                                         &nbsp;|&nbsp;
-                                        <a class="qc_delete qc-link-green" href="#">Xóa</a>
+                                        <a class="qc_delete qc-link-red" href="#" title="Xóa">
+                                            <i class="qc-font-size-16 glyphicon glyphicon-trash"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach

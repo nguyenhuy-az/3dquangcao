@@ -58,7 +58,7 @@ $customerId = $dataCustomer->customerId();
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr style="background-color: whitesmoke;">
-                                <th colspan="8">
+                                <th colspan="9">
                                     <i class="qc-font-size-16 glyphicon glyphicon-shopping-cart"></i>
                                     <b class="qc-color-red">ĐƠN HÀNG</b>
                                 </th>
@@ -74,7 +74,7 @@ $customerId = $dataCustomer->customerId();
                                 <th class="text-right">VAT<br/>VNĐ</th>
                                 <th class="text-right">Doanh thu<br/>VNĐ</th>
                             </tr>
-                            @if(count($dataOrders) > 0)
+                            @if($hFunction->checkCount($dataOrders))
                                 <?php
                                 $n_o = 0;
                                 $sumOrderMoney = 0;
@@ -108,7 +108,7 @@ $customerId = $dataCustomer->customerId();
                                             {!! $orders->name() !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! date('d/m/Y', strtotime($orderReceiveDate)) !!}
+                                            {!! $hFunction->convertDateDMYFromDatetime($orderReceiveDate) !!}
                                         </td>
                                         <td>
                                             @if(!empty($orders->constructionAddress()))  <em>Đ/C:</em>

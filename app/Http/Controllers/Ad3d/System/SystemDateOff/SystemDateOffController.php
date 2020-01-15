@@ -15,7 +15,7 @@ use Request;
 
 class SystemDateOffController extends Controller
 {
-    public function index($companyFilterId = null, $monthFilter = null, $yearFilter = null)
+    public function index($companyFilterId = null, $monthFilter = 0, $yearFilter = 0)
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
@@ -28,8 +28,25 @@ class SystemDateOffController extends Controller
         if (empty($companyFilterId)) {
             $companyFilterId = $dataStaffLogin->companyId();
         }
-
-        //$monthFilter = (empty($monthFilter)? 0:$monthFilter
+        $dateFilter = null;
+        if ($monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+            $monthFilter = 100;
+            $yearFilter = date('Y');
+            $dateFilter = date('Y');
+        } elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        }  elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+            $dateFilter = null;
+            $monthFilter = 100;
+            $yearFilter = 100;
+        } else {
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+        }
+/*
         if (empty($yearFilter)) { // may mac dinh
             $dateFilter = date('Y');
             $monthFilter = 0;
@@ -38,12 +55,12 @@ class SystemDateOffController extends Controller
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } else {
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        }
+        }*/
         $dataSystemDateOff = $modelSystemDateOff->selectInfoOfCompanyAndDate($companyFilterId, $dateFilter)->paginate(30);
         return view('ad3d.system.system-date-off.list', compact('modelStaff', 'dataSystemDateOff', 'dataAccess', 'dataCompany', 'companyFilterId', 'monthFilter', 'yearFilter'));
     }
 
-    //lay form them
+    //------- -------  them ------- ------
     public function getAdd()
     {
         $modelStaff = new QcStaff();
@@ -53,7 +70,7 @@ class SystemDateOffController extends Controller
         ];
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataCompany = $modelCompany->getInfo($dataStaffLogin->companyId());
-        return view('ad3d.system.system-date-off.add', compact('modelStaff','dataAccess', 'dataCompany'));
+        return view('ad3d.system.system-date-off.add', compact('modelStaff', 'dataAccess', 'dataCompany'));
     }
 
     public function getAddDate()
@@ -86,6 +103,7 @@ class SystemDateOffController extends Controller
                 }
 
             }
+            Session::put('notifyAdd', 'THÊM THÀNH CÔNG, NHẬP THÔNG TIN ĐỂ TIẾP TỤC');
             return redirect()->back();
         } else {
             Session::put('notifyAdd', 'Thêm thất bại, Phải chọn ngày nghỉ');
@@ -102,10 +120,94 @@ class SystemDateOffController extends Controller
             }
         }*/
     }
-    // xoa
-    public function deleteDateOff($payListId)
+
+    //------- ------- Sua ------- --------
+    public function getEdit($dateOffId)
     {
         $modelSystemDateOff = new QcSystemDateOff();
-        $modelSystemDateOff->deleteDateOff($payListId);
+        $dataSystemDateOff = $modelSystemDateOff->getInfo($dateOffId);
+        return view('ad3d.system.system-date-off.edit', compact('dataSystemDateOff'));
+    }
+
+    public function postEdit($dateOffId)
+    {
+        $modelSystemDateOff = new QcSystemDateOff();
+        $cbType = Request::input('cbType');
+        $txtDescription = Request::input('txtDescription');
+        $modelSystemDateOff->updateInfo($dateOffId, $cbType, $txtDescription);
+    }
+
+    //------- ------- Sao chep ngay nghỉ ------- --------
+    public function getCopyDateOff($companySelectedId = null, $yearSelected = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
+        $dataAccess = [
+            'accessObject' => 'systemDateOff'
+        ];
+        $yearSelected = ($hFunction->checkEmpty($yearSelected)) ? $hFunction->currentYear() : $yearSelected;
+        if ($hFunction->checkEmpty($companySelectedId)) {
+            $dataCompanySelected = $hFunction->setNull();
+        } else {
+            $dataCompanySelected = $modelCompany->getInfo($companySelectedId);
+        }
+        $dataCompany = $modelCompany->infoActivity();
+        return view('ad3d.system.system-date-off.copy-date-off', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataCompanySelected', 'yearSelected'));
+    }
+
+    public function postCopyDateOff()
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
+        $modelSystemDateOff = new QcSystemDateOff();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $companyLoginId = $dataStaffLogin->companyId();
+        $companyId = Request::input('cbCompanyCopy');
+        $cbYearCopy = Request::input('cbYearCopy');
+        $insertStatus = false;
+        #ngay nghi co dinh
+        $dataSystemDateOffObligatory = $modelSystemDateOff->infoDateObligatoryOfCompanyAndDate($companyId, $cbYearCopy);
+        if ($hFunction->checkCount($dataSystemDateOffObligatory)) {
+            foreach ($dataSystemDateOffObligatory as $systemDateOffObligatory) {
+                $dateOff = $systemDateOffObligatory->dateOff();
+                $type = $systemDateOffObligatory->type();
+                $description = $systemDateOffObligatory->description();
+                if (!$modelSystemDateOff->checkExistsDateOfCompany($companyLoginId, $dateOff)) {
+                    if ($modelSystemDateOff->insert($dateOff, $description, $type, $dataStaffLogin->staffId(), $companyLoginId)) {
+                        $insertStatus = true;
+                    }
+                }
+            }
+        }
+
+        #ngay nghi khong co dinh
+        $dataSystemDateOffOptional = $modelSystemDateOff->infoDateOptionalOfCompanyAndDate($companyId, $cbYearCopy);
+        if ($hFunction->checkCount($dataSystemDateOffOptional)) {
+            foreach ($dataSystemDateOffOptional as $systemDateOffOptional) {
+                $dateOff = $systemDateOffOptional->dateOff();
+                $type = $systemDateOffOptional->type();
+                $description = $systemDateOffOptional->description();
+                if (!$modelSystemDateOff->checkExistsDateOfCompany($companyLoginId, $dateOff)) {
+                    if ($modelSystemDateOff->insert($dateOff, $description, $type, $dataStaffLogin->staffId(), $companyLoginId)) {
+                        $insertStatus = true;
+                    }
+                }
+            }
+        }
+        if ($insertStatus) {
+            Session::put('notifyAdd', "Đã sao chép  thành công");
+        } else {
+            Session::put('notifyAdd', "Tính năng đang cập nhật");
+        }
+
+    }
+
+    // xoa
+    public function deleteDateOff($dateOffId)
+    {
+        $modelSystemDateOff = new QcSystemDateOff();
+        $modelSystemDateOff->deleteDateOff($dateOffId);
     }
 }

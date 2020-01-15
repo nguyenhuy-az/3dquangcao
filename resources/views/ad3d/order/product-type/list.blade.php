@@ -57,7 +57,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             <th class="text-center">STT</th>
                             <th class="text-center">Mã loại</th>
                             <th>Tên</th>
-                            <th>Mô tả</th>
+                            <th style="max-width: 400px !important;">Mô tả</th>
                             <th>Ảnh mẫu</th>
                             <th class="text-center">Đơn vị tính</th>
                             <th class="text-center">Áp dụng</th>
@@ -92,7 +92,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     <td>
                                         {!! $productType->name() !!}
                                     </td>
-                                    <td class="qc-color-grey">
+                                    <td class="qc-color-grey" style="max-width: 400px;">
                                         @if(!$hFunction->checkEmpty($description))
                                             {!! $description !!}
                                         @else
@@ -149,14 +149,18 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         @endif
                                     </td>
                                     <td class="text-right">
-                                        <a class="qc_view qc-link-green" href="#">
-                                            Chi tiết
+                                        <a class="qc_view qc-link" title="Xem chi tiết">
+                                            <i class="glyphicon glyphicon-eye-open"></i>
                                         </a>
                                         @if($dataStaffLogin->checkRootStatus())
                                             <span>|</span>
-                                            <a class="qc_edit qc-link-green" href="#">Sửa</a>
+                                            <a class="qc_edit qc-link-green" href="#" title="Sửa">
+                                                <i class="glyphicon glyphicon-pencil"></i>
+                                            </a>
                                             <span>|</span>
-                                            <a class="qc_delete qc-link-green" href="#">Xóa</a>
+                                            <a class="qc_delete qc-link-red" href="#" title="Xóa">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>

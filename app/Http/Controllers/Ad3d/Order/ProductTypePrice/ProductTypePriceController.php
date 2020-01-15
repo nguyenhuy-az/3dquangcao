@@ -20,6 +20,7 @@ class ProductTypePriceController extends Controller
 {
     public function index($companyFilterId = null, $nameFilter = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelProductType = new QcProductType();
@@ -28,7 +29,7 @@ class ProductTypePriceController extends Controller
         $dataAccess = [
             'accessObject' => 'productTypePrice'
         ];
-        if (empty($companyFilterId)) {
+        if ($hFunction->checkEmpty($companyFilterId)) {
             $companyFilterId = $dataStaffLogin->companyId();
         }
         if ($dataStaffLogin->checkRootManage()) {
@@ -37,7 +38,7 @@ class ProductTypePriceController extends Controller
             $dataCompany = $modelCompany->selectInfo($dataStaffLogin->companyId())->get();
         }
 
-        if (!empty($nameFilter)) {
+        if (!$hFunction->checkEmpty($nameFilter)) {
             $listProductTypeId = $modelProductType->listIdActivityByName($nameFilter);
         } else {
             $listProductTypeId = $modelProductType->listIdActivity();
@@ -47,7 +48,49 @@ class ProductTypePriceController extends Controller
 
     }
 
-    # them bang gia
+    #------- ------- Them bang gia ------ ------
+    public function getCopyPrice($companySelectedId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
+        $dataAccess = [
+            'accessObject' => 'productTypePrice'
+        ];
+        if ($hFunction->checkEmpty($companySelectedId)) {
+            $dataCompanySelected = $hFunction->setNull();
+        } else {
+            $dataCompanySelected = $modelCompany->getInfo($companySelectedId);
+        }
+        $dataCompany = $modelCompany->infoActivity();
+        return view('ad3d.order.product-type-price.copy-price', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataCompanySelected'));
+    }
+
+    public function postCopyPrice()
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
+        $modelProductTypePrice = new QcProductTypePrice();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $companyLoginId = $dataStaffLogin->companyId();
+        $companyId = Request::input('cbCompanyCopy');
+        $dataProductTypePrice = $modelCompany->productTypePriceInfoActivity($companyId);
+        if ($hFunction->checkCount($dataProductTypePrice)) {
+            foreach ($dataProductTypePrice as $productTypePrice) {
+                $typeId = $productTypePrice->typeId();
+                $price = $productTypePrice->price();
+                $note = $productTypePrice->note();
+                if (!$modelProductTypePrice->checkExistProductTypeOfCompany($companyLoginId, $typeId)) {
+                    $modelProductTypePrice->insert($price, $note, $typeId, $companyLoginId, $dataStaffLogin->staffId());
+                }
+            }
+            Session::put('notifyAdd', "Đã thêm bảng giá thành công");
+        }
+
+    }
+
+    #------- ------ them bang gia ------ ------
     public function getAdd()
     {
         $modelStaff = new QcStaff();
@@ -72,7 +115,7 @@ class ProductTypePriceController extends Controller
         $txtPrice = Request::input('txtPrice');
         $txtNote = Request::input('txtNote');
         $selectStatus = false;
-        if (count($txtPrice) > 0) {
+        if ($hFunction->checkCount($txtPrice)) {
             foreach ($txtPrice as $key => $value) {
                 if ($value > 0) $selectStatus = true;
             }

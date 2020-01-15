@@ -6,7 +6,7 @@ var qc_ad3d_system_date_off = {
         qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-view') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
     },
     add: {
-        addDate:function(href){
+        addDate: function (href) {
             qc_ad3d_submit.ajaxNotReload(href, '#qc_date_off_container', false);
         },
         save: function (formObject) {
@@ -19,6 +19,18 @@ var qc_ad3d_system_date_off = {
             }
             qc_ad3d_submit.ajaxFormHasReload(formObject, '', false);
             qc_main.scrollTop();
+        }
+    },
+    edit: {
+        get: function (href) {
+            qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
+        },
+        save: function (frm) {
+            var containNotify = $(frm).find('.frm_notify');
+            if (confirm('Tôi dồng ý cập nhật thông tin này')) {
+                qc_ad3d_submit.ajaxFormHasReload(frm, containNotify, true);
+                qc_main.scrollTop();
+            }
         }
     },
     delete: function (href) {
@@ -45,13 +57,47 @@ $(document).ready(function () {
         qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $(this).val());
     });
 });
+
+//--------- ------ ----- Sao chep ngay nghi --------- ------- -------
+$(document).ready(function () {
+    //chon nam
+    $('.frmAd3dSystemDateOffCopy').on('change', '.cbYearCopy', function () {
+        var cbCompanyCopy = $('.frmAd3dSystemDateOffCopy').find('.cbCompanyCopy').val();
+        qc_main.url_replace($(this).data('href') + '/' + cbCompanyCopy + '/' + $(this).val());
+    });
+    //chon cty
+    $('.frmAd3dSystemDateOffCopy').on('change', '.cbCompanyCopy', function () {
+        var year = $('.frmAd3dSystemDateOffCopy').find('.cbYearCopy').val();
+        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + year);
+    });
+
+    $('.frmAd3dSystemDateOffCopy').on('click', '.qc_save', function () {
+        var frm = $(this).parents('.frmAd3dSystemDateOffCopy');
+        if(confirm('Tôi đồng ý sao chép thông tin ngà nghỉ này')){
+            qc_ad3d_submit.ajaxFormHasReload(frm, '', false);
+            qc_main.scrollTop();
+        }
+
+    });
+});
+//--------- ------ ----- Sua --------- ------- -------
+$(document).ready(function () {
+    $('.qc_ad3d_list_object').on('click', '.qc_edit', function () {
+        qc_ad3d_system_date_off.edit.get($(this).data('href'));
+    });
+    $('body').on('click', '#frmAd3dSystemDateOffEdit .qc_save', function () {
+        qc_ad3d_system_date_off.edit.save($(this).parents('#frmAd3dSystemDateOffEdit'));
+    });
+});
+
+//--------- ------ ----- Xoa --------- ------- -------
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_delete', function () {
         qc_ad3d_system_date_off.delete($(this).data('href'));
-    })
+    });
 });
 
-//-------------------- add ------------
+//--------- ------ ----- Them --------- ------- -------
 $(document).ready(function () {
     $('.frmAdd').on('click', '.qc_date_off_add_act', function () {
         qc_ad3d_system_date_off.add.addDate($(this).data('href'));

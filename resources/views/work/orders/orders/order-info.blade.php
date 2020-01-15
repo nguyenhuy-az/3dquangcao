@@ -195,8 +195,7 @@ if (!$cancelStatus) {
                 </div>
                 <form id="qc_work_order_frm_order_edit" class="qc-display-none" name="qc_work_order_frm_customer_edit"
                       role="form" method="post" action="{!! route('qc.work.orders.info.order.edit.post', $orderId) !!}">
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                         @if($mobileStatus) style="padding: 0 0;" @endif>
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="frm_info_edit_notify text-center form-group form-group-sm qc-color-red"></div>
                     </div>
                     <div class="row">
@@ -446,7 +445,7 @@ if (!$cancelStatus) {
                                     <th class="text-right">Thi công</th>
                                     <th class="text-center">Dài<br/>(m)</th>
                                     <th class="text-center">Rộng<br/>(m)</th>
-                                    <th class="text-center">Diện tích, m2 <br/>m, cái, cây, bộ...</th>
+                                    <th class="text-center">Đơn vị</th>
                                     <th class="text-center">Số lượng</th>
                                     <th class="text-right">
                                         Giá/SP(VNĐ)
@@ -558,7 +557,11 @@ if (!$cancelStatus) {
                                                 {!! $product->height()/1000 !!}
                                             </td>
                                             <td class="text-center">
-                                                {!! ($product->width()/1000)*($product->height()/1000) !!}
+                                                @if(!$hFunction->checkEmpty($product->productType->unit()))
+                                                    {!! $product->productType->unit()  !!}
+                                                @else
+                                                    <em class="qc-color-grey">...</em>
+                                                @endif
                                             </td>
                                             <td class="text-center">
                                                 {!! $product->amount() !!}

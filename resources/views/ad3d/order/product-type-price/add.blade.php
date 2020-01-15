@@ -5,6 +5,7 @@
  * Date: 12/28/2017
  * Time: 2:34 PM
  */
+$hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 ?>
@@ -23,7 +24,7 @@ $mobileStatus = $mobile->isMobile();
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         @if (Session::has('notifyAdd'))
-                            <div class="form-group form-group-sm text-center qc-color-red">
+                            <div class="form-group form-group-sm text-center qc-color-red qc-font-size-16">
                                 {!! Session::get('notifyAdd') !!}
                                 <?php
                                 Session::forget('notifyAdd');
@@ -45,47 +46,51 @@ $mobileStatus = $mobile->isMobile();
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="qc-ad3d-table-container row">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <tr style="background-color: whitesmoke;">
-                                    <th class="text-center qc-padding-none">STT</th>
-                                    <th class="qc-padding-none">Tên</th>
-                                    <th class="text-center qc-padding-none">Giá</th>
-                                    <th class="text-center qc-padding-none">Đơn vị tính</th>
-                                    <th class="qc-padding-none">Ghi chú</th>
+                                    <th class="text-center" style="width: 20px;">STT</th>
+                                    <th>Tên</th>
+                                    <th class="text-center" >Đơn vị tính</th>
+                                    <th class="text-center" style="width: 150px;">Giá</th>
+                                    <th>Ghi chú</th>
                                 </tr>
-                                @if(count($dataProductType) > 0)
+                                @if($hFunction->checkCount($dataProductType))
                                     @foreach($dataProductType as $productType)
                                         <?php
                                         $typeId = $productType->typeId();
                                         ?>
                                         <tr class="qc_store_select">
-                                            <td class="text-center qc-padding-none">
+                                            <td class="text-center">
                                                 {!! $n_o = (isset($n_o))?$n_o + 1: 1 !!}
                                                 <input class="qc_product_type" type="hidden" name="txtProductType[]"
                                                        value="{!! $typeId !!}">
                                             </td>
-                                            <td class="qc-padding-none">
+                                            <td>
                                                 {!! $productType->name() !!}
                                             </td>
-                                            <td class="text-center qc-padding-none">
-                                                <input class="txtPrice text-right"
+                                            <td class="text-center">
+                                                @if(!$hFunction->checkEmpty($productType->unit()))
+                                                    {!! $productType->unit() !!}
+                                                @else
+                                                    <span>...</span>
+                                                @endif
+                                            </td>
+                                            <td style="padding: 0;">
+                                                <input class="txtPrice text-right form-control"
                                                        onkeyup="qc_main.showFormatCurrency(this);" type="text"
                                                        name="txtPrice[]" value="0">
                                             </td>
-                                            <td class="text-center qc-padding-none">
-                                                {!! $productType->unit() !!}
-                                            </td>
-                                            <td class="text-center qc-padding-none">
-                                                <input class="txtNote" type="text" name="txtNote[]" style="width: 100%;"
+                                            <td style="padding: 0;">
+                                                <input class="txtNote form-control" type="text" name="txtNote[]" placeholder="Ghi chú"
                                                        value="">
                                             </td>
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td class="text-center qc-padding-none" colspan="5">
+                                        <td class="text-center" colspan="5">
                                             Không sản phẩm chưa báo giá <br/>
                                             <button type="button" class="btn btn-sm btn-default"
                                                     onclick="qc_main.page_back();">

@@ -9,9 +9,11 @@ use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
 use App\Models\Ad3d\Payment\QcPayment;
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\ProductTypePrice\QcProductTypePrice;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
+use App\Models\Ad3d\SystemDateOff\QcSystemDateOff;
 use Illuminate\Database\Eloquent\Model;
 
 class QcCompany extends Model
@@ -130,6 +132,20 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\SystemDateOff\QcSystemDateOff', 'company_id', 'company_id');
     }
 
+    # ngay bat buoc nghi
+    public function systemDateOffObligatoryOfCompanyAndDate($companyId, $date = null)
+    {
+        $modelSystemDateOff = new QcSystemDateOff();
+        return $modelSystemDateOff->infoDateObligatoryOfCompanyAndDate($companyId, $date);
+    }
+
+    # ngay khong bat buoc nghi
+    public function systemDateOffOptionalOfCompanyAndDate($companyId, $date = null)
+    {
+        $modelSystemDateOff = new QcSystemDateOff();
+        return $modelSystemDateOff->infoDateOptionalOfCompanyAndDate($companyId, $date);
+    }
+
     #============================= end new ===============================
     #----------- thong tin NV lam viec ------------
     public function companyStaffWork()
@@ -179,6 +195,12 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\ProductTypePrice\QcProductTypePrice', 'company_id', 'company_id');
     }
 
+    # danh sanh bang gia dang dung cua cty
+    public function productTypePriceInfoActivity($companyId = null)
+    {
+        $modelProductTypePrice = new QcProductTypePrice();
+        return $modelProductTypePrice->selectInfoActivityOfCompany($this->checkIdNull($companyId))->get();
+    }
 
     #----------- đơn hàng ------------
     public function order()

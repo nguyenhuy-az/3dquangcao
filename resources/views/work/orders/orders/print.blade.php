@@ -156,7 +156,7 @@ $orderId = $dataOrders->orderId();
                                         <th>Ghi chú</th>
                                         <th class="text-center">Dài(m)</th>
                                         <th class="text-center">Rộng (m)</th>
-                                        <th class="text-center">Diện tích, m2 <br/>m, cái, cây, bộ...</th>
+                                        <th class="text-center">Đơn vị</th>
                                         <th class="text-center">Số lượng</th>
                                         <th class="text-right">Giá/SP</th>
                                         <th class="text-right">Thành tiền</th>
@@ -169,6 +169,12 @@ $orderId = $dataOrders->orderId();
                                         @foreach($dataProduct as $product)
                                             <?php
                                             $designImage = $product->designImage();
+                                            # thiet ke dang ap dung
+                                            $dataProductDesign = $product->productDesignInfoApplyActivity();
+                                            if ($hFunction->getCountFromData($dataProductDesign) == 0) {
+                                                # thiet ke sau cung
+                                                $dataProductDesign = $product->productDesignInfoLast();
+                                            }
                                             ?>
                                             <tr>
                                                 <td class="text-center">
@@ -178,11 +184,21 @@ $orderId = $dataOrders->orderId();
                                                     {!! $product->productType->name()  !!}
                                                 </td>
                                                 <td style="padding-bottom: 10px;">
-                                                    @if(!empty($designImage))
-                                                        <img style="margin-right: 10px; max-width: 70px; max-height: 70px; padding: 5px 5px;"
-                                                             src="{!! $product->pathSmallDesignImage($designImage) !!}">
+                                                    @if($hFunction->checkCount($dataProductDesign))
+                                                        @if($dataProductDesign->checkApplyStatus())
+                                                            <img style="width: 70px; height: auto; margin: 5px; border: 2px solid green;" title="Đang áp dụng"
+                                                                 src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                                                        @else
+                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px; border: 2px solid red;" title="Không được áp dụng"
+                                                                 src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                                                        @endif
                                                     @else
-                                                        <em class="qc-color-grey">Gửi thiết kế sau</em>
+                                                        @if(!$hFunction->checkEmpty($designImage))
+                                                            <img style="width: 70px; height: 70px; margin: 5px; "
+                                                                 src="{!! $product->pathSmallDesignImage($designImage) !!}">
+                                                        @else
+                                                            <em class="qc-color-grey">Gửi thiết kế sau</em>
+                                                        @endif
                                                     @endif
                                                 </td>
                                                 <td>
@@ -195,7 +211,12 @@ $orderId = $dataOrders->orderId();
                                                     {!! $product->height()/1000 !!}
                                                 </td>
                                                 <td class="text-center">
-                                                    {!! ($product->width()/1000)*($product->height()/1000) !!}
+                                                    @if(!$hFunction->checkEmpty($product->productType->unit()))
+                                                        {!! $product->productType->unit()  !!}
+                                                    @else
+                                                        <em class="qc-color-grey">...</em>
+                                                    @endif
+
                                                 </td>
                                                 <td class="text-center">
                                                     {!! $product->amount() !!}

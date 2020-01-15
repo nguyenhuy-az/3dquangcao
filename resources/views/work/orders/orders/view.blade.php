@@ -135,7 +135,7 @@ $orderId = $dataOrders->orderId();
                                 <th>Chú thích</th>
                                 <th class="text-center">Dài<br/>(m)</th>
                                 <th class="text-center">Rộng<br/>(m)</th>
-                                <th class="text-center">Diện tích, m2 <br/>m, cái, cây, bộ...</th>
+                                <th class="text-center">Đơn vị</th>
                                 <th class="text-center">Số lượng</th>
                                 <th class="text-right">Giá/SP</th>
                                 <th class="text-right">Thành tiền</th>
@@ -204,7 +204,11 @@ $orderId = $dataOrders->orderId();
                                             {!! $product->height()/1000 !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! ($product->width()/1000)*($product->height()/1000) !!}
+                                            @if(!$hFunction->checkEmpty($product->productType->unit()))
+                                                {!! $product->productType->unit()  !!}
+                                            @else
+                                                <em class="qc-color-grey">...</em>
+                                            @endif
                                         </td>
                                         <td class="text-center">
                                             {!! $product->amount() !!}

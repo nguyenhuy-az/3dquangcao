@@ -71,7 +71,7 @@ $dataProduct = $dataOrders->allProductOfOrder();
                                             Rộng <br/> (m)
                                         </th>
                                         <th class="text-center">
-                                            Diện tích,m2 <br/>m, cái, cây, bộ
+                                            Đơn vị
                                         </th>
                                         <th class="text-center">Số lượng</th>
                                         <th class="text-right">Giá/SP</th>
@@ -109,7 +109,11 @@ $dataProduct = $dataOrders->allProductOfOrder();
                                                     {!! $product->height()/1000 !!}
                                                 </td>
                                                 <td class="text-center">
-                                                    {!! ( $product->width()/1000)*($product->height()/1000) !!}
+                                                    @if(!$hFunction->checkEmpty($product->productType->unit()))
+                                                        {!! $product->productType->unit()  !!}
+                                                    @else
+                                                        <em class="qc-color-grey">...</em>
+                                                    @endif
                                                 </td>
                                                 <td class="text-center">
                                                     {!! $product->amount() !!}

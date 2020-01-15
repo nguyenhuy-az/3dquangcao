@@ -69,6 +69,11 @@ class Hfunction
         return ($dataCheck == null) ? true : false;
     }
 
+    function setNull()
+    {
+        return null;
+    }
+
     function checkEmpty($dataCheck)
     {
         return (empty($dataCheck)) ? true : false;
@@ -470,6 +475,7 @@ class Hfunction
     {
         return date("H:i:s", strtotime($date));
     }
+
     // -------- plus year\month\day\ for current date (no time)--------
     function currentDatePlusYear($yearNumber = 0, $timeZoneDefault = 'HCM')
     {

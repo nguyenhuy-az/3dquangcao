@@ -116,7 +116,7 @@ $orderId = $dataOrders->orderId();
                     <div class="table-responsive">
                         <table class="table table-bordered" style="margin-bottom: 0;">
                             <tr style="background-color: whitesmoke;">
-                                <th colspan="9">
+                                <th colspan="10">
                                     <i class="qc-font-size-16 glyphicon glyphicon-shopping-cart"></i>
                                     <b class="qc-color-red">DANH SÁCH SẢN PHẨM</b>
                                 </th>
@@ -128,7 +128,7 @@ $orderId = $dataOrders->orderId();
                                 <th>Thiết kế</th>
                                 <th class="text-center">Dài <br/> (m)</th>
                                 <th class="text-center">Rộng <br/> (m)</th>
-                                <th class="text-center">Diện tích m2 <br/>m, cái, cây, bộ...</th>
+                                <th class="text-center">Đơn vị</th>
                                 <th class="text-center">Số lượng</th>
                                 <th class="text-right">Giá/SP</th>
                                 <th class="text-right">Thành tiền</th>
@@ -166,7 +166,11 @@ $orderId = $dataOrders->orderId();
                                             {!! $product->height()/1000 !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! ($product->width()/1000)*($product->height()/1000) !!}
+                                            @if(!$hFunction->checkEmpty($product->productType->unit()))
+                                                {!! $product->productType->unit()  !!}
+                                            @else
+                                                <em class="qc-color-grey">...</em>
+                                            @endif
                                         </td>
                                         <td class="text-center">
                                             {!! $product->amount() !!}

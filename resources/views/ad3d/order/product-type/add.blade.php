@@ -20,8 +20,7 @@ $mobileStatus = $mobile->isMobile();
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 @if (Session::has('notifyAdd'))
                                     <div class="form-group form-group-sm text-center qc-color-red">
                                         {!! Session::get('notifyAdd') !!}
@@ -31,8 +30,7 @@ $mobileStatus = $mobile->isMobile();
                                     </div>
                                 @endif
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
                                 <div class="form-group form-group-sm">
                                     <label>
                                         Tên loại sản phẩm:
@@ -43,8 +41,7 @@ $mobileStatus = $mobile->isMobile();
                                            value="">
                                 </div>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
                                 <div class="form-group form-group-sm">
                                     <label>
                                         Mã loại sản phẩm:
@@ -54,8 +51,7 @@ $mobileStatus = $mobile->isMobile();
                                            placeholder="Nhập mã loại sản phẩm" value="">
                                 </div>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
                                 <div class="form-group form-group-sm">
                                     <label>
                                         Đơn vị tính:
@@ -65,13 +61,12 @@ $mobileStatus = $mobile->isMobile();
                                            placeholder="Nhập đơn vị tính: cái, m2 ..." value="">
                                 </div>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group form-group-sm">
                                     <label>
                                         Mô tả sản phẩm:
                                     </label>
-                                    <textarea name="txtDescription" rows="3" class="form-control"
+                                    <textarea name="txtDescription"  class="form-control"
                                               placeholder="Mô tả sản phẩm"></textarea>
                                 </div>
                             </div>

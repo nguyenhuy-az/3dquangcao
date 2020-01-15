@@ -39,6 +39,16 @@ class QcSystemDateOff extends Model
         return $this->lastId;
     }
 
+    #cap nhat ngay nghi
+    public function updateInfo($dateOffId, $type, $description)
+    {
+        return QcSystemDateOff::where('dateOff_id', $dateOffId)->update([
+            'type' => $type,
+            'description' => $description
+        ]);
+    }
+
+    //xoa ngay nghi
     public function deleteDateOff($dateOffId = null)
     {
         $dateOffId = (empty($dateOffId)) ? $this->dateOffId() : $dateOffId;
@@ -61,6 +71,28 @@ class QcSystemDateOff extends Model
     public function checkExistsDateOfCompany($companyId, $dateOff)
     {
         return QcSystemDateOff::where('dateOff', 'like', "%$dateOff%")->where('company_id', $companyId)->exists();
+    }
+
+    # ngay bat buoc nghi
+    public function infoDateObligatoryOfCompanyAndDate($companyId, $dateOff = null)
+    {
+        if (empty($dateOff)) {
+            return QcSystemDateOff::where('company_id', $companyId)->where('type', 1)->orderBy('dateOff', 'DESC')->get();
+        } else {
+            return QcSystemDateOff::where('company_id', $companyId)->where('type', 1)->where('dateOff', 'like', "%$dateOff%")->orderBy('dateOff', 'DESC')->get();
+        }
+
+    }
+
+    # ngay khong bat buoc nghi
+    public function infoDateOptionalOfCompanyAndDate($companyId, $dateOff = null)
+    {
+        if (empty($dateOff)) {
+            return QcSystemDateOff::where('company_id', $companyId)->where('type', 2)->orderBy('dateOff', 'DESC')->get();
+        } else {
+            return QcSystemDateOff::where('company_id', $companyId)->where('type', 2)->where('dateOff', 'like', "%$dateOff%")->orderBy('dateOff', 'DESC')->get();
+        }
+
     }
 
     public function selectInfoOfCompanyAndDate($companyId, $dateOff = null)
@@ -138,7 +170,7 @@ class QcSystemDateOff extends Model
 
     public function typeLabel($dateOffId = null)
     {
-        return ($this->type($dateOffId)[0] == 1) ? 'Cố dịnh' : 'Khong cố định';
+        return ($this->type($dateOffId)[0] == 1) ? 'Cố dịnh' : 'Không cố định';
     }
 
 // tong so thanh toan

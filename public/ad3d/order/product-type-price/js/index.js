@@ -28,9 +28,7 @@ var qc_ad3d_order_product_type_price = {
         save: function (form) {
             var containNotify = $(form).find('.frm_notify');
             qc_ad3d_submit.ajaxFormHasReload(form, containNotify, true);
-            $('#qc_container_content').animate({
-                scrollTop: 0
-            })
+            qc_main.scrollTop();
         }
     },
     delete: function (listObject) {
@@ -69,17 +67,32 @@ $(document).ready(function () {
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_delete', function () {
         qc_ad3d_order_product_type_price.delete($(this).parents('.qc_ad3d_list_object'));
-    })
+    });
 });
 
 
-//-------------------- edit ------------
+//-------------------- sua ------------
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_edit', function () {
         qc_ad3d_order_product_type_price.edit.get($(this).parents('.qc_ad3d_list_object'));
-    })
+    });
 
     $('body').on('click', '.frmEdit .qc_save', function () {
         qc_ad3d_order_product_type_price.edit.save($(this).parents('.frmEdit'));
-    })
+    });
+});
+//----------- --------- sao chep bang gia ------------ -----
+$(document).ready(function () {
+    $('.frmAd3dProductTypePriceCopy').on('change', '.cbCompanyCopy', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $(this).val());
+    });
+
+    $('.frmAd3dProductTypePriceCopy').on('click', '.qc_save', function () {
+        var frm = $(this).parents('.frmAd3dProductTypePriceCopy');
+        if(confirm('Tôi đồng ý sao chép bảng giá n')){
+            qc_ad3d_submit.ajaxFormHasReload(frm, '', false);
+            qc_main.scrollTop();
+        }
+
+    });
 });

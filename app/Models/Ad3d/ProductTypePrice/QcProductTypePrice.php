@@ -69,6 +69,11 @@ class QcProductTypePrice extends Model
         return QcProductTypePrice::where('company_id', $companyId)->where('action', 1)->pluck('type_id');
     }
 
+    public function checkExistProductTypeOfCompany($companyId, $typeId)
+    {
+        return QcProductTypePrice::where('company_id', $companyId)->where('type_id', $typeId)->exists();
+    }
+
     //---------- nhan vien -----------
     public function staff()
     {
@@ -125,7 +130,8 @@ class QcProductTypePrice extends Model
     public function note($priceId = null)
     {
         $hFunction = new \Hfunction();
-        return $hFunction->htmlEntities($this->pluck('note', $priceId));
+        return $this->pluck('note', $priceId);
+        //return $hFunction->htmlEntities($this->pluck('note', $priceId));
     }
 
     public function applyDate($priceId = null)
@@ -133,9 +139,9 @@ class QcProductTypePrice extends Model
         return $this->pluck('applyDate', $priceId);
     }
 
-    public function action($orderId = null)
+    public function action($priceId = null)
     {
-        return $this->pluck('action', $orderId);
+        return $this->pluck('action', $priceId);
     }
 
     public function cancelStatus($priceId = null)
