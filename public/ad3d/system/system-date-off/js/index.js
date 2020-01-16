@@ -73,7 +73,7 @@ $(document).ready(function () {
 
     $('.frmAd3dSystemDateOffCopy').on('click', '.qc_save', function () {
         var frm = $(this).parents('.frmAd3dSystemDateOffCopy');
-        if(confirm('Tôi đồng ý sao chép thông tin ngà nghỉ này')){
+        if (confirm('Tôi đồng ý sao chép thông tin ngà nghỉ này')) {
             qc_ad3d_submit.ajaxFormHasReload(frm, '', false);
             qc_main.scrollTop();
         }

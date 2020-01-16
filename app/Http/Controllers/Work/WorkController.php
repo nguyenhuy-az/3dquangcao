@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Work;
 
+use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\ProductTypePrice\QcProductTypePrice;
 use App\Models\Ad3d\Rule\QcRules;
@@ -20,23 +21,14 @@ use Request;
 
 class WorkController extends Controller
 {
-    public function index()
+    public function index($sysInfoObject=null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelWork = new QcWork();
-        $modelTimekeepingProvisional = new QcTimekeepingProvisional();
-
+        $modelCompany = new QcCompany();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        if (count($dataStaffLogin) > 0) {
-            $staffCompanyId = $dataStaffLogin->companyId();
-            $dateFilter = date('Y-m-d');
-            //$listStaffId = $modelCompanyStaffWork->listStaffIdActivityHasFilter($staffCompanyId);
-            //$dataStaffActivity = $modelStaff->getInfoByListStaffId($listStaffId);
-            $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$staffCompanyId]));
-            $dataTimekeepingProvisional = $modelTimekeepingProvisional->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->get();
-            return view('work.control-panel', compact('modelStaff','dataTimekeepingProvisional'));
-            //return redirect()->route('qc.work.timekeeping.get', compact('loginMonthYear'));
+        if ($hFunction->checkCount($dataStaffLogin)) {
+            return view('work.control-panel', compact('modelCompany','modelStaff','sysInfoObject'));
         } else {
             return view('work.login');
         }
@@ -46,6 +38,7 @@ class WorkController extends Controller
     //làm việc
     public function work($loginMonth = null, $loginYear = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $dataAccess = [
@@ -53,8 +46,8 @@ class WorkController extends Controller
         ];
         if ($modelStaff->checkLogin()) {
             $dataStaff = $modelStaff->loginStaffInfo();
-            $loginMonth = (empty($loginMonth)) ? date('m') : $loginMonth;
-            $loginYear = (empty($loginYear)) ? date('Y') : $loginYear;
+            $loginMonth = ($hFunction->checkNull($loginMonth)) ? date('m') : $loginMonth;
+            $loginYear = ($hFunction->checkNull($loginYear)) ? date('Y') : $loginYear;
             if ($loginYear <= 2019 && $loginMonth < 8) { #du lieu cu
                 return view('work.work.work-old', compact('dataAccess', 'modelStaff', 'dataStaff', 'loginMonth', 'loginYear'));
             } else { # du lieu moi
@@ -72,10 +65,11 @@ class WorkController extends Controller
 
     public function login()
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $account = Request::input('txtAccount');
         $pass = Request::input('txtPass');
-        if (empty($account) || empty($pass)) {
+        if ($hFunction->checkEmpty($account) || $hFunction->checkEmpty($pass)) {
             Session::put('notifyLogin', "Tài khoản hoặc mật khẩu không đúng.");
             return redirect()->back();
         } else {
@@ -102,6 +96,7 @@ class WorkController extends Controller
     //nội qui
     public function rules($loginCode = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelRules = new QcRules();
         $dataAccess = [
@@ -111,7 +106,7 @@ class WorkController extends Controller
             return redirect()->route('qc.work.login.get');
         } else {
             $dataStaff = $modelStaff->loginStaffInfo();
-            if (count($dataStaff) > 0) {
+            if ($hFunction->checkCount($dataStaff)) {
                 $dataRule = $modelRules->getInfo();
                 return view('work.rules.rules', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataRule'));
             }
@@ -126,11 +121,12 @@ class WorkController extends Controller
 
     public function postChangeAccount()
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $txtOldAccount = Request::input('txtOldAccount');
         $txtNewAccount = Request::input('txtNewAccount');
         $dataStaffLogin = $modelStaff->infoFromAccount($txtOldAccount);
-        if (count($dataStaffLogin) > 0) {
+        if ($hFunction->checkCount($dataStaffLogin)) {
             if ($txtOldAccount == $txtNewAccount) {
                 return redirect()->route('qc.work.home');
             } else {

@@ -12,6 +12,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$indexHref = route('qc.ad3d.system.staff.get');
 ?>
 @extends('ad3d.system.staff.index')
 @section('qc_ad3d_index_content')
@@ -21,10 +22,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green"
-                       href="{!! route('qc.ad3d.system.staff.get') !!}">
+                       href="{!! $indexHref !!}">
                         <i class="glyphicon glyphicon-refresh qc-font-size-20"></i>
                     </a>
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
                     <label class="qc-font-size-20">NHÂN VIÊN</label><br/>
                     <a href="{!! route('qc.ad3d.system.staff.change-pass.get') !!}">
                         <em>Đổi mật khẩu</em>
@@ -39,7 +39,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                         @if($dataStaffLogin->checkRootManage())
                             <option value="">Tất cả</option>
                         @endif
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"
@@ -58,32 +58,24 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
-                    <form name="" action="">
-                        <div class="row">
-                            {{--
-                            <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                <input class="col-xs-12" type="text" value="" placeholder="Tên hoặc mã nhân viên"
-                                       style="height: 30px;">
-                            </div>
-                            --}}
-                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <a class="qc-link-red"
-                                   href="{!! route('qc.ad3d.system.staff.add.get') !!}">
-                                    <i class="glyphicon glyphicon-plus"></i>Thêm
-                                </a>
-                            </div>
+                    <div class="row">
+                        <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <a class="qc-link-green-bold " href="{!! route('qc.ad3d.system.staff.add.get') !!}">
+                                <i class="qc-font-size-14 glyphicon glyphicon-plus"></i>
+                                <span class="qc-font-size-14">Thêm</span>
+                            </a>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-            <div class="qc_ad3d_list_content row qc-ad3d-table-container"
+            <div class="qc_ad3d_list_content qc-ad3d-table-container row"
                  data-href-view="{!! route('qc.ad3d.system.staff.view.get') !!}"
                  data-href-reset="{!! route('qc.ad3d.system.staff.reset_pass') !!}"
                  data-href-del="{!! route('qc.ad3d.system.staff.delete') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
                             <th class="text-center">Ảnh</th>
                             <th>Tên</th>
                             <th>
@@ -108,9 +100,28 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             <th class="text-center">
                                 TT Đăng nhập
                             </th>
-                            <th></th>
+                            <th style="width: 60px;"></th>
                         </tr>
-                        @if(count($dataStaff) > 0)
+                        {{--<tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td style="padding: 0 !important;">
+                                <select class="cbWorkStatus form-control" name="cbWorkStatus">
+                                    <option class="1">Đang làm</option>
+                                    <option class="0">Đã nghỉ</option>
+                                    <option class="100">Tất cả</option>
+                                </select>
+                            </td>
+                        </tr>--}}
+                        @if($hFunction->checkCount($dataStaff))
                             <?php
                             $perPage = $dataStaff->perPage();
                             $currentPage = $dataStaff->currentPage();
@@ -121,9 +132,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 $staffId = $staff->staffId();
                                 $dataCompanyStaffWork = $staff->companyStaffWorkInfoActivity($staffId);
                                 $image = $staff->image();
-                                if(empty($image)){
+                                if ($hFunction->checkEmpty($image)) {
                                     $src = asset('public/images/icons/people.jpeg');
-                                }else{
+                                } else {
                                     $src = $staff->pathFullImage($image);
                                 }
                                 ?>
@@ -134,7 +145,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     <td class="text-canter">
                                         <a class="qc-link-green"
                                            href="{!! route('qc.ad3d.system.staff.edit.get', $staffId) !!}">
-                                            <img style="margin: 5px 0px; max-width: 50px;height: 50px;" src="{!! $src !!}">
+                                            <img style="margin: 5px 0px; max-width: 50px;height: 50px;"
+                                                 src="{!! $src !!}">
                                         </a>
 
                                     </td>
@@ -142,18 +154,18 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         {!! $staff->firstName().' '.$staff->lastName() !!}
                                     </td>
                                     <td>
-                                        @if(count($dataCompanyStaffWork) > 0)
+                                        @if($hFunction->checkCount($dataCompanyStaffWork))
                                             {!! $dataCompanyStaffWork->company->nameCode() !!}
                                         @else
                                             <em class="qc-color-grey">Chưa phân bổ CV</em>
                                         @endif
                                     </td>
                                     <td>
-                                        @if(count($dataCompanyStaffWork) > 0)
+                                        @if($hFunction->checkCount($dataCompanyStaffWork))
                                             <?php
                                             $listIdDepartment = $staff->departmentActivityOfStaff();
                                             ?>
-                                            @if(count($listIdDepartment) > 0)
+                                            @if($hFunction->checkCount($listIdDepartment))
                                                 @foreach($listIdDepartment as $department)
                                                     {!! $modelDepartment->name($department)[0].',' !!}
                                                 @endforeach
@@ -165,7 +177,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         @endif
                                     </td>
                                     <td>
-                                        @if(count($dataCompanyStaffWork) > 0)
+                                        @if($hFunction->checkCount($dataCompanyStaffWork))
                                             @if($dataCompanyStaffWork->checkExistsActivityStaffWorkSalary())
                                                 <em>Đã có</em>
                                             @else
@@ -176,12 +188,13 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         @endif
                                     </td>
                                     <td>
-                                        @if(count($dataCompanyStaffWork) > 0)
+                                        @if($hFunction->checkCount($dataCompanyStaffWork))
                                             @if($dataCompanyStaffWork->checkExistsActivityWork())
                                                 <em>Đang mở</em>
                                             @else
-                                                <em class="qc-color-grey">Đã tắt</em> <span>|</span>
-                                                <a class="qc_ad3d_staff_open_work_act qc-link-green"
+                                                <em class="qc-color-grey">Đã tắt</em>
+                                                <br/>
+                                                <a class="qc_ad3d_staff_open_work_act qc-link-red"
                                                    data-href="{!! route('qc.ad3d.system.staff.open_work.get', $dataCompanyStaffWork->workId()) !!}">
                                                     Mở chấm công
                                                 </a>
@@ -210,13 +223,10 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     <td class="text-right">
                                         @if($staff->checkRootStatus())
                                             @if($dataStaffLogin->checkRootStatus())
-                                                {{--<span>|</span>
-                                                <a class="qc_view qc-link-green" href="#">
-                                                    Chi tiết
-                                                </a>--}}
-                                                <a class="qc_edit qc-link-green"
-                                                   href="{!! route('qc.ad3d.system.staff.edit.get', $staffId) !!}">Quản
-                                                    lý thông tin</a>
+                                                <a class="qc_edit qc-link" title="Quản lý thông tin"
+                                                   href="{!! route('qc.ad3d.system.staff.edit.get', $staffId) !!}">
+                                                    <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                                </a>
                                                 <span>|</span>
                                                 {{--<a class="qc_delete qc-link-green" href="#">Xóa</a>--}}
                                                 <em class="qc-color-grey">---</em>
@@ -224,24 +234,23 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                 <em class="qc-color-grey">---</em>
                                             @endif
                                         @else
-                                            {{--<span>|</span>
-                                            <a class="qc_view qc-link-green" href="#">
-                                                Chi tiết
-                                            </a>--}}
-                                            <a class="qc_edit qc-link-green"
-                                               href="{!! route('qc.ad3d.system.staff.edit.get', $staffId) !!}">Quản lý
-                                                thông tin</a>
+                                            <a class="qc_edit qc-link" title="Quản lý thông tin"
+                                               href="{!! route('qc.ad3d.system.staff.edit.get', $staffId) !!}">
+                                                <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                            </a>
                                             <span>|</span>
-                                            <a class="qc_delete qc-link-green" href="#">Xóa</a>
+                                            <a class="qc_delete qc-link-red" href="#" title="Xóa">
+                                                <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>
                             @endforeach
-                                <tr>
-                                    <td class="text-center" colspan="11" >
-                                        {!! $hFunction->page($dataStaff) !!}
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td class="text-center" colspan="11">
+                                    {!! $hFunction->page($dataStaff) !!}
+                                </td>
+                            </tr>
                         @endif
                     </table>
                 </div>

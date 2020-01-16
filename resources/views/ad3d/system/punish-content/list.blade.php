@@ -9,7 +9,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-
+$indexHref = route('qc.ad3d.system.punish-content.get');
 $dataPunishType = $modelPunishType->getInfo();
 ?>
 @extends('ad3d.system.punish-content.index')
@@ -19,7 +19,7 @@ $dataPunishType = $modelPunishType->getInfo();
              style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed black;">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! route('qc.ad3d.system.punish-content.get') !!}">
+                    <a class="qc-link-green-bold" href="{!! $indexHref !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     &nbsp;
@@ -35,8 +35,7 @@ $dataPunishType = $modelPunishType->getInfo();
                         <div class="row">
                             <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <select class="cbPunishTypeFilter" name="cbPunishTypeFilter"
-                                        style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.system.punish-content.get') !!}">
+                                        style="margin-top: 5px; height: 25px;" data-href="{!! $indexHref !!}">
                                     <option value="0">Tất cả</option>
                                     @if($hFunction->checkCount($dataPunishType))
                                         @foreach($dataPunishType as $punishType)
@@ -96,15 +95,15 @@ $dataPunishType = $modelPunishType->getInfo();
                                     </td>
                                     <td class="text-right">
                                         <a class="qc_view qc-link" href="#">
-                                            <i class="qc-font-size-16 glyphicon glyphicon-eye-open"></i>
+                                            <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
                                         </a>
                                         &nbsp;|&nbsp;
                                         <a class="qc_edit qc-link-green" href="#">
-                                            <i class="qc-font-size-16 glyphicon glyphicon-pencil"></i>
+                                            <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
                                         </a>
                                         &nbsp;|&nbsp;
                                         <a class="qc_delete qc-link-red" href="#" title="Xóa">
-                                            <i class="qc-font-size-16 glyphicon glyphicon-trash"></i>
+                                            <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
                                         </a>
                                     </td>
                                 </tr>

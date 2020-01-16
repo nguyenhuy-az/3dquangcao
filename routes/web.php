@@ -1144,7 +1144,7 @@ Route::group(['prefix' => 'work'], function () {
     //làm việc
     Route::get('work/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.work.get', 'uses' => 'Work\WorkController@work']);
 
-    Route::get('/', ['as' => 'qc.work.home', 'uses' => 'Work\WorkController@index']);
+    Route::get('/{sysInfoObject?}', ['as' => 'qc.work.home', 'uses' => 'Work\WorkController@index']);
 });
 
 #about

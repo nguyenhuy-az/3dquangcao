@@ -8,6 +8,7 @@
 /*
  *dataCompany
  */
+$hFunction = new Hfunction();
 ?>
 @extends('ad3d.components.container.container-8')
 @section('qc_ad3d_container_content')
@@ -21,7 +22,7 @@
                 <em>Trụ sở chính</em>
             @endif
         </div>
-        @if(!empty($dataCompany->logo()))
+        @if(!$hFunction->checkEmpty($dataCompany->logo()))
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <img alt="..." src="{!! $dataCompany->pathSmallImage($dataCompany->logo()) !!}"
                      style="max-width: 300px;">

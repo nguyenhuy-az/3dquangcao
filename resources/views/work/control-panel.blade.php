@@ -29,7 +29,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 </style>
 @section('qc_work_body')
     {{--system info--}}
-    @include('work.components.system-info', compact('modelStaff','dataTimekeepingProvisional'))
+    @include('work.components.system-info.system-info', compact('modelCompany','modelStaff','dataTimekeepingProvisional'))
 
     {{--control panel--}}
     <div class="row">

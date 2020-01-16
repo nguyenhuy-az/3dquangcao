@@ -14,6 +14,8 @@ use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\SystemDateOff\QcSystemDateOff;
+use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
+use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
 
 class QcCompany extends Model
@@ -132,6 +134,12 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\SystemDateOff\QcSystemDateOff', 'company_id', 'company_id');
     }
 
+    public function systemDateOfFOfCompanyAndDate($companyId, $date = null)
+    {
+        $modelSystemDateOff = new QcSystemDateOff();
+        return $modelSystemDateOff->selectInfoOfCompanyAndDate($companyId, $date)->get();
+    }
+
     # ngay bat buoc nghi
     public function systemDateOffObligatoryOfCompanyAndDate($companyId, $date = null)
     {
@@ -233,11 +241,12 @@ class QcCompany extends Model
 
     public function getInfo($companyId = '', $field = '')
     {
-        if (empty($companyId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($companyId)) {
             return QcCompany::get();
         } else {
             $result = QcCompany::where('company_id', $companyId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -260,7 +269,8 @@ class QcCompany extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcCompany::where('company_id', $objectId)->pluck($column);
@@ -338,7 +348,8 @@ class QcCompany extends Model
     //lay hinh anh
     public function pathSmallImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathSmallImage() . '/' . $image);
@@ -347,7 +358,8 @@ class QcCompany extends Model
 
     public function pathFullImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
@@ -363,7 +375,8 @@ class QcCompany extends Model
     #============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
     public function checkRoot($companyId = null)
     {
-        return (empty($this->rootId($companyId))) ? true : false;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($this->rootId($companyId))) ? true : false;
     }
 
     # ten cong ty da ton tai
@@ -409,6 +422,16 @@ class QcCompany extends Model
         return ($this->companyType($companyId) == 1) ? true : false;
     }
 
+    #============ =========== ============ BANG TIN HE THONG ============= =========== ==========
+    # Thong tin cham cong trong ngay
+    public function timekeepingProvisionalOfCompanyAndDate($companyId, $dateFilter)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelWork = new QcWork();
+        $modelTimekeepingProvisional = new QcTimekeepingProvisional();
+        $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyId]));
+        return $modelTimekeepingProvisional->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->get();
+    }
     #============ =========== ============ THONG KE DOANH THU ============= =========== ==========
     # tong tien doanh so
     public function statisticalTotalMoneyOrder($companyId, $dateFilter = null)
@@ -468,6 +491,7 @@ class QcCompany extends Model
         return $modelOrderPay->totalOrderPayOfCompany($listCompanyId, $dateFilter);
     }
 
+    // tong thu theo don hang cua nhan vien
     public function totalOrderPayOfCompanyStaffDate($listCompanyId, $staffId, $dateFilter = null)
     {
         $modelOrderPay = new QcOrderPay();

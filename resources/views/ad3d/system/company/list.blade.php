@@ -32,55 +32,98 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 <input class="col-xs-12" type="text" value="" placeholder="Tên công ty"
                                        style="height: 30px;">
                             </div>--}}
-                                <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <a class="btn btn-primary btn-sm"
-                                       href="{!! route('qc.ad3d.system.company.add.get') !!}">
-                                        <i class="glyphicon glyphicon-plus"></i>
-                                    </a>
-                                </div>
+                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <a class="qc-font-size-16 qc-link-green-bold" title="Thêm"
+                                   href="{!! route('qc.ad3d.system.company.add.get') !!}">
+                                    <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
+                                    Thêm
+                                </a>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <div class="qc_ad3d_list_content row"
+            <div class="qc_ad3d_list_content qc-ad3d-table-container row"
                  data-href-view="{!! route('qc.ad3d.system.company.view.get') !!}"
                  data-href-edit="{!! route('qc.ad3d.system.company.edit.get') !!}">
-                @if(count($dataCompany) > 0)
-                    <?php
-                    $perPage = $dataCompany->perPage();
-                    $currentPage = $dataCompany->currentPage();
-                    $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
-                    ?>
-                    @foreach($dataCompany as $company)
-                        <?php
-                        $companyId = $company->companyId();
-                        ?>
-                        <div class="qc_ad3d_list_object qc-ad3d-list-object row" data-object="{!! $companyId !!}">
-                            <div class="text-left col-xs-12 col-sm-12 col-md-3 col-lg-4"
-                                 style="padding-top:5px; padding-bottom: 5px; ">
-                                <b>{!! $n_o += 1 !!}).</b> {!! $company->name() !!}
-                            </div>
-                            <div class="text-left col-xs-12 col-sm-12 col-md-3 col-lg-4"
-                                 style="padding-top:5px; padding-bottom: 5px; ">
-                                <em><b>Địa chỉ:</b></em>
-                                {!! $company->address() !!}
-                            </div>
-                            <div class="text-right col-xs-12 col-sm-12 col-md-3 col-lg-4"
-                                 style="padding-top:5px; padding-bottom: 5px; ">
-                                <a class="qc_view qc-link-green btn btn-default btn-sm" href="#">
-                                    Chi tiết
-                                </a>
-                                    <a class="qc_edit qc-link-green btn btn-default btn-sm" href="#">Sửa</a>
-                                    <a class="qc_delete qc-link-green btn btn-default btn-sm" href="#">Xóa</a>
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
-
-            </div>
-            <div class="row">
-                <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    {!! $hFunction->page($dataCompany) !!}
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <tr style="background-color: whitesmoke;">
+                            <th class="text-center" style="width: 20px;">STT</th>
+                            <th class="text-center">Logo</th>
+                            <th>Tên</th>
+                            <th>Thông tin liên lạc</th>
+                            <th>Hình thức hoạt động</th>
+                            <th></th>
+                        </tr>
+                        @if($hFunction->checkCount($dataCompany))
+                            <?php
+                            $perPage = $dataCompany->perPage();
+                            $currentPage = $dataCompany->currentPage();
+                            $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
+                            ?>
+                            @foreach($dataCompany as $company)
+                                <?php
+                                $companyId = $company->companyId();
+                                $logo = $company->logo();
+                                ?>
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
+                                    data-object="{!! $companyId !!}">
+                                    <td class="text-center">
+                                        {!! $n_o += 1 !!}
+                                    </td>
+                                    <td class="text-center">
+                                        @if(!$hFunction->checkEmpty($logo))
+                                            <img alt="..." src="{!! $company->pathSmallImage($logo) !!}" style="max-width: 70px;">
+                                            @else
+                                            <em class="qc-color-grey">Chưa có</em>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {!! $company->name() !!}
+                                    </td>
+                                    <td>
+                                        <em class="qc-text-under">- Địa chỉ:</em>
+                                        <span>{!! $company->address() !!}</span>
+                                        <br/>
+                                        <em class="qc-text-under">- Điện thoại:</em>
+                                        <span>{!! $company->phone() !!}</span>
+                                        <br/>
+                                        <em class="qc-text-under">- Email:</em>
+                                        <span>{!! $company->email() !!}</span>
+                                        <br/>
+                                        <em class="qc-text-under">- Website:</em>
+                                        <span>{!! $company->website() !!}</span>
+                                    </td>
+                                    <td>
+                                        @if($company->checkBranch())
+                                            <em>Chi Nhánh</em>
+                                        @else
+                                            <b>Trụ sở chính</b>
+                                        @endif
+                                    </td>
+                                    <td class="text-right">
+                                        <a class="qc_view qc-link" href="#" title="Xem chi tiết">
+                                            <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
+                                        </a>
+                                        &nbsp;|&nbsp;
+                                        <a class="qc_edit qc-link-green" href="#" title="Sửa">
+                                            <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                        </a>
+                                        &nbsp;|&nbsp;
+                                        <a class="qc_delete qc-link-red" href="#" title="Xóa">
+                                            <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            <tr>
+                                <td class="text-center" colspan="6">
+                                    {!! $hFunction->page($dataCompany) !!}
+                                </td>
+                            </tr>
+                        @endif
+                    </table>
                 </div>
             </div>
         </div>

@@ -10,6 +10,7 @@
  */
 $hFunction = new Hfunction();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$indexHref = route('qc.ad3d.system.pay_activity_list.get');
 ?>
 @extends('ad3d.system.pay-activity-list.index')
 @section('qc_ad3d_index_content')
@@ -18,11 +19,10 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
              style="margin-bottom: 10px; padding-top: 10px; padding-bottom: 10px; border-bottom: 2px dashed brown;">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green"
-                       href="{!! route('qc.ad3d.system.pay_activity_list.get') !!}">
+                    <a class="qc-link-green" href="{!! $indexHref !!}">
                         <i class="glyphicon glyphicon-refresh qc-font-size-20"></i>
                     </a>
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
+                    &nbsp;
                     <label class="qc-font-size-20">LĨNH VỰC CHI</label>
                 </div>
             </div>
@@ -33,7 +33,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     <form name="" action="">
                         <div class="row">
                             <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <a class="btn btn-primary btn-sm"
+                                <a class="qc-link-bold"
                                    href="{!! route('qc.ad3d.system.pay_activity_list.add.post') !!}">
                                     <i class="glyphicon glyphicon-plus"></i>Thêm
                                 </a>
@@ -42,20 +42,20 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     </form>
                 </div>
             </div>
-            <div class="qc_ad3d_list_content row"
+            <div class="qc_ad3d_list_content qc-ad3d-table-container row"
                  data-href-view="{!! route('qc.ad3d.system.pay_activity_list.view.get') !!}"
                  data-href-edit="{!! route('qc.ad3d.system.pay_activity_list.edit.get') !!}"
                  data-href-del="{!! route('qc.ad3d.system.pay_activity_list.delete') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center qc-padding-none">STT</th>
-                            <th class="qc-padding-none">Tên</th>
-                            <th class="qc-padding-none">Mô tả</th>
-                            <th class="text-center qc-padding-none">Loại chi phí</th>
-                            <th class="qc-padding-none"></th>
+                            <th class="text-center" style="width: 20px;">STT</th>
+                            <th>Tên</th>
+                            <th>Mô tả</th>
+                            <th>Loại chi phí</th>
+                            <th></th>
                         </tr>
-                        @if(count($dataPayActivityList) > 0)
+                        @if($hFunction->checkCount($dataPayActivityList))
                             <?php
                             $perPage = $dataPayActivityList->perPage();
                             $currentPage = $dataPayActivityList->currentPage();
@@ -66,47 +66,51 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 $payListIdId = $payActivityList->payListId();
                                 $description = $payActivityList->description();
                                 ?>
-                                <tr class="qc_ad3d_list_object qc-ad3d-list-object" data-object="{!! $payListIdId !!}">
-                                    <td class="text-center qc-padding-none">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $payListIdId !!}">
+                                    <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
-                                    <td class="qc-padding-none">
+                                    <td>
                                         {!! $payActivityList->name() !!}
                                     </td>
-                                    <td class="qc-link-grey qc-padding-none">
-                                        @if(!empty($description))
+                                    <td class="qc-link-grey">
+                                        @if(!$hFunction->checkCount($description))
                                             {!! $description !!}
                                         @else
                                             <em>---</em>
                                         @endif
                                     </td>
-                                    <td class="text-center qc-padding-none">
+                                    <td>
                                         {!! $payActivityList->typeLabel() !!}
                                     </td>
-                                    <td class="text-right qc-padding-none">
-                                        <a class="qc_view qc-link-green" href="#">
-                                            Chi tiết
+                                    <td class="text-right">
+                                        <a class="qc_view qc-link" href="#">
+                                            <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
                                         </a>
                                         <span>|</span>
-                                        <a class="qc_edit qc-link-green" href="#">Sửa</a>
+                                        <a class="qc_edit qc-link-green" href="#">
+                                            <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                        </a>
                                         <span>|</span>
-                                        <a class="qc_delete qc-link-green" href="#">Xóa</a>
+                                        <a class="qc_delete qc-link-red" href="#">
+                                            <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
+                            <tr>
+                                <td class="text-center" colspan="5">
+                                    {!! $hFunction->page($dataPayActivityList) !!}
+                                </td>
+                            </tr>
                         @else
                             <tr>
-                                <td class="text-center qc-color-red qc-padding-none" colspan="5">
+                                <td class="text-center qc-color-red" colspan="5">
                                     Chưa có danh mục chi
                                 </td>
                             </tr>
                         @endif
                     </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    {!! $hFunction->page($dataPayActivityList) !!}
                 </div>
             </div>
         </div>

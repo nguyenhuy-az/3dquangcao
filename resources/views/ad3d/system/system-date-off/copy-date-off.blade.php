@@ -74,7 +74,7 @@ if ($hFunction->checkCount($dataCompanySelected)) {
                                     </option>
                                     <option value="{!! $currentYear + 1 !!}"
                                             @if($yearSelected == ($currentYear +1)) selected="selected" @endif>
-                                        {!! $yearSelected + 1 !!}
+                                        {!! $currentYear + 1 !!}
                                     </option>
                                 </select>
                             </div>
@@ -86,7 +86,7 @@ if ($hFunction->checkCount($dataCompanySelected)) {
                                 </label>
                                 <select class="cbCompanyCopy form-control" name="cbCompanyCopy"
                                         data-href="{!! route('qc.ad3d.system.system_date_off.copy.get') !!}">
-                                    <option value="">Chọn công ty</option>
+                                    <option value="0">Chọn công ty</option>
                                     @if($hFunction->checkCount($dataCompany))
                                         @foreach($dataCompany as $company)
                                             @if($dataStaffLogin->companyId() != $company->companyId())

@@ -59,29 +59,29 @@ if (count($dataWork) > 0) {
                     </select>
                 </div>
             </div>
-            @if(count($dataWork) > 0)
+            @if($hFunction->checkCount($dataWork))
                 @if($infoSalaryBasic)
                     {{-- HAN MUC UNG LUONG   --}}
                     <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row qc-container-table">
                             <div class="table-responsive">
-                                <table class="table table-hover table-bordered">
+                                <table class="table table-hover table-bordered" style="table-layout: fixed;">
                                     <tr style="background-color: whitesmoke;">
                                         <th class="text-center">Hạn mức ứng</th>
                                         <th class="text-center">Số lần ứng</th>
                                         <th class="text-center">Tổng ứng</th>
                                     </tr>
                                     <tr>
-                                        <td class="text-center">
+                                        <td class="text-center qc-color-red">
                                             @if($dataWork->limitBeforePay()>0)
                                                 {!! $hFunction->currencyFormat($dataWork->limitBeforePay()) !!}
                                             @else
-                                                <em class="qc-color-red">Lương không đủ ứng</em>
+                                                <em>Lương không đủ ứng</em>
                                             @endif
                                         </td>
                                         <td class="text-center">
                                             {!! count($dataBeforePay) !!}
-                                            @if(count($dataBeforePay) > 2)
+                                            @if($hFunction->getCountFromData($dataBeforePay) > 2)
                                                 <em style="color: brown">Vượt số lần ứng</em>
                                             @endif
                                         </td>
@@ -96,25 +96,25 @@ if (count($dataWork) > 0) {
                     </div>
 
                     {{-- CHI TIET UNG LUONG --}}
-                    <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="row">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                <i class="qc-font-size-16 glyphicon glyphicon-th-list"></i>
-                                <label class="qc-color-red">CHI TIẾT ỨNG LƯƠNG</label>
-                            </div>
+                    <div class="row">
+                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <i class="qc-font-size-14 glyphicon glyphicon-th-list"></i>
+                            <label class="qc-color-red">CHI TIẾT ỨNG LƯƠNG</label>
                         </div>
-                        <div class="row qc-container-table">
+                    </div>
+                    <div class="row ">
+                        <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
                                     <tr style="background-color: whitesmoke;">
-                                        <th class="text-center">STT</th>
+                                        <th class="text-center" style="width: 20px;">STT</th>
                                         <th>Ngày</th>
                                         <th>Thủ quỹ</th>
                                         <th>Ghú</th>
                                         <th class="text-center">Xác nhận</th>
                                         <th class="text-right">Số tiền</th>
                                     </tr>
-                                    @if(count($dataBeforePay) > 0)
+                                    @if($hFunction->checkCount($dataBeforePay))
                                         <?php
                                         $totalMoney = 0;
                                         ?>
@@ -129,7 +129,7 @@ if (count($dataWork) > 0) {
                                                     {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
                                                 </td>
                                                 <td>
-                                                    {!! date('d-m-Y', strtotime($beforePay->datePay())) !!}
+                                                    {!! $hFunction->convertDateDMYFromDatetime($beforePay->datePay()) !!}
                                                 </td>
                                                 <td>
                                                     {!! $beforePay->staff->fullName() !!}
@@ -170,28 +170,28 @@ if (count($dataWork) > 0) {
                                 </table>
                             </div>
                         </div>
+
                     </div>
                     {{-- DE XUAT UNG LUONG   --}}
-                    <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-
-                        <div class="row">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                <i class="qc-font-size-16 glyphicon glyphicon-question-sign"></i>
-                                <label class="qc-color-red">ĐỀ XUÂT ỨNG LƯƠNG</label>
-                            </div>
+                    <div class="row">
+                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <i class="qc-font-size-14 glyphicon glyphicon-question-sign"></i>
+                            <label class="qc-color-red">ĐỀ XUÂT ỨNG LƯƠNG</label>
                         </div>
-                        <div class="row qc-container-table">
+                    </div>
+                    <div class="row">
+                        <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
                                     <tr style="background-color: whitesmoke;">
-                                        <th class="text-center">STT</th>
+                                        <th class="text-center" style="width: 20px;">STT</th>
                                         <th>Ngày</th>
                                         <th>Ghi chú</th>
                                         <th class="text-center">Duyệt</th>
                                         <th class="text-center">Trạng thái nhận</th>
                                         <th class="text-center">Số tiền</th>
                                     </tr>
-                                    @if(count($dataBeforePayRequest) > 0)
+                                    @if($hFunction->checkCount($dataBeforePayRequest))
                                         @foreach($dataBeforePayRequest as $beforePayRequest)
                                             <?php
                                             $requestId = $beforePayRequest->requestId();
@@ -202,7 +202,7 @@ if (count($dataWork) > 0) {
                                                     {!! $request_n_o = (isset($request_n_o)) ? $request_n_o + 1 : 1 !!}
                                                 </td>
                                                 <td>
-                                                    {!! date('d/m/Y', strtotime($beforePayRequest->dateRequest())) !!}
+                                                    {!! $hFunction->convertDateDMYFromDatetime($beforePayRequest->dateRequest()) !!}
                                                 </td>
                                                 <td>
                                                     {!! $beforePayRequest->confirmNote() !!}

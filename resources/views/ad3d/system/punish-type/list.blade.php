@@ -66,15 +66,15 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </td>
                                     <td class="text-right">
                                         <a class="qc_view qc-link" href="#" title="Xem chi tiết">
-                                            <i class="qc-font-size-16 glyphicon glyphicon-eye-open"></i>
+                                            <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
                                         </a>
                                         &nbsp;|&nbsp;
                                         <a class="qc_edit qc-link-green" href="#" title="Sửa">
-                                            <i class="qc-font-size-16 glyphicon glyphicon-pencil"></i>
+                                            <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
                                         </a>
                                         &nbsp;|&nbsp;
                                         <a class="qc_delete qc-link-red" href="#" title="Xóa">
-                                            <i class="qc-font-size-16 glyphicon glyphicon-trash"></i>
+                                            <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
                                         </a>
                                     </td>
                                 </tr>
