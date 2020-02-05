@@ -68,7 +68,7 @@ $currentMonth = $hFunction->currentMonth();
                             <th class="text-center"></th>
                             <th class="text-center">Thanh toán</th>
                         </tr>
-                        @if(count($dataSalary) > 0)
+                        @if($hFunction->checkCount($dataSalary))
                             <?php
                             $sumSalary = 0;
                             $sumSalaryPaid = 0;
@@ -93,7 +93,7 @@ $currentMonth = $hFunction->currentMonth();
                                         {!! $n_o = isset($n_o)?$n_o+ 1:1 !!}
                                     </td>
                                     <td>
-                                        @if(!empty($dataWork->companyStaffWorkId()))
+                                        @if(!$hFunction->checkEmpty($dataWork->companyStaffWorkId()))
                                             {!! $dataWork->companyStaffWork->staff->fullName() !!}
                                         @else
                                             {!! $salary->work->staff->fullName() !!}

@@ -43,7 +43,7 @@ class PaySalaryController extends Controller
                 $dateFilter = date('Y-m', strtotime("1-$loginMonth-$loginYear"));
             }
             $searchCompanyFilterId = [$dataStaff->companyId()];
-            if ($loginMonth < 8 && $loginYear <= 2109) { # du lieu cu phien ban cu --  loc theo staff_id
+            if ($loginMonth < 8 && $loginYear <= 2019) { # du lieu cu phien ban cu --  loc theo staff_id
                 $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
                 $listWorkId = $modelWork->listIdOfListStaffInBeginDate($listStaffId, $dateFilter);
             } else { # du lieu phien ban moi - loc theo thong tin lam viec tai cty (companyStaffWork)

@@ -17,10 +17,10 @@ $workId = $dataWork->workId();
 $dataTimekeepingProvisional = $dataWork->infoTimekeepingProvisional($workId, 'DESC');
 
 // xin nghỉ
-$dataLicenseOffWork = $dataStaff->timekeepingOffWorkOfStaff($loginStaffId, $dateFilter);
+$dataLicenseOffWork = $dataStaff->timekeepingOffWorkOfStaff($loginStaffId, date('Y-m'));
 
 // xin trễ
-$dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, $dateFilter);
+$dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, date('Y-m'));
 ?>
 @extends('work.index')
 
@@ -93,7 +93,7 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, $da
                             <th class="text-center">Ghi chú</th>
                             <th></th>
                         </tr>
-                        @if(count($dataTimekeepingProvisional) > 0)
+                        @if($hFunction->checkCount($dataTimekeepingProvisional))
                             @foreach($dataTimekeepingProvisional as $timekeepingProvisional)
                                 <?php
                                 $timekeepingProvisionalId = $timekeepingProvisional->timekeepingProvisionalId();
@@ -126,7 +126,7 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, $da
                                         </span>
                                     </td>
                                     <td>
-                                        @if(!empty($timeEnd))
+                                        @if(!$hFunction->checkEmpty($timeEnd))
                                             <span>
                                                 {!! date('d-m-Y ', strtotime($timeEnd)) !!}
                                             </span>
@@ -156,7 +156,7 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, $da
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        @if(count($dataTimekeepingProvisionalImage) > 0)
+                                        @if($hFunction->checkCount($dataTimekeepingProvisionalImage))
                                             @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
                                                 <div style="position: relative; float: left; margin: 5px 10px 5px 10px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                     <a class="qc_work_allocation_report_image_view qc-link"
@@ -177,14 +177,14 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, $da
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        @if(!empty($timekeepingNote))
+                                        @if(!$hFunction->checkEmpty($timekeepingNote))
                                             <em class="qc-color-grey">{!! $timekeepingNote !!}</em>
                                         @else
                                             <span>---</span>
                                         @endif
                                     </td>
                                     <td class="text-right">
-                                        @if(empty($timeEnd))
+                                        @if($hFunction->checkEmpty($timeEnd))
                                             @if($endCheckStatus)
                                                 <a class="qc_time_end_action qc-link-bold">Báo giờ ra</a>
                                                 <span class="qc-color-grey"> &nbsp; | &nbsp; </span>
@@ -241,7 +241,7 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, $da
                             <th class="text-center">Duyệt</th>
                             <th class="text-right">Duyệt</th>
                         </tr>
-                        @if(count($dataLicenseLateWork) > 0)
+                        @if($hFunction->checkCount($dataLicenseLateWork))
                             @foreach($dataLicenseLateWork as $licenseLateWork)
                                 <?php
                                 $licenseLateWorkId = $licenseLateWork->licenseId();
@@ -259,14 +259,14 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, $da
                                         {!! date('d-m-Y ', strtotime($dateLate)) !!}
                                     </td>
                                     <td>
-                                        @if(!empty($lateNote))
+                                        @if(!$hFunction->checkEmpty($lateNote))
                                             <em class="qc-color-grey">{!! $lateNote !!}</em>
                                         @else
                                             <span>---</span>
                                         @endif
                                     </td>
                                     <td>
-                                        @if(!empty($lateConfirmNote))
+                                        @if(!$hFunction->checkEmpty($lateConfirmNote))
                                             <em class="qc-color-grey">{!! $lateConfirmNote !!}</em>
                                         @else
                                             <span>---</span>
@@ -320,7 +320,7 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, $da
                             <th class="text-center">Duyệt</th>
                             <th class="text-right">Duyệt</th>
                         </tr>
-                        @if(count($dataLicenseOffWork) > 0)
+                        @if($hFunction->checkCount($dataLicenseOffWork))
                             @foreach($dataLicenseOffWork as $licenseOffWork)
                                 <?php
                                 $licenseOffWorkId = $licenseOffWork->licenseId();
@@ -335,18 +335,18 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, $da
                                         {!! $n_o_off = (isset($n_o_off)) ? $n_o_off + 1 : 1 !!}
                                     </td>
                                     <td>
-                                        {!! date('d-m-Y ', strtotime($dateOff)) !!}
+                                        {!! $hFunction->convertDateDMYFromDatetime($dateOff) !!}
                                     </td>
 
                                     <td>
-                                        @if(!empty($offNote))
+                                        @if(!$hFunction->checkEmpty($offNote))
                                             <em class="qc-color-grey">{!! $offNote !!}</em>
                                         @else
                                             <span>---</span>
                                         @endif
                                     </td>
                                     <td>
-                                        @if(!empty($confirmNote))
+                                        @if(!$hFunction->checkEmpty($confirmNote))
                                             <em class="qc-color-grey">{!! $confirmNote !!}</em>
                                         @else
                                             <span>---</span>
