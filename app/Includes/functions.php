@@ -8,19 +8,19 @@ class Hfunction
         $this->dateDefaultHCM();
     }
 
-    function dateDefaultHCM()
+    public function dateDefaultHCM()
     {
         return date_default_timezone_set('Asia/Ho_Chi_Minh');
     }
 
-    function defaultTimezone($city = null)
+    public function defaultTimezone($city = null)
     {
         if (empty($city) || $city == 'HCM') {
             $this->dateDefaultHCM();
         }
     }
 
-    function convertNumberToWord($num = false)
+    public function convertNumberToWord($num = false)
     {
         $num = str_replace(array(',', ' '), '', trim($num));
         if (!$num) {
@@ -64,22 +64,22 @@ class Hfunction
         return implode(' ', $words);
     }
 
-    function checkNull($dataCheck)
+    public function checkNull($dataCheck)
     {
         return ($dataCheck == null) ? true : false;
     }
 
-    function setNull()
+    public function setNull()
     {
         return null;
     }
 
-    function checkEmpty($dataCheck)
+    public function checkEmpty($dataCheck)
     {
         return (empty($dataCheck)) ? true : false;
     }
 
-    function checkCount($dataCheck = null)
+    public function checkCount($dataCheck = null)
     {
         $result = (empty($dataCheck)) ? 0 : count($dataCheck);
         return ($result > 0) ? true : false;
@@ -87,7 +87,7 @@ class Hfunction
 
 
     // alias
-    function stripUnicode($str)
+    public function stripUnicode($str)
     {
         if (!$str) return false;
         $unicode = array(
@@ -151,7 +151,7 @@ class Hfunction
     }
 
     //string
-    function cutString($string, $length, $more = '')
+    public function cutString($string, $length, $more = '')
     {
         if (strlen($string) > $length) {
             $string = mb_substr($string, 0, $length, 'UTF-8') . $more;
@@ -207,7 +207,7 @@ class Hfunction
         return intval($string);
     }
 
-    function convertViewValue($value)
+    public function convertViewValue($value)
     {
         if (1000 <= $value && $value < 1000000) {
             $value = ($value / 1000) . "K";
@@ -217,7 +217,7 @@ class Hfunction
         return $value;
     }
 
-    function convertCurrencyToInt($currency, $replace = ',')
+    public function convertCurrencyToInt($currency, $replace = ',')
     {
         if ($replace == ',') {
             return (int)str_replace(',', '', $currency);
@@ -228,7 +228,7 @@ class Hfunction
     }
 
     // create option of select
-    function option($data, $select = '')
+    public function option($data, $select = '')
     {
         foreach ($data as $key => $value) {
             $id = $value['optionKey'];
@@ -241,7 +241,7 @@ class Hfunction
         }
     }
 
-    function optionMultiple($data, $parent = 0, $str = "--", $select = 0)
+    public function optionMultiple($data, $parent = 0, $str = "--", $select = 0)
     {
         foreach ($data as $key => $value) {
             $id = $value['optionKey'];
@@ -654,7 +654,7 @@ class Hfunction
     }
 
     // ========== ========== ========== upload image file ========== ========== ==========
-    function getCountFromData($data)
+    public function getCountFromData($data)
     {
         return (empty($data)) ? 0 : count($data);
     }
@@ -665,7 +665,7 @@ class Hfunction
         return end($array);
     }
 
-    function selectOneImage($id = '', $name = '', $typeImage = '', $widthImgView = '', $heightImgView = '')
+    public function selectOneImage($id = '', $name = '', $typeImage = '', $widthImgView = '', $heightImgView = '')
     {
         $widthImgView = (!empty($widthImgView)) ? $widthImgView : 150;
         $heightImgView = (!empty($heightImgView)) ? $heightImgView : 100;
@@ -687,7 +687,7 @@ class Hfunction
     }
 
     // select image on size
-    function selectOneImageFollowSize($id = '', $name = '', $typeImage = '', $idImageCheck = '', $limitSize = '', $limitWidth = '', $limitHeight = '', $widthImgView = '', $heightImgView = '')
+    public function selectOneImageFollowSize($id = '', $name = '', $typeImage = '', $idImageCheck = '', $limitSize = '', $limitWidth = '', $limitHeight = '', $widthImgView = '', $heightImgView = '')
     {
         $widthImgView = (!empty($widthImgView)) ? $widthImgView : 150;
         $heightImgView = (!empty($heightImgView)) ? $heightImgView : 100;

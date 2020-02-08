@@ -275,9 +275,10 @@ class OrdersController extends Controller
     //loai san pham
     public function checkProductType($name)
     {
+        $hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
         $dataProductType = $modelProductType->infoFromSuggestionName($name);
-        if (count($dataProductType) > 0) {
+        if ($hFunction->checkCount($dataProductType)) {
             $result = array(
                 'status' => 'exist',
                 'content' => $dataProductType
@@ -292,28 +293,44 @@ class OrdersController extends Controller
     }
 
     //tao don hang
-    public function addProduct()
-    {
-        $modelProductType = new QcProductType();
-        $dataProductType = $modelProductType->infoActivity();
-        return view('work.orders.orders.add-product', compact('dataProductType'));
-    }
+
 
     # them order moi va them san pham
     public function getAdd($orderType = 1, $customerId = null, $orderId = null) // $type: 1 - don hang thuc / 2 - don hang bao gia
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $modelCustomer = new QcCustomer();
+        //$modelProductType = new QcProductType();
+        //$dataProductType = $modelProductType->infoActivity();
         $dataAccess = [
             'object' => 'orders',
             'subObjectLabel' => 'Sản phảm'
         ];
-        $dataCustomer = (empty($customerId)) ? $customerId : $modelCustomer->getInfo($customerId);
-        $dataOrders = (empty($orderId)) ? $orderId : $modelOrder->getInfo($orderId);
+        $dataCustomer = ($hFunction->checkEmpty($customerId)) ? $customerId : $modelCustomer->getInfo($customerId);
+        $dataOrders = ($hFunction->checkEmpty($orderId)) ? $orderId : $modelOrder->getInfo($orderId);
+        /*//session()->forget('listProductAdd');
+        if (Session::has('listProductAdd')){
+            echo 'có';
+        }else{
+            $listProductAdd[] = view('work.orders.orders.add-product', compact('dataProductType'));
+            Session::put('listProductAdd', $listProductAdd);
+            echo 'ko';
+
+        }
+        $result = Session::get('listProductAdd');
+        dd($result);*/
         return view('work.orders.orders.add', compact('modelStaff', 'dataAccess', 'dataCustomer', 'orderType', 'dataOrders'));
     }
 
+    public function addProduct()
+    {
+        $hFunction = new \Hfunction();
+        $modelProductType = new QcProductType();
+        $dataProductType = $modelProductType->infoActivity();
+        return view('work.orders.orders.add-product', compact('dataProductType'));
+    }
     // them don hang thuc
     public function postAdd()
     {
@@ -338,13 +355,13 @@ class OrdersController extends Controller
         $productType = Request::input('txtProductType');
         $txtWidth = Request::input('txtWidth');
         $txtHeight = Request::input('txtHeight');
-        $txtDepth = Request::input('txtDepth');
+        //$txtDepth = Request::input('txtDepth');
         $txtAmount = Request::input('txtAmount');
         $txtPrice = Request::input('txtPrice');
         $txtDescription = Request::input('txtDescription');
         $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
         $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
-        $txtDepth = (empty($txtDepth)) ? 0 : $txtDepth;
+        $txtDepth = 0;//(empty($txtDepth)) ? 0 : $txtDepth;
 
         //thong tin don hang
         $txtOrderName = Request::input('txtOrderName');
@@ -479,18 +496,18 @@ class OrdersController extends Controller
         $cbVat = Request::input('cbVat');
         $oldCustomerId = null;
         $dataCustomer = null;
-        if (count($dataStaff) > 0) {
+        if ($hFunction->checkCount($dataStaff)) {
             $staffLoginId = $dataStaff->staffId();
-            if (!empty($txtPhone)) {
+            if (!$hFunction->checkEmpty($txtPhone)) {
                 #lay thong tin khach hang tu so dien thoai di dong
                 $dataCustomer = $modelCustomer->infoFromPhone($txtPhone);
             }
-            if (!empty($txtZalo) && count($dataCustomer) <= 0) {
+            if (!$hFunction->checkEmpty($txtZalo) && count($dataCustomer) <= 0) {
                 # lay thong tin khach hang tu so zalo
                 $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
             }
 
-            if (count($dataCustomer) > 0) {
+            if ($hFunction->checkCount($dataCustomer)) {
                 # ton tai khach hang - khach hang cu
                 $customerId = $dataCustomer->customerId();
                 $customerName = $dataCustomer->name();

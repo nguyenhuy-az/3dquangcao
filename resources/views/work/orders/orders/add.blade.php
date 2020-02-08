@@ -89,7 +89,8 @@ if ($provisionalStatus) {
                                 <input type="number" class="txtPhone form-control" name="txtPhone"
                                        data-href-check="{!! route('qc.work.orders.add.customer.check.phone') !!}"
                                        data-href-replace="{!! route('qc.work.orders.add.get',$orderType) !!}"
-                                       placeholder="Số điện thoại" @if($hFunction->checkCount($dataCustomer)) readonly="true"
+                                       placeholder="Số điện thoại"
+                                       @if($hFunction->checkCount($dataCustomer)) readonly="true"
                                        @endif
                                        style="height: 25px;" value="{!! $customerPhone !!}">
                             </div>
@@ -172,12 +173,12 @@ if ($provisionalStatus) {
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm qc-margin-none">
-                                <label>Tên đơn hàng:
+                                <label>Tên ĐH (Tên thương hiệu):
                                     <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                 </label>
                                 <input type="text" class="txtOrderName form-control" name="txtOrderName"
                                        data-href-check-name="{!! route('qc.work.orders.add.order.check.name') !!}"
-                                       placeholder="Nhập tên đơn hàng" style="height: 25px;"
+                                       placeholder="VD: Phở tân, Bom, Thảo tây ...." style="height: 25px;"
                                        value="{!! $orderName !!}">
                             </div>
                             <div id="qc_order_add_name_suggestions_wrap"
@@ -292,7 +293,8 @@ if ($provisionalStatus) {
                                     <label>Ngày Nhận:<i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                                     <input id="txtDateReceive" type="text" name="txtDateReceive" class="form-control"
                                            disabled="disabled"
-                                           value="{!! $hFunction->convertDateDMYFromDatetime($currentDate) !!}" style="height: 25px;"
+                                           value="{!! $hFunction->convertDateDMYFromDatetime($currentDate) !!}"
+                                           style="height: 25px;"
                                            placeholder="Ngày nhận">
                                 </div>
                             </div>
@@ -379,7 +381,31 @@ if ($provisionalStatus) {
                         </div>
                     </div>
                     <div id="qc_work_orders_add_product_wrap" class="row">
-                        @include('work.orders.orders.add-product')
+                        @if (Session::has('listProductAdd'))
+                            <?php
+                            $listProduct = Session::get('listProductAdd');
+                            ?>
+                            @if($hFunction->checkCount($listProduct))
+                                @foreach($listProduct as $key => $value)
+                                    <?php
+                                        $numberOrder = $key
+                                    ?>
+                                        <table class="table" style="margin: 0; border: 1px solid #d7d7d7;">
+                                            <tr>
+                                                <td class="text-center" style="background-color: whitesmoke;vertical-align: middle; padding: 0;">
+                                                    <label class="qc-font-size-20">{!! $numberOrder !!}</label>
+                                                </td>
+                                                <td>
+                                                    {!! $value !!}
+                                                    {{--@include('work.orders.orders.add-product', compact('numberOrder'))--}}
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                @endforeach
+                            @endif
+                            {{--@include('work.orders.orders.add-product')--}}
+                        @endif
                     </div>
                 </div>
                 <div class="row">

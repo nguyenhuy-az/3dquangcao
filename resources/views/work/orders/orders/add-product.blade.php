@@ -5,15 +5,13 @@
  * Date: 1/4/2018
  * Time: 5:41 PM
  *
- * dataProductType
  *
  */
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 ?>
-<div class="qc_work_orders_product_add qc-margin-top-5 col-xs-12 col-sm-12 col-md-12 col-lg-12"
-     style="border: 1px solid #d7d7d7; border-left: 5px solid brown;">
+<div class="qc_work_orders_product_add qc-margin-top-5 qc-container-table-border-none col-xs-12 col-sm-12 col-md-12 col-lg-12" style=" padding: 0;">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
             <div class="form-group form-group-sm qc-margin-none">
@@ -52,11 +50,9 @@ $mobileStatus = $mobile->isMobile();
         <div class="col-xs-6 col-sm-12 col-md-3 col-lg-3">
             <div class="form-group form-group-sm qc-margin-none">
                 <label>
-                    Sâu<em>(mm)</em>:
+                    Đơn vị tính:
                 </label>
-                <input class="form-control" type="text" onkeyup="qc_main.showNumberInput(this);" name="txtDepth[]"
-                       style="height: 25px;"
-                       placeholder="Chiều sâu sản phẩm" value="">
+                <input class="txtUnit form-control" type="text" name="txtUnit[]" style="height: 25px;" placeholder="Đơn vị tính" value="">
             </div>
         </div>
     </div>

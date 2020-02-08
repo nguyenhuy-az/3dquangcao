@@ -46,6 +46,7 @@ var qc_work_orders = {
     },
     add: {
         addProduct: function (href) {
+            //qc_main.url_replace(href);
             qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_orders_add_product_wrap', false);
         },
         save: function (frm) {
@@ -1051,8 +1052,9 @@ $(document).ready(function () {
                         $(suggestions_content).empty(); // xoa thong tin cu
                         for (var i = 0; i < content.length; i++) {
                             var contentName = content[i]['name'];
+                            var contentUnit = content[i]['unit'];
                             $(suggestions_content).append(
-                                "<a class='qc_order_add_product_type_suggestions_select qc-link' data-name='" + contentName + "'> " + contentName + "</a><br/>"
+                                "<a class='qc_order_add_product_type_suggestions_select qc-link' data-name='" + contentName + "' data-unit='" + contentUnit + "'> " + contentName + "</a><br/>"
                             );
                         }
                     } else if (result['status'] == 'notExist') {
@@ -1075,8 +1077,10 @@ $(document).ready(function () {
     /*chon don loai san pham goi y*/
     $('body').on('click', '#frmWorkOrdersAdd .qc_order_add_product_type_suggestions_select', function () {
         var name = $(this).data('name');
+        var unit = $(this).data('unit');
         var objectWrap = $(this).parents('.qc_work_orders_product_add');
         objectWrap.find('.txtProductType').val(name);
+        objectWrap.find('.txtUnit').val(unit);
         objectWrap.find('.qc_order_add_product_type_suggestions_wrap').hide();
 
     });
