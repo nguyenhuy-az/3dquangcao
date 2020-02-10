@@ -17,7 +17,7 @@ use App\Http\Controllers\Controller;
 use File;
 use Illuminate\Support\Facades\Session;
 use Input;
-use Request;
+use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
@@ -296,7 +296,7 @@ class OrdersController extends Controller
 
 
     # them order moi va them san pham
-    public function getAdd($orderType = 1, $customerId = null, $orderId = null) // $type: 1 - don hang thuc / 2 - don hang bao gia
+    public function getAdd(Request $request ,$orderType = 1, $customerId = null, $orderId = null) // $type: 1 - don hang thuc / 2 - don hang bao gia
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -310,25 +310,36 @@ class OrdersController extends Controller
         ];
         $dataCustomer = ($hFunction->checkEmpty($customerId)) ? $customerId : $modelCustomer->getInfo($customerId);
         $dataOrders = ($hFunction->checkEmpty($orderId)) ? $orderId : $modelOrder->getInfo($orderId);
-        /*//session()->forget('listProductAdd');
-        if (Session::has('listProductAdd')){
-            echo 'có';
-        }else{
-            $listProductAdd[] = view('work.orders.orders.add-product', compact('dataProductType'));
-            Session::put('listProductAdd', $listProductAdd);
-            echo 'ko';
+        //$request->session()->forget('listProductAdd');
+//        if (Session::has('listProductAdd')){
+//           // echo 'có';
+//        }else{
+//            $listProductAdd[] = view('work.orders.orders.add-product', compact('dataProductType'));
+//            Session::put('listProductAdd', $listProductAdd);
+//            //echo 'ko';
+//
+//        }
 
-        }
-        $result = Session::get('listProductAdd');
-        dd($result);*/
+
         return view('work.orders.orders.add', compact('modelStaff', 'dataAccess', 'dataCustomer', 'orderType', 'dataOrders'));
     }
 
-    public function addProduct()
+    public function addProduct(Request $request )
     {
+        $data = $request->session()->all();
+
         $hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
         $dataProductType = $modelProductType->infoActivity();
+        if (Session::has('listProductAdd')){
+            $rowsProductions = Session::get('listProductAdd');
+            $rowsProductions= json_decode($rowsProductions);
+        }else{
+            $rowsProductions = [];
+        }
+        $rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType'))->render();
+        $request->session()->put('listProductAdd',json_encode($rowsProductions));
+
         return view('work.orders.orders.add-product', compact('dataProductType'));
     }
     // them don hang thuc

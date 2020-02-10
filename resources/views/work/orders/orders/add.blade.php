@@ -384,6 +384,8 @@ if ($provisionalStatus) {
                         @if (Session::has('listProductAdd'))
                             <?php
                             $listProduct = Session::get('listProductAdd');
+                            $listProduct = json_decode($listProduct);
+
                             ?>
                             @if($hFunction->checkCount($listProduct))
                                 @foreach($listProduct as $key => $value)
