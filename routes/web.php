@@ -810,10 +810,13 @@ Route::group(['prefix' => 'work'], function () {
 
             # kiem tra goi y thong loai san pham
             Route::get('product-type/{name?}', ['as' => 'qc.work.orders.add.product_type.check.name', 'uses' => 'Work\Orders\OrdersController@checkProductType']);
+            # huy san pham
+            Route::get('cancel/product/{key?}', ['as' => 'qc.work.orders.add.product.cancel.get', 'uses' => 'Work\Orders\OrdersController@cancelAddProduct']);
 
             #them san pham
-            Route::get('/product', ['as' => 'qc.work.orders.product.get', 'uses' => 'Work\Orders\OrdersController@addProduct']);
+            Route::get('/product', ['as' => 'qc.work.orders.add.product.get', 'uses' => 'Work\Orders\OrdersController@addProduct']);
             Route::get('/{type?}/{customerId?}/{orderId?}', ['as' => 'qc.work.orders.add.get', 'uses' => 'Work\Orders\OrdersController@getAdd']);
+
             // them don hang thuc
             Route::post('add', ['as' => 'work.orders.add.post', 'uses' => 'Work\Orders\OrdersController@postAdd']);
 

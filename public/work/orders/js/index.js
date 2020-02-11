@@ -1,6 +1,28 @@
 /**
  * Created by HUY on 12/29/2017.
  */
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires;
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+    }
+    return "";
+}
+
+function deleteCookie(cname) {
+    setCookie(cname,null,-100);
+}
+
 var qc_work_orders = {
     filter: function (href) {
         qc_main.url_replace(href);
@@ -47,7 +69,51 @@ var qc_work_orders = {
     add: {
         addProduct: function (href) {
             //qc_main.url_replace(href);
-            qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_orders_add_product_wrap', false);
+            //qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_orders_add_product_wrap', false);
+            //document.cookie = "rowsProductAdd=15";
+            //var x = document.cookie;
+            //setCookie('rowsProductAdd',200,3);
+
+            //console.log(x);
+
+            $.ajax({
+                url: href,
+                type: 'GET',
+                cache: false,
+                data: {},
+                beforeSend: function () {
+                    qc_master.loadStatus();
+                },
+                success: function (data) {
+                    qc_master.containActionClose();
+                    if (data) {
+                        deleteCookie('rowsProductAdd');
+                        var rowsProductNew;
+                        var rowsProduct = [];
+                        rowsProduct = getCookie('rowsProductAdd');
+                        if ( rowsProduct.length > 0 ) {
+                            console.log('Tồn tại');
+                            console.log(rowsProduct);
+                            //rowsProduct.push(data);
+                            //setCookie('rowsProductAdd',rowsProduct.push(data),3);
+                            // does exist
+                        }
+                        else {
+                            console.log('Không tồn tại');
+                            //setCookie('rowsProductAdd',data,3);
+                            rowsProduct = data;
+                        }
+                        //setCookie('rowsProductAdd',rowsProduct,3);
+                        //console(getCookie('rowsProductAdd'));
+                        //console.log(rowsProduct);
+                        //console.log(data);
+                        //$('#qc_work_orders_add_product_wrap').append(data);
+                    }
+                },
+                complete: function () {
+                    qc_master.loadStatus();
+                }
+            });
         },
         save: function (frm) {
             // thong tin khach hang
@@ -1090,10 +1156,23 @@ $(document).ready(function () {
         qc_work_orders.add.addProduct($(this).data('href'));
     });
     /*xoa san pham khi them*/
+    //alert("Tổng số trang đã lưu trong history là: " + window.history.length);
     $('body').on('click', '#frmWorkOrdersAdd .qc_work_orders_product_add .qc_delete', function () {
+        var checkRow = parseInt($(this).parents('.qc_work_orders_product_add').data('row'));
+        var href = $(this).data('href') + '/' + checkRow ;
         $(this).parents('.qc_work_orders_product_add').remove();
-        qc_work_orders.add.updateOrderPrice();
+        $('#frmWorkOrdersAdd .qc_work_orders_product_add').filter(function () {
+            var currentRow =  $(this).data('row');
+            if (currentRow > checkRow) {
+                currentRow = currentRow -1;
+                $(this).attr('data-row',currentRow);
+                $(this).find('.qc_show_row').html(currentRow);
+            }
 
+        });
+        //qc_master_submit.ajaxHasReload(href,'',false);
+        qc_master_submit.ajaxNotReload(href,'',false);
+        qc_work_orders.add.updateOrderPrice();
     });
 
     /*LLU don hang chinh*/

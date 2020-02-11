@@ -47,6 +47,11 @@ if ($provisionalStatus) {
     Tạo đơn hàng
 @endsection
 @section('qc_work_order_body')
+    {{--<script type="text/javascript">
+        window.onbeforeunload = function () {
+            return "Dude, are you sure you want to leave? Think of the kittens!";
+        }
+    </script>--}}
     <div class="row qc_work_orders_wrap">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-10">
             @if (!$provisionalStatus)
@@ -389,21 +394,7 @@ if ($provisionalStatus) {
                             ?>
                             @if($hFunction->checkCount($listProduct))
                                 @foreach($listProduct as $key => $value)
-                                    <?php
-                                        $numberOrder = $key
-                                    ?>
-                                        <table class="table" style="margin: 0; border: 1px solid #d7d7d7;">
-                                            <tr>
-                                                <td class="text-center" style="background-color: whitesmoke;vertical-align: middle; padding: 0;">
-                                                    <label class="qc-font-size-20">{!! $numberOrder !!}</label>
-                                                </td>
-                                                <td>
-                                                    {!! $value !!}
-                                                    {{--@include('work.orders.orders.add-product', compact('numberOrder'))--}}
-                                                </td>
-                                            </tr>
-                                        </table>
-
+                                    {!! $value !!}
                                 @endforeach
                             @endif
                             {{--@include('work.orders.orders.add-product')--}}
@@ -413,7 +404,7 @@ if ($provisionalStatus) {
                 <div class="row">
                     <div class="qc-padding-top-20 qc-padding-bot-20  qc-border-none text-left col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <a class="qc_orders_product_add_act qc-link-green"
-                           data-href="{!! route('qc.work.orders.product.get') !!}">
+                           data-href="{!! route('qc.work.orders.add.product.get') !!}">
                             <i class="glyphicon glyphicon-plus"></i>
                             Thêm sản phẩm
                         </a>

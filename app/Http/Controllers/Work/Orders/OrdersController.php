@@ -311,36 +311,48 @@ class OrdersController extends Controller
         $dataCustomer = ($hFunction->checkEmpty($customerId)) ? $customerId : $modelCustomer->getInfo($customerId);
         $dataOrders = ($hFunction->checkEmpty($orderId)) ? $orderId : $modelOrder->getInfo($orderId);
         //$request->session()->forget('listProductAdd');
-//        if (Session::has('listProductAdd')){
-//           // echo 'có';
-//        }else{
-//            $listProductAdd[] = view('work.orders.orders.add-product', compact('dataProductType'));
-//            Session::put('listProductAdd', $listProductAdd);
-//            //echo 'ko';
-//
-//        }
-
-
+        /*if (!Session::has('listProductAdd')){
+            $numberRow = 1;
+            $rowsProductions = Session::get('listProductAdd');
+            $rowsProductions= json_decode($rowsProductions);
+            $rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType','numberRow'))->render();
+            $request->session()->put('listProductAdd',json_encode($rowsProductions));
+        }*/
         return view('work.orders.orders.add', compact('modelStaff', 'dataAccess', 'dataCustomer', 'orderType', 'dataOrders'));
     }
 
     public function addProduct(Request $request )
     {
-        $data = $request->session()->all();
-
-        $hFunction = new \Hfunction();
+        //$data = $request->session()->all();
+        //$hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
         $dataProductType = $modelProductType->infoActivity();
-        if (Session::has('listProductAdd')){
+        /*if (Session::has('listProductAdd')){
             $rowsProductions = Session::get('listProductAdd');
             $rowsProductions= json_decode($rowsProductions);
         }else{
             $rowsProductions = [];
         }
-        $rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType'))->render();
-        $request->session()->put('listProductAdd',json_encode($rowsProductions));
+        $numberRow =  count($rowsProductions) + 1;
+        $rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType','numberRow'))->render();
+        $request->session()->put('listProductAdd',json_encode($rowsProductions));*/
 
-        return view('work.orders.orders.add-product', compact('dataProductType'));
+        $numberRow = 1;
+        return view('work.orders.orders.add-product', compact('dataProductType','numberRow'));
+    }
+    public function cancelAddProduct(Request $request, $key=null)
+    {
+        if (Session::has('listProductAdd')){
+            $rowsProductions = Session::get('listProductAdd');
+            $rowsProductions= json_decode($rowsProductions);
+           echo  $numberRow =  count($rowsProductions);
+            if($numberRow == 1){
+                $request->session()->forget('listProductAdd');// huy danh sanh
+            }else{
+                unset($rowsProductions[$numberRow -1]); // xoa 1 dòng
+                $request->session()->put('listProductAdd',json_encode($rowsProductions));
+            }
+        }
     }
     // them don hang thuc
     public function postAdd()
