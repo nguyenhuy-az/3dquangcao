@@ -636,11 +636,25 @@ class QcStaff extends Model
         return $modelOrder->infoAndPayOfStaffReceive($this->checkIdNull($staffId), $date, $paymentStatus, $orderKeyword);
     }
 
+    // lay thong tin don hang da thanh toan hoac chưa thanh toan theo tg - khong huy
+    public function orderNoCancelAndPayInfoOfStaffReceive($staffId = null, $date = null, $paymentStatus = null, $orderKeyword = null)
+    {
+        $modelOrder = new QcOrder();
+        return $modelOrder->infoNoCancelAndPayOfStaffReceive($this->checkIdNull($staffId), $date, $paymentStatus, $orderKeyword);
+    }
+
     // lay thong tin don hang bao gia
     public function orderProvisionAndPayInfoOfStaffReceive($staffId = null, $date = null, $provisionalConfirm = null, $orderKeyword = null)
     {
         $modelOrder = new QcOrder();
         return $modelOrder->infoProvisionalOfStaffReceive($this->checkIdNull($staffId), $date, $provisionalConfirm, $orderKeyword);
+    }
+
+    // lay thong tin don hang bao gia - khong huy
+    public function orderProvisionNoCancelAndPayInfoOfStaffReceive($staffId = null, $date = null, $provisionalConfirm = null, $orderKeyword = null)
+    {
+        $modelOrder = new QcOrder();
+        return $modelOrder->infoProvisionalNoCancelOfStaffReceive($this->checkIdNull($staffId), $date, $provisionalConfirm, $orderKeyword);
     }
     //---------- san pham -----------
     public function product()

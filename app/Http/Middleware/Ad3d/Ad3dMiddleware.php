@@ -18,10 +18,11 @@ class Ad3dMiddleware
     public function handle($request, Closure $next)
     {
         //return $next($request);
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        if (count($dataStaffLogin) > 0) {
-            if ($dataStaffLogin->level() <= 3) {
+        if ($hFunction->checkCount($dataStaffLogin)) {
+            if ($dataStaffLogin->checkLoginAdmin()) {
                 return $next($request);
             } else {
                 return redirect()->route('qc.work.home');

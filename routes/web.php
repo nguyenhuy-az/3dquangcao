@@ -727,11 +727,10 @@ Route::group(['prefix' => 'ad3d'], function () {
 });
 
 //========== ======== Front-end =========== ========
-Route::group(['prefix' => 'work'], function () {
-    //đăng nhập
-    Route::get('login/', ['as' => 'qc.work.login.get', 'uses' => 'Work\WorkController@getLogin']);
-    Route::post('login/', ['as' => 'qc.work.login.post', 'uses' => 'Work\WorkController@login']);
-
+//đăng nhập
+Route::get('work-login/', ['as' => 'qc.work.login.get', 'uses' => 'Work\WorkController@getLogin']);
+Route::post('work-login/', ['as' => 'qc.work.login.post', 'uses' => 'Work\WorkController@login']);
+Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function () {
     //thoát
     Route::get('logout', ['as' => 'qc.work.logout.get', 'uses' => 'Work\WorkController@logout']);
 
@@ -866,7 +865,7 @@ Route::group(['prefix' => 'work'], function () {
             Route::post('confirm/{orderId?}', ['as' => 'qc.work.orders.provisional.confirm.post', 'uses' => 'Work\Orders\OrdersProvisionalController@postConfirm']);
 
             # huy dn hang
-            Route::get('delete/{orderId?}', ['as' => 'qc.work.orders.provisional.cancel.get', 'uses' => 'Work\Orders\OrdersController@cancelOrders']);
+            Route::get('delete/{orderId?}', ['as' => 'qc.work.orders.provisional.cancel.get', 'uses' => 'Work\Orders\OrdersProvisionalController@cancelOrders']);
 
             Route::get('/{loginMonth?}/{loginYear?}/{orderFilterName?}/{orderCustomerFilterName?}', ['as' => 'qc.work.orders.provisional.get', 'uses' => 'Work\Orders\OrdersProvisionalController@index']);
         });

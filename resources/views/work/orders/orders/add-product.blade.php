@@ -11,15 +11,12 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 ?>
-<div class="qc_work_orders_product_add qc-margin-top-5 col-xs-12 col-sm-12 col-md-12 col-lg-12" data-row="{!! $numberRow !!}" style=" padding: 0;">
-    <table class="table" style="margin: 0; border: 1px solid #d7d7d7;">
+<div class="qc_work_orders_product_add qc-margin-top-5 col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-left: 3px solid brown; padding: 0;">
+    <table class="table" style=" margin: 0; border: 1px solid #d7d7d7;">
         <tr>
-            <td class="text-center" style="background-color: whitesmoke;vertical-align: middle; padding: 0;">
-                <label class="qc_show_row qc-font-size-20">{!! $numberRow !!}</label>
-            </td>
             <td>
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                         <div class="form-group form-group-sm qc-margin-none">
                             <label>Loại sản phẩm: <i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                             <input type="text" class="txtProductType form-control" name="txtProductType[]"
@@ -36,16 +33,15 @@ $mobileStatus = $mobile->isMobile();
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-6 col-sm-12 col-md-3 col-lg-3">
+                    <div class="col-xs-6 col-sm-12 col-md-2 col-lg-2">
                         <div class="form-group form-group-sm qc-margin-none">
                             <label>Rộng<em>(mm)</em>: <i
                                         class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                             <input class="txtWidth form-control" type="text" onkeyup="qc_main.showNumberInput(this);"
-                                   name="txtWidth[]" style="height: 25px;"
-                                   placeholder="Chiều rộng sản phẩm" value="0">
+                                   name="txtWidth[]" style="height: 25px;" placeholder="Chiều rộng sản phẩm" value="">
                         </div>
                     </div>
-                    <div class="col-xs-6 col-sm-12 col-md-3 col-lg-3">
+                    <div class="col-xs-6 col-sm-12 col-md-2 col-lg-2">
                         <div class="form-group form-group-sm qc-margin-none">
                             <label>Cao<em>(mm)</em>: <i
                                         class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -54,7 +50,7 @@ $mobileStatus = $mobile->isMobile();
                                    placeholder="Chiều cao sản phẩm" value="">
                         </div>
                     </div>
-                    <div class="col-xs-6 col-sm-12 col-md-3 col-lg-3">
+                    <div class="col-xs-6 col-sm-12 col-md-2 col-lg-2">
                         <div class="form-group form-group-sm qc-margin-none">
                             <label>
                                 Đơn vị tính:
@@ -63,20 +59,7 @@ $mobileStatus = $mobile->isMobile();
                                    placeholder="Đơn vị tính" value="">
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                        <div class="form-group form-group-sm qc-margin-none">
-                            <label>
-                                Giá/sản phẩm:
-                                <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
-                            </label>
-                            <input class="txtPrice form-control" type="text" name="txtPrice[]"
-                                   placeholder="Gía trên một sản phẩm"
-                                   value="0" style="height:25px;">
-                        </div>
-                    </div>
-                    <div class="col-xs-6 col-sm-12 col-md-3 col-lg-3">
+                    <div class="col-xs-6 col-sm-12 col-md-2 col-lg-2">
                         <div class="form-group form-group-sm qc-margin-none">
                             <label>Số lượng: <i
                                         class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -84,7 +67,20 @@ $mobileStatus = $mobile->isMobile();
                                    placeholder="Số lượng sản phẩm" value="1">
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="form-group form-group-sm qc-margin-none">
+                            <label>
+                                Giá/sản phẩm:
+                                <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
+                            </label>
+                            <input class="txtPrice form-control" type="text" name="txtPrice[]"
+                                   placeholder="Gía trên một sản phẩm"
+                                   value="" style="height:25px;">
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                         <div class="form-group form-group-sm qc-margin-none">
                             <label>Chi chú</label>
                             <input type="text" class="txtDescription form-control" name="txtDescription[]"

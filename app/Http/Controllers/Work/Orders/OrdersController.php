@@ -12,12 +12,11 @@ use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\Staff\QcStaff;
-//use Illuminate\Http\Request;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use File;
 use Illuminate\Support\Facades\Session;
 use Input;
-use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
@@ -40,41 +39,37 @@ class OrdersController extends Controller
         $hFunction->dateDefaultHCM();
         $orderFilterName = ($orderFilterName == 'null') ? null : $orderFilterName;
         $orderCustomerFilterName = ($orderCustomerFilterName == 'null') ? null : $orderCustomerFilterName;
-        if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'orders'
-            ];
-            $dataStaffLogin = $modelStaff->loginStaffInfo();
-            $loginStaffId = $dataStaffLogin->staffId();
-            if ($monthFilter == 100 && $yearFilter == 100) {//xem tất cả đơn hang
-                $dateFilter = null;
-            } elseif ($monthFilter < 100 && $yearFilter == 100) {
-                $dateFilter = date('Y');
-                $yearFilter = date('Y');
-            } elseif ($monthFilter == 100 && $yearFilter != 100) {
-                if ($yearFilter == 0) $yearFilter = date('Y');// else $yearFilter =
-                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-            } elseif ($monthFilter < 100 && $yearFilter == 100) {
-                $yearFilter = $hFunction->currentYear();
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            } elseif ($monthFilter == 0 && $yearFilter == 0) {
-                $dateFilter = date('Y-m');
-                $monthFilter = date('m');
-                $yearFilter = date('Y');
+        $dataAccess = [
+            'object' => 'orders'
+        ];
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $loginStaffId = $dataStaffLogin->staffId();
+        if ($monthFilter == 100 && $yearFilter == 100) {//xem tất cả đơn hang
+            $dateFilter = null;
+        } elseif ($monthFilter < 100 && $yearFilter == 100) {
+            $dateFilter = date('Y');
+            $yearFilter = date('Y');
+        } elseif ($monthFilter == 100 && $yearFilter != 100) {
+            if ($yearFilter == 0) $yearFilter = date('Y');// else $yearFilter =
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($monthFilter < 100 && $yearFilter == 100) {
+            $yearFilter = $hFunction->currentYear();
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter == 0 && $yearFilter == 0) {
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
 
-            } else {
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            }
-            if (!empty($orderCustomerFilterName)) {
-                $dataOrders = $modelOrders->infoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus);
-            } else {
-                $dataOrders = $dataStaffLogin->orderAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, $paymentStatus, $orderFilterName);
-            }
-            $dataOrdersProvisional = $dataStaffLogin->orderProvisionAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, 0, null);
-            return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional', 'dataStaffLogin', 'dateFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
         } else {
-            return redirect()->route('qc.work.login.get');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
+        if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
+            $dataOrders = $modelOrders->infoNoCancelOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus);
+        } else {
+            $dataOrders = $dataStaffLogin->orderNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, $paymentStatus, $orderFilterName);
+        }
+        $dataOrdersProvisional = $dataStaffLogin->orderProvisionNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, 0, null);
+        return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional', 'dataStaffLogin', 'dateFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
 
     }
 
@@ -85,38 +80,34 @@ class OrdersController extends Controller
         $modelStaff = new QcStaff();
         $modelOrders = new QcOrder();
         $hFunction->dateDefaultHCM();
-        if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'orders'
-            ];
-            $dataStaffLogin = $modelStaff->loginStaffInfo();
-            $loginStaffId = $dataStaffLogin->staffId();
-            //$loginMonth = (empty($loginMonth)) ? date('m') : $loginMonth;
-            //$loginYear = (empty($loginYear)) ? date('Y') : $loginYear;
-            if ($monthFilter == 100 && $yearFilter == 100) {//xem tất cả đơn hang
-                $dateFilter = null;
-            }
-            if ($monthFilter < 100 && $yearFilter == 100) { //xem tất cả đơn hang
-                $dateFilter = null;
-                $monthFilter = 100;
-            } elseif ($monthFilter == 100 && $yearFilter != 100) {
-                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-            } elseif ($monthFilter < 100 && $yearFilter == 100) {
-                $yearFilter = $hFunction->currentYear();
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            } elseif ($monthFilter == 0 && $yearFilter == 0) {
-                $dateFilter = date('Y-m');
-                $monthFilter = date('m');
-                $yearFilter = date('Y');
-
-            } else {
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            }
-            $dataOrders = $dataStaffLogin->orderInfoOfStaffReceive($loginStaffId, $dateFilter, $salesConfirm, $keyWork);
-            return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataStaffLogin', 'monthFilter', 'yearFilter', 'salesConfirm', 'keyWork'));
-        } else {
-            return view('work.login');
+        $dataAccess = [
+            'object' => 'orders'
+        ];
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $loginStaffId = $dataStaffLogin->staffId();
+        //$loginMonth = (empty($loginMonth)) ? date('m') : $loginMonth;
+        //$loginYear = (empty($loginYear)) ? date('Y') : $loginYear;
+        if ($monthFilter == 100 && $yearFilter == 100) {//xem tất cả đơn hang
+            $dateFilter = null;
         }
+        if ($monthFilter < 100 && $yearFilter == 100) { //xem tất cả đơn hang
+            $dateFilter = null;
+            $monthFilter = 100;
+        } elseif ($monthFilter == 100 && $yearFilter != 100) {
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($monthFilter < 100 && $yearFilter == 100) {
+            $yearFilter = $hFunction->currentYear();
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter == 0 && $yearFilter == 0) {
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+
+        } else {
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        }
+        $dataOrders = $dataStaffLogin->orderInfoOfStaffReceive($loginStaffId, $dateFilter, $salesConfirm, $keyWork);
+        return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataStaffLogin', 'monthFilter', 'yearFilter', 'salesConfirm', 'keyWork'));
 
     }
 
@@ -153,15 +144,10 @@ class OrdersController extends Controller
         $dataAccess = [
             'object' => 'orders'
         ];
-        if ($modelStaff->checkLogin()) {
-            $dataOrders = $modelOrder->getInfo($orderId);
-            if (count($dataOrders) > 0) {
-                return view('work.orders.orders.print', compact('modelStaff', 'dataAccess', 'dataOrders'));
-            }
-        } else {
-            return view('work.login');
+        $dataOrders = $modelOrder->getInfo($orderId);
+        if (count($dataOrders) > 0) {
+            return view('work.orders.orders.print', compact('modelStaff', 'dataAccess', 'dataOrders'));
         }
-
     }
 
     # xem thong tin khach hang
@@ -302,8 +288,8 @@ class OrdersController extends Controller
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $modelCustomer = new QcCustomer();
-        //$modelProductType = new QcProductType();
-        //$dataProductType = $modelProductType->infoActivity();
+        $modelProductType = new QcProductType();
+        $dataProductType = $modelProductType->infoActivity();
         $dataAccess = [
             'object' => 'orders',
             'subObjectLabel' => 'Sản phảm'
@@ -311,13 +297,14 @@ class OrdersController extends Controller
         $dataCustomer = ($hFunction->checkEmpty($customerId)) ? $customerId : $modelCustomer->getInfo($customerId);
         $dataOrders = ($hFunction->checkEmpty($orderId)) ? $orderId : $modelOrder->getInfo($orderId);
         //$request->session()->forget('listProductAdd');
-        /*if (!Session::has('listProductAdd')){
-            $numberRow = 1;
-            $rowsProductions = Session::get('listProductAdd');
-            $rowsProductions= json_decode($rowsProductions);
-            $rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType','numberRow'))->render();
-            $request->session()->put('listProductAdd',json_encode($rowsProductions));
-        }*/
+        //if (!Session::has('listProductAdd')){
+           // $numberRow = 1;
+            //$rowsProductions = Session::get('listProductAdd');
+            //$rowsProductions= json_decode($rowsProductions);
+            //$rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType'))->render();
+            ///$request->session()->put('listProductAdd',json_encode($rowsProductions));
+            //$request->session()->put('listProductAdd',$rowsProductions);
+        //}
         return view('work.orders.orders.add', compact('modelStaff', 'dataAccess', 'dataCustomer', 'orderType', 'dataOrders'));
     }
 
@@ -327,35 +314,37 @@ class OrdersController extends Controller
         //$hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
         $dataProductType = $modelProductType->infoActivity();
-        /*if (Session::has('listProductAdd')){
+        if (Session::has('listProductAdd')){
             $rowsProductions = Session::get('listProductAdd');
-            $rowsProductions= json_decode($rowsProductions);
+            ///$rowsProductions= json_decode($rowsProductions);
         }else{
             $rowsProductions = [];
         }
-        $numberRow =  count($rowsProductions) + 1;
-        $rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType','numberRow'))->render();
-        $request->session()->put('listProductAdd',json_encode($rowsProductions));*/
+        //$numberRow =  count($rowsProductions) + 1;
+        //$rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType'))->render();
+        ///$request->session()->put('listProductAdd',json_encode($rowsProductions));
+       // $request->session()->put('listProductAdd',$rowsProductions);
 
-        $numberRow = 1;
-        return view('work.orders.orders.add-product', compact('dataProductType','numberRow'));
+        //$numberRow = 1;
+        return view('work.orders.orders.add-product');
     }
     public function cancelAddProduct(Request $request, $key=null)
     {
         if (Session::has('listProductAdd')){
             $rowsProductions = Session::get('listProductAdd');
-            $rowsProductions= json_decode($rowsProductions);
-           echo  $numberRow =  count($rowsProductions);
+            ///$rowsProductions= json_decode($rowsProductions);
+            $numberRow =  count($rowsProductions);
             if($numberRow == 1){
                 $request->session()->forget('listProductAdd');// huy danh sanh
             }else{
-                unset($rowsProductions[$numberRow -1]); // xoa 1 dòng
-                $request->session()->put('listProductAdd',json_encode($rowsProductions));
+                unset($rowsProductions[$key]); // xoa 1 dòng
+                ///$request->session()->put('listProductAdd',json_encode($rowsProductions));
+                $request->session()->put('listProductAdd',$rowsProductions);
             }
         }
     }
     // them don hang thuc
-    public function postAdd()
+    public function postAdd(Request $request)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         $hFunction = new \Hfunction();
@@ -369,119 +358,117 @@ class OrdersController extends Controller
         $dataStaff = $modelStaff->loginStaffInfo();
         $staffLoginId = $modelStaff->loginStaffId();
         //thong tin khach hang
-        $txtCustomerName = Request::input('txtCustomerName');
-        $txtPhone = Request::input('txtPhone');
-        $txtZalo = Request::input('txtZalo');
-        $txtAddress = Request::input('txtAddress');
+        $txtCustomerName = $request->input('txtCustomerName');
+        $txtPhone = $request->input('txtPhone');
+        $txtZalo = $request->input('txtZalo');
+        $txtAddress = $request->input('txtAddress');
 
         //thong tin san pham
-        $productType = Request::input('txtProductType');
-        $txtWidth = Request::input('txtWidth');
-        $txtHeight = Request::input('txtHeight');
+        $productType = $request->input('txtProductType');
+        $txtWidth = $request->input('txtWidth');
+        $txtHeight = $request->input('txtHeight');
         //$txtDepth = Request::input('txtDepth');
-        $txtAmount = Request::input('txtAmount');
-        $txtPrice = Request::input('txtPrice');
-        $txtDescription = Request::input('txtDescription');
+        $txtUnit = $request->input('txtUnit');
+        $txtAmount = $request->input('txtAmount');
+        $txtPrice = $request->input('txtPrice');
+        $txtDescription = $request->input('txtDescription');
         $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
         $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
-        $txtDepth = 0;//(empty($txtDepth)) ? 0 : $txtDepth;
+        //$txtDepth = (empty($txtDepth)) ? 0 : $txtDepth;
 
         //thong tin don hang
-        $txtOrderName = Request::input('txtOrderName');
-        $txtConstructionAddress = Request::input('txtConstructionAddress');
-        $txtConstructionPhone = Request::input('txtConstructionPhone');
-        $txtConstructionContact = Request::input('txtConstructionContact');
-        $txtBeforePay = Request::input('txtBeforePay');
+        $txtOrderName = $request->input('txtOrderName');
+        $txtConstructionAddress = $request->input('txtConstructionAddress');
+        $txtConstructionPhone = $request->input('txtConstructionPhone');
+        $txtConstructionContact = $request->input('txtConstructionContact');
+        $txtBeforePay = $request->input('txtBeforePay');
         $txtBeforePay = $hFunction->convertCurrencyToInt($txtBeforePay);
         $txtDateReceive = $hFunction->carbonNow();//Request::input('txtDateReceive');
-        $txtDateDelivery = Request::input('txtDateDelivery');
-        $cbDiscount = Request::input('cbDiscount');
-        $cbVat = Request::input('cbVat');
+        $txtDateDelivery = $request->input('txtDateDelivery');
+        $cbDiscount = $request->input('cbDiscount');
+        $cbVat = $request->input('cbVat');
         $oldCustomerId = null;
         $dataCustomer = null;
-        if (count($dataStaff) > 0) {
-            if (!empty($txtPhone)) {
-                #lay thong tin khach hang tu so dien thoai di dong
-                $dataCustomer = $modelCustomer->infoFromPhone($txtPhone);
-            }
-            if (!empty($txtZalo) && count($dataCustomer) <= 0) {
-                # lay thong tin khach hang tu so zalo
-                $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
-            }
+        if (!empty($txtPhone)) {
+            #lay thong tin khach hang tu so dien thoai di dong
+            $dataCustomer = $modelCustomer->infoFromPhone($txtPhone);
+        }
+        if (!empty($txtZalo) && count($dataCustomer) <= 0) {
+            # lay thong tin khach hang tu so zalo
+            $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
+        }
 
-            if (count($dataCustomer) > 0) {
-                # ton tai khach hang - khach hang cu
-                $customerId = $dataCustomer->customerId();
-                $customerName = $dataCustomer->name();
-            } else {
-                # khach hang moi
-                if ($modelCustomer->insert($txtCustomerName, null, null, $txtAddress, $txtPhone, $txtZalo)) {
-                    $customerId = $modelCustomer->insertGetId();
-                    $customerName = $txtCustomerName;
-                }
+        if (count($dataCustomer) > 0) {
+            # ton tai khach hang - khach hang cu
+            $customerId = $dataCustomer->customerId();
+            $customerName = $dataCustomer->name();
+        } else {
+            # khach hang moi
+            if ($modelCustomer->insert($txtCustomerName, null, null, $txtAddress, $txtPhone, $txtZalo)) {
+                $customerId = $modelCustomer->insertGetId();
+                $customerName = $txtCustomerName;
             }
-            if (!empty($customerId) && !empty($staffLoginId)) {
-                #cap nhat thong tin khach hang neu co thay doi dia chi
-                $modelCustomer->updateInfo($customerId, $customerName, null, null, $txtAddress, $txtPhone, $txtZalo);
-                # them don hang
-                $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
-                $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
-                $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
-                if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 1, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 1, null, 1)) {
-                    $orderId = $modelOrder->insertGetId();
-                    if (count($productType) > 0) {
-                        # them san pham
-                        foreach ($productType as $key => $value) {
-                            $dataProductType = $modelProductType->infoFromExactlyName($value);
-                            if (count($dataProductType) > 0) {
-                                $productTypeId = $dataProductType->typeId();
+        }
+        if (!empty($customerId) && !empty($staffLoginId)) {
+            #cap nhat thong tin khach hang neu co thay doi dia chi
+            $modelCustomer->updateInfo($customerId, $customerName, null, null, $txtAddress, $txtPhone, $txtZalo);
+            # them don hang
+            $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
+            $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
+            $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
+            if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 1, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 1, null, 1)) {
+                $orderId = $modelOrder->insertGetId();
+                if (count($productType) > 0) {
+                    # them san pham
+                    foreach ($productType as $key => $value) {
+                        $dataProductType = $modelProductType->infoFromExactlyName($value);
+                        if (count($dataProductType) > 0) {
+                            $productTypeId = $dataProductType->typeId();
+                        } else {
+                            $unit = $txtUnit[$key];
+                            if ($modelProductType->insert(null, $value, null,$unit, 0, 0)) {
+                                $productTypeId = $modelProductType->insertGetId();
                             } else {
-                                if ($modelProductType->insert(null, $value, null, null, 0, 0)) {
-                                    $productTypeId = $modelProductType->insertGetId();
-                                } else {
-                                    $productTypeId = null;
-                                }
-                            }
-                            if (!empty($productTypeId)) {
-                                $width = $txtWidth[$key];
-                                $height = $txtHeight[$key];
-                                $depth = $txtDepth[$key];
-                                $amount = $txtAmount[$key];
-                                $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
-                                $description = $txtDescription[$key];
-                                $modelProduct = new QcProduct();
-                                $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId);
+                                $productTypeId = null;
                             }
                         }
+                        if (!empty($productTypeId)) {
+                            $width = $txtWidth[$key];
+                            $height = $txtHeight[$key];
+                            $depth = 0;
+                            $amount = $txtAmount[$key];
+                            $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
+                            $description = $txtDescription[$key];
+                            $modelProduct = new QcProduct();
+                            $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId);
+                        }
                     }
-                    # thanh toan
-                    if ($txtBeforePay > 0) {
-                        # thanh toan don hang
-                        $modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone);
-                    }
-                    # cap nhat thong tin thanh toan don hang
-                    $modelOrder->updateFinishPayment($orderId);
-
-                    # bàn giao don hang = cong trinh
-                    $modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
-
-                    return redirect()->route('qc.work.orders.print.get', $orderId);
-                } else {
-                    Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
-                    return redirect()->back();
                 }
+                # thanh toan
+                if ($txtBeforePay > 0) {
+                    # thanh toan don hang
+                    $modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone);
+                }
+                # cap nhat thong tin thanh toan don hang
+                $modelOrder->updateFinishPayment($orderId);
+
+                # bàn giao don hang = cong trinh
+                $modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
+
+                return redirect()->route('qc.work.orders.print.get', $orderId);
             } else {
                 Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
                 return redirect()->back();
             }
         } else {
-            return redirect()->route('qc.work.login.get');
+            Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
+            return redirect()->back();
         }
 
     }
 
     // them don hang tam
-    public function postAddProvisional()
+    public function postAddProvisional(Request $request)
     {
         $hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
@@ -491,103 +478,100 @@ class OrdersController extends Controller
 
         $dataStaff = $modelStaff->loginStaffInfo();
         //thong tin khach hang
-        $txtCustomerName = Request::input('txtCustomerName');
-        $txtPhone = Request::input('txtPhone');
-        $txtZalo = Request::input('txtZalo');
-        $txtAddress = Request::input('txtAddress');
+        $txtCustomerName = $request->input('txtCustomerName');
+        $txtPhone = $request->input('txtPhone');
+        $txtZalo = $request->input('txtZalo');
+        $txtAddress = $request->input('txtAddress');
 
         //thong tin san pham
-        $productType = Request::input('txtProductType');
-        $txtWidth = Request::input('txtWidth');
-        $txtHeight = Request::input('txtHeight');
-        $txtDepth = Request::input('txtDepth');
-        $txtAmount = Request::input('txtAmount');
-        $txtPrice = Request::input('txtPrice');
-        $txtDescription = Request::input('txtDescription');
+        $productType = $request->input('txtProductType');
+        $txtWidth = $request->input('txtWidth');
+        $txtHeight = $request->input('txtHeight');
+        //$txtDepth = $request->input('txtDepth');
+        $txtUnit = $request->input('txtUnit');
+        $txtAmount = $request->input('txtAmount');
+        $txtPrice = $request->input('txtPrice');
+        $txtDescription = $request->input('txtDescription');
         $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
         $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
         $txtDepth = (empty($txtDepth)) ? 0 : $txtDepth;
 
         //thong tin don hang
-        $txtOrderName = Request::input('txtOrderName');
-        $txtConstructionAddress = Request::input('txtConstructionAddress');
-        $txtConstructionPhone = Request::input('txtConstructionPhone');
-        $txtConstructionContact = Request::input('txtConstructionContact');
+        $txtOrderName = $request->input('txtOrderName');
+        $txtConstructionAddress = $request->input('txtConstructionAddress');
+        $txtConstructionPhone = $request->input('txtConstructionPhone');
+        $txtConstructionContact = $request->input('txtConstructionContact');
         $txtDateReceive = null;
         $txtDateDelivery = null;
-        $cbDiscount = Request::input('cbDiscount');
-        $cbVat = Request::input('cbVat');
+        $cbDiscount = $request->input('cbDiscount');
+        $cbVat = $request->input('cbVat');
         $oldCustomerId = null;
         $dataCustomer = null;
-        if ($hFunction->checkCount($dataStaff)) {
-            $staffLoginId = $dataStaff->staffId();
-            if (!$hFunction->checkEmpty($txtPhone)) {
-                #lay thong tin khach hang tu so dien thoai di dong
-                $dataCustomer = $modelCustomer->infoFromPhone($txtPhone);
-            }
-            if (!$hFunction->checkEmpty($txtZalo) && count($dataCustomer) <= 0) {
-                # lay thong tin khach hang tu so zalo
-                $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
-            }
+        $staffLoginId = $dataStaff->staffId();
+        if (!$hFunction->checkEmpty($txtPhone)) {
+            #lay thong tin khach hang tu so dien thoai di dong
+            $dataCustomer = $modelCustomer->infoFromPhone($txtPhone);
+        }
+        if (!$hFunction->checkEmpty($txtZalo) && count($dataCustomer) <= 0) {
+            # lay thong tin khach hang tu so zalo
+            $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
+        }
 
-            if ($hFunction->checkCount($dataCustomer)) {
-                # ton tai khach hang - khach hang cu
-                $customerId = $dataCustomer->customerId();
-                $customerName = $dataCustomer->name();
-            } else {
-                # khach hang moi
-                if ($modelCustomer->insert($txtCustomerName, null, null, $txtAddress, $txtPhone, $txtZalo)) {
-                    $customerId = $modelCustomer->insertGetId();
-                    $customerName = $txtCustomerName;
-                }
+        if ($hFunction->checkCount($dataCustomer)) {
+            # ton tai khach hang - khach hang cu
+            $customerId = $dataCustomer->customerId();
+            $customerName = $dataCustomer->name();
+        } else {
+            # khach hang moi
+            if ($modelCustomer->insert($txtCustomerName, null, null, $txtAddress, $txtPhone, $txtZalo)) {
+                $customerId = $modelCustomer->insertGetId();
+                $customerName = $txtCustomerName;
             }
-            if (!empty($customerId) && !empty($staffLoginId)) {
-                #cap nhat thong tin khach hang neu co thay doi dia chi
-                $modelCustomer->updateInfo($customerId, $customerName, null, null, $txtAddress, $txtPhone, $txtZalo);
-                # them don hang
-                $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
-                $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
-                $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
-                if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 0, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 0, $hFunction->carbonNow(), 0)) {
-                    $orderId = $modelOrder->insertGetId();
-                    if (count($productType) > 0) {
-                        # them san pham
-                        foreach ($productType as $key => $value) {
-                            $dataProductType = $modelProductType->infoFromExactlyName($value);
-                            if (count($dataProductType) > 0) {
-                                $productTypeId = $dataProductType->typeId();
+        }
+        if (!empty($customerId) && !empty($staffLoginId)) {
+            #cap nhat thong tin khach hang neu co thay doi dia chi
+            $modelCustomer->updateInfo($customerId, $customerName, null, null, $txtAddress, $txtPhone, $txtZalo);
+            # them don hang
+            $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
+            $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
+            $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
+            if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 0, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 0, $hFunction->carbonNow(), 0)) {
+                $orderId = $modelOrder->insertGetId();
+                if (count($productType) > 0) {
+                    # them san pham
+                    foreach ($productType as $key => $value) {
+                        $dataProductType = $modelProductType->infoFromExactlyName($value);
+                        if (count($dataProductType) > 0) {
+                            $productTypeId = $dataProductType->typeId();
+                        } else {
+                            $unit = $txtUnit[$key];
+                            if ($modelProductType->insert(null, $value, null, $unit, 0, 0)) {
+                                $productTypeId = $modelProductType->insertGetId();
                             } else {
-                                if ($modelProductType->insert(null, $value, null, null, 0, 0)) {
-                                    $productTypeId = $modelProductType->insertGetId();
-                                } else {
-                                    $productTypeId = null;
-                                }
-                            }
-                            if (!empty($productTypeId)) {
-                                $width = $txtWidth[$key];
-                                $height = $txtHeight[$key];
-                                $depth = $txtDepth[$key];
-                                $amount = $txtAmount[$key];
-                                $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
-                                $description = $txtDescription[$key];
-                                $modelProduct = new QcProduct();
-                                $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId);
+                                $productTypeId = null;
                             }
                         }
+                        if (!empty($productTypeId)) {
+                            $width = $txtWidth[$key];
+                            $height = $txtHeight[$key];
+                            $depth = 0;
+                            $amount = $txtAmount[$key];
+                            $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
+                            $description = $txtDescription[$key];
+                            $modelProduct = new QcProduct();
+                            $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId);
+                        }
                     }
-                    return redirect()->route('qc.work.orders.print.get', $orderId);
-                } else {
-                    Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại 2');
-                    return redirect()->back();
                 }
+                return redirect()->route('qc.work.orders.print.get', $orderId);
             } else {
-                Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại 1');
+                Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại 2');
                 return redirect()->back();
             }
         } else {
-            return view('work.login');
+            Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại 1');
+            return redirect()->back();
         }
-
 
     }
 
@@ -615,19 +599,19 @@ class OrdersController extends Controller
         return view('work.orders.orders.add-product');
     }
 
-    public function postEditAddProduct($orderId)
+    public function postEditAddProduct(Request $request,$orderId)
     {
         $hFunction = new \Hfunction();
         $modelOrders = new QcOrder();
         $modelProductType = new QcProductType();
         //thong tin san pham
-        $productType = Request::input('txtProductType');
-        $txtWidth = Request::input('txtWidth');
-        $txtHeight = Request::input('txtHeight');
-        $txtDepth = Request::input('txtDepth');
-        $txtAmount = Request::input('txtAmount');
-        $txtPrice = Request::input('txtPrice');
-        $txtDescription = Request::input('txtDescription');
+        $productType = $request->input('txtProductType');
+        $txtWidth = $request->input('txtWidth');
+        $txtHeight = $request->input('txtHeight');
+        $txtDepth = $request->input('txtDepth');
+        $txtAmount = $request->input('txtAmount');
+        $txtPrice = $request->input('txtPrice');
+        $txtDescription = $request->input('txtDescription');
         $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
         $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
         $txtDepth = (empty($txtDepth)) ? 0 : $txtDepth;
@@ -691,13 +675,14 @@ class OrdersController extends Controller
     // thanh toan don hang
     public function getPayment($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelOrders = new QcOrder();
         $dataAccess = [
             'object' => 'orders',
             'subObjectLabel' => 'Thanh toán'
         ];
         $dataOrder = $modelOrders->getInfo($orderId);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             return view('work.orders.orders.payment', compact('dataAccess', 'dataOrder'));
         } else {
             return redirect()->back();
@@ -705,19 +690,19 @@ class OrdersController extends Controller
 
     }
 
-    public function postPayment($orderId)
+    public function postPayment(Request $request, $orderId)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrders = new QcOrder();
         $modelOrderPay = new QcOrderPay();
-        $txtMoney = Request::input('txtMoney');
-        $txtName = Request::input('txtName');
-        $txtPhone = Request::input('txtPhone');
-        $txtNote = Request::input('txtNote');
+        $txtMoney = $request->input('txtMoney');
+        $txtName = $request->input('txtName');
+        $txtPhone = $request->input('txtPhone');
+        $txtNote = $request->input('txtNote');
         $txtMoney = $hFunction->convertCurrencyToInt($txtMoney);
         $dataOrder = $modelOrders->getInfo($orderId);
-        if (count($txtMoney) > 0 && count($dataOrder) > 0) {
+        if ($hFunction->checkCount($txtMoney) && $hFunction->checkCount($dataOrder)) {
             if ($modelOrderPay->insert($txtMoney, $txtNote, $hFunction->carbonNow(), $orderId, $modelStaff->loginStaffId(), $txtName, $txtPhone)) {
                 # cap nhat thong tin thanh toan don hang
                 $modelOrders->updateFinishPayment($orderId);
@@ -732,30 +717,26 @@ class OrdersController extends Controller
     // ================ HUY DON HANG ===================
     public function getOrderCancel($orderId = null)
     {
+        $hFunction = new \Hfunction();
         $modelOrders = new QcOrder();
         $dataOrder = $modelOrders->getInfo($orderId);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             return view('work.orders.orders.cancel', compact('dataOrder'));
         }
     }
 
-    public function postOrderCancel($orderId = null)
+    public function postOrderCancel(Request $request,$orderId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        $txtPayment = Request::input('txtPayment');
-        $txtReason = Request::input('txtReason');
+        $txtPayment = $request->input('txtPayment');
+        $txtReason = $request->input('txtReason');
         $txtPayment = $hFunction->convertCurrencyToInt($txtPayment);
-
-        if (count($dataStaffLogin) > 0) {
-            $dataOrder = $modelOrder->getInfo($orderId);
-            if (count($dataOrder) > 0) {
-                $modelOrder->cancelOrder($orderId, $txtPayment, $txtReason, $dataStaffLogin->staffId());
-            }
-        } else {
-            return view('work.login');
+        $dataOrder = $modelOrder->getInfo($orderId);
+        if ($hFunction->checkCount($dataOrder)) {
+            $modelOrder->cancelOrder($orderId, $txtPayment, $txtReason, $dataStaffLogin->staffId());
         }
 
     }
@@ -763,26 +744,27 @@ class OrdersController extends Controller
     //======= ======== ===== QUAN LY THONG TIN DƠN HANG ==== ======== ======
     public function ordersInfo($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelOrders = new QcOrder();
         $dataAccess = [
             'object' => 'orders',
             'subObjectLabel' => 'Quản lý đơn hàng'
         ];
         $dataOrder = $modelOrders->getInfo($orderId);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             $pageBack = 1;
             return view('work.orders.orders.order-info', compact('dataAccess', 'dataOrder', 'pageBack'));
         }
     }
 
     // thay doi thong tin khach hang
-    public function postEditInfoCustomer($customerId)
+    public function postEditInfoCustomer(Request $request,$customerId)
     {
         $modelCustomer = new QcCustomer();
-        $txtCustomerName = Request::input('txtCustomerName');
-        $txtCustomerPhone = Request::input('txtCustomerPhone');
-        $txtCustomerZalo = Request::input('txtCustomerZalo');
-        $txtCustomerAddress = Request::input('txtCustomerAddress');
+        $txtCustomerName = $request->input('txtCustomerName');
+        $txtCustomerPhone = $request->input('txtCustomerPhone');
+        $txtCustomerZalo = $request->input('txtCustomerZalo');
+        $txtCustomerAddress = $request->input('txtCustomerAddress');
         if (!$modelCustomer->updateInfo($customerId, $txtCustomerName, null, null, $txtCustomerAddress, $txtCustomerPhone, $txtCustomerZalo)) {
             return "Tính năng đang bảo trì";
         }
@@ -790,21 +772,21 @@ class OrdersController extends Controller
     }
 
     // thay doi thong tin don hang
-    public function postEditInfoOrder($orderId)
+    public function postEditInfoOrder(Request $request,$orderId)
     {
         $modelOrder = new QcOrder();
-        $txtOrderName = Request::input('txtOrderName');
-        $cbDiscount = Request::input('cbDiscount');
-        $cbVat = Request::input('cbVat');
-        $txtConstructionAddress = Request::input('txtConstructionAddress');
-        $txtConstructionPhone = Request::input('txtConstructionPhone');
-        $txtConstructionContact = Request::input('txtConstructionContact');
+        $txtOrderName = $request->input('txtOrderName');
+        $cbDiscount = $request->input('cbDiscount');
+        $cbVat = $request->input('cbVat');
+        $txtConstructionAddress = $request->input('txtConstructionAddress');
+        $txtConstructionPhone = $request->input('txtConstructionPhone');
+        $txtConstructionContact = $request->input('txtConstructionContact');
         if ($modelOrder->checkProvisionUnConfirmed($orderId)) { // don hang dang bao gia
             $txtDateReceive = null;
             $txtDateDelivery = null;
         } else {
-            $txtDateReceive = Request::input('txtDateReceive');
-            $txtDateDelivery = Request::input('txtDateDelivery');
+            $txtDateReceive = $request->input('txtDateReceive');
+            $txtDateDelivery = $request->input('txtDateDelivery');
         }
         $staffReceiveId = $modelOrder->staffReceiveId($orderId)[0];
         if (!$modelOrder->updateInfo($orderId, $txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $staffReceiveId, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact)) {
@@ -815,20 +797,21 @@ class OrdersController extends Controller
     //sua thong tin thanh toan
     public function getEditInfoPay($payId)
     {
+        $hFunction = new \Hfunction();
         $modelOrderPay = new QcOrderPay();
         $dataOrderPay = $modelOrderPay->getInfo($payId);
-        if (count($dataOrderPay) > 0) {
+        if ($hFunction->checkCount($dataOrderPay)) {
             return view('work.orders.orders.edit-order-info-pay', compact('dataAccess', 'dataOrderPay'));
         }
     }
 
-    public function postEditInfoPay($payId)
+    public function postEditInfoPay(Request $request,$payId)
     {
         $hFunction = new \Hfunction();
         $modelOrderPay = new QcOrderPay();
-        $txtPayName = Request::input('txtPayName');
-        $txtPayPhone = Request::input('txtPayPhone');
-        $txtPayMoney = Request::input('txtPayMoney');
+        $txtPayName = $request->input('txtPayName');
+        $txtPayPhone = $request->input('txtPayPhone');
+        $txtPayMoney = $request->input('txtPayMoney');
         $txtPayMoney = $hFunction->convertCurrencyToInt($txtPayMoney);
         if (!$modelOrderPay->updateInfo($payId, $txtPayMoney, $txtPayName, $txtPayPhone)) {
             return "Tính năng đang bảo trì";
@@ -838,13 +821,14 @@ class OrdersController extends Controller
     //======== ======= =====  QUAN LY SAN PHAM CUA DON HANG ======= ========= ========
     public function productList($orderId = null)
     {
+        $hFunction = new \Hfunction();
         $modelOrders = new QcOrder();
         $dataAccess = [
             'object' => 'orders',
             'subObjectLabel' => 'Sản phẩm'
         ];
         $dataOrders = $modelOrders->getInfo($orderId);
-        if (count($dataOrders) > 0) {
+        if ($hFunction->checkCount($dataOrders)) {
             return view('work.orders.product.product', compact('dataAccess', 'dataOrders'));
         }
 
@@ -853,34 +837,30 @@ class OrdersController extends Controller
     # cap nhat hong tin SP
     public function getProductInfoEdit($productId)
     {
+        $hFunction = new \Hfunction();
         $modelProduct = new QcProduct();
         $dataProduct = $modelProduct->getInfo($productId);
-        if (count($dataProduct) > 0) {
+        if ($hFunction->checkCount($dataProduct)) {
             return view('work.orders.orders.product.edit-info', compact('dataProduct'));
         }
     }
 
-    public function postProductInfoEdit($productId)
+    public function postProductInfoEdit(Request $request,$productId)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
-        $txtWidth = Request::input('txtWidth');
-        $txtHeight = Request::input('txtHeight');
-        $txtAmount = Request::input('txtAmount');
-        $txtPrice = Request::input('txtPrice');
-        $txtDescription = Request::input('txtDescription');
+        $txtWidth = $request->input('txtWidth');
+        $txtHeight = $request->input('txtHeight');
+        $txtAmount = $request->input('txtAmount');
+        $txtPrice = $request->input('txtPrice');
+        $txtDescription = $request->input('txtDescription');
         $txtPrice = $hFunction->convertCurrencyToInt($txtPrice);
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
-        if (count($dataStaffLogin) > 0) {
-            $dataProduct = $modelProduct->getInfo($productId);
-            if (count($dataProduct) > 0) {
-                $modelProduct->updateInfoNotType($productId, $txtWidth, $txtHeight, 0, $txtPrice, $txtAmount, $txtDescription);
-            } else {
-                return "Tính năng đang cập nhật";
-            }
+        $dataProduct = $modelProduct->getInfo($productId);
+        if ($hFunction->checkCount($dataProduct)) {
+            $modelProduct->updateInfoNotType($productId, $txtWidth, $txtHeight, 0, $txtPrice, $txtAmount, $txtDescription);
         } else {
-            return redirect()->route('qc.work.login.get');
+            return "Tính năng đang cập nhật";
         }
 
     }
@@ -900,34 +880,30 @@ class OrdersController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
-        if ($modelStaff->checkLogin()) {
-            $modelProduct->confirmFinish($modelStaff->loginStaffId(), $hFunction->carbonNow(), $productId);
-        }
+        $modelProduct->confirmFinish($modelStaff->loginStaffId(), $hFunction->carbonNow(), $productId);
     }
 
     #----- ------ huy san pham ----- ----
     public function getProductCancel($productId = null)
     {
+        $hFunction = new \Hfunction();
         $modelProduct = new QcProduct();
         $dataProduct = $modelProduct->getInfo($productId);
-        if (count($dataProduct) > 0) {
+        if ($hFunction->checkCount($dataProduct)) {
             return view('work.orders.orders.product.cancel', compact('dataProduct'));
         }
     }
 
-    public function postProductCancel($productId)
+    public function postProductCancel(Request $request,$productId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        $txtReason = Request::input('txtReason');
-        if (count($dataStaffLogin) > 0) {
-            $dataOrder = $modelProduct->getInfo($productId);
-            if (count($dataOrder) > 0) {
-                $modelProduct->cancelProduct($productId, $txtReason, $dataStaffLogin->staffId());
-            }
-        } else {
-            return view('work.login');
+        $txtReason = $request->input('txtReason');
+        $dataOrder = $modelProduct->getInfo($productId);
+        if ($hFunction->checkCount($dataOrder)) {
+            $modelProduct->cancelProduct($productId, $txtReason, $dataStaffLogin->staffId());
         }
     }
 
@@ -944,46 +920,43 @@ class OrdersController extends Controller
     #them anh thiet ke
     public function getProductDesign($productId = null)
     {
+        $hFunction = new \Hfunction();
         $modelProduct = new QcProduct();
         $dataProduct = $modelProduct->getInfo($productId);
-        if (count($dataProduct) > 0) {
+        if ($hFunction->checkCount($dataProduct)) {
             return view('work.orders.orders.product.add-design', compact('dataProduct'));
         }
     }
 
-    public function postProductDesign($productId = null)
+    public function postProductDesign(Request $request, $productId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
         $modelProductDesign = new QcProductDesign();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        $txtDesignImage = Request::file('txtDesignImage');
-        if (count($dataStaffLogin) > 0) {
-            $loginStaffId = $dataStaffLogin->staffId();
-            $dataProduct = $modelProduct->getInfo($productId);
-            if (count($txtDesignImage) > 0) {
-                $name_img = stripslashes($_FILES['txtDesignImage']['name']);
-                $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
-                $source_img = $_FILES['txtDesignImage']['tmp_name'];
-                if ($modelProductDesign->uploadImage($source_img, $name_img)) {
-                    if ($modelProductDesign->insert($name_img, null, $productId, $dataStaffLogin->staffId())) {
-                        $newId = $modelProductDesign->insertGetId();
-                        # nguoi quan ly don hang up thiet ke ===> Ap dụng
-                        if ($loginStaffId == $dataProduct->order->staffReceiveId()) {
-                            $modelProductDesign->confirmApplyStatus($newId, 1, 1, $dataStaffLogin->staffId());
-                        }
-
-                    } else {
-                        $modelProduct->dropDesignImage($name_img);
-                        return "Tính năng đang cập nhật";
+        $txtDesignImage = $request->file('txtDesignImage');
+        $loginStaffId = $dataStaffLogin->staffId();
+        $dataProduct = $modelProduct->getInfo($productId);
+        if ($hFunction->getCount($txtDesignImage) > 0) {
+            $name_img = stripslashes($_FILES['txtDesignImage']['name']);
+            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $source_img = $_FILES['txtDesignImage']['tmp_name'];
+            if ($modelProductDesign->uploadImage($source_img, $name_img)) {
+                if ($modelProductDesign->insert($name_img, null, $productId, $dataStaffLogin->staffId())) {
+                    $newId = $modelProductDesign->insertGetId();
+                    # nguoi quan ly don hang up thiet ke ===> Ap dụng
+                    if ($loginStaffId == $dataProduct->order->staffReceiveId()) {
+                        $modelProductDesign->confirmApplyStatus($newId, 1, 1, $dataStaffLogin->staffId());
                     }
+
+                } else {
+                    $modelProduct->dropDesignImage($name_img);
+                    return "Tính năng đang cập nhật";
                 }
-            } else {
-                return "Chọn ảnh thiết kế";
             }
         } else {
-            return redirect()->route('qc.work.login.get');
+            return "Chọn ảnh thiết kế";
         }
     }
 
@@ -1000,19 +973,16 @@ class OrdersController extends Controller
         $modelStaff = new QcStaff();
         $modelProductDesign = new QcProductDesign();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        if (count($dataStaffLogin) > 0) {
-            $modelProductDesign->confirmApplyStatus($designId, $applyStatus, 1, $dataStaffLogin->staffId());
-        } else {
-            return redirect()->route('qc.work.login.get');
-        }
+        $modelProductDesign->confirmApplyStatus($designId, $applyStatus, 1, $dataStaffLogin->staffId());
     }
 
     #xem chi tiet hinh anh thiet ke
     public function viewProductDesign($designId)
     {
+        $hFunction = new \Hfunction();
         $modelProductDesign = new QcProductDesign();
         $dataProductDesign = $modelProductDesign->getInfo($designId);
-        if (count($dataProductDesign) > 0) {
+        if ($hFunction->checkCount($dataProductDesign)) {
             return view('work.orders.orders.product.view-design-image', compact('dataProductDesign'));
         }
     }

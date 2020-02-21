@@ -51,9 +51,9 @@ class OrdersProvisionalController extends Controller
                 $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
             }
             if (!empty($orderCustomerFilterName)) {
-                $dataOrders = $modelOrders->infoProvisionalOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter);
+                $dataOrders = $modelOrders->infoProvisionalNoCancelOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter);
             } else {
-                $dataOrders = $dataStaffLogin->orderProvisionAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, 0, $orderFilterName);
+                $dataOrders = $dataStaffLogin->orderProvisionNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, 0, $orderFilterName);
             }
 
             return view('work.orders.provisional.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataStaffLogin', 'dateFilter', 'monthFilter', 'yearFilter', 'provisionalConfirm', 'orderFilterName', 'orderCustomerFilterName'));
@@ -197,7 +197,7 @@ class OrdersProvisionalController extends Controller
     {
         $modelOrder = new QcOrder();
         if (!empty($orderId)) {
-            $modelOrder->cancelOrder($orderId);
+            $modelOrder->cancelOrderProvisional($orderId);
         }
     }
 }

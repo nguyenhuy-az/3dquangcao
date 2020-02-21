@@ -390,15 +390,31 @@ if ($provisionalStatus) {
                             <?php
                             $listProduct = Session::get('listProductAdd');
                             $listProduct = json_decode($listProduct);
-
+                            dd($listProduct);
                             ?>
                             @if($hFunction->checkCount($listProduct))
-                                @foreach($listProduct as $key => $value)
-                                    {!! $value !!}
+                                @foreach($listProduct as $key => $value )
+                                        <table class="table" style="margin: 0 0 5px 0; border: 1px solid #d7d7d7;">
+                                            <tr>
+                                                <td class="text-center" style="background-color: whitesmoke;vertical-align: middle; padding: 0;">
+                                                    <label class="qc_show_row qc-font-size-20">{!! $key + 1 !!}</label>
+                                                </td>
+                                                <td>
+                                                    {!! $value !!}
+                                                </td>
+                                                <td class="text-center" style="background-color: whitesmoke;vertical-align: middle; padding: 0;">
+                                                    <a class="qc_delete qc-link-red" data-href="{!! route('qc.work.orders.add.product.cancel.get', $key) !!}">
+                                                        Xóa
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+
                                 @endforeach
                             @endif
-                            {{--@include('work.orders.orders.add-product')--}}
+
                         @endif
+                        @include('work.orders.orders.add-product')
                     </div>
                 </div>
                 <div class="row">

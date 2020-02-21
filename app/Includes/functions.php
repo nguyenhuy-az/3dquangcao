@@ -68,6 +68,15 @@ class Hfunction
     {
         return ($dataCheck == null) ? true : false;
     }
+    // gop 2 mang
+    public function arrayMergeTwo($array_1, $array_2){
+        return array_merge($array_1, $array_2);
+    }
+    // xoa gia tri trung
+    public function arrayUnique($array){
+        return array_unique($array);
+    }
+
 
     public function setNull()
     {
@@ -81,8 +90,7 @@ class Hfunction
 
     public function checkCount($dataCheck = null)
     {
-        $result = (empty($dataCheck)) ? 0 : count($dataCheck);
-        return ($result > 0) ? true : false;
+        return ($this->getCountFromData($dataCheck) > 0) ? true : false;
     }
 
 
@@ -658,6 +666,12 @@ class Hfunction
     {
         return (empty($data)) ? 0 : count($data);
     }
+
+    public function getCount($value)
+    {
+        return count($value);
+    }
+
 
     public function getTypeImg($image)
     {

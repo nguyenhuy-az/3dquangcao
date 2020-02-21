@@ -20,87 +20,90 @@ $orderId = $dataOrders->orderId();
 @section('qc_work_order_body')
     <div class="row">
         <div style="width: 547px;">
-            <div id="qc_work_order_print_wrap" class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="row">
-                        <div class="text-center col-xs-4 col-sm-5 col-md-5 col-lg-5">
-                            @if(!$hFunction->checkEmpty($dataCompany->logo()))
-                                <img alt="..." src="{!! $dataCompany->pathSmallImage($dataCompany->logo()) !!}"
-                                     style="width: 100px; height: auto;">
-                            @endif
-                            <br/>
-                            <span>{!! $dataCompany->nameCode().':'.$dataCompany->name() !!}</span>
-                            <br/>
-                            <em>Đc/:{!! $dataCompany->address() !!}</em>
-                        </div>
-                        <div class="qc-container-table qc-container-table-border-none col-xs-8 col-sm-7 col-md-7 col-lg-7">
-                            <div class="table-responsive">
-                                <table class="table table-hover qc-margin-bot-none">
-                                    <tr>
-                                        <td>
-                                            <em class=" qc-color-grey">Mã ĐH:</em>
-                                        </td>
-                                        <td class="text-right">
-                                            <b>{!! $dataOrders->orderCode() !!}</b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <em class="qc-color-grey">Khách hàng:</em>
-                                        </td>
-                                        <td class="text-right">
-                                            <b>{!! $dataOrders->customer->name() !!}</b>
-                                            <b> - ĐT: {!! $dataOrders->customer->phone() !!}</b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <em class="qc-color-grey">Người nhận :</em>
-                                        </td>
-                                        <td class="text-right">
-                                            <b>{!! $dataOrders->staffReceive->fullName() !!}</b>
-                                            <b> - ĐT:{!! $dataOrders->staffReceive->phone() !!}</b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <em class="qc-color-grey">Ngày nhận:</em>
-                                        </td>
-                                        <td class="text-right">
-                                            <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->receiveDate()) !!}</b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <em class="qc-color-grey">Ngày giao:</em>
-                                        </td>
-                                        <td class="text-right">
-                                            <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->deliveryDate()) !!}</b>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <em class="qc-color-grey">Đ/c thi công:</em>
-                                        </td>
-                                        <td class="text-right">
+            <div id="qc_work_order_print_wrap" class="row" style="padding-top: 10px;">
+                <div class="qc-container-table qc-container-table-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <table class="table" style="margin: 0;">
+                        <tr>
+                            <td class="text-center" style="width: 200px;">
+                                @if(!$hFunction->checkEmpty($dataCompany->logo()))
+                                    <img alt="..." src="{!! $dataCompany->pathSmallImage($dataCompany->logo()) !!}"
+                                         style="width: 70px; height: auto;">
+                                @endif
+                                <br/>
+                                <span>{!! $dataCompany->nameCode().':'.$dataCompany->name() !!}</span>
+                                <br/>
+                                <em>Đc/:{!! $dataCompany->address() !!}</em>
+                            </td>
+                            <td style="width: 347px;">
+                                <div class="table-responsive">
+                                    <table class="table table-hover qc-margin-bot-none">
+                                        <tr>
+                                            <td  style="width: 100px;" >
+                                                <em class=" qc-color-grey">Mã ĐH:</em>
+                                            </td>
+                                            <td class="text-right">
+                                                <b>{!! $dataOrders->orderCode() !!}</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <em class="qc-color-grey">Khách hàng:</em>
+                                            </td>
+                                            <td class="text-right">
+                                                <b>{!! $dataOrders->customer->name() !!}</b>
+                                                <b> - ĐT: {!! $dataOrders->customer->phone() !!}</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <em class="qc-color-grey">Người nhận :</em>
+                                            </td>
+                                            <td class="text-right">
+                                                <b>{!! $dataOrders->staffReceive->fullName() !!}</b>
+                                                <b> - ĐT:{!! $dataOrders->staffReceive->phone() !!}</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <em class="qc-color-grey">Ngày nhận:</em>
+                                            </td>
+                                            <td class="text-right">
+                                                <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->receiveDate()) !!}</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <em class="qc-color-grey">Ngày giao:</em>
+                                            </td>
+                                            <td class="text-right">
+                                                <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->deliveryDate()) !!}</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <em class="qc-color-grey">Đ/c thi công:</em>
+                                            </td>
+                                            <td class="text-right">
                                     <span class="pull-right">{!! $dataOrders->constructionAddress() !!}
                                         - ĐT: {!! $dataOrders->constructionPhone() !!}
                                         - tên: {!! $dataOrders->constructionContact() !!}</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <b class="qc-font-size-20">HÓA ĐƠN</b>
-
-                            <p>
-                                <label class="qc-font-size-16">{!! $dataOrders->name() !!}</label>
-                                {{--<i class="glyphicon glyphicon-minus"></i>--}}
-                            </p>
-                        </div>
-                    </div>
-
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center" colspan="2">
+                                <b class="qc-font-size-16">HÓA ĐƠN ĐẶT HÀNG (ORDER)</b>
+                                <p>
+                                    <em>Đặt hàng:</em>
+                                    <label class="qc-font-size-16">{!! $dataOrders->name() !!}</label>
+                                    {{--<i class="glyphicon glyphicon-minus"></i>--}}
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="qc-margin-bot-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
@@ -146,11 +149,11 @@ $orderId = $dataOrders->orderId();
                                                 <td style="padding-bottom: 10px;">
                                                     @if($hFunction->checkCount($dataProductDesign))
                                                         @if($dataProductDesign->checkApplyStatus())
-                                                            <img style="width: 70px; height: auto; margin: 5px; border: 2px solid green;"
+                                                            <img style="width: 70px; height: auto; margin: 5px;"
                                                                  title="Đang áp dụng"
                                                                  src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                         @else
-                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px; border: 2px solid red;"
+                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px;"
                                                                  title="Không được áp dụng"
                                                                  src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                         @endif
@@ -196,7 +199,10 @@ $orderId = $dataOrders->orderId();
 
                                             </td>
                                             <td>
-                                                Tổng tiền(VND):
+                                                <b>
+                                                    Tổng tiền VNĐ:
+                                                    (Chưa VAT 10%)
+                                                </b>
                                             </td>
                                             <td colspan="7"></td>
                                             <td class="text-right">
@@ -218,10 +224,7 @@ $orderId = $dataOrders->orderId();
                 {{-- Thông tin thanh toán --}}
                 <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
-                        <div class="text-center col-xs-4 col-sm-6 col-md-6 col-lg-6" style="background-color: whitesmoke; height: 70px;" >
-                            Mẫu TK gửi sau
-                        </div>
-                        <div class="qc-container-table qc-container-table-border-none col-xs-8 col-sm-6 col-md-6-lg-6">
+                        <div class="qc-container-table qc-container-table-border-none col-xs-8 col-sm-6 col-md-6-lg-6" style="float: right;">
                             <div class="table-responsive">
                                 <table class="table table-hover qc-margin-bot-none">
                                     <tr>
@@ -291,7 +294,12 @@ $orderId = $dataOrders->orderId();
                             <em class="qc-color-grey">(Ký tên và ghi rõ họ tên)</em>
                         </div>
                     </div>
-
+                    <div class="row">
+                        <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                             style="background-color: whitesmoke; height: 70px;">
+                            Mẫu TK gửi sau
+                        </div>
+                    </div>
                 </div>
 
 
