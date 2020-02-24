@@ -278,6 +278,13 @@ $hrefIndex = route('qc.work.orders.get');
                                                             <i class="qc-font-size-14 fa fa-print"></i>
                                                         </a>
                                                         @if(!$cancelStatus)
+                                                                @if($orders->checkConfirmStatus())
+                                                                    &nbsp;&nbsp;
+                                                                    <a class="qc-link-green" title="In nghiệm thu"
+                                                                       href="{!! route('qc.work.orders.print_confirm.get', $orderId) !!}">
+                                                                        <i class="qc-font-size-14 glyphicon glyphicon-list-alt"></i>
+                                                                    </a>
+                                                                @endif
                                                             @if(!$finishStatus)
                                                                 @if($orders->checkStaffInput($dataStaffLogin->staffId()))
                                                                     &nbsp;&nbsp;

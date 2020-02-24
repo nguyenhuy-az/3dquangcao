@@ -222,18 +222,19 @@ $(document).ready(function () {
     })
 });
 
-// in hoa don
+// in
 $(document).ready(function () {
-    //khi chọn công ty...
-    //$('body').on('click', '.qc_ad3d_order_order_print', function () {
-    // window.print();
-    /*var prtContent = document.getElementById('qc_ad3d_order_order_print_wrap');
-     var WinPrint = window.open('','','letf=0,top=0,width=800,height=800');
-     WinPrint.document.write(prtContent.innerHTML);
-     WinPrint.document.close();
-     WinPrint.focus();
-     WinPrint.print();*/
-    //})
+    /*in hoa don*/
+    $('#qc_ad3d_order_order_print_wrap').on('click', '.qc_print', function () {
+        $(this).parents('#qc_ad3d_order_order_print_wrap_act').remove();
+        window.print();
+    });
+
+    /*in nghiem thu*/
+    $('#qc_ad3d_order_order_print_confirm_wrap').on('click', '.qc_print', function () {
+        $(this).parents('#qc_ad3d_order_order_print_confirm_wrap_act').remove();
+        window.print();
+    });
 });
 
 //-------------------- LOC DON HANG ------------

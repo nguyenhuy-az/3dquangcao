@@ -282,28 +282,27 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     <td>
                                         <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                <a class="qc-link" title="Click xem menu"
-                                                   onclick="qc_main.toggle('#ad3d_order_menu_{!! $orderId !!}');">
+                                                <a class="qc-link" title="Click xem menu">
                                                     {!! $order->name() !!}
                                                 </a>
                                             </div>
                                         </div>
-                                        <div id="ad3d_order_menu_{!! $orderId !!}" class="row qc-display-none">
+                                        <div  class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <a class="qc_view qc-link-green">
-                                                    <i class="qc-font-size-20 glyphicon glyphicon-eye-open"></i>
+                                                    <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
                                                 </a>
                                                 &nbsp;&nbsp;
                                                 <a class="qc-link" title="In đơn hàng"
                                                    href="{!! route('qc.ad3d.order.order.print.get', $orderId) !!}">
-                                                    <i class="qc-font-size-20 fa fa-print"></i>
+                                                    <i class="qc-font-size-14 fa fa-print"></i>
                                                 </a>
                                                 @if(!$cancelStatus)
                                                     @if($order->checkConfirmStatus())
                                                         &nbsp;&nbsp;
                                                         <a class="qc-link-green" title="In nghiệm thu"
                                                            href="{!! route('qc.ad3d.order.order.confirm.print.get', $orderId) !!}">
-                                                            <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
+                                                            <i class="qc-font-size-16 glyphicon glyphicon-list-alt"></i>
                                                         </a>
                                                     @endif
                                                 @endif

@@ -52,7 +52,7 @@ $mobileStatus = $mobile->isMobile();
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group qc-padding-none">
-                                <label>Số tiền <i class="qc-color-red glyphicon glyphicon-star-empty"></i>:</label>
+                                <label>Số tiền / SP <i class="qc-color-red glyphicon glyphicon-star-empty"></i>:</label>
                                 <input type="text" class="form-control" name="txtPrice" placeholder="Nhập giá sản phẩm"
                                        onkeyup="qc_main.showFormatCurrency(this);"
                                        value="{!! $hFunction->currencyFormat($dataProduct->price()) !!}">

@@ -4,6 +4,7 @@ namespace App\Models\Ad3d\Order;
 
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
+use App\Models\Ad3d\OrderImage\QcOrderImage;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\Staff\QcStaff;
@@ -247,6 +248,18 @@ class QcOrder extends Model
     }
 
     //========== ========= ========= RELATION ========== ========= ==========
+    //---------- thiet ke -----------
+    public function orderImage()
+    {
+        return $this->hasMany('App\Models\Ad3d\OrderImage\QcOrderImage', 'order_id', 'order_id');
+    }
+
+    public function orderImageInfoActivity($orderId=null)
+    {
+        $modelOrderImage = new QcOrderImage();
+        return $modelOrderImage->infoActivityOfOrder($this->checkIdNull($orderId));
+    }
+
     //---------- khach hang -----------
     public function customer()
     {
@@ -300,6 +313,7 @@ class QcOrder extends Model
             return QcOrder::whereIn('customer_id', $listCustomerId)->where('provisionalStatus', 0)->orderBy('receiveDate', $orderBy)->get();
         }
     }
+
     // lay thong tin don hang BAO GIA cua 1 hoac nhieu khach hang - khong huy
     public function infoProvisionalNoCancelOfListCustomer($listCustomerId, $date = null, $orderBy = 'DESC')
     {
@@ -400,7 +414,7 @@ class QcOrder extends Model
                 $listOrderId = QcOrder::where('name', 'like', "%$keyWord%")->pluck('order_id');
             }
         }
-        $selectOrderId = $hFunction->arrayUnique($hFunction->arrayMergeTwo($listOrderId->toArray(),$listOrderOfPaidId->toArray()));
+        $selectOrderId = $hFunction->arrayUnique($hFunction->arrayMergeTwo($listOrderId->toArray(), $listOrderOfPaidId->toArray()));
         return QcOrder::where(['staffReceive_id' => $staffId])->whereIn('order_id', $selectOrderId)->where('confirmStatus', 1)->orderBy('receiveDate', $orderBy)->get();
     }
 
@@ -434,7 +448,7 @@ class QcOrder extends Model
                 $listOrderId = QcOrder::where('name', 'like', "%$keyWord%")->pluck('order_id');
             }
         }
-        $selectOrderId = $hFunction->arrayUnique($hFunction->arrayMergeTwo($listOrderId->toArray(),$listOrderOfPaidId->toArray()));
+        $selectOrderId = $hFunction->arrayUnique($hFunction->arrayMergeTwo($listOrderId->toArray(), $listOrderOfPaidId->toArray()));
         return QcOrder::where(['staffReceive_id' => $staffId])->whereIn('order_id', $selectOrderId)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->get();
     }
 
@@ -519,6 +533,7 @@ class QcOrder extends Model
             }
         }
     }
+
     //---------- ---------- ---------- cong ty ----------- ---------- ----------
     public function company()
     {
@@ -667,6 +682,7 @@ class QcOrder extends Model
         return $modelProduct->infoActivityOfOrder($this->checkIdNull($orderId));
     }
 
+    // tat ca san pham cua don hang bao dong da huy
     public function allProductOfOrder($orderId = null)
     {
         $modelProduct = new QcProduct();

@@ -7,6 +7,7 @@ use App\Models\Ad3d\Customer\QcCustomer;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
+use App\Models\Ad3d\OrderImage\QcOrderImage;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
@@ -129,9 +130,10 @@ class OrdersController extends Controller
     # xem chi tiet thanh toan
     public function viewOrderPay($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelOrder = new QcOrder();
         $dataOrder = $modelOrder->getInfo($orderId);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             return view('work.orders.orders.view-order-pay', compact('dataOrder'));
         }
     }
@@ -139,14 +141,30 @@ class OrdersController extends Controller
     #in hoa don
     public function printOrders($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $dataAccess = [
             'object' => 'orders'
         ];
         $dataOrders = $modelOrder->getInfo($orderId);
-        if (count($dataOrders) > 0) {
+        if ($hFunction->checkCount($dataOrders)) {
             return view('work.orders.orders.print', compact('modelStaff', 'dataAccess', 'dataOrders'));
+        }
+    }
+
+    #in nghiem thu
+    public function printOrderConfirm($orderId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelOrder = new QcOrder();
+        $dataAccess = [
+            'object' => 'orders'
+        ];
+        $dataOrder = $modelOrder->getInfo($orderId);
+        if ($hFunction->checkCount($dataOrder)) {
+            return view('work.orders.orders.print-confirm', compact('modelStaff', 'dataAccess', 'dataOrder'));
         }
     }
 
@@ -815,6 +833,42 @@ class OrdersController extends Controller
         $txtPayMoney = $hFunction->convertCurrencyToInt($txtPayMoney);
         if (!$modelOrderPay->updateInfo($payId, $txtPayMoney, $txtPayName, $txtPayPhone)) {
             return "Tính năng đang bảo trì";
+        }
+    }
+    // them thiet ke tong the
+    #them anh thiet ke
+    public function getAddDesign($orderId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelOrder = new QcOrder();
+        $dataOrder = $modelOrder->getInfo($orderId);
+        if ($hFunction->checkCount($dataOrder)) {
+            return view('work.orders.orders.add-design', compact('dataOrder'));
+        }
+    }
+
+    public function postAddDesign(Request $request, $orderId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelOrder = new QcOrder();
+        $modelOrderImage = new QcOrderImage();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $txtDesignImage = $request->file('txtDesignImage');
+        $loginStaffId = $dataStaffLogin->staffId();
+        $dataOrder = $modelOrder->getInfo($orderId);
+        if ($hFunction->getCount($txtDesignImage) > 0 & $hFunction->checkCount($dataOrder)) {
+            $name_img = stripslashes($_FILES['txtDesignImage']['name']);
+            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $source_img = $_FILES['txtDesignImage']['tmp_name'];
+            if ($modelOrderImage->uploadImage($source_img, $name_img)) {
+                if (!$modelOrderImage->insert($name_img,$orderId, $loginStaffId)) {
+                    $modelOrderImage->dropImage($name_img);
+                    return "Tính năng đang cập nhật";
+                }
+            }
+        } else {
+            return "Chọn ảnh thiết kế";
         }
     }
 

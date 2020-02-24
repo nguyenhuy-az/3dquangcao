@@ -744,8 +744,12 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             #thay doi thong tin thanh toan
             Route::get('pay-edit/{payId?}', ['as' => 'qc.work.orders.info.pay.edit.post', 'uses' => 'Work\Orders\OrdersController@getEditInfoPay']);
             Route::post('pay-edit/{payId?}', ['as' => 'qc.work.orders.info.pay.edit.post', 'uses' => 'Work\Orders\OrdersController@postEditInfoPay']);
-
             Route::get('list/{orderId?}', ['as' => 'qc.work.orders.info.get', 'uses' => 'Work\Orders\OrdersController@ordersInfo']);
+        });
+        #them thiet ke
+        Route::group(['prefix' => 'design'], function () {
+            Route::get('/{orderId?}', ['as' => 'qc.work.orders.info.design.add.get', 'uses' => 'Work\Orders\OrdersController@getAddDesign']);
+            Route::post('/{orderId?}', ['as' => 'qc.work.orders.info.design.add.post', 'uses' => 'Work\Orders\OrdersController@postAddDesign']);
         });
         Route::group(['prefix' => 'product'], function () {
             # thiet ke
@@ -795,6 +799,10 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
         # in don hang
         Route::get('print/{orderId?}', ['as' => 'qc.work.orders.print.get', 'uses' => 'Work\Orders\OrdersController@printOrders']);
+
+        # in nghiem thu
+        Route::get('print-confirm/{orderId?}', ['as' => 'qc.work.orders.print_confirm.get', 'uses' => 'Work\Orders\OrdersController@printOrderConfirm']);
+
 
         # them don hang moi va them san pham cho don hang
         Route::group(['prefix' => 'add'], function () {

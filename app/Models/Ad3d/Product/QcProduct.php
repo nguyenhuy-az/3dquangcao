@@ -246,6 +246,11 @@ class QcProduct extends Model
         return QcProduct::where('order_id', $orderId)->get();
     }
 
+    public function infoNoCancelOfOrder($orderId)
+    {
+        //return QcProduct::where('order_id', $orderId)->where('cancelStatus', 0)->get();
+    }
+
     public function cancelByOrder($orderId)
     {
         return QcProduct::where('order_id', $orderId)->update(['cancelStatus' => 1]);
@@ -253,9 +258,10 @@ class QcProduct extends Model
 
     public function totalPriceOfOrder($orderId)
     {
+        $hFunction = new \Hfunction();
         $totalPrice = 0;
-        $dataProduct = QcProduct::where('order_id', $orderId)->get();
-        if (count($dataProduct) > 0) {
+        $dataProduct = QcProduct::where('order_id', $orderId)->where('cancelStatus',0)->get();
+        if ($hFunction->checkCount($dataProduct)) {
             foreach ($dataProduct as $key => $value) {
                 $totalPrice = $totalPrice + ($value['price'] * $value['amount']);
             }

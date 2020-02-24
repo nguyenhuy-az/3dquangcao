@@ -432,16 +432,6 @@ var qc_work_orders = {
                     qc_main.scrollTop();
                 }
             },
-            getApply: function (href) {
-                qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-            },
-            saveApply: function (form) {
-                var notifyContent = $(form).find('.frm_notify');
-                if (confirm('Tôi đồng ý sử dụng thiết kế này?')) {
-                    qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
-                    qc_main.scrollTop();
-                }
-            },
         }
 
     },
@@ -536,6 +526,28 @@ var qc_work_orders = {
                 }
             }
         },
+        design: {
+            getDesignImage: function (href) {
+                qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+            },
+            saveDesign: function (form) {
+                var notifyContent = $(form).find('.frm_notify');
+                if (confirm('Tôi đồng ý thêm thiết kế này?')) {
+                    qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
+                    qc_main.scrollTop();
+                }
+            },
+            getApply: function (href) {
+                qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+            },
+            saveApply: function (form) {
+                var notifyContent = $(form).find('.frm_notify');
+                if (confirm('Tôi đồng ý sử dụng thiết kế này?')) {
+                    qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
+                    qc_main.scrollTop();
+                }
+            },
+        }
     },
     edit: {
         addProduct: function (href) {
@@ -716,11 +728,16 @@ $(document).ready(function () {
         qc_work_orders.product.saveConfirm($(this).parents('.frmWorkOrderProductConfirm'));
     });
 
-    /*in*/
+    /*in don hang*/
     $('#qc_work_order_print_wrap').on('click', '.qc_work_order_order_print', function () {
         $(this).parents('#qc_work_order_order_print_wrap_act').remove();
         window.print();
+    });
 
+    /*in nghiem thu*/
+    $('#qc_work_order_order_print_confirm_wrap').on('click', '.qc_print', function () {
+        $(this).parents('#qc_work_order_order_print_confirm_wrap_act').remove();
+        window.print();
     });
 });
 /* ---------- LOC THONG TIN -----------------*/
@@ -885,6 +902,17 @@ $(document).ready(function () {
     /*Thanh toan don hang*/
     $('.qc_frm_work_orders_payment').on('click', '.qc_save', function () {
         qc_work_orders.payment.save('.qc_frm_work_orders_payment');
+    });
+});
+
+/* ---------  THEM THIET KE TONG THE --------------- */
+$(document).ready(function(){
+    /*------- ------ them anh thiet ke ----- ---- */
+    $('#qc_work_orders_wrap').on('click', '.qc_work_order_design_image_add', function () {
+        qc_work_orders.info.design.getDesignImage($(this).data('href'));
+    });
+    $('body').on('click', '.qc_frm_order_add_design .qc_save', function () {
+        qc_work_orders.info.design.saveDesign($(this).parents('.qc_frm_order_add_design'));
     });
 });
 /* ---------- THEM DON HANG THUC -----------------*/
