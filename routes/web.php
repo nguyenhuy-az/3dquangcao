@@ -975,7 +975,15 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
         // cong viec da ket thuc
         Route::group(['prefix' => 'manage'], function () {
-            Route::get('/', ['as' => 'qc.work.work_allocation.manage.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManage@index']);
+            #loc don hang
+            Route::group(['prefix' => 'filter'], function () {
+                // loc ten don hang
+                Route::get('order-name/{name?}', ['as' => 'qc.work.work_allocation.manage.filter.order.check.name', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@filterCheckOrderName']);
+                // loc theo ten khach hang
+                Route::get('customer-name/{name?}', ['as' => 'qc.work.work_allocation.manage.filter.customer.check.name', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@filterCheckCustomerName']);
+            });
+
+            Route::get('/{day?}/{month?}/{year?}/{paymentStatus?}/{orderFilterName?}/{orderCustomerFilterName?}/{staffFilterName?}', ['as' => 'qc.work.work_allocation.manage.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@index']);
         });
         // san pham da lam
         Route::group(['prefix' => 'construction'], function () {

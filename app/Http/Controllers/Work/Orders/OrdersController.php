@@ -438,11 +438,11 @@ class OrdersController extends Controller
             $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
             if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 1, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 1, null, 1)) {
                 $orderId = $modelOrder->insertGetId();
-                if (count($productType) > 0) {
+                if ($hFunction->checkCount($productType)) {
                     # them san pham
                     foreach ($productType as $key => $value) {
                         $dataProductType = $modelProductType->infoFromExactlyName($value);
-                        if (count($dataProductType) > 0) {
+                        if ($hFunction->checkCount($dataProductType)) {
                             $productTypeId = $dataProductType->typeId();
                         } else {
                             $unit = $txtUnit[$key];
@@ -473,7 +473,7 @@ class OrdersController extends Controller
                 $modelOrder->updateFinishPayment($orderId);
 
                 # bàn giao don hang = cong trinh
-                $modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
+                ///$modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
 
                 return redirect()->route('qc.work.orders.print.get', $orderId);
             } else {

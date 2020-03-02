@@ -455,7 +455,7 @@ class QcOrder extends Model
     public function selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $nameFiler = null, $dateFilter = null, $paymentStatus)
     {
         $dataOrder = null;
-        if ($paymentStatus == 2) { // 2 = bao gom  chua thanh toan xong va da thanh toan xong
+        if ($paymentStatus >= 2) { // 2 = bao gom  chua thanh toan xong va da thanh toan xong
             if (empty($nameFiler)) {
                 if (empty($dateFilter)) {
                     $dataOrder = QcOrder::whereIn('staff_id', $listStaffId)->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
@@ -805,6 +805,13 @@ class QcOrder extends Model
     {
         return QcOrder::where('name', 'like', "%$name%")->get();
     }
+
+    # lay tat ca don hang
+    public function infoNoCancelFromSuggestionName($name)
+    {
+        return QcOrder::where('name', 'like', "%$name%")->where('cancelStatus', 0)->get();
+    }
+
 
     public function infoFromSuggestionNameOffReceiveStaff($staffId, $name)
     {
