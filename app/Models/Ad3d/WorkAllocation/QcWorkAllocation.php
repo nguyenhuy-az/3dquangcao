@@ -47,6 +47,9 @@ class QcWorkAllocation extends Model
         return $this->lastId;
     }
 
+    public function checkIdNull($allocationId){
+        return (empty($allocationId)) ? $this->allocationId() : $allocationId;
+    }
     // ket thuc cong viec
     public function confirmFinish($allocationId, $reportDate, $finishStatus, $finishReason = 0, $finishNoted = null)
     {
@@ -188,7 +191,12 @@ class QcWorkAllocation extends Model
     public function workAllocationFinishInfo($allocationId = null)
     {
         $modelWorkAllocationFinish = new QcWorkAllocationFinish();
-        return $modelWorkAllocationFinish->infoOfAllocation((empty($allocationId)) ? $this->allocationId() : $allocationId);
+        return $modelWorkAllocationFinish->infoOfAllocation($this->checkIdNull($allocationId));
+    }
+
+    public function checkFinishAllocation($allocationId = null){
+        $modelWorkAllocationFinish = new QcWorkAllocationFinish();
+        return $modelWorkAllocationFinish->checkFinishOfAllocation($this->checkIdNull($allocationId));
     }
 
     //---------- bao cao -----------

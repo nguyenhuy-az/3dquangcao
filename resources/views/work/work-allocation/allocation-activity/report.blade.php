@@ -29,7 +29,7 @@ $currentYear = date('Y');
                 <h3>BÁO CÁO CÔNG VIỆC</h3>
             </div>
             <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <form class="qc_frm_Work_allocation_report form-horizontal" name="qc_frm_time_end_add" role="form" method="post" enctype="multipart/form-data"
+                <form class="qc_frm_Work_allocation_activity_report form-horizontal" name="qc_frm_time_end_add" role="form" method="post" enctype="multipart/form-data"
                       action="{!! route('qc.work.work_allocation.activity.report.get') !!}">
                     <div class="row">
                         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">

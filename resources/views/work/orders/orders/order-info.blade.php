@@ -488,14 +488,16 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                     @if($dataProductDesign->checkApplyStatus())
                                                         <a class="qc_work_order_product_design_image_view qc-link"
                                                            data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
-                                                            <img style="width: 70px; height: auto; margin-bottom: 5px;" title="Đang áp dụng"
+                                                            <img style="width: 70px; height: auto; margin-bottom: 5px;"
+                                                                 title="Đang áp dụng"
                                                                  src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                         </a>
                                                         <br/>
                                                     @else
                                                         <a class="qc_work_order_product_design_image_view qc-link"
                                                            data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
-                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px;" title="Không được áp dụng"
+                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px;"
+                                                                 title="Không được áp dụng"
                                                                  src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                         </a>
                                                         <br/>
@@ -519,7 +521,8 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                         &nbsp;|&nbsp;
                                                     @endif
                                                 @endif
-                                                <a class="qc-link" href="{!! route('qc.work.orders.product.design.get',$productId) !!}">
+                                                <a class="qc-link"
+                                                   href="{!! route('qc.work.orders.product.design.get',$productId) !!}">
                                                     <i class="qc-font-size-14 glyphicon glyphicon-list-alt"
                                                        title="Quản lý thiết kế"></i>
                                                     <em title="Số mẫu thiết kế">
@@ -775,14 +778,17 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                 <div class="qc-container-table-border-none col-xs-12 col-sm-12 col-dm-12 col-lg-12">
                     <div class="table-responsive">
                         <table class="table table-bordered" style="margin-bottom: 0px;">
-                            <tr>
-                                <td colspan="2">
-                                    <a class="qc_work_order_design_image_add qc-link-green" data-href="{!! route('qc.work.orders.info.design.add.get',$orderId) !!}">
-                                        <i class="glyphicon glyphicon-plus"></i>
-                                        Thêm thiết kế tổng thể
-                                    </a>
-                                </td>
-                            </tr>
+                            @if(!$finishStatus)
+                                <tr>
+                                    <td colspan="2">
+                                        <a class="qc_work_order_design_image_add qc-link-green"
+                                           data-href="{!! route('qc.work.orders.info.design.add.get',$orderId) !!}">
+                                            <i class="glyphicon glyphicon-plus"></i>
+                                            Thêm thiết kế tổng thể
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endif
                             @if($hFunction->checkCount($dataOrderImage))
                                 @foreach($dataOrderImage as $orderImage)
                                     <tr>
@@ -793,7 +799,8 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                             </a>
                                         </td>
                                         <td class="text-center" style="width:20px;">
-                                            <a class="qc-link-red-bold">
+                                            <a class="qc_work_order_design_image_delete qc-link-red-bold"
+                                               data-href="{!! route('qc.work.orders.info.design.delete',$orderImage->imageId()) !!}">
                                                 <i class="qc-font-size-16 glyphicon glyphicon-trash"></i>
                                             </a>
                                         </td>

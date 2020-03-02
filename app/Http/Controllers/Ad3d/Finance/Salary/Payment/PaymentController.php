@@ -49,7 +49,7 @@ class PaymentController extends Controller
             $companyFilterId = $dataStaffLogin->companyId();
         }
 
-        if($monthFilter < 8 && $yearFilter <= 2109){ # du lieu cu phien ban cu --  loc theo staff_id
+        if($monthFilter < 8 && $yearFilter <= 2019){ # du lieu cu phien ban cu --  loc theo staff_id
             if (!empty($nameFiler)) {
                 $listStaffId = $modelStaff->listIdOfListCompanyAndName($searchCompanyFilterId, $nameFiler);
             } else {
@@ -69,6 +69,7 @@ class PaymentController extends Controller
 
         $dataSalary = $modelSalary->selectInfoByListWork($listWorkId)->paginate(30);
         return view('ad3d.finance.salary.payment.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataSalary', 'companyFilterId', 'monthFilter', 'yearFilter', 'nameFiler'));
+
 
     }
 

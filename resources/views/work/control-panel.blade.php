@@ -33,15 +33,14 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 
     {{--control panel--}}
     <div class="row">
-
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.work_allocation.activity.get') !!}">
-                PHÂN VIỆC
-            </a>
-        </div>
         <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <a class="qc-work-panel-icon-link" href="{!! route('qc.work.timekeeping.get') !!}">
                 CHẤM CÔNG
+            </a>
+        </div>
+        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.work_allocation.activity.get') !!}">
+                THI CÔNG
             </a>
         </div>
         @if($dataStaffLogin->checkBusinessDepartment() || $dataStaffLogin->checkDesignDepartment())

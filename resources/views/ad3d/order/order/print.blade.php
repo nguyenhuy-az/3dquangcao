@@ -10,6 +10,11 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $dataCompany = $dataOrder->company;
+
+// san pham cua don hang
+$dataProduct = $dataOrder->productActivityOfOrder();
+#anh thiet ke tong quat
+$dataOrderImage = $dataOrder->orderImageInfoActivity();
 ?>
 @extends('ad3d.order.order.index')
 @section('titlePage')
@@ -124,7 +129,6 @@ $dataCompany = $dataOrder->company;
                                         <th class="text-right">Thành tiền</th>
                                     </tr>
                                     <?php
-                                    $dataProduct = $dataOrder->allProductOfOrder();
                                     $n_o = 0;
                                     ?>
                                     @if($hFunction->checkCount($dataProduct))
@@ -294,11 +298,30 @@ $dataCompany = $dataOrder->company;
                             <em class="qc-color-grey">(Ký tên và ghi rõ họ tên)</em>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                             style="background-color: whitesmoke; height: 70px;">
-                    Mẫu TK gửi sau
-                </div>
+                    <div class="row" style="margin-top: 30px;">
+                        <div class="qc-container-table-border-none text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" style="margin-bottom: 0px;">
+                                    @if($hFunction->checkCount($dataOrderImage))
+                                        <tr>
+                                            <td class="text-left" style="padding-top: 0 !important;">
+                                                <em>***Thiết kế tổng thể</em>
+                                            </td>
+                                        </tr>
+                                        @foreach($dataOrderImage as $orderImage)
+                                            <tr>
+                                                <td class="text-center" style="padding-top: 0 !important;">
+                                                    <a class="qc-link">
+                                                        <img style="width: 100%; margin-bottom: 5px;" title="Thiết kế tổng quát"
+                                                             src="{!! $orderImage->pathFullImage($orderImage->image()) !!}">
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

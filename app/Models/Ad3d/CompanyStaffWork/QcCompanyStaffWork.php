@@ -232,29 +232,7 @@ class QcCompanyStaffWork extends Model
         }
     }
 
-    //-------------------------- kiem tra bo phan hien tai cua nv ---------------------------
-    public function checkCurrentDepartmentManageOfStaff($staffId)
-    {
-        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
-        $result = $this->infoActivityOfStaff($staffId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            if ($modelStaffWorkDepartment->checkCurrentDepartmentManageOfWork($result->workId())) $resultStatus = true;
-        }
-        return $resultStatus;
-    }
-
-    public function checkCurrentDepartmentConstructionOfStaff($staffId)
-    {
-        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
-        $result = $this->infoActivityOfStaff($staffId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            if ($modelStaffWorkDepartment->checkCurrentDepartmentConstructionOfWork($result->workId())) $resultStatus = true;
-        }
-        return $resultStatus;
-    }
-
+    #======== ======== ========== KIEM TRA BO PHAN CUA NV ======== ======== =========
     public function checkCurrentDepartmentAccountantOfStaff($staffId)
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
@@ -266,50 +244,17 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    public function checkCurrentDepartmentDesignOfStaff($staffId)
+    #-------------- ------------ kiem tra bo phan QUAN LY ------------- --------------
+    public function checkCurrentDepartmentManageOfStaff($staffId)
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
         if (count($result) > 0) {
-            if ($modelStaffWorkDepartment->checkCurrentDepartmentDesignOfWork($result->workId())) $resultStatus = true;
+            if ($modelStaffWorkDepartment->checkCurrentDepartmentManageOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
     }
-
-    public function checkCurrentDepartmentBusinessOfStaff($staffId)
-    {
-        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
-        $result = $this->infoActivityOfStaff($staffId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            if ($modelStaffWorkDepartment->checkCurrentDepartmentBusinessOfWork($result->workId())) $resultStatus = true;
-        }
-        return $resultStatus;
-    }
-
-    public function checkCurrentDepartmentPersonnelOfStaff($staffId)
-    {
-        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
-        $result = $this->infoActivityOfStaff($staffId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            if ($modelStaffWorkDepartment->checkCurrentDepartmentPersonnelOfWork($result->workId())) $resultStatus = true;
-        }
-        return $resultStatus;
-    }
-
-    public function checkCurrentDepartmentTreasureOfStaff($staffId)
-    {
-        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
-        $result = $this->infoActivityOfStaff($staffId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            if ($modelStaffWorkDepartment->checkCurrentDepartmentTreasureOfWork($result->workId())) $resultStatus = true;
-        }
-        return $resultStatus;
-    }
-
     //kiem tra nv thuoc bp quan ly
     public function checkManageDepartment($staffId)
     {
@@ -321,8 +266,6 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
-
-    //--------------------------kiem tra theo cap nac nv ---------------------------
     // kiem tra nv theo bo phan quan ly cap quan ly
     public function checkManageDepartmentAndManageRank($staffId)
     {
@@ -334,7 +277,6 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
-
     // kiem tra nv theo bo phan quan ly cap thong thuong
     public function checkManageDepartmentAndNormalRank($staffId)
     {
@@ -347,42 +289,40 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    // kiem tra nv theo cap bac nhan su
-    public function checkPersonnelDepartment($staffId)
+    #-------------- ------------kiem tra bo phan THI CONG------------- --------------
+    public function checkCurrentDepartmentConstructionOfStaff($staffId)
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
         if (count($result) > 0) {
-            if ($modelStaffWorkDepartment->checkPersonnelDepartment($result->workId())) $resultStatus = true;
+            if ($modelStaffWorkDepartment->checkCurrentDepartmentConstructionOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
     }
-
-    //kiem tran nv thuoc bo phan nhan su cap quan ly
-    public function checkPersonnelDepartmentAndManageRank($staffId)
+    // kiem tra nv theo bo phan quan ly cap quan ly
+    public function checkConstructionDepartmentAndManageRank($staffId)
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
         if (count($result) > 0) {
-            if ($modelStaffWorkDepartment->checkPersonnelDepartmentAndManageRank($result->workId())) $resultStatus = true;
+            if ($modelStaffWorkDepartment->checkConstructionDepartmentAndManageRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
     }
 
-    //kiem tran nv thuoc bo phan nhan su cap nv
-    public function checkPersonnelDepartmentAndNormalRank($staffId)
+    #-------------- ------------kiem tra bo phan THIET KE------------- --------------
+    public function checkCurrentDepartmentDesignOfStaff($staffId)
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
         if (count($result) > 0) {
-            if ($modelStaffWorkDepartment->checkPersonnelDepartmentAndNormalRank($result->workId())) $resultStatus = true;
+            if ($modelStaffWorkDepartment->checkCurrentDepartmentDesignOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
     }
-
     //kiem tra nv thuoc bo phan thiet ke
     public function checkDesignDepartment($staffId)
     {
@@ -394,7 +334,6 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
-
     //kiem tra nv thuoc bo phan thiet ke cap quan ly
     public function checkDesignDepartmentAndManageRank($staffId)
     {
@@ -419,6 +358,18 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
+    #-------------- ------------kiem tra bo phan KINH DOANH------------- --------------
+    #kiem tra bo phan kinh doanh
+    public function checkCurrentDepartmentBusinessOfStaff($staffId)
+    {
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $result = $this->infoActivityOfStaff($staffId);
+        $resultStatus = false;
+        if (count($result) > 0) {
+            if ($modelStaffWorkDepartment->checkCurrentDepartmentBusinessOfWork($result->workId())) $resultStatus = true;
+        }
+        return $resultStatus;
+    }
     //kiem tra nv thuoc bp kinh doanh
     public function checkBusinessDepartment($staffId)
     {
@@ -430,7 +381,6 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
-
     //kiem tra nv thuoc bp kinh doanh cap nv quan ly
     public function checkBusinessDepartmentAndManageRank($staffId)
     {
@@ -442,7 +392,6 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
-
     //kiem tra nv thuoc bp kinh doanh cap nv
     public function checkBusinessDepartmentAndNormalRank($staffId)
     {
@@ -455,6 +404,64 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
+    #-------------- ------------kiem tra bo phan NHAN SU------------- --------------
+    #kiem tra bo phan nhan su
+    public function checkCurrentDepartmentPersonnelOfStaff($staffId)
+    {
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $result = $this->infoActivityOfStaff($staffId);
+        $resultStatus = false;
+        if (count($result) > 0) {
+            if ($modelStaffWorkDepartment->checkCurrentDepartmentPersonnelOfWork($result->workId())) $resultStatus = true;
+        }
+        return $resultStatus;
+    }
+    // kiem tra nv theo cap bac nhan su
+    public function checkPersonnelDepartment($staffId)
+    {
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $result = $this->infoActivityOfStaff($staffId);
+        $resultStatus = false;
+        if (count($result) > 0) {
+            if ($modelStaffWorkDepartment->checkPersonnelDepartment($result->workId())) $resultStatus = true;
+        }
+        return $resultStatus;
+    }
+    //kiem tran nv thuoc bo phan nhan su cap quan ly
+    public function checkPersonnelDepartmentAndManageRank($staffId)
+    {
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $result = $this->infoActivityOfStaff($staffId);
+        $resultStatus = false;
+        if (count($result) > 0) {
+            if ($modelStaffWorkDepartment->checkPersonnelDepartmentAndManageRank($result->workId())) $resultStatus = true;
+        }
+        return $resultStatus;
+    }
+    //kiem tran nv thuoc bo phan nhan su cap nv
+    public function checkPersonnelDepartmentAndNormalRank($staffId)
+    {
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $result = $this->infoActivityOfStaff($staffId);
+        $resultStatus = false;
+        if (count($result) > 0) {
+            if ($modelStaffWorkDepartment->checkPersonnelDepartmentAndNormalRank($result->workId())) $resultStatus = true;
+        }
+        return $resultStatus;
+    }
+
+    #-------------- ------------ kiem tra bo phan THU QUY ------------- --------------
+    # kiem tra bo phan thu quy
+    public function checkCurrentDepartmentTreasureOfStaff($staffId)
+    {
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $result = $this->infoActivityOfStaff($staffId);
+        $resultStatus = false;
+        if (count($result) > 0) {
+            if ($modelStaffWorkDepartment->checkCurrentDepartmentTreasureOfWork($result->workId())) $resultStatus = true;
+        }
+        return $resultStatus;
+    }
     //kiem tra nv thuoc bp thu quy
     public function checkTreasureDepartment($staffId)
     {
@@ -466,7 +473,6 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
-
     //kiem tra nv thuoc bp kinh doanh cap nv quan ly
     public function checkTreasureDepartmentAndManageRank($staffId)
     {
@@ -478,7 +484,6 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
-
     //kiem tra nv thuoc bp kinh doanh cap nv
     public function checkTreasureDepartmentAndNormalRank($staffId)
     {
@@ -548,18 +553,24 @@ class QcCompanyStaffWork extends Model
         return $this->listStaffIdActivityHasFilter($companyId, $modelDepartment->manageDepartmentId(), $level);
     }
 
-    //lay id cac nv cua bo phan cua bo phan thu quy
+    //lay id cac nv cua bo phan thu quy
     public function listStaffIdTreasure($companyId, $level = 1000)
     {
         $modelDepartment = new QcDepartment();
         return $this->listStaffIdActivityHasFilter($companyId, $modelDepartment->treasurerDepartmentId(), $level);
     }
 
-    // lay id cac nv cua bo phan thu quy
+    // lay id cac nv cua bo phan thi thi cong
     public function listConstructionStaffId()
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         return QcCompanyStaffWork::whereIn('work_id', $modelStaffWorkDepartment->listConstructionWorkId())->pluck('staff_id');
+    }
+
+    public function listStaffIdConstruction($companyId, $level = 1000)
+    {
+        $modelDepartment = new QcDepartment();
+        return $this->listStaffIdActivityHasFilter($companyId, $modelDepartment->constructionDepartmentId(), $level);
     }
 
     // lay id cac nv cua bo phan thiet ke

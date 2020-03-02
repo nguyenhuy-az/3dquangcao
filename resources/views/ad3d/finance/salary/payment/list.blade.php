@@ -30,7 +30,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
                         @endif
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"
@@ -106,11 +106,12 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                             <th class="text-right">Chưa thanh toán</th>
 
                         </tr>
-                        @if(count($dataSalary) > 0)
+                        @if($hFunction->checkCount($dataSalary))
                             <?php
                             $perPage = $dataSalary->perPage();
                             $currentPage = $dataSalary->currentPage();
                             $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
+
                             ?>
                             @foreach($dataSalary as $salary)
                                 <?php
@@ -118,7 +119,10 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 $salaryPay = $salary->salary();
                                 $totalPaid = $salary->totalPaid();
                                 $dataWork = $salary->work;
-                                $workCompanyId = $dataWork->companyIdOfWork()[0];
+
+                                $workCompanyId = $dataWork->companyIdOfWork();
+                                $workCompanyId = (count($workCompanyId) > 0) ? $workCompanyId[0] : $workCompanyId;
+                                //dd($workCompanyId);
                                 $totalSalary = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
                                 ?>
                                 <tr class="qc_ad3d_list_object" data-object="{!! $salaryId !!}">
@@ -177,7 +181,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                             </tr>
                         @else
                             <tr>
-                                <td class="qc-padding-top-20 qc-padding-bot-20 text-center" colspan="9" >
+                                <td class="qc-padding-top-20 qc-padding-bot-20 text-center" colspan="9">
                                     <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                 </td>
                             </tr>

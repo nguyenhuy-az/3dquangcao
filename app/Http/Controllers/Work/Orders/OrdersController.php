@@ -300,7 +300,7 @@ class OrdersController extends Controller
 
 
     # them order moi va them san pham
-    public function getAdd(Request $request ,$orderType = 1, $customerId = null, $orderId = null) // $type: 1 - don hang thuc / 2 - don hang bao gia
+    public function getAdd(Request $request, $orderType = 1, $customerId = null, $orderId = null) // $type: 1 - don hang thuc / 2 - don hang bao gia
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -316,51 +316,53 @@ class OrdersController extends Controller
         $dataOrders = ($hFunction->checkEmpty($orderId)) ? $orderId : $modelOrder->getInfo($orderId);
         //$request->session()->forget('listProductAdd');
         //if (!Session::has('listProductAdd')){
-           // $numberRow = 1;
-            //$rowsProductions = Session::get('listProductAdd');
-            //$rowsProductions= json_decode($rowsProductions);
-            //$rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType'))->render();
-            ///$request->session()->put('listProductAdd',json_encode($rowsProductions));
-            //$request->session()->put('listProductAdd',$rowsProductions);
+        // $numberRow = 1;
+        //$rowsProductions = Session::get('listProductAdd');
+        //$rowsProductions= json_decode($rowsProductions);
+        //$rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType'))->render();
+        ///$request->session()->put('listProductAdd',json_encode($rowsProductions));
+        //$request->session()->put('listProductAdd',$rowsProductions);
         //}
         return view('work.orders.orders.add', compact('modelStaff', 'dataAccess', 'dataCustomer', 'orderType', 'dataOrders'));
     }
 
-    public function addProduct(Request $request )
+    public function addProduct(Request $request)
     {
         //$data = $request->session()->all();
         //$hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
         $dataProductType = $modelProductType->infoActivity();
-        if (Session::has('listProductAdd')){
+        if (Session::has('listProductAdd')) {
             $rowsProductions = Session::get('listProductAdd');
             ///$rowsProductions= json_decode($rowsProductions);
-        }else{
+        } else {
             $rowsProductions = [];
         }
         //$numberRow =  count($rowsProductions) + 1;
         //$rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType'))->render();
         ///$request->session()->put('listProductAdd',json_encode($rowsProductions));
-       // $request->session()->put('listProductAdd',$rowsProductions);
+        // $request->session()->put('listProductAdd',$rowsProductions);
 
         //$numberRow = 1;
         return view('work.orders.orders.add-product');
     }
-    public function cancelAddProduct(Request $request, $key=null)
+
+    public function cancelAddProduct(Request $request, $key = null)
     {
-        if (Session::has('listProductAdd')){
+        if (Session::has('listProductAdd')) {
             $rowsProductions = Session::get('listProductAdd');
             ///$rowsProductions= json_decode($rowsProductions);
-            $numberRow =  count($rowsProductions);
-            if($numberRow == 1){
+            $numberRow = count($rowsProductions);
+            if ($numberRow == 1) {
                 $request->session()->forget('listProductAdd');// huy danh sanh
-            }else{
+            } else {
                 unset($rowsProductions[$key]); // xoa 1 dòng
                 ///$request->session()->put('listProductAdd',json_encode($rowsProductions));
-                $request->session()->put('listProductAdd',$rowsProductions);
+                $request->session()->put('listProductAdd', $rowsProductions);
             }
         }
     }
+
     // them don hang thuc
     public function postAdd(Request $request)
     {
@@ -444,7 +446,7 @@ class OrdersController extends Controller
                             $productTypeId = $dataProductType->typeId();
                         } else {
                             $unit = $txtUnit[$key];
-                            if ($modelProductType->insert(null, $value, null,$unit, 0, 0)) {
+                            if ($modelProductType->insert(null, $value, null, $unit, 0, 0)) {
                                 $productTypeId = $modelProductType->insertGetId();
                             } else {
                                 $productTypeId = null;
@@ -617,7 +619,7 @@ class OrdersController extends Controller
         return view('work.orders.orders.add-product');
     }
 
-    public function postEditAddProduct(Request $request,$orderId)
+    public function postEditAddProduct(Request $request, $orderId)
     {
         $hFunction = new \Hfunction();
         $modelOrders = new QcOrder();
@@ -743,7 +745,7 @@ class OrdersController extends Controller
         }
     }
 
-    public function postOrderCancel(Request $request,$orderId = null)
+    public function postOrderCancel(Request $request, $orderId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -776,7 +778,7 @@ class OrdersController extends Controller
     }
 
     // thay doi thong tin khach hang
-    public function postEditInfoCustomer(Request $request,$customerId)
+    public function postEditInfoCustomer(Request $request, $customerId)
     {
         $modelCustomer = new QcCustomer();
         $txtCustomerName = $request->input('txtCustomerName');
@@ -790,7 +792,7 @@ class OrdersController extends Controller
     }
 
     // thay doi thong tin don hang
-    public function postEditInfoOrder(Request $request,$orderId)
+    public function postEditInfoOrder(Request $request, $orderId)
     {
         $modelOrder = new QcOrder();
         $txtOrderName = $request->input('txtOrderName');
@@ -823,7 +825,7 @@ class OrdersController extends Controller
         }
     }
 
-    public function postEditInfoPay(Request $request,$payId)
+    public function postEditInfoPay(Request $request, $payId)
     {
         $hFunction = new \Hfunction();
         $modelOrderPay = new QcOrderPay();
@@ -836,7 +838,7 @@ class OrdersController extends Controller
         }
     }
     // them thiet ke tong the
-    #them anh thiet ke
+    #-------- them anh thiet ke -------
     public function getAddDesign($orderId = null)
     {
         $hFunction = new \Hfunction();
@@ -862,7 +864,7 @@ class OrdersController extends Controller
             $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtDesignImage']['tmp_name'];
             if ($modelOrderImage->uploadImage($source_img, $name_img)) {
-                if (!$modelOrderImage->insert($name_img,$orderId, $loginStaffId)) {
+                if (!$modelOrderImage->insert($name_img, $orderId, $loginStaffId)) {
                     $modelOrderImage->dropImage($name_img);
                     return "Tính năng đang cập nhật";
                 }
@@ -870,6 +872,13 @@ class OrdersController extends Controller
         } else {
             return "Chọn ảnh thiết kế";
         }
+    }
+
+    # huy thiet ke
+    public function deleteDesign($imageId)
+    {
+        $modelOrderImage = new QcOrderImage();
+        $modelOrderImage->actionDelete($imageId);
     }
 
     //======== ======= =====  QUAN LY SAN PHAM CUA DON HANG ======= ========= ========
@@ -899,7 +908,7 @@ class OrdersController extends Controller
         }
     }
 
-    public function postProductInfoEdit(Request $request,$productId)
+    public function postProductInfoEdit(Request $request, $productId)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -948,7 +957,7 @@ class OrdersController extends Controller
         }
     }
 
-    public function postProductCancel(Request $request,$productId)
+    public function postProductCancel(Request $request, $productId)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -968,7 +977,7 @@ class OrdersController extends Controller
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
         $dataProduct = $modelProduct->getInfo($productId);
-        return view('work.orders.orders.product.design', compact('modelStaff','dataProduct'));
+        return view('work.orders.orders.product.design', compact('modelStaff', 'dataProduct'));
     }
 
     #them anh thiet ke

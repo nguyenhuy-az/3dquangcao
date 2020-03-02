@@ -36,7 +36,7 @@ class QcStaffWorkDepartment extends Model
         }
     }
 
-    // l?y id m?i thêm
+    // l?y id m?i thï¿½m
     public function insertGetId()
     {
         return $this->lastId;
@@ -84,32 +84,6 @@ class QcStaffWorkDepartment extends Model
 
     //-------------------------  kiem tra bo phan hien tai cua nv ---------------------------
 
-    public function checkCurrentDepartmentManageOfWork($workId)
-    {
-        $modelDepartment = new QcDepartment();
-        $result = $this->infoActivityOfWork($workId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            foreach ($result as $value) {
-                if ($modelDepartment->checkManage($value->departmentId())) $resultStatus = true;
-            }
-        }
-        return $resultStatus;
-    }
-
-    public function checkCurrentDepartmentConstructionOfWork($workId)
-    {
-        $modelDepartment = new QcDepartment();
-        $result = $this->infoActivityOfWork($workId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            foreach ($result as $value) {
-                if ($modelDepartment->checkConstruction($value->departmentId())) $resultStatus = true;
-            }
-        }
-        return $resultStatus;
-    }
-
     public function checkCurrentDepartmentAccountantOfWork($workId)
     {
         $modelDepartment = new QcDepartment();
@@ -123,60 +97,22 @@ class QcStaffWorkDepartment extends Model
         return $resultStatus;
     }
 
-    public function checkCurrentDepartmentDesignOfWork($workId)
-    {
-        $modelDepartment = new QcDepartment();
-        $result = $this->infoActivityOfWork($workId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            foreach ($result as $value) {
-                if ($modelDepartment->checkDesign($value->departmentId())) $resultStatus = true;
-            }
-        }
-        return $resultStatus;
-    }
-
-    public function checkCurrentDepartmentBusinessOfWork($workId)
-    {
-        $modelDepartment = new QcDepartment();
-        $result = $this->infoActivityOfWork($workId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            foreach ($result as $value) {
-                if ($modelDepartment->checkBusiness($value->departmentId())) $resultStatus = true;
-            }
-        }
-        return $resultStatus;
-    }
-
-    public function checkCurrentDepartmentPersonnelOfWork($workId)
-    {
-        $modelDepartment = new QcDepartment();
-        $result = $this->infoActivityOfWork($workId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            foreach ($result as $value) {
-                if ($modelDepartment->checkPersonnel($value->departmentId())) $resultStatus = true;
-            }
-        }
-        return $resultStatus;
-    }
-
-    public function checkCurrentDepartmentTreasureOfWork($workId)
-    {
-        $modelDepartment = new QcDepartment();
-        $result = $this->infoActivityOfWork($workId);
-        $resultStatus = false;
-        if (count($result) > 0) {
-            foreach ($result as $value) {
-                if ($modelDepartment->checkTreasure($value->departmentId())) $resultStatus = true;
-            }
-        }
-        return $resultStatus;
-    }
-
-    // ki?m tra nv thu?c b? ph?n qu?n lý
+    #======= ======== ======== KIEM TRA BO PHAN - CAP BAC NV ======== ======== ========
+    #-------------- ----------- kiem tra bo phan QUAN LY ------------- --------------
     public function checkManageDepartment($workId)
+    {
+        $hFunction = new \Hfunction();
+        $modelDepartment = new QcDepartment();
+        $result = $this->infoActivityOfWork($workId);
+        $resultStatus = false;
+        if ($hFunction->checkCount($result)) {
+            foreach ($result as $value) {
+                if ($modelDepartment->checkManage($value->departmentId())) $resultStatus = true;
+            }
+        }
+        return $resultStatus;
+    }
+    public function checkCurrentDepartmentManageOfWork($workId)
     {
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
@@ -188,16 +124,15 @@ class QcStaffWorkDepartment extends Model
         }
         return $resultStatus;
     }
-
-    //-------------------------- kiem tra bo phan theo cap bac nv ---------------------------
-    //kiem tranv thuoc bo phan quan ly cap quan ly
+    //kiem tra nv thuoc bo phan quan ly cap quan ly
     public function checkManageDepartmentAndManageRank($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkManage($value->departmentId())) {
                     if ($modelRank->checkManageRank($value->rankId())) {
@@ -208,7 +143,6 @@ class QcStaffWorkDepartment extends Model
         }
         return $resultStatus;
     }
-
     //kiem tranv thuoc bo phan quan ly cap nv
     public function checkManageDepartmentAndNormalRank($workId)
     {
@@ -228,7 +162,51 @@ class QcStaffWorkDepartment extends Model
         return $resultStatus;
     }
 
-    // ki?m tra nv thu?c b? ph?n nhân s?
+    #-------------- ----------- kiem tra bo phan THI CONG ------------- --------------
+    public function checkCurrentDepartmentConstructionOfWork($workId)
+    {
+        $hFunction = new \Hfunction();
+        $modelDepartment = new QcDepartment();
+        $result = $this->infoActivityOfWork($workId);
+        $resultStatus = false;
+        if ($hFunction->checkCount($result)) {
+            foreach ($result as $value) {
+                if ($modelDepartment->checkConstruction($value->departmentId())) $resultStatus = true;
+            }
+        }
+        return $resultStatus;
+    }
+    public function checkConstructionDepartmentAndManageRank($workId)
+    {
+        $hFunction = new \Hfunction();
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $result = $this->infoActivityOfWork($workId);
+        $resultStatus = false;
+        if ($hFunction->checkCount($result)) {
+            foreach ($result as $value) {
+                if ($modelDepartment->checkConstruction($value->departmentId())) {
+                    if ($modelRank->checkManageRank($value->rankId())) {
+                        $resultStatus = true;
+                    }
+                }
+            }
+        }
+        return $resultStatus;
+    }
+    #-------------- ----------- kiem tra bo phan NHAN SU ------------- --------------
+    public function checkCurrentDepartmentPersonnelOfWork($workId)
+    {
+        $modelDepartment = new QcDepartment();
+        $result = $this->infoActivityOfWork($workId);
+        $resultStatus = false;
+        if (count($result) > 0) {
+            foreach ($result as $value) {
+                if ($modelDepartment->checkPersonnel($value->departmentId())) $resultStatus = true;
+            }
+        }
+        return $resultStatus;
+    }
     public function checkPersonnelDepartment($workId)
     {
         $modelDepartment = new QcDepartment();
@@ -241,8 +219,7 @@ class QcStaffWorkDepartment extends Model
         }
         return $resultStatus;
     }
-
-    // ki?m tra nv thu?c b? ph?n nh?n s? c?p qu?n lý
+    // cap quan ly
     public function checkPersonnelDepartmentAndManageRank($workId)
     {
         $modelDepartment = new QcDepartment();
@@ -260,8 +237,7 @@ class QcStaffWorkDepartment extends Model
         }
         return $resultStatus;
     }
-
-    // ki?m tra nv thu?c b? ph?n nhân s? c?p thông th??ng
+    // cap nhan vien
     public function checkPersonnelDepartmentAndNormalRank($workId)
     {
         $modelDepartment = new QcDepartment();
@@ -280,6 +256,19 @@ class QcStaffWorkDepartment extends Model
         return $resultStatus;
     }
 
+    #-------------- ----------- kiem tra bo phan THIET KE ------------- --------------
+    public function checkCurrentDepartmentDesignOfWork($workId)
+    {
+        $modelDepartment = new QcDepartment();
+        $result = $this->infoActivityOfWork($workId);
+        $resultStatus = false;
+        if (count($result) > 0) {
+            foreach ($result as $value) {
+                if ($modelDepartment->checkDesign($value->departmentId())) $resultStatus = true;
+            }
+        }
+        return $resultStatus;
+    }
     //kiem tra nv thuoc bo phan thiet ke
     public function checkDesignDepartment($workId)
     {
@@ -293,7 +282,6 @@ class QcStaffWorkDepartment extends Model
         }
         return $resultStatus;
     }
-
     //kiem tra nv thuoc bp thiet ke cap quan ly
     public function checkDesignDepartmentAndManageRank($workId)
     {
@@ -312,8 +300,6 @@ class QcStaffWorkDepartment extends Model
         }
         return $resultStatus;
     }
-
-    // ki?m tra nv thu?c b? ph?n thi?t k? c?p thông th??ng
     public function checkDesignDepartmentAndNormalRank($workId)
     {
         $modelDepartment = new QcDepartment();
@@ -332,6 +318,19 @@ class QcStaffWorkDepartment extends Model
         return $resultStatus;
     }
 
+    #-------------- ----------- kiem tra bo phan KINH DOANH ------------- --------------
+    public function checkCurrentDepartmentBusinessOfWork($workId)
+    {
+        $modelDepartment = new QcDepartment();
+        $result = $this->infoActivityOfWork($workId);
+        $resultStatus = false;
+        if (count($result) > 0) {
+            foreach ($result as $value) {
+                if ($modelDepartment->checkBusiness($value->departmentId())) $resultStatus = true;
+            }
+        }
+        return $resultStatus;
+    }
     // kiem tra nvthuoc BP thu quy
     public function checkBusinessDepartment($workId)
     {
@@ -345,7 +344,6 @@ class QcStaffWorkDepartment extends Model
         }
         return $resultStatus;
     }
-
     // kiem tra nvthuoc BP kinh doanh cap quan ly
     public function checkBusinessDepartmentAndManageRank($workId)
     {
@@ -364,7 +362,6 @@ class QcStaffWorkDepartment extends Model
         }
         return $resultStatus;
     }
-
     // kiem tra nvthuoc BP kinh doanh cap quan nhan vien
     public function checkBusinessDepartmentAndNormalRank($workId)
     {
@@ -384,6 +381,19 @@ class QcStaffWorkDepartment extends Model
         return $resultStatus;
     }
 
+    #-------------- ----------- kiem tra bo phan THU QUY ------------- --------------
+    public function checkCurrentDepartmentTreasureOfWork($workId)
+    {
+        $modelDepartment = new QcDepartment();
+        $result = $this->infoActivityOfWork($workId);
+        $resultStatus = false;
+        if (count($result) > 0) {
+            foreach ($result as $value) {
+                if ($modelDepartment->checkTreasure($value->departmentId())) $resultStatus = true;
+            }
+        }
+        return $resultStatus;
+    }
     // kiem tra nvthuoc BP thu quy
     public function checkTreasureDepartment($workId)
     {
@@ -397,7 +407,6 @@ class QcStaffWorkDepartment extends Model
         }
         return $resultStatus;
     }
-
     // kiem tra nvthuoc BP thu quy cap quan ly
     public function checkTreasureDepartmentAndManageRank($workId)
     {
@@ -416,7 +425,6 @@ class QcStaffWorkDepartment extends Model
         }
         return $resultStatus;
     }
-
     // kiem tra nvthuoc BP thu quy cap quan nhan vien
     public function checkTreasureDepartmentAndNormalRank($workId)
     {
@@ -460,35 +468,35 @@ class QcStaffWorkDepartment extends Model
         return QcStaffWorkDepartment::where('department_id', $modelDepartment->manageDepartmentId())->pluck('work_id');
     }
 
-    // lay id các nhan vien cua bo phan thu quy
+    // lay id cï¿½c nhan vien cua bo phan thu quy
     public function listTreasureWorkId()
     {
         $modelDepartment = new QcDepartment();
         return QcStaffWorkDepartment::where('department_id', $modelDepartment->treasurerDepartmentId())->pluck('work_id');
     }
 
-    // l?y id các nhan vien cua bo phan thu quy
+    // l?y id cï¿½c nhan vien cua bo phan thu quy
     public function listConstructionWorkId()
     {
         $modelDepartment = new QcDepartment();
         return QcStaffWorkDepartment::where('department_id', $modelDepartment->constructionDepartmentId())->pluck('work_id');
     }
 
-    // l?y id các nhan vien cua bo phan thiet ke
+    // l?y id cï¿½c nhan vien cua bo phan thiet ke
     public function listDesignWorkId()
     {
         $modelDepartment = new QcDepartment();
         return QcStaffWorkDepartment::where('department_id', $modelDepartment->designDepartmentId())->pluck('work_id');
     }
 
-    // l?y id các nhan vien cua bo phan k? toán
+    // l?y id cï¿½c nhan vien cua bo phan k? toï¿½n
     public function listAccountantWorkId()
     {
         $modelDepartment = new QcDepartment();
         return QcStaffWorkDepartment::where('department_id', $modelDepartment->accountantDepartmentId())->pluck('work_id');
     }
 
-    // l?y id các nhan vien cua bo phan nhan su
+    // l?y id cï¿½c nhan vien cua bo phan nhan su
     public function listPersonnelWorkId()
     {
         $modelDepartment = new QcDepartment();
@@ -502,7 +510,7 @@ class QcStaffWorkDepartment extends Model
         return $this->belongsTo('App\Models\Ad3d\Rank\QcRank', 'rank_id', 'rank_id');
     }
 
-    #============ =========== ============ l?y thông tin chi ti?t ============= =========== ==========
+    #============ =========== ============ l?y thï¿½ng tin chi ti?t ============= =========== ==========
     public function getInfo($detailId = '', $field = '')
     {
         if (empty($detailId)) {

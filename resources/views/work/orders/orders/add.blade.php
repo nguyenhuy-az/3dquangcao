@@ -298,7 +298,7 @@ if ($provisionalStatus) {
                                     <label>Ngày Nhận:<i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                                     <input id="txtDateReceive" type="text" name="txtDateReceive" class="form-control"
                                            disabled="disabled"
-                                           value="{!! $hFunction->convertDateDMYFromDatetime($currentDate) !!}"
+                                           value="{!! date('Y-m-d', strtotime($currentDate)) !!}"
                                            style="height: 25px;"
                                            placeholder="Ngày nhận">
                                 </div>

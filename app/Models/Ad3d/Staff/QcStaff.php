@@ -1122,6 +1122,8 @@ class QcStaff extends Model
         }
     }
 
+    #======== KIEM TRA CAC BO PHAN CUA NV ===============
+    #--------- --------- Bo phan QUAN LY ----------- --------
     // kiểm tra nv thuộc bộ phận quản lý
     public function checkManageDepartment($staffId = null)
     {
@@ -1129,7 +1131,7 @@ class QcStaff extends Model
         return $modelCompanyStaffWork->checkCurrentDepartmentManageOfStaff($staffId);
     }
 
-    // kiểm tra nv thuộc bộ phận quản lý cấp quản lý
+    // kiem tra nv quan ly cap quan ly
     public function checkManageDepartmentAndManageRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -1143,6 +1145,20 @@ class QcStaff extends Model
         return $modelCompanyStaffWork->checkManageDepartmentAndNormalRank($this->checkIdNull($staffId));
     }
 
+    #--------- --------- Bo phan  THI CONG ----------- --------
+    # kiem tra NV thuoc bo phan thi cong
+    public function checkConstructionDepartment($staffId = null)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        return $modelCompanyStaffWork->checkCurrentDepartmentConstructionOfStaff($this->checkIdNull($staffId));
+    }
+
+    public function checkConstructionDepartmentAndManageRank($staffId = null)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        return $modelCompanyStaffWork->checkConstructionDepartmentAndManageRank($this->checkIdNull($staffId));
+    }
+    #--------- --------- Bo phan NHAN SU ----------- --------
     // kiểm tra nv thuộc bộ phận nhân sự
     public function checkPersonnelDepartment($staffId = null)
     {
@@ -1164,6 +1180,7 @@ class QcStaff extends Model
         return $modelCompanyStaffWork->checkPersonnelDepartmentAndNormalRank($this->checkIdNull($staffId));
     }
 
+    #--------- --------- Bo phan THIET KE ----------- --------
     // kiểm tra nv thuộc bộ phận thiết kế
     public function checkDesignDepartment($staffId = null)
     {
@@ -1185,7 +1202,8 @@ class QcStaff extends Model
         return $modelCompanyStaffWork->checkDesignDepartmentAndNormalRank($this->checkIdNull($staffId));
     }
 
-    // -------- kiểm tra nv thuộc bộ phận thiết kế  ----------
+    #--------- --------- Bo phan KINH DOANH ----------- --------
+    // kiem tra nv thuoc bo phan kinh doanh
     public function checkBusinessDepartment($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -1206,7 +1224,8 @@ class QcStaff extends Model
         return $modelCompanyStaffWork->checkBusinessDepartmentAndNormalRank($this->checkIdNull($staffId));
     }
 
-    # kiem tra bo phan thu quy
+    #--------- --------- Bo phan THU QUY ----------- --------
+    //kiem tra bo phan thu quy
     public function checkTreasureDepartment($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -1220,7 +1239,7 @@ class QcStaff extends Model
         return $modelCompanyStaffWork->checkTreasureDepartmentAndManageRank($this->checkIdNull($staffId));
     }
 
-    // kiem tra bo phan thu quy cap nhan vien
+    // kiem tra nv bo phan thu quy cap nhan vien
     public function checkTreasureDepartmentAndNormalRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -1258,7 +1277,7 @@ class QcStaff extends Model
     }
 
     //  ========== ================= THONG KE CHI ===================
-    # TONG CHI
+    # tong chi
     public function totalPaidMoney($staffId, $date = null)
     {
         #  chi mua vạt tu da duoc duyet
@@ -1289,6 +1308,7 @@ class QcStaff extends Model
         return $modelTransfers->totalMoneyConfirmedOfTransferStaffAndDate($staffId, $dateFilter);
     }
 
+    # ------- -------- TONG CHI -------- ------
     ##tong tien chi mua vat tu / dung cu da duoc duỵet
     public function totalMoneyImportConfirmedAndAgreeOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
     {

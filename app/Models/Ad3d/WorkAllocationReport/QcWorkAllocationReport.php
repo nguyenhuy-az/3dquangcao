@@ -39,9 +39,14 @@ class QcWorkAllocationReport extends Model
         return $this->lastId;
     }
 
+    public function checkIdNull($reportId = null)
+    {
+        return (empty($reportId)) ? $this->reportId() : $reportId;
+    }
+
     public function deleteReport($reportId = null)
     {
-        return QcWorkAllocationReport::where('report_id', (empty($reportId)) ? $this->reportId() : $reportId)->delete();
+        return QcWorkAllocationReport::where('report_id', $this->checkIdNull($reportId))->delete();
     }
     //========== ========= ========= RELATION ========== ========= ==========
     //---------- phan viec -----------

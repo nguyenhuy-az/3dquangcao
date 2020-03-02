@@ -178,30 +178,6 @@ var qc_work = {
     },*/
 
     workAllocation: {
-        viewProductDesign: function (href) {
-            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-        },
-        viewReportImage: function (href) {
-            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-        },
-        getReport: function (href) {
-            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-        },
-        saveReport: function (form) {
-            var notifyContent = $(form).find('.frm_notify');
-            qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
-            qc_main.scrollTop();
-        },
-        deleteReport: function (href) {
-            if (confirm('Bạn muốn xóa báo cáo này?')) {
-                qc_master_submit.ajaxHasReload(href, '#qc_master', false);
-            }
-        },
-        deleteReportImage: function (href) {
-            if (confirm('Bạn muốn xóa ảnh này?')) {
-                qc_master_submit.ajaxHasReload(href, '#qc_master', false);
-            }
-        },
         construction: {
             filter: function (href) {
                 qc_main.url_replace(href);
@@ -451,45 +427,16 @@ $(document).ready(function () {
 
 //=========================== PHAN VIEC =============================
 $(document).ready(function () {
-    //xem anh thiet chi tiet
-    $('body').on('click', '.qc_work_allocation_product_design_image_view', function () {
-        qc_work.workAllocation.viewProductDesign($(this).data('href'));
-    });
-    //xem anh bao cao chi tiet
-    $('body').on('click', '.qc_work_allocation_report_image_view', function () {
-        qc_work.workAllocation.viewReportImage($(this).data('href'));
-    });
-
-    //---------------------- viec dang làm --------------------
-    //form nao cao
-    $('body').on('click', '.qc_work_allocation_report_action', function () {
-        var href = $(this).parents('.qc_work_allocation_contain').data('href-report') + '/' + $(this).parents('.qc_work_allocation_object').data('work-allocation');
-        qc_work.workAllocation.getReport(href);
-    });
-    //luu bao cao
-    $('body').on('click', '.qc_frm_Work_allocation_report .qc_save', function () {
-        qc_work.workAllocation.saveReport($(this).parents('.qc_frm_Work_allocation_report'));
-    });
-
-    //xoa anh bao cao
-    $('body').on('click', '.qc_work_allocation_contain .qc_delete_image_action', function () {
-        qc_work.workAllocation.deleteReportImage($(this).data('href'));
-    });
-
-    //xoa bao cao
-    $('body').on('click', '.qc_work_allocation_contain .qc_delete_report_action', function () {
-        qc_work.workAllocation.deleteReport($(this).data('href'));
-    });
 
     //--------------------- viec da hoan thanh -----------------------
     //xem  bao cao
-    $('body').on('click', '.qc_work_allocation_finish_object .qc_work_allocation_report_view', function () {
-        $(this).parents('.qc_work_allocation_finish_object').find('.qc_work_allocation_report_wrap').show();
+    /*$('body').on('click', '.qc_work_allocation_finish_contain .qc_work_allocation_report_view', function () {
+        $(this).parents('.qc_work_allocation_finish_contain').find('.qc_work_allocation_report_wrap').show();
     });
     //ẩn báo cáo
-    $('body').on('click', '.qc_work_allocation_finish_object .qc_work_allocation_report_hide', function () {
+    $('body').on('click', '.qc_work_allocation_finish_contain .qc_work_allocation_report_hide', function () {
         $(this).parents('.qc_work_allocation_report_wrap').hide();
-    });
+    });*/
 
     //------------------- quan ly giao cong trinh -------------------------
     //theo tháng

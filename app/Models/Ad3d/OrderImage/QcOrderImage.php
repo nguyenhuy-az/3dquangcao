@@ -57,11 +57,7 @@ class QcOrderImage extends Model
     # xoa
     public function actionDelete($imageId = null)
     {
-        $imageId = (empty($imageId)) ? $this->imageId() : $imageId;
-        $imageName = $this->image($imageId)[0];
-        if (QcOrderImage::where('image_id', $imageId)->delete()) {
-            $this->dropImage($imageName); # xoa anh
-        }
+        return QcOrderImage::where('image_id', $this->checkIdNull($imageId))->update(['action'=> 0]);
     }
 
     //them anh thie ke

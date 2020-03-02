@@ -319,7 +319,7 @@ class StaffController extends Controller
                             $modelStaffWorkDepartment->insert($hFunction->carbonNow(), $permission, $newCompanyStaffWorkId, $value, $rankId);
                         }
                         #them bang luong moi theo bang luong cua cty cu
-                        $modelStaffWorkSalary->insert($oldDataStaffWorkSalary->salary(), $oldDataStaffWorkSalary->responsibility(), $oldDataStaffWorkSalary->usePhone(), $oldDataStaffWorkSalary->insurance(), $oldDataStaffWorkSalary->fuel(), $oldDataStaffWorkSalary->dateOff(), $oldDataStaffWorkSalary->overtimeHour(), $newCompanyStaffWorkId);
+                        $modelStaffWorkSalary->insert($oldDataStaffWorkSalary->totalSalary(), $oldDataStaffWorkSalary->salary(), $oldDataStaffWorkSalary->responsibility(), $oldDataStaffWorkSalary->usePhone(), $oldDataStaffWorkSalary->insurance(), $oldDataStaffWorkSalary->fuel(), $oldDataStaffWorkSalary->dateOff(), $oldDataStaffWorkSalary->overtimeHour(), $newCompanyStaffWorkId);
                         #---------  lap bang cham cong moi -----
                         $currentDate = date('Y-m-d');
                         $toDateWork = $hFunction->lastDateOfMonthFromDate($currentDate);

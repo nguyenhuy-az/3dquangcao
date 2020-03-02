@@ -17,6 +17,6 @@ $hFunction = new Hfunction();
                 style="position: absolute; top: 0; right: 0;">Đóng
         </button>
         <img class="qc-margin-top-10" style="max-width: 100%;" alt="..."
-             src="{!! $dataWorkAllocationReportImage->pathFullImage($dataWorkAllocationReportImage->name()) !!}">
+             src="{!! $dataWorkAllocationReportImage->pathSmallImage($dataWorkAllocationReportImage->name()) !!}">
     </div>
 @endsection

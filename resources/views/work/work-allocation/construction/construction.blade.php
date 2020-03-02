@@ -19,7 +19,7 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
 ?>
 @extends('work.index')
 @section('titlePage')
-    Công trình
+    Công trình thi công
 @endsection
 <style type="text/css">
     .qc_work_list_content_object {
