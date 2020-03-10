@@ -10,20 +10,21 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $dataCompany = $dataOrder->company;
-
+$orderId = $dataOrder->orderId();
 // san pham cua don hang
 $dataProduct = $dataOrder->productActivityOfOrder();
 #anh thiet ke tong quat
 $dataOrderImage = $dataOrder->orderImageInfoActivity();
 ?>
-@extends('ad3d.order.order.index')
+@extends('work.work-allocation.index')
 @section('titlePage')
     In đơn hàng
 @endsection
-@section('qc_ad3d_order_order')
+@section('qc_master_header') @endsection
+@section('qc_work_allocation_body')
     <div class="row">
         <div style="width: 547px;">
-            <div id="qc_ad3d_order_order_print_wrap" class="row">
+            <div id="qc_work_order_print_wrap" class="row" style="padding-top: 10px;">
                 <div class="qc-container-table qc-container-table-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <table class="table" style="margin: 0;">
                         <tr>
@@ -41,7 +42,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                 <div class="table-responsive">
                                     <table class="table table-hover qc-margin-bot-none">
                                         <tr>
-                                            <td style="width: 100px;">
+                                            <td  style="width: 100px;" >
                                                 <em class=" qc-color-grey">Mã ĐH:</em>
                                             </td>
                                             <td class="text-right">
@@ -99,7 +100,6 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                         <tr>
                             <td class="text-center" colspan="2">
                                 <b class="qc-font-size-16">HÓA ĐƠN ĐẶT HÀNG (ORDER)</b>
-
                                 <p>
                                     <em>Đặt hàng:</em>
                                     <label class="qc-font-size-16">{!! $dataOrder->name() !!}</label>
@@ -227,8 +227,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                 {{-- Thông tin thanh toán --}}
                 <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
-                        <div class="qc-container-table qc-container-table-border-none col-xs-8 col-sm-6 col-md-6-lg-6"
-                             style="float: right;">
+                        <div class="qc-container-table qc-container-table-border-none col-xs-8 col-sm-6 col-md-6-lg-6" style="float: right;">
                             <div class="table-responsive">
                                 <table class="table table-hover qc-margin-bot-none">
                                     <tr>
@@ -326,7 +325,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                 </div>
 
 
-                <div id="qc_ad3d_order_order_print_wrap_act" class="row">
+                <div id="qc_work_allocation_order_print_wrap_act" class="row">
                     <div class="qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <a class="qc_print btn btn-sm btn-primary">
                             In

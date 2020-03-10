@@ -685,10 +685,8 @@ class OrdersController extends Controller
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        if (count($dataStaffLogin) > 0) {
-            $staffLoginId = $dataStaffLogin->staffId();
-            $modelOrder->confirmReportFinish($orderId, 1, $staffLoginId);
-        }
+        $staffLoginId = $dataStaffLogin->staffId();
+        $modelOrder->confirmReportFinish($orderId, 1, $staffLoginId);
     }
 
     // ======= ===== ==== THANH TOAN DON HANG ====== ======== =====

@@ -161,8 +161,11 @@ class QcStaff extends Model
     // delete
     public function actionDelete($staffId = null)
     {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
         if (empty($staffId)) $staffId = $this->staffId();
-        return QcStaff::where('staff_id', $staffId)->update(['workStatus' => 0]);
+        if (QcStaff::where('staff_id', $staffId)->update(['workStatus' => 0])) {
+            $modelCompanyStaffWork->deleteOfStaff($staffId);
+        }
     }
 
     // up hinh anh
@@ -307,7 +310,7 @@ class QcStaff extends Model
         return $modelPayActivityDetail->infoOfStaff($this->checkIdNull($staffId), $date, $confirmStatus);
     }
 
-    public function payActivityDetailConfirmedOfReceiveStaff($staffId, $date=null)
+    public function payActivityDetailConfirmedOfReceiveStaff($staffId, $date = null)
     {
         $modelPayActivityDetail = new QcPayActivityDetail();
         return $modelPayActivityDetail->infoConfirmAndInvalidOfStaffAndDate($staffId, $date);
@@ -330,11 +333,13 @@ class QcStaff extends Model
         $modelStaffSalaryBasic = new QcStaffSalaryBasic();
         return $modelStaffSalaryBasic->infoActivityOfStaff($this->checkIdNull($staffId));
     }
+
     #----------- ANH thiet ke  ------------
     public function productDesign()
     {
         return $this->hasMany('App\Models\Ad3d\ProductDesign\QcProductDesign', 'staff_id', 'staff_id');
     }
+
     #----------- thanh toán lương ------------
     public function salaryPay()
     {
@@ -470,6 +475,13 @@ class QcStaff extends Model
     {
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
     }*/
+
+    # danh sach NV thi cong dang hoat dong
+    public function infoActivityConstructionOfCompany($companyId, $level = 1000, $orderByName = 'ASC')
+    {
+        $modelDepartment = new QcDepartment();
+        return $this->infoActivityOfCompany($companyId, $modelDepartment->constructionDepartmentId(), $level, $orderByName);
+    }
 
     public function infoOfCompany($companyId)
     {
@@ -656,6 +668,7 @@ class QcStaff extends Model
         $modelOrder = new QcOrder();
         return $modelOrder->infoProvisionalNoCancelOfStaffReceive($this->checkIdNull($staffId), $date, $provisionalConfirm, $orderKeyword);
     }
+
     //---------- san pham -----------
     public function product()
     {
@@ -769,7 +782,7 @@ class QcStaff extends Model
         return $modelTransfers->infoOfTransferStaff($this->checkIdNull($staffId), $date, $orderBy);
     }
 
-    public function transferConfirmedOfTransferStaff($staffId, $date=null)
+    public function transferConfirmedOfTransferStaff($staffId, $date = null)
     {
         $modelTransfers = new QcTransfers();
         return $modelTransfers->infoConfirmedOfTransferStaff($staffId, $date);
@@ -787,11 +800,12 @@ class QcStaff extends Model
         return $modelTransfers->infoOfReceiveStaff($this->checkIdNull($staffId), $date, $orderBy);
     }
 
-    public function transferConfirmedOfReceiveStaff($staffId, $date=null)
+    public function transferConfirmedOfReceiveStaff($staffId, $date = null)
     {
         $modelTransfers = new QcTransfers();
         return $modelTransfers->infoConfirmedOfReceiveStaff($staffId, $date);
     }
+
     //----------- GIU TIEN ------------
     public function keepMoney()
     {
@@ -1067,6 +1081,11 @@ class QcStaff extends Model
         return $this->pluck('gender', $staffId);
     }
 
+    public function workStatus($staffId = null)
+    {
+        return $this->pluck('workStatus', $staffId);
+    }
+
     public function bankAccount($staffId = null)
     {
         return $this->pluck('bankAccount', $staffId);
@@ -1098,7 +1117,7 @@ class QcStaff extends Model
 
     public function checkWorkStatus($staffId = null)
     {
-        return ($this->workStatus($this->checkIdNull($staffId)) == 1) ? true : false;
+        return ($this->workStatus($staffId) == 1) ? true : false;
     }
 
     // exist of account

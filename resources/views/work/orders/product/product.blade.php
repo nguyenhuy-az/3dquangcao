@@ -79,6 +79,12 @@ $dataProduct = $dataOrders->allProductOfOrder();
                                         <?php
                                         $productId = $product->productId();
                                         $designImage = $product->designImage();
+                                        # thiet ke dang ap dung
+                                        $dataProductDesign = $product->productDesignInfoApplyActivity();
+                                        if ($hFunction->getCountFromData($dataProductDesign) == 0) {
+                                            # thiet ke sau cung
+                                            $dataProductDesign = $product->productDesignInfoLast();
+                                        }
                                         ?>
                                         <tr>
                                             <td class="text-center qc-padding-none">

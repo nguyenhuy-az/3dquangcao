@@ -21,11 +21,11 @@ $objectAccess = $dataAccess['object'];
                     Việc đã làm
                 </a>
             </li>
-            {{--<li @if($objectAccess == 'workAllocationConstruction') class="active" @endif>
+            <li @if($objectAccess == 'workAllocationConstruction') class="active" @endif>
                 <a href="{!! route('qc.work.work_allocation.construction.get') !!}">
                     <label>Công trình được giao</label>
                 </a>
-            </li>--}}
+            </li>
             @if($dataStaffLogin->checkConstructionDepartmentAndManageRank())
                 <li @if($objectAccess == 'workAllocationManage') class="active" @endif>
                     <a href="{!! route('qc.work.work_allocation.manage.get') !!}" title="Đang cập nhật">

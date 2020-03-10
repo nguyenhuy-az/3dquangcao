@@ -32,12 +32,12 @@ $currentHour = $hFunction->currentHour();
 $dataProduct = $dataOrder->productActivityOfOrder();
 
 ?>
-@extends('ad3d.order.order.index')
+@extends('work.work-allocation.index')
 @section('titlePage')
     Bàn giao công trình
 @endsection
-@section('qc_ad3d_order_order')
-    <div id="qc_ad3d_order_order_construction_wrap" class="col-sx-12 col-sm-12 col-md-12 col-lg-10"
+@section('qc_work_allocation_body')
+    <div id="qc_work_allocation_manage_order_construction_wrap" class="col-sx-12 col-sm-12 col-md-12 col-lg-10"
          style="padding-bottom: 50px;">
         <div class="row">
             <div class="qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 0;">
@@ -50,7 +50,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
         {{-- BÀN GIAO CÔNG TRÌNH --}}
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <h4>BÀN GIAO CÔNG TRÌNH</h4>
+                <h3>TRIỂN KHAI THI CÔNG</h3>
             </div>
         </div>
         <div class="row">
@@ -156,8 +156,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             <td class="text-center">
                                                 @if($allocationStatus)
                                                     <a class="qc_delete_construction qc-link-red"
-                                                       data-href="{!! route('qc.ad3d.order.order.construction.delete',$ordersAllocationId) !!}">
-                                                        Hủy
+                                                       data-href="{!! route('qc.work.work_allocation.manage.order.construction.delete',$ordersAllocationId) !!}">
+                                                        Hủy bàn giao
                                                     </a>
                                                 @else
                                                     <em class="qc-color-grey">Đã hủy</em>
@@ -168,7 +168,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                 @else
                                     <tr>
                                         <td class="text-center" colspan="5">
-                                            <em class="qc-color-red">Chưa được bàn giao</em>
+                                            <em class="qc-color-red">Chưa có người phụ trách</em>
                                         </td>
                                     </tr>
                                 @endif
@@ -187,19 +187,20 @@ $dataProduct = $dataOrder->productActivityOfOrder();
         @else
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <label class="qc-color-red">BÀN GIAO CÔNG TRÌNH:</label>
+                    <label class="qc-color-red">BÀN GIAO CHO NHÂN VIÊN PHỤ TRÁCH:</label>
                 </div>
             </div>
             @if($addAllocationStatus)
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-top: 1px dotted #d7d7d7;">
-                        <form id="frmAd3dOrderConstructionAdd" role="form" method="post" enctype="multipart/form-data"
-                              action="{!! route('qc.ad3d.order.order.construction.add.post', $orderId) !!}">
+                        <form id="frmWorlAllocationOrderConstructionAdd" role="form" method="post"
+                              enctype="multipart/form-data"
+                              action="{!! route('qc.work.work_allocation.manage.order.construction.add.post', $orderId) !!}">
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     @if (Session::has('notifyAdd'))
                                         <div class="form-group form-group-sm text-center qc-color-red">
-                                            {!! Session::get('notifyAdd') !!}
+                                            <span class="qc-font-size-16">{!! Session::get('notifyAdd') !!}</span>
                                             <?php
                                             Session::forget('notifyAdd');
                                             ?>
@@ -220,7 +221,9 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             <option value="">Chọn nhân viên</option>
                                             @if($hFunction->checkCount($dataReceiveStaff))
                                                 @foreach($dataReceiveStaff as $receiveStaff)
-                                                    <option value="{!! $receiveStaff->staffId() !!}">{!! $receiveStaff->fullName() !!}</option>
+                                                    @if($receiveStaff->checkWorkStatus())
+                                                        <option value="{!! $receiveStaff->staffId() !!}">{!! $receiveStaff->fullName() !!}</option>
+                                                    @endif
                                                 @endforeach
                                             @endif
                                         </select>
@@ -367,7 +370,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
         {{-- THI CONG SAN PHAM --}}
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <h4>THÔNG TIN TRIỂN KHAI THI CÔNG</h4>
+                <h3>THÔNG TIN TRIỂN KHAI THI CÔNG SẢN PHẨM</h3>
             </div>
         </div>
         @if($hFunction->checkCount($dataProduct))
@@ -391,9 +394,10 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         <em>{!! $product->description() !!}</em>
                                     </td>
                                     <td class="text-right">
-                                        <a class="qc-link" title="Triển khai thi công" target="_blank"
-                                           href="{!! route('qc.ad3d.order.product.work-allocation.add.get',$productId) !!}">
-                                            <i class="qc-color-16 glyphicon glyphicon-wrench"></i>
+                                        <a class="qc-link-red" title="Triển khai thi công"
+                                           href="{!! route('qc.work.work_allocation.manage.order.product.work-allocation.add.get',$productId) !!}">
+                                            <i class="qc-font-size-16 glyphicon glyphicon-wrench"></i>
+                                            <span class="qc-font-size-14">TRIỂN KHAI THI CÔNG</span>
                                         </a>
                                     </td>
                                 </tr>
@@ -432,14 +436,19 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             <td class="text-right">
                                                 @if($workAllocation->checkActivity())
                                                     <em style="color: black;">Đang thi công</em>
+                                                    <span>|</span>
+                                                    <a class="qc_cancel_allocation_product qc-link-red" title="Hủy giao việc"
+                                                       data-href="{!! route('qc.ad3d.work.work_allocation.delete', $allocationId) !!}">
+                                                        <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
+                                                    </a>
                                                 @else
                                                     <em style="color: grey;">Đã kết thúc</em>
                                                 @endif
                                                 |
                                                 <a class="qc_work_allocation_view qc-link-green"
                                                    title="Click xem chi tiết thi công"
-                                                   data-href="{!! route('qc.ad3d.order.order.work_allocation.get',$allocationId) !!}">
-                                                    <i class="glyphicon glyphicon-eye-open"></i>
+                                                   data-href="{!! route('qc.work.work_allocation.manage.order.work_allocation.get',$allocationId) !!}">
+                                                    <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
                                                 </a>
                                             </td>
                                         </tr>
@@ -464,7 +473,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                             <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                                 <a class="qc_work_allocation_report_image_view qc-link"
                                                                    title="Click xem chi tiết hình ảnh"
-                                                                   data-href="{!! route('qc.ad3d.order.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
+                                                                   data-href="{!! route('qc.work.work_allocation.manage.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
                                                                     <img style="max-width: 100%; max-height: 100%;"
                                                                          src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
                                                                 </a>

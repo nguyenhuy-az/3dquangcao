@@ -24,13 +24,14 @@ $dataCustomer = $dataOrder->customer;
 $customerName = $dataCustomer->name();
 
 ?>
-@extends('ad3d.order.order.index')
+@extends('work.work-allocation.index')
 @section('titlePage')
-    In nghiệm thu
+    In Xác nhận đơn hàng
 @endsection
-@section('qc_ad3d_order_order')
-    <div id="qc_ad3d_order_order_print_confirm_wrap" class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="width: 1094px;">
+@section('qc_master_header') @endsection
+@section('qc_work_allocation_body')
+    <div id="qc_work_allocation_order_print_confirm_wrap" class="row" style="width: 1094px;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <table class="table" >
                 <tr>
                     <td class="text-center" colspan="2" style="border: none;">
@@ -77,7 +78,7 @@ $customerName = $dataCustomer->name();
                             vào ngày <b>{!! date('d/m/Y', strtotime($orderReceiveDate)) !!}</b>
                         </p>
                         <b>Điều 1: Nội dung:</b>
-                        <br/>
+                            <br/>
                         <span>- Bên B bàn giao cho bên A</span>
                     </td>
                 </tr>
@@ -239,9 +240,9 @@ $customerName = $dataCustomer->name();
                 </tr>
             </table>
         </div>
-        <div id="qc_ad3d_order_order_print_confirm_wrap_act" class="row">
+        <div id="qc_work_allocation_order_print_confirm_wrap_act" class="row">
             <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <a class="qc_print btn btn-sm btn-primary">
+                <a class="qc_print btn btn-sm btn-primary" >
                     In
                 </a>
                 <a class="btn btn-sm btn-default"

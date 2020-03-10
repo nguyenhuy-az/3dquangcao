@@ -975,6 +975,19 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
         // cong viec da ket thuc
         Route::group(['prefix' => 'manage'], function () {
+            # phan viec tren san pham
+            Route::group(['prefix' => 'product'], function () {
+                # phan viec
+                Route::get('allocation/add/staff/{productId?}', ['as' => 'qc.work.work_allocation.manage.order.product.work-allocation.staff.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@getAddStaff']);
+                Route::get('allocation/add/{productId?}', ['as' => 'qc.work.work_allocation.manage.order.product.work-allocation.add.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@getAddWorkAllocation']);
+                Route::post('allocation/add/{productId?}', ['as' => 'qc.work.work_allocation.manage.product.work-allocation.add.post', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@postAddWorkAllocation']);
+
+                # xem chi tiet thi cong
+                Route::get('view-work-allocation/{allocationId?}', ['as' => 'qc.work.work_allocation.manage.order.work_allocation.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@viewWorkAllocation']);
+
+                # xem chi tiết ảnh báo cáo
+                Route::get('view-report-image/{imageId?}', ['as' => 'qc.work.work_allocation.manage.order.allocation.report_image.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@viewReportImage']);
+            });
             #loc don hang
             Route::group(['prefix' => 'filter'], function () {
                 // loc ten don hang
@@ -982,24 +995,41 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
                 // loc theo ten khach hang
                 Route::get('customer-name/{name?}', ['as' => 'qc.work.work_allocation.manage.filter.customer.check.name', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@filterCheckCustomerName']);
             });
+            # xem thong tin dơn hang
+            Route::get('view/{orderId?}', ['as' => 'qc.work.work_allocation.manage.order.view', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@viewOrder']);
+
+            # in don hang
+            Route::get('print/{orderId?}', ['as' => 'qc.work.work_allocation.manage.order.print.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@printOrder']);
+
+            # in xac nhan
+            Route::get('print-confirm/{orderId?}', ['as' => 'qc.work.work_allocation.manage.order.print_confirm.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@printConfirmOrder']);
+
+            # ban giao cong trinh
+            Route::get('construction/{orderId?}', ['as' => 'qc.work.work_allocation.manage.order.construction.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@getOrderConstruction']);
+            Route::post('construction/add/{orderId?}', ['as' => 'qc.work.work_allocation.manage.order.construction.add.post', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@postOrderConstruction']);
+
+            # huy ban giao
+            Route::get('delete-construction/{allocationId?}', ['as' => 'qc.work.work_allocation.manage.order.construction.delete', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@deleteOrderConstruction']);
 
             Route::get('/{day?}/{month?}/{year?}/{paymentStatus?}/{orderFilterName?}/{orderCustomerFilterName?}/{staffFilterName?}', ['as' => 'qc.work.work_allocation.manage.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@index']);
         });
         // san pham da lam
         Route::group(['prefix' => 'construction'], function () {
             Route::group(['prefix' => 'product'], function () {
+                // xem thiet ke
+                Route::get('design-view/{designId?}', ['as' => 'qc.work.work_allocation.construction.product.design.view', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@viewProductDesign']);
                 # xac nhan hoan thanh sp
-                Route::get('confirm/{productId?}', ['as' => 'qc.work.work_allocation.construction.product.confirm.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@getConstructionProductConfirm']);
-                Route::post('confirm/{productId?}', ['as' => 'qc.work.work_allocation.construction.product.confirm.post', 'uses' => 'Work\WorkAllocation\WorkAllocationController@postConstructionProductConfirm']);
+                Route::get('confirm/{productId?}', ['as' => 'qc.work.work_allocation.construction.product.confirm.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@getConstructionProductConfirm']);
+                Route::post('confirm/{productId?}', ['as' => 'qc.work.work_allocation.construction.product.confirm.post', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@postConstructionProductConfirm']);
 
                 # sản phẩm
-                Route::get('/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.product.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@constructionProduct']);
+                Route::get('/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.product.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@constructionProduct']);
             });
-            # xac nhoan thanh sp
-            Route::get('confirm/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.confirm.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@getConstructionConfirm']);
-            Route::post('confirm/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.confirm.post', 'uses' => 'Work\WorkAllocation\WorkAllocationController@postConstructionConfirm']);
+            # xac hoan thanh sp
+            Route::get('confirm/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.confirm.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@getConstructionConfirm']);
+            Route::post('confirm/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.confirm.post', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@postConstructionConfirm']);
 
-            Route::get('/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.work_allocation.construction.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@index']);
+            Route::get('/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.work_allocation.construction.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@index']);
         });
 
     });

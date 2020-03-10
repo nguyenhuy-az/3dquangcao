@@ -110,22 +110,25 @@ class OrderController extends Controller
     # thong tin chi tiet don hang
     public function view($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $dataAccess = [
             'accessObject' => 'order'
         ];
         $dataOrder = $modelOrder->getInfo($orderId);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             return view('ad3d.order.order.view', compact('modelStaff', 'dataAccess', 'dataOrder'));
         }
 
     }
 
     # xem anh thiet ke san pham
-    public function viewProductDesign($productId){
+    public function viewProductDesign($productId)
+    {
 
     }
+
     # xem thong tin khach hang
     public function viewCustomer($customerId)
     {
@@ -180,13 +183,14 @@ class OrderController extends Controller
     #in hoa don
     public function printOrder($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $dataAccess = [
             'accessObject' => 'order'
         ];
         $dataOrder = $modelOrder->getInfo($orderId);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             return view('ad3d.order.order.print', compact('modelStaff', 'dataAccess', 'dataOrder'));
         }
 
@@ -195,13 +199,14 @@ class OrderController extends Controller
     #in phieu nghiem thu
     public function printConfirmOrder($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $dataAccess = [
             'accessObject' => 'order'
         ];
         $dataOrder = $modelOrder->getInfo($orderId);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             return view('ad3d.order.order.print-confirm', compact('modelStaff', 'dataAccess', 'dataOrder'));
         }
 
@@ -211,9 +216,10 @@ class OrderController extends Controller
     # chi tiet thi cong
     public function viewWorkAllocation($allocationId)
     {
+        $hFunction = new \Hfunction();
         $modelWorkAllocation = new QcWorkAllocation();
         $dataWorkAllocation = $modelWorkAllocation->getInfo($allocationId);
-        if (count($dataWorkAllocation) > 0) {
+        if ($hFunction->checkCount($dataWorkAllocation)) {
             return view('ad3d.order.order.view-work-allocation', compact('dataWorkAllocation'));
         }
     }
@@ -231,6 +237,7 @@ class OrderController extends Controller
     # ban giao don hang - cong trinh
     public function getOrderConstruction($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrders = new QcOrder();
         $dataAccess = [
@@ -238,7 +245,7 @@ class OrderController extends Controller
         ];
         $dataOrder = $modelOrders->getInfo($orderId);
         $dataReceiveStaff = $modelStaff->infoActivityOfCompany($dataOrder->companyId()); //Lay NV cty so huu don hang
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             return view('ad3d.order.order.construction', compact('modelStaff', 'dataAccess', 'dataReceiveStaff', 'dataOrder'));
         } else {
             return redirect()->back();

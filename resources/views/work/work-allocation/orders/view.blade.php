@@ -10,12 +10,12 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $orderId = $dataOrder->orderId();
 ?>
-@extends('ad3d.order.order.index')
+@extends('work.work-allocation.index')
 @section('titlePage')
     Chi tiết đơn hàng
 @endsection
-@section('qc_ad3d_order_order')
-    <div id="qc_ad3d_order_order_detail_wrap"
+@section('qc_work_allocation_body')
+    <div id="qc_work_allocation_order_detail_wrap"
          class="qc-padding-top-20 qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
             <div class="qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 0;">
@@ -26,7 +26,7 @@ $orderId = $dataOrder->orderId();
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <h3>{!! $dataOrder->name() !!}</h3>
+            <h3 class="qc-color-green">{!! $dataOrder->name() !!}</h3>
         </div>
         {{-- thông tin đơn hàng --}}
         <div class="qc-container-table qc-container-table-border-none qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-6">
@@ -85,7 +85,7 @@ $orderId = $dataOrder->orderId();
                     <tr style="background-color: whitesmoke;">
                         <th colspan="2">
                             <i class="qc-font-size-16 glyphicon glyphicon-user"></i>
-                            <b class="qc-color-red">KHÁCH HÀNG</b>
+                            <label class="qc-font-size-14 qc-color-red">KHÁCH HÀNG</label>
                         </th>
                     </tr>
                     <tr>
@@ -132,13 +132,13 @@ $orderId = $dataOrder->orderId();
                     <div class="table-responsive">
                         <table class="table table-bordered" style="margin-bottom: 0;">
                             <tr style="background-color: whitesmoke;">
-                                <th colspan="9">
+                                <th colspan="10">
                                     <i class="qc-font-size-16 glyphicon glyphicon-shopping-cart"></i>
-                                    <b class="qc-color-red">DANH SÁCH SẢN PHẨM</b>
+                                    <label class="qc-font-size-14 qc-color-red">DANH SÁCH SẢN PHẨM</label>
                                 </th>
                             </tr>
                             <tr>
-                                <th class="text-center">STT</th>
+                                <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Tên SP</th>
                                 <th>Chú thích</th>
                                 <th>Thiết kế</th>
@@ -153,7 +153,7 @@ $orderId = $dataOrder->orderId();
                             $dataProduct = $dataOrder->allProductOfOrder();
                             $n_o = 0;
                             ?>
-                            @if(count($dataProduct) > 0)
+                            @if($hFunction->checkCount($dataProduct))
                                 @foreach($dataProduct as $product)
                                     <?php
                                     $productId = $product->productId();
@@ -223,11 +223,11 @@ $orderId = $dataOrder->orderId();
                             <tr style="background-color: whitesmoke;">
                                 <th colspan="5">
                                     <i class="qc-font-size-16 glyphicon glyphicon-credit-card"></i>
-                                    <b class="qc-color-red">CHI TIẾT THANH TOÁN</b>
+                                    <label class="qc-font-size-14 qc-color-red">CHI TIẾT THANH TOÁN</label>
                                 </th>
                             </tr>
                             <tr>
-                                <th class="text-center">STT</th>
+                                <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Ngày</th>
                                 <th>Tên</th>
                                 <th>Điện thoại</th>
@@ -235,26 +235,26 @@ $orderId = $dataOrder->orderId();
                             </tr>
                             <?php
                             $dataOrderPay = $dataOrder->infoOrderPayOfOrder();
-                            $n_o = 0;
+                            $n_o_pay = 0;
                             ?>
-                            @if(count($dataOrderPay) > 0)
+                            @if($hFunction->checkCount($dataOrderPay))
                                 @foreach($dataOrderPay as $orderPay)
                                     <tr>
                                         <td class="text-center">
-                                            {!! $n_o+=1  !!}
+                                            {!! $n_o_pay +=1  !!}
                                         </td>
                                         <td>
                                             {!! date('d/m/Y',strtotime($orderPay->datePay()))  !!}
                                         </td>
                                         <td>
-                                            @if(!empty($orderPay->payerName()))
+                                            @if(!$hFunction->checkEmpty($orderPay->payerName()))
                                                 <span>{!! $orderPay->payerName() !!}</span>
                                             @else
                                                 <span>{!! $orderPay->order->customer->name() !!}</span>
                                             @endif
                                         </td>
                                         <td>
-                                            @if(!empty($orderPay->payerPhone()))
+                                            @if(!$hFunction->checkEmpty($orderPay->payerPhone()))
                                                 <span>{!! $orderPay->payerPhone() !!}</span>
                                             @else
                                                 <span>{!! $orderPay->order->customer->phone() !!}</span>

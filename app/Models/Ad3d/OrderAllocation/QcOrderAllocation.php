@@ -3,6 +3,7 @@
 namespace App\Models\Ad3d\OrderAllocation;
 
 use App\Models\Ad3d\Order\QcOrder;
+use App\Models\Ad3d\Product\QcProduct;
 use Illuminate\Database\Eloquent\Model;
 
 class QcOrderAllocation extends Model
@@ -49,12 +50,27 @@ class QcOrderAllocation extends Model
         return QcOrderAllocation::where('allocation_id', $allocationId)->update(['action' => 0]);
     }
 
+    public function checkNullId($allocationId = null)
+    {
+        return (empty($allocationId)) ? $this->allocationId() : $allocationId;
+    }
     //========== ========= DUYET TU BAO CAO BAN GIAO CONG TRINH ========= ==========
     # bao cao hoan thanh cong trinh
     public function reportFinishAllocation($allocationId, $reportDate)
     {
-        $allocationId = (empty($allocationId)) ? $this->allocationId() : $allocationId;
-        return QcOrderAllocation::where('allocation_id', $allocationId)->update(['finishStatus' => 1, 'finishDate' => $reportDate]);
+        $hFunction = new \Hfunction();
+        $modelProduct = new QcProduct();
+        $modelOrder = new QcOrder();
+        $allocationId = $this->checkNullId($allocationId);
+        $dataProduct = $modelOrder->productActivityOfOrder($this->orderId($allocationId));
+        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['finishStatus' => 1, 'finishDate' => $reportDate])) {
+            # bao ket thuc san pham
+            if ($hFunction->checkCount($dataProduct)) {
+                foreach ($dataProduct as $product) {
+                    $modelProduct->confirmFinishFromFinishOrder($product->productId(), $this->receiveStaffId($allocationId)[0]);
+                }
+            }
+        }
     }
 
     // ket thuc cong viec
@@ -62,7 +78,7 @@ class QcOrderAllocation extends Model
     {
         $hFunction = new \Hfunction();
         $modelOrder = new QcOrder();
-        $allocationId = (empty($allocationId)) ? $this->allocationId() : $allocationId;
+        $allocationId = $this->checkNullId($allocationId);
         if (QcOrderAllocation::where('allocation_id', $allocationId)->update(
             [
                 'confirmStatus' => 1,
@@ -324,4 +340,13 @@ class QcOrderAllocation extends Model
         return ($this->confirmFinish($allocationId) == 1) ? true : false;
     }
 
+    # kiem tra bao cao hoan thanh
+    public function checkCancelAllocation($allocationId = null)
+    {
+        if ($this->checkConfirm($allocationId) && $this->checkActivity($allocationId) && !$this->checkFinish($allocationId)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

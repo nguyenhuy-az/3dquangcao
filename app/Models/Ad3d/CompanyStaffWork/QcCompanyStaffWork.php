@@ -54,6 +54,11 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::where('work_id', $this->checkIdNull($workId))->update(['action' => 0]);
     }
 
+    public function deleteOfStaff($staffId)
+    {
+        return QcCompanyStaffWork::where('staff_id', $staffId)->where('action', 1)->update(['action' => 0]);
+    }
+
     //cap nhat quyen admin
     public function updateLevel($level, $workId = null)
     {
@@ -255,6 +260,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tra nv thuoc bp quan ly
     public function checkManageDepartment($staffId)
     {
@@ -266,6 +272,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     // kiem tra nv theo bo phan quan ly cap quan ly
     public function checkManageDepartmentAndManageRank($staffId)
     {
@@ -277,6 +284,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     // kiem tra nv theo bo phan quan ly cap thong thuong
     public function checkManageDepartmentAndNormalRank($staffId)
     {
@@ -300,6 +308,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     // kiem tra nv theo bo phan quan ly cap quan ly
     public function checkConstructionDepartmentAndManageRank($staffId)
     {
@@ -323,6 +332,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tra nv thuoc bo phan thiet ke
     public function checkDesignDepartment($staffId)
     {
@@ -334,6 +344,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tra nv thuoc bo phan thiet ke cap quan ly
     public function checkDesignDepartmentAndManageRank($staffId)
     {
@@ -370,6 +381,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tra nv thuoc bp kinh doanh
     public function checkBusinessDepartment($staffId)
     {
@@ -381,6 +393,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tra nv thuoc bp kinh doanh cap nv quan ly
     public function checkBusinessDepartmentAndManageRank($staffId)
     {
@@ -392,6 +405,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tra nv thuoc bp kinh doanh cap nv
     public function checkBusinessDepartmentAndNormalRank($staffId)
     {
@@ -416,6 +430,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     // kiem tra nv theo cap bac nhan su
     public function checkPersonnelDepartment($staffId)
     {
@@ -427,6 +442,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tran nv thuoc bo phan nhan su cap quan ly
     public function checkPersonnelDepartmentAndManageRank($staffId)
     {
@@ -438,6 +454,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tran nv thuoc bo phan nhan su cap nv
     public function checkPersonnelDepartmentAndNormalRank($staffId)
     {
@@ -462,6 +479,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tra nv thuoc bp thu quy
     public function checkTreasureDepartment($staffId)
     {
@@ -473,6 +491,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tra nv thuoc bp kinh doanh cap nv quan ly
     public function checkTreasureDepartmentAndManageRank($staffId)
     {
@@ -484,6 +503,7 @@ class QcCompanyStaffWork extends Model
         }
         return $resultStatus;
     }
+
     //kiem tra nv thuoc bp kinh doanh cap nv
     public function checkTreasureDepartmentAndNormalRank($staffId)
     {

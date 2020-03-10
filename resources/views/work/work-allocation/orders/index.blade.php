@@ -69,11 +69,7 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                         </div>
                     </div>
                 </div>
-                <div class="qc_ad3d_list_content qc-ad3d-table-container row"
-                     data-="{!! route('qc.ad3d.order.order.confirm.get') !!}"
-                     data-href-view="{!! route('qc.ad3d.order.order.view.get') !!}"
-                     data-href-view-customer="{!! route('qc.ad3d.order.order.view_customer.get') !!}"
-                     data-href-del="{!! route('qc.ad3d.order.order.delete') !!}">
+                <div class="qc_work_allocation_manage_list_content  row">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: whitesmoke;">
@@ -220,22 +216,20 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                             </div>
                                             <div  class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                    <a class="qc_view qc-link-green">
+                                                    <a class="qc-link-green" href="{!! route('qc.work.work_allocation.manage.order.view', $orderId) !!}">
                                                         <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
                                                     </a>
                                                     &nbsp;&nbsp;
                                                     <a class="qc-link" title="In đơn hàng"
-                                                       href="{!! route('qc.ad3d.order.order.print.get', $orderId) !!}">
+                                                       href="{!! route('qc.work.work_allocation.manage.order.print.get', $orderId) !!}">
                                                         <i class="qc-font-size-14 fa fa-print"></i>
                                                     </a>
-                                                    @if(!$cancelStatus)
-                                                        @if($order->checkConfirmStatus())
-                                                            &nbsp;&nbsp;
-                                                            <a class="qc-link-green" title="In nghiệm thu"
-                                                               href="{!! route('qc.ad3d.order.order.confirm.print.get', $orderId) !!}">
-                                                                <i class="qc-font-size-16 glyphicon glyphicon-list-alt"></i>
-                                                            </a>
-                                                        @endif
+                                                    @if($order->checkConfirmStatus())
+                                                        <span>&nbsp;&nbsp;</span>
+                                                        <a class="qc-link-green" title="In nghiệm thu"
+                                                           href="{!! route('qc.work.work_allocation.manage.order.print_confirm.get', $orderId) !!}">
+                                                            <i class="qc-font-size-16 glyphicon glyphicon-list-alt"></i>
+                                                        </a>
                                                     @endif
 
                                                 </div>
@@ -250,7 +244,7 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                         <td class="text-center">
                                             @if(!$cancelStatus)
                                                 <a class="qc-link-green" title="Click xem chi tiết thi công"
-                                                   href="{!! route('qc.ad3d.order.order.construction.get',$orderId) !!}">
+                                                   href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderId) !!}">
                                                     @if(!$finishStatus)
                                                         Bàn giao công trình
                                                     @else
@@ -266,13 +260,6 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                                         &nbsp;
                                                     @endforeach
                                                 @endif
-                                            @else
-                                                <em style=" color: brown;">
-                                                    Đã hủy
-                                                </em>
-                                            @endif
-                                            @if($hFunction->checkCount($dataProduct))
-                                                <br/>
                                             @endif
                                         </td>
                                         <td class="text-center qc-color-red">
@@ -295,7 +282,7 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                                     </div>
                                                     <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         <a class="qc-link-green" title="Click xem chi tiết thi công"
-                                                           href="{!! route('qc.ad3d.order.order.construction.get',$orderId) !!}">
+                                                           href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderId) !!}">
                                                             Chi tiết...
                                                         </a>
                                                     </div>

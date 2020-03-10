@@ -31,30 +31,34 @@ $dataOrder = $dataOrderAllocation->orders;
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
                              @if($mobileStatus) style="padding: 0 0;" @endif>
-                            <div class="text-center form-group qc-padding-none">
-                                <span>
+                            <div class="form-group qc-padding-none">
+                                <h3>
                                     {!! $dataOrder->name() !!}
-                                </span>
+                                </h3>
                             </div>
                         </div>
                     </div>
+                    @if($dataOrder->checkExistsProductNotFinish())
                     <div class="row">
-                        <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group qc-padding-none">
-                                @if($dataOrder->checkExistsProductNotFinish())
-                                    <b class="qc-color-red">TỒN TẠI SẢN PHẨM CHƯA HOÀN THÀNH</b>
-                                @else
-                                    <em class="qc-color-red">Ngày hoàn thành là ngày xác nhận</em>
-                                @endif
+                                <b class="qc-color-red">TỒN TẠI SẢN PHẨM CHƯA HOÀN THÀNH</b>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    <div class="row">
+                        <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label style="text-decoration: underline;">Lưu ý:</label><br/>
+                                <b class="qc-color-red">TẤT CẢ CÁC SẢN PHẨM SẼ KẾT THÚC THEO CÔNG TRÌNH</b>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="text-center qc-padding-top-20 qc-padding-bot-20  qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                            @if(!$dataOrder->checkExistsProductNotFinish())
-                                <button type="button" class="qc_save btn btn-sm btn-primary">Xác nhận</button>
-                            @endif
+                            <button type="button" class="qc_save btn btn-sm btn-primary">Xác nhận</button>
                             <button type="button" class="qc_container_close btn btn-sm btn-default">Đóng</button>
                         </div>
                     </div>

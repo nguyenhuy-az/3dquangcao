@@ -70,15 +70,15 @@ class QcWork extends Model
         $modelStaffWorkSalary = new QcStaffWorkSalary();
         $modelSalary = new QcSalary();
 
-        $dataWork = $this->getInfo($workId);
-        $mainMinute = $dataWork->sumMainMinute();
-        $plusMinute = $dataWork->sumPlusMinute();
-        $minusMinute = $dataWork->sumMinusMinute();
-        $totalBeforePay = $dataWork->totalMoneyBeforePay();
-        $totalMinusMoney = $dataWork->totalMoneyMinus();
-        $companyStaffWorkId = $dataWork->companyStaffWorkId();
         # kiem tra da tinh luong chưa
         if (!$modelSalary->checkExistInfoOfWork($workId)) { # chưa tinh luong
+            $dataWork = $this->getInfo($workId);
+            $mainMinute = $dataWork->sumMainMinute();
+            $plusMinute = $dataWork->sumPlusMinute();
+            $minusMinute = $dataWork->sumMinusMinute();
+            $totalBeforePay = $dataWork->totalMoneyBeforePay();
+            $totalMinusMoney = $dataWork->totalMoneyMinus();
+            $companyStaffWorkId = $dataWork->companyStaffWorkId();
             # phien ban moi - nv lam nhieu cty
             if (!empty($companyStaffWorkId)) {
                 $dataStaffWorkSalary = $modelStaffWorkSalary->infoActivityOfWork($companyStaffWorkId);
@@ -92,7 +92,6 @@ class QcWork extends Model
                 $workSalaryId = $dataStaffWorkSalary->workSalaryId();
                 $overtimeHour = $dataStaffWorkSalary->overtimeHour();# phu cap tang ca
                 //$moneyOvertime = ($plusMinute / 60) * $dataStaffWorkSalary->overtimeHour(); # tien phu cap tang ca
-
                 //$totalMoneyMinusFuel = $this->totalMinusFuelInMonth($workId);# tru tien xang neu di lam ko du thang
                 $totalUnpaidSalary = (int)($this->totalSalaryBasicOfWorkInMonth($workId) - $totalBeforePay - $totalMinusMoney);
                 $overtimeMoney = ($plusMinute / 60) * $overtimeHour;
@@ -159,12 +158,12 @@ class QcWork extends Model
 
     public function confirmExportSalary($workId = null)
     {
-        return QcWork::where('work_id', (empty($workId)) ? $this->workId() : $workId)->update(['salaryStatus' => 1, 'action' => 0]);
+        return QcWork::where('work_id', $this->checkIdNull($workId))->update(['salaryStatus' => 1, 'action' => 0]);
     }
 
     public function disableWord($workId = null)
     {
-        return QcWork::where('work_id', (empty($workId)) ? $this->workId() : $workId)->update(['action' => 0]);
+        return QcWork::where('work_id', $this->checkIdNull($workId))->update(['action' => 0]);
     }
 
     //========== ========== ========== CAC MOI QUAN HE ========== ========== ==========
@@ -643,10 +642,9 @@ class QcWork extends Model
     {
         $hFunction = new \Hfunction();
         $hFunction->dateDefaultHCM();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
         $currentDate = date('Y-m-d');
         $firstDateOfMonth = $hFunction->firstDateOfMonthFromDate($currentDate); # lay ngay dau thang
-        $lastDateOfMonth = $hFunction->lastDateOfMonthFromDate($currentDate); # lay ngay cuoi thang
+        //$lastDateOfMonth = $hFunction->lastDateOfMonthFromDate($currentDate); # lay ngay cuoi thang
         $dataWorkActivity = QcWork::where('action', 1)->get(); # lay nhung bang cham cong dang lam
         if (count($dataWorkActivity) > 0) {
             foreach ($dataWorkActivity as $work) {

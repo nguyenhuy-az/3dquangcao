@@ -11,8 +11,8 @@ $mobileStatus = $mobile->isMobile();
 
 $dataWorkAllocationReport = $dataWorkAllocation->workAllocationReportInfo();
 ?>
-@extends('ad3d.components.container.container-10')
-@section('qc_ad3d_container_content')
+@extends('components.container.container-10')
+@section('qc_container_content')
     <div class="qc-padding-top-20 qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
             <h3>{!! $dataWorkAllocation->product->productType->name() !!}</h3>
@@ -95,10 +95,6 @@ $dataWorkAllocationReport = $dataWorkAllocation->workAllocationReportInfo();
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
                              style="border-top: 1px dotted brown; "></div>
                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="margin-top: 5px;">
-                            <a class="qc_delete_report_action qc-link-red" title="Xóa báo cáo"
-                               data-href="{!! route('qc.work.work_allocation.activity.report.cancel.get', $workAllocationReport->reportId()) !!}">
-                                <i class="glyphicon glyphicon-trash"></i>
-                            </a>&nbsp;
                             <b>{!! date('d/m/Y H:j', strtotime($workAllocationReport->reportDate())) !!}</b>
                             <br/>
                             <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
@@ -107,7 +103,7 @@ $dataWorkAllocationReport = $dataWorkAllocation->workAllocationReportInfo();
                             @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
                                 <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                     <a class="qc_work_allocation_report_image_view qc-link"
-                                       data-href="{!! route('qc.work.work_allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
+                                       data-href="{!! route('qc.work.work_allocation.manage.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
                                         <img style="max-width: 100%; max-height: 100%;"
                                              src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
                                     </a>
@@ -151,7 +147,7 @@ $dataWorkAllocationReport = $dataWorkAllocation->workAllocationReportInfo();
         @endif
         <div class="row">
             <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <a class="qc_ad3d_container_close btn btn-primary">
+                <a class="qc_container_close btn btn-primary">
                     Đóng
                 </a>
             </div>

@@ -136,7 +136,7 @@ $workId = $dataWork->workId();
                                                            @if($n_o%2 == 0) style="background-color: whitesmoke;" @endif>
                                                         <tr>
                                                             <th style="border-top: none; " colspan="3">
-                                                                <label style="color: brown;">Thông tin báo cáo:</label>
+                                                                <label style="color: brown;">BÁO CÁO THI CÔNG:</label>
                                                             </th>
                                                         </tr>
                                                         <tr>

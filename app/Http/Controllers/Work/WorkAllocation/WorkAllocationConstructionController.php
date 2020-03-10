@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Work\WorkAllocation;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\Rule\QcRules;
 use App\Models\Ad3d\Salary\QcSalary;
 use App\Models\Ad3d\Staff\QcStaff;
@@ -21,7 +22,7 @@ use File;
 use Input;
 use Request;
 
-class WorkAllocationController extends Controller
+class WorkAllocationConstructionController extends Controller
 {
     // danh sach cong trinh dc ban giao
     public function index($loginMonth = null, $loginYear = null)
@@ -52,10 +53,21 @@ class WorkAllocationController extends Controller
     public function postConstructionConfirm($allocationId = null)
     {
         $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
         $modelOrderAllocation = new QcOrderAllocation();
-        if ($modelStaff->checkLogin()) {
+        if(!$hFunction->checkEmpty($allocationId)){
             $modelOrderAllocation->reportFinishAllocation($allocationId, $hFunction->carbonNow());
+        }
+
+    }
+
+    #xem chi tiet hinh anh thiet ke
+    public function viewProductDesign($designId)
+    {
+        $hFunction = new \Hfunction();
+        $modelProductDesign = new QcProductDesign();
+        $dataProductDesign = $modelProductDesign->getInfo($designId);
+        if ($hFunction->checkCount($dataProductDesign)) {
+            return view('work.work-allocation.construction.product.view-design-image', compact('dataProductDesign'));
         }
     }
 
@@ -79,9 +91,10 @@ class WorkAllocationController extends Controller
     # xac nhan san pham
     public function getConstructionProductConfirm($productId = null)
     {
+        $hFunction = new \Hfunction();
         $modelProduct = new QcProduct();
         $dataProduct = $modelProduct->getInfo($productId);
-        if (count($dataProduct) > 0) {
+        if ($hFunction->checkCount($dataProduct)) {
             return view('work.work-allocation.construction.product.confirm-finish', compact('dataProduct'));
         }
     }
@@ -91,8 +104,6 @@ class WorkAllocationController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
-        if ($modelStaff->checkLogin()) {
-            $modelProduct->confirmFinish($modelStaff->loginStaffId(), $hFunction->carbonNow(), $productId);
-        }
+        $modelProduct->confirmFinish($modelStaff->loginStaffId(), $hFunction->carbonNow(), $productId);
     }
 }

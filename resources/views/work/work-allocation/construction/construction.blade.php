@@ -15,32 +15,27 @@ $loginStaffId = $dataStaffLogin->staffId();
 
 $dataOrdersAllocation = null;
 $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($loginStaffId, date('Y-m', strtotime("$loginYear-$loginMonth")));
-//$totalMoneyOrder = $modelOrders->totalMoneyOfListOrder($dataOrders);
-?>
-@extends('work.index')
-@section('titlePage')
-    Công trình thi công
-@endsection
-<style type="text/css">
-    .qc_work_list_content_object {
-        border-bottom: 1px solid #d7d7d7;
-    }
 
-    .qc_work_list_content_object:hover {
-        background-color: whitesmoke;
-    }
-</style>
-@section('qc_work_body')
+$hrefIndex = route('qc.work.work_allocation.construction.get');
+?>
+@extends('work.work-allocation.index')
+@section('titlePage')
+    Công trình được bàn giao
+@endsection
+@section('qc_work_allocation_body')
     <div class="row">
         <div class="qc_work_allocation_construction_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            @include('work.work-allocation.work-allocation-menu')
+            @include('work.work-allocation.menu')
 
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
-                    <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <h4 class="qc-color-red">Công trình được Bàn giao</h4>
+                    </div>
+                    <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <select class="qc_work_orders_allocation_login_month" style="height: 25px;"
-                                data-href="{!! route('qc.work.work_allocation.construction.get') !!}">
+                                data-href="{!! $hrefIndex !!}">
                             @for($i = 1; $i <=12; $i++)
                                 <option @if($loginMonth == $i) selected="selected" @endif>
                                     {!! $i !!}
@@ -49,7 +44,7 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                         </select>
                         <span>/</span>
                         <select class="qc_work_orders_allocation_login_year" style="height: 25px;"
-                                data-href="{!! route('qc.work.work_allocation.construction.get') !!}">
+                                data-href="{!! $hrefIndex !!}">
                             @for($i = 2017; $i <=2050; $i++)
                                 <option @if($loginYear == $i) selected="selected" @endif>
                                     {!! $i !!}
@@ -62,8 +57,8 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr style="background-color: whitesmoke;">
-                                <th class="text-center">STT</th>
-                                <th >Mã ĐH</th>
+                                <th class="text-center" style="width: 20px;">STT</th>
+                                <th>Mã ĐH</th>
                                 <th>Đơn hàng</th>
                                 <th>Khách hàng</th>
                                 <th class="text-center">Ngày nhận</th>
