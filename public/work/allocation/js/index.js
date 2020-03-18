@@ -117,6 +117,11 @@ var qc_work_allocation = {
                 } else {
                     return false;
                 }
+            },
+            cancelAllocation: function (href) {
+                if (confirm('Tôi đồng ý hủy phân việc trên sản phẩm này')) {
+                    qc_master_submit.ajaxHasReload(href, '', false);
+                }
             }
         },
     },
@@ -411,7 +416,7 @@ $(document).ready(function () {
 
         //------ xem chi tiet anh bao cao -------
         $('#qc_work_allocation_manage_order_construction_wrap').on('click', '.qc_work_allocation_report_image_view', function () {
-            qc_ad3d_order_order.viewAllocationReportImage($(this).data('href'));
+           // qc_ad3d_order_order.viewAllocationReportImage($(this).data('href'));
         });
 
         //------ in don hang -------
@@ -424,6 +429,11 @@ $(document).ready(function () {
         $('#qc_work_allocation_order_print_confirm_wrap_act').on('click', '.qc_print', function () {
             $(this).parents('#qc_work_allocation_order_print_confirm_wrap_act').hide();
             window.print();
+        });
+
+        // -------- Xoa ban giao tren san pham -------
+        $('#qc_work_allocation_manage_order_construction_wrap').on('click', '.qc_cancel_allocation_product', function () {
+            qc_work_allocation.manage.productWorkAllocation.cancelAllocation($(this).data('href'));
         });
     });
 

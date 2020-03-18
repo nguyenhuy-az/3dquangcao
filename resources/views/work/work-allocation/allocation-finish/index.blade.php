@@ -122,7 +122,7 @@ $workId = $dataWork->workId();
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            @if($dataWorkAllocationFinish->checkFinishStatus())
+                                            @if($hFunction->checkCount($dataWorkAllocationFinish))
                                                 <em>Đã hoàn thành</em>
                                                 <br/>
                                                 @if($dataWorkAllocationFinish->checkFinishSoon())

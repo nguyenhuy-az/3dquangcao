@@ -20,7 +20,8 @@ class KpiController extends Controller
         $modelStaff = new QcStaff();
         $modelKpi = new QcKpi();
         $dataAccess = [
-            'accessObject' => 'kpi'
+            'accessObject' => 'activity',
+            'accessSubObject' => 'kpi'
         ];
         $dataKpi = $modelKpi->selectActivityInfo()->paginate(30);
         return view('ad3d.system.kpi.list', compact('modelStaff', 'dataKpi', 'dataAccess'));
@@ -43,7 +44,8 @@ class KpiController extends Controller
         $modelKpi = new QcKpi();
         $modelDepartment = new QcDepartment();
         $dataAccess = [
-            'accessObject' => 'kpi'
+            'accessObject' => 'activity',
+            'accessSubObject' => 'kpi'
         ];
 
         $departmentId = (empty($departmentId)) ? $modelDepartment->businessDepartmentId() : $departmentId; # mac dinh bo phan kinh doanh

@@ -95,8 +95,8 @@ class WorkAllocationController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelWorkAllocation = new QcWorkAllocation();
-        if (!empty($allocationId)) {
-            $modelWorkAllocation->confirmFinish($allocationId, $hFunction->carbonNow(), 0, 1);
+        if (!$hFunction->checkEmpty($allocationId)) {
+            $modelWorkAllocation->cancelAllocation($allocationId);
         }
     }
 

@@ -9,6 +9,7 @@
  * dataAccess
  */
 $accessObject = (isset($dataAccess['accessObject'])) ? $dataAccess['accessObject'] : null;
+$accessSubObject = (isset($dataAccess['accessSubObject'])) ? $dataAccess['accessSubObject'] : null;
 $dataLogin = $modelStaff->loginStaffInfo();
 $dataCompanyLogin = $dataLogin->companyInfoActivity();
 ?>
@@ -127,14 +128,19 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                     Ngày nghỉ
                                 </a>
                             </li>
-                            <li @if($accessObject == 'kpi') class="active" @endif>
+                            <li @if($accessObject == 'activity') class="active" @endif>
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    KPI <span class="caret"></span>
+                                    Hoạt động <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li>
                                         <a class="qc-link-bold" href="{!! route('qc.ad3d.system.kpi.get') !!}">
                                             Danh mục KPI
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="qc-link-bold" href="{!! route('qc.ad3d.system.construction_work.get') !!}">
+                                            Danh mục Thi công
                                         </a>
                                     </li>
                                 </ul>

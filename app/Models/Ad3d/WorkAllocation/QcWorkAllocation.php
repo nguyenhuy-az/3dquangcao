@@ -47,9 +47,11 @@ class QcWorkAllocation extends Model
         return $this->lastId;
     }
 
-    public function checkIdNull($allocationId){
+    public function checkIdNull($allocationId=null)
+    {
         return (empty($allocationId)) ? $this->allocationId() : $allocationId;
     }
+
     // ket thuc cong viec
     public function confirmFinish($allocationId, $reportDate, $finishStatus, $finishReason = 0, $finishNoted = null)
     {
@@ -70,12 +72,12 @@ class QcWorkAllocation extends Model
         }
     }
 
-   # xac nhan hoan thanh khi bao hoan thanh san pham
+    # xac nhan hoan thanh khi bao hoan thanh san pham
     public function confirmFinishFromFinishProduct($productId)
     {
         $hFunction = new \Hfunction();
         $dataWorkAllocation = $this->infoActivityOfProduct($productId);
-        if (count($dataWorkAllocation) > 0) {
+        if ($hFunction->checkCount($dataWorkAllocation)) {
             foreach ($dataWorkAllocation as $workAllocation) {
                 $this->confirmFinish($workAllocation->allocationId(), $hFunction->carbonNow(), 1, 0, 'Kết thúc từ báo hoàn thành sản phẩm');
             }
@@ -87,11 +89,18 @@ class QcWorkAllocation extends Model
     {
         $hFunction = new \Hfunction();
         $dataWorkAllocation = $this->infoActivityOfProduct($productId);
-        if (count($dataWorkAllocation) > 0) {
+        if ($hFunction->checkCount($dataWorkAllocation)) {
             foreach ($dataWorkAllocation as $workAllocation) {
                 $this->confirmFinish($workAllocation->allocationId(), $hFunction->carbonNow(), 1, 0, 'Kết thúc từ báo hủy sản phẩm');
             }
         }
+    }
+
+    # huy ban giao
+    public function cancelAllocation($allocationId)
+    {
+        $hFunction = new \Hfunction();
+        //return QcWorkAllocation::where('allocation_id', $allocationId)->update(['action' => 0, 'cancelStatus' => 1, 'cancelDate' => $hFunction->carbonNow()]);
     }
     //========== ========= ========= RELATION ========== ========= ==========
     //---------- nhan vien ban giao -----------
@@ -194,7 +203,8 @@ class QcWorkAllocation extends Model
         return $modelWorkAllocationFinish->infoOfAllocation($this->checkIdNull($allocationId));
     }
 
-    public function checkFinishAllocation($allocationId = null){
+    public function checkFinishAllocation($allocationId = null)
+    {
         $modelWorkAllocationFinish = new QcWorkAllocationFinish();
         return $modelWorkAllocationFinish->checkFinishOfAllocation($this->checkIdNull($allocationId));
     }
@@ -342,6 +352,11 @@ class QcWorkAllocation extends Model
     public function checkActivity($allocationId = null)
     {
         return ($this->action($allocationId) == 1) ? true : false;
+    }
+    #kiem tra huy phan viec
+    public function checkCancel($allocationId = null)
+    {
+       // return ($this->cancelStatus($allocationId) == 1) ? true : false;
     }
 
     # xac nhan phan cong

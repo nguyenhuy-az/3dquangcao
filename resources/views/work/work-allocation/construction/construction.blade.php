@@ -20,7 +20,7 @@ $hrefIndex = route('qc.work.work_allocation.construction.get');
 ?>
 @extends('work.work-allocation.index')
 @section('titlePage')
-    Công trình được bàn giao
+    Đơn hàng được bàn giao
 @endsection
 @section('qc_work_allocation_body')
     <div class="row">
@@ -31,7 +31,7 @@ $hrefIndex = route('qc.work.work_allocation.construction.get');
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                        <h4 class="qc-color-red">Công trình được Bàn giao</h4>
+                        <h4 class="qc-color-red">Đơn hàng thi công</h4>
                     </div>
                     <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <select class="qc_work_orders_allocation_login_month" style="height: 25px;"

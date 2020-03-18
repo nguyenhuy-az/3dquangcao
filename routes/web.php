@@ -471,6 +471,23 @@ Route::group(['prefix' => 'ad3d'], function () {
 
             Route::get('/', ['as' => 'qc.ad3d.system.kpi.get', 'uses' => 'Ad3d\System\Kpi\KpiController@index']);
         });
+        // danh thi cong
+        Route::group(['prefix' => 'construction-work'], function () {
+            Route::get('view/{constructionId?}', ['as' => 'qc.ad3d.system.construction_work.view', 'uses' => 'Ad3d\System\ConstructionWork\ConstructionWorkController@view']);
+
+            //cap nhat thong in
+            Route::get('edit/{constructionId?}', ['as' => 'qc.ad3d.system.construction_work.edit.get', 'uses' => 'Ad3d\System\ConstructionWork\ConstructionWorkController@getEdit']);
+            Route::post('edit/{constructionId?}', ['as' => 'qc.ad3d.system.construction_work.edit.post', 'uses' => 'Ad3d\System\ConstructionWork\ConstructionWorkController@postEdit']);
+
+            //them moi
+            Route::get('add/', ['as' => 'qc.ad3d.system.construction_work.add.get', 'uses' => 'Ad3d\System\ConstructionWork\ConstructionWorkController@getAdd']);
+            Route::post('add/', ['as' => 'qc.ad3d.system.construction_work.add.post', 'uses' => 'Ad3d\System\ConstructionWork\ConstructionWorkController@postAdd']);
+
+            // xoa
+            Route::get('delete/{constructionId?}', ['as' => 'qc.ad3d.system.construction_work.delete', 'uses' => 'Ad3d\System\ConstructionWork\ConstructionWorkController@delete']);
+
+            Route::get('/', ['as' => 'qc.ad3d.system.construction_work.get', 'uses' => 'Ad3d\System\ConstructionWork\ConstructionWorkController@index']);
+        });
         //ngay nghi cua he thong
         Route::group(['prefix' => 'system-date-off'], function () {
             Route::get('view/{payListId?}', ['as' => 'qc.ad3d.system.system_date_off.view.get', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@view']);
@@ -981,6 +998,9 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
                 Route::get('allocation/add/staff/{productId?}', ['as' => 'qc.work.work_allocation.manage.order.product.work-allocation.staff.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@getAddStaff']);
                 Route::get('allocation/add/{productId?}', ['as' => 'qc.work.work_allocation.manage.order.product.work-allocation.add.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@getAddWorkAllocation']);
                 Route::post('allocation/add/{productId?}', ['as' => 'qc.work.work_allocation.manage.product.work-allocation.add.post', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@postAddWorkAllocation']);
+
+                #huy ban giao cong viec
+                Route::get('allocation/cancel/{allocationId?}', ['as' => 'qc.work.work_allocation.manage.order.product.work-allocation.cancel.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@cancelWorkAllocationProduct']);
 
                 # xem chi tiet thi cong
                 Route::get('view-work-allocation/{allocationId?}', ['as' => 'qc.work.work_allocation.manage.order.work_allocation.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@viewWorkAllocation']);

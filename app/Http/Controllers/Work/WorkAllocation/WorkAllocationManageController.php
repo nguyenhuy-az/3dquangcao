@@ -177,7 +177,8 @@ class WorkAllocationManageController extends Controller
         $modelStaff = new QcStaff();
         $modelOrders = new QcOrder();
         $dataAccess = [
-            'object' => 'workAllocationManage'
+            'object' => 'workAllocationManage',
+            'subObjectLabel' => 'Bàn giao đơn hàng'
         ];
         $dataOrder = $modelOrders->getInfo($orderId);
         $dataReceiveStaff = $modelStaff->infoActivityConstructionOfCompany($dataOrder->companyId()); //Lay NV cty so huu don hang
@@ -226,7 +227,9 @@ class WorkAllocationManageController extends Controller
     public function deleteOrderConstruction($allocationId)
     {
         $modelOrderAllocation = new QcOrderAllocation();
-        $modelOrderAllocation->cancel($allocationId);
+        if($modelOrderAllocation->cancel($allocationId)){
+
+        }
     }
 
     # ========= ======== phan cong tren san pham ========= =======
@@ -236,7 +239,8 @@ class WorkAllocationManageController extends Controller
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
         $dataAccess = [
-            'object' => 'workAllocationManage'
+            'object' => 'workAllocationManage',
+            'subObjectLabel'=> 'Triển khai thi công'
         ];
         $dataProduct = $modelProduct->getInfo($productId);
         $dataReceiveStaff = $modelStaff->infoActivityConstructionOfCompany($dataProduct->order->companyId()); # lay NV so hua don hang
@@ -252,7 +256,7 @@ class WorkAllocationManageController extends Controller
         return view('work.work-allocation.orders.product.work-allocation-staff', compact('modelStaff', 'dataReceiveStaff', 'dataProduct'));
     }
 
-    public function postAddWorkAllocation(Request $request,$productId)
+    public function postAddWorkAllocation(Request $request, $productId)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -322,6 +326,17 @@ class WorkAllocationManageController extends Controller
         }
         return redirect()->back();
     }
+
+    # huy phan viec tren san pham
+    public function cancelWorkAllocationProduct($allocationId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelWorkAllocation = new QcWorkAllocation();
+        if (!$hFunction->checkEmpty($allocationId)) {
+            $modelWorkAllocation->cancelAllocation($allocationId);
+        }
+    }
+
     # chi tiet thi cong
     public function viewWorkAllocation($allocationId)
     {
@@ -332,6 +347,7 @@ class WorkAllocationManageController extends Controller
             return view('work.work-allocation.orders.product.view-work-allocation', compact('dataWorkAllocation'));
         }
     }
+
     #xem anh ban cao thi cong san pham
     public function viewReportImage($imageId)
     {

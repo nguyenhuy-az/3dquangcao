@@ -43,17 +43,18 @@ class QcOrderAllocation extends Model
         return $this->lastId;
     }
 
-    # huy ban giao
-    public function cancel($allocationId)
-    {
-        $allocationId = (empty($allocationId)) ? $this->allocationId() : $allocationId;
-        return QcOrderAllocation::where('allocation_id', $allocationId)->update(['action' => 0]);
-    }
-
     public function checkNullId($allocationId = null)
     {
         return (empty($allocationId)) ? $this->allocationId() : $allocationId;
     }
+
+    # huy ban giao
+    public function cancel($allocationId = null)
+    {
+        return QcOrderAllocation::where('allocation_id', $this->checkNullId($allocationId))->update(['action' => 0]);
+    }
+
+
     //========== ========= DUYET TU BAO CAO BAN GIAO CONG TRINH ========= ==========
     # bao cao hoan thanh cong trinh
     public function reportFinishAllocation($allocationId, $reportDate)

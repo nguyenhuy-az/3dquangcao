@@ -21,7 +21,8 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
                  style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed brown;">
                 <div class="row">
-                    <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
+                    <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6"
+                         style="padding-left: 0;padding-right: 0;">
                         <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                             <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                         </a>
@@ -214,9 +215,10 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                                     {!! $order->name() !!}
                                                 </div>
                                             </div>
-                                            <div  class="row">
+                                            <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                    <a class="qc-link-green" href="{!! route('qc.work.work_allocation.manage.order.view', $orderId) !!}">
+                                                    <a class="qc-link-green"
+                                                       href="{!! route('qc.work.work_allocation.manage.order.view', $orderId) !!}">
                                                         <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
                                                     </a>
                                                     &nbsp;&nbsp;
@@ -254,10 +256,13 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
 
                                                 @if($hFunction->checkCount($orderWorkAllocationAllInfo))
                                                     <br/>
-                                                    TC:
+                                                    Thi công:
                                                     @foreach($orderWorkAllocationAllInfo as $workAllocation)
-                                                        <span>{!! $workAllocation->receiveStaff->lastName() !!}</span>,
-                                                        &nbsp;
+                                                        @if($workAllocation->checkActivity())
+                                                            <span>{!! $workAllocation->receiveStaff->lastName() !!}</span>
+                                                            ,
+                                                            &nbsp;
+                                                        @endif
                                                     @endforeach
                                                 @endif
                                             @endif

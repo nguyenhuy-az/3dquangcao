@@ -26,7 +26,7 @@ $currentMinute = (int)date('i');
 @section('qc_work_allocation_body')
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <a class="qc-link-red qc-font-size-16" onclick="qc_main.page_back();">
+            <a class="qc-link-red qc-font-size-16" href="{!! $hFunction->getUrlReferer() !!}">
                 <i class="glyphicon glyphicon-backward"></i>
                 Trở lại
             </a>
@@ -96,7 +96,7 @@ $currentMinute = (int)date('i');
                                                 <?php
                                                 $workAllocationFinish = $workAllocation->workAllocationFinishInfo()
                                                 ?>
-                                                @if($workAllocationFinish->checkSystemCancel())
+                                                @if($hFunction->checkCount($workAllocationFinish) && $workAllocationFinish->checkSystemCancel())
                                                     <em class="qc-color-red">Đã hủy</em>
                                                 @else
                                                     <em class="qc-color-red">Xong</em>

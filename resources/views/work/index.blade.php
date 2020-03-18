@@ -45,9 +45,12 @@ if ($viewLoginObject == 'work') {
     $label = 'Việc đã làm';
     $href = route('qc.work.work_allocation.finish.get');
 } elseif ($viewLoginObject == 'workAllocationConstruction') {
-    $label = 'Công trình';
+    $label = 'Đơn hàng được giao';
     $href = route('qc.work.work_allocation.construction.get');
-} elseif ($viewLoginObject == 'timekeeping') {
+} elseif ($viewLoginObject == 'workAllocationManage') {
+    $label = 'Quản lý đơn hàng';
+    $href = route('qc.work.work_allocation.manage.get');
+}elseif ($viewLoginObject == 'timekeeping') {
     $label = 'Chấm công';
     $href = route('qc.work.timekeeping.get');
 } elseif ($viewLoginObject == 'salary') {

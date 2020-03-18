@@ -97,6 +97,12 @@ class QcProductType extends Model
         return $modelProductTypeImage->infoOfProductType($this->checkIdNull($typeId));
     }
 
+    #----------- hang muc thi cong ------------
+    public function productTypeConstruction()
+    {
+        return $this->hasMany('App\Models\Ad3d\ProductTypeConstruction\QcProductTypeConstruction', 'type_id', 'type_id');
+    }
+
     #============ =========== ============ Lấy thông tin ============= =========== ==========
     public function getInfoActivityToCreatedPriceList($companyId)
     {

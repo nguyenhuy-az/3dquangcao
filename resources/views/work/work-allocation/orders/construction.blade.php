@@ -41,7 +41,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
          style="padding-bottom: 50px;">
         <div class="row">
             <div class="qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 0;">
-                <a class="qc-font-size-20 qc-link-red" onclick="qc_main.page_back();">
+                <a class="qc-font-size-20 qc-link-red" href="{!! $hFunction->getUrlReferer() !!}">
                     <i class="glyphicon glyphicon-backward"></i>
                     Trở lại
                 </a>
@@ -62,7 +62,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                             <table class="table table-hover qc-margin-bot-none">
                                 <tr>
                                     <td>
-                                        <em class=" qc-color-grey">Công trình</em>
+                                        <em class=" qc-color-grey">Đơn hàng</em>
                                     </td>
                                     <td class="text-right">
                                         <b>{!! $dataOrder->name() !!}</b>
@@ -111,7 +111,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                         <div class="table-responsive">
                             <table class="table table-hover qc-margin-bot-none">
                                 <tr style="background-color: whitesmoke;">
-                                    <th colspan="5">
+                                    <th colspan="6">
                                         <i class="qc-font-size-16 glyphicon glyphicon-user"></i>
                                         <b class="qc-color-red">PHỤ TRÁCH ĐƠN HÀNG</b>
                                     </th>
@@ -130,6 +130,9 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         Ngày giao
                                     </th>
                                     <th class="text-center">
+                                        Thi công
+                                    </th>
+                                    <th class="text-center">
                                         Hoạt động
                                     </th>
                                 </tr>
@@ -137,8 +140,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                     @foreach($dataOrderAllocation as $ordersAllocation)
                                         <?php
                                         $ordersAllocationId = $ordersAllocation->allocationId();
-                                        $allocationStatus = $ordersAllocation->checkActivity();
-                                        if ($allocationStatus) $addAllocationStatus = false;
+                                        $allocationActivityStatus = $ordersAllocation->checkActivity();
+                                        if ($allocationActivityStatus) $addAllocationStatus = false;
                                         ?>
                                         <tr>
                                             <td class="text-center">
@@ -154,13 +157,30 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                 {!! $hFunction->convertDateDMYHISFromDatetime($ordersAllocation->receiveDeadline()) !!}
                                             </td>
                                             <td class="text-center">
-                                                @if($allocationStatus)
+                                                @if(!$allocationActivityStatus)
+                                                    @if($ordersAllocation->checkConfirm())
+                                                        @if($ordersAllocation->checkConfirmFinish())
+                                                            <em class="qc-color-grey">Hoàn thành</em>
+                                                        @else
+                                                            <em class="qc-color-grey">Không hoàn thành</em>
+                                                        @endif
+                                                    @else
+                                                        <a class="qc_confirm_finish qc-link-green">
+                                                            Xác nhận hoàn thành
+                                                        </a>
+                                                    @endif
+                                                @else
+                                                    <em>Đang thi công</em>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if($allocationActivityStatus)
                                                     <a class="qc_delete_construction qc-link-red"
                                                        data-href="{!! route('qc.work.work_allocation.manage.order.construction.delete',$ordersAllocationId) !!}">
                                                         Hủy bàn giao
                                                     </a>
                                                 @else
-                                                    <em class="qc-color-grey">Đã hủy</em>
+                                                    <em class="qc-color-grey">Đã hủy bàn giao</em>
                                                 @endif
                                             </td>
                                         </tr>
@@ -384,16 +404,16 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                 $dataWorkAllocation = $product->workAllocationInfoOfProduct();
                                 ?>
                                 <tr style="color: brown;">
-                                    <td style="width:50px;">
+                                    <td style="width:50px; border: 1px solid #d7d7d7;">
                                         SP_{!! $sp_n_o = (isset($sp_n_o))?$sp_n_o+1:1 !!}
                                     </td>
-                                    <td>
+                                    <td style="border: 1px solid #d7d7d7;">
                                         {!! ucwords($product->productType->name()) !!}
                                     </td>
-                                    <td class="text-left" colspan="3">
+                                    <td class="text-left" colspan="3" style="border: 1px solid #d7d7d7;">
                                         <em>{!! $product->description() !!}</em>
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-right" style="border: 1px solid #d7d7d7;">
                                         <a class="qc-link-red" title="Triển khai thi công"
                                            href="{!! route('qc.work.work_allocation.manage.order.product.work-allocation.add.get',$productId) !!}">
                                             <i class="qc-font-size-16 glyphicon glyphicon-wrench"></i>
@@ -436,15 +456,20 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             <td class="text-right">
                                                 @if($workAllocation->checkActivity())
                                                     <em style="color: black;">Đang thi công</em>
-                                                    <span>|</span>
-                                                    <a class="qc_cancel_allocation_product qc-link-red" title="Hủy giao việc"
-                                                       data-href="{!! route('qc.ad3d.work.work_allocation.delete', $allocationId) !!}">
+                                                    <span>&nbsp;|&nbsp;</span>
+                                                    <a class="qc_cancel_allocation_product qc-link-red"
+                                                       title="Hủy giao việc"
+                                                       data-href="{!! route('qc.work.work_allocation.manage.order.product.work-allocation.cancel.get', $allocationId) !!}">
                                                         <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
                                                     </a>
                                                 @else
-                                                    <em style="color: grey;">Đã kết thúc</em>
+                                                    @if($workAllocation->checkCancel())
+                                                        <em style="color: grey;">Đã hủy</em>
+                                                    @else
+                                                        <em style="color: grey;">Đã kết thúc</em>
+                                                    @endif
                                                 @endif
-                                                |
+                                                <span>&nbsp;|&nbsp;</span>
                                                 <a class="qc_work_allocation_view qc-link-green"
                                                    title="Click xem chi tiết thi công"
                                                    data-href="{!! route('qc.work.work_allocation.manage.order.work_allocation.get',$allocationId) !!}">
@@ -496,7 +521,11 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                     <tr>
                                         <td style="background-color: lightgrey;"></td>
                                         <td colspan="5">
-                                            <em class="qc-color-grey">Chưa triển khai</em>
+                                            @if($product->checkFinishStatus())
+                                                <em class="qc-color-grey">Đã kết thúc</em>
+                                            @else
+                                                <em class="qc-color-grey">Chưa triển khai</em>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endif
