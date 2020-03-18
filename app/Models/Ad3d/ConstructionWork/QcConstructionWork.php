@@ -68,6 +68,12 @@ class QcConstructionWork extends Model
         return $this->hasMany('App\Models\Ad3d\ProductTypeConstruction\QcProductTypeConstruction', 'construction_id', 'construction_id');
     }
 
+    #========== ========== ========== thong tin ========== ========== ==========
+    public function getInfoByListId($listConstructionId)
+    {
+        return  QcConstructionWork::whereIn('construction_id', $listConstructionId)->get();
+    }
+
     public function getInfo($constructionId = '', $field = '')
     {
         if (empty($constructionId)) {

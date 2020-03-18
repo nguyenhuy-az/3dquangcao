@@ -5,6 +5,7 @@
  * Date: 12/28/2017
  * Time: 2:34 PM
  */
+$hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 ?>
@@ -66,23 +67,49 @@ $mobileStatus = $mobile->isMobile();
                                     <label>
                                         Mô tả sản phẩm:
                                     </label>
-                                    <textarea name="txtDescription"  class="form-control"
+                                    <textarea name="txtDescription" class="form-control"
                                               placeholder="Mô tả sản phẩm"></textarea>
                                 </div>
                             </div>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="form-group form-group-sm">
+                                    <label>
+                                        Danh mục thi công liên quan:
+                                    </label>
+                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                        @if($hFunction->checkCount($dataConstructionWork))
+                                            @foreach($dataConstructionWork as $constructionWork)
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox" name="cbConstructionWork[]"
+                                                           value="{!! $constructionWork->constructionId() !!}">
+                                                    {!! $constructionWork->name() !!}
+                                                </label>
+                                            @endforeach
+                                        @else
+                                            <em class="qc-color-grey">Không có danh mục thi công</em>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="row">
+                        <div class="row" style="margin-top: 20px;">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <label>Ảnh mẫu:</label>
-                                <input type="file" class="txtImage_1" name="txtImage_1">
+                                <div class="form-group form-group-sm">
+                                    <label>Ảnh mẫu:</label>
+                                    <input type="file" class="txtImage_1" name="txtImage_1">
+                                </div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <label>Ảnh mẫu:</label>
-                                <input class="txtImage_2" type="file" name="txtImage_2">
+                                <div class="form-group form-group-sm">
+                                    <label>Ảnh mẫu:</label>
+                                    <input class="txtImage_2" type="file" name="txtImage_2">
+                                </div>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <label>Ảnh mẫu:</label>
-                                <input type="file" class="txtImage_3" name="txtImage_3">
+                                <div class="form-group form-group-sm">
+                                    <label>Ảnh mẫu:</label>
+                                    <input type="file" class="txtImage_3" name="txtImage_3">
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\ProductType;
 
+use App\Models\Ad3d\ProductTypeConstruction\QcProductTypeConstruction;
 use App\Models\Ad3d\ProductTypeImage\QcProductTypeImage;
 use App\Models\Ad3d\ProductTypePrice\QcProductTypePrice;
 use Illuminate\Database\Eloquent\Model;
@@ -101,6 +102,18 @@ class QcProductType extends Model
     public function productTypeConstruction()
     {
         return $this->hasMany('App\Models\Ad3d\ProductTypeConstruction\QcProductTypeConstruction', 'type_id', 'type_id');
+    }
+
+    public function constructionWorkListId($typeId = null)
+    {
+        $modelProductTypeConstruction = new QcProductTypeConstruction();
+        return $modelProductTypeConstruction->listConstructWorkIdOfProductType($this->checkIdNull($typeId));
+    }
+
+    public function constructionWorkInfo($typeId = null)
+    {
+        $modelProductTypeConstruction = new QcProductTypeConstruction();
+        return $modelProductTypeConstruction->infoConstructWorkOfProductType($this->checkIdNull($typeId));
     }
 
     #============ =========== ============ Lấy thông tin ============= =========== ==========

@@ -54,10 +54,11 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
                             <th class="text-center">Mã loại</th>
                             <th>Tên</th>
                             <th style="max-width: 400px !important;">Mô tả</th>
+                            <th class="text-center">Danh mục thi công</th>
                             <th>Ảnh mẫu</th>
                             <th class="text-center">Đơn vị tính</th>
                             <th class="text-center">Áp dụng</th>
@@ -77,6 +78,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 $unit = $productType->unit();
                                 $description = $productType->description();
                                 $dataProductTypeImage = $productType->infoProductTypeImage();
+                                // danh muc thi cong
+                                $dataConstructionWorkSelected = $productType->constructionWorkInfo();
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $typeId !!}">
                                     <td class="text-center">
@@ -97,6 +100,15 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             {!! $description !!}
                                         @else
                                             <em class="qc-color-grey">---</em>
+                                        @endif
+                                    </td>
+                                    <td class="qc-color-grey" style="max-width: 400px;">
+                                        @if($hFunction->checkCount($dataConstructionWorkSelected))
+                                            @foreach($dataConstructionWorkSelected as $constructionWorkSelected)
+                                                <span>{!! $constructionWorkSelected->name() !!},</span>
+                                            @endforeach
+                                        @else
+                                            <em class="qc-color-grey">Không có</em>
                                         @endif
                                     </td>
                                     <td>
@@ -166,13 +178,13 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="9">
+                                <td class="text-center" colspan="10">
                                     {!! $hFunction->page($dataProductType) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="9">
+                                <td class="text-center" colspan="10">
                                     Chưa có thông tin
                                 </td>
                             </tr>

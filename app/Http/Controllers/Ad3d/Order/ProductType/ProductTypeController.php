@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Ad3d\Order\ProductType;
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Ad3d\Company\QcCompany;
+use App\Models\Ad3d\ConstructionWork\QcConstructionWork;
 use App\Models\Ad3d\ProductType\QcProductType;
+use App\Models\Ad3d\ProductTypeConstruction\QcProductTypeConstruction;
 use App\Models\Ad3d\ProductTypeImage\QcProductTypeImage;
 use App\Models\Ad3d\Staff\QcStaff;
 use Illuminate\Support\Facades\Session;
@@ -41,21 +43,25 @@ class ProductTypeController extends Controller
     public function getAdd()
     {
         $modelStaff = new QcStaff();
+        $modelConstructionWork = new QcConstructionWork();
         $dataAccess = [
             'accessObject' => 'productType'
         ];
-        return view('ad3d.order.product-type.add', compact('modelStaff', 'dataAccess'));
+        $dataConstructionWork =  $modelConstructionWork->selectActivityInfo()->get();
+        return view('ad3d.order.product-type.add', compact('modelStaff', 'dataAccess', 'dataConstructionWork'));
     }
 
     public function postAdd()
     {
         $hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
+        $modelProductTypeConstruction = new QcProductTypeConstruction();
         $modelProductTypeImage = new QcProductTypeImage();
         $name = Request::input('txtName');
         $typeCode = Request::input('txtTypeCode');
         $txtUnit = Request::input('txtUnit');
         $txtDescription = Request::input('txtDescription');
+        $cbConstructionWork = Request::input('cbConstructionWork');
         $txtImage_1 = Request::file('txtImage_1');
         $txtImage_2 = Request::file('txtImage_2');
         $txtImage_3 = Request::file('txtImage_3');
@@ -69,6 +75,12 @@ class ProductTypeController extends Controller
             } else {
                 if ($modelProductType->insert($typeCode, $name, $txtDescription, $txtUnit)) {
                     $newTypeId = $modelProductType->insertGetId();
+                    # them danh muc thi cong
+                    if(!empty($cbConstructionWork)){
+                        foreach($cbConstructionWork as $value){
+                            $modelProductTypeConstruction->insert($newTypeId, $value);
+                        }
+                    }
                     # anh bao cao 1
                     if (!empty($txtImage_1)) {
                         $name_img = stripslashes($_FILES['txtImage_1']['name']);
@@ -108,25 +120,30 @@ class ProductTypeController extends Controller
     //edit
     public function getEdit($typeId)
     {
+        $hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
+        $modelConstructionWork = new QcConstructionWork();
         $dataProductType = $modelProductType->getInfo($typeId);
-        if (count($dataProductType) > 0) {
-            return view('ad3d.order.product-type.edit', compact('dataProductType'));
+        if ($hFunction->checkCount($dataProductType)) {
+            $dataConstructionWork =  $modelConstructionWork->selectActivityInfo()->get();
+            return view('ad3d.order.product-type.edit', compact('dataProductType','dataConstructionWork'));
         }
     }
 
     public function postEdit($typeId)
     {
-        $dataProductType = new QcProductType();
+        $modelProductType = new QcProductType();
+        $modelProductTypeConstruction = new QcProductTypeConstruction();
         $name = Request::input('txtName');
         $typeCode = Request::input('txtTypeCode');
         $txtUnit = Request::input('txtUnit');
         $txtDescription = Request::input('txtDescription');
+        $cbConstructionWork = Request::input('cbConstructionWork');
         $notifyContent = null;
-        if ($dataProductType->existEditName($typeId, $name)) {
+        if ($modelProductType->existEditName($typeId, $name)) {
             $notifyContent = "Tên <b>'$name'</b> đã tồn tại.";
         }
-        if ($dataProductType->existEditTypeCode($typeId, $typeCode)) {
+        if ($modelProductType->existEditTypeCode($typeId, $typeCode)) {
             if (empty($notifyContent)) {
                 $notifyContent = "Mã <b>'$typeCode'</b> đã tồn tại.";
             } else {
@@ -136,7 +153,15 @@ class ProductTypeController extends Controller
         if (!empty($notifyContent)) {
             return $notifyContent;
         } else {
-            $dataProductType->updateInfo($typeId, $typeCode, $name, $txtDescription, $txtUnit);
+            $modelProductType->updateInfo($typeId, $typeCode, $name, $txtDescription, $txtUnit);
+            // xoa thong tin ton tai
+            $modelProductTypeConstruction->deleteInfoOfType($typeId);
+            # them danh mục thi cong
+            if(!empty($cbConstructionWork)){
+                foreach($cbConstructionWork as $value){
+                    $modelProductTypeConstruction->insert($typeId, $value);
+                }
+            }
         }
     }
 

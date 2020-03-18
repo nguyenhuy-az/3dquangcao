@@ -7,8 +7,11 @@
  *
  * dataCompany
  */
+$hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+//$dataConstructionWorkSelected = $dataProductType->constructionWorkInfo();
+$constructionWorkListId = $dataProductType->constructionWorkListId()->toArray();
 ?>
 @extends('ad3d.components.container.container-6')
 @section('qc_ad3d_container_content')
@@ -21,12 +24,10 @@ $mobileStatus = $mobile->isMobile();
                 <form class="frmEdit" name="frmEdit" role="form" method="post" action="{!! route('qc.ad3d.order.product_type.edit.post', $dataProductType->typeId()) !!}">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="frm_notify form-group qc-color-red"></div>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group">
                                     <label>
                                         Tên:
@@ -36,8 +37,7 @@ $mobileStatus = $mobile->isMobile();
                                            value="{!! $dataProductType->name() !!}">
                                 </div>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group">
                                     <label>
                                         Mã loại sản phẩm:
@@ -47,8 +47,7 @@ $mobileStatus = $mobile->isMobile();
                                            placeholder="Nhập mã loại sản phẩm" value="{!! $dataProductType->typeCode() !!}">
                                 </div>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group">
                                     <label>
                                         Đơn vị tính:
@@ -58,13 +57,35 @@ $mobileStatus = $mobile->isMobile();
                                            placeholder="Nhập đơn vị tính" value="{!! $dataProductType->unit() !!}">
                                 </div>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group">
                                     <label>
                                         Mô tả sản phẩm:
                                     </label>
                                     <textarea name="txtDescription" class="form-control" placeholder="Mô tả sản phẩm">{!! $dataProductType->description() !!}</textarea>
+                                </div>
+                            </div>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="form-group form-group-sm">
+                                    <label>
+                                        Danh mục thi công liên quan:
+                                    </label>
+                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                        @if($hFunction->checkCount($dataConstructionWork))
+                                            @foreach($dataConstructionWork as $constructionWork)
+                                                <?php
+                                                $constructionId = $constructionWork->constructionId();
+                                                ?>
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox" name="cbConstructionWork[]" @if($hFunction->checkInArray($constructionId,$constructionWorkListId)) checked="checked" @endif
+                                                           value="{!! $constructionId !!}">
+                                                    {!! $constructionWork->name() !!}
+                                                </label>
+                                            @endforeach
+                                        @else
+                                            <em class="qc-color-grey">Không có danh mục thi công</em>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>

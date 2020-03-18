@@ -2,12 +2,13 @@
 
 namespace App\Models\Ad3d\ProductTypeConstruction;
 
+use App\Models\Ad3d\ConstructionWork\QcConstructionWork;
 use Illuminate\Database\Eloquent\Model;
 
 class QcProductTypeConstruction extends Model
 {
     protected $table = 'qc_product_type_construction';
-    protected $fillable = ['detail_id','created_at', 'type_id', 'construction_id'];
+    protected $fillable = ['detail_id', 'created_at', 'type_id', 'construction_id'];
     protected $primaryKey = 'detail_id';
     public $timestamps = false;
 
@@ -30,11 +31,15 @@ class QcProductTypeConstruction extends Model
         }
     }
 
-    public function checkIdNull($detailId=null)
+    public function checkIdNull($detailId = null)
     {
         return (empty($detailId)) ? $this->cancalId() : $detailId;
     }
 
+    public function deleteInfoOfType($typeId)
+    {
+        return QcProductTypeConstruction::where('type_id', $typeId)->delete();
+    }
     #========== ========== ========== CAC MOI QUAN HE DU LIEU ========== ========== ==========
     //---------- loai san pham  -----------
     public function productType()
@@ -45,6 +50,18 @@ class QcProductTypeConstruction extends Model
     public function infoOfProductType($typeId, $orderBy = 'DESC')
     {
         return QcProductTypeConstruction::where('type_id', $typeId)->orderBy('created_at', $orderBy)->get();
+    }
+
+    public function listConstructWorkIdOfProductType($typeId)
+    {
+        return QcProductTypeConstruction::where('type_id', $typeId)->pluck('construction_id');
+    }
+
+    public function infoConstructWorkOfProductType($typeId)
+    {
+        $modelConstructionWork = new QcConstructionWork();
+        $listConstructId = $this->listConstructWorkIdOfProductType($typeId);
+        return $modelConstructionWork->getInfoByListId($listConstructId);
     }
 
     //---------- danh muc thi cong  -----------

@@ -265,6 +265,11 @@ class Hfunction
         }
     }
 
+    // kiem tra phan tu ton tai trong mang
+    public function checkInArray($element, $array)
+    {
+        return in_array($element, $array);
+    }
     // tim phan tu trong chuoi co dau phay
     public function checkExistOfString($element, $string)
     {
