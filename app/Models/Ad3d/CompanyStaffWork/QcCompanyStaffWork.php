@@ -124,6 +124,19 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->pluck('staff_id');
     }
 
+    public function listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, $listDepartmentId, $rankId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $listWorkId = $modelStaffWorkDepartment->listWorkIdOfListDepartment($listDepartmentId, $rankId);
+        if ($hFunction->checkCount($listWorkId)) {
+            return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', 1)->pluck('staff_id');
+        } else {
+            return null;
+        }
+
+    }
+
     public function listStaffIdActivityHasFilter($companyId, $departmentId = null, $level = 1000) #level = 1000 ->mac dinh chon tat ca level
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();

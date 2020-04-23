@@ -19,6 +19,7 @@ $currentMonth = (int)date('m');
 $currentYear = (int)date('Y');
 $currentHour = (int)date('H');
 $currentMinute = (int)date('i');
+
 ?>
 @section('titlePage')
     Sản phẩm - phân việc
@@ -38,12 +39,13 @@ $currentMinute = (int)date('i');
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             {{-- thông tin sản phảm --}}
             <div class="row qc-margin-bot-20">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
                     <h3>{!! $dataProduct->productType->name() !!}</h3>
                     <em>{!! $dataProduct->width() !!}x{!! $dataProduct->height() !!}mm -
                         SL: {!! $dataProduct->amount() !!}</em>
                     <span class="qc-color-grey">- {!! $dataProduct->order->name() !!}</span>
                 </div>
+
             </div>
             @if(count($dataWorkAllocation) > 0)
                 <div class="row qc-margin-bot-20">

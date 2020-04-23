@@ -18,6 +18,13 @@ $currentMonth = (int)date('m');
 $currentYear = (int)date('Y');
 $currentHour = (int)date('H');
 $currentMinute = (int)date('i');
+$designImage = $dataProduct->designImage();
+# thiet ke dang ap dung
+$dataProductDesign = $dataProduct->productDesignInfoApplyActivity();
+if ($hFunction->getCountFromData($dataProductDesign) == 0) {
+    # thiet ke sau cung
+    $dataProductDesign = $dataProduct->productDesignInfoLast();
+}
 ?>
 @extends('work.work-allocation.index')
 @section('titlePage')
@@ -31,17 +38,41 @@ $currentMinute = (int)date('i');
                 Trở lại
             </a>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dotted brown;">
+        <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dotted brown;">
             <h3>TRIỂN KHAI THI CÔNG</h3>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             {{-- thông tin sản phảm --}}
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="text-center col-sx-12 col-sm-12 col-md-6 col-lg-6">
                     <h3>{!! $dataProduct->productType->name() !!}</h3>
                     <em>{!! $dataProduct->width() !!}x{!! $dataProduct->height() !!}mm -
                         SL: {!! $dataProduct->amount() !!}</em>
                     <span class="qc-color-grey">- {!! $dataProduct->order->name() !!}</span>
+                </div>
+                <div class="text-center col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                    @if($hFunction->checkCount($dataProductDesign))
+                        <em class="qc-color-grey">Thiết kế SP</em> <br/>
+                        @if($dataProductDesign->checkApplyStatus())
+                            <img style="width: 70px; height: auto; margin: 5px;"
+                                 title="Đang áp dụng"
+                                 src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                        @else
+                            <img style="width: 70px; height: 70px; margin-bottom: 5px;"
+                                 title="Không được áp dụng"
+                                 src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                        @endif
+                    @else
+                        @if(!$hFunction->checkEmpty($designImage))
+                            <img style="width: 70px; height: 70px; margin: 5px; "
+                                 src="{!! $product->pathSmallDesignImage($designImage) !!}">
+                        @else
+                            <em class="qc-color-grey">Gửi thiết kế sau</em>
+                        @endif
+                    @endif
+                </div>
+                <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                    <em class="qc-color-grey">Thiết kế thi công</em> <br/>
                 </div>
             </div>
             @if($hFunction->checkCount($dataWorkAllocation))

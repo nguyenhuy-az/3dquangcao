@@ -240,10 +240,8 @@ $workId = $dataWork->workId();
             </div>
             <div class="row">
                 <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <a href="{!! route('qc.work.home') !!}">
-                        <button type="button" class="btn btn-primary">
-                            Đóng
-                        </button>
+                    <a class="btn btn-primary" href="{!! route('qc.work.home') !!}">
+                        Về Trang chủ
                     </a>
                 </div>
             </div>

@@ -16,11 +16,13 @@ use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
 use App\Models\Ad3d\Payment\QcPayment;
 use App\Models\Ad3d\PaymentType\QcPaymentType;
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\Salary\QcSalary;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\SalaryBeforePayRequest\QcSalaryBeforePayRequest;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\StaffKpi\QcStaffKpi;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\StaffSalaryBasic\QcStaffSalaryBasic;
 use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod;
@@ -835,6 +837,30 @@ class QcStaff extends Model
         return $this->hasMany('App\Models\Ad3d\StaffKpiRegister\QcStaffKpiRegister', 'confirmStaff_id', 'staff_id');
     }
 
+    //---------- THONG BAO DON HANG MOI -----------
+    public function staffNotify()
+    {
+        return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'staff_id', 'staff_id');
+    }
+
+    public function selectAllNotify($staffId = null)
+    {
+        $modelStaffNotify = new QcStaffNotify();
+        return $modelStaffNotify->selectInfoOfStaff($this->checkIdNull($staffId));
+    }
+
+    public function totalNotifyNewOrder($staffId = null)
+    {
+        $modelStaffNotify = new QcStaffNotify();
+        return $modelStaffNotify->totalNotifyNewOrderOfStaff($this->checkIdNull($staffId));
+    }
+
+    public function checkViewNotifyNewOrder($staffId, $orderId)
+    {
+        $modelStaffNotify = new QcStaffNotify();
+        return $modelStaffNotify->checkViewedNewOrderOfStaff($staffId, $orderId);
+    }
+
     //========== ========== ========== dang nhap ========== ========== ==========
     public function login($account, $password)
     {
@@ -889,6 +915,14 @@ class QcStaff extends Model
     }
 
     //========= ========== ========== lay thong tin ========== ========== ==========
+    public function infoStaffReceiveNotifyNewOrder($companyId)
+    {
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, $modelDepartment->listIdReceiveNotifyNewOrder(), $modelRank->manageRankId());
+        return QcStaff::whereIn('staff_id', $listStaffId)->get();
+    }
 
     public function getInfo($staffId = '', $field = '')
     {

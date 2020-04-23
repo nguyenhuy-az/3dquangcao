@@ -343,7 +343,10 @@ $orderId = $dataOrder->orderId();
         </div>
         <div class="qc-padding-top-10 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <a class="btn btn-sm btn-primary" href="{!! $hFunction->getUrlReferer() !!}">
-                Đóng
+                Về trang trước
+            </a>
+            <a class="btn btn-sm btn-default" href="{!! route('qc.work.work_allocation.manage.get') !!}">
+                Về Danh mục ĐH
             </a>
         </div>
     </div>

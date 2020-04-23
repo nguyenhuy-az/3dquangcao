@@ -169,6 +169,10 @@ class QcDepartment extends Model
     {
         return 7;
     }
+
+    public function listIdReceiveNotifyNewOrder(){
+        return [$this->businessDepartmentId(), $this->designDepartmentId(), $this->constructionDepartmentId(), $this->manageDepartmentId()];
+    }
     #----------- KIỂM TRA THÔNG TIN -------------
     public function existName($name)
     {

@@ -148,7 +148,6 @@ $indexHref = route('qc.ad3d.system.staff.get');
                                             <img style="margin: 5px 0px; max-width: 50px;height: 50px;"
                                                  src="{!! $src !!}">
                                         </a>
-
                                     </td>
                                     <td>
                                         {!! $staff->firstName().' '.$staff->lastName() !!}

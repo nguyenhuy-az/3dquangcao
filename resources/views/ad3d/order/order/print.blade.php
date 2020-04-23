@@ -10,7 +10,7 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $dataCompany = $dataOrder->company;
-
+$hotlineConstruction = $dataCompany->hotlineConstructionDepartment($dataCompany->companyId());
 // san pham cua don hang
 $dataProduct = $dataOrder->productActivityOfOrder();
 #anh thiet ke tong quat
@@ -59,27 +59,14 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         </tr>
                                         <tr>
                                             <td>
-                                                <em class="qc-color-grey">Người nhận :</em>
-                                            </td>
-                                            <td class="text-right">
-                                                <b>{!! $dataOrder->staffReceive->fullName() !!}</b>
-                                                <b> - ĐT:{!! $dataOrder->staffReceive->phone() !!}</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <em class="qc-color-grey">Ngày nhận:</em>
+                                                <em class="qc-color-grey">Ngày nhận|Giao:</em>
                                             </td>
                                             <td class="text-right">
                                                 <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->receiveDate()) !!}</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <em class="qc-color-grey">Ngày giao:</em>
-                                            </td>
-                                            <td class="text-right">
+                                                <span>|</span>
                                                 <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->deliveryDate()) !!}</b>
+                                                &nbsp;
+                                                ĐT: @if(!empty($hotlineConstruction)) {!! $hotlineConstruction !!} @else Null @endif
                                             </td>
                                         </tr>
                                         <tr>
@@ -89,7 +76,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                             <td class="text-right">
                                     <span class="pull-right">{!! $dataOrder->constructionAddress() !!}
                                         - ĐT: {!! $dataOrder->constructionPhone() !!}
-                                        - tên: {!! $dataOrder->constructionContact() !!}</span>
+                                        - LH: {!! $dataOrder->constructionContact() !!}</span>
                                             </td>
                                         </tr>
                                     </table>

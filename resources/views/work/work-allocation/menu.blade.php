@@ -27,9 +27,16 @@ $objectAccess = $dataAccess['object'];
                 </a>
             </li>
             @if($dataStaffLogin->checkConstructionDepartmentAndManageRank())
+                <?php
+                $totalNotifyNewOrder = $dataStaffLogin->totalNotifyNewOrder();
+                ?>
                 <li @if($objectAccess == 'workAllocationManage') class="active" @endif>
                     <a href="{!! route('qc.work.work_allocation.manage.get') !!}" title="Đang cập nhật">
                         <label>Danh sách đơn hàng</label>
+                        @if($totalNotifyNewOrder > 0)
+                            &nbsp;
+                            <i class="qc-font-size-14 glyphicon glyphicon-bullhorn" style="color: red;"></i>
+                        @endif
                     </a>
                 </li>
             @endif

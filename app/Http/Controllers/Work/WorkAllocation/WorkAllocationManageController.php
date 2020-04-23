@@ -8,6 +8,7 @@ use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\Staff\QcStaff;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use App\Models\Ad3d\WorkAllocationReportImage\QcWorkAllocationReportImage;
 use Illuminate\Http\Request;
@@ -20,10 +21,10 @@ class WorkAllocationManageController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
         $modelCustomer = new QcCustomer();
         $modelCompany = new QcCompany();
         $modelOrder = new QcOrder();
-
         $dataAccess = [
             'object' => 'workAllocationManage'
         ];
@@ -63,7 +64,6 @@ class WorkAllocationManageController extends Controller
             $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
         }
 
-
         if (!empty($orderCustomerFilterName)) {
             $dataOrderSelect = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, 2);
         } else {
@@ -72,7 +72,6 @@ class WorkAllocationManageController extends Controller
         }
 
         $dataOrder = $dataOrderSelect->paginate(50);
-        //dd($dataOrder);
         //danh sach NV
         $dataStaff = $modelCompany->staffInfoActivityOfListCompanyId([$searchCompanyFilterId]);
         return view('work.work-allocation.orders.index', compact('modelStaff', 'dataStaff', 'dataAccess', 'dataOrder', 'dayFilter', 'monthFilter', 'yearFilter', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId'));
@@ -124,10 +123,14 @@ class WorkAllocationManageController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
         $modelOrders = new QcOrder();
         $dataAccess = [
             'object' => 'workAllocationManage'
         ];
+        # cap nhat da xem thong bao
+        $modelStaffNotify->updateViewedOfStaffAndOrder($modelStaff->loginStaffId(),$orderId);
+        #lay thong tin don hang
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($dataOrder)) {
             return view('work.work-allocation.orders.view', compact('modelStaff', 'dataAccess', 'dataOrder'));

@@ -844,7 +844,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::get('/product', ['as' => 'qc.work.orders.add.product.get', 'uses' => 'Work\Orders\OrdersController@addProduct']);
             Route::get('/{type?}/{customerId?}/{orderId?}', ['as' => 'qc.work.orders.add.get', 'uses' => 'Work\Orders\OrdersController@getAdd']);
 
-            // them don hang thuc
+            // them don hang chinh thuc
             Route::post('add', ['as' => 'work.orders.add.post', 'uses' => 'Work\Orders\OrdersController@postAdd']);
 
             // them don hang tam

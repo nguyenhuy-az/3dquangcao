@@ -13,6 +13,7 @@ use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\Staff\QcStaff;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use File;
@@ -371,6 +372,7 @@ class OrdersController extends Controller
         $modelProductType = new QcProductType();
         $modelCustomer = new QcCustomer();
         $modelOrder = new QcOrder();
+        $modelStaffNotify = new QcStaffNotify();
         $modelOrderPay = new QcOrderPay();
         $modelOrderAllocation = new QcOrderAllocation();
         $modelStaff = new QcStaff();
@@ -438,8 +440,16 @@ class OrdersController extends Controller
             $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
             if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 1, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 1, null, 1)) {
                 $orderId = $modelOrder->insertGetId();
+                # thong bao them don hang
+                $listStaffReceiveNotify = $modelStaff->infoStaffReceiveNotifyNewOrder($dataStaff->companyId());
+                if ($hFunction->checkCount($listStaffReceiveNotify)) {
+                    foreach ($listStaffReceiveNotify as $staff) {
+                        $modelStaffNotify->insert($orderId, $staff->staffId(), null);
+                    }
+                }
+
+                # them san pham
                 if ($hFunction->checkCount($productType)) {
-                    # them san pham
                     foreach ($productType as $key => $value) {
                         $dataProductType = $modelProductType->infoFromExactlyName($value);
                         if ($hFunction->checkCount($dataProductType)) {
@@ -469,6 +479,7 @@ class OrdersController extends Controller
                     # thanh toan don hang
                     $modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone);
                 }
+
                 # cap nhat thong tin thanh toan don hang
                 $modelOrder->updateFinishPayment($orderId);
 

@@ -113,7 +113,6 @@ $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
                 <div class="ac-ad3d-panel col-xs-12 col-sm-6 col-md-4 col-lg-4">
                     <div class="ac-ad3d-panel-icon-wrap">
                         <a class="ac-ad3d-panel-icon-link" href="{!! route('qc.ad3d.login.exit') !!}">
-                            <i class="glyphicon glyphicon-lock" style="font-size: 20px; color: grey;"></i><br>
                             Đăng xuất
                         </a>
                     </div>

@@ -15,7 +15,7 @@ class QcRank extends Model
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($name,$description)
+    public function insert($name, $description)
     {
         $hFunction = new \Hfunction();
         $modelDepartment = new QcRank();
@@ -45,7 +45,7 @@ class QcRank extends Model
         ]);
     }
 
-   # delete
+    # delete
     public function actionDelete($rankId = null)
     {
         if (empty($rankId)) $rankId = $this->departmentId();
@@ -90,6 +90,7 @@ class QcRank extends Model
         }
     }
 
+
     #----------- RANK INFO -------------
     public function rankId()
     {
@@ -109,6 +110,22 @@ class QcRank extends Model
     public function createdAt($rankId = null)
     {
         return $this->pluck('created_at', $rankId);
+    }
+
+    // ID cấp quản lý
+    public function manageRankId()
+    {
+        return 1;
+    }
+
+    public function staffRankId()
+    {
+        return 2;
+    }
+
+    public function rankIdReceiveNotifyNewOrder()
+    {
+        return $this->manageRankId();
     }
 
     #----------- CHECK INFO -------------

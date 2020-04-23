@@ -8,7 +8,6 @@
  * modelStaff
  */
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-
 ?>
 @extends('work.index')
 @section('titlePage')

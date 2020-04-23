@@ -48,7 +48,6 @@ $dataPunishType = $modelPunishType->getInfo();
                                         </option>
                                     @endforeach
                                 @endif
-
                             </select>
                         </div>
                     </div>

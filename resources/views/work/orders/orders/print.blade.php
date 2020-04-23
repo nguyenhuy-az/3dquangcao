@@ -11,6 +11,7 @@ $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $dataCompany = $dataOrders->company;
 $orderId = $dataOrders->orderId();
+$hotlineConstruction = $dataCompany->hotlineConstructionDepartment($dataCompany->companyId());
 // san pham cua don hang
 $dataProduct = $dataOrders->productActivityOfOrder();
 #anh thiet ke tong quat
@@ -34,7 +35,7 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                          style="width: 70px; height: auto;">
                                 @endif
                                 <br/>
-                                <span>{!! $dataCompany->nameCode().':'.$dataCompany->name() !!}</span>
+                                <span>{!! $dataCompany->name() !!}</span>
                                 <br/>
                                 <em>Đc/:{!! $dataCompany->address() !!}</em>
                             </td>
@@ -58,29 +59,17 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                                 <b> - ĐT: {!! $dataOrders->customer->phone() !!}</b>
                                             </td>
                                         </tr>
+
                                         <tr>
                                             <td>
-                                                <em class="qc-color-grey">Người nhận :</em>
-                                            </td>
-                                            <td class="text-right">
-                                                <b>{!! $dataOrders->staffReceive->fullName() !!}</b>
-                                                <b> - ĐT:{!! $dataOrders->staffReceive->phone() !!}</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <em class="qc-color-grey">Ngày nhận:</em>
+                                                <em class="qc-color-grey">Ngày nhận|Giao:</em>
                                             </td>
                                             <td class="text-right">
                                                 <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->receiveDate()) !!}</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <em class="qc-color-grey">Ngày giao:</em>
-                                            </td>
-                                            <td class="text-right">
+                                                <span>|</span>
                                                 <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->deliveryDate()) !!}</b>
+                                                &nbsp;
+                                                ĐT: @if(!empty($hotlineConstruction)) {!! $hotlineConstruction !!} @else Null @endif
                                             </td>
                                         </tr>
                                         <tr>
@@ -90,7 +79,7 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                             <td class="text-right">
                                     <span class="pull-right">{!! $dataOrders->constructionAddress() !!}
                                         - ĐT: {!! $dataOrders->constructionPhone() !!}
-                                        - tên: {!! $dataOrders->constructionContact() !!}</span>
+                                        - LH: {!! $dataOrders->constructionContact() !!}</span>
                                             </td>
                                         </tr>
                                     </table>
@@ -295,6 +284,10 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                             <b>Lập hóa đơn</b>
                             <br/>
                             <em class="qc-color-grey">(Ký tên và ghi rõ họ tên)</em>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <span>{!! $dataOrders->staffReceive->fullName() !!}</span>
                         </div>
                     </div>
                     <div class="row" style="margin-top: 30px;">

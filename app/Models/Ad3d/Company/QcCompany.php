@@ -3,6 +3,7 @@
 namespace App\Models\Ad3d\Company;
 
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
+use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
@@ -10,9 +11,11 @@ use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
 use App\Models\Ad3d\Payment\QcPayment;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductTypePrice\QcProductTypePrice;
+use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
+use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\SystemDateOff\QcSystemDateOff;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
 use App\Models\Ad3d\Work\QcWork;
@@ -229,6 +232,23 @@ class QcCompany extends Model
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
+    public function hotlineConstructionDepartment($companyId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        //$modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        #lay thong tin lam viec cua bo phan thi cong cap quan ly
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId,[$modelDepartment->constructionDepartmentId()], $modelRank->manageRankId());
+        if($hFunction->checkCount($listStaffId)){
+            return $modelStaff->phone($listStaffId[0]);
+        }else{
+            return null;
+        }
+    }
+
     public function infoActivity()
     {
         return QcCompany::where('action', 1)->get();

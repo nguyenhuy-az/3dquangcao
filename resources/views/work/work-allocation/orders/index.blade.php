@@ -10,6 +10,7 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$dataStaffLogin = $modelStaff->loginStaffInfo();
 $hrefIndex = route('qc.work.work_allocation.manage.get');
 ?>
 @extends('work.work-allocation.index')
@@ -213,6 +214,9 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                     {!! $order->name() !!}
+                                                    @if($dataStaffLogin->checkViewNotifyNewOrder($dataStaffLogin->staffId(),$orderId))
+                                                        <em style="color: red;">(Chưa xem)</em>
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -322,10 +326,8 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                 </div>
             </div>
             <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <a href="{!! route('qc.work.home') !!}">
-                    <button type="button" class="btn btn-primary">
-                        Đóng
-                    </button>
+                <a class="btn btn-primary" href="{!! route('qc.work.home') !!}">
+                    Về Trang chủ
                 </a>
             </div>
         </div>
