@@ -7,12 +7,12 @@ var qc_ad3d_work_time_keeping_provisional = {
         qc_main.scrollTop();
     },
     view: function (listObject) {
-        qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-view')+ '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
+        qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-view') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
         qc_main.scrollTop();
     },
     cancel: function (listObject) {
-        if(confirm('Bạn muốn hủy tin này')){
-            qc_ad3d_submit.ajaxHasReload($(listObject).parents('.qc_ad3d_list_content').data('href-cancel')+ '/' + $(listObject).data('object'), '#', false);
+        if (confirm('Bạn muốn hủy tin này')) {
+            qc_ad3d_submit.ajaxHasReload($(listObject).parents('.qc_ad3d_list_content').data('href-cancel') + '/' + $(listObject).data('object'), '#', false);
         }
     },
     confirm: {
@@ -21,9 +21,10 @@ var qc_ad3d_work_time_keeping_provisional = {
             qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
             qc_main.scrollTop();
         },
-        save: function (formObject) {
-            var notifyContent = $(formObject).find('.notifyConfirm');
-            qc_ad3d_submit.ajaxFormHasReload(formObject, notifyContent, true);
+        save: function (frm) {
+            var notifyContent = $(frm).find('.notifyConfirm');
+            //qc_ad3d_submit.ajaxFormNotReload(frm, notifyContent, true);
+            qc_ad3d_submit.ajaxFormHasReload(frm, notifyContent, true);
             qc_main.scrollTop();
         }
     }
@@ -43,7 +44,7 @@ $(document).ready(function () {
     })
 });
 
-$(document).ready(function(){
+$(document).ready(function () {
     // xem anh bao cao
     $('body').on('click', '.qc_ad3d_timekeeping_provisional_image_view', function () {
         qc_ad3d_work_time_keeping_provisional.viewImage($(this).data('href'));

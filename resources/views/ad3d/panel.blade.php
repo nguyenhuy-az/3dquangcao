@@ -8,8 +8,15 @@
  * modelStaff
  */
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$companyLoginId = $dataStaffLogin->companyId();
+$companyLoginId = $dataStaffLogin->companyId($dataStaffLogin->staffId());
+$dataCompany = $modelStaff->companyInfoActivity($dataStaffLogin->staffId());
 $staffLevel = $dataStaffLogin->level();
+# thong tin chi mua vat tu chua dc duyet cua cty
+$totalImportNotConfirmOfCompany = $dataCompany->totalImportNotConfirmOfCompany($companyLoginId);
+$totalImportNotConfirmOfCompany = (empty($totalImportNotConfirmOfCompany))?0:$totalImportNotConfirmOfCompany;
+# thong tin chi hoat dong chua duyet cua cong ty
+$totalPayActivityNotConfirmOfCompany = $dataCompany->totalPayActivityNotConfirmOfCompany($companyLoginId);
+$totalPayActivityNotConfirmOfCompany = (empty($totalPayActivityNotConfirmOfCompany))?0:$totalPayActivityNotConfirmOfCompany;
 # bao cham cong theo cong ty dang nhap
 $totalNewTimekeepingProvisional = $modelStaff->totalNewTimekeepingProvisional($companyLoginId);
 # xin di tre chưa duyet theo cong ty dang nhap
@@ -19,6 +26,8 @@ $totalNewLicenseLateWork = $modelStaff->totalNewLicenseLateWork($companyLoginId)
 # yeu cau ung luong chưa duyet theo cong ty dang nhap
 $totalNewSalaryBeforePayRequest = $modelStaff->totalNewSalaryBeforePayRequest($companyLoginId);
 $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
+
+
 ?>
 @extends('ad3d.index')
 @section('titlePage')
@@ -38,6 +47,18 @@ $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
                         </span>
                         Chấm công
                     </a>
+                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.store.import.get') !!}">
+                        <span class="qc-color-red badge" style="background:none;">
+                            [ {!! $totalImportNotConfirmOfCompany !!} ]
+                        </span>
+                        Duyệt chi vật tư
+                    </a>
+                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.finance.pay_activity.get') !!}">
+                        <span class="qc-color-red badge" style="background:none;">
+                            [ {!! $totalPayActivityNotConfirmOfCompany !!} ]
+                        </span>
+                        Duyệt chi hoạt động
+                    </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.off-work.get') !!}" >
                         <span class="qc-color-red badge" style="background:none;">
                             [ {!! $totalNewLicenseOffWork !!} ]
@@ -56,6 +77,7 @@ $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
                         </span>
                         Xin ứng lương
                     </a>
+
                 </div>
 
             </div>

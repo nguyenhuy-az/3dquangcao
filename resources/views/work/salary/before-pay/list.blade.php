@@ -69,7 +69,7 @@ if (count($dataWork) > 0) {
                                     <tr style="background-color: whitesmoke;">
                                         <th class="text-center">Hạn mức ứng</th>
                                         <th class="text-center">Số lần ứng</th>
-                                        <th class="text-center">Tổng ứng</th>
+                                        <th class="text-center">Tổng ứng đã ứng</th>
                                     </tr>
                                     <tr>
                                         <td class="text-center qc-color-red">
@@ -86,7 +86,7 @@ if (count($dataWork) > 0) {
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->currencyFormat($dataWork->totalMoneyBeforePay()) !!}
+                                            {!! $hFunction->currencyFormat($dataWork->totalMoneyConfirmedBeforePay()) !!}
                                         </td>
 
                                     </tr>
@@ -259,6 +259,16 @@ if (count($dataWork) > 0) {
                     </div>
                 </div>
             @endif
+            <div class="row">
+                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                        Về trang trước
+                    </a>
+                    <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
+                        Về trang chủ
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

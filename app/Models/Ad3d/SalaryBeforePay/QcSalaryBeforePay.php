@@ -86,7 +86,7 @@ class QcSalaryBeforePay extends Model
 
     }
 
-# tong tien cua 1 nv cho úng da xac nhan
+    # tong tien cua 1 nv cho úng da xac nhan
     public function totalMoneyConfirmedOfStaffAndDate($staffId, $date)
     {
         if (!empty($date)) {
@@ -105,7 +105,16 @@ class QcSalaryBeforePay extends Model
         } else {
             return QcSalaryBeforePay::whereIn('staffPay_id', $listStaffId)->sum('money');
         }
+    }
 
+    # tong tien cua nhieu nv cho úng da xac nhan
+    public function totalMoneyConfirmedOfListStaffAndDate($listStaffId, $date)
+    {
+        if (!empty($date)) {
+            return QcSalaryBeforePay::whereIn('staffPay_id', $listStaffId)->where('confirmStatus', 1)->where('datePay', 'like', "%$date%")->sum('money');
+        } else {
+            return QcSalaryBeforePay::whereIn('staffPay_id', $listStaffId)->where('confirmStatus', 1)->sum('money');
+        }
     }
 
     //----------- lam viec ------------

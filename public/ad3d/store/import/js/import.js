@@ -7,18 +7,18 @@ var qc_ad3d_store_import = {
         qc_main.scrollTop();
     },
     confirm: {
-        get: function (listObject) {
-            var href = $(listObject).parents('.qc_ad3d_list_content').data('href-confirm') + '/' + $(listObject).data('object');
+        get: function (href) {
             qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
             qc_main.scrollTop();
         },
         save: function (form) {
             var payStatus = $(form).find('.cbPayStatus').val();
             if (payStatus == 2) {
-                qc_ad3d_submit.normalForm(form);
+                qc_ad3d_submit.ajaxFormHasReload(form);
             } else {
                 if (qc_ad3d_store_import.confirm.checkInput()) {
-                    qc_ad3d_submit.normalForm(form);
+                    qc_ad3d_submit.ajaxFormHasReload(form);
+                    //qc_ad3d_submit.normalForm(form);
                 } else {
                     alert('Chọn phân loại vật tư / đơn vị tính');
                     return false;
@@ -100,8 +100,8 @@ $(document).ready(function () {
 
 //-------------------- confirm ------------
 $(document).ready(function () {
-    $('.qc_ad3d_list_object').on('click', '.qc_confirm', function () {
-        //qc_ad3d_store_import.confirm.get($(this).parents('.qc_ad3d_list_object'));
+    $('.qc_ad3d_list_object').on('click', '.qc_confirm_get', function () {
+        qc_ad3d_store_import.confirm.get($(this).data('href'));
     });
     $('body').on('click', '#frm_ad3d_import_confirm .qc_ad3d_import_confirm_save', function () {
         qc_ad3d_store_import.confirm.save($(this).parents('#frm_ad3d_import_confirm'));

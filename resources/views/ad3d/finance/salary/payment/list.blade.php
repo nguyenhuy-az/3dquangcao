@@ -95,13 +95,17 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
                             <th>Tên</th>
                             <th class="text-center"></th>
                             <th class="text-right">Tổng lương</th>
+                            <th class="text-right">
+                                Mua vật tư <br/>
+                                <em>(Đã duyệt chưa TT)</em>
+                            </th>
                             <th class="text-right">Ứng</th>
                             <th class="text-right">Phạt</th>
-                            <th class="text-right">Lương lãnh</th>
+                            <th class="text-right">Tổng lãnh </th>
                             <th class="text-right">Đã thanh toán</th>
                             <th class="text-right">Chưa thanh toán</th>
 
@@ -124,6 +128,9 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 $workCompanyId = (count($workCompanyId) > 0) ? $workCompanyId[0] : $workCompanyId;
                                 //dd($workCompanyId);
                                 $totalSalary = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
+                                //2 tong tien mua vat tu xac nhan chưa thanh toan
+                                $fromDate = $dataWork->fromDate();
+                                $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataWork->companyStaffWork->staff->staffId(), date('Y-m', strtotime($fromDate)), 2);
                                 ?>
                                 <tr class="qc_ad3d_list_object" data-object="{!! $salaryId !!}">
                                     <td class="text-center">
@@ -157,19 +164,22 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         {!! $hFunction->currencyFormat($totalSalary) !!}
                                     </td>
                                     <td class="text-right">
+                                        {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
+                                    </td>
+                                    <td class="text-right">
                                         {!! $hFunction->currencyFormat($dataWork->totalMoneyBeforePay()) !!}
                                     </td>
                                     <td class="text-right">
                                         {!! $hFunction->currencyFormat($dataWork->totalMoneyMinus()) !!}
                                     </td>
                                     <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($salary->salary()) !!}
+                                        {!! $hFunction->currencyFormat($salary->salary() + $totalMoneyImportOfStaff) !!}
                                     </td>
                                     <td class="text-right">
                                         {!! $hFunction->currencyFormat($totalPaid) !!}
                                     </td>
                                     <td class="text-right qc-color-red">
-                                        {!! $hFunction->dotNumber($salaryPay-$totalPaid) !!}
+                                        {!! $hFunction->dotNumber($salaryPay + $totalMoneyImportOfStaff -$totalPaid) !!}
                                     </td>
 
                                 </tr>

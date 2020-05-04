@@ -4,6 +4,7 @@ namespace App\Models\Ad3d\Company;
 
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\Department\QcDepartment;
+use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
@@ -200,6 +201,10 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail', 'company_id', 'company_id');
     }
 
+    public function totalPayActivityNotConfirmOfCompany($companyId=null){
+        $modelPayActivityDetail = new QcPayActivityDetail();
+        return $modelPayActivityDetail->totalPayActivityNotConfirmOfCompany($this->checkIdNull($companyId));
+    }
     #----------- bang gia ------------
     public function productTypePrice()
     {
@@ -225,6 +230,12 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\Import\QcImport', 'company_id', 'company_id');
     }
 
+    public function totalImportNotConfirmOfCompany($companyId = null)
+    {
+        $modelImport = new QcImport();
+        return $modelImport->totalImportNotConfirmOfCompany($this->checkIdNull($companyId));
+    }
+
     #----------- kho ------------
     public function companyStore()
     {
@@ -239,12 +250,27 @@ class QcCompany extends Model
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        //$modelStaffWorkDepartment = new QcStaffWorkDepartment();
         #lay thong tin lam viec cua bo phan thi cong cap quan ly
-        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId,[$modelDepartment->constructionDepartmentId()], $modelRank->manageRankId());
-        if($hFunction->checkCount($listStaffId)){
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()], $modelRank->manageRankId());
+        if ($hFunction->checkCount($listStaffId)) {
             return $modelStaff->phone($listStaffId[0]);
-        }else{
+        } else {
+            return null;
+        }
+    }
+
+    public function hotlineInfoOfConstructionDepartment($companyId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        #lay thong tin lam viec cua bo phan thi cong cap quan ly
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()], $modelRank->manageRankId());
+        if ($hFunction->checkCount($listStaffId)) {
+            return $modelStaff->getInfo($listStaffId[0]);
+        } else {
             return null;
         }
     }

@@ -31,17 +31,22 @@ $hFunction = new Hfunction();
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_salary_salary_content qc-container-table row">
-                    @if(count($dataSalary) > 0)
+                    @if($hFunction->checkCount($dataSalary))
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <tr style="background-color: whitesmoke;">
-                                    <th class="text-center">STT</th>
+                                    <th class="text-center" style="width: 20px;">STT</th>
                                     <th class="text-center">Từ ngày</th>
                                     <th class="text-center">Đến ngày</th>
                                     <th class="text-right">Tổng lương</th>
                                     <th class="text-right">Ứng</th>
                                     <th class="text-right">Phạt</th>
-                                    <th class="text-right">Lương lãnh</th>
+                                    <th class="text-right">
+                                        Mua vật tư
+                                        <br/>
+                                        <em>(Đã duyệt chưa TT)</em>
+                                    </th>
+                                    <th class="text-right">Tổng lãnh</th>
                                     <th class="text-right">Đã thanh toán</th>
                                     <th class="text-right">Còn lại</th>
                                     <th class="text-center">TT thanh toán</th>
@@ -56,10 +61,12 @@ $hFunction = new Hfunction();
                                     $totalPaid = $salary->totalPaid();
                                     $dataSalaryPayInfo = $salary->infoSalaryPay();
                                     $dataWork = $salary->work;
-                                    $totalSalary =  $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId()) + $salaryBenefit;
+                                    $totalSalary = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId()) + $salaryBenefit;
                                     $fromDate = $salary->work->fromDate();
-                                    $monthOfFromDate =date('m', strtotime($fromDate));
-                                    $yearOfFromDate =date('Y', strtotime($fromDate));
+                                    $monthOfFromDate = date('m', strtotime($fromDate));
+                                    $yearOfFromDate = date('Y', strtotime($fromDate));
+                                    // 2 = tong tien mua vat tu da duyet chua thanh toan
+                                    $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataStaff->staffId(), date('Y-m', strtotime($fromDate)), 2);
                                     ?>
                                     <tr>
                                         <td class="text-center">
@@ -85,17 +92,27 @@ $hFunction = new Hfunction();
                                             </a>
                                         </td>
                                         <td class="text-right qc-color-red">
-                                            {!! $hFunction->currencyFormat($salary->salary()) !!}
+                                            {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
+                                        </td>
+                                        <td class="text-right qc-color-red">
+                                            {!! $hFunction->currencyFormat($salary->salary() + $totalMoneyImportOfStaff) !!}
                                         </td>
                                         <td class="text-right">
                                             {!! $hFunction->currencyFormat($totalPaid) !!}
                                         </td>
                                         <td class="text-right qc-color-red">
-                                            {!! $hFunction->currencyFormat($salaryPay-$totalPaid) !!}
+                                            {!! $hFunction->currencyFormat($salaryPay + $totalMoneyImportOfStaff -$totalPaid) !!}
                                         </td>
                                         <td class="text-center">
                                             @if(!$salary->checkPaid())
-                                                <em class="qc-color-grey">Chưa Thanh toán</em>
+                                                @if($salary->salaryPayCheckExistUnConfirm())
+                                                    <a class="qc_salary_pay_confirm_get qc-link-red"
+                                                       data-href="{!! route('qc.work.salary.salary.confirm.get',$salaryId) !!}">
+                                                        Xác nhận đã nhận tiền
+                                                    </a>
+                                                @else
+                                                    <em class="qc-color-grey">Chưa Thanh toán hết</em>
+                                                @endif
                                             @else
                                                 <span>Đã Thanh toán |</span>
                                                 @if(!$salary->salaryPayCheckExistUnConfirm())

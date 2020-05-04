@@ -150,8 +150,7 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
                         <tr>
                             <td>
                                 <i class="glyphicon glyphicon-minus"></i>
-                                <span>Tiền phạt</span>
-                                <em class="qc-color-grey">- (Đã xác nhận):</em>
+                                <span>Tiền phạt :</span>
                             </td>
                             <td class="text-right">
                                 <a target="_blank" href="{!! route('qc.work.minus_money.get') !!}">

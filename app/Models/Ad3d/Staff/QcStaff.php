@@ -278,7 +278,8 @@ class QcStaff extends Model
     public function companyInfoActivity($staffId = null)
     {
         $modelCompany = new QcCompany();
-        return $modelCompany->getInfo($this->companyId($staffId));
+        $companyLoginId = $this->companyId($this->checkIdNull($staffId));
+        return $modelCompany->getInfo($companyLoginId);
     }
 
     #thong tin luong
@@ -760,7 +761,7 @@ class QcStaff extends Model
         return $modelImport->infoOfStaff($this->checkIdNull($staffId), $date, $payStatus);
     }
 
-    public function totalMoneyImportOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
+    public function totalMoneyImportOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan / 2 da duyet chua thanh toan
     {
         $modelImport = new QcImport();
         return $modelImport->totalMoneyImportOfStaff($staffId, $date, $payStatus);

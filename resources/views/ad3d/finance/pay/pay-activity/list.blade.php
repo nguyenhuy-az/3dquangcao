@@ -66,6 +66,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 <span>/</span>
                                 <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;"
                                         data-href="{!! $hrefIndex !!}">
+                                    <option value="0" @if($monthFilter == 0) selected="selected" @endif>Tất cả</option>
                                     @for($i =1;$i<= 12; $i++)
                                         <option value="{!! $i !!}"
                                                 @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>

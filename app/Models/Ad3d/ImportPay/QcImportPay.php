@@ -52,6 +52,11 @@ class QcImportPay extends Model
         return $this->belongsTo('App\Models\Ad3d\Import\QcImport', 'import_id', 'import_id');
     }
 
+    public function infoOfImport($importId)
+    {
+        return QcImportPay::where('import_id', $importId)->first();
+    }
+
     public function checkPayOfImport($importId)
     {
         $result = QcImportPay::where('import_id', $importId)->where('confirmStatus', 1)->get();
@@ -94,6 +99,16 @@ class QcImportPay extends Model
             return QcImportPay::whereIn('staff_id', $listStaffId)->sum('money');
         }
 
+    }
+
+    public function listImportIdConfirmed()
+    {
+        return QcImportPay::where('confirmStatus', 1)->pluck('import_id');
+    }
+
+    public function listImportIdUnconfirmed()
+    {
+        return QcImportPay::where('confirmStatus', 0)->pluck('import_id');
     }
     /*public function totalMoneyOfListImport($listImport, $date)
     {

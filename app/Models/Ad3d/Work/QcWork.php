@@ -395,7 +395,7 @@ class QcWork extends Model
     public function totalMoneyBeforePayRequest($workId = null)
     {
         $modelSalaryBeforePayRequest = new QcSalaryBeforePayRequest();
-        return $modelSalaryBeforePayRequest->totalMoneyOfWork($this->checkIdNull($workId));
+        return $modelSalaryBeforePayRequest->totalMoneyConfirmedOfWork($this->checkIdNull($workId));
     }
 
     public function infoBeforePayRequestOfWork($workId = null)
@@ -553,7 +553,7 @@ class QcWork extends Model
     {
         $workId = $this->checkIdNull($workId);
         $totalSalary = $this->totalCurrentSalary($workId);
-        $limitBeforePay = (($totalSalary * 0.6) - $this->totalMoneyBeforePay($workId) - $this->totalMoneyMinus($workId));
+        $limitBeforePay = (($totalSalary - $this->totalMoneyBeforePay($workId) - $this->totalMoneyMinus($workId))* 0.6) ;
         return (int)$limitBeforePay - ($limitBeforePay % 100000);
 
     }

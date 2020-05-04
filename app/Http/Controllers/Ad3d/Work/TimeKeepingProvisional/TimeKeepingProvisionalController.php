@@ -136,10 +136,16 @@ class TimeKeepingProvisionalController extends Controller
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $staffLoginId = $modelStaff->loginStaffId();
         $timekeepingId = Request::input('txtTimekeeping');
-        $permissionStatus = Request::input('txtPermissionLateStatus');
+        $permissionLateStatus = Request::input('txtPermissionLateStatus');
         $accuracyStatus = Request::input('txtAccuracyStatus');
+        $applyTimekeepingStatus = Request::input('txtApplyTimekeepingStatus');
+        $applyRuleStatus = Request::input('txtApplyRuleStatus');
         $confirmNote = Request::input('txtConfirmNote');
-        $modelTimekeepingProvisional->confirmWork($timekeepingId, $staffLoginId, $accuracyStatus, $confirmNote, $permissionStatus);
+        $permissionLateStatus = (empty($permissionLateStatus) ? 1 : 0); // 1 - co phep; 0 - khong phep
+        $accuracyStatus = (empty($accuracyStatus) ? 1 : 0); // 1 - chinh xac; 0 - khong chinh xac
+        $applyTimekeepingStatus = (empty($applyTimekeepingStatus) ? 1 : 0); // 1 - ap dung tinh cong; 0 - khong tin cong
+        $applyRuleStatus = (empty($applyRuleStatus) ? 0 : 1); // 1 - a dung; 0 - khong ap dung
+        $modelTimekeepingProvisional->confirmWork($timekeepingId, $staffLoginId, $confirmNote, $permissionLateStatus,$accuracyStatus,$applyTimekeepingStatus, $applyRuleStatus);
 
     }
 

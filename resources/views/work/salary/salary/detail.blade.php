@@ -75,6 +75,8 @@ if (!$hFunction->checkEmpty($companyStaffWorkId)) {
         }
     }
 }
+// 2 = tong tien mua vat tu da duyet chua thanh toan
+$totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($staffId, date('Y-m', strtotime($dataWork->fromDate())), 2);
 #thong tin thanh toan
 $dataSalaryPayInfo = $dataSalary->infoSalaryPay();
 $totalPaid = $dataSalary->totalPaid();
@@ -360,12 +362,20 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                                     <b>{!! $hFunction->currencyFormat($totalMoneyMinus) !!}</b>
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Mua vật tư (Đã duyệt chưa TT):</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}</b>
+                                                </td>
+                                            </tr>
                                             <tr style="border-top: 1px solid whitesmoke; color: brown;">
                                                 <td>
                                                     <em>Lương còn lại:</em>
                                                 </td>
                                                 <td class="text-right">
-                                                    <b>{!! $hFunction->currencyFormat($totalCurrentSalary -  $totalMoneyBeforePay - $totalMoneyMinus) !!}</b>
+                                                    <b>{!! $hFunction->currencyFormat($totalCurrentSalary + $totalMoneyImportOfStaff -  $totalMoneyBeforePay - $totalMoneyMinus) !!}</b>
                                                 </td>
                                             </tr>
                                         @else

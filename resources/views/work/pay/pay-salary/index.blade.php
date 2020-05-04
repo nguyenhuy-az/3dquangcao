@@ -59,9 +59,13 @@ $currentMonth = $hFunction->currentMonth();
                 <div class="table-responsive qc-container-table">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
                             <th>Tên</th>
                             <th class="text-right">Lương lãnh thực</th>
+                            <th class="text-right">
+                                Mua vật tư <br/>
+                                <em>(Đã duyệt chưa TT)</em>
+                            </th>
                             <th class="text-right">Cộng thêm</th>
                             <th class="text-right">Đã thanh toán</th>
                             <th class="text-right">còn lại</th>
@@ -87,6 +91,9 @@ $currentMonth = $hFunction->currentMonth();
                                 $sumSalaryPaid = $sumSalaryPaid + $totalPaid;
                                 $sumSalaryUnpaid = $sumSalaryUnpaid + $salaryPay - $totalPaid;
                                 $dataWork = $salary->work;
+                                $fromDate = $dataWork->fromDate();
+                                // tong tien mua vat tu xac nhan chưa thanh toan
+                                $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataWork->companyStaffWork->staff->staffId(), date('Y-m', strtotime($fromDate)), 2);
                                 ?>
                                 <tr>
                                     <td class="text-center">
@@ -103,13 +110,16 @@ $currentMonth = $hFunction->currentMonth();
                                         {!! $hFunction->currencyFormat($salaryPay) !!}
                                     </td>
                                     <td class="text-right">
+                                        {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
+                                    </td>
+                                    <td class="text-right">
                                         {!! $hFunction->currencyFormat($benefitMoney) !!}
                                     </td>
                                     <td class="text-right">
                                         {!! $hFunction->currencyFormat($totalPaid) !!}
                                     </td>
                                     <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($salaryPay + $benefitMoney -$totalPaid) !!}
+                                        {!! $hFunction->currencyFormat($salaryPay + $totalMoneyImportOfStaff + $benefitMoney -$totalPaid) !!}
                                     </td>
                                     <td class="text-center">
                                         <a class="qc-link-green"
@@ -131,7 +141,7 @@ $currentMonth = $hFunction->currentMonth();
                             @endforeach
                             <tr>
                                 <td class="text-right qc-color-red" style="background-color: whitesmoke;"
-                                    colspan="2"></td>
+                                    colspan="3"></td>
                                 <td class="text-right qc-color-red">
                                     {!! $hFunction->currencyFormat($sumSalary)  !!}
                                 </td>
@@ -149,13 +159,23 @@ $currentMonth = $hFunction->currentMonth();
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="7">
+                                <td class="text-center" colspan="8">
                                     <em class="qc-color-red">Không có thông lương</em>
                                 </td>
                             </tr>
                         @endif
                     </table>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                    Về trang trước
+                </a>
+                <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
+                    Về trang chủ
+                </a>
             </div>
         </div>
     </div>

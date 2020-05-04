@@ -68,9 +68,9 @@ $totalMoneyPay = $totalMoneyTransferTransfer + $totalMoneyImportOfStaff + $total
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <tr style="background-color: whitesmoke;">
-                                    <th class="text-center">STT</th>
+                                    <th class="text-center" style="width:20px;">STT</th>
                                     <th>Lĩnh vực</th>
-                                    <th class="text-center">Mô tả</th>
+                                    <th>Mô tả</th>
                                     <th class="text-right">Thu</th>
                                     <th class="text-right">Chi</th>
                                 </tr>
@@ -81,7 +81,7 @@ $totalMoneyPay = $totalMoneyTransferTransfer + $totalMoneyImportOfStaff + $total
                                     <td>
                                         Nhận từ thu đơn hàng
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <em class="qc-color-grey">Thu tiền từ các đơn hàng</em>
                                     </td>
                                     <td class="text-right">
@@ -102,7 +102,7 @@ $totalMoneyPay = $totalMoneyTransferTransfer + $totalMoneyImportOfStaff + $total
                                     <td>
                                         Nhận tiền bàn giao
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <em class="qc-color-grey">Do NV khác bàn bàn giao</em>
                                     </td>
                                     <td class="text-right">
@@ -121,7 +121,7 @@ $totalMoneyPay = $totalMoneyTransferTransfer + $totalMoneyImportOfStaff + $total
                                     <td>
                                         Nhận thanh toán Mua vật tư
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <em class="qc-color-grey">Mua vật tư thi công</em>
                                     </td>
                                     <td class="text-right">
@@ -142,7 +142,7 @@ $totalMoneyPay = $totalMoneyTransferTransfer + $totalMoneyImportOfStaff + $total
                                     <td>
                                         Chi Mua vật tư
                                     </td>
-                                    <td class="text-center">
+                                    <td >
                                         <em class="qc-color-grey">Mua vật tư thi công</em>
                                     </td>
                                     <td class="text-right">
@@ -163,7 +163,7 @@ $totalMoneyPay = $totalMoneyTransferTransfer + $totalMoneyImportOfStaff + $total
                                     <td>
                                         Chi hoạt động
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <em class="qc-color-grey">Các hoạt động của cty</em>
                                     </td>
                                     <td class="text-right">
@@ -184,7 +184,7 @@ $totalMoneyPay = $totalMoneyTransferTransfer + $totalMoneyImportOfStaff + $total
                                     <td>
                                         Chi ứng lương
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <em class="qc-color-grey">Chi ứng lương cho nhân viên</em>
                                     </td>
                                     <td class="text-right">
@@ -205,7 +205,7 @@ $totalMoneyPay = $totalMoneyTransferTransfer + $totalMoneyImportOfStaff + $total
                                     <td>
                                         Thanh toán lương
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <em class="qc-color-grey">Thanh toán lương cho nhân viên</em>
                                     </td>
                                     <td class="text-right">
@@ -226,7 +226,7 @@ $totalMoneyPay = $totalMoneyTransferTransfer + $totalMoneyImportOfStaff + $total
                                     <td>
                                         Thanh toán mua vật tư
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <em class="qc-color-grey">Thủ quỹ thanh toán tiền vật tư cho NV</em>
                                     </td>
                                     <td class="text-right">
@@ -247,7 +247,7 @@ $totalMoneyPay = $totalMoneyTransferTransfer + $totalMoneyImportOfStaff + $total
                                     <td>
                                         Bàn giao tiền
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         <em class="qc-color-grey">Do NV khác bàn bàn giao</em>
                                     </td>
                                     <td class="text-right">

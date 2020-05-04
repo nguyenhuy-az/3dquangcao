@@ -218,7 +218,6 @@ class WorkAllocationManageController extends Controller
                 } else {
                     Session::put('notifyAdd', "Nhân viện không được nhận công trình 2 lần");
                 }
-
             } else {
                 Session::put('notifyAdd', "Ngày giao phải lớn hơn ngày nhận");
             }

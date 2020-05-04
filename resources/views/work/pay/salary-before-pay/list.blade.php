@@ -60,7 +60,7 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                 <div class="table-responsive qc-container-table">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
                             <th>Ngày</th>
                             <th>Tên</th>
                             <th>Ghi chú</th>
@@ -137,5 +137,15 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
             </div>
         </div>
 
+        <div class="row">
+            <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                    Về trang trước
+                </a>
+                <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
+                    Về trang chủ
+                </a>
+            </div>
+        </div>
     </div>
 @endsection

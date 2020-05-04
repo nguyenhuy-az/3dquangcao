@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class QcTimekeeping extends Model
 {
     protected $table = 'qc_timekeeping';
-    protected $fillable = ['timekeeping_id', 'timeBegin', 'timeEnd', 'dateOff', 'afternoonStatus', 'mainMinute', 'plusMinute', 'minusMinute', 'note', 'lateStatus', 'permissionStatus', 'workStatus', 'created_at', 'staffCheck_id', 'work_id'];
+    protected $fillable = ['timekeeping_id', 'timeBegin', 'timeEnd', 'dateOff', 'afternoonStatus', 'mainMinute', 'plusMinute', 'minusMinute', 'note','confirmNote', 'lateStatus', 'permissionStatus', 'workStatus', 'created_at', 'staffCheck_id', 'work_id'];
     protected $primaryKey = 'timekeeping_id';
     public $timestamps = false;
 
@@ -17,7 +17,7 @@ class QcTimekeeping extends Model
 
     //========== ========== ========== INSERT && UPDATE ========== ========== ==========
     //---------- Insert ----------
-    public function insert($timeBegin, $timeEnd, $dateOff, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $lateStatus, $permissionStatus, $workStatus, $staffCheckId, $workId)
+    public function insert($timeBegin, $timeEnd, $dateOff, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note,$confirmNote, $lateStatus, $permissionStatus, $workStatus, $staffCheckId, $workId)
     {
         $hFunction = new \Hfunction();
         $modelTimekeeping = new QcTimekeeping();
@@ -29,6 +29,7 @@ class QcTimekeeping extends Model
         $modelTimekeeping->plusMinute = $plusMinute;
         $modelTimekeeping->minusMinute = $minusMinute;
         $modelTimekeeping->note = $note;
+        $modelTimekeeping->confirmNote = $confirmNote;
         $modelTimekeeping->lateStatus = $lateStatus;
         $modelTimekeeping->permissionStatus = $permissionStatus;
         $modelTimekeeping->workStatus = $workStatus;
@@ -68,7 +69,7 @@ class QcTimekeeping extends Model
     }
 
     //========== ========== ========== RELATION ========== ========== ==========
-    //----------- TF-Work ------------
+    //----------- Work ------------
     public function timekeepingImage()
     {
         return $this->hasMany('App\Models\Ad3d\TimekeepingImage\QcTimekeepingImage', 'timekeeping_id', 'timekeeping_id');
@@ -81,7 +82,7 @@ class QcTimekeeping extends Model
     }
 
 
-    //----------- TF-STAFF ------------
+    //----------- STAFF ------------
     public function staff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staffCheck_id', 'staff_id');
@@ -247,6 +248,11 @@ class QcTimekeeping extends Model
     public function note($timekeepingId = null)
     {
         return $this->pluck('note', $timekeepingId);
+    }
+
+    public function confirmNote($timekeepingId = null)
+    {
+        return $this->pluck('confirmNote', $timekeepingId);
     }
 
     public function lateStatus($timekeepingId = null)

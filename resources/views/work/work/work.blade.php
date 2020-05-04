@@ -14,7 +14,7 @@ $loginStaffId = $dataStaff->staffId();
 $dataWork = $dataStaff->firstInfoToWork($loginStaffId, date('Y-m', strtotime("$loginYear-$loginMonth")));
 $workId = $dataWork->workId();
 $totalMoneyMinus = $dataWork->totalMoneyMinus();
-$totalMoneyBeforePay = $dataWork->totalMoneyBeforePay();
+$totalMoneyBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
 $sumMainMinute = $dataWork->sumMainMinute();
 $sumPlusMinute = $dataWork->sumPlusMinute();
 $sumPlusMinute_1_5 = $sumPlusMinute * 1.5;
@@ -369,7 +369,9 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                                     <em class="qc-color-grey">Ứng:</em>
                                                 </td>
                                                 <td class="text-right">
-                                                    <b>{!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}</b>
+                                                    <a class="qc-link" href="{!! route('qc.work.salary.before_pay.get') !!}" >
+                                                        {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}
+                                                    </a>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -377,7 +379,9 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                                     <em class="qc-color-grey">Phạt:</em>
                                                 </td>
                                                 <td class="text-right">
-                                                    <b>{!! $hFunction->currencyFormat($totalMoneyMinus) !!}</b>
+                                                    <a class="qc-link" href="{!! route('qc.work.minus_money.get') !!}">
+                                                        {!! $hFunction->currencyFormat($totalMoneyMinus) !!}
+                                                    </a>
                                                 </td>
                                             </tr>
                                             <tr style="border-top: 1px solid whitesmoke; color: brown;">
@@ -426,6 +430,10 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                     @foreach($dataTimekeeping as $timekeeping)
                                         <?php
                                         $timekeepingId = $timekeeping->timekeepingId();
+                                        $timekeepingBegin = $timekeeping->timeBegin();
+                                        $timekeepingEnd = $timekeeping->timeEnd();
+                                        $timekeepingNote = $timekeeping->note();
+                                        $timekeepingConfirmNote = $timekeeping->confirmNote();
                                         ?>
                                         <tr class="@if($n_o%2) info @endif">
                                             <td class="text-center">
@@ -433,17 +441,17 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                             </td>
                                             <td class="text-center">
                                                 @if(!$timekeeping->checkOff())
-                                                    <span>{!! $hFunction->convertDateDMYFromDatetime($timekeeping->timeBegin()) !!}</span>
-                                                    <b>{!! date('H:i',strtotime($timekeeping->timeBegin())) !!}</b>
+                                                    <span>{!! $hFunction->convertDateDMYFromDatetime($timekeepingBegin) !!}</span>
+                                                    <b>{!! date('H:i',strtotime($timekeepingBegin)) !!}</b>
                                                 @else
                                                     <span>---</span>
                                                 @endif
                                             </td>
                                             <td class="text-center">
                                                 @if(!$timekeeping->checkOff())
-                                                    @if(!$hFunction->checkEmpty($timekeeping->timeEnd()))
-                                                        <span>{!! $hFunction->convertDateDMYFromDatetime($timekeeping->timeEnd()) !!}</span>
-                                                        <b>{!! date('H:i',strtotime($timekeeping->timeEnd())) !!}</b>
+                                                    @if(!$hFunction->checkEmpty($timekeepingEnd))
+                                                        <span>{!! $hFunction->convertDateDMYFromDatetime($timekeepingEnd) !!}</span>
+                                                        <b>{!! date('H:i',strtotime($timekeepingEnd)) !!}</b>
                                                     @else
                                                         <span>Null</span>
                                                     @endif
@@ -452,7 +460,12 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                                 @endif
                                             </td>
                                             <td>
-                                                <em class="qc-color-grey"> {!! $timekeeping->note() !!}</em>
+                                                @if(!empty($timekeepingConfirmNote))
+                                                    <em class="qc-color-grey"> {!! $timekeepingConfirmNote !!}</em>
+                                                @else
+                                                    <em class="qc-color-grey"> {!! $timekeepingNote !!}</em>
+                                                @endif
+
                                             </td>
                                             <td class="text-center">
                                                 @if($timekeeping->checkOff() && $timekeeping->checkPermissionStatus())

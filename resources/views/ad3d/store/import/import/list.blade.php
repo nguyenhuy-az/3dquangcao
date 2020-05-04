@@ -71,6 +71,7 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                                 <span>/</span>
                                 <select class="cbMonthFilter" style="margin-top: 5px; padding: 3px 0;"
                                         data-href="{!! $hrefIndex !!}">
+                                    <option value="0" @if($monthFilter == 0) selected="selected" @endif>Tất cả</option>
                                     @for($i =1;$i<= 12; $i++)
                                         <option value="{!! $i !!}"
                                                 @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
@@ -79,6 +80,7 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                                 <span>/</span>
                                 <select class="cbYearFilter" style="margin-top: 5px; padding: 3px 0;"
                                         data-href="{!! $hrefIndex !!}">
+                                    <option value="0" @if($yearFilter == 0) selected="selected" @endif>Tất cả</option>
                                     @for($i =2017;$i<= 2050; $i++)
                                         <option value="{!! $i !!}"
                                                 @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
@@ -95,12 +97,13 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
-                            <th>Ngày</th>
+                            <th class="text-center" style="width:20px;">STT</th>
+                            <th style="width: 80px;">Ngày</th>
                             <th>Nhân viên</th>
                             <th>Chi chú</th>
                             <th class="text-center">Thanh toán</th>
                             <th></th>
+                            <th class="text-center">Ngày duyệt</th>
                             <th class="text-right">Thành tiền</th>
                         </tr>
                         <tr>
@@ -122,23 +125,31 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                             <td></td>
                             <td class="text-center" style="padding: 0px; margin: 0;">
                                 <select class="cbPayStatusFilter form-control" data-href="{!! $hrefIndex !!}">
-                                    <option value="3" @if($payStatusFilter == 3) selected="selected" @endif>Tất cả
+                                    <option value="4" @if($payStatusFilter == 4) selected="selected" @endif>
+                                        Tất cả
                                     </option>
-                                    <option value="1" @if($payStatusFilter == 1) selected="selected" @endif>Đã thanh
-                                        toán
+                                    <option value="0" @if($payStatusFilter == 0) selected="selected" @endif>
+                                        Chưa thanh toán
                                     </option>
-                                    <option value="0" @if($payStatusFilter == 0) selected="selected" @endif>Chưa thanh
-                                        toán
+                                    <option value="1" @if($payStatusFilter == 1) selected="selected" @endif>
+                                        Đã thanh toán
+                                    </option>
+                                    <option value="2" @if($payStatusFilter == 2) selected="selected" @endif>
+                                        Thanh toán - Chưa xác nhận
+                                    </option>
+                                    <option value="3" @if($payStatusFilter == 3) selected="selected" @endif>
+                                        Thanh toán - Đã xác nhận
                                     </option>
                                 </select>
                             </td>
+                            <td></td>
                             <td></td>
                             <td class="text-right qc-color-red">
                                 <b class="qc-color-red">{!! $hFunction->currencyFormat($importTotalMoney) !!}</b>
                             </td>
 
                         </tr>
-                        @if(count($dataImport) > 0)
+                        @if($hFunction->checkCount($dataImport))
                             <?php
                             $perPage = $dataImport->perPage();
                             $currentPage = $dataImport->currentPage();
@@ -149,6 +160,7 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                                 $importId = $import->importId();
                                 $importDate = $import->importDate();
                                 $companyImportId = $import->companyId();
+                                $dataImportPay = $import->importPayInfo();
                                 ?>
                                 <tr class="qc_ad3d_list_object @if(!$import->checkExactlyStatus()) danger  @else @if($n_o%2 == 1) info @endif @endif "
                                     data-object="{!! $importId !!}">
@@ -159,7 +171,7 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                                         {!! date('d-m-Y', strtotime($importDate)) !!}
                                     </td>
                                     <td>
-                                        {!! $import->staffImport->lastName() !!}
+                                        {!! $import->staffImport->fullName() !!}
                                     </td>
                                     <td>
                                         <em class="qc-color-grey">{!! $import->confirmNote() !!}</em>
@@ -202,11 +214,11 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                                            href="{!! route('qc.ad3d.store.import.view.get', $importId) !!}">
                                             Chi tiết
                                         </a>
-                                        @if(!$import->checkConfirm())
+                                        @if(!$hFunction->checkCount($dataImportPay))
                                             @if($companyImportId == $companyLoginId)
                                                 <span>|</span>
-                                                <a class="qc-link-green-bold"
-                                                   href="{!! route('qc.ad3d.store.import.confirm.get',$importId) !!}">Duyệt</a>
+                                                <a class="qc_confirm_get qc-link-green-bold"
+                                                   data-href="{!! route('qc.ad3d.store.import.confirm.get',$importId) !!}">Duyệt</a>
                                             @else
                                                 <span>|</span>
                                                 <em class="qc-color-grey">
@@ -218,6 +230,13 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                                             <em class="qc-color-grey">Đã Duyệt</em>
                                         @endif
                                     </td>
+                                    <td class="text-center" style="color: grey;">
+                                        @if($hFunction->checkCount($dataImportPay))
+                                            <span>{!! date('d-m-Y H:i', strtotime($dataImportPay->createdAt())) !!}</span>
+                                        @else
+                                            <span>---</span>
+                                        @endif
+                                    </td>
                                     <td class="text-right">
                                         {!! $hFunction->currencyFormat($import->totalMoneyOfImport()) !!}
                                     </td>
@@ -225,20 +244,24 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                             @endforeach
                         @else
                             <tr>
-                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="7">
+                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="8">
                                     <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                 </td>
                             </tr>
                         @endif
+                        <tr>
+                            <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="8">
+                                <div class="row">
+                                    <div class="text-center qc-padding-top-10 qc-padding-bot-10 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        {!! $hFunction->page($dataImport) !!}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
                     </table>
                 </div>
+            </div>
 
-            </div>
-            <div class="row">
-                <div class="text-center qc-padding-top-10 qc-padding-bot-10 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    {!! $hFunction->page($dataImport) !!}
-                </div>
-            </div>
         </div>
     </div>
 @endsection

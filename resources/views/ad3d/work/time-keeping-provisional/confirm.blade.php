@@ -98,34 +98,40 @@ if(!empty($companyStaffWorkId)){
                 </div>
             @endif
             <div class="form-group" style="border-top: 1px dotted grey;">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <div class="radio col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                        <label>
-                            <input type="radio" name="txtPermissionLateStatus" value="1"
-                                   @if($lateStatus == 1) checked @endif>
-                            Trễ có phép
-                        </label>
+                <div class="col-sm-offset-2 col-sm-10 ">
+                    <div class="radio col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="txtPermissionLateStatus" @if($lateStatus == 0) checked @endif>
+                                Không phép nếu trễ
+                            </label>
+                        </div>
                     </div>
-                    <div class="radio col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                        <label>
-                            <input type="radio" name="txtPermissionLateStatus" value="0"
-                                   @if($lateStatus == 0) checked @endif>
-                            Trễ không phép
-                        </label>
+                    <div class="radio col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="txtAccuracyStatus">
+                                Báo Không chính xác
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-offset-2 col-sm-10">
-                    <div class="radio col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                        <label>
-                            <input type="radio" name="txtAccuracyStatus" value="1" checked>
-                            Báo Chính xác
-                        </label>
+                    <div class="radio col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="txtApplyTimekeepingStatus">
+                                Không Tính công
+                            </label>
+                        </div>
                     </div>
-                    <div class="radio col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                        <label>
-                            <input type="radio" name="txtAccuracyStatus" value="0">
-                            Báo Không chính xác
-                        </label>
+                    <div class="radio col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="txtApplyRuleStatus" checked>
+                                Áp dụng phạt theo nội quy
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>

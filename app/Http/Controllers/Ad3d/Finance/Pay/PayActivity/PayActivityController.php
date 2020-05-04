@@ -41,7 +41,12 @@ class PayActivityController extends Controller
             $searchCompanyFilterId = [$dataStaffLogin->companyId()];
             $companyFilterId = $dataStaffLogin->companyId();
         }
-        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
+        if(empty($dayFilter) && empty($monthFilter) && empty($yearFilter)){
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+            $dateFilter = date('Y', strtotime("1-$monthFilter-$yearFilter"));
+        }
+        elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));

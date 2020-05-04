@@ -23,7 +23,7 @@ use Request;
 
 class ImportController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = null, $monthFilter = null, $yearFilter = null, $payStatusFilter = 3, $staffFilterId = null)
+    public function index($companyFilterId = null, $dayFilter = null, $monthFilter = null, $yearFilter = null, $payStatusFilter = 4, $staffFilterId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -57,6 +57,8 @@ class ImportController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif (empty($dayFilter) && empty($monthFilter) && !empty($yearFilter)) {
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } elseif ($dayFilter == 0) { //xem t?t c? các ngày trong tháng
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         } else {
@@ -119,16 +121,17 @@ class ImportController extends Controller
         $allocationStatus = Request::input('cbAllocationStatus');
         $confirmPayStatus = Request::input('cbPayStatus');
         $confirmNote = Request::input('txtConfirmNote');
-        if($confirmPayStatus == 2){
+        $confirmPayStatus = (empty($confirmPayStatus)) ? 0 : $confirmPayStatus;
+        if ($confirmPayStatus == 2) {
             $exactlyStatus = 0;
             $confirmPayStatus = 0;
-        }else{
+        } else {
             $exactlyStatus = 1;
         }
         //$exactlyStatus = ($confirmPayStatus == 2) ? 0 : 1;  //$confirmPayStatus = nhap khong chinh xac
         $dataImportDetail = $modelImportDetail->infoOfImport($importId);
         if ($modelImport->confirmImport($importId, $confirmPayStatus, $exactlyStatus, $loginStaffId, $confirmNote)) {
-            if ($confirmPayStatus < 2){ // nhap chinh xac
+            if ($confirmPayStatus < 2) { // nhap chinh xac
                 //thanh toan cho nguoi mua
                 if ($confirmPayStatus == 1) {
                     $modelImportPay->insert($modelImport->totalMoneyOfImport($importId), $importId, $loginStaffId);
@@ -230,7 +233,7 @@ class ImportController extends Controller
             }
 
         }
-        return redirect()->route('qc.ad3d.store.import.get');
+       // return redirect()->back();// route('qc.ad3d.store.import.get');
     }
 
     public function getPay($importId)

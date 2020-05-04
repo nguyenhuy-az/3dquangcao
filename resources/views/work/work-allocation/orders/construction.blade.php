@@ -34,7 +34,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
 ?>
 @extends('work.work-allocation.index')
 @section('titlePage')
-    Bàn giao công trình
+    Bàn giao công trình và triển khai thi công
 @endsection
 @section('qc_work_allocation_body')
     <div id="qc_work_allocation_manage_order_construction_wrap" class="col-sx-12 col-sm-12 col-md-12 col-lg-10"

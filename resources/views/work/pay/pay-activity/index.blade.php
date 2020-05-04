@@ -11,14 +11,12 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $loginStaffId = $dataStaff->staffId();
-
 $currentMonth = $hFunction->currentMonth();
-If (empty($loginDay)) {
+if (empty($loginDay)) {
     $loginDate = date('Y-m', strtotime("$loginYear-$loginMonth"));
 } else {
     $loginDate = date('Y-m-d', strtotime("$loginYear-$loginMonth-$loginDay"));
 }
-
 $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($loginStaffId, $confirmStatus, $loginDate);
 ?>
 @extends('work.index')
@@ -72,10 +70,10 @@ $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($loginStaffId,
                 <div class="table-responsive qc-container-table">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
                             <th class="text-center">Ngày</th>
                             <th>Danh mục chi</th>
-                            <th class="text-center">Ghi chú</th>
+                            <th>Ghi chú</th>
                             <th class="text-right"></th>
                             <th>Ghi chú duyệt</th>
                             <th class="text-right">Số tiền</th>
@@ -119,6 +117,7 @@ $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($loginStaffId,
                                 $payId = $payActivityDetail->payId();
                                 $money = $payActivityDetail->money();
                                 $payDate = $payActivityDetail->payDate();
+                                $payNote = $payActivityDetail->note();
                                 $sumPay = $sumPay + $money;
                                 ?>
                                 <tr class="@if($n_o%2) info @endif">
@@ -131,9 +130,9 @@ $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($loginStaffId,
                                     <td>
                                         {!! $payActivityDetail->payActivityList->name()  !!}
                                     </td>
-                                    <td class="text-center">
-                                        @if(!empty($payActivityDetail->note()))
-                                            {!! $payActivityDetail->note()  !!}
+                                    <td>
+                                        @if(!empty($payNote))
+                                            {!! $payNote !!}
                                         @else
                                             <em class="qc-color-grey">---</em>
                                         @endif
@@ -205,6 +204,17 @@ $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($loginStaffId,
                             </tr>
                         @endif
                     </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                        Về trang trước
+                    </a>
+                    <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
+                        Về trang chủ
+                    </a>
                 </div>
             </div>
         </div>

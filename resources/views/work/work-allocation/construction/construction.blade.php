@@ -66,7 +66,7 @@ $hrefIndex = route('qc.work.work_allocation.construction.get');
                                 <th class="text-right">QL sản phẩm</th>
                                 <th class="text-right">Trạng thái</th>
                             </tr>
-                            @if(count($dataOrdersAllocation) > 0)
+                            @if($hFunction->checkCount($dataOrdersAllocation))
                                 <?php $n_o = 0; ?>
                                 @foreach($dataOrdersAllocation as $ordersAllocation)
                                     <?php

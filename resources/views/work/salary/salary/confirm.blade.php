@@ -35,31 +35,31 @@ $mobileStatus = $mobile->isMobile();
                                         <th class="qc-padding-none" colspan="7">Chi tiết thanh toán lương</th>
                                     </tr>
                                     <tr style="background-color: whitesmoke;">
-                                        <th class="text-center qc-padding-none">STT</th>
-                                        <th class="text-center qc-padding-none">Ngày</th>
-                                        <th class="text-center qc-padding-none">Thủ quỹ</th>
-                                        <th class="text-right qc-padding-none">Số tiền</th>
+                                        <th class="text-center"  style="width: 20px;">STT</th>
+                                        <th class="text-center">Ngày</th>
+                                        <th class="text-center">Thủ quỹ</th>
+                                        <th class="text-right">Số tiền</th>
                                     </tr>
                                     @if(count($dataSalaryPay) > 0)
                                         @foreach($dataSalaryPay as $salaryPay)
                                             <tr>
-                                                <td class="text-center qc-padding-none">
+                                                <td class="text-center">
                                                     {!! $n_o_pay = (isset($n_o_pay)) ? $n_o_pay + 1 : 1 !!}
                                                 </td>
-                                                <td class="text-center qc-padding-none">
+                                                <td class="text-center">
                                                     {!!  date('d/m/Y',strtotime($salaryPay->datePay())) !!}
                                                 </td>
-                                                <td class="text-center qc-padding-none">
+                                                <td class="text-center">
                                                     {!! $salaryPay->staff->fullName()  !!}
                                                 </td>
-                                                <td class="text-right qc-color-red qc-padding-none">
+                                                <td class="text-right qc-color-red">
                                                     {!! $hFunction->currencyFormat($salaryPay->money()) !!}
                                                 </td>
                                             </tr>
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td class="qc-padding-none" colspan="5">
+                                            <td class="" colspan="5">
                                                 Không có thông tin thanh toán
                                             </td>
                                         </tr>

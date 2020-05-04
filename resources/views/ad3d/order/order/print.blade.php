@@ -10,7 +10,11 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $dataCompany = $dataOrder->company;
-$hotlineConstruction = $dataCompany->hotlineConstructionDepartment($dataCompany->companyId());
+$dataStaffHotline = $dataCompany->hotlineInfoOfConstructionDepartment($dataCompany->companyId());
+$hotlineName = $dataStaffHotline->lastName();
+$hotlinePhone = $dataStaffHotline->phone();
+$hotlineName = (empty($hotlineName))?'Null':$hotlineName;
+$hotlinePhone = (empty($hotlinePhone))?'Null':$hotlinePhone;
 // san pham cua don hang
 $dataProduct = $dataOrder->productActivityOfOrder();
 #anh thiet ke tong quat
@@ -41,42 +45,51 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                 <div class="table-responsive">
                                     <table class="table table-hover qc-margin-bot-none">
                                         <tr>
-                                            <td style="width: 100px;">
+                                            <td class="qc-color-grey">
                                                 <em class=" qc-color-grey">Mã ĐH:</em>
-                                            </td>
-                                            <td class="text-right">
                                                 <b>{!! $dataOrder->orderCode() !!}</b>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>
-                                                <em class="qc-color-grey">Khách hàng:</em>
-                                            </td>
-                                            <td class="text-right">
+                                            <td class="qc-color-grey">
+                                                <em >Khách hàng:</em>
                                                 <b>{!! $dataOrder->customer->name() !!}</b>
                                                 <b> - ĐT: {!! $dataOrder->customer->phone() !!}</b>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <em class="qc-color-grey">Ngày nhận|Giao:</em>
-                                            </td>
-                                            <td class="text-right">
+                                                <em class="qc-color-grey">Ngày nhận:</em>
                                                 <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->receiveDate()) !!}</b>
-                                                <span>|</span>
+                                                <span>-</span>
+                                                <em class="qc-color-grey">Ngày giao:</em>
                                                 <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->deliveryDate()) !!}</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <em class="qc-color-grey">Phụ trách sx thi công:</em>
+                                                <b>ĐT: {!! $hotlinePhone !!}</b>
                                                 &nbsp;
-                                                ĐT: @if(!empty($hotlineConstruction)) {!! $hotlineConstruction !!} @else Null @endif
+                                                <span>({!! $hotlineName !!})</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <em class="qc-color-grey">NV kinh doanh:</em>
+                                                <b>ĐT: 09.077.077.28</b>
+                                                &nbsp;
+                                                <span>(Mr.Hoàng)</span>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <em class="qc-color-grey">Đ/c thi công:</em>
-                                            </td>
-                                            <td class="text-right">
-                                    <span class="pull-right">{!! $dataOrder->constructionAddress() !!}
-                                        - ĐT: {!! $dataOrder->constructionPhone() !!}
-                                        - LH: {!! $dataOrder->constructionContact() !!}</span>
+                                                <b>
+                                                    {!! $dataOrder->constructionAddress() !!}
+                                                    - ĐT: {!! $dataOrder->constructionPhone() !!}
+                                                    - LH: {!! $dataOrder->constructionContact() !!}
+                                                </b>
                                             </td>
                                         </tr>
                                     </table>
@@ -157,7 +170,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    {!! $product->description()  !!}
+                                                    {!! mb_strtolower($product->description())  !!}
                                                 </td>
                                                 <td class="text-center">
                                                     {!! $product->width()/1000 !!}

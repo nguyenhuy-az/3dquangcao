@@ -98,6 +98,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 $timeEnd = $timekeepingProvisional->timeEnd();
                                 $note = $timekeepingProvisional->note();
                                 $createdAt = $timekeepingProvisional->createdAt();
+                                $updatedAt = $timekeepingProvisional->updatedAt();
                                 #thong tin bang cham cong
                                 $dataWork = $timekeepingProvisional->work;
                                 $dataCompanyStaffWorkId = $dataWork->companyStaffWorkId();
@@ -122,7 +123,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         {!! $dataWork->companyStaffWork->staff->fullName() !!}
                                     </td>
                                     <td class="text-center">
-                                        <span class="qc-color-grey">{!! $hFunction->getTimeFromDate($createdAt) !!}</span>
+                                        <span class="qc-color-grey">Vào: {!! $hFunction->getTimeFromDate($createdAt) !!}</span>
+                                        <br/>
+                                        <span class="qc-color-grey">Ra: @if(empty($updatedAt)) '......' @else {!! $hFunction->getTimeFromDate($updatedAt) !!} @endif </span>
                                     </td>
                                     <td class="text-center">
                                         <span style="color: brown;">{!! $hFunction->convertDateDMYFromDatetime($timeBegin) !!}</span>
@@ -131,7 +134,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </td>
                                     <td class="text-center">
                                         @if($hFunction->checkEmpty($timeEnd))
-                                            <span style="color: brown;">Null</span>
+                                            <span style="color: brown;">...</span>
                                         @else
                                             <span style="color: brown;">{!! $hFunction->convertDateDMYFromDatetime($timeEnd) !!}</span>
                                             <br/>

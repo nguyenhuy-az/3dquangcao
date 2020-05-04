@@ -142,7 +142,7 @@ class QcPayActivityDetail extends Model
     }
 
     // tong tien da chua bao gom da duyet va chua duyet
-    public function totalMoneyOfStaffAndDate($staffId, $date=null)
+    public function totalMoneyOfStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
             return QcPayActivityDetail::where('staff_id', $staffId)->where('payDate', 'like', "%$date%")->sum('money');
@@ -153,7 +153,7 @@ class QcPayActivityDetail extends Model
     }
 
     // tong tien da duoc duyet va hop le
-    public function totalMoneyConfirmedAndInvalidOfStaffAndDate($staffId, $date=null)
+    public function totalMoneyConfirmedAndInvalidOfStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
             return QcPayActivityDetail::where('staff_id', $staffId)->where('confirmStatus', 1)->where('invalidStatus', 1)->where('payDate', 'like', "%$date%")->sum('money');
@@ -261,6 +261,11 @@ class QcPayActivityDetail extends Model
     public function company()
     {
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
+    }
+
+    public function totalPayActivityNotConfirmOfCompany($companyId)
+    {
+        return QcPayActivityDetail::where('company_id', $companyId)->where('confirmStatus', 0)->count('pay_id');
     }
 
     //========= ========== ========== LAY THONG TIN========== ========== ==========

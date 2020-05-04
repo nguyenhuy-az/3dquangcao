@@ -111,7 +111,7 @@ class QcImport extends Model
         return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->whereNotIn('import_id', $listImportId)->orderBy('importDate', $order)->select('*');
     }
 
-    public function listIdOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
+    public function listIdOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan / 2_da xac nhan chua thanh toan
     {
         $modelImportPay = new QcImportPay();
         if ($payStatus < 3) $listImportId = $modelImportPay->listImportId();
@@ -120,6 +120,8 @@ class QcImport extends Model
                 return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->pluck('import_id');
             } elseif ($payStatus == 1) { # da thanh toan
                 return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->pluck('import_id');
+            }elseif($payStatus == 2){
+                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus',1)->where('importDate', 'like', "%$date%")->pluck('import_id');
             } else {
                 return QcImport::where(['importStaff_id' => $staffId])->where('importDate', 'like', "%$date%")->pluck('import_id');
             }
@@ -128,6 +130,8 @@ class QcImport extends Model
                 return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->pluck('import_id');
             } elseif ($payStatus == 1) {
                 return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->pluck('import_id');
+            }elseif($payStatus == 2){
+                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus',1)->pluck('import_id');
             } else {
                 return QcImport::where(['importStaff_id' => $staffId])->pluck('import_id');
             }
@@ -162,6 +166,8 @@ class QcImport extends Model
             }
         }
     }
+
+
 
     public function infoConfirmedAndAgreeOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
     {
@@ -224,6 +230,11 @@ class QcImport extends Model
         return QcImport::where('importDate', 'like', "%$importDate%")->whereIn('company_id', $companyId)->pluck('import_id');
     }
 
+    public function totalImportNotConfirmOfCompany($companyId)
+    {
+        return QcImport::where('confirmStatus', 0)->where('company_id', $companyId)->count('import_id');
+    }
+
     // --------------- hình ảnh ------------
     public function importImage()
     {
@@ -272,6 +283,12 @@ class QcImport extends Model
         return $this->hasMany('App\Models\Ad3d\ImportPay\QcImportPay', 'import_id', 'import_id');
     }
 
+    public function importPayInfo($importId = null)
+    {
+        $modelImportPay = new QcImportPay();
+        return $modelImportPay->infoOfImport($this->checkIdNull($importId));
+    }
+
     public function checkPayConfirmOfImport($importId = null)
     {
         $modelImportPay = new QcImportPay();
@@ -287,8 +304,14 @@ class QcImport extends Model
     //========= ========== ========== GET INFO ========== ========== ==========
     public function getInfoHaveFilter($listStaffId, $searchCompanyFilterId, $dateFilter, $payStatus = 3, $orderBy = 'DESC')
     {
-        if ($payStatus == 3) {
+        $modelImportPay = new QcImportPay();
+        # $payStatus: 0 - chua thanh toan | 1 - da thanh toan | 2 - da thanh toan chua xac nhan | 3 - da thanh da xac nhan
+        if ($payStatus == 4) {
             return QcImport::whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
+        } elseif ($payStatus == 3) {
+            return QcImport::whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->whereIn('import_id', $modelImportPay->listImportIdConfirmed())->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
+        } elseif ($payStatus == 2) {
+            return QcImport::whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->whereIn('import_id', $modelImportPay->listImportIdUnconfirmed())->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
         } else {
             return QcImport::where('payStatus', $payStatus)->whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
         }

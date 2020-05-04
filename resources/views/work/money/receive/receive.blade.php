@@ -80,7 +80,7 @@ $totalMoney = 0;
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
                                     <tr>
-                                        <th></th>
+                                        <th style="width: 20px;"></th>
                                         <th>Ngày</th>
                                         <th>Mã ĐH</th>
                                         <th>Tên ĐH</th>

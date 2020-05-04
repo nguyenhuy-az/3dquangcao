@@ -72,6 +72,7 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
                             <th>Chi chú</th>
                             <th class="text-center">Thanh toán</th>
                             <th class="text-center"></th>
+                            <th class="text-center">Duyệt</th>
                             <th class="text-right">Số tiền</th>
                             <th class="text-right">Đã thanh toán</th>
                             <th class="text-right">Chưa thanh toán</th>
@@ -81,7 +82,8 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
                             <th></th>
                             <th></th>
                             <th class="text-center" style="padding: 0;">
-                                <select class="qc_work_import_login_status form-control" data-href="{!! $hrefIndex !!}" style="border: 0;">
+                                <select class="qc_work_import_login_status form-control" data-href="{!! $hrefIndex !!}"
+                                        style="border: 0;">
                                     <option value="3" @if($loginPayStatus == 3) selected="selected" @endif>
                                         Tất cả
                                     </option>
@@ -162,6 +164,13 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
                                             </a>
                                         @endif
                                     </td>
+                                    <td class="text-center" style="color: grey;">
+                                        @if($import->checkConfirm())
+                                            <em>Đã duyệt</em>
+                                        @else
+                                            <em>Chưa duyệt</em>
+                                        @endif
+                                    </td>
                                     <td class="text-right">
                                         {!! $hFunction->currencyFormat($totalMoneyOfImport) !!}
                                     </td>
@@ -175,7 +184,7 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
                             @endforeach
                             <tr style="border-top: 2px solid brown;">
                                 <td class="text-right qc-color-red"
-                                    style="background-color: whitesmoke;" colspan="5"></td>
+                                    style="background-color: whitesmoke;" colspan="6"></td>
                                 <td class="text-right qc-color-red">
                                     {!! number_format($sumMoney)  !!}
                                 </td>
@@ -188,7 +197,7 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
                             </tr>
                         @else
                             <tr>
-                                <td class="text-right" colspan="8">
+                                <td class="text-right" colspan="9">
                                     <em class="qc-color-red">Không có thông tin mua</em>
                                 </td>
                             </tr>
@@ -196,12 +205,14 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
                     </table>
                 </div>
             </div>
+
             <div class="row">
                 <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <a href="{!! route('qc.work.home') !!}">
-                        <button type="button" class="qc_ad3d_container_close btn btn-sm btn-primary">
-                            Đóng
-                        </button>
+                    <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                        Về trang trước
+                    </a>
+                    <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
+                        Về trang chủ
                     </a>
                 </div>
             </div>
