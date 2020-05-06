@@ -9,6 +9,7 @@ use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\Rule\QcRules;
 use App\Models\Ad3d\Salary\QcSalary;
 use App\Models\Ad3d\Staff\QcStaff;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
 use App\Models\Ad3d\Work\QcWork;
 //use Illuminate\Http\Request;
@@ -75,6 +76,7 @@ class WorkAllocationConstructionController extends Controller
     public function constructionProduct($allocationId)
     {
         $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
         $modelOrderAllocation = new QcOrderAllocation();
         if ($modelStaff->checkLogin()) {
             $dataAccess = [
@@ -82,6 +84,7 @@ class WorkAllocationConstructionController extends Controller
                 'subObjectLabel' => 'Sản phẩm'
             ];
             $dataOrdersAllocation = $modelOrderAllocation->getInfo($allocationId);
+            $modelStaffNotify->updateViewedOfStaffAndOrderAllocation($modelStaff->loginStaffId(), $allocationId);
             return view('work.work-allocation.construction.product.product', compact('dataAccess', 'modelStaff', 'dataOrdersAllocation'));
         } else {
             return view('work.login');

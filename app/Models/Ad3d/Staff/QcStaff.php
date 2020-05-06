@@ -408,6 +408,13 @@ class QcStaff extends Model
         return $this->hasMany('App\Models\Ad3d\WorkAllocation\QcWorkAllocation', 'receiveStaff_id', 'staff_id');
     }
 
+    #lay tat ca thong tin phan cong cua nguoi nhan
+    public function workAllocationOfStaffReceive($staffId = null)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+        return $modelWorkAllocation->infoOfStaffReceive($this->checkIdNull($staffId));
+    }
+
     #lay thong tin phan cong dang nhan
     public function workAllocationActivityOfStaffReceive($staffId = null)
     {
@@ -850,6 +857,14 @@ class QcStaff extends Model
         return $modelStaffNotify->selectInfoOfStaff($this->checkIdNull($staffId));
     }
 
+    #tat ca thong bao moi chua xem
+    public function totalNewNotify($staffId = null)
+    {
+        $modelStaffNotify = new QcStaffNotify();
+        return $modelStaffNotify->totalNewNotifyOfStaff($this->checkIdNull($staffId));
+    }
+
+    # thong bao them don hang moi chua xem
     public function totalNotifyNewOrder($staffId = null)
     {
         $modelStaffNotify = new QcStaffNotify();
@@ -860,6 +875,20 @@ class QcStaff extends Model
     {
         $modelStaffNotify = new QcStaffNotify();
         return $modelStaffNotify->checkViewedNewOrderOfStaff($staffId, $orderId);
+    }
+
+    # thong bao ban giao cong trinh moi chua xem
+    public function totalNotifyNewOrderAllocation($staffId = null)
+    {
+        $modelStaffNotify = new QcStaffNotify();
+        return $modelStaffNotify->totalNotifyNewOrderAllocationOfStaff($this->checkIdNull($staffId));
+    }
+
+    # thong bao phan viec moi chua xem
+    public function totalNotifyNewWorkAllocation($staffId = null)
+    {
+        $modelStaffNotify = new QcStaffNotify();
+        return $modelStaffNotify->totalNotifyNewWorkAllocationOfStaff($this->checkIdNull($staffId));
     }
 
     //========== ========== ========== dang nhap ========== ========== ==========

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcStaffNotify extends Model
 {
     protected $table = 'qc_staff_notify';
-    protected $fillable = ['notify_id', 'note', 'viewStatus', 'viewDate', 'created_at', 'order_id', 'staff_id'];
+    protected $fillable = ['notify_id', 'note', 'viewStatus', 'viewDate', 'created_at', 'order_id', 'orderAllocation_id', 'workAllocation_id', 'staff_id'];
     protected $primaryKey = 'notify_id';
     public $timestamps = false;
 
@@ -15,12 +15,14 @@ class QcStaffNotify extends Model
 
     #========== ========== ========== THEM - SUA ========== ========== ==========
     #---------- Them ----------
-    public function insert($orderId, $staffId, $note = null)
+    public function insert($orderId, $staffId, $note = null, $orderAllocationId = null, $workAllocationId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaffNotify = new QcStaffNotify();
         $modelStaffNotify->note = $note;
         $modelStaffNotify->order_id = $orderId;
+        $modelStaffNotify->orderAllocation_id = $orderAllocationId;
+        $modelStaffNotify->workAllocation_id = $workAllocationId;
         $modelStaffNotify->staff_id = $staffId;
         $modelStaffNotify->created_at = $hFunction->createdAt();
         if ($modelStaffNotify->save()) {
@@ -68,12 +70,17 @@ class QcStaffNotify extends Model
         }
     }
 
-    #tong thong báo moi cua 1 nhan vien
+    #tong thong them don hang moi cua 1 nhan vien
     public function totalNotifyNewOrderOfStaff($staffId)
     {
         return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('order_id')->where('viewStatus', 0)->count();
     }
 
+    #tong thong báo moi cua 1 nhan vien
+    public function totalNewNotifyOfStaff($staffId)
+    {
+        return QcStaffNotify::where('staff_id', $staffId)->where('viewStatus', 0)->count();
+    }
 
     #cap nhat nhan vien da xem thong bao
     public function updateViewedAllNewOrderOfStaff($staffId)
@@ -90,11 +97,26 @@ class QcStaffNotify extends Model
 
     public function checkViewedNewOrderOfStaff($staffId, $orderId)
     {
-        return QcStaffNotify::where('staff_id', $staffId)->where('order_id', $orderId)->where('viewStatus', 0)->exists();
+        if (QcStaffNotify::where('staff_id', $staffId)->where('order_id', $orderId)->exists()) {
+            return QcStaffNotify::where('staff_id', $staffId)->where('order_id', $orderId)->where('viewStatus', 1)->exists();
+        } else {
+            return true;
+        }
     }
 
+    #tong thong bang giao don hang moi cua 1 nhan vien
+    public function totalNotifyNewOrderAllocationOfStaff($staffId)
+    {
+        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('orderAllocation_id')->where('viewStatus', 0)->count();
+    }
+
+    #tong thong phan viec moi cua 1 nhan vien
+    public function totalNotifyNewWorkAllocationOfStaff($staffId)
+    {
+        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('workAllocation_id')->where('viewStatus', 0)->count();
+    }
     //---------- DON HANG -----------
-    public function order()
+    public function orders()
     {
         return $this->belongsTo('App\Models\Ad3d\Order\QcOrder', 'order_id', 'order_id');
     }
@@ -104,6 +126,35 @@ class QcStaffNotify extends Model
         return QcStaffNotify::where('order_id', $orderId)->get();
     }
 
+    //---------- ban giao don hang -----------
+    public function orderAllocation()
+    {
+        return $this->belongsTo('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'orderAllocation_id', 'allocation_id');
+    }
+
+    #cap nhat da xem thong bao giao don hang
+    public function updateViewedOfStaffAndOrderAllocation($staffId, $orderAllocationId)
+    {
+        $hFunction = new \Hfunction();
+        return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocation_id', $orderAllocationId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+    }
+
+    # kien tra da xem thong bao
+    public function checkViewedOrderAllocationOfStaff($staffId, $orderAllocationId)
+    {
+        if (QcStaffNotify::where('staff_id', $staffId)->where('orderAllocation_id', $orderAllocationId)->exists()) {
+            return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocation_id', $orderAllocationId)->where('viewStatus', 1)->exists();
+        } else {
+            return true;
+        }
+
+    }
+
+    //---------- ban giao thi cong san pham -----------
+    public function workAllocation()
+    {
+        return $this->belongsTo('App\Models\Ad3d\WorkAllocation\QcWorkAllocation', 'workAllocation_id', 'allocation_id');
+    }
 
     #============ =========== ============ LAY THONG TIN ============= =========== ==========
     public function getInfo($notifyId = '', $field = '')
@@ -139,6 +190,11 @@ class QcStaffNotify extends Model
         return $this->pluck('viewStatus', $notifyId);
     }
 
+    public function note($notifyId = null)
+    {
+        return $this->pluck('note', $notifyId);
+    }
+
     public function viewDate($notifyId = null)
     {
         return $this->pluck('viewDate', $notifyId);
@@ -147,6 +203,16 @@ class QcStaffNotify extends Model
     public function orderId($notifyId = null)
     {
         return $this->pluck('order_id', $notifyId);
+    }
+
+    public function orderAllocationId($notifyId = null)
+    {
+        return $this->pluck('orderAllocation_id', $notifyId);
+    }
+
+    public function workAllocationId($notifyId = null)
+    {
+        return $this->pluck('workAllocation_id', $notifyId);
     }
 
     public function staffId($notifyId = null)

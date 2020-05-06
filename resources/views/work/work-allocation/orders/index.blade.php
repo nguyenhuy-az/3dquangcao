@@ -191,6 +191,8 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                     $sumPaidMoney = $sumPaidMoney + $totalPaid;
                                     $totalUnPaid = $totalPrice - $totalDiscount - $totalPaid;//$orders->totalMoneyUnpaid();
                                     $sumUnPaidMoney = $sumUnPaidMoney + $totalUnPaid;
+                                    # thong tin ban giao don hang
+                                    $dataOrderAllocation = $order->orderAllocationActivity()->first();
                                     // san pham
                                     $dataProduct = $order->allProductOfOrder();
 
@@ -214,8 +216,8 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                     {!! $order->name() !!}
-                                                    @if($dataStaffLogin->checkViewNotifyNewOrder($dataStaffLogin->staffId(),$orderId))
-                                                        <em style="color: red;">(Chưa xem)</em>
+                                                    @if(!$dataStaffLogin->checkViewNotifyNewOrder($dataStaffLogin->staffId(),$orderId))
+                                                        <em style="color: red;"> - Chưa xem</em>
                                                     @endif
                                                 </div>
                                             </div>
@@ -247,20 +249,26 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                         <td class="qc-color-grey">
                                             {!! $dataReceiveStaff->lastName() !!}
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-left">
                                             @if(!$cancelStatus)
                                                 <a class="qc-link-green" title="Click xem chi tiết thi công"
                                                    href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderId) !!}">
-                                                    @if(!$finishStatus)
-                                                        Bàn giao công trình
-                                                    @else
-                                                        Đã kết thúc
+                                                    Quản lý thi công
+                                                    @if($finishStatus)
+                                                        (Đã kết thúc)
                                                     @endif
                                                 </a>
+                                                <br/>
+                                                <label style="color: brown;">Bàn giao:</label>
+                                                @if($hFunction->checkCount($dataOrderAllocation))
+                                                    <span>{!! $dataOrderAllocation->receiveStaff->lastName() !!}</span>
+                                                @else
+                                                    <span style="color: red;">Chưa</span>
+                                                @endif
 
                                                 @if($hFunction->checkCount($orderWorkAllocationAllInfo))
                                                     <br/>
-                                                    Thi công:
+                                                    <label style="color: blue;">Thi công:</label>
                                                     @foreach($orderWorkAllocationAllInfo as $workAllocation)
                                                         @if($workAllocation->checkActivity())
                                                             <span>{!! $workAllocation->receiveStaff->lastName() !!}</span>

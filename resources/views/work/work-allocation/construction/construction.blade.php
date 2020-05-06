@@ -61,9 +61,9 @@ $hrefIndex = route('qc.work.work_allocation.construction.get');
                                 <th>Mã ĐH</th>
                                 <th>Đơn hàng</th>
                                 <th>Khách hàng</th>
-                                <th class="text-center">Ngày nhận</th>
-                                <th class="text-center">Ngày giao</th>
-                                <th class="text-right">QL sản phẩm</th>
+                                <th class="text-center">Ngày nhận giao</th>
+                                <th class="text-center">Thời Hạng hoàn thành</th>
+                                <th>QL sản phẩm</th>
                                 <th class="text-right">Trạng thái</th>
                             </tr>
                             @if($hFunction->checkCount($dataOrdersAllocation))
@@ -83,7 +83,7 @@ $hrefIndex = route('qc.work.work_allocation.construction.get');
                                             {!! $orders->orderCode() !!}
                                         </td>
                                         <td>
-                                            {!! $orders->name() !!}
+                                            {!! $allocationId - $orders->name() !!}
                                         </td>
                                         <td>
                                             {!! $orders->customer->name() !!}
@@ -94,11 +94,17 @@ $hrefIndex = route('qc.work.work_allocation.construction.get');
                                         <td class="text-center">
                                             {!! date('d/m/Y', strtotime($orders->deliveryDate())) !!}
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             <a class="qc-link-green"
                                                href="{!! route('qc.work.work_allocation.construction.product.get',$allocationId) !!}">
-                                                Sản phẩm
+                                                Quản lý Sản phẩm
                                             </a>
+                                            @if($ordersAllocation->checkViewedNewOrderAllocation($allocationId,$loginStaffId))
+                                                <em style="color: grey;"> - Đã xem</em>
+                                            @else
+                                                <em style="color: red;"> - Chưa xem</em>
+                                            @endif
+
                                         </td>
                                         <td class="text-right">
                                             @if($ordersAllocation->checkActivity())
@@ -115,7 +121,7 @@ $hrefIndex = route('qc.work.work_allocation.construction.get');
                                                 @else
                                                     <a class="qc_confirm_act qc-link-green"
                                                        data-href="{!! route('qc.work.work_allocation.construction.confirm.get', $allocationId) !!}">
-                                                        Báo hoàn thành
+                                                        Báo hoàn thành đơn hàng
                                                     </a>
                                                 @endif
                                             @else

@@ -131,7 +131,7 @@ $dataProduct = $dataOrders->allProductOfOrder();
                                                     @if($dataOrdersAllocation->checkActivity())
                                                         <a class="qc_confirm_finish_product_act qc-link-green"
                                                            data-href="{!! route('qc.work.work_allocation.construction.product.confirm.get',$productId) !!}">
-                                                            Báo hoàn thành
+                                                            Báo hoàn thành sản phẩm
                                                         </a>
                                                     @else
                                                         {{--khi huy ban giao don hang--}}
@@ -156,7 +156,10 @@ $dataProduct = $dataOrders->allProductOfOrder();
         </div>
         <div class="text-center qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                Đóng
+                Về trang trước
+            </a>
+            <a class="btn btn-sm btn-default" href="{!! route('qc.work.work_allocation.construction.get') !!}">
+                Về danh mục đơn hàng
             </a>
         </div>
     </div>

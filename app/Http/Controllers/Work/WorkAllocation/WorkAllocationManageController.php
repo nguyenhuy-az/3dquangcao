@@ -129,7 +129,7 @@ class WorkAllocationManageController extends Controller
             'object' => 'workAllocationManage'
         ];
         # cap nhat da xem thong bao
-        $modelStaffNotify->updateViewedOfStaffAndOrder($modelStaff->loginStaffId(),$orderId);
+        $modelStaffNotify->updateViewedOfStaffAndOrder($modelStaff->loginStaffId(), $orderId);
         #lay thong tin don hang
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($dataOrder)) {
@@ -178,6 +178,7 @@ class WorkAllocationManageController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
         $modelOrders = new QcOrder();
         $dataAccess = [
             'object' => 'workAllocationManage',
@@ -186,6 +187,8 @@ class WorkAllocationManageController extends Controller
         $dataOrder = $modelOrders->getInfo($orderId);
         $dataReceiveStaff = $modelStaff->infoActivityConstructionOfCompany($dataOrder->companyId()); //Lay NV cty so huu don hang
         if ($hFunction->checkCount($dataOrder)) {
+            # cap nhat da xem thong bao
+            $modelStaffNotify->updateViewedOfStaffAndOrder($modelStaff->loginStaffId(), $orderId);
             return view('work.work-allocation.orders.construction', compact('modelStaff', 'dataAccess', 'dataReceiveStaff', 'dataOrder'));
         } else {
             return redirect()->back();
@@ -196,13 +199,13 @@ class WorkAllocationManageController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
         $modelOrdersAllocation = new QcOrderAllocation();
         $cbReceiveStaffId = $request->input('cbReceiveStaff');
         $cbAllocationDay = $request->input('cbAllocationDay');
         $cbAllocationMonth = $request->input('cbAllocationMonth');
         $cbAllocationYear = $request->input('cbAllocationYear');
         $cbAllocationHours = $request->input('cbAllocationHours');
-
         $cbDeadlineDay = $request->input('cbDeadlineDay');
         $cbDeadlineMonth = $request->input('cbDeadlineMonth');
         $cbDeadlineYear = $request->input('cbDeadlineYear');
@@ -213,8 +216,12 @@ class WorkAllocationManageController extends Controller
             Session::put('notifyAdd', "Chọn nhân viên bàn giao");
         } else {
             if ($dateDeadline > $dateAllocation) {
+                # kiem tra nv co duoc ban giao cong trinh nay chua
                 if (!$modelOrdersAllocation->checkStaffReceiveOrder($cbReceiveStaffId, $orderId)) {
-                    $modelOrdersAllocation->insert($dateAllocation, 0, $dateDeadline, '', $orderId, $cbReceiveStaffId, $modelStaff->loginStaffId());
+                    if ($modelOrdersAllocation->insert($dateAllocation, 0, $dateDeadline, '', $orderId, $cbReceiveStaffId, $modelStaff->loginStaffId())) {
+                        $newOrderAllocationId = $modelOrdersAllocation->insertGetId();
+                        $modelStaffNotify->insert(null,$cbReceiveStaffId,'Giao phụ trách đơn hàng',$newOrderAllocationId, null);
+                    }
                 } else {
                     Session::put('notifyAdd', "Nhân viện không được nhận công trình 2 lần");
                 }
@@ -229,7 +236,7 @@ class WorkAllocationManageController extends Controller
     public function deleteOrderConstruction($allocationId)
     {
         $modelOrderAllocation = new QcOrderAllocation();
-        if($modelOrderAllocation->cancel($allocationId)){
+        if ($modelOrderAllocation->cancel($allocationId)) {
 
         }
     }
@@ -242,7 +249,7 @@ class WorkAllocationManageController extends Controller
         $modelProduct = new QcProduct();
         $dataAccess = [
             'object' => 'workAllocationManage',
-            'subObjectLabel'=> 'Triển khai thi công'
+            'subObjectLabel' => 'Triển khai thi công'
         ];
         $dataProduct = $modelProduct->getInfo($productId);
         $dataReceiveStaff = $modelStaff->infoActivityConstructionOfCompany($dataProduct->order->companyId()); # lay NV so hua don hang
@@ -262,6 +269,7 @@ class WorkAllocationManageController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
         $modelProduct = new QcProduct();
         $modelWorkAllocation = new QcWorkAllocation();
 
@@ -319,7 +327,11 @@ class WorkAllocationManageController extends Controller
                 if ($dateDeadline > $dateAllocation) {
                     # chua duoc phan cong
                     if (!$modelProduct->checkStaffReceiveProduct($receiveStaffId, $productId)) {
-                        $modelWorkAllocation->insert($dateAllocation, 0, $dateDeadline, 1, $hFunction->carbonNow(), $description, $productId, $loginStaffId, $receiveStaffId, $role);
+                        #them giao viec
+                        if($modelWorkAllocation->insert($dateAllocation, 0, $dateDeadline, 1, $hFunction->carbonNow(), $description, $productId, $loginStaffId, $receiveStaffId, $role)){
+                            $newWorkAllocationId = $modelWorkAllocation->insertGetId();
+                            $modelStaffNotify->insert(null,$receiveStaffId,'Giao thi công sản phẩm',null,$newWorkAllocationId);
+                        }
                     }
                 }
             }

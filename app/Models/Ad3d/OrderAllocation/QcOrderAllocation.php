@@ -4,6 +4,7 @@ namespace App\Models\Ad3d\OrderAllocation;
 
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use Illuminate\Database\Eloquent\Model;
 
 class QcOrderAllocation extends Model
@@ -127,6 +128,18 @@ class QcOrderAllocation extends Model
     public function confirmStaff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'confirmStaff_id', 'staff_id');
+    }
+
+    //---------- thong bao ban giao don hang moi -----------
+    public function staffNotify()
+    {
+        return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'orderAllocation_id', 'allocation_id');
+    }
+
+    public function checkViewedNewOrderAllocation($orderAllocationId,$staffId)
+    {
+        $modelStaffAllocation = new QcStaffNotify();
+        return $modelStaffAllocation->checkViewedOrderAllocationOfStaff($staffId,$orderAllocationId);
     }
 
     //---------- nhan vien nhan -----------

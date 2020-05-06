@@ -35,6 +35,8 @@ $dataStaffNotify = $dataStaffLogin->selectAllNotify($dataStaffLogin->staffId())-
                             <?php
                             $notifyDate = $staffNotify->createdAt();
                             $orderId = $staffNotify->orderId();
+                            $orderAllocationId = $staffNotify->orderAllocationId();
+                            $workAllocationId = $staffNotify->workAllocationId();
                             ?>
                             @if(!$hFunction->checkEmpty($orderId))
                                 <tr class="@if($n_o%2) info @endif ">
@@ -50,14 +52,70 @@ $dataStaffNotify = $dataStaffLogin->selectAllNotify($dataStaffLogin->staffId())-
                                             Xem
                                         </a>
                                         @if($staffNotify->checkNewInfo())
-                                            <em style="color: red;"> - Mới</em>
+                                            <em style="color: red;"> - Chưa xem</em>
+                                        @else
+                                            <em style="color: grey;">- Đã xem</em>
                                         @endif
                                     </td>
                                     <td>
-                                        <span>Đã thêm ĐH:</span>
+                                        <span style="color: deeppink;">Đã thêm ĐH:</span>
                                         <a class="qc-link-green-bold"
                                            href="{!! route('qc.work.work_allocation.manage.order.view', $orderId) !!}">
-                                            {!! $staffNotify->order->name() !!}
+                                            {!! $staffNotify->orders->name() !!}
+                                        </a>
+                                    </td>
+                                </tr>
+                            @elseif(!$hFunction->checkEmpty($orderAllocationId))
+                                <tr class="@if($n_o%2) info @endif ">
+                                    <td class="text-center">
+                                        {!! $n_o += 1 !!}
+                                    </td>
+                                    <td>
+                                        {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!}
+                                    </td>
+                                    <td>
+                                        <a class="qc-link-green"
+                                           href="{!! route('qc.work.work_allocation.construction.product.get',$orderAllocationId) !!}">
+                                            Xem
+                                        </a>
+                                        @if($staffNotify->checkNewInfo())
+                                            <em style="color: red;"> - Chưa xem</em>
+                                        @else
+                                            <em style="color: grey;">- Đã xem</em>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span style="color: blue;">{!! $staffNotify->note() !!}:</span>
+                                        <a class="qc-link-green-bold"
+                                           href="{!! route('qc.work.work_allocation.construction.product.get',$orderAllocationId) !!}">
+                                            {!! $staffNotify->orderAllocation->orders->name() !!}
+                                        </a>
+                                    </td>
+                                </tr>
+                            @elseif(!$hFunction->checkEmpty($workAllocationId))
+                                <tr class="@if($n_o%2) info @endif ">
+                                    <td class="text-center">
+                                        {!! $n_o += 1 !!}
+                                    </td>
+                                    <td>
+                                        {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!}
+                                    </td>
+                                    <td>
+                                        <a class="qc-link-green"
+                                           href="{!! route('qc.work.work_allocation.manage.order.view', $workAllocationId) !!}">
+                                            Xem
+                                        </a>
+                                        @if($staffNotify->checkNewInfo())
+                                            <em style="color: red;"> - Chưa xem</em>
+                                        @else
+                                            <em style="color: grey;">- Đã xem</em>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span style="color: brown;">{!! $staffNotify->note() !!}:</span>
+                                        <a class="qc-link-green-bold"
+                                           href="{!! route('qc.work.work_allocation.manage.order.view', $workAllocationId) !!}">
+                                            {!! $staffNotify->workAllocation->product->productType->name() !!}
                                         </a>
                                     </td>
                                 </tr>

@@ -628,6 +628,11 @@ class QcOrder extends Model
         return $modelWorkAllocationReportImage->infoAllOfOrder($orderId, $take);
     }
 
+    //---------- thong bao them don hang -----------
+    public function staffNotify()
+    {
+        return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'order_id', 'order_id');
+    }
     //---------- huy don hang -----------
     public function orderCancel()
     {

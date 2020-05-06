@@ -103,6 +103,12 @@ class QcWorkAllocation extends Model
         //return QcWorkAllocation::where('allocation_id', $allocationId)->update(['action' => 0, 'cancelStatus' => 1, 'cancelDate' => $hFunction->carbonNow()]);
     }
     //========== ========= ========= RELATION ========== ========= ==========
+    //---------- thong bao ban giao san pham moi -----------
+    public function staffNotify()
+    {
+        return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'workAllocation_id', 'allocation_id');
+    }
+
     //---------- nhan vien ban giao -----------
     public function allocationStaff()
     {
@@ -115,6 +121,12 @@ class QcWorkAllocation extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'receiveStaff_id', 'staff_id');
     }
 
+    # lay tat ca thong tin cua nguoi nhan
+    public function infoOfStaffReceive($staffId)
+    {
+        return QcWorkAllocation::where('receiveStaff_id', $staffId)->orderBy('allocationDate', 'DESC')->get();
+    }
+
     # kiem tra nhan vien da duoc phan cong san pham
     public function checkStaffReceiveProduct($staffId, $productId)
     {
@@ -124,7 +136,7 @@ class QcWorkAllocation extends Model
     # lay thong tin dang thi cong cua nhan vien
     public function infoActivityOfStaffReceive($staffId)
     {
-        return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('action', 1)->orderBy('receiveDeadline', 'ASC')->get();
+        return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('action', 1)->orderBy('allocationDate', 'DESC')->get();
     }
 
     # lay thong tin viec da ket thuc cua nhan vien cua nhan vien

@@ -1052,6 +1052,9 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::get('/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.work_allocation.construction.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@index']);
         });
 
+        # phan viec
+        Route::get('/', ['as' => 'qc.work.work_allocation.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@index']);
+
     });
 
     //chấm công

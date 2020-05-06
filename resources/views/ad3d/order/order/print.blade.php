@@ -44,15 +44,19 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                             <td style="width: 347px;">
                                 <div class="table-responsive">
                                     <table class="table table-hover qc-margin-bot-none">
-                                        <tr>
-                                            <td class="qc-color-grey">
-                                                <em class=" qc-color-grey">Mã ĐH:</em>
+                                        <tr class="qc-color-grey">
+                                            <td style="width: 130px;">
+                                                <em class=" qc-color-grey">Mã đơn hàng:</em>
+                                            </td>
+                                            <td class="text-right">
                                                 <b>{!! $dataOrder->orderCode() !!}</b>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td class="qc-color-grey">
-                                                <em >Khách hàng:</em>
+                                        <tr class="qc-color-grey">
+                                            <td>
+                                                <em>Khách hàng:</em>
+                                            </td>
+                                            <td class="text-right">
                                                 <b>{!! $dataOrder->customer->name() !!}</b>
                                                 <b> - ĐT: {!! $dataOrder->customer->phone() !!}</b>
                                             </td>
@@ -60,15 +64,24 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         <tr>
                                             <td>
                                                 <em class="qc-color-grey">Ngày nhận:</em>
+                                            </td>
+                                            <td class="text-right">
                                                 <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->receiveDate()) !!}</b>
-                                                <span>-</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
                                                 <em class="qc-color-grey">Ngày giao:</em>
+                                            </td>
+                                            <td class="text-right">
                                                 <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->deliveryDate()) !!}</b>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <em class="qc-color-grey">Phụ trách sx thi công:</em>
+                                            </td>
+                                            <td class="text-right">
                                                 <b>ĐT: {!! $hotlinePhone !!}</b>
                                                 &nbsp;
                                                 <span>({!! $hotlineName !!})</span>
@@ -76,7 +89,9 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         </tr>
                                         <tr>
                                             <td>
-                                                <em class="qc-color-grey">NV kinh doanh:</em>
+                                                <em class="qc-color-grey">Phụ trách kinh doanh:</em>
+                                            </td>
+                                            <td class="text-right">
                                                 <b>ĐT: 09.077.077.28</b>
                                                 &nbsp;
                                                 <span>(Mr.Hoàng)</span>
@@ -84,7 +99,9 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         </tr>
                                         <tr>
                                             <td>
-                                                <em class="qc-color-grey">Đ/c thi công:</em>
+                                                <em class="qc-color-grey">Địa chỉ thi công:</em>
+                                            </td>
+                                            <td class="text-right">
                                                 <b>
                                                     {!! $dataOrder->constructionAddress() !!}
                                                     - ĐT: {!! $dataOrder->constructionPhone() !!}
@@ -118,7 +135,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         <th class="text-center" style="width: 20px;padding: 0;">
                                             <i class="qc-font-size-16 glyphicon glyphicon-shopping-cart"></i>
                                         </th>
-                                        <th>Hàng Hóa/DV</th>
+                                        <th>Đặt hàng</th>
                                         <th>Thiết kế</th>
                                         <th>Ghi chú</th>
                                         <th class="text-center" style="width: 20px;">Dài (m)</th>
@@ -149,20 +166,20 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                 <td>
                                                     {!! $product->productType->name()  !!}
                                                 </td>
-                                                <td style="padding-bottom: 10px;">
+                                                <td style="padding: 0px;">
                                                     @if($hFunction->checkCount($dataProductDesign))
                                                         @if($dataProductDesign->checkApplyStatus())
-                                                            <img style="width: 70px; height: auto; margin: 5px;"
+                                                            <img style="width: 70px; height: auto;"
                                                                  title="Đang áp dụng"
                                                                  src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                         @else
-                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px;"
+                                                            <img style="width: 70px; height: 70px;"
                                                                  title="Không được áp dụng"
                                                                  src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                         @endif
                                                     @else
                                                         @if(!$hFunction->checkEmpty($designImage))
-                                                            <img style="width: 70px; height: 70px; margin: 5px; "
+                                                            <img style="width: 70px; height: 70px;"
                                                                  src="{!! $product->pathSmallDesignImage($designImage) !!}">
                                                         @else
                                                             <em class="qc-color-grey">Gửi thiết kế sau</em>
@@ -197,7 +214,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                 </td>
                                             </tr>
                                         @endforeach
-                                        <tr>
+                                        {{--<tr>
                                             <td class="text-center">
 
                                             </td>
@@ -211,7 +228,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                             <td class="text-right">
                                                 <b>{!! $hFunction->currencyFormat($dataOrder->totalPrice()) !!}</b>
                                             </td>
-                                        </tr>
+                                        </tr>--}}
                                     @else
                                         <tr>
                                             <td class="text-center" colspan="10">
@@ -233,7 +250,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                 <table class="table table-hover qc-margin-bot-none">
                                     <tr>
                                         <td>
-                                            <em class=" qc-color-grey">Tổng tiền:</em>
+                                            <em class=" qc-color-grey">Tổng tiền chưa VAT:</em>
                                         </td>
                                         <td class="text-right">
                                             <b>{!! $hFunction->currencyFormat($dataOrder->totalPrice()) !!}</b>
@@ -244,7 +261,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                             <em class="qc-color-grey">Giảm {!! $dataOrder->discount() !!}%:</em>
                                         </td>
                                         <td class="text-right">
-                                            <b>{!! $hFunction->currencyFormat($dataOrder->totalMoneyDiscount()) !!}</b>
+                                            <b>- {!! $hFunction->currencyFormat($dataOrder->totalMoneyDiscount()) !!}</b>
                                         </td>
                                     </tr>
                                     <tr>
@@ -252,7 +269,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                             <em class="qc-color-grey">VAT {!! $dataOrder->vat() !!}%:</em>
                                         </td>
                                         <td class="text-right">
-                                            <b>{!! $hFunction->currencyFormat($dataOrder->totalMoneyOfVat()) !!}</b>
+                                            <b>+ {!! $hFunction->currencyFormat($dataOrder->totalMoneyOfVat()) !!}</b>
                                         </td>
                                     </tr>
                                     <?php
@@ -263,17 +280,23 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         @foreach($dataOrderPay as $orderPay)
                                             <tr>
                                                 <td>
-                                                    <em class="qc-color-grey">TT lần {!! $n_o+=1  !!}:</em>
+                                                    @if($n_o == 0)
+                                                        <em class="qc-color-grey">Thanh toán lần {!! $n_o+=1  !!} (Đặt
+                                                            hàng):</em>
+                                                    @else
+                                                        <em class="qc-color-grey">Thanh toán lần {!! $n_o+=1  !!}:</em>
+                                                    @endif
+
                                                 </td>
                                                 <td class="text-right">
-                                                    <b class="qc-color-red">{!! $hFunction->currencyFormat($orderPay->money()) !!}</b>
+                                                    <b class="qc-color-red">- {!! $hFunction->currencyFormat($orderPay->money()) !!}</b>
                                                 </td>
                                             </tr>
                                         @endforeach
                                     @endif
                                     <tr>
                                         <td>
-                                            <em class="qc-color-grey">Còn lại:</em>
+                                            <em class="qc-color-grey">Còn lại chưa thanh toán:</em>
                                         </td>
                                         <td class="text-right">
                                             <b class="qc-color-red">{!! $hFunction->currencyFormat($dataOrder->totalMoneyUnpaid()) !!}</b>

@@ -11,10 +11,8 @@ $hFunction = new Hfunction();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $staffCompanyId = $dataStaffLogin->companyId();
 $sysInfoObject = isset($sysInfoObject) ? $sysInfoObject : 'home_timekeeping';
-$systemNotify = 0;
-if($dataStaffLogin->checkConstructionDepartmentAndManageRank()){
-    $systemNotify = $systemNotify + (int)$dataStaffLogin->totalNotifyNewOrder();
-}
+//$systemNotify = 0;
+$systemNotify = $dataStaffLogin->totalNewNotify();
 ?>
 <div class="row" style="margin-bottom: 10px; border-bottom: dotted 3px brown;">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
