@@ -409,10 +409,10 @@ class QcStaff extends Model
     }
 
     #lay tat ca thong tin phan cong cua nguoi nhan
-    public function workAllocationOfStaffReceive($staffId = null)
+    public function workAllocationOfStaffReceive($staffId, $dateFilter = null)
     {
         $modelWorkAllocation = new QcWorkAllocation();
-        return $modelWorkAllocation->infoOfStaffReceive($this->checkIdNull($staffId));
+        return $modelWorkAllocation->infoOfStaffReceive($staffId, $dateFilter);
     }
 
     #lay thong tin phan cong dang nhan

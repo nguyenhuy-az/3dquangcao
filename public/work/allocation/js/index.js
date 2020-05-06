@@ -151,6 +151,12 @@ var qc_work_allocation = {
 
 //------------ ---------- quản lý dơn hang duoc ban giao ----------- ---------
 $(document).ready(function () {
+    $('body').on('change', '.cbWorkAllocationConstructionMonthFilter', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.cbWorkAllocationConstructionYearFilter').val());
+    });
+    $('body').on('change', '.cbWorkAllocationConstructionYearFilter', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbWorkAllocationConstructionMonthFilter').val() + '/' + $(this).val());
+    });
     //-------- San pham --------
     //xem anh thiet chi tiet
     $('.qc_work_allocation_construction_product_wrap').on('click', '.qc_work_allocation_construct_product_design_image_view', function () {
@@ -171,6 +177,15 @@ $(document).ready(function () {
     });
     $('body').on('click', '.frmWorkAllocationConstructionConfirm .qc_save', function () {
         qc_work_allocation.construct.postConfirmAllocation($(this).parents('.frmWorkAllocationConstructionConfirm'));
+    });
+});
+//------------ ---------- quan ly phan viec ----------- ---------
+$(document).ready(function () {
+    $('body').on('change', '.cbWorkAllocationMonthFilter', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.cbWorkAllocationYearFilter').val());
+    });
+    $('body').on('change', '.cbWorkAllocationYearFilter', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbWorkAllocationMonthFilter').val() + '/' + $(this).val());
     });
 });
 //----------- ----------- viec dang làm --------- -----------
@@ -416,7 +431,7 @@ $(document).ready(function () {
 
         //------ xem chi tiet anh bao cao -------
         $('#qc_work_allocation_manage_order_construction_wrap').on('click', '.qc_work_allocation_report_image_view', function () {
-           // qc_ad3d_order_order.viewAllocationReportImage($(this).data('href'));
+            // qc_ad3d_order_order.viewAllocationReportImage($(this).data('href'));
         });
 
         //------ in don hang -------

@@ -42,7 +42,9 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                     </option>
                                     @for($i =1;$i<= 31; $i++)
                                         <option value="{!! $i !!}"
-                                                @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
+                                                @if((int)$dayFilter == $i) selected="selected" @endif >
+                                            Ngày {!! $i !!}
+                                        </option>
                                     @endfor
                                 </select>
                                 <span>/</span>
@@ -52,8 +54,9 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                         Tất cả
                                     </option>
                                     @for($i =1;$i<= 12; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                        <option value="{!! $i !!}" @if((int)$monthFilter == $i) selected="selected" @endif>
+                                            Tháng {!! $i !!}
+                                        </option>
                                     @endfor
                                 </select>
                                 <span>/</span>

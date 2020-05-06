@@ -3,6 +3,7 @@
 namespace App\Models\Ad3d\WorkAllocation;
 
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\WorkAllocationFinish\QcWorkAllocationFinish;
 use App\Models\Ad3d\WorkAllocationReport\QcWorkAllocationReport;
 use Illuminate\Database\Eloquent\Model;
@@ -47,7 +48,7 @@ class QcWorkAllocation extends Model
         return $this->lastId;
     }
 
-    public function checkIdNull($allocationId=null)
+    public function checkIdNull($allocationId = null)
     {
         return (empty($allocationId)) ? $this->allocationId() : $allocationId;
     }
@@ -109,6 +110,12 @@ class QcWorkAllocation extends Model
         return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'workAllocation_id', 'allocation_id');
     }
 
+    public function checkViewedNewWorkAllocation($workAllocationId, $staffId)
+    {
+        $modelStaffNotify = new QcStaffNotify();
+        return $modelStaffNotify->checkViewedWorkAllocationOfStaff($staffId, $workAllocationId);
+    }
+
     //---------- nhan vien ban giao -----------
     public function allocationStaff()
     {
@@ -122,9 +129,14 @@ class QcWorkAllocation extends Model
     }
 
     # lay tat ca thong tin cua nguoi nhan
-    public function infoOfStaffReceive($staffId)
+    public function infoOfStaffReceive($staffId, $dateFilter = null)
     {
-        return QcWorkAllocation::where('receiveStaff_id', $staffId)->orderBy('allocationDate', 'DESC')->get();
+        if (empty($dateFilter)) {
+            return QcWorkAllocation::where('receiveStaff_id', $staffId)->orderBy('allocationDate', 'DESC')->get();
+        } else {
+            return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('allocationDate', 'DESC')->get();
+        }
+
     }
 
     # kiem tra nhan vien da duoc phan cong san pham
@@ -365,10 +377,11 @@ class QcWorkAllocation extends Model
     {
         return ($this->action($allocationId) == 1) ? true : false;
     }
+
     #kiem tra huy phan viec
     public function checkCancel($allocationId = null)
     {
-       // return ($this->cancelStatus($allocationId) == 1) ? true : false;
+        // return ($this->cancelStatus($allocationId) == 1) ? true : false;
     }
 
     # xac nhan phan cong

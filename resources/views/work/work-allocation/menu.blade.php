@@ -16,27 +16,27 @@ $totalNotifyNewWorkAllocation = $dataStaffLogin->totalNotifyNewWorkAllocation();
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
             <li @if($objectAccess == 'workAllocation') class="active " @endif>
-                <a class="qc-link" href="{!! route('qc.work.work_allocation.get') !!}">
-                    Phân Việc
+                <a class="qc-link" href="{!! route('qc.work.work_allocation.get') !!}" @if($objectAccess == 'workAllocation') style="background-color: whitesmoke;" @endif>
+                    <label>Thi công sản phẩm</label>
                     @if($totalNotifyNewWorkAllocation > 0)
                         &nbsp;
                         <i class="qc-font-size-14 glyphicon glyphicon-bullhorn" style="color: red;"></i>
                     @endif
                 </a>
             </li>
-            <li @if($objectAccess == 'workAllocationActivity') class="active " @endif>
+            {{--<li @if($objectAccess == 'workAllocationActivity') class="active " @endif>
                 <a class="qc-link" href="{!! route('qc.work.work_allocation.activity.get') !!}">
                     Việc đang làm
                 </a>
-            </li>
+            </li>--}}
             {{--<li @if($objectAccess == 'workAllocationFinish') class="active" @endif>
                 <a class="qc-link" href="{!! route('qc.work.work_allocation.finish.get') !!}">
                     Việc đã làm
                 </a>
             </li>--}}
             <li @if($objectAccess == 'workAllocationConstruction') class="active" @endif>
-                <a href="{!! route('qc.work.work_allocation.construction.get') !!}">
-                    <label>Đơn hàng được giao</label>
+                <a href="{!! route('qc.work.work_allocation.construction.get') !!}" @if($objectAccess == 'workAllocationConstruction') style="background-color: whitesmoke;" @endif>
+                    <label>Phụ trách đơn hàng</label>
                     @if($totalNotifyNewOrderAllocation > 0)
                         &nbsp;
                         <i class="qc-font-size-14 glyphicon glyphicon-bullhorn" style="color: red;"></i>

@@ -139,7 +139,7 @@ class QcStaffNotify extends Model
         return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocation_id', $orderAllocationId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
     }
 
-    # kien tra da xem thong bao
+    # kien tra da xem thong bao ban giao don hang
     public function checkViewedOrderAllocationOfStaff($staffId, $orderAllocationId)
     {
         if (QcStaffNotify::where('staff_id', $staffId)->where('orderAllocation_id', $orderAllocationId)->exists()) {
@@ -156,6 +156,16 @@ class QcStaffNotify extends Model
         return $this->belongsTo('App\Models\Ad3d\WorkAllocation\QcWorkAllocation', 'workAllocation_id', 'allocation_id');
     }
 
+    # kien tra da xem thong bao
+    public function checkViewedWorkAllocationOfStaff($staffId, $workAllocationId)
+    {
+        if (QcStaffNotify::where('staff_id', $staffId)->where('workAllocation_id', $workAllocationId)->exists()) {
+            return QcStaffNotify::where('staff_id', $staffId)->where('workAllocation_id', $workAllocationId)->where('viewStatus', 1)->exists();
+        } else {
+            return true;
+        }
+
+    }
     #============ =========== ============ LAY THONG TIN ============= =========== ==========
     public function getInfo($notifyId = '', $field = '')
     {

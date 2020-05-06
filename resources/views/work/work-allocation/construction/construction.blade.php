@@ -10,13 +10,14 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$hrefIndex = route('qc.work.work_allocation.construction.get');
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaffLogin->staffId();
 
 $dataOrdersAllocation = null;
-$dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($loginStaffId, date('Y-m', strtotime("$loginYear-$loginMonth")));
+$dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($loginStaffId, $dateFilter);
 
-$hrefIndex = route('qc.work.work_allocation.construction.get');
+
 ?>
 @extends('work.work-allocation.index')
 @section('titlePage')
@@ -28,43 +29,58 @@ $hrefIndex = route('qc.work.work_allocation.construction.get');
             @include('work.work-allocation.menu')
 
             {{-- chi tiêt --}}
-            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="row">
-                    <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                        <h4 class="qc-color-red">Đơn hàng thi công</h4>
-                    </div>
-                    <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                        <select class="qc_work_orders_allocation_login_month" style="height: 25px;"
-                                data-href="{!! $hrefIndex !!}">
-                            @for($i = 1; $i <=12; $i++)
-                                <option @if($loginMonth == $i) selected="selected" @endif>
-                                    {!! $i !!}
-                                </option>
-                            @endfor
-                        </select>
-                        <span>/</span>
-                        <select class="qc_work_orders_allocation_login_year" style="height: 25px;"
-                                data-href="{!! $hrefIndex !!}">
-                            @for($i = 2017; $i <=2050; $i++)
-                                <option @if($loginYear == $i) selected="selected" @endif>
-                                    {!! $i !!}
-                                </option>
-                            @endfor
-                        </select>
-                    </div>
-                </div>
+            <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_allocation_construction_list_content qc-container-table row">
                     <div class="table-responsive">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered" style="border: none;">
+                            <tr>
+                                <th colspan="8" style="border-top: none;" >
+                                    <em style="color: deeppink;">(Danh sách đơn hàng được bàn giao)</em>
+                                </th>
+                            </tr>
                             <tr style="background-color: whitesmoke;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Mã ĐH</th>
-                                <th>Đơn hàng</th>
+                                <th>Phụ trách Đơn hàng</th>
                                 <th>Khách hàng</th>
-                                <th class="text-center">Ngày nhận giao</th>
-                                <th class="text-center">Thời Hạng hoàn thành</th>
+                                <th class="text-center">Thời gian được giao</th>
+                                <th class="text-center">Thời hạn bàn giao</th>
                                 <th>QL sản phẩm</th>
                                 <th class="text-right">Trạng thái</th>
+                            </tr>
+                            <tr>
+                                <th class="text-center" style="width: 20px;"></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="text-center" style="padding: 0;">
+                                    <select class="cbWorkAllocationConstructionMonthFilter" style="height: 25px;"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                            Tất cả tháng
+                                        </option>
+                                        @for($i =1;$i<= 12; $i++)
+                                            <option value="{!! $i !!}"
+                                                    @if((int)$monthFilter == $i) selected="selected" @endif>
+                                                Tháng {!! $i !!}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <span>/</span>
+                                    <select class="cbWorkAllocationConstructionYearFilter" style="height: 25px;"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                                            Tất cả năm
+                                        </option>
+                                        @for($i =2017;$i<= 2050; $i++)
+                                            <option value="{!! $i !!}"
+                                                    @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                        @endfor
+                                    </select>
+                                </th>
+                                <th></th>
+                                <th></th>
+                                <th class="text-right"></th>
                             </tr>
                             @if($hFunction->checkCount($dataOrdersAllocation))
                                 <?php $n_o = 0; ?>
@@ -75,7 +91,7 @@ $hrefIndex = route('qc.work.work_allocation.construction.get');
                                     $orderId = $orders->orderId();
                                     $customerId = $orders->customerId();
                                     ?>
-                                    <tr class="qc_work_list_content_object" data-object="{!! $orderId !!}">
+                                    <tr class="qc_work_list_content_object @if($n_o%2) info @endif" data-object="{!! $orderId !!}">
                                         <td class="text-center">
                                             {!! $n_o+=1  !!}
                                         </td>
@@ -83,16 +99,16 @@ $hrefIndex = route('qc.work.work_allocation.construction.get');
                                             {!! $orders->orderCode() !!}
                                         </td>
                                         <td>
-                                            {!! $allocationId - $orders->name() !!}
+                                            {!! $orders->name() !!}
                                         </td>
                                         <td>
                                             {!! $orders->customer->name() !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! date('d/m/Y', strtotime($orders->receiveDate())) !!}
+                                            {!! date('d-m-Y', strtotime($orders->receiveDate())) !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! date('d/m/Y', strtotime($orders->deliveryDate())) !!}
+                                            {!! date('d-m-Y', strtotime($orders->deliveryDate())) !!}
                                         </td>
                                         <td>
                                             <a class="qc-link-green"
