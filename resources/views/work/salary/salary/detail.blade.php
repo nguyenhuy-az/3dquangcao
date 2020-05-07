@@ -9,6 +9,7 @@
  */
 $hFunction = new Hfunction();
 $dataWork = $dataSalary->work;
+$benefitMoney = $dataSalary->benefitMoney();
 
 $workId = $dataWork->workId();
 $companyStaffWorkId = $dataWork->companyStaffWorkId();
@@ -319,7 +320,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                     <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
                         <div class="row">
                             {{-- Chi tiết lương   --}}
-                            <div class="qc-container-table qc-container-table-border-none qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="qc-container-table  qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="table-responsive">
                                     <table class="table table-hover qc-margin-bot-none">
                                         <tr style="background-color: whitesmoke;">
@@ -329,18 +330,9 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                             </th>
                                         </tr>
                                         @if($infoSalaryBasic)
-                                            <tr>
-                                                <td>
-                                                    P/C tăng ca ({!! floor(($sumPlusMinute-$sumPlusMinute%60)/60) !!}
-                                                    <b>h</b> {!! $sumPlusMinute%60 !!})
-                                                </td>
-                                                <td class="text-right">
-                                                    <b>{!! $hFunction->currencyFormat($totalMoneyOvertimeHour) !!}</b>
-                                                </td>
-                                            </tr>
                                             <tr style="color: brown;">
                                                 <td>
-                                                    <em>Lương lãnh:</em>
+                                                    <em>Tổng lương:</em>
                                                 </td>
                                                 <td class="text-right">
                                                     <b>{!! $hFunction->currencyFormat($totalCurrentSalary) !!}</b>
@@ -348,18 +340,11 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <em class="qc-color-grey">Ứng:</em>
+                                                    P/C tăng ca ({!! floor(($sumPlusMinute-$sumPlusMinute%60)/60) !!}
+                                                    <b>h</b> {!! $sumPlusMinute%60 !!})
                                                 </td>
                                                 <td class="text-right">
-                                                    <b>{!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}</b>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <em class="qc-color-grey">Phạt:</em>
-                                                </td>
-                                                <td class="text-right">
-                                                    <b>{!! $hFunction->currencyFormat($totalMoneyMinus) !!}</b>
+                                                    <b>+ {!! $hFunction->currencyFormat($totalMoneyOvertimeHour) !!}</b>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -367,15 +352,40 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                                     <em class="qc-color-grey">Mua vật tư (Đã duyệt chưa TT):</em>
                                                 </td>
                                                 <td class="text-right">
-                                                    <b>{!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}</b>
+                                                    <b> + {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}</b>
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Cộng thêm:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>+ {!! $hFunction->currencyFormat($benefitMoney) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Ứng:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>- {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Phạt:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>- {!! $hFunction->currencyFormat($totalMoneyMinus) !!}</b>
+                                                </td>
+                                            </tr>
+
                                             <tr style="border-top: 1px solid whitesmoke; color: brown;">
                                                 <td>
                                                     <em>Lương còn lại:</em>
                                                 </td>
                                                 <td class="text-right">
-                                                    <b>{!! $hFunction->currencyFormat($totalCurrentSalary + $totalMoneyImportOfStaff -  $totalMoneyBeforePay - $totalMoneyMinus) !!}</b>
+                                                    <b>{!! $hFunction->currencyFormat($totalCurrentSalary + $totalMoneyImportOfStaff + $benefitMoney -  $totalMoneyBeforePay - $totalMoneyMinus) !!}</b>
                                                 </td>
                                             </tr>
                                         @else

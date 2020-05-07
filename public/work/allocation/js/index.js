@@ -5,6 +5,11 @@ var qc_work_allocation = {
     filter: function (href) {
         qc_main.url_replace(href);
     },
+    workAllocation:{
+        getReport: function (href) {
+            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+        }
+    },
     activity: {
         viewProductDesign: function (href) {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
@@ -187,6 +192,16 @@ $(document).ready(function () {
     $('body').on('change', '.cbWorkAllocationYearFilter', function () {
         qc_main.url_replace($(this).data('href') + '/' + $('.cbWorkAllocationMonthFilter').val() + '/' + $(this).val());
     });
+    //form bao cao
+    $('body').on('click', '.qc_work_allocation_report_act', function () {
+        var href = $(this).parents('.qc_work_allocation_contain').data('href-report') + '/' + $(this).parents('.qc_work_allocation_object').data('work-allocation');
+        qc_work_allocation.workAllocation.getReport(href);
+    });
+    //luu bao cao
+    $('body').on('click', '.qc_frm_Work_allocation_activity_report .qc_save', function () {
+        qc_work_allocation.activity.saveReport($(this).parents('.qc_frm_Work_allocation_activity_report'));
+    });
+
 });
 //----------- ----------- viec dang làm --------- -----------
 $(document).ready(function () {

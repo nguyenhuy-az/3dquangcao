@@ -81,12 +81,11 @@ $workId = $dataWork->workId();
                                                     - tên: {!! $dataProduct->order->constructionContact() !!}</span>
                                             </p>
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="padding: 0;">
                                             @if(!$hFunction->checkEmpty($productDesignImage))
                                                 <a class="qc_design_image_view qc-link"
                                                    data-href="{!! route('qc.work.work_allocation.activity.design_image.view', $productDesignImage->designId()) !!}">
-                                                    <img style="width: 70px; height: 70px;"
-                                                         src="{!! $productDesignImage->pathSmallImage($productDesignImage->image()) !!}">
+                                                    <img style="width: 100%;" src="{!! $productDesignImage->pathSmallImage($productDesignImage->image()) !!}">
                                                 </a>
                                             @else
                                                 <span>Thiết kế cập nhật sau</span>

@@ -38,7 +38,10 @@ if ($viewLoginObject == 'work') {
 } elseif ($viewLoginObject == 'moneyStatistical') {
     $label = 'Thu - chi';
     $href = route('qc.work.money.statistical.get');
-} elseif ($viewLoginObject == 'workAllocationActivity') {
+} elseif ($viewLoginObject == 'workAllocation') {
+    $label = 'Phân việc';
+    $href = route('qc.work.work_allocation.get');
+}elseif ($viewLoginObject == 'workAllocationActivity') {
     $label = 'Việc đang làm';
     $href = route('qc.work.work_allocation.activity.get');
 } elseif ($viewLoginObject == 'workAllocationFinish') {

@@ -21,12 +21,12 @@ $workId = $dataWork->workId();
             @include('work.work-allocation.menu',compact('modelStaff'))
 
             <div class="qc_work_allocation_contain qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                 data-href-report="{!! route('qc.work.work_allocation.activity.report.post') !!}">
+                 data-href-report="{!! route('qc.work.work_allocation.report.get') !!}">
                 <div class="row">
                     <div class="table-responsive">
                         <table class="table table-bordered qc-margin-bot-none" style="border: none;">
                             <tr>
-                                <th colspan="7" style="border-top: none;" >
+                                <th colspan="7" style="border-top: none;">
                                     <em style="color: deeppink;">(Công việc được bàn giao)</em>
                                 </th>
                             </tr>
@@ -89,14 +89,17 @@ $workId = $dataWork->workId();
                                     $productDesignImage = $dataProduct->productDesignInfoApplyActivity();
                                     $n_o = $n_o + 1;
                                     ?>
-                                    <tr class="qc_work_allocation_activity_object"
+                                    <tr class="qc_work_allocation_object"
                                         @if($n_o%2 == 0) style="background-color: whitesmoke;"
                                         @endif data-work-allocation="{!! $allocationId !!}">
                                         <td class="text-center">
                                             <b>{!! $n_o !!}</b>
                                         </td>
                                         <td>
-                                            <a class="qc-link-green-bold">Xem chi tiết</a>
+                                            <a class="qc-link-green-bold"
+                                               href="{!! route('qc.work.work_allocation.detail.get', $allocationId) !!}">
+                                                Xem chi tiết
+                                            </a>
                                             @if($workAllocation->checkViewedNewWorkAllocation($allocationId,$workAllocation->receiveStaffId()))
                                                 <em style="color: grey;"> - Đã xem</em>
                                             @else
@@ -125,7 +128,7 @@ $workId = $dataWork->workId();
                                             </span>
                                         </td>
                                         <td class="text-center">
-                                            <a class="qc_work_allocation_activity_report_act qc-link-green-bold">
+                                            <a class="qc_work_allocation_report_act qc-link-green-bold">
                                                 Báo cáo công việc
                                             </a>
                                         </td>

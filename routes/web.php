@@ -1053,6 +1053,14 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         });
 
         # phan viec
+        #chi tiet
+        Route::get('detail/{allocationId?}', ['as' => 'qc.work.work_allocation.detail.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@getDetailAllocation']);
+        #xem anh thiet ke
+        Route::get('design-image/{imageId?}', ['as' => 'qc.work.work_allocation.design_image.view', 'uses' => 'Work\WorkAllocation\WorkAllocationController@viewDesignImage']);
+        #bao cao cong viec trong ngay
+        Route::get('report/{allocationId?}', ['as' => 'qc.work.work_allocation.report.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@getAllocationReport']);
+        Route::post('report/{allocationId?}', ['as' => 'qc.work.work_allocation.report.post', 'uses' => 'Work\WorkAllocation\WorkAllocationController@postAllocationReport']);
+
         Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.work_allocation.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@index']);
 
     });
