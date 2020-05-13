@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Work\WorkAllocation;
 
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\Staff\QcStaff;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
+use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use App\Models\Ad3d\WorkAllocationReport\QcWorkAllocationReport;
 use App\Models\Ad3d\WorkAllocationReportImage\QcWorkAllocationReportImage;
@@ -118,13 +120,16 @@ class WorkAllocationController extends Controller
     }
     public function getDetailAllocation($allocationId){
         $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
         $modelWorkAllocation = new QcWorkAllocation();
         if ($modelStaff->checkLogin()) {
             $dataAccess = [
-                'object' => 'workAllocationActivity'
+                'object' => 'workAllocation'
             ];
             $dataStaff = $modelStaff->loginStaffInfo();
             $dataWorkAllocation = $modelWorkAllocation->getInfo($allocationId);
+            # cap nhat da xem thong bao
+            $modelStaffNotify->updateViewedOfStaffAndWorkAllocation($dataStaff->staffId(), $allocationId);
             return view('work.work-allocation.work-allocation.detail', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataWorkAllocation'));
         } else {
             return view('work.login');
@@ -137,8 +142,28 @@ class WorkAllocationController extends Controller
         $modelProductDesign = new QcProductDesign();
         $dataProductDesign = $modelProductDesign->getInfo($designId);
         if ($hFunction->checkCount($dataProductDesign)) {
-            //return view('work.work-allocation.allocation-activity.design-image-view', compact('dataProductDesign'));
+            return view('work.work-allocation.work-allocation.design-image-view', compact('dataProductDesign'));
         }
+    }
+    # huy bao cao
+    public function cancelReport($reportId)
+    {
+        $modelWorkAllocationReport = New QcWorkAllocationReport();
+        $modelWorkAllocationReport->deleteReport($reportId);
+    }
+    #xem anh bao cao truc tiep
+    public function viewReportImageDirect($imageId)
+    {
+        $modelWorkAllocationReportImage = new QcWorkAllocationReportImage();
+        $dataWorkAllocationReportImage = $modelWorkAllocationReportImage->getInfo($imageId);
+        return view('work.work-allocation.work-allocation.report-image-direct-view', compact('dataWorkAllocationReportImage'));
+    }
+    # xem anh bao cao qua cham cong
+    public function viewReportImage($imageId)
+    {
+        $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
+        $dataTimekeepingProvisionalImage = $modelTimekeepingProvisionalImage->getInfo($imageId);
+        return view('work.work-allocation.work-allocation.report-image-view', compact('dataTimekeepingProvisionalImage'));
     }
     #===========
     public function deleteReportImage($imageId)
@@ -148,25 +173,8 @@ class WorkAllocationController extends Controller
     }
 
 
-    # xem anh bao cao qua cham cong
-    public function viewReportImage($imageId)
-    {
-        $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
-        $dataTimekeepingProvisionalImage = $modelTimekeepingProvisionalImage->getInfo($imageId);
-        return view('work.work-allocation.allocation-activity.report-image-view', compact('dataTimekeepingProvisionalImage'));
-    }
 
-    #xem anh bao cao truc tiep
-    public function viewReportImageDirect($imageId)
-    {
-        $modelWorkAllocationReportImage = new QcWorkAllocationReportImage();
-        $dataWorkAllocationReportImage = $modelWorkAllocationReportImage->getInfo($imageId);
-        return view('work.work-allocation.allocation-activity.report-image-direct-view', compact('dataWorkAllocationReportImage'));
-    }
-    # hu bao cao
-    public function cancelReport($reportId)
-    {
-        $modelWorkAllocationReport = New QcWorkAllocationReport();
-        $modelWorkAllocationReport->deleteReport($reportId);
-    }
+
+
+
 }

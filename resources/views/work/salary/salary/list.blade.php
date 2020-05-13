@@ -13,7 +13,7 @@ $hFunction = new Hfunction();
 @section('qc_work_salary_salary_body')
     <div class="row">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            {{--<div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-4 col-lg-4">
                         <em>Tên:</em>
@@ -24,13 +24,13 @@ $hFunction = new Hfunction();
                         <span class="qc-font-bold">{!! $dataStaff->nameCode() !!}</span>
                     </div>
                 </div>
-            </div>
+            </div>--}}
             {{--system info--}}
             @include('work.components.finance-statistic', compact('modelStaff'))
 
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="qc_work_salary_salary_content qc-container-table row">
+                <div class="qc_work_salary_salary_content row">
                     @if($hFunction->checkCount($dataSalary))
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">

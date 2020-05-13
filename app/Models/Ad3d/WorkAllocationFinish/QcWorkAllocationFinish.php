@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\WorkAllocationFinish;
 
+use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use Illuminate\Database\Eloquent\Model;
 
 class QcWorkAllocationFinish extends Model
@@ -14,7 +15,7 @@ class QcWorkAllocationFinish extends Model
     private $lastId;
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
-    //---------- thêm ----------
+    //---------- thï¿½m ----------
     public function insert($finishDate, $finishStatus, $finishLevel, $finishReason, $noted, $allocationId)
     {
         $hFunction = new \Hfunction();
@@ -71,7 +72,7 @@ class QcWorkAllocationFinish extends Model
         }
     }
 
-    //========= ========== ========== l?y thông tin ========== ========== ==========
+    //========= ========== ========== l?y thï¿½ng tin ========== ========== ==========
     public function getInfo($finishId = '', $field = '')
     {
         if (empty($finishId)) {
@@ -154,11 +155,19 @@ class QcWorkAllocationFinish extends Model
 
     public function checkFinishLate($finishId = null)
     {
-
+        $modelWorkAllocation = new QcWorkAllocation();
+        $finishDate = $this->finishDate($finishId);
+        $receiveDeadline = $modelWorkAllocation->receiveDeadline($this->allocationId($finishId));
+        //dd($finishDate."===".$receiveDeadline[0]);
+        if ($finishDate > $receiveDeadline[0]) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // he thong huy
-    public function checkSystemCancel($finishId=null)
+    public function checkSystemCancel($finishId = null)
     {
         return ($this->finishReason($finishId) == 1) ? true : false;
     }

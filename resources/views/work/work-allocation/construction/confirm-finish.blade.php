@@ -19,6 +19,7 @@ $dataOrder = $dataOrderAllocation->orders;
         <div class="row">
             <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
                 <h3>XÁC NHẬN HOÀN THÀNH CÔNG TRÌNH </h3>
+                <label style="color: red;">Thời gian báo hoàn thành là giờ hiện tại</label>
             </div>
         </div>
         <div class="row">
@@ -52,6 +53,14 @@ $dataOrder = $dataOrderAllocation->orders;
                             <div class="form-group">
                                 <label style="text-decoration: underline;">Lưu ý:</label><br/>
                                 <b class="qc-color-red">TẤT CẢ CÁC SẢN PHẨM SẼ KẾT THÚC THEO CÔNG TRÌNH</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label style="text-decoration: underline;">Ghi chú:</label><br/>
+                                <input name="txtFinishNote" class="form-control" type="text" value="" >
                             </div>
                         </div>
                     </div>

@@ -130,7 +130,7 @@ $dataWorkAllocationReport = $dataWorkAllocation->workAllocationReportInfo();
                             @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
                                 <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                     <a class="qc_work_allocation_report_image_view qc-link"
-                                       data-href="{!! route('qc.work.work_allocation.timekeeping_provisional_image.get', $timekeepingProvisionalImage->imageId()) !!}">
+                                       data-href="{!! route('qc.work.work_allocation.manage.order.allocation.report_image.get', $timekeepingProvisionalImage->imageId()) !!}">
                                         <img style="max-width: 100%; max-height: 100%;"
                                              src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
                                     </a>

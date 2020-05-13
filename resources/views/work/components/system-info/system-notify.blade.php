@@ -18,7 +18,8 @@ $dataStaffNotify = $dataStaffLogin->selectAllNotify($dataStaffLogin->staffId())-
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <label style="color: brown;">Danh sách thông báo</label>
         </div>
-        <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12"
+             style="max-height: 200px; overflow-y: scroll;">
             <div class="table-responsive">
                 <table class="table table-hover table-bordered">
                     <tr style="background-color: whitesmoke;">
@@ -35,8 +36,12 @@ $dataStaffNotify = $dataStaffLogin->selectAllNotify($dataStaffLogin->staffId())-
                             <?php
                             $notifyDate = $staffNotify->createdAt();
                             $orderId = $staffNotify->orderId();
+                            #ban giao don hang
                             $orderAllocationId = $staffNotify->orderAllocationId();
+                            # thong bao giao thi cong san pham
                             $workAllocationId = $staffNotify->workAllocationId();
+                            # thuong nong
+                            $bonusId = $staffNotify->bonusId();
                             ?>
                             @if(!$hFunction->checkEmpty($orderId))
                                 <tr class="@if($n_o%2) info @endif ">
@@ -102,7 +107,7 @@ $dataStaffNotify = $dataStaffLogin->selectAllNotify($dataStaffLogin->staffId())-
                                     </td>
                                     <td>
                                         <a class="qc-link-green"
-                                           href="{!! route('qc.work.work_allocation.manage.order.view', $workAllocationId) !!}">
+                                           href="{!! route('qc.work.work_allocation.detail.get', $workAllocationId) !!}">
                                             Xem
                                         </a>
                                         @if($staffNotify->checkNewInfo())
@@ -114,8 +119,38 @@ $dataStaffNotify = $dataStaffLogin->selectAllNotify($dataStaffLogin->staffId())-
                                     <td>
                                         <span style="color: brown;">{!! $staffNotify->note() !!}:</span>
                                         <a class="qc-link-green-bold"
-                                           href="{!! route('qc.work.work_allocation.manage.order.view', $workAllocationId) !!}">
+                                           href="{!! route('qc.work.work_allocation.detail.get', $workAllocationId) !!}">
                                             {!! $staffNotify->workAllocation->product->productType->name() !!}
+                                        </a>
+                                    </td>
+                                </tr>
+                            @elseif(!$hFunction->checkEmpty($bonusId))
+                                <?php
+                                       // $dataBonus
+                                ?>
+                                <tr class="@if($n_o%2) info @endif ">
+                                    <td class="text-center">
+                                        {!! $n_o += 1 !!}
+                                    </td>
+                                    <td>
+                                        {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!}
+                                    </td>
+                                    <td>
+                                        <a class="qc-link-green"
+                                           href="#">
+                                            Xem
+                                        </a>
+                                        @if($staffNotify->checkNewInfo())
+                                            <em style="color: red;"> - Chưa xem</em>
+                                        @else
+                                            <em style="color: grey;">- Đã xem</em>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span style="color: black;">{!! $staffNotify->note() !!}:</span>
+                                        <a class="qc-link-green-bold"
+                                           href="#">
+                                            {!! $staffNotify->bonus->orderAllocation->orders->name() !!}
                                         </a>
                                     </td>
                                 </tr>

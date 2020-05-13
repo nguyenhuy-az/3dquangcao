@@ -1,4 +1,4 @@
-<?php
+    <?php
 /**
  * Created by PhpStorm.
  * User: HUY
@@ -492,10 +492,10 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                 @if($workAllocation->checkActivity())
                                                                     <em style="color: black;">Đang thi công</em>
                                                                     <span>&nbsp;|&nbsp;</span>
-                                                                    <a class="qc_cancel_allocation_product qc-link-red"
+                                                                    <a class="qc_cancel_allocation_product qc-link-red-bold"
                                                                        title="Hủy giao việc"
                                                                        data-href="{!! route('qc.work.work_allocation.manage.order.product.work-allocation.cancel.get', $allocationId) !!}">
-                                                                        <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
+                                                                        Xóa
                                                                     </a>
                                                                 @else
                                                                     @if($workAllocation->checkCancel())
@@ -505,10 +505,10 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                     @endif
                                                                 @endif
                                                                 <span>&nbsp;|&nbsp;</span>
-                                                                <a class="qc_work_allocation_view qc-link-green"
+                                                                <a class="qc_work_allocation_view qc-link-green-bold"
                                                                    title="Click xem chi tiết thi công"
                                                                    data-href="{!! route('qc.work.work_allocation.manage.order.work_allocation.get',$allocationId) !!}">
-                                                                    <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
+                                                                    Xem chi tiết
                                                                 </a>
                                                             </td>
                                                         </tr>

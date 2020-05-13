@@ -2,31 +2,23 @@
 
 namespace App\Http\Controllers\Work\WorkAllocation;
 
-use App\Models\Ad3d\Order\QcOrder;
+
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
-use App\Models\Ad3d\Rule\QcRules;
-use App\Models\Ad3d\Salary\QcSalary;
+
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
-use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
-use App\Models\Ad3d\Work\QcWork;
-//use Illuminate\Http\Request;
-use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
-use App\Models\Ad3d\WorkAllocationReport\QcWorkAllocationReport;
-use App\Models\Ad3d\WorkAllocationReportImage\QcWorkAllocationReportImage;
+
 use App\Models\Ad3d\WorkAllocationReportImage\QcWorkAllocationReportImageImage;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
-use File;
-use Input;
-use Request;
+use Illuminate\Http\Request;
 
 class WorkAllocationConstructionController extends Controller
 {
     // danh sach cong trinh dc ban giao
-    public function index($monthFilter = null,$yearFilter = null)
+    public function index($monthFilter = null, $yearFilter = null)
     {
         $modelStaff = new QcStaff();
         if ($modelStaff->checkLogin()) {
@@ -48,14 +40,14 @@ class WorkAllocationConstructionController extends Controller
                 $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
             } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
                 $dateFilter = null;
-            }elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả
+            } elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả
                 $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
             } else {
                 $dateFilter = date('Y-m');
                 $monthFilter = date('m');
                 $yearFilter = date('Y');
             }
-            return view('work.work-allocation.construction.construction', compact('dataAccess', 'modelStaff','dateFilter', 'monthFilter', 'yearFilter'));
+            return view('work.work-allocation.construction.construction', compact('dataAccess', 'modelStaff', 'dateFilter', 'monthFilter', 'yearFilter'));
         } else {
             return view('work.login');
         }
@@ -71,12 +63,13 @@ class WorkAllocationConstructionController extends Controller
         }
     }
 
-    public function postConstructionConfirm($allocationId = null)
+    public function postConstructionConfirm(Request $request, $allocationId = null)
     {
         $hFunction = new \Hfunction();
         $modelOrderAllocation = new QcOrderAllocation();
-        if(!$hFunction->checkEmpty($allocationId)){
-            $modelOrderAllocation->reportFinishAllocation($allocationId, $hFunction->carbonNow());
+        if (!$hFunction->checkEmpty($allocationId)) {
+            $finishNote = $request->input('txtFinishNote');
+            $modelOrderAllocation->reportFinishAllocation($allocationId, $hFunction->carbonNow(), $finishNote);
         }
 
     }

@@ -17,6 +17,6 @@
 @endsection
 
 @section('qc_js_footer')
-    <script src="{{ url('public/ad3d/finance/minus-money/js/minus-money.js')}}"></script>
+    <script src="{{ url('bonus-minus')}}"></script>
 @endsection
 

@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\Work;
 
+use App\Models\Ad3d\Bonus\QcBonus;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
 use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
@@ -90,7 +91,8 @@ class QcWork extends Model
             }
             if (count($dataStaffWorkSalary) > 0) {
                 $workSalaryId = $dataStaffWorkSalary->workSalaryId();
-                $overtimeHour = $dataStaffWorkSalary->overtimeHour();# phu cap tang ca
+                $overtimeHour = $dataStaffWorkSalary->overtimeHour($workSalaryId);# phu cap tang ca
+                $overtimeHour = (is_int($overtimeHour))?$overtimeHour:$overtimeHour[0];
                 //$moneyOvertime = ($plusMinute / 60) * $dataStaffWorkSalary->overtimeHour(); # tien phu cap tang ca
                 //$totalMoneyMinusFuel = $this->totalMinusFuelInMonth($workId);# tru tien xang neu di lam ko du thang
                 $totalUnpaidSalary = (int)($this->totalSalaryBasicOfWorkInMonth($workId) - $totalBeforePay - $totalMinusMoney);
@@ -133,15 +135,22 @@ class QcWork extends Model
         $companyStaffWorkId = $dataWork->companyStaffWorkId();
         if (!empty($companyStaffWorkId)) {
             $dataStaffWorkSalary = $modelStaffWorkSalary->infoActivityOfWork($companyStaffWorkId);
-            $overtime = $dataStaffWorkSalary->overtimeHour();
-            $totalSalaryOnHour = $dataStaffWorkSalary->salaryOnHour(); # lương lam trong 1 gio
+            if(!empty($dataStaffWorkSalary)){
+                $overtime =  $dataStaffWorkSalary->overtimeHour($dataStaffWorkSalary->workSalaryId());
+                $totalSalaryOnHour = $dataStaffWorkSalary->salaryOnHour(); # lương lam trong 1 gio
+            }else{
+                $overtime = 0;
+                $totalSalaryOnHour = 0;
+            }
+
+
         } else {
 
             # truong hop phien ban cu chua cap nhat
             $staffId = $this->staffIdOld($workId);
             $dataStaffWorkSalary = $modelCompanyStaffWork->staffWorkSalaryActivityOfStaff($staffId);
             if (count($dataStaffWorkSalary) > 0) {
-                $overtime = $dataStaffWorkSalary->overtimeHour();
+                $overtime = $dataStaffWorkSalary->overtimeHour($dataStaffWorkSalary->workSalaryId());
                 $totalSalaryOnHour = $dataStaffWorkSalary->salaryOnHour(); # lương lam trong 1 gio
             } else { # theo ban luong phien bang cu
                 $salaryBasic = 100;// $dataWork->staff->salaryBasicOfStaff($staffId);
@@ -150,6 +159,7 @@ class QcWork extends Model
             }
         }
 
+        $overtime = (is_int($overtime))?$overtime:$overtime[0];
         $moneyOfMainMinute = ($mainMinute / 60) * $totalSalaryOnHour;  # tong luong trong gio lam chinh
         $moneyOfPlusMinute = ($plusMinute / 60) * 1.5 * $totalSalaryOnHour; # tang ca nhan 1.5  - tong luong cua gio tang ca
         $allowanceOvertime = ($plusMinute / 60) * $overtime; # tien phu cap tang ca
@@ -410,6 +420,23 @@ class QcWork extends Model
         return $modelSalaryBeforePayRequest->existUnconfirmedOfWork($this->checkIdNull($workId));
     }
 
+    //----------- thuong ------------
+    public function bonus()
+    {
+        return $this->hasMany('App\Models\Ad3d\Bonus\QcBonus', 'work_id', 'work_id');
+    }
+
+    public function infoBonusOfWork($workId = null)
+    {
+        $modelBonus = new QcBonus();
+        return $modelBonus->infoOfWork($this->checkIdNull($workId));
+    }
+
+    public function totalMoneyBonus($workId = null)
+    {
+        $modelBonus = new QcBonus();
+        return $modelBonus->totalMoneyOfWork($this->checkIdNull($workId));
+    }
     //----------- phạt ------------
     public function minusMoney()
     {

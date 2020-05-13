@@ -34,6 +34,9 @@ $totalMoneyPayActivity = $dataStaff->totalMoneyPayActivityConfirmedAndInvalidOfS
 // chi hoan tien don hang
 $totalPaidOrderCancelOfStaffAndDate = $dataStaff->totalPaidOrderCancelOfStaffAndDate($staffId, $statisticDate);
 
+// chi thanh toan mua vat tu
+$totalMoneyImportPayOfStaffAndDate = $dataStaff->totalMoneyImportPayOfStaffAndDate($staffId, $statisticDate);
+
 ?>
 @extends('ad3d.statistic.revenue.company.index')
 @section('qc_ad3d_index_content')
@@ -207,6 +210,22 @@ $totalPaidOrderCancelOfStaffAndDate = $dataStaff->totalPaidOrderCancelOfStaffAnd
                                         {!! $hFunction->currencyFormat($totalPaidOrderCancelOfStaffAndDate)  !!}
                                     </td>
                                 </tr>
+                                <tr class="danger">
+                                    <td class="text-center">
+                                        10
+                                    </td>
+                                    <td>
+                                        <a class= qc-link" title="Đang cập nhật" data-href="#">
+                                            Chi thanh toán mua vật tư
+                                        </a>
+                                    </td>
+                                    <td class="text-right">
+                                        0
+                                    </td>
+                                    <td class="text-right">
+                                        {!! $hFunction->currencyFormat($totalMoneyImportPayOfStaffAndDate)  !!}
+                                    </td>
+                                </tr>
                                 <tr style="border-top: 2px solid brown;" >
                                     <td class="text-center" colspan="2">
 
@@ -215,7 +234,7 @@ $totalPaidOrderCancelOfStaffAndDate = $dataStaff->totalPaidOrderCancelOfStaffAnd
                                         {!! $hFunction->currencyFormat($totalMoneyOrderPay + $totalMoneyImportPaidOfStaff + $totalReceivedMoneyOfStaffAndDate )  !!}
                                     </td>
                                     <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($totalPaidOrderCancelOfStaffAndDate + $totalMoneyImport + $totalMoneyTransfer + $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay)  !!}
+                                        {!! $hFunction->currencyFormat($totalPaidOrderCancelOfStaffAndDate + $totalMoneyImport + $totalMoneyTransfer + $totalMoneyPayActivity +  $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay + $totalMoneyImportPayOfStaffAndDate)  !!}
                                     </td>
                                 </tr>
                                 <tr>
@@ -223,7 +242,7 @@ $totalPaidOrderCancelOfStaffAndDate = $dataStaff->totalPaidOrderCancelOfStaffAnd
                                         Lợi nhuận (trước thuế)
                                     </td>
                                     <td class="text-right qc-color-green" colspan="2" >
-                                        {!! $hFunction->currencyFormat($totalMoneyOrderPay + $totalMoneyImportPaidOfStaff + $totalReceivedMoneyOfStaffAndDate - ($totalPaidOrderCancelOfStaffAndDate + $totalMoneyImport + $totalMoneyTransfer + $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay) )  !!}
+                                        {!! $hFunction->currencyFormat($totalMoneyOrderPay + $totalMoneyImportPaidOfStaff + $totalMoneyImportPayOfStaffAndDate + $totalReceivedMoneyOfStaffAndDate - ($totalPaidOrderCancelOfStaffAndDate + $totalMoneyImport + $totalMoneyTransfer + $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay) )  !!}
                                     </td>
                                 </tr>
                             </table>

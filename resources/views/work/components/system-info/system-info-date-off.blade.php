@@ -17,7 +17,7 @@ $dataSystemDateOff = $modelCompany->systemDateOfFOfCompanyAndDate($dataStaffLogi
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <label style="color: brown;">Lịch nghỉ 2020</label>
         </div>
-        <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12" style="max-height: 200px; overflow-y: scroll;">
             <div class="table-responsive">
                 <table class="table table-hover table-bordered">
                     <tr style="background-color: whitesmoke;">

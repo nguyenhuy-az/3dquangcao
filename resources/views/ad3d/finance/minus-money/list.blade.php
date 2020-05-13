@@ -57,7 +57,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                       <span class="input-group-btn">
                                             <button class="btFilterName btn btn-default" type="button"
                                                     style="height: 25px;"
-                                                    data-href="{!! route('qc.ad3d.finance.minus-money.get') !!}">
+                                                    data-href="{!! route('bonus-minus') !!}">
                                                 Tìm
                                             </button>
                                       </span>
@@ -75,7 +75,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </select>
                                 <span>/</span>
                                 <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.finance.minus-money.get') !!}">
+                                        data-href="{!! route('bonus-minus') !!}">
                                     @for($i =1;$i<= 12; $i++)
                                         <option value="{!! $i !!}"
                                                 @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
@@ -123,7 +123,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
             <div class="qc_ad3d_list_content row"
                  data-href-view="{!! route('qc.ad3d.finance.minus-money.view.get') !!}"
                  data-href-edit="{!! route('qc.ad3d.finance.minus-money.edit.get') !!}"
-                 data-href-del="{!! route('qc.ad3d.finance.minus-money.delete') !!}">
+                 data-href-del="{!! route('bonus-minus') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">

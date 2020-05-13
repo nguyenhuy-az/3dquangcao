@@ -188,6 +188,7 @@ var qc_work = {
             saveConfirm: function (form) {
                 if (confirm('Bạn đông ý xác nhận hoàn thành công trình này?')) {
                     qc_master_submit.ajaxFormHasReload(form, '', true);
+                    //qc_master_submit.ajaxFormNotReload(form, '', true);
                 }
             },
             product: {
@@ -677,15 +678,6 @@ $(document).ready(function () {
     $('body').on('change', '.qc_work_login_year', function () {
         qc_work.work.filter($(this).data('href') + '/' + $('.qc_work_login_month').val() + '/' + $(this).val());
     })
-});
-//============================ Phạt =================
-$(document).ready(function () {
-    $('body').on('change', '.qc_work_minus_money_month', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_minus_money_year').val());
-    });
-    $('body').on('change', '.qc_work_minus_money_year', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $('.qc_work_minus_money_month').val() + '/' + $(this).val());
-    });
 });
 //========================= THU - CHI ===============================
 $(document).ready(function () {

@@ -962,7 +962,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::get('report/{allocationId?}', ['as' => 'qc.work.work_allocation.activity.report.get', 'uses' => 'Work\WorkAllocation\WorkAllocationActivityController@getAllocationReport']);
             Route::post('report/{allocationId?}', ['as' => 'qc.work.work_allocation.activity.report.post', 'uses' => 'Work\WorkAllocation\WorkAllocationActivityController@postAllocationReport']);
 
-            #xem anh bao cao qua cham con
+            #xem anh bao cao qua cham cong
             Route::get('report-image/{imageId?}', ['as' => 'qc.work.work_allocation.activity.report_image.view', 'uses' => 'Work\WorkAllocation\WorkAllocationActivityController@viewReportImage']);
 
             #xem anh bao cao truc tiep
@@ -1060,6 +1060,14 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         #bao cao cong viec trong ngay
         Route::get('report/{allocationId?}', ['as' => 'qc.work.work_allocation.report.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@getAllocationReport']);
         Route::post('report/{allocationId?}', ['as' => 'qc.work.work_allocation.report.post', 'uses' => 'Work\WorkAllocation\WorkAllocationController@postAllocationReport']);
+
+        #xem anh bao cao truc tiep
+        Route::get('report-image-direct/{imageId?}', ['as' => 'qc.work.work_allocation.report_image_direct.view', 'uses' => 'Work\WorkAllocation\WorkAllocationController@viewReportImageDirect']);
+        #xem anh bao cao qua cham cong
+        Route::get('report-image/{imageId?}', ['as' => 'qc.work.work_allocation.report_image.view', 'uses' => 'Work\WorkAllocation\WorkAllocationController@viewReportImage']);
+
+        #Hủy báo cáo
+        Route::get('report/cancel/{reportId?}', ['as' => 'qc.work.work_allocation.report.cancel.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@cancelReport']);
 
         Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.work_allocation.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@index']);
 
@@ -1228,6 +1236,10 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::get('/{nameFilter?}', ['as' => 'qc.work.product_type_price.get', 'uses' => 'Work\ProductTypePrice\ProductTypePriceController@index']);
     });
 
+    //thuong
+    Route::group(['prefix' => 'bonus'], function () {
+        Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.bonus.get', 'uses' => 'Work\Bonus\BonusController@index']);
+    });
     //phạt
     Route::group(['prefix' => 'minus-money'], function () {
         Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.minus_money.get', 'uses' => 'Work\MinusMoney\MinusMoneyController@index']);

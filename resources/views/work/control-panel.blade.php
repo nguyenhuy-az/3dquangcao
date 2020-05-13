@@ -72,7 +72,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
         </div>
         <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
             <a class="qc-work-panel-icon-link" href="{!! route('qc.work.minus_money.get') !!}">
-                PHẠT
+                THƯỞNG - PHẠT
             </a>
         </div>
         <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">

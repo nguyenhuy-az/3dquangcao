@@ -6,6 +6,7 @@ use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Import\QcImport;
+use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
 use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
 use App\Models\Ad3d\Order\QcOrder;
@@ -232,6 +233,18 @@ class QcStaff extends Model
         return QcStaff::where('staff_id', $staffId)->update(['identityCardBack' => $image]);
     }
     //========== ========= ========= mối quan hệ ========== ========= ==========
+
+    #----------- ngay nghi he thong ------------
+    public function importPay()
+    {
+        return $this->hasMany('App\Models\Ad3d\ImportPay\QcImportPay', 'staff_id', 'staff_id');
+    }
+
+    public function totalMoneyImportPayOfStaffAndDate($staffId, $filterDate = null)
+    {
+        $modelImportPay = new QcImportPay();
+        return $modelImportPay->totalMoneyOfPayStaffAndDate($staffId, $filterDate);
+    }
 
     #----------- ngay nghi he thong ------------
     public function systemDateOff()
@@ -1375,13 +1388,18 @@ class QcStaff extends Model
         #chi thanh toan luong - da duoc thanh toan
         $totalMoneyPaidSalaryPay = $this->totalMoneyPaidSalaryPayOfStaffAndDateAndConfirmed($staffId, $date);
 
+        #chi thanh toan mua vat tu
+        $totalMoneyPayImport = $this->totalMoneyImportPayOfStaffAndDate($staffId, $date);
+
         #chi hoat dong
         $totalMoneyPayActivity = $this->totalMoneyPayActivityConfirmedAndInvalidOfStaff($staffId, $date);
 
         #hoan tien don hang
         $totalPaidOrderCancelOfStaffAndDate = $this->totalPaidOrderCancelOfStaffAndDate($staffId, $date);
 
-        return $totalMoneyTransfer + $totalMoneyImport + $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay + $totalMoneyPayActivity + $totalPaidOrderCancelOfStaffAndDate;
+
+
+        return $totalMoneyTransfer + $totalMoneyImport + $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay +$totalMoneyPayImport+ $totalMoneyPayActivity + $totalPaidOrderCancelOfStaffAndDate;
     }
 
     ##tong tien da chuyen va da duoc xac nhan
@@ -1406,7 +1424,7 @@ class QcStaff extends Model
         return $modelPayActivityDetail->totalMoneyConfirmedAndInvalidOfStaffAndDate($staffId, $date);
     }
 
-    ##tong tien chi ưng luong
+    #tong tien chi ưng luong
     public function totalMoneyPaidSalaryBeforePayOfStaffAndDate($staffId, $dateFilter = null) // tồng tiền nhận
     {
         $modelSalaryBeforePay = new QcSalaryBeforePay();

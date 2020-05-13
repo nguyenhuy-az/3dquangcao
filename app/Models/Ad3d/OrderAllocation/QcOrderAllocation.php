@@ -2,15 +2,17 @@
 
 namespace App\Models\Ad3d\OrderAllocation;
 
+use App\Models\Ad3d\Bonus\QcBonus;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use Illuminate\Database\Eloquent\Model;
 
 class QcOrderAllocation extends Model
 {
     protected $table = 'qc_order_allocation';
-    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'noted', 'finishStatus', 'finishDate', 'confirmStatus', 'confirmFinish', 'confirmDate', 'action', 'confirmStaff_id', 'order_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
+    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'noted', 'finishStatus', 'finishDate', 'finishNote', 'confirmStatus', 'confirmFinish', 'confirmDate', 'action', 'confirmStaff_id', 'order_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
     protected $primaryKey = 'allocation_id';
     public $timestamps = false;
 
@@ -58,14 +60,36 @@ class QcOrderAllocation extends Model
 
     //========== ========= DUYET TU BAO CAO BAN GIAO CONG TRINH ========= ==========
     # bao cao hoan thanh cong trinh
-    public function reportFinishAllocation($allocationId, $reportDate)
+    public function reportFinishAllocation($allocationId, $reportDate, $finishNote = null)
     {
         $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
+        $modelBonus = new QcBonus();
         $modelProduct = new QcProduct();
         $modelOrder = new QcOrder();
-        $allocationId = $this->checkNullId($allocationId);
-        $dataProduct = $modelOrder->productActivityOfOrder($this->orderId($allocationId));
-        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['finishStatus' => 1, 'finishDate' => $reportDate])) {
+        $orderId = $this->orderId($allocationId);
+        $dataProduct = $modelOrder->productActivityOfOrder($orderId);
+        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['confirmFinish' => 1, 'confirmDate' => $hFunction->carbonNow(), 'finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate])) {
+            if (!$this->checkLate($allocationId)) {
+                $receiveStaffId = $this->receiveStaffId($allocationId);
+                $dataWork = $modelStaff->firstInfoActivityToWork($receiveStaffId);
+                if ($hFunction->checkCount($dataWork)) {
+                    $dataOrder = $modelOrder->getInfo($orderId);
+                    $orderTotalPrice = $dataOrder->totalPrice();
+                    # bonus price & minus price
+                    if ($orderTotalPrice > 20) {
+                        $orderBonusPrice = $orderTotalPrice * 0.05;
+                    } else {
+                        $orderBonusPrice = $orderTotalPrice * 0.03;
+                    }
+                    if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Thưởng hoàn thành đơn hàng', 0, $dataWork->workId(), $allocationId)) {
+                        $bonusId = $modelBonus->insertGetId();
+                        $receiveStaffId = (is_int($receiveStaffId))?$receiveStaffId:$receiveStaffId[0];
+                        $modelStaffNotify->insert(null, $receiveStaffId, 'Thưởng hoàn thành đơn hàng', null, null, $bonusId);
+                    }
+                }
+            }
             # bao ket thuc san pham
             if ($hFunction->checkCount($dataProduct)) {
                 foreach ($dataProduct as $product) {
@@ -118,6 +142,12 @@ class QcOrderAllocation extends Model
     }
 
     //========== ========= ========= RELATION ========== ========= ==========
+    //---------- thuong  -----------
+    public function bonus()
+    {
+        return $this->hasMany('App\Models\Ad3d\Bonus\QcBonus', 'allocation_id', 'orderAllocation_id');
+    }
+
     //---------- nhan vien ban giao -----------
     public function allocationStaff()
     {
@@ -136,10 +166,10 @@ class QcOrderAllocation extends Model
         return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'orderAllocation_id', 'allocation_id');
     }
 
-    public function checkViewedNewOrderAllocation($orderAllocationId,$staffId)
+    public function checkViewedNewOrderAllocation($orderAllocationId, $staffId)
     {
         $modelStaffAllocation = new QcStaffNotify();
-        return $modelStaffAllocation->checkViewedOrderAllocationOfStaff($staffId,$orderAllocationId);
+        return $modelStaffAllocation->checkViewedOrderAllocationOfStaff($staffId, $orderAllocationId);
     }
 
     //---------- nhan vien nhan -----------
@@ -333,34 +363,60 @@ class QcOrderAllocation extends Model
     #con hoat dong
     public function checkActivity($allocationId = null)
     {
-        return ($this->action($allocationId) == 1) ? true : false;
+        $result = $this->action($allocationId);
+        $result = is_int($result) ? $result : $result[0];
+        return ($result == 1) ? true : false;
     }
 
     # kiem tra bao cao hoan thanh
     public function checkFinish($allocationId = null)
     {
-        return ($this->finishStatus($allocationId) == 1) ? true : false;
+        $result = $this->finishStatus($allocationId);
+        $result = is_int($result) ? $result : $result[0];
+        return ($result == 1) ? true : false;
     }
 
     # kiem tra xac nhan ket thuc giao viec
     public function checkConfirm($allocationId = null)
     {
-        return ($this->confirmStatus($allocationId) == 1) ? true : false;
+        $result = $this->confirmStatus($allocationId);
+        $result = is_int($result) ? $result : $result[0];
+        return ($result == 1) ? true : false;
     }
 
     # he thong xac nhan da hoanh thanh
     public function checkConfirmFinish($allocationId = null)
     {
-        return ($this->confirmFinish($allocationId) == 1) ? true : false;
+        $result = $this->confirmFinish($allocationId);
+        $result = is_int($result) ? $result : $result[0];
+        return ($result == 1) ? true : false;
     }
 
-    # kiem tra bao cao hoan thanh
+    # kiem tra huy ban giao
     public function checkCancelAllocation($allocationId = null)
     {
-        if ($this->checkConfirm($allocationId) && $this->checkActivity($allocationId) && !$this->checkFinish($allocationId)) {
+        if (!$this->checkActivity($allocationId) && !$this->checkFinish($allocationId)) { # da ngung hoat dong va chua ket thuc
             return true;
         } else {
             return false;
         }
+    }
+
+    #kiem tra phan viec bi tre
+    public function checkLate($allocationId)
+    {
+        $hFunction = new \Hfunction();
+        $checkDate = $hFunction->carbonNow();
+        $lateStatus = false;
+        $receiveDeadline = $this->receiveDeadline($allocationId);
+        if (!$this->checkActivity($allocationId)) { # cong viec da xong
+            if ($this->checkFinish()) { # co bao hoan thanh
+                $finishDate = $this->finishDate($allocationId);
+                if ($finishDate > $receiveDeadline[0]) $lateStatus = true;
+            }
+        } else { # don hang chưa ket thuc
+            if ($checkDate > $receiveDeadline[0]) $lateStatus = true;
+        }
+        return $lateStatus;
     }
 }

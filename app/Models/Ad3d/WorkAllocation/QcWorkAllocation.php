@@ -101,7 +101,7 @@ class QcWorkAllocation extends Model
     public function cancelAllocation($allocationId)
     {
         $hFunction = new \Hfunction();
-        //return QcWorkAllocation::where('allocation_id', $allocationId)->update(['action' => 0, 'cancelStatus' => 1, 'cancelDate' => $hFunction->carbonNow()]);
+        return QcWorkAllocation::where('allocation_id', $allocationId)->update(['action' => 0, 'cancelStatus' => 1, 'cancelDate' => $hFunction->carbonNow()]);
     }
     //========== ========= ========= RELATION ========== ========= ==========
     //---------- thong bao ban giao san pham moi -----------
@@ -314,6 +314,7 @@ class QcWorkAllocation extends Model
         return $this->pluck('confirmStatus', $allocationId);
     }
 
+
     public function confirmDate($allocationId = null)
     {
 
@@ -326,6 +327,18 @@ class QcWorkAllocation extends Model
 
         return $this->pluck('noted', $allocationId);
     }
+
+    public function cancelStatus($allocationId = null)
+    {
+        return $this->pluck('cancelStatus', $allocationId);
+    }
+
+    public function cancelDate($allocationId = null)
+    {
+
+        return $this->pluck('cancelDate', $allocationId);
+    }
+
 
     public function role($allocationId = null)
     {
@@ -378,21 +391,45 @@ class QcWorkAllocation extends Model
         return ($this->action($allocationId) == 1) ? true : false;
     }
 
-    #kiem tra huy phan viec
+    #kiem tra huy phan viec is_int
     public function checkCancel($allocationId = null)
     {
-        // return ($this->cancelStatus($allocationId) == 1) ? true : false;
+        $result = $this->cancelStatus($allocationId);
+        $result = is_int($result)?$result:$result[0];
+        return ($result == 1) ? true : false;
     }
 
     # xac nhan phan cong
     public function checkConfirm($allocationId = null)
     {
-        return ($this->confirmStatus($allocationId) == 1) ? true : false;
+        $result = $this->confirmStatus($allocationId);
+        $result = is_int($result)?$result:$result[0];
+        return ($result == 1) ? true : false;
     }
 
-    # check tho lam chinh
+    # kiem tra tho lam chinh
     public function checkRoleMain($allocationId = null)
     {
-        return ($this->role($allocationId) == 1) ? true : false;
+        $result = $this->role($allocationId);
+        $result = is_int($result)?$result:$result[0];
+        return ($result == 1) ? true : false;
+    }
+
+    #kiem tra phan viec bi tre
+    public function checkLate($allocationId)
+    {
+        $hFunction = new \Hfunction();
+        $checkDate = $hFunction->carbonNow();
+        $lateStatus = false;
+        $dataWorkAllocationFinish = $this->workAllocationFinishInfo($allocationId);
+        if ($hFunction->checkCount($dataWorkAllocationFinish)) { # dơn hang da ke thuc
+            $lateStatus = $dataWorkAllocationFinish->checkFinishLate();
+        } else { # don hang chưa ket thuc
+            if (!$this->checkCancel($allocationId)) { # chua huy
+                $receiveDeadline = $this->receiveDeadline($allocationId); // lay ngay den han
+                if ($checkDate > $receiveDeadline[0])$lateStatus = true;
+            }
+        }
+        return $lateStatus;
     }
 }

@@ -5,10 +5,26 @@ var qc_work_allocation = {
     filter: function (href) {
         qc_main.url_replace(href);
     },
-    workAllocation:{
+    workAllocation: {
         getReport: function (href) {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-        }
+        },
+        saveReport: function (form) {
+            var notifyContent = $(form).find('.frm_notify');
+            qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
+            qc_main.scrollTop();
+        },
+        deleteReport: function (href) {
+            if (confirm('Bạn muốn xóa báo cáo này?')) {
+                qc_master_submit.ajaxHasReload(href, '#qc_master', false);
+            }
+        },
+        viewReportImage: function (href) {
+            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+        },
+        viewProductDesign: function (href) {
+            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+        },
     },
     activity: {
         viewProductDesign: function (href) {
@@ -198,8 +214,20 @@ $(document).ready(function () {
         qc_work_allocation.workAllocation.getReport(href);
     });
     //luu bao cao
-    $('body').on('click', '.qc_frm_Work_allocation_activity_report .qc_save', function () {
-        qc_work_allocation.activity.saveReport($(this).parents('.qc_frm_Work_allocation_activity_report'));
+    $('body').on('click', '.qc_frm_Work_allocation_report .qc_save', function () {
+        qc_work_allocation.workAllocation.saveReport($(this).parents('.qc_frm_Work_allocation_report'));
+    });
+    //xoa bao cao
+    $('body').on('click', '.qc_work_allocation_detail_wrap .qc_delete_report_action', function () {
+        qc_work_allocation.workAllocation.deleteReport($(this).data('href'));
+    });
+    //xem anh bao cao chi tiet
+    $('body').on('click', '.qc_work_allocation_detail_wrap .qc_image_view', function () {
+        qc_work_allocation.workAllocation.viewReportImage($(this).data('href'));
+    });
+    //xem anh thiet chi tiet
+    $('body').on('click', '.qc_work_allocation_detail_wrap .qc_design_image_view', function () {
+        qc_work_allocation.workAllocation.viewProductDesign($(this).data('href'));
     });
 
 });

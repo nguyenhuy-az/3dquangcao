@@ -81,16 +81,6 @@ class QcImportPay extends Model
 
     }
 
-    public function totalMoneyOfPayStaffAndDate($staffId, $date)
-    {
-        if (!empty($date)) {
-            return QcImportPay::where('staff_id', $staffId)->where('created_at', 'like', "%$date%")->sum('money');
-        } else {
-            return QcImportPay::where('staff_id', $staffId)->sum('money');
-        }
-
-    }
-
     public function totalMoneyOfPayListStaffAndDate($listStaffId, $date)
     {
         if (!empty($date)) {
@@ -120,6 +110,20 @@ class QcImportPay extends Model
         }
 
     }*/
+    #----------- thông tin nhập ------------
+    public function staff()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
+    }
+    public function totalMoneyOfPayStaffAndDate($staffId, $date)
+    {
+        if (!empty($date)) {
+            return QcImportPay::where('staff_id', $staffId)->where('created_at', 'like', "%$date%")->sum('money');
+        } else {
+            return QcImportPay::where('staff_id', $staffId)->sum('money');
+        }
+    }
+
     #============ =========== ============ GET INFO ============= =========== ==========
     public function getInfo($payId = '', $field = '')
     {

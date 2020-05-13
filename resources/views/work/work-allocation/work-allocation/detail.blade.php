@@ -22,6 +22,8 @@ $dataProduct = $dataWorkAllocation->product;
 ///$productDesignImage = $dataProduct->designImage();
 # thiet ke dang ap dung
 $productDesignImage = $dataProduct->productDesignInfoApplyActivity();
+# thong ket thuc phan viec
+$dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
 ?>
 @extends('work.work-allocation.index')
 @section('titlePage')
@@ -104,8 +106,20 @@ $productDesignImage = $dataProduct->productDesignInfoApplyActivity();
                                             {!! date('H:i', strtotime($receiveDeadline)) !!}
                                     </span>
                                 </td>
-                                <td class="text-center qc-color-grey">
-
+                                <td class="text-center">
+                                    @if($dataWorkAllocation->checkCancel())
+                                        <em style="color: grey;">Đã hủy</em>
+                                    @else
+                                        @if($hFunction->checkCount($dataWorkAllocationFinish))
+                                            <em style="color: grey;">Đã kết thúc</em>
+                                        @else
+                                            <em style="color: grey;">Đang thi công</em>
+                                        @endif
+                                        @if($dataWorkAllocation->checkLate($allocationId))
+                                            <br/>
+                                            <span style="color: white; padding: 3px; background-color: red;">TRỄ</span>
+                                        @endif
+                                    @endif
                                 </td>
                                 <td class="text-center">
                                     <a class="qc_work_allocation_report_act qc-link-green-bold">
@@ -117,10 +131,108 @@ $productDesignImage = $dataProduct->productDesignInfoApplyActivity();
                                 </td>
                             </tr>
                             <tr>
-                                <th colspan="6">
+                                <th colspan="6" style="border-bottom: none;">
                                     <em style="color: deeppink;">Báo cáo công việc</em>
                                 </th>
                             </tr>
+                            @if($hFunction->checkCount($dataWorkAllocationReport))
+                                <tr>
+                                    <td colspan="6" style="border-top: none;">
+                                        <div class="table-responsive">
+                                            <table class="table table-condensed">
+                                                <tr style="background-color: whitesmoke;">
+                                                    <th>
+                                                        Ngày
+                                                    </th>
+                                                    <th>
+                                                        Ảnh báo cáo
+                                                    </th>
+                                                    <th>
+                                                        Ghi chú
+                                                    </th>
+                                                    <th></th>
+                                                </tr>
+                                                @foreach($dataWorkAllocationReport as $workAllocationReport)
+                                                    <?php
+                                                    $dataWorkAllocationReportImage = $workAllocationReport->workAllocationReportImageInfo();
+                                                    #bao cao khi bao gio ra
+                                                    $dataTimekeepingProvisionalImage = $workAllocationReport->timekeepingProvisionalImageInfo();
+                                                    ?>
+                                                    @if($hFunction->checkCount($dataWorkAllocationReportImage))
+                                                        <tr>
+                                                            <td>
+                                                                <span>{!! date('d/m/Y H:j', strtotime($workAllocationReport->reportDate())) !!}</span><br/>
+                                                                <em class="qc-color-grey">Báo cáo trực tiếp</em>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
+                                                                    <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                                        <a class="qc_image_view qc-link"
+                                                                           data-href="{!! route('qc.work.work_allocation.report_image_direct.view', $workAllocationReportImage->imageId()) !!}">
+                                                                            <img style="max-width: 100%; max-height: 100%;"
+                                                                                 src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
+                                                                        </a>
+                                                                        <a class="qc_delete_image_action qc-link"
+                                                                           title="Xóa ảnh báo cáo"
+                                                                           data-href="{!! route('qc.work.work_allocation.activity.report_image.delete', $workAllocationReportImage->imageId()) !!}">
+                                                                            <i style="position: absolute; font-weight: bold; padding: 0 3px; color: red; top: 3px; right: 3px; border: 1px solid #d7d7d7;">x</i>
+                                                                        </a>
+                                                                    </div>
+                                                                @endforeach
+                                                            </td>
+                                                            <td>
+                                                                <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <a class="qc_delete_report_action qc-link-red-bold"
+                                                                   data-href="{!! route('qc.work.work_allocation.report.cancel.get', $workAllocationReport->reportId()) !!}">
+                                                                    <i class="glyphicon glyphicon-trash qc-font-size-14"
+                                                                       title="Xóa báo cáo"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                    @if($hFunction->checkCount($dataTimekeepingProvisionalImage))
+                                                        <tr>
+                                                            <td>
+                                                                <span>{!! date('d/m/Y H:j', strtotime($workAllocationReport->reportDate())) !!}</span><br/>
+                                                                <em class="qc-color-grey">Báo qua chấm công</em>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
+                                                                    <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                                        <a class="qc_image_view qc-link"
+                                                                           data-href="{!! route('qc.work.work_allocation.report_image.view', $timekeepingProvisionalImage->imageId()) !!}">
+                                                                            <img style="max-width: 100%; max-height: 100%;"
+                                                                                 src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
+                                                                        </a>
+                                                                    </div>
+                                                                @endforeach
+                                                            </td>
+                                                            <td>
+                                                                <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <a class="qc_delete_report_action qc-link-red-bold"
+                                                                   data-href="{!! route('qc.work.work_allocation.report.cancel.get', $workAllocationReport->reportId()) !!}">
+                                                                    <i class="glyphicon glyphicon-trash qc-font-size-14"
+                                                                       title="Xóa báo cáo"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td colspan="6">
+                                        <span>Không có báo cáo</span>
+                                    </td>
+                                </tr>
+                            @endif
                         </table>
                     </div>
                 </div>
@@ -135,6 +247,9 @@ $productDesignImage = $dataProduct->productDesignInfoApplyActivity();
         <div class="text-center qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
                 Về trang trước
+            </a>
+            <a class="btn btn-sm btn-default" href="{!! route('qc.work.work_allocation.get') !!}">
+                Về danh mục công việc
             </a>
         </div>
     </div>

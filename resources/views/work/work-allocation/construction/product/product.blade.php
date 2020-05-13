@@ -27,16 +27,20 @@ $dataProduct = $dataOrders->allProductOfOrder();
 
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8">
-                        <em>Đơn hàng:</em>
-                        <b class="qc-font-size-20 qc-color-red">{!! $dataOrders->name() !!}</b>
-                    </div>
-                    <div class="text-right col-sx-12 col-sm-12 col-md-4 col-lg-4">
-                        <em class="qc-color-grey">Nhận:</em>
-                        <b class="qc-color-red">{!! date('d/m/Y', strtotime($dataOrdersAllocation->allocationDate())) !!}</b>
-                        <em class="qc-color-grey">Giao:</em>
-                        <b class="qc-color-red">{!! date('d/m/Y', strtotime($dataOrdersAllocation->receiveDeadline())) !!}</b>
-                    </div>
+                    <span style="color:grey;">ĐƠN HÀNG: </span>
+                    <label style="font-size: 20px; color: red;">{!! $dataOrders->name() !!}</label>
+                    <br/>
+                    <em class="qc-color-grey">- Thời gian được giao:</em>
+                    <b class="qc-color-red">{!! date('d/m/Y', strtotime($dataOrdersAllocation->allocationDate())) !!}</b>
+                    <br/>
+                    <em class="qc-color-grey">- Thời hạn hoàn thành:</em>
+                    <b class="qc-color-red">{!! date('d/m/Y', strtotime($dataOrdersAllocation->receiveDeadline())) !!}</b>
+                    <br/>
+                    <em style="color:grey;"> - Thông tin thi công:</em>
+                    <span>{!! $dataOrders->constructionAddress() !!}
+                        - ĐT: {!! $dataOrders->constructionPhone() !!}
+                        - tên: {!! $dataOrders->constructionContact() !!}
+                    </span>
                 </div>
             </div>
             {{-- chi tiêt --}}

@@ -97,7 +97,7 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                 </ul>
                             </li>
                             <li @if($accessObject == 'penalize') class="active" @endif>
-                                <a href="{!! route('qc.ad3d.finance.minus-money.get') !!}">
+                                <a href="{!! route('bonus-minus') !!}">
                                     Phạt
                                 </a>
                             </li>

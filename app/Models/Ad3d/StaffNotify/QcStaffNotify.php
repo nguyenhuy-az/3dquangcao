@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcStaffNotify extends Model
 {
     protected $table = 'qc_staff_notify';
-    protected $fillable = ['notify_id', 'note', 'viewStatus', 'viewDate', 'created_at', 'order_id', 'orderAllocation_id', 'workAllocation_id', 'staff_id'];
+    protected $fillable = ['notify_id', 'note', 'viewStatus', 'viewDate', 'created_at', 'order_id', 'orderAllocation_id', 'workAllocation_id', 'bonus_id', 'staff_id'];
     protected $primaryKey = 'notify_id';
     public $timestamps = false;
 
@@ -15,7 +15,7 @@ class QcStaffNotify extends Model
 
     #========== ========== ========== THEM - SUA ========== ========== ==========
     #---------- Them ----------
-    public function insert($orderId, $staffId, $note = null, $orderAllocationId = null, $workAllocationId = null)
+    public function insert($orderId = null, $staffId, $note = null, $orderAllocationId = null, $workAllocationId = null, $bonusId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaffNotify = new QcStaffNotify();
@@ -23,6 +23,7 @@ class QcStaffNotify extends Model
         $modelStaffNotify->order_id = $orderId;
         $modelStaffNotify->orderAllocation_id = $orderAllocationId;
         $modelStaffNotify->workAllocation_id = $workAllocationId;
+        $modelStaffNotify->bonus_id = $bonusId;
         $modelStaffNotify->staff_id = $staffId;
         $modelStaffNotify->created_at = $hFunction->createdAt();
         if ($modelStaffNotify->save()) {
@@ -115,6 +116,7 @@ class QcStaffNotify extends Model
     {
         return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('workAllocation_id')->where('viewStatus', 0)->count();
     }
+
     //---------- DON HANG -----------
     public function orders()
     {
@@ -124,6 +126,30 @@ class QcStaffNotify extends Model
     public function infoOfOrder($orderId)
     {
         return QcStaffNotify::where('order_id', $orderId)->get();
+    }
+
+    //---------- thuong -----------
+    public function bonus()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Bonus\QcBonus','bonus_id', 'bonus_id');
+    }
+
+    #cap nhat da xem thong bao thuong
+    public function updateViewedOfStaffAndBonus($staffId, $bonusId)
+    {
+        $hFunction = new \Hfunction();
+        return QcStaffNotify::where('staff_id', $staffId)->where('bonus_id', $bonusId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+    }
+
+    # kien tra da xem thong bao ban giao don hang
+    public function checkViewedBonusOfStaff($staffId, $bonusId)
+    {
+        if (QcStaffNotify::where('staff_id', $staffId)->where('bonus_id', $bonusId)->exists()) {
+            return QcStaffNotify::where('staff_id', $staffId)->where('bonus_id', $bonusId)->where('viewStatus', 1)->exists();
+        } else {
+            return true;
+        }
+
     }
 
     //---------- ban giao don hang -----------
@@ -156,6 +182,13 @@ class QcStaffNotify extends Model
         return $this->belongsTo('App\Models\Ad3d\WorkAllocation\QcWorkAllocation', 'workAllocation_id', 'allocation_id');
     }
 
+    #cap nhat da xem thong bao giao thi cong
+    public function updateViewedOfStaffAndWorkAllocation($staffId, $workAllocationId)
+    {
+        $hFunction = new \Hfunction();
+        return QcStaffNotify::where('staff_id', $staffId)->where('workAllocation_id', $workAllocationId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+    }
+
     # kien tra da xem thong bao
     public function checkViewedWorkAllocationOfStaff($staffId, $workAllocationId)
     {
@@ -166,6 +199,7 @@ class QcStaffNotify extends Model
         }
 
     }
+
     #============ =========== ============ LAY THONG TIN ============= =========== ==========
     public function getInfo($notifyId = '', $field = '')
     {
@@ -224,6 +258,12 @@ class QcStaffNotify extends Model
     {
         return $this->pluck('workAllocation_id', $notifyId);
     }
+
+    public function bonusId($notifyId = null)
+    {
+        return $this->pluck('bonus_id', $notifyId);
+    }
+
 
     public function staffId($notifyId = null)
     {

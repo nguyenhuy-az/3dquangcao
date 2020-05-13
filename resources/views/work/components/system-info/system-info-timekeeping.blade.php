@@ -11,7 +11,7 @@ $hFunction = new Hfunction();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $dataTimekeepingProvisional = $modelCompany->timekeepingProvisionalOfCompanyAndDate($dataStaffLogin->companyId(), $hFunction->currentDate());
 ?>
-<div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12" style="max-height: 200px; overflow-y: scroll;">
     <div class="table-responsive">
         <table class="table table-hover table-bordered">
             <tr style="background-color: whitesmoke;">

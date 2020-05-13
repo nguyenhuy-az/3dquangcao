@@ -25,30 +25,43 @@ if (count($dataWork) > 0) {
     //$totalSalary = $dataWork->totalSalaryBasicOfWorkInMonth(); // tong luong co ban
     # ung lương
     $totalMoneyBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
-    $totalMoneyMinus = $dataWork->totalMoneyMinus(); // phat - tru tien
+    // phat - tru tien
+    $totalMoneyMinus = $dataWork->totalMoneyMinus();
+    // thuong
+    $totalMoneyBonus = $dataWork->totalMoneyBonus();
 } else {
     $sumMainMinute = 0;
     $sumPlusMinute = 0;
     $sumPlusMinute_1_5 = 0;
     //$totalSalary = 0;
-    $totalMoneyBeforePay = 0; //ung luong
+    $totalMoneyBeforePay = 0;
+    //ung luong
     $totalMoneyMinus = 0;
+    // thuong
+    $totalMoneyBonus = 0;
+
 }
 $sumPlusMinute_1_5 = $sumPlusMinute * 1.5;
 # --- ---- THU ---------
 $totalMoneyMainWork = ($sumMainMinute / 60) * $salaryOneHour;
-$totalMoneyOvertimeWork = ($sumPlusMinute_1_5 / 60) * $salaryOneHour; // tien lam tang ca
-$totalMoneyAllowanceOvertime = ($sumPlusMinute / 60) * $overtimeHour; // phu cap an uong tang ca
-$totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($loginStaffId, $dateFilter, 3); // tong tien mua vat tu
+# tien lam tang ca
+$totalMoneyOvertimeWork = ($sumPlusMinute_1_5 / 60) * $salaryOneHour;
+# phu cap an uong tang ca
+$totalMoneyAllowanceOvertime = ($sumPlusMinute / 60) * $overtimeHour;
+# tong tien mua vat tu
+$totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($loginStaffId, $dateFilter, 3);
 # chi ung luong
 $totalMoneyPaidSalaryBeforePayOfStaffAndDate = $modelStaff->totalMoneyPaidSalaryBeforePayOfStaffAndDate($loginStaffId, $dateFilter);
+
+
 # --- ---- CHI ---------
 $totalMoneyImportPaidOfStaff = $modelStaff->totalMoneyImportOfStaff($loginStaffId, $dateFilter, 1); // tong tien mua vat tu da thanh toan
 # hoan tra huy don hang
 $totalPaidOrderCancelOfStaffAndDate = $modelStaff->totalPaidOrderCancelOfStaffAndDate($loginStaffId, $dateFilter);
 
 #tong lương lanh
-$totalSalary = $totalMoneyMainWork + $totalMoneyOvertimeWork + $totalMoneyAllowanceOvertime + $totalMoneyImportOfStaff + $totalMoneyPaidSalaryBeforePayOfStaffAndDate + $totalPaidOrderCancelOfStaffAndDate;
+$totalSalary = $totalMoneyBonus + $totalMoneyMainWork + $totalMoneyOvertimeWork + $totalMoneyAllowanceOvertime + $totalMoneyImportOfStaff + $totalMoneyPaidSalaryBeforePayOfStaffAndDate + $totalPaidOrderCancelOfStaffAndDate;
+#
 $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalMoneyMinus;
 
 ?>
@@ -61,7 +74,7 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
 <div class="row" style="margin-bottom: 20px;">
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
         <div class="row">
-            <div class="qc-container-table qc-container-table-border-none qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="table-responsive">
                     <table class="table table-hover qc-margin-bot-none">
                         <tr style="border-bottom: 1px solid #d7d7d7;">
@@ -131,6 +144,18 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
                         <tr>
                             <td>
                                 <i class="glyphicon glyphicon-plus"></i>
+                                <span>Thưởng Nóng </span>
+                                <em class="qc-color-grey">- (Tạm thời):</em>
+                            </td>
+                            <td class="text-right">
+                                <a class="qc-color-red" href="{!! route('qc.work.bonus.get') !!}">
+                                    + {!! $hFunction->currencyFormat($totalMoneyBonus) !!}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i class="glyphicon glyphicon-plus"></i>
                                 <span>Thưởng KPI</span>
                                 <em class="qc-color-grey">- (Đang cập nhật):</em>
                             </td>
@@ -150,10 +175,10 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
                         <tr>
                             <td>
                                 <i class="glyphicon glyphicon-minus"></i>
-                                <span>Tiền phạt :</span>
+                                <span>Tiền phạt </span><em class="qc-color-grey"> - (Tạm thời):</em>
                             </td>
                             <td class="text-right">
-                                <a target="_blank" href="{!! route('qc.work.minus_money.get') !!}">
+                                <a href="{!! route('qc.work.minus_money.get') !!}">
                                     - {!! $hFunction->currencyFormat($totalMoneyMinus) !!}
                                 </a>
                             </td>
