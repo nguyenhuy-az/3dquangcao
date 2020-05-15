@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Work\MinusMoney;
 
 use App\Models\Ad3d\Staff\QcStaff;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\Work\QcWork;
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -17,12 +18,14 @@ class MinusMoneyController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
         $modelWork = new QcWork();
         $dataStaff = $modelStaff->loginStaffInfo();
         $dataAccess = [
             'object' => 'minusMoney'
         ];
         if ($hFunction->checkCount($dataStaff)) {
+            $staffLoginId = $dataStaff->staffId();
             $dateFilter = null;
             if ($monthFilter == 0 && $yearFilter == 0) { //khong chon thoi gian xem
                 $monthFilter = date('m');
@@ -45,7 +48,7 @@ class MinusMoneyController extends Controller
                 $monthFilter = date('m');
                 $yearFilter = date('Y');
             }
-            $dataWork = $modelWork->firstInfoOfStaff($dataStaff->staffId(), $dateFilter);
+            $dataWork = $modelWork->firstInfoOfStaff($staffLoginId, $dateFilter);
             if($hFunction->checkCount($dataWork)){
                 $dataMinusMoney = $dataWork->infoMinusMoneyOfWork();
                 $totalMinusMoney = $dataWork->totalMoneyMinus();
@@ -53,7 +56,8 @@ class MinusMoneyController extends Controller
                 $dataMinusMoney = null;
                 $totalMinusMoney = 0;
             }
-
+            # cap nhat thong tin thong bao moi
+            $modelStaffNotify->updateViewedAllOfStaffAndMinusMoney($staffLoginId);
             return view('work.bonus-minus.minus-money.list', compact('dataAccess', 'modelStaff', 'dataMinusMoney','totalMinusMoney', 'monthFilter', 'yearFilter'));
         } else {
             return redirect()->route('qc.work.login.get');

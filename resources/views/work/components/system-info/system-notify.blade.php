@@ -42,6 +42,8 @@ $dataStaffNotify = $dataStaffLogin->selectAllNotify($dataStaffLogin->staffId())-
                             $workAllocationId = $staffNotify->workAllocationId();
                             # thuong nong
                             $bonusId = $staffNotify->bonusId();
+                            # phat
+                            $minusMoneyId = $staffNotify->minusMoneyId();
                             ?>
                             @if(!$hFunction->checkEmpty($orderId))
                                 <tr class="@if($n_o%2) info @endif ">
@@ -126,7 +128,7 @@ $dataStaffNotify = $dataStaffLogin->selectAllNotify($dataStaffLogin->staffId())-
                                 </tr>
                             @elseif(!$hFunction->checkEmpty($bonusId))
                                 <?php
-                                       // $dataBonus
+                                // $dataBonus
                                 ?>
                                 <tr class="@if($n_o%2) info @endif ">
                                     <td class="text-center">
@@ -147,10 +149,40 @@ $dataStaffNotify = $dataStaffLogin->selectAllNotify($dataStaffLogin->staffId())-
                                         @endif
                                     </td>
                                     <td>
-                                        <span style="color: black;">{!! $staffNotify->note() !!}:</span>
+                                        <span style="color: red;">{!! $staffNotify->note() !!}:</span>
                                         <a class="qc-link-green-bold"
                                            href="#">
                                             {!! $staffNotify->bonus->orderAllocation->orders->name() !!}
+                                        </a>
+                                    </td>
+                                </tr>
+                            @elseif(!$hFunction->checkEmpty($minusMoneyId))
+                                <?php
+                                // $dataBonus
+                                ?>
+                                <tr class="@if($n_o%2) info @endif ">
+                                    <td class="text-center">
+                                        {!! $n_o += 1 !!}
+                                    </td>
+                                    <td>
+                                        {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!}
+                                    </td>
+                                    <td>
+                                        <a class="qc-link-green"
+                                           href="{!! route('qc.work.minus_money.get') !!}">
+                                            Xem
+                                        </a>
+                                        @if($staffNotify->checkNewInfo())
+                                            <em style="color: red;"> - Chưa xem</em>
+                                        @else
+                                            <em style="color: grey;">- Đã xem</em>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <span style="color: black;">Phạt {!! $staffNotify->note() !!}:</span>
+                                        <a class="qc-link-green-bold"
+                                           href="{!! route('qc.work.minus_money.get') !!}">
+                                            {!! $staffNotify->minusMoney->orderAllocation->orders->name() !!}
                                         </a>
                                     </td>
                                 </tr>

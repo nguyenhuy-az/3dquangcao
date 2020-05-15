@@ -254,7 +254,7 @@ class QcOrder extends Model
         return $this->hasMany('App\Models\Ad3d\OrderImage\QcOrderImage', 'order_id', 'order_id');
     }
 
-    public function orderImageInfoActivity($orderId=null)
+    public function orderImageInfoActivity($orderId = null)
     {
         $modelOrderImage = new QcOrderImage();
         return $modelOrderImage->infoActivityOfOrder($this->checkIdNull($orderId));
@@ -633,6 +633,7 @@ class QcOrder extends Model
     {
         return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'order_id', 'order_id');
     }
+
     //---------- huy don hang -----------
     public function orderCancel()
     {
@@ -1110,6 +1111,28 @@ class QcOrder extends Model
     public function checkHasVAT($orderId = null)
     {
         return ($this->vat($orderId) == 1) ? true : false;
+    }
+
+    # lay gia tri tien thuong ban giao don hang
+    public function getBonusByOrderAllocation($orderId = null)
+    {
+        $orderTotalPrice = $this->totalPrice($orderId);
+        if ($orderTotalPrice < 20000000) {
+            return (int)$orderTotalPrice * 0.05;
+        } else {
+            return (int)$orderTotalPrice * 0.03;
+        }
+    }
+
+    # lay gia tri tien phat tre ban giao don hang
+    public function getMinusMoneyOrderAllocationLate($orderId = null)
+    {
+        $orderTotalPrice = $this->totalPrice($orderId);
+        if ($orderTotalPrice < 20000000) {
+            return (int) $orderTotalPrice * 0.05;
+        } else {
+            return (int)$orderTotalPrice * 0.03;
+        }
     }
 #============ =========== ============ STATISTICAL ============= =========== ==========
 

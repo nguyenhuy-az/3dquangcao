@@ -202,16 +202,20 @@ class WorkAllocationManageController extends Controller
         $modelStaffNotify = new QcStaffNotify();
         $modelOrdersAllocation = new QcOrderAllocation();
         $cbReceiveStaffId = $request->input('cbReceiveStaff');
+        # ngay giao
         $cbAllocationDay = $request->input('cbAllocationDay');
         $cbAllocationMonth = $request->input('cbAllocationMonth');
         $cbAllocationYear = $request->input('cbAllocationYear');
         $cbAllocationHours = $request->input('cbAllocationHours');
+        $cbAllocationMinute = $request->input('cbAllocationMinute');
+        # ngay het han
         $cbDeadlineDay = $request->input('cbDeadlineDay');
         $cbDeadlineMonth = $request->input('cbDeadlineMonth');
         $cbDeadlineYear = $request->input('cbDeadlineYear');
+        $cbDeadlineHours = $request->input('cbDeadlineHours');
         $cbDeadlineMinute = $request->input('cbDeadlineMinute');
-        $dateAllocation = $hFunction->convertStringToDatetime("$cbAllocationMonth/$cbAllocationDay/$cbAllocationYear $cbAllocationHours:00:00");
-        $dateDeadline = $hFunction->convertStringToDatetime("$cbDeadlineMonth/$cbDeadlineDay/$cbDeadlineYear $cbDeadlineMinute:00:00");
+        $dateAllocation = $hFunction->convertStringToDatetime("$cbAllocationMonth/$cbAllocationDay/$cbAllocationYear $cbAllocationHours:$cbAllocationMinute:00");
+        $dateDeadline = $hFunction->convertStringToDatetime("$cbDeadlineMonth/$cbDeadlineDay/$cbDeadlineYear $cbDeadlineHours:$cbDeadlineMinute:00");
         if (empty($cbReceiveStaffId)) {
             Session::put('notifyAdd', "Chọn nhân viên bàn giao");
         } else {
@@ -220,7 +224,7 @@ class WorkAllocationManageController extends Controller
                 if (!$modelOrdersAllocation->checkStaffReceiveOrder($cbReceiveStaffId, $orderId)) {
                     if ($modelOrdersAllocation->insert($dateAllocation, 0, $dateDeadline, '', $orderId, $cbReceiveStaffId, $modelStaff->loginStaffId())) {
                         $newOrderAllocationId = $modelOrdersAllocation->insertGetId();
-                        $modelStaffNotify->insert(null,$cbReceiveStaffId,'Giao phụ trách đơn hàng',$newOrderAllocationId, null);
+                        $modelStaffNotify->insert(null, $cbReceiveStaffId, 'Giao phụ trách đơn hàng', $newOrderAllocationId, null);
                     }
                 } else {
                     Session::put('notifyAdd', "Nhân viện không được nhận công trình 2 lần");
@@ -328,9 +332,9 @@ class WorkAllocationManageController extends Controller
                     # chua duoc phan cong
                     if (!$modelProduct->checkStaffReceiveProduct($receiveStaffId, $productId)) {
                         #them giao viec
-                        if($modelWorkAllocation->insert($dateAllocation, 0, $dateDeadline, 1, $hFunction->carbonNow(), $description, $productId, $loginStaffId, $receiveStaffId, $role)){
+                        if ($modelWorkAllocation->insert($dateAllocation, 0, $dateDeadline, 1, $hFunction->carbonNow(), $description, $productId, $loginStaffId, $receiveStaffId, $role)) {
                             $newWorkAllocationId = $modelWorkAllocation->insertGetId();
-                            $modelStaffNotify->insert(null,$receiveStaffId,'Giao thi công sản phẩm',null,$newWorkAllocationId);
+                            $modelStaffNotify->insert(null, $receiveStaffId, 'Giao thi công sản phẩm', null, $newWorkAllocationId);
                         }
                     }
                 }

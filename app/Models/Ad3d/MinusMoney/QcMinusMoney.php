@@ -2,13 +2,15 @@
 
 namespace App\Models\Ad3d\MinusMoney;
 
+use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use Illuminate\Database\Eloquent\Model;
 
 class QcMinusMoney extends Model
 {
     protected $table = 'qc_minus_money';
-    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'created_at', 'work_id', 'staff_id', 'punish_id'];
+    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'applyStatus', 'cancelStatus', '', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id'];
     protected $primaryKey = 'minus_id';
     public $timestamps = false;
 
@@ -16,17 +18,29 @@ class QcMinusMoney extends Model
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($dateMinus, $reason, $workId, $staffId, $punishId)
+    public function insert($dateMinus, $reason, $workId, $staffId=null, $punishId, $applyStatus = 1, $orderAllocationId = null)
     {
         $hFunction = new \Hfunction();
+        $modelOrderAllocation = new QcOrderAllocation();
         $modelPunishContent = new QcPunishContent();
         $modelMinusMoney = new QcMinusMoney();
-        $modelMinusMoney->money = $modelPunishContent->money($punishId)[0];
+        $money = 0;
+        if(empty($orderAllocationId)){
+            # tien dinh
+            $money = $modelPunishContent->money($punishId)[0];
+        }else{
+            $dataOrderAllocation = $modelOrderAllocation->getInfo($orderAllocationId);
+            $dataOrder = $dataOrderAllocation->orders;
+            $money =    (int)$dataOrder->getMinusMoneyOrderAllocationLate();
+        }
+        $modelMinusMoney->money = $money;
         $modelMinusMoney->dateMinus = $dateMinus;
         $modelMinusMoney->reason = $reason;
+        $modelMinusMoney->applyStatus = $applyStatus;
         $modelMinusMoney->work_id = $workId;
         $modelMinusMoney->staff_id = $staffId;
         $modelMinusMoney->punish_id = $punishId;
+        $modelMinusMoney->orderAllocation_id = $orderAllocationId;
         $modelMinusMoney->created_at = $hFunction->createdAt();
         if ($modelMinusMoney->save()) {
             $this->lastId = $modelMinusMoney->minus_id;
@@ -34,6 +48,12 @@ class QcMinusMoney extends Model
         } else {
             return false;
         }
+    }
+
+    //lay id moi them
+    public function insertGetId()
+    {
+        return $this->lastId;
     }
 
     public function updateInfo($minusId, $money, $datePay, $reason, $punishId)
@@ -46,6 +66,7 @@ class QcMinusMoney extends Model
         $minusId = (empty($minusId)) ? $this->payId() : $minusId;
         return QcMinusMoney::where('minus_id', $minusId)->delete();
     }
+
 
     //---------- nhân viên -----------
     public function staff()
@@ -60,6 +81,17 @@ class QcMinusMoney extends Model
         return (QcMinusMoney::where('staff_id', $staffId)->where('minus_id', $minusId)->count() > 0) ? true : false;
     }
 
+    //---------- thong bao ban giao don hang moi -----------
+    public function staffNotify()
+    {
+        return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'minusMoney_id', 'minusMoney_id');
+    }
+
+    public function checkViewedNewMinusMoney($minusMoneyId, $staffId)
+    {
+        $modelStaffAllocation = new QcStaffNotify();
+        return $modelStaffAllocation->checkViewedMinusMoneyOfStaff($staffId, $minusMoneyId);
+    }
     //----------- làm việc ------------
     public function work()
     {
@@ -74,6 +106,19 @@ class QcMinusMoney extends Model
     public function totalMoneyOfWork($workId)
     {
         return QcMinusMoney::where('work_id', $workId)->sum('money');
+    }
+
+    //---------- ban giao don hang -----------
+    public function orderAllocation()
+    {
+        return $this->belongsTo('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'orderAllocation_id', 'allocation_id');
+    }
+
+    public function checkExistMinusMoneyAllocationLate($orderAllocationId)
+    {
+        $modelPunishContent = new QcPunishContent();
+        $punishId = $modelPunishContent->getPunishIdOfOrderAllocationLate();
+        return QcMinusMoney::where('orderAllocation_id', $orderAllocationId)->where('punish_id', $punishId)->exists();
     }
 
     //----------- lý do phạt ------------
@@ -126,6 +171,18 @@ class QcMinusMoney extends Model
         return $this->pluck('reason', $minusId);
     }
 
+    public function applyStatus($minusId = null)
+    {
+        return $this->pluck('applyStatus', $minusId);
+    }
+
+
+    public function cancelStatus($minusId = null)
+    {
+        return $this->pluck('cancelStatus', $minusId);
+    }
+
+
     public function createdAt($minusId = null)
     {
         return $this->pluck('created_at', $minusId);
@@ -145,4 +202,10 @@ class QcMinusMoney extends Model
     {
         return $this->pluck('punish_id', $minusId);
     }
+
+    public function orderAllocationId($minusId = null)
+    {
+        return $this->pluck('orderAllocation_id', $minusId);
+    }
+    #========= ======
 }

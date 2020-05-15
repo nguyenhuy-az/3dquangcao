@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcPunishContent extends Model
 {
     protected $table = 'qc_punish_content';
-    protected $fillable = ['punish_id','punishCode', 'name', 'money', 'note', 'created_at', 'type_id'];
+    protected $fillable = ['punish_id', 'punishCode', 'name', 'money', 'note', 'created_at', 'type_id'];
     protected $primaryKey = 'punish_id';
     public $timestamps = false;
 
@@ -17,7 +17,7 @@ class QcPunishContent extends Model
     //---------- thêm ----------
 
     // insert
-    public function insert($punishCode,$name, $money, $note, $typeId)
+    public function insert($punishCode, $name, $money, $note, $typeId)
     {
         $hFunction = new \Hfunction();
         $modelPunishContent = new QcPunishContent();
@@ -43,7 +43,7 @@ class QcPunishContent extends Model
     }
 
     // cập nhật thông tin
-    public function updateInfo($punishId,$name, $money, $note, $typeId)
+    public function updateInfo($punishId, $name, $money, $note, $typeId)
     {
         return QcPunishContent::where('punish_id', $punishId)->update([
             'name' => $name,
@@ -174,6 +174,7 @@ class QcPunishContent extends Model
     {
         return QcPunishContent::where('punishCode', 'BGKĐ')->pluck('punish_id');
     }
+
     // ---------- ---------- CHECK INFO --------- -------
     public function existName($name)
     {
@@ -186,6 +187,7 @@ class QcPunishContent extends Model
         $result = QcPunishContent::where('name', $name)->where('punish_id', '<>', $punishId)->count();
         return ($result > 0) ? true : false;
     }
+
     public function existPunishCode($punishCode)
     {
         $result = QcPunishContent::where('punishCode', $punishCode)->count();
@@ -198,4 +200,10 @@ class QcPunishContent extends Model
         return ($result > 0) ? true : false;
     }
 
+    #============= ======== lay id cua danh muc phat =========== ==========
+    public function getPunishIdOfOrderAllocationLate()
+    {
+        $result = QcPunishContent::where('punishCode', 'BGĐHT')->pluck('punish_id');
+        return (count($result) > 0) ? $result : null;
+    }
 }

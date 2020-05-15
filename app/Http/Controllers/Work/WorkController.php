@@ -4,14 +4,11 @@ namespace App\Http\Controllers\Work;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
-use App\Models\Ad3d\ProductTypePrice\QcProductTypePrice;
+use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
+
 use App\Models\Ad3d\Rule\QcRules;
-use App\Models\Ad3d\Salary\QcSalary;
-use App\Models\Ad3d\SalaryBeforePayRequest\QcSalaryBeforePayRequest;
 use App\Models\Ad3d\Staff\QcStaff;
-use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
-use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
-use App\Models\Ad3d\Work\QcWork;
+
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
@@ -26,8 +23,12 @@ class WorkController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
+        $modelOrderAllocation = new QcOrderAllocation();
+
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         if ($hFunction->checkCount($dataStaffLogin)) {
+            # kiem tra thong tin ban giao don hang
+            $modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
             return view('work.control-panel', compact('modelCompany','modelStaff','sysInfoObject'));
         } else {
             return view('work.login');

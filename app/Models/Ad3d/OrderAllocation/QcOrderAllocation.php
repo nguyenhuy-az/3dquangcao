@@ -3,8 +3,10 @@
 namespace App\Models\Ad3d\OrderAllocation;
 
 use App\Models\Ad3d\Bonus\QcBonus;
+use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\PunishContent\QcPunishContent;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use Illuminate\Database\Eloquent\Model;
@@ -70,22 +72,18 @@ class QcOrderAllocation extends Model
         $modelOrder = new QcOrder();
         $orderId = $this->orderId($allocationId);
         $dataProduct = $modelOrder->productActivityOfOrder($orderId);
-        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['confirmFinish' => 1, 'confirmDate' => $hFunction->carbonNow(), 'finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate])) {
+        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['confirmFinish' => 1, 'confirmDate' => $hFunction->carbonNow(), 'finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate,'action' => 1])) {
+            # khong tre ngay phan cong
             if (!$this->checkLate($allocationId)) {
                 $receiveStaffId = $this->receiveStaffId($allocationId);
                 $dataWork = $modelStaff->firstInfoActivityToWork($receiveStaffId);
                 if ($hFunction->checkCount($dataWork)) {
                     $dataOrder = $modelOrder->getInfo($orderId);
-                    $orderTotalPrice = $dataOrder->totalPrice();
-                    # bonus price & minus price
-                    if ($orderTotalPrice > 20) {
-                        $orderBonusPrice = $orderTotalPrice * 0.05;
-                    } else {
-                        $orderBonusPrice = $orderTotalPrice * 0.03;
-                    }
+                    #tien thuong
+                    $orderBonusPrice = $dataOrder->getBonusByOrderAllocation();
                     if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Thưởng hoàn thành đơn hàng', 0, $dataWork->workId(), $allocationId)) {
                         $bonusId = $modelBonus->insertGetId();
-                        $receiveStaffId = (is_int($receiveStaffId))?$receiveStaffId:$receiveStaffId[0];
+                        $receiveStaffId = (is_int($receiveStaffId)) ? $receiveStaffId : $receiveStaffId[0];
                         $modelStaffNotify->insert(null, $receiveStaffId, 'Thưởng hoàn thành đơn hàng', null, null, $bonusId);
                     }
                 }
@@ -146,6 +144,12 @@ class QcOrderAllocation extends Model
     public function bonus()
     {
         return $this->hasMany('App\Models\Ad3d\Bonus\QcBonus', 'allocation_id', 'orderAllocation_id');
+    }
+
+    //---------- phat  -----------
+    public function minusMoney()
+    {
+        return $this->hasMany('App\Models\Ad3d\MinusMoney\QcMinusMoney', 'orderAllocation_id', 'allocation_id');
     }
 
     //---------- nhan vien ban giao -----------
@@ -234,6 +238,11 @@ class QcOrderAllocation extends Model
     }
 
     //========= ========== ========== lay thong tin ========== ========== ==========
+    public function selectInfoActivity()
+    {
+        return QcOrderAllocation::where('action', 1);
+    }
+
     public function getInfo($allocationId = '', $field = '')
     {
         if (empty($allocationId)) {
@@ -418,5 +427,52 @@ class QcOrderAllocation extends Model
             if ($checkDate > $receiveDeadline[0]) $lateStatus = true;
         }
         return $lateStatus;
+    }
+
+    public function checkMinusMoneyLate($allocationId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelPunishContent = new QcPunishContent();
+        $modelStaffNotify = new QcStaffNotify();
+        $modelMinusMoney = new QcMinusMoney();
+        # thoi gian de kiem tra
+        $checkDate = $hFunction->carbonNow();
+        # danh muc phat tre don hang
+        $punishId = $modelPunishContent->getPunishIdOfOrderAllocationLate();
+        $allocationId = $this->checkNullId($allocationId);
+        $orderAllocation = $this->getInfo($allocationId);
+        $receiveDeadline = $orderAllocation->receiveDeadline();
+        $dataReceiveStaff = $orderAllocation->receiveStaff;
+        $dataWork = $dataReceiveStaff->workInfoActivityOfStaff();
+        if ($hFunction->checkCount($dataWork)) {
+            $workId = $dataWork->workId();
+            if ($receiveDeadline < $checkDate) {
+                if (!$modelMinusMoney->checkExistMinusMoneyAllocationLate($allocationId)) {
+                    $punishId = (is_int($punishId))?$punishId:$punishId[0];
+                    if ($modelMinusMoney->insert($checkDate, 'Trễ đơn hàng', $workId, null, $punishId, 0, $allocationId)) {
+                        $modelStaffNotify->insert(null, $dataReceiveStaff->staffId(), 'Trễ đơn hàng', null, null, null, $modelMinusMoney->insertGetId());
+                    }
+                }
+
+            }
+        }
+    }
+
+    #kiem tra tu dong giao don hang
+    public function autoCheckMinusMoneyLateOrderAllocation()
+    {
+        $hFunction = new \Hfunction();
+        $modelPunishContent = new QcPunishContent();
+        #lay thong tin con hoat dong
+        $dataOrderAllocation = $this->selectInfoActivity()->get();
+        if ($hFunction->checkCount($dataOrderAllocation)) {
+            $punishId = $modelPunishContent->getPunishIdOfOrderAllocationLate();
+            if (!$hFunction->checkEmpty($punishId)) {
+                foreach ($dataOrderAllocation as $orderAllocation) {
+                    $this->checkMinusMoneyLate($orderAllocation->allocationId());
+                }
+            }
+
+        }
     }
 }

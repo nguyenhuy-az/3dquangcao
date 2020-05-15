@@ -904,6 +904,19 @@ class QcStaff extends Model
         return $modelStaffNotify->totalNotifyNewWorkAllocationOfStaff($this->checkIdNull($staffId));
     }
 
+    # thong bao thuong moi chua xem
+    public function totalNotifyNewBonus($staffId = null)
+    {
+        $modelStaffNotify = new QcStaffNotify();
+        return $modelStaffNotify->totalNotifyNewBonusOfStaff($this->checkIdNull($staffId));
+    }
+
+    # thong bao phat moi chua xem
+    public function totalNotifyNewMinusMoney($staffId = null)
+    {
+        $modelStaffNotify = new QcStaffNotify();
+        return $modelStaffNotify->totalNotifyNewMinusMoneyOfStaff($this->checkIdNull($staffId));
+    }
     //========== ========== ========== dang nhap ========== ========== ==========
     public function login($account, $password)
     {
@@ -1398,8 +1411,7 @@ class QcStaff extends Model
         $totalPaidOrderCancelOfStaffAndDate = $this->totalPaidOrderCancelOfStaffAndDate($staffId, $date);
 
 
-
-        return $totalMoneyTransfer + $totalMoneyImport + $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay +$totalMoneyPayImport+ $totalMoneyPayActivity + $totalPaidOrderCancelOfStaffAndDate;
+        return $totalMoneyTransfer + $totalMoneyImport + $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay + $totalMoneyPayImport + $totalMoneyPayActivity + $totalPaidOrderCancelOfStaffAndDate;
     }
 
     ##tong tien da chuyen va da duoc xac nhan
@@ -1559,5 +1571,6 @@ class QcStaff extends Model
         //$modelWork->checkAutoTimekeepingOfActivityWork();
         #kiểm tra đầu tháng để cho ra bảng làm việc của tháng mới
         $modelWork->checkEndWorkOfMonth();
+
     }
 }

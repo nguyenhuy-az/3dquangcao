@@ -97,15 +97,7 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                     $orderId = $orders->orderId();
                                     $customerId = $orders->customerId();
                                     $allocationFinishDate = $ordersAllocation->finishDate();
-                                    $orderTotalPrice = $orders->totalPrice();
-                                    # bonus price & minus price
-                                    if ($orderTotalPrice > 20) {
-                                        $orderBonusPrice = $orderTotalPrice * 0.05;
-                                        $orderMinusPrice = $orderTotalPrice * 0.05;
-                                    } else {
-                                        $orderBonusPrice = $orderTotalPrice * 0.03;
-                                        $orderMinusPrice = $orderTotalPrice * 0.03;
-                                    }
+
 
                                     ?>
                                     <tr class="qc_work_list_content_object @if($n_o%2) info @endif"
@@ -152,10 +144,10 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->currencyFormat($orderBonusPrice) !!}
+                                            {!! $hFunction->currencyFormat($orders->getBonusByOrderAllocation()) !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->currencyFormat($orderMinusPrice) !!}
+                                            {!! $hFunction->currencyFormat($orders->getMinusMoneyOrderAllocationLate()) !!}
                                         </td>
                                         <td>
                                             <a class="qc-link-green"
