@@ -41,6 +41,15 @@ class QcSalaryPay extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
     }
 
+    public function infoOfStaffAndDate($staffId, $date = null)
+    {
+        if (!empty($date)) {
+            return QcSalaryPay::where('staff_id', $staffId)->where('datePay', 'like', "%$date%")->orderBy('datePay', 'DESC')->get();
+        } else {
+            return QcSalaryPay::where('staff_id', $staffId)->orderBy('datePay', 'DESC')->get();
+        }
+    }
+
     public function infoConfirmedOfStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
@@ -48,7 +57,6 @@ class QcSalaryPay extends Model
         } else {
             return QcSalaryPay::where('staff_id', $staffId)->where('confirmStatus', 1)->orderBy('datePay', 'DESC')->get();
         }
-
     }
 
     public function totalMoneyOfStaffAndDate($staffId, $date)
@@ -61,7 +69,7 @@ class QcSalaryPay extends Model
 
     }
 
-    public function totalMoneyOfStaffAndDateAndConfirmed($staffId, $date)
+    public function totalMoneyConfirmedOfStaffAndDate($staffId, $date)
     {
         if (!empty($date)) {
             return QcSalaryPay::where('staff_id', $staffId)->where('confirmStatus', 1)->where('datePay', 'like', "%$date%")->sum('money');
@@ -77,6 +85,16 @@ class QcSalaryPay extends Model
             return QcSalaryPay::whereIn('staff_id', $listStaffId)->where('datePay', 'like', "%$date%")->sum('money');
         } else {
             return QcSalaryPay::whereIn('staff_id', $listStaffId)->sum('money');
+        }
+
+    }
+
+    public function totalMoneyConfirmedOfListStaffAndDate($listStaffId, $date)
+    {
+        if (!empty($date)) {
+            return QcSalaryPay::whereIn('staff_id', $listStaffId)->where('confirmStatus', 1)->where('datePay', 'like', "%$date%")->sum('money');
+        } else {
+            return QcSalaryPay::whereIn('staff_id', $listStaffId)->where('confirmStatus', 1)->sum('money');
         }
 
     }

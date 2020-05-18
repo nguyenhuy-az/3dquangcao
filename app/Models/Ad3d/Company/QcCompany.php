@@ -201,10 +201,12 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail', 'company_id', 'company_id');
     }
 
-    public function totalPayActivityNotConfirmOfCompany($companyId=null){
+    public function totalPayActivityNotConfirmOfCompany($companyId = null)
+    {
         $modelPayActivityDetail = new QcPayActivityDetail();
         return $modelPayActivityDetail->totalPayActivityNotConfirmOfCompany($this->checkIdNull($companyId));
     }
+
     #----------- bang gia ------------
     public function productTypePrice()
     {
@@ -243,6 +245,17 @@ class QcCompany extends Model
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
+
+    public function infoRootActivity()
+    {
+        return QcCompany::where('companyType', 0)->where('action', 1)->get();
+    }
+
+    public function getRootActivityCompanyId()
+    {
+        return QcCompany::where('companyType', 0)->where('action', 1)->pluck('company_id');
+    }
+
     public function hotlineConstructionDepartment($companyId)
     {
         $hFunction = new \Hfunction();
@@ -494,7 +507,10 @@ class QcCompany extends Model
         $modelOrderPay = new QcOrderPay();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $listStaffId = $modelCompanyStaffWork->listStaffIdOfListCompanyId([$companyId]);
-        return $modelOrderPay->totalMoneyOfListStaffAndDate($listStaffId, $dateFilter);
+        # thu tien tu đơn hàng
+        $totalOrderPay = $modelOrderPay->totalMoneyOfListStaffAndDate($listStaffId, $dateFilter);
+        # thu tu cong ty me
+        return $totalOrderPay;
     }
 
     # tong tien da thu cua cong ty theo thoi gian
@@ -507,16 +523,19 @@ class QcCompany extends Model
         $modelSalaryBeforePay = new QcSalaryBeforePay();
         # danh sach  NV thuoc cty
         $listStaffId = $modelCompanyStaffWork->listStaffIdOfListCompanyId([$companyId]);
-        # thanh toan mua vat tu
-        $totalMoneyOfPayListStaffAndDate = $modelImportPay->totalMoneyOfPayListStaffAndDate($listStaffId, $dateFilter);
+
+        # thanh toan mua vat tu - nguoi mua da xac nhan
+        $totalMoneyOfPayListStaffAndDate = $modelImportPay->totalMoneyConfirmedOfPayListStaffAndDate($listStaffId, $dateFilter);
+
         # chi hoat dong
         $totalMoneyPayActivityDetailOfStaff = $modelPayActivityDetail->totalMoneyOfListStaffAndDate($listStaffId, $dateFilter);
 
-        # thanh toan luong
-        $totalMoneySalaryPayOfStaff = $modelSalaryPay->totalMoneyOfListStaffAndDate($listStaffId, $dateFilter);
+        # thanh toan luong - da xac nhan
+        $totalMoneySalaryPayOfStaff = $modelSalaryPay->totalMoneyConfirmedOfListStaffAndDate($listStaffId, $dateFilter);
 
-        # chi ung luong luong
-        $totalMoneySalaryBeforePayOfStaff = $modelSalaryBeforePay->totalMoneyOfListStaffAndDate($listStaffId, $dateFilter);
+        # chi ung luong luong - dã xac nhan
+        $totalMoneySalaryBeforePayOfStaff = $modelSalaryBeforePay->totalMoneyConfirmedOfListStaffAndDate($listStaffId, $dateFilter);
+
         return $totalMoneyOfPayListStaffAndDate + $totalMoneyPayActivityDetailOfStaff + $totalMoneySalaryPayOfStaff + $totalMoneySalaryBeforePayOfStaff;
     }
 

@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 
 class RevenueCompanyController extends Controller
 {
-    public function index($companyStatisticId = null, $dayFilter = null, $monthFilter = null, $yearFilter = null)
+    public function index($companyStatisticId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -20,38 +20,40 @@ class RevenueCompanyController extends Controller
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $currentMonth = $hFunction->currentMonth();
         $currentYear = $hFunction->currentYear();
+        //payment
+        $dataAccess = [
+            'accessObject' => 'receiveAndPay',
+        ];
+        $dateFilter = null;
+        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $monthFilter = $currentMonth;
+            $yearFilter = $currentYear;
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+            $dateFilter = null;
+        } else {
+            $dateFilter = date('Y-m');
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+        }
+
         $companyStatisticId = (empty($companyStatisticId)) ? $dataStaffLogin->companyId() : $companyStatisticId;
         if ($dataStaffLogin->checkRootManage()) {
             $dataCompany = $modelCompany->getInfo();
         } else {
             $dataCompany = $modelCompany->selectInfo($dataStaffLogin->companyId())->get();
         }
-        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
-            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-        } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
-            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-        } elseif ($dayFilter == 0 && $monthFilter > 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter > 0 && $monthFilter > 0 && $yearFilter > 0) {
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter > 0 && $monthFilter == 0 && $yearFilter == 0) { //xem tất cả các ngày trong tháng
-            $monthFilter = $currentMonth;
-            $yearFilter = $currentYear;
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
-        } elseif ($dayFilter == 0 && $monthFilter > 0 && $yearFilter == 0) { //xem tất cả các ngày trong tháng
-            $yearFilter = $currentYear;
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$currentYear"));
-        } else {
-            $dateFilter = date('Y-m');
-            $monthFilter = date('m');
-            $yearFilter = date('Y');
-        }
 
-        //payment
-        $dataAccess = [
-            'accessObject' => 'receiveAndPay',
-            'statisticDate' => $dateFilter,
-        ];
         $dataCompanyStatistic = $modelCompany->getInfo($companyStatisticId);
         $dataStaffOfCompany = $dataCompanyStatistic->staffInfoActivityOfListCompanyId([$companyStatisticId]);
         return view('ad3d.statistic.revenue.company.list', compact('modelStaff', 'modelCompany', 'dataAccess', 'dataCompany', 'dataCompanyStatistic', 'dataStaffOfCompany', 'dateFilter', 'dayFilter', 'monthFilter', 'yearFilter'));
@@ -73,7 +75,6 @@ class RevenueCompanyController extends Controller
     public function detailOrderPay($staffId, $statisticDate)
     {
         $modelStaff = new QcStaff();
-        //$modelOrderPay = new QcOrderPay();
         $dataStaff = $modelStaff->getInfo($staffId);
         $dataOrderPay = $modelStaff->orderPayInfoOfStaff($staffId, $statisticDate);
         return view('ad3d.statistic.revenue.company.detail-order-pay', compact('modelStaff','dataStaff','dataOrderPay', 'statisticDate'));
@@ -83,7 +84,6 @@ class RevenueCompanyController extends Controller
     public function detailImport($staffId, $statisticDate)
     {
         $modelStaff = new QcStaff();
-        //$modelOrderPay = new QcOrderPay();
         $dataStaff = $modelStaff->getInfo($staffId);
         $dataImport = $dataStaff->importInfoOfStaff($staffId, 3, $statisticDate);
         return view('ad3d.statistic.revenue.company.detail-import', compact('modelStaff','dataStaff','dataImport', 'statisticDate'));

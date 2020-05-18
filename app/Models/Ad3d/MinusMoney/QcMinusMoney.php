@@ -18,20 +18,20 @@ class QcMinusMoney extends Model
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($dateMinus, $reason, $workId, $staffId=null, $punishId, $applyStatus = 1, $orderAllocationId = null)
+    public function insert($dateMinus, $reason, $workId, $staffId = null, $punishId, $applyStatus = 1, $orderAllocationId = null)
     {
         $hFunction = new \Hfunction();
         $modelOrderAllocation = new QcOrderAllocation();
         $modelPunishContent = new QcPunishContent();
         $modelMinusMoney = new QcMinusMoney();
         $money = 0;
-        if(empty($orderAllocationId)){
+        if (empty($orderAllocationId)) {
             # tien dinh
             $money = $modelPunishContent->money($punishId)[0];
-        }else{
+        } else {
             $dataOrderAllocation = $modelOrderAllocation->getInfo($orderAllocationId);
             $dataOrder = $dataOrderAllocation->orders;
-            $money =    (int)$dataOrder->getMinusMoneyOrderAllocationLate();
+            $money = (int)$dataOrder->getMinusMoneyOrderAllocationLate();
         }
         $modelMinusMoney->money = $money;
         $modelMinusMoney->dateMinus = $dateMinus;
@@ -56,15 +56,25 @@ class QcMinusMoney extends Model
         return $this->lastId;
     }
 
+    public function checkNullId($minusId)
+    {
+        return (empty($minusId)) ? $this->minusId() : $minusId;
+    }
+
     public function updateInfo($minusId, $money, $datePay, $reason, $punishId)
     {
         return QcMinusMoney::where('minus_id', $minusId)->update(['money' => $money, 'dateMinus' => $datePay, 'reason' => $reason, 'punish_id' => $punishId]);
     }
 
+    public function cancelMinus($minusId = null)
+    {
+        return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->update(['cancelStatus'=> 1]);
+    }
+
+
     public function deleteInfo($minusId = null)
     {
-        $minusId = (empty($minusId)) ? $this->payId() : $minusId;
-        return QcMinusMoney::where('minus_id', $minusId)->delete();
+        return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->delete();
     }
 
 
@@ -77,8 +87,7 @@ class QcMinusMoney extends Model
     //kiển tra người nhập
     public function checkStaffInput($staffId, $minusId = null)
     {
-        $minusId = (empty($minusId)) ? $this->minusId() : $minusId;
-        return (QcMinusMoney::where('staff_id', $staffId)->where('minus_id', $minusId)->count() > 0) ? true : false;
+        return (QcMinusMoney::where('staff_id', $staffId)->where('minus_id', $this->checkNullId($minusId))->count() > 0) ? true : false;
     }
 
     //---------- thong bao ban giao don hang moi -----------
@@ -92,6 +101,7 @@ class QcMinusMoney extends Model
         $modelStaffAllocation = new QcStaffNotify();
         return $modelStaffAllocation->checkViewedMinusMoneyOfStaff($staffId, $minusMoneyId);
     }
+
     //----------- làm việc ------------
     public function work()
     {
@@ -105,7 +115,7 @@ class QcMinusMoney extends Model
 
     public function totalMoneyOfWork($workId)
     {
-        return QcMinusMoney::where('work_id', $workId)->sum('money');
+        return QcMinusMoney::where('work_id', $workId)->where('cancelStatus', 0)->sum('money');
     }
 
     //---------- ban giao don hang -----------
@@ -128,6 +138,24 @@ class QcMinusMoney extends Model
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
+    public function selectInfoHasFilter($listWorkId, $punishId, $dateFilter)
+    {
+        if (empty($punishId)) {
+            return QcMinusMoney::where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->orderBy('dateMinus', 'DESC')->select('*');
+        } else {
+            return QcMinusMoney::where('punish_id', $punishId)->where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->orderBy('dateMinus', 'DESC')->select('*');
+        }
+    }
+
+    public function totalMoneyHasFilter($listWorkId, $punishId, $dateFilter)
+    {
+        if (empty($punishId)) {
+            return QcMinusMoney::where('cancelStatus', 0)->where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->sum('money');
+        } else {
+            return QcMinusMoney::where('cancelStatus', 0)->where('punish_id', $punishId)->where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->sum('money');
+        }
+    }
+
     public function getInfo($minusId = '', $field = '')
     {
         if (empty($minusId)) {
@@ -207,5 +235,19 @@ class QcMinusMoney extends Model
     {
         return $this->pluck('orderAllocation_id', $minusId);
     }
+
     #========= ======
+    public function checkCancelStatus($minusId = null)
+    {
+        return ($this->cancelStatus($minusId) == 1) ? true : false;
+    }
+
+    public function checkEnableApply($minusId = null)
+    {
+        if ($this->applyStatus($minusId) == 1 && $this->cancelStatus() == 0) {
+            return true; # ap dung phat
+        } else {
+            return false; # khong ap dung phat
+        }
+    }
 }

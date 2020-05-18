@@ -17,25 +17,41 @@ use Request;
 
 class MoneyReceiveController extends Controller
 {
-    public function index($loginDay = null, $loginMonth = null, $loginYear = null)
+    public function index($monthFilter = 0, $yearFilter = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelDepartment = new QcDepartment();
         $modelCompany = new QcCompany();
         $hFunction->dateDefaultHCM();
+        $dataAccess = [
+            'object' => 'moneyReceive',
+            'subObjectLabel' => 'Thu đơn hàng'
+        ];
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        if (count($dataStaffLogin) >0) {
-            $dataAccess = [
-                'object' => 'moneyReceive',
-                'subObjectLabel' => 'Thu đơn hàng'
-            ];
-            $currentMonth = $hFunction->currentMonth();
-            $currentYear = $hFunction->currentYear();
-            $loginMonth = (empty($loginMonth)) ? $currentMonth : $loginMonth;
-            $loginYear = (empty($loginYear)) ? $currentYear : $loginYear;
-            $dataStaffReceiveTransfer = $modelStaff->infoActivityOfCompany($dataStaffLogin->companyId(), $modelDepartment->treasurerDepartmentId());
-            return view('work.money.receive.receive', compact('dataAccess', 'modelStaff', 'dataStaffReceiveTransfer', 'loginDay', 'loginMonth', 'loginYear'));
+        if ($hFunction->checkCount($dataStaffLogin)) {
+            $loginStaffId = $dataStaffLogin->staffId();
+            $dateFilter = null;
+            if ($monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+                $monthFilter = date('m');
+                $yearFilter = date('Y');
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            } elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+            } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+                $dateFilter = null;
+            } else {
+                $dateFilter = date('Y-m');
+                $monthFilter = date('m');
+                $yearFilter = date('Y');
+            }
+            # nhan tien tu don hang
+            $dataOrderPay = $dataStaffLogin->orderPayNoTransferOfStaff($loginStaffId, $dateFilter);
+            # danh sach NV nhan tien cua cty me
+            $dataStaffReceiveTransfer = $modelStaff->infoActivityOfCompany($modelCompany->getRootActivityCompanyId(), $modelDepartment->treasurerDepartmentId());
+            return view('work.money.receive.receive', compact('dataAccess', 'modelStaff', 'dataOrderPay', 'dataStaffReceiveTransfer', 'dateFilter', 'dayFilter', 'monthFilter', 'yearFilter'));
         } else {
             return view('work.login');
         }
@@ -50,7 +66,7 @@ class MoneyReceiveController extends Controller
         $modelTransfer = new QcTransfers();
         $modelTransferDetail = new QcTransfersDetail();
         $listOrderPay = Request::input('txtOrderPay');
-        $txtTotalMoney = Request::input('txtTotalMoney');
+        $txtTotalMoney = Request::input('txtTransferMoney');
         $txtStaffReceiveId = Request::input('cbStaffReceive');
         $txtTransferImage = Request::file('txtTransferImage');
         $txtNote = Request::input('txtNote');

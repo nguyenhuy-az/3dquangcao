@@ -172,6 +172,15 @@ class QcPayActivityDetail extends Model
         }
 
     }
+    public function totalMoneyConfirmedOfListStaffAndDate($listStaffId, $date)
+    {
+        if (!empty($date)) {
+            return QcPayActivityDetail::whereIn('staff_id', $listStaffId)->where('confirmStatus', 1)->where('payDate', 'like', "%$date%")->sum('money');
+        } else {
+            return QcPayActivityDetail::whereIn('staff_id', $listStaffId)->where('confirmStatus', 1)->sum('money');
+        }
+
+    }
 
     //---------- nha vien duyet -----------
     public function confirmStaff()

@@ -10,9 +10,14 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 
-$statisticDate = $dataAccess['statisticDate'];
 $hrefIndex = route('qc.ad3d.statistic.revenue.company.get');
 $companyStatisticId = $dataCompanyStatistic->companyId();
+
+# tong thu tu don hang
+$totalMoneyReceiveFromOrder = $dataCompanyStatistic->statisticalTotalCollectMoney($companyStatisticId,$dateFilter);
+
+# tong thu chi
+$totalMoneyPayment = $dataCompanyStatistic->statisticalTotalPaymentMoney($companyStatisticId,$dateFilter);
 ?>
 @extends('ad3d.statistic.revenue.company.index')
 @section('qc_ad3d_index_content')
@@ -25,12 +30,14 @@ $companyStatisticId = $dataCompanyStatistic->companyId();
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <label class="qc-font-size-20">{!! $dataCompanyStatistic->name() !!}</label>
+                    <label class="qc-font-size-20">THỐNG KÊ THU CHI CỦA CÔNG TY</label>
+                    <br/>
+                    <span>{!! $dataCompanyStatistic->name() !!}</span>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
                             data-href-filter="{!! $hrefIndex !!}">
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 <option value="{!! $company->companyId() !!}"
                                         @if($companyStatisticId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
@@ -43,135 +50,147 @@ $companyStatisticId = $dataCompanyStatistic->companyId();
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             {{-- lọc theo ngày tháng --}}
             <div class="row">
-                <div class="qc-padding-none text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <select class="cbDayFilter" style="margin-top: 5px; height: 30px;"
-                            data-href="{!! $hrefIndex !!}">
-                        <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >Tất cả
+                <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <select class="cbDayFilter" style="margin-top: 5px; height: 30px;" data-href="{!! $hrefIndex !!}">
+                        <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
+                            Tất cả
                         </option>
-                        @for($i =1;$i<= 31; $i++)
-                            <option value="{!! $i !!}"
-                                    @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
+                        @for($d =1;$d<= 31; $d++)
+                            <option value="{!! $d !!}" @if((int)$dayFilter == $d) selected="selected" @endif >
+                                {!! $d !!}
+                            </option>
                         @endfor
                     </select>
-                    /
-                    <select class="cbMonthFilter" style="margin-top: 5px; height: 30px;"
-                            data-href="{!! $hrefIndex !!}">
-                        <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >Tất cả
-                        @for($i =1;$i<= 12; $i++)
-                            <option value="{!! $i !!}"
-                                    @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                    <span>/</span>
+                    <select class="cbMonthFilter" style="margin-top: 5px; height: 30px;" data-href="{!! $hrefIndex !!}">
+                        <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                            Tất cả
+                        </option>
+                        @for($m =1;$m<= 12; $m++)
+                            <option value="{!! $m !!}"
+                                    @if((int)$monthFilter == $m) selected="selected" @endif>
+                                {!! $m !!}
+                            </option>
                         @endfor
                     </select>
-                    /
-                    <select class="cbYearFilter" style="margin-top: 5px; height: 30px;"
-                            data-href="{!! $hrefIndex !!}">
-                        <option value="0" @if((int)$yearFilter == 0) selected="selected" @endif >Tất cả
-                        @for($i =2017;$i<= 2050; $i++)
-                            <option value="{!! $i !!}"
-                                    @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                    <span>/</span>
+                    <select class="cbYearFilter" style="margin-top: 5px; height: 30px;" data-href="{!! $hrefIndex !!}">
+                        <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                            Tất cả
+                        </option>
+                        @for($y =2017;$y<= 2050; $y++)
+                            <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                {!! $y !!}
+                            </option>
                         @endfor
                     </select>
                 </div>
             </div>
-            {{-- nội dung --}}
+            {{-- Thống kê tổng --}}
+            <div class="row" style="margin-top: 10px;">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr style="background-color: whitesmoke;">
+                                <th class="text-center">Tổng doanh thu</th>
+                                <th class="text-center">Tổng Chi</th>
+                                <th class="text-center">Lợi nhân</th>
+                                <th class="text-center">Lãi ròng</th>
+                            </tr>
+                            <tr>
+                                <td class="text-center" style="color: red;">
+                                    <b style="color: blue;">
+                                        {!! $hFunction->currencyFormat($totalMoneyReceiveFromOrder)  !!}
+                                    </b>
+                                </td>
+                                <td class="text-center" style="color: red;">
+                                    <b style="color: red;">
+                                        {!! $hFunction->currencyFormat($totalMoneyPayment)  !!}
+                                    </b>
+                                </td>
+                                <td class="text-center" style="color: red;">
+                                    <b style="color: green;">
+                                        {!! $hFunction->currencyFormat($totalMoneyReceiveFromOrder-$totalMoneyPayment)  !!}
+                                    </b>
+                                </td>
+                                <td class="text-center" style="color: red;">
+                                    <b style="color: green;">
+                                        {!! $hFunction->currencyFormat(($totalMoneyReceiveFromOrder-$totalMoneyPayment)*0.8)  !!}
+                                    </b>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {{-- Thông tin chi tiết --}}
             <div class="qc_ad3d_list_content row">
                 <div class="qc-margin-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="row qc-ad3d-table-container">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered">
-                                <tr style="background-color: whitesmoke;">
-                                    <th class="text-center">STT</th>
-                                    <th>Nhân viên</th>
-                                    <th class="text-right">Thu</th>
-                                    <th class="text-right">Chi</th>
-                                    <th class="text-right">
-                                        Lợi nhuận <br/>
-                                        <em>(Trước thuế)</em>
-                                    </th>
-                                    <th class="text-right">
-                                        Lãi ròng <br/>
-                                        <em>(sau thuế)</em>
-                                    </th>
-                                </tr>
-                                @if(count($dataStaffOfCompany) > 0)
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered">
+                            <tr style="background-color: whitesmoke;">
+                                <th class="text-center">STT</th>
+                                <th>Nhân viên</th>
+                                <th class="text-right">Thu từ đơn hàng</th>
+                                <th class="text-right">Chi</th>
+                                <th class="text-right">
+                                    Lợi nhuận <br/>
+                                    <em>(Trước thuế)</em>
+                                </th>
+                                <th class="text-right">
+                                    Lãi ròng <br/>
+                                    <em>(sau thuế)</em>
+                                </th>
+                            </tr>
+                            @if($hFunction->checkCount($dataStaffOfCompany))
+                                <?php
+                                $n_o = 0;
+                                ?>
+                                @foreach($dataStaffOfCompany as $staff)
                                     <?php
-                                    $n_o = 0;
-                                    $sumMoneyOrder = 0;
-                                    $sumCollectMoney = 0;
-                                    $sumPaymentMoney = 0;
+                                    $staffId = $staff->staffId();
+
+                                    #tong thu tu don hang
+                                    $statisticalTotalMoneyFromOrder = $staff->totalReceiveMoneyFromOrderPay($staffId, $dateFilter);
+                                    #tong chi
+                                    $statisticalTotalPaymentMoney = $staff->totalPaidMoney($staffId, $dateFilter);
                                     ?>
-                                    @foreach($dataStaffOfCompany as $staff)
-                                        <?php
-                                        $staffId = $staff->staffId();
-                                        #tong doanh so
-                                        $statisticalTotalMoneyOrder = 0;
-                                        $sumMoneyOrder = $sumMoneyOrder + $statisticalTotalMoneyOrder;
-
-                                        #tong thu
-                                        $statisticalTotalCollectMoney = $staff->totalReceivedMoney($staffId,$dateFilter);
-                                        $sumCollectMoney = $sumCollectMoney + $statisticalTotalCollectMoney;
-                                        #tong chi
-                                        $statisticalTotalPaymentMoney = $staff->totalPaidMoney($staffId,$dateFilter);
-                                        $sumPaymentMoney = $sumPaymentMoney + $statisticalTotalPaymentMoney;
-                                        ?>
-                                        <tr class="qc_ad3d_list_object @if($n_o%2) info @endif">
-                                            <td class="text-center">
-                                                {!! $n_o += 1 !!}
-                                            </td>
-                                            <td>
-                                                <a class="qc-link" href="{!! route('qc.ad3d.statistic.revenue.company.staff.get',"$staffId/$dateFilter") !!}">
-                                                    {!! $staff->fullName() !!}
-                                                </a>
-                                            </td>
-                                            <td class="text-right">
-                                                {!! $hFunction->currencyFormat($statisticalTotalCollectMoney)  !!}
-                                            </td>
-                                            <td class="text-right">
-                                                {!! $hFunction->currencyFormat($statisticalTotalPaymentMoney)  !!}
-                                            </td>
-                                            <td class="text-right">
-                                                {!! $hFunction->currencyFormat($statisticalTotalCollectMoney - $statisticalTotalPaymentMoney)  !!}
-                                            </td>
-                                            <td class="text-right">
-                                                @if(($statisticalTotalCollectMoney - $statisticalTotalPaymentMoney) > 0)
-                                                    {!! $hFunction->currencyFormat(($statisticalTotalCollectMoney - $statisticalTotalPaymentMoney)*0.8)  !!}
-                                                @else
-                                                    {!! $hFunction->currencyFormat(($statisticalTotalCollectMoney - $statisticalTotalPaymentMoney))  !!}
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    <tr style="color: red;border-top: 2px solid brown;">
-                                        <td class="text-right" style="background-color: #d7d7d7;" colspan="2"></td>
-                                        <td class="text-right">
-                                            <b>{!! $hFunction->currencyFormat($sumCollectMoney) !!}</b>
+                                    <tr class="qc_ad3d_list_object @if($n_o%2) info @endif">
+                                        <td class="text-center" style="width: 20px;">
+                                            {!! $n_o += 1 !!}
+                                        </td>
+                                        <td>
+                                            <a class="qc-link"
+                                               href="{!! route('qc.ad3d.statistic.revenue.company.staff.get',"$staffId/$dateFilter") !!}">
+                                                {!! $staff->fullName() !!}
+                                            </a>
                                         </td>
                                         <td class="text-right">
-                                            <b>{!! $hFunction->currencyFormat($sumPaymentMoney) !!}</b>
+                                            {!! $hFunction->currencyFormat($statisticalTotalMoneyFromOrder)  !!}
                                         </td>
                                         <td class="text-right">
-                                            <b>{!! $hFunction->currencyFormat($sumCollectMoney - $sumPaymentMoney) !!}</b>
+                                            {!! $hFunction->currencyFormat($statisticalTotalPaymentMoney)  !!}
                                         </td>
                                         <td class="text-right">
-                                            <b>
-                                                @if(($sumCollectMoney - $sumPaymentMoney) > 0)
-                                                    {!! $hFunction->currencyFormat(($sumCollectMoney - $sumPaymentMoney)*0.8)  !!}
-                                                @else
-                                                    {!! $hFunction->currencyFormat(($sumCollectMoney - $sumPaymentMoney)) !!}
-                                                @endif
-                                            </b>
-
+                                            {!! $hFunction->currencyFormat($statisticalTotalMoneyFromOrder - $statisticalTotalPaymentMoney)  !!}
+                                        </td>
+                                        <td class="text-right">
+                                            @if(($statisticalTotalMoneyFromOrder - $statisticalTotalPaymentMoney) > 0)
+                                                {!! $hFunction->currencyFormat(($statisticalTotalMoneyFromOrder - $statisticalTotalPaymentMoney)*0.8)  !!}
+                                            @else
+                                                {!! $hFunction->currencyFormat(($statisticalTotalMoneyFromOrder - $statisticalTotalPaymentMoney))  !!}
+                                            @endif
                                         </td>
                                     </tr>
-                                @else
-                                    <tr>
-                                        <td class="text-right" colspan="6">
-                                            <em class="qc-color-red">Không có công ty hoạt động</em>
-                                        </td>
-                                    </tr>
-                                @endif
-                            </table>
-                        </div>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td class="text-right" colspan="6">
+                                        <em class="qc-color-red">Không có công ty hoạt động</em>
+                                    </td>
+                                </tr>
+                            @endif
+                        </table>
                     </div>
                 </div>
 

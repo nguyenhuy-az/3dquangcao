@@ -23,13 +23,13 @@ if (isset($dataAccess)) {
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
             <li @if($viewLoginObject == 'payImport') class="active" @endif>
-                <a href="{!! route('qc.work.import.get') !!}">
+                <a href="{!! route('qc.work.import.get') !!}" @if($viewLoginObject == 'payImport') style="background-color: whitesmoke;" @endif>
                     Chi mua vật tu
                 </a>
             </li>
             @if($dataLoginStaff->checkTreasureDepartment())
                 <li @if($viewLoginObject == 'payActivity') class="active" @endif>
-                    <a href="{!! route('qc.work.pay.pay_activity.get') !!}">
+                    <a href="{!! route('qc.work.pay.pay_activity.get') !!}" @if($viewLoginObject == 'payActivity') style="background-color: whitesmoke;" @endif>
                         Chi hoạt động
                     </a>
                 </li>
@@ -39,12 +39,12 @@ if (isset($dataAccess)) {
                     </a>
                 </li>--}}
                 <li @if($viewLoginObject == 'paySalary') class="active" @endif>
-                    <a href="{!! route('qc.work.pay.pay_salary.get') !!}">
+                    <a href="{!! route('qc.work.pay.pay_salary.get') !!}" @if($viewLoginObject == 'paySalary') style="background-color: whitesmoke" @endif>
                         Thanh toán lương
                     </a>
                 </li>
                 <li @if($viewLoginObject == 'paySalaryBeforePay') class="active" @endif>
-                    <a href="{!! route('qc.work.pay.salary_before_pay.get') !!}">
+                    <a href="{!! route('qc.work.pay.salary_before_pay.get') !!}" @if($viewLoginObject == 'paySalaryBeforePay') style="background-color: whitesmoke;" @endif >
                         Ứng lương mua vật tư
                     </a>
                 </li>

@@ -75,7 +75,11 @@ if (!empty($companyStaffWorkId)) {
 }
 #cham cong
 $dataTimekeeping = $dataWork->infoTimekeeping();
-
+if ($hFunction->checkCount($dataWork)) {
+    $totalMoneyBonus = $dataWork->totalMoneyBonus();
+} else {
+    $totalMoneyBonus = 0;
+}
 ?>
 @extends('work.index')
 @section('qc_work_body')
@@ -337,7 +341,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                     <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
                         <div class="row">
                             {{-- Chi tiết lương   --}}
-                            <div class="qc-container-table qc-container-table-border-none qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="table-responsive">
                                     <table class="table table-hover qc-margin-bot-none">
                                         <tr style="background-color: whitesmoke;">
@@ -347,15 +351,6 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                             </th>
                                         </tr>
                                         @if($infoSalaryBasic)
-                                            <tr>
-                                                <td>
-                                                    P/C tăng ca ({!! floor(($sumPlusMinute-$sumPlusMinute%60)/60) !!}
-                                                    <b>h</b> {!! $sumPlusMinute%60 !!})
-                                                </td>
-                                                <td class="text-right">
-                                                    <b>{!! $hFunction->currencyFormat($totalMoneyOvertimeHour) !!}</b>
-                                                </td>
-                                            </tr>
                                             <tr style="color: brown;">
                                                 <td>
                                                     <em>Lương lãnh:</em>
@@ -366,21 +361,40 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                             </tr>
                                             <tr>
                                                 <td>
+                                                    P/C tăng ca ({!! floor(($sumPlusMinute-$sumPlusMinute%60)/60) !!}
+                                                    <b>h</b> {!! $sumPlusMinute%60 !!})
+                                                </td>
+                                                <td class="text-right">
+                                                    <b> + {!! $hFunction->currencyFormat($totalMoneyOvertimeHour) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr style="color: brown;">
+                                                <td>
+                                                    <span>Thưởng:</span>
+                                                    <em class="qc-color-grey"> - (Tạm thời)</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>+ {!! $hFunction->currencyFormat($totalMoneyBonus) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
                                                     <em class="qc-color-grey">Ứng:</em>
                                                 </td>
                                                 <td class="text-right">
                                                     <a class="qc-link" href="{!! route('qc.work.salary.before_pay.get') !!}" >
-                                                        {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}
+                                                        - {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}
                                                     </a>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <em class="qc-color-grey">Phạt:</em>
+                                                    <span>Phạt</span>
+                                                    <em class="qc-color-grey"> - (Tạm thời)</em>
                                                 </td>
                                                 <td class="text-right">
                                                     <a class="qc-link" href="{!! route('qc.work.minus_money.get') !!}">
-                                                        {!! $hFunction->currencyFormat($totalMoneyMinus) !!}
+                                                        - {!! $hFunction->currencyFormat($totalMoneyMinus) !!}
                                                     </a>
                                                 </td>
                                             </tr>
@@ -389,7 +403,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                                     <em>Lương còn lại:</em>
                                                 </td>
                                                 <td class="text-right">
-                                                    <b class="qc-color-red">{!! $hFunction->currencyFormat($totalCurrentSalary -  $totalMoneyBeforePay - $totalMoneyMinus) !!}</b>
+                                                    <b class="qc-color-red">{!! $hFunction->currencyFormat($totalCurrentSalary + $totalMoneyBonus -  $totalMoneyBeforePay - $totalMoneyMinus) !!}</b>
                                                 </td>
                                             </tr>
                                         @else

@@ -19,80 +19,101 @@ use Request;
 
 class MinusMoneyController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = null, $monthFilter = null, $yearFilter = null, $punishContentFilterId = null, $nameFiler = null)
+    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $punishContentFilterId = 0, $nameFiler = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelPunishContent = new QcPunishContent();
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
+        $modelMinus = new QcMinusMoney();
+        $currentMonth = $hFunction->currentMonth();
+        $currentYear = $hFunction->currentYear();
 
         $dataPunishContent = $modelPunishContent->getInfo();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataAccess = [
             'accessObject' => 'penalize'
         ];
-        if (empty($dayFilter) && empty($monthFilter) && empty($yearFilter)) {
-            $dateFilter = date('Y-m');
-            //$dayFilter = date('d');
+        $dateFilter = null;
+        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+            $dayFilter = 100;
             $monthFilter = date('m');
             $yearFilter = date('Y');
-            //$dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter == 0) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $monthFilter = $currentMonth;
+            $yearFilter = $currentYear;
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+            $dateFilter = null;
         } else {
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
-        }
-        $dataCompany = $modelCompany->getInfo();
-        if ($dataStaffLogin->checkRootManage()) {
-            if (empty($companyFilterId)) {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            } else {
-                $searchCompanyFilterId = [$companyFilterId];
-            }
-        } else {
-            $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-            $companyFilterId = $dataStaffLogin->companyId();
+            $dateFilter = date('Y-m');
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
         }
 
-        if($monthFilter < 8 && $yearFilter < 2109){ # du lieu cu phien ban cu --  loc theo staff_id
+        $dataCompany = $modelCompany->getInfo();
+        if (empty($companyFilterId)) {
+            if (!$dataStaffLogin->checkRootManage()) {
+                $searchCompanyFilterId = [$dataStaffLogin->companyId()];
+                $companyFilterId = $dataStaffLogin->companyId();
+            } else {
+                $searchCompanyFilterId = $modelCompany->listIdActivity();
+            }
+        } else {
+            if($companyFilterId == 1000){
+                $searchCompanyFilterId = $modelCompany->listIdActivity();
+            }else{
+                $searchCompanyFilterId = [$companyFilterId];
+            }
+        }
+
+        if ($monthFilter < 8 && $yearFilter <= 2019) { # du lieu phien ban cu
             if (!empty($nameFiler)) {
                 $listStaffId = $modelStaff->listIdOfListCompanyAndName($searchCompanyFilterId, $nameFiler);
             } else {
                 $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
             }
-            $listWorkId = $modelWork->listIdOfListStaffInBeginDate($listStaffId, $dateFilter);
-        }else{ # du lieu phien ban moi - loc theo thong tin lam viec tai cty (companyStaffWork)
+            $listWorkId = $modelWork->listIdOfListStaffId($listStaffId);
+        } else {
             if (!empty($nameFiler)) {
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId, $modelStaff->listStaffIdByName($nameFiler));
+                $listStaffId = $modelStaff->listStaffIdByName($nameFiler);
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId, $listStaffId);
             } else {
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId);
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId, null);
             }
-            $listWorkId = $modelWork->listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter);
+            $listWorkId = $modelWork->listIdOfListCompanyStaffWork($listCompanyStaffWorkId);
         }
-
-        if(empty($punishContentFilterId)){
-            $dataMinusMoney = QcMinusMoney::where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->orderBy('dateMinus', 'DESC')->select('*')->paginate(30);
-            $totalMinusMoney = QcMinusMoney::where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->sum('money');
-        }else{
-            $dataMinusMoney = QcMinusMoney::where('punish_id',$punishContentFilterId)->where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->orderBy('dateMinus', 'DESC')->select('*')->paginate(30);
-            $totalMinusMoney = QcMinusMoney::where('punish_id',$punishContentFilterId)->where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->sum('money');
-        }
-
-        return view('ad3d.finance.minus-money.list', compact('modelStaff', 'dataCompany', 'dataAccess','dataPunishContent', 'dataMinusMoney', 'totalMinusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter','punishContentFilterId', 'nameFiler'));
+        $punishContentFilterId = ($punishContentFilterId == 0) ? null : $punishContentFilterId;
+        $dataMinusMoney = $modelMinus->selectInfoHasFilter($listWorkId, $punishContentFilterId, $dateFilter)->paginate(30);
+        $totalMinusMoney = $modelMinus->totalMoneyHasFilter($listWorkId, $punishContentFilterId, $dateFilter);
+        //dd($searchCompanyFilterId);
+        return view('ad3d.finance.minus-money.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataPunishContent', 'dataMinusMoney', 'totalMinusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'punishContentFilterId', 'nameFiler'));
 
     }
+    public function cancelMinusMoney($minusId)
+    {
+        $modelMinus = new QcMinusMoney();
+        $modelMinus->cancelMinus($minusId);
+    }
 
-    public function view($minusId)
+   /* public function view($minusId)
     {
         $modelMinusMoney = new QcMinusMoney();
         $dataMinusMoney = $modelMinusMoney->getInfo($minusId);
         if (count($dataMinusMoney) > 0) {
             return view('ad3d.finance.minus-money.view', compact('dataMinusMoney'));
         }
-    }
+    }*/
 
-    public function getAdd($companyLoginId = null, $workId = null, $punishId = null)
+    /*public function getAdd($companyLoginId = null, $workId = null, $punishId = null)
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
@@ -137,9 +158,9 @@ class MinusMoneyController extends Controller
             return Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
         }
 
-    }
+    }*/
 
-    public function getEdit($minusId)
+    /*public function getEdit($minusId)
     {
         $modelMinusMoney = new QcMinusMoney();
         $dataMinusMoney = $modelMinusMoney->getInfo($minusId);
@@ -161,12 +182,8 @@ class MinusMoneyController extends Controller
         if (!$modelMinusMoney->updateInfo($minusId, $txtMoney, $dateMinus, $txtReason)) {
             return "Cập nhật thất bại";
         }
-    }
+    }*/
 
-    public function deleteMinusMoney($minusId)
-    {
-        $modelMinus = new QcMinusMoney();
-        $modelMinus->deleteInfo($minusId);
-    }
+
 
 }

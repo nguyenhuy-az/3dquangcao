@@ -69,7 +69,7 @@ class QcBonus extends Model
 
     public function totalMoneyOfWork($workId)
     {
-        return QcBonus::where('work_id', $workId)->sum('money');
+        return QcBonus::where('work_id', $workId)->where('cancelStatus',0)->sum('money');
     }
 
     public function totalMoneyApplyOfWork($workId)
@@ -100,6 +100,24 @@ class QcBonus extends Model
         return $modelStaffAllocation->checkViewedBonusOfStaff($staffId, $bonusId);
     }
     #============ =========== ============ GET INFO ============= =========== ==========
+    public function selectInfoHasFilter($listWorkId, $dateFilter)
+    {
+        if (empty($dateFilter)) {
+            return QcBonus::whereIn('work_id', $listWorkId)->orderBy('bonusDate', 'DESC')->select('*');
+        } else {
+            return QcBonus::where('bonusDate', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->orderBy('bonusDate', 'DESC')->select('*');
+        }
+    }
+
+    public function totalMoneyHasFilter($listWorkId, $dateFilter)
+    {
+        if (empty($dateFilter)) {
+            return QcBonus::where('cancelStatus', 0)->whereIn('work_id', $listWorkId)->sum('money');
+        } else {
+            return QcBonus::where('cancelStatus', 0)->where('bonusDate', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->sum('money');
+        }
+    }
+
     public function getInfo($bonusId = '', $field = '')
     {
         if (empty($bonusId)) {
@@ -166,6 +184,20 @@ class QcBonus extends Model
     public function orderAllocationId($bonusId = null)
     {
         return $this->pluck('orderAllocation_id', $bonusId);
+    }
+    #========= ======
+    public function checkCancelStatus($minusId = null)
+    {
+        return ($this->cancelStatus($minusId) == 1) ? true : false;
+    }
+
+    public function checkEnableApply($minusId = null)
+    {
+        if ($this->applyStatus($minusId) == 1 && $this->cancelStatus() == 0) {
+            return true; # ap dung phat
+        } else {
+            return false; # khong ap dung phat
+        }
     }
 
 }

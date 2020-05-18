@@ -246,6 +246,13 @@ class QcStaff extends Model
         return $modelImportPay->totalMoneyOfPayStaffAndDate($staffId, $filterDate);
     }
 
+    public function totalMoneyImportPayConfirmOfStaffAndDate($staffId, $filterDate = null)
+    {
+        $modelImportPay = new QcImportPay();
+        return $modelImportPay->totalMoneyConfirmedOfPayStaffAndDate($staffId, $filterDate);
+    }
+
+
     #----------- ngay nghi he thong ------------
     public function systemDateOff()
     {
@@ -1357,6 +1364,14 @@ class QcStaff extends Model
 
     #============ =========== ============ STATISTICAL ============= =========== ==========
 //  ========== ================= THONG KE THU ===================
+    public function totalReceivedMoneyForCompany($staffId, $date = null)
+    {
+        //  tong tien nhan tu thu don hang
+        $totalMoneyOrderPay = $this->totalReceiveMoneyFromOrderPay($staffId, $date);
+        // tien duoc giao
+        $totalReceivedMoneyOfStaffAndDate = $this->totalMoneyReceivedTransferOfStaffAndDate($staffId, $date);
+        return $totalMoneyOrderPay + $totalReceivedMoneyOfStaffAndDate;
+    }
     #TONG THU
     public function totalReceivedMoney($staffId, $date = null)
     {
@@ -1382,39 +1397,32 @@ class QcStaff extends Model
     public function totalMoneyReceivedTransferOfStaffAndDate($staffId, $dateFilter = null) // tồng tiền nhận
     {
         $modelTransfers = new QcTransfers();
-        return $modelTransfers->totalMoneyOfReceivedStaffAndDate($staffId, $dateFilter);
+        return $modelTransfers->totalMoneyConfirmedOfReceivedStaffAndDate($staffId, $dateFilter);
     }
 
     //  ========== ================= THONG KE CHI ===================
     # tong chi
-    public function totalPaidMoney($staffId, $date = null)
+    public function totalPaidMoney($staffId, $date = null) # thong tien nv giư cua cty
     {
-        #  chi mua vạt tu da duoc duyet
-        $totalMoneyImport = $this->totalMoneyImportConfirmedAndAgreeOfStaff($staffId, $date);
-
-        # Chi GIAO TIEN va Da xac nha
-        $totalMoneyTransfer = $this->totalMoneyTransferConfirmedOfStaffAndDate($staffId, $date);
-
         #chi ứng luong
         $totalMoneyPaidSalaryBeforePay = $this->totalMoneyPaidSalaryBeforePayOfStaffAndDate($staffId, $date);
 
         #chi thanh toan luong - da duoc thanh toan
-        $totalMoneyPaidSalaryPay = $this->totalMoneyPaidSalaryPayOfStaffAndDateAndConfirmed($staffId, $date);
+        $totalMoneyPaidSalaryPay =  $this->totalMoneyPaidSalaryPayOfStaffAndDateAndConfirmed($staffId, $date);
 
-        #chi thanh toan mua vat tu
-        $totalMoneyPayImport = $this->totalMoneyImportPayOfStaffAndDate($staffId, $date);
+        #chi thanh toan mua vat tu - da duoc duyet
+        $totalMoneyPayImport = $this->totalMoneyImportPayConfirmOfStaffAndDate($staffId, $date);
 
-        #chi hoat dong
+        #chi hoat dong - da duoc duyet
         $totalMoneyPayActivity = $this->totalMoneyPayActivityConfirmedAndInvalidOfStaff($staffId, $date);
 
         #hoan tien don hang
         $totalPaidOrderCancelOfStaffAndDate = $this->totalPaidOrderCancelOfStaffAndDate($staffId, $date);
 
-
-        return $totalMoneyTransfer + $totalMoneyImport + $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay + $totalMoneyPayImport + $totalMoneyPayActivity + $totalPaidOrderCancelOfStaffAndDate;
+        return $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay + $totalMoneyPayImport + $totalMoneyPayActivity + $totalPaidOrderCancelOfStaffAndDate;
     }
 
-    ##tong tien da chuyen va da duoc xac nhan
+    #tong tien da chuyen va da duoc xac nhan
     public function totalMoneyTransferConfirmedOfStaffAndDate($staffId, $dateFilter = null) // tồng tiền nhận
     {
         $modelTransfers = new QcTransfers();
@@ -1461,7 +1469,7 @@ class QcStaff extends Model
     public function totalMoneyPaidSalaryPayOfStaffAndDateAndConfirmed($staffId, $dateFilter = null) // tồng tiền nhận
     {
         $modelSalaryPay = new QcSalaryPay();
-        return $modelSalaryPay->totalMoneyOfStaffAndDateAndConfirmed($staffId, $dateFilter);
+        return $modelSalaryPay->totalMoneyConfirmedOfStaffAndDate($staffId, $dateFilter);
     }
 
     public function paymentTypeInfo()

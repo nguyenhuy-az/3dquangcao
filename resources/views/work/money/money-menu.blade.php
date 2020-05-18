@@ -20,14 +20,9 @@ $objectAccess = $dataAccess['object'];
                     <label>Lịch sử thu ĐH</label>
                 </a>
             </li>--}}
-            {{--<li @if($objectAccess == 'moneyPay') class="active" @endif>
-                <a href="{!! route('qc.work.money.pay.import.get') !!}">
-                    <label>Chi mua vật tư</label>
-                </a>
-            </li>--}}
             <li @if($objectAccess == 'moneyTransfer') class="active" @endif>
                 <a href="{!! route('qc.work.money.transfer.transfer.get') !!}">
-                    <label>Lịch sử giao tiền</label>
+                    <label>Giao tiền</label>
                 </a>
             </li>
             <li @if($objectAccess == 'moneyTransferReceive') class="active" @endif>
@@ -35,9 +30,14 @@ $objectAccess = $dataAccess['object'];
                     <label>Nhận tiền</label>
                 </a>
             </li>
+            <li @if($objectAccess == 'moneyStatisticalPayment') class="active" @endif>
+                <a href="{!! route('qc.work.money.payment.get') !!}">
+                    <label>TK chi</label>
+                </a>
+            </li>
             <li @if($objectAccess == 'moneyStatistical') class="active" @endif>
                 <a href="{!! route('qc.work.money.statistical.get') !!}">
-                    <label>Thống kê</label>
+                    <label>Thống kê tiền C.TY</label>
                 </a>
             </li>
         </ul>

@@ -21,41 +21,43 @@ use Request;
 
 class PaySalaryController extends Controller
 {
-    public function index($loginMonth = null, $loginYear = null, $payStatus = 3)
+    public function index($filterMonth = null, $filterYear = null, $payStatus = 3)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelSalary = new QcSalary();
+        $modelSalaryPay = new QcSalaryPay();
         $modelWork = new QcWork();
         $dataStaff = $modelStaff->loginStaffInfo();
         $dataAccess = [
             'object' => 'paySalary',
             'subObjectLabel' => 'Thanh toán lương'
         ];
-        if (count($dataStaff) > 0) {
-            if (empty($loginMonth) && empty($loginYear)) {
+        if ($hFunction->checkCount($dataStaff)) {
+            $loginStaffId = $modelStaff->loginStaffId();
+            if (empty($filterMonth) && empty($filterYear)) {
                 $dateFilter = date('Y-m');
-                $loginMonth = date('m');
-                $loginYear = date('Y');
-            } elseif ($loginMonth == 0) { //xem tat ca cac thang
-                $dateFilter = date('Y', strtotime("1-1-$loginYear"));
+                $filterMonth = date('m');
+                $filterYear = date('Y');
+            } elseif ($filterMonth == 0) { //xem tat ca cac thang
+                $dateFilter = date('Y', strtotime("1-1-$filterYear"));
             } else {
-                $dateFilter = date('Y-m', strtotime("1-$loginMonth-$loginYear"));
+                $dateFilter = date('Y-m', strtotime("1-$filterMonth-$filterYear"));
             }
             $searchCompanyFilterId = [$dataStaff->companyId()];
-            if ($loginMonth < 8 && $loginYear <= 2019) { # du lieu cu phien ban cu --  loc theo staff_id
+            if ($filterMonth < 8 && $filterYear <= 2019) { # du lieu cu phien ban cu --  loc theo staff_id
                 $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
                 $listWorkId = $modelWork->listIdOfListStaffInBeginDate($listStaffId, $dateFilter);
             } else { # du lieu phien ban moi - loc theo thong tin lam viec tai cty (companyStaffWork)
                 $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId);
                 $listWorkId = $modelWork->listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter);
             }
-
-            //$loginMonth = (empty($loginMonth)) ? date('m') : $loginMonth;
-            //$loginYear = (empty($loginYear)) ? date('Y') : $loginYear;
-            //$dataSalary = $modelSalary->selectInfoOfListCompany($searchCompanyFilterId, $dateFilter, $payStatus)->get();
+            #thong tin bang lương
             $dataSalary = $modelSalary->selectInfoByListWork($listWorkId)->get();
-            return view('work.pay.pay-salary.index', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSalary', 'loginMonth', 'loginYear', 'payStatus'));
+            # thong tin thanh toan trong tháng
+            $dataSalaryPay = $modelSalaryPay->infoOfStaffAndDate($loginStaffId, $dateFilter);
+            return view('work.pay.pay-salary.index', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSalary', 'dataSalaryPay', 'dateFilter', 'filterMonth', 'filterYear', 'payStatus'));
         } else {
             return view('work.login');
         }
@@ -177,7 +179,7 @@ class PaySalaryController extends Controller
             foreach ($dataImport as $key => $import) {
                 $importId = $import->importId();
                 $totalImportPay = $import->totalMoneyOfImport();
-                if ($modelImportPay->insert($totalImportPay,$importId , $staffLoginId)) {
+                if ($modelImportPay->insert($totalImportPay, $importId, $staffLoginId)) {
                     $modelImport->confirmPaid($importId);
                 }
             }

@@ -72,7 +72,7 @@ class QcOrderAllocation extends Model
         $modelOrder = new QcOrder();
         $orderId = $this->orderId($allocationId);
         $dataProduct = $modelOrder->productActivityOfOrder($orderId);
-        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['confirmFinish' => 1, 'confirmDate' => $hFunction->carbonNow(), 'finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate,'action' => 1])) {
+        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['confirmFinish' => 1, 'confirmDate' => $hFunction->carbonNow(), 'finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate,'action' => 0])) {
             # khong tre ngay phan cong
             if (!$this->checkLate($allocationId)) {
                 $receiveStaffId = $this->receiveStaffId($allocationId);
@@ -309,7 +309,7 @@ class QcOrderAllocation extends Model
     public function confirmFinish($allocationId = null)
     {
 
-        return $this->pluck('confirmStatus', $allocationId);
+        return $this->pluck('confirmFinish', $allocationId);
     }
 
     public function confirmDate($allocationId = null)
@@ -373,7 +373,7 @@ class QcOrderAllocation extends Model
     public function checkActivity($allocationId = null)
     {
         $result = $this->action($allocationId);
-        $result = is_int($result) ? $result : $result[0];
+        $result = (is_int($result)) ? $result : $result[0];
         return ($result == 1) ? true : false;
     }
 
@@ -381,7 +381,7 @@ class QcOrderAllocation extends Model
     public function checkFinish($allocationId = null)
     {
         $result = $this->finishStatus($allocationId);
-        $result = is_int($result) ? $result : $result[0];
+        $result = (is_int($result)) ? $result : $result[0];
         return ($result == 1) ? true : false;
     }
 
@@ -389,7 +389,7 @@ class QcOrderAllocation extends Model
     public function checkConfirm($allocationId = null)
     {
         $result = $this->confirmStatus($allocationId);
-        $result = is_int($result) ? $result : $result[0];
+        $result = (is_int($result)) ? $result : $result[0];
         return ($result == 1) ? true : false;
     }
 
@@ -397,7 +397,7 @@ class QcOrderAllocation extends Model
     public function checkConfirmFinish($allocationId = null)
     {
         $result = $this->confirmFinish($allocationId);
-        $result = is_int($result) ? $result : $result[0];
+        $result = (is_int($result)) ? $result : $result[0];
         return ($result == 1) ? true : false;
     }
 
@@ -417,14 +417,21 @@ class QcOrderAllocation extends Model
         $hFunction = new \Hfunction();
         $checkDate = $hFunction->carbonNow();
         $lateStatus = false;
-        $receiveDeadline = $this->receiveDeadline($allocationId);
+        $receiveDeadline = $this->receiveDeadline($allocationId)[0];
         if (!$this->checkActivity($allocationId)) { # cong viec da xong
             if ($this->checkFinish()) { # co bao hoan thanh
-                $finishDate = $this->finishDate($allocationId);
-                if ($finishDate > $receiveDeadline[0]) $lateStatus = true;
+                $finishDate = $this->finishDate($allocationId)[0];
+                if ($finishDate > $receiveDeadline){
+                    //echo "$finishDate === <br/>==== $receiveDeadline";
+                    //die();
+                    $lateStatus = true;
+                } else{
+                    //echo "No  $finishDate ======= $receiveDeadline";
+                    //die();
+                }
             }
         } else { # don hang chưa ket thuc
-            if ($checkDate > $receiveDeadline[0]) $lateStatus = true;
+            if ($checkDate > $receiveDeadline) $lateStatus = true;
         }
         return $lateStatus;
     }

@@ -12,16 +12,9 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaffLogin->staffId();
-
-$dataOrderPay = null;
-$currentMonth = $hFunction->currentMonth();
-If (empty($loginDay)) {
-    $loginDate = date('Y-m', strtotime("$loginYear-$loginMonth"));
-} else {
-    $loginDate = date('Y-m-d', strtotime("$loginYear-$loginMonth-$loginDay"));
-}
-$dataOrderPay = $dataStaffLogin->orderPayNoTransferOfStaff($loginStaffId, null);
-$totalMoney = 0;
+$totalReceiveMoney = 0;
+# tong chi
+$totalPaidMoney = $dataStaffLogin->totalPaidMoney($loginStaffId,$dateFilter);
 ?>
 @extends('work.index')
 @section('titlePage')
@@ -38,65 +31,58 @@ $totalMoney = 0;
                     <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <label class="qc-color-red">Thu chưa bàn giao</label>
                     </div>
-                    {{--<div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                        <select class="qc_work_money_receive_login_year" style="height: 25px;"
-                                data-href="{!! route('qc.work.money.receive.get') !!}">
-                            <option @if($loginDay == null) selected="selected" @endif>
-                                Trong tháng
-                            </option>
-                            @for($i = 1; $i <=31; $i++)
-                                <option @if($loginDay == $i) selected="selected" @endif>
-                                    {!! $i !!}
-                                </option>
-                            @endfor
-                        </select>
-                        <span>/</span>
-                        <select class="qc_work_money_receive_login_month" style="height: 25px;"
-                                data-href="{!! route('qc.work.money.receive.get') !!}">
-                            @for($i = 1; $i <=12; $i++)
-                                <option @if($loginMonth == $i) selected="selected" @endif>
-                                    {!! $i !!}
-                                </option>
-                            @endfor
-                        </select>
-                        <span>/</span>
-                        <select class="qc_work_money_receive_login_year" style="height: 25px;"
-                                data-href="{!! route('qc.work.money.receive.get') !!}">
-                            @for($i = 2017; $i <=2050; $i++)
-                                <option @if($loginYear == $i) selected="selected" @endif>
-                                    {!! $i !!}
-                                </option>
-                            @endfor
-                        </select>
-                    </div>--}}
                 </div>
                 <div class="qc_work_money_receive_list_content row">
                     <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <form class="qc_work_frm_transfer_receive"
+                        <form class="qc_work_frm_transfer_receive" enctype="multipart/form-data"
                               name="qc_work_frm_transfer_receive" role="form" method="post"
-                              enctype="multipart/form-data"
                               action="{!! route('qc.work.money.receive.transfer.post') !!}">
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
-                                    <tr>
+                                    <tr style="background-color: black;color: yellow;">
                                         <th style="width: 20px;"></th>
-                                        <th>Ngày</th>
+                                        <th>Ngày thu</th>
                                         <th>Mã ĐH</th>
                                         <th>Tên ĐH</th>
-                                        <th>Ngày nhận ĐH</th>
                                         <th>Điện thoại</th>
                                         <th class="text-right">Số tiền</th>
                                     </tr>
-                                    @if(count($dataOrderPay) > 0)
+                                    <tr>
+                                        <td></td>
+                                        <td style="padding: 0">
+                                            <select class="qc_work_money_receive_filter_month" style="height: 25px;"
+                                                    data-href="{!! route('qc.work.money.receive.get') !!}">
+                                                @for($m = 1; $m <=12; $m++)
+                                                    <option @if($monthFilter == $m) selected="selected" @endif>
+                                                        {!! $m !!}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                            <span>/</span>
+                                            <select class="qc_work_money_receive_filter_year" style="height: 25px;"
+                                                    data-href="{!! route('qc.work.money.receive.get') !!}">
+                                                @for($y = 2017; $y <=2050; $y++)
+                                                    <option @if($yearFilter == $y) selected="selected" @endif>
+                                                        {!! $y !!}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    @if($hFunction->checkCount($dataOrderPay))
                                         <?php
                                         $n_o = 0;
                                         ?>
                                         @foreach($dataOrderPay as $orderPay)
                                             <?php
-                                            $totalMoney = $totalMoney + $orderPay->money();
+                                            $totalReceiveMoney = $totalReceiveMoney + $orderPay->money();
+                                            $n_o = $n_o + 1;
                                             ?>
-                                            <tr>
+                                            <tr @if($n_o%2) class="info" @endif>
                                                 <td class="text-center">
                                                     <input type="checkbox" checked="checked" name="txtPayShow[]"
                                                            disabled value="{!! $orderPay->payId() !!}">
@@ -113,9 +99,6 @@ $totalMoney = 0;
                                                     <span>{!! $orderPay->order->name() !!}</span>
                                                 </td>
                                                 <td>
-                                                    <span class="qc-color-grey">{!! date('d/m/Y',strtotime($orderPay->order->receiveDate()))  !!}</span>
-                                                </td>
-                                                <td>
                                                     @if(!empty($orderPay->payerPhone()))
                                                         <span>{!! $orderPay->payerPhone() !!}</span>
                                                     @else
@@ -123,16 +106,16 @@ $totalMoney = 0;
                                                     @endif
                                                 </td>
                                                 <td class="text-right">
-                                                    {!! number_format($orderPay->money()) !!}
+                                                    {!! $hFunction->currencyFormat($orderPay->money()) !!}
                                                 </td>
                                             </tr>
                                         @endforeach
                                         <tr>
                                             <td class="text-right qc-color-red"
-                                                style="background-color: whitesmoke;" colspan="6">
+                                                style="background-color: whitesmoke;" colspan="5">
                                             </td>
                                             <td class="text-right qc-color-red">
-                                                {!! number_format($totalMoney)  !!}
+                                                {!! $hFunction->currencyFormat($totalReceiveMoney)  !!}
                                             </td>
                                         </tr>
                                     @else
@@ -144,7 +127,7 @@ $totalMoney = 0;
                                     @endif
                                 </table>
                             </div>
-                            @if($totalMoney > 0)
+                            @if($totalReceiveMoney > 0)
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <div class="form-group form-group-sm"
@@ -152,51 +135,84 @@ $totalMoney = 0;
                                             <label class="qc-color-red">Giao tiền</label>
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-                                        <div class="form-group form-group-sm">
-                                            <label>Số tiền:</label>
-                                            <input class="form-control" type="text" name="txtTotalMoney" readonly
-                                                   value="{!! number_format($totalMoney) !!}">
+                                    @if($hFunction->checkCount($dataStaffReceiveTransfer))
+                                        <?php
+                                        $transferMoney = $totalReceiveMoney - $totalPaidMoney;
+                                        ?>
+                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                            <div class="form-group form-group-sm">
+                                                <label>Số tiền đã thu:</label>
+                                                <input class="form-control" type="text" name="txtTotalReceiveMoney"
+                                                       readonly
+                                                       value="{!! $hFunction->currencyFormat($totalReceiveMoney) !!}">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-                                        <div class="form-group form-group-sm">
-                                            <label>Người nhận:</label>
-                                            <select class="form-control" name="cbStaffReceive">
-                                                <option value="">Chọn người nhận</option>
-                                                @if(count($dataStaffReceiveTransfer) > 0)
-                                                    @foreach($dataStaffReceiveTransfer as $staff)
-                                                        <option value="{!! $staff->staffId() !!}">{!! $staff->fullname() !!}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
+                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                            <div class="form-group form-group-sm">
+                                                <label>Số tiền đã chi:</label>
+                                                <input class="form-control" type="text" name="txtTotalPaidMoney"
+                                                       readonly
+                                                       value="{!! $hFunction->currencyFormat($totalPaidMoney) !!}">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-                                        <div class="form-group form-group-sm">
-                                            <label>Ảnh xác nhận:</label>
-                                            <input class="txtTransferImage" type="file" name="txtTransferImage">
+                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                            <div class="form-group form-group-sm">
+                                                <label>Số tiền giao:</label>
+                                                <input class="form-control" type="text" name="txtTransferMoney" readonly
+                                                       value="{!! $hFunction->currencyFormat($totalReceiveMoney-$totalPaidMoney) !!}">
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="form-group form-group-sm">
-                                            <label>Ghi chú:</label>
-                                            <input class="form-control" type="text" name="txtNote" value="">
+                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                            <div class="form-group form-group-sm">
+                                                <label>Người nhận</label> <em style="color: red;">(Từ công ty mẹ)</em>
+                                                <select class="form-control" name="cbStaffReceive">
+                                                    <option value="">Chọn người nhận</option>
+                                                    @if($hFunction->checkCount($dataStaffReceiveTransfer))
+                                                        @foreach($dataStaffReceiveTransfer as $staff)
+                                                            <option value="{!! $staff->staffId() !!}">{!! $staff->fullname() !!}</option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="text-center form-group form-group-sm">
-                                            <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                                            <button type="button" class="qc_transfer_save btn btn-sm btn-primary">
-                                                Giao
-                                            </button>
-                                            <button type="reset" class="btn btn-sm btn-default">Nhập lại</button>
+                                        @if($transferMoney > 0)
+                                            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                                <div class="form-group form-group-sm">
+                                                    <label>Ảnh xác nhận:</label>
+                                                    <input class="txtTransferImage" type="file" name="txtTransferImage">
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                                                <div class="form-group form-group-sm">
+                                                    <label>Ghi chú:</label>
+                                                    <input class="form-control" type="text" name="txtNote" value="">
+                                                </div>
+                                            </div>
+                                            <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div class="text-center form-group form-group-sm">
+                                                    <input type="hidden" name="_token" value="{!! csrf_token() !!}">
+                                                    <button type="button"
+                                                            class="qc_transfer_save btn btn-sm btn-primary">
+                                                        Giao
+                                                    </button>
+                                                    <button type="reset" class="btn btn-sm btn-default">Nhập lại
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div class="text-center form-group form-group-sm">
+                                                    <label style="font-size: 1.5em; color: deeppink;">Không có tiền để giao</label>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="form-group form-group-sm">
+                                                <span style="color: deeppink;">Không có thông tin người nhận</span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </div>
                             @endif
                         </form>

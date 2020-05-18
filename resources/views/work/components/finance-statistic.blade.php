@@ -42,6 +42,7 @@ if (count($dataWork) > 0) {
 
 }
 $sumPlusMinute_1_5 = $sumPlusMinute * 1.5;
+# ======== ======= THO
 # --- ---- THU ---------
 $totalMoneyMainWork = ($sumMainMinute / 60) * $salaryOneHour;
 # tien lam tang ca
@@ -50,24 +51,25 @@ $totalMoneyOvertimeWork = ($sumPlusMinute_1_5 / 60) * $salaryOneHour;
 $totalMoneyAllowanceOvertime = ($sumPlusMinute / 60) * $overtimeHour;
 # tong tien mua vat tu
 $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($loginStaffId, $dateFilter, 3);
+
 # chi ung luong
-$totalMoneyPaidSalaryBeforePayOfStaffAndDate = $modelStaff->totalMoneyPaidSalaryBeforePayOfStaffAndDate($loginStaffId, $dateFilter);
+//$totalMoneyPaidSalaryBeforePayOfStaffAndDate = $modelStaff->totalMoneyPaidSalaryBeforePayOfStaffAndDate($loginStaffId, $dateFilter);
 
 
 # --- ---- CHI ---------
 $totalMoneyImportPaidOfStaff = $modelStaff->totalMoneyImportOfStaff($loginStaffId, $dateFilter, 1); // tong tien mua vat tu da thanh toan
 # hoan tra huy don hang
-$totalPaidOrderCancelOfStaffAndDate = $modelStaff->totalPaidOrderCancelOfStaffAndDate($loginStaffId, $dateFilter);
+//$totalPaidOrderCancelOfStaffAndDate = $modelStaff->totalPaidOrderCancelOfStaffAndDate($loginStaffId, $dateFilter);
 
 #tong lương lanh
-$totalSalary = $totalMoneyBonus + $totalMoneyMainWork + $totalMoneyOvertimeWork + $totalMoneyAllowanceOvertime + $totalMoneyImportOfStaff + $totalMoneyPaidSalaryBeforePayOfStaffAndDate + $totalPaidOrderCancelOfStaffAndDate;
+$totalSalary = $totalMoneyBonus + $totalMoneyMainWork + $totalMoneyOvertimeWork + $totalMoneyAllowanceOvertime + $totalMoneyImportOfStaff;
 #
 $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalMoneyMinus;
 
 ?>
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <Label class="qc-color-red">THỐNG KÊ TÀI CHÍNH </Label>
+        <Label class="qc-color-red">THỐNG KÊ TÀI CHÍNH CÁ NHÂN </Label>
         <em>(Tháng {!! $currentMonth !!})</em> <br/>
     </div>
 </div>
@@ -77,14 +79,14 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="table-responsive">
                     <table class="table table-hover qc-margin-bot-none">
-                        <tr style="border-bottom: 1px solid #d7d7d7;">
+                        {{--<tr style="border-bottom: 1px solid #d7d7d7;">
                             <td>
                                 <em class="qc-color-grey">Tổng Tiền:</em>
                             </td>
                             <td class="text-right">
-                                <b class="qc-color-red">{!! $hFunction->currencyFormat($totalSalary) !!}</b>
+                                    <b class="qc-color-red">{!! $hFunction->currencyFormat($totalSalary) !!}</b>
                             </td>
-                        </tr>
+                        </tr>--}}
                         <tr>
                             <td>
                                 <i class="glyphicon glyphicon-plus"></i>
@@ -122,7 +124,7 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
                                 <b class="qc-color-green">+ {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}</b>
                             </td>
                         </tr>
-                        <tr>
+                        {{--<tr>
                             <td>
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span>Chi ứng lương</span>
@@ -131,8 +133,8 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
                             <td class="text-right">
                                 <b class="qc-color-green">+ {!! $hFunction->currencyFormat($totalMoneyPaidSalaryBeforePayOfStaffAndDate) !!}</b>
                             </td>
-                        </tr>
-                        <tr>
+                        </tr>--}}
+                        {{--<tr>
                             <td>
                                 <i class="glyphicon glyphicon-plus"></i>
                                 <span>Hoàn tiền ĐH:</span>
@@ -140,7 +142,7 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
                             <td class="text-right">
                                 <b class="qc-color-green">+ {!! $hFunction->currencyFormat($totalPaidOrderCancelOfStaffAndDate) !!}</b>
                             </td>
-                        </tr>
+                        </tr>--}}
                         <tr>
                             <td>
                                 <i class="glyphicon glyphicon-plus"></i>

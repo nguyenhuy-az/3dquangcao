@@ -215,7 +215,7 @@ class QcTransfers extends Model
         }
 
     }
-    public function totalMoneyOfReceivedStaffAndDate($staffId, $date=null)
+    public function totalMoneyConfirmedOfReceivedStaffAndDate($staffId, $date=null)
     {
         if (!empty($date)) {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive',1)->where('transfersDate', 'like', "%$date%")->sum('money');

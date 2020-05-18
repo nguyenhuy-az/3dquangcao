@@ -45,9 +45,9 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                 <th>Khách hàng</th>
                                 <th class="text-center">Thời gian được giao</th>
                                 <th class="text-center">Thời hạn bàn giao</th>
-                                <th class="text-center">Ngày hoàn thành</th>
-                                <th class="text-center">Thưởng đúng hạn</th>
-                                <th class="text-center">Phạt trễ hạn</th>
+                                <th class="text-center">Ngày giao</th>
+                                <th class="text-center">Thưởng <br/> đúng hạn</th>
+                                <th class="text-center">Phạt <br/> trễ hạn</th>
                                 <th>QL sản phẩm</th>
                                 <th class="text-center">Báo cáo</th>
                             </tr>
@@ -97,8 +97,6 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                     $orderId = $orders->orderId();
                                     $customerId = $orders->customerId();
                                     $allocationFinishDate = $ordersAllocation->finishDate();
-
-
                                     ?>
                                     <tr class="qc_work_list_content_object @if($n_o%2) info @endif"
                                         data-object="{!! $orderId !!}">
@@ -124,7 +122,7 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                             {!! $orders->name() !!}
                                         </td>
                                         <td>
-                                            {!! $allocationId.$orders->customer->name() !!}
+                                            {!! $orders->customer->name() !!}
                                         </td>
                                         <td class="text-center">
                                             {!! date('d-m-Y', strtotime($ordersAllocation->allocationDate())) !!}
@@ -154,10 +152,11 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                                href="{!! route('qc.work.work_allocation.construction.product.get',$allocationId) !!}">
                                                 Quản lý Sản phẩm
                                             </a>
+                                            <br/>
                                             @if($ordersAllocation->checkViewedNewOrderAllocation($allocationId,$loginStaffId))
-                                                <em style="color: grey;"> - Đã xem</em>
+                                                <em style="color: grey;"> Đã xem</em>
                                             @else
-                                                <em style="color: red;"> - Chưa xem</em>
+                                                <em style="color: red;"> Chưa xem</em>
                                             @endif
 
                                         </td>
@@ -172,16 +171,16 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                                     </a>
                                                 @endif
                                             @else
-                                                @if($ordersAllocation->checkFinish())
-                                                    <em>Xong</em> |
-                                                    @if($ordersAllocation->checkConfirmFinish())
-                                                        <em class="qc-color-grey">Hoàn thành</em>
+                                                    @if($ordersAllocation->checkCancelAllocation())
+                                                    <em style="color: grey;">---</em>
+                                                @else
+                                                    @if($ordersAllocation->checkConfirmFinish($allocationId))
+                                                        <em class="qc-color-grey">Đã hoàn thành</em>
                                                     @else
                                                         <em class="qc-color-grey">Không hoàn thành</em>
                                                     @endif
-                                                @else
-                                                    <span>---</span>
                                                 @endif
+
                                             @endif
                                         </td>
                                     </tr>

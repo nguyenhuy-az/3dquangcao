@@ -83,7 +83,6 @@ class OrderController extends Controller
 
         //$listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
 
-        //echo "$dateFilter";
         if (!empty($orderCustomerFilterName)) {
             $dataOrderSelect = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus);
         } else {

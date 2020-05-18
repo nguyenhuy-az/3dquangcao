@@ -11,7 +11,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$hrefIndex = route('qc.ad3d.finance.order-payment.get');
+$hrefIndex =  route('qc.ad3d.finance.order-payment.get');
 ?>
 @extends('ad3d.finance.order-payment.index')
 @section('qc_ad3d_index_content')
@@ -30,7 +30,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                         {{--@if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
                         @endif--}}
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"

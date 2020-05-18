@@ -123,59 +123,59 @@ var qc_work = {
         }
     },
     /*salary: {
-        /!*salary: {
-            getConfirm: function (href) {
-                qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-            },
-            save: function (form) {
-                var notifyContent = $(form).find('.frm_notify');
-                if (confirm('Tôi đã nhận số lương này')) {
-                    qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
-                    qc_main.scrollTop();
-                }
+     /!*salary: {
+     getConfirm: function (href) {
+     qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+     },
+     save: function (form) {
+     var notifyContent = $(form).find('.frm_notify');
+     if (confirm('Tôi đã nhận số lương này')) {
+     qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
+     qc_main.scrollTop();
+     }
 
-            },
-        },*!/
-        /!*salaryBeforePay: {
-            request: {
-                getForm: function (href) {
-                    qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-                },
-                save: function (form) {
-                    var txtMoneyRequest = $(form).find("input[name='txtMoneyRequest']");
-                    if (txtMoneyRequest.val().length > 0) {
-                        if (parseInt(txtMoneyRequest.val()) > parseInt(txtMoneyRequest.data('limit'))) {
-                            alert('Số tiền không được vượt hạn mức');
-                            txtMoneyRequest.focus();
-                            return false;
-                        } else {
-                            var notifyContent = $(form).find('.frm_notify');
-                            if (confirm('Bạn muốn ứng ' + txtMoneyRequest.val() + '?')) {
-                                qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
-                                qc_main.scrollTop();
-                            }
-                        }
-                    } else {
-                        alert('Nhập số tiền ứng');
-                        txtMoneyRequest.focus();
-                        return false;
-                    }
+     },
+     },*!/
+     /!*salaryBeforePay: {
+     request: {
+     getForm: function (href) {
+     qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+     },
+     save: function (form) {
+     var txtMoneyRequest = $(form).find("input[name='txtMoneyRequest']");
+     if (txtMoneyRequest.val().length > 0) {
+     if (parseInt(txtMoneyRequest.val()) > parseInt(txtMoneyRequest.data('limit'))) {
+     alert('Số tiền không được vượt hạn mức');
+     txtMoneyRequest.focus();
+     return false;
+     } else {
+     var notifyContent = $(form).find('.frm_notify');
+     if (confirm('Bạn muốn ứng ' + txtMoneyRequest.val() + '?')) {
+     qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
+     qc_main.scrollTop();
+     }
+     }
+     } else {
+     alert('Nhập số tiền ứng');
+     txtMoneyRequest.focus();
+     return false;
+     }
 
-                },
-                cancel: function (href) {
-                    if (confirm('Bạn muốn hủy yêu cầu?')) {
-                        qc_master_submit.ajaxHasReload(href, '#qc_master', false);
-                    }
-                }
-            }
-        },*!/
+     },
+     cancel: function (href) {
+     if (confirm('Bạn muốn hủy yêu cầu?')) {
+     qc_master_submit.ajaxHasReload(href, '#qc_master', false);
+     }
+     }
+     }
+     },*!/
 
-    },
-    kpi: {
-        getRegister: function (href) {
-            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-        }
-    },*/
+     },
+     kpi: {
+     getRegister: function (href) {
+     qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+     }
+     },*/
 
     workAllocation: {
         construction: {
@@ -432,12 +432,12 @@ $(document).ready(function () {
     //--------------------- viec da hoan thanh -----------------------
     //xem  bao cao
     /*$('body').on('click', '.qc_work_allocation_finish_contain .qc_work_allocation_report_view', function () {
-        $(this).parents('.qc_work_allocation_finish_contain').find('.qc_work_allocation_report_wrap').show();
-    });
-    //ẩn báo cáo
-    $('body').on('click', '.qc_work_allocation_finish_contain .qc_work_allocation_report_hide', function () {
-        $(this).parents('.qc_work_allocation_report_wrap').hide();
-    });*/
+     $(this).parents('.qc_work_allocation_finish_contain').find('.qc_work_allocation_report_wrap').show();
+     });
+     //ẩn báo cáo
+     $('body').on('click', '.qc_work_allocation_finish_contain .qc_work_allocation_report_hide', function () {
+     $(this).parents('.qc_work_allocation_report_wrap').hide();
+     });*/
 
     //------------------- quan ly giao cong trinh -------------------------
     //theo tháng
@@ -569,23 +569,23 @@ $(document).ready(function () {
     });
 
     //----------------  UNG LUONG ---------------------------------
-   /* $('body').on('change', '.qc_work_salary_before_pay_month', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_salary_before_pay_year').val());
-    });
-    $('body').on('change', '.qc_work_salary_before_pay_year', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $('.qc_work_salary_before_pay_month').val() + '/' + $(this).val());
-    });
+    /* $('body').on('change', '.qc_work_salary_before_pay_month', function () {
+     qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_salary_before_pay_year').val());
+     });
+     $('body').on('change', '.qc_work_salary_before_pay_year', function () {
+     qc_main.url_replace($(this).data('href') + '/' + $('.qc_work_salary_before_pay_month').val() + '/' + $(this).val());
+     });
 
-    $('body').on('click', '.qc_work_before_pay_request_action', function () {
-        qc_work.salary.salaryBeforePay.request.getForm($(this).data('href'));
-    });
-    $('body').on('click', '.frm_work_before_pay_request .qc_save', function () {
-        qc_work.salary.salaryBeforePay.request.save($(this).parents('.frm_work_before_pay_request'));
-    });
-    //hủy yêu cầu ứng lương
-    $('body').on('click', '.qc_salary_before_pay_request_cancel', function () {
-        qc_work.salary.salaryBeforePay.request.cancel($(this).data('href'));
-    })*/
+     $('body').on('click', '.qc_work_before_pay_request_action', function () {
+     qc_work.salary.salaryBeforePay.request.getForm($(this).data('href'));
+     });
+     $('body').on('click', '.frm_work_before_pay_request .qc_save', function () {
+     qc_work.salary.salaryBeforePay.request.save($(this).parents('.frm_work_before_pay_request'));
+     });
+     //hủy yêu cầu ứng lương
+     $('body').on('click', '.qc_salary_before_pay_request_cancel', function () {
+     qc_work.salary.salaryBeforePay.request.cancel($(this).data('href'));
+     })*/
 });
 
 //======================== CHẤM CÔNG ==============================
@@ -681,15 +681,26 @@ $(document).ready(function () {
 });
 //========================= THU - CHI ===============================
 $(document).ready(function () {
-    // thu
+    // thu va giao tien
     $('body').on('click', '.qc_work_money_receive_list_content', function () {
         //qc_work.money.receive.getTransfer($(this).data('href'));
+    });
+
+    //theo tháng
+    $('body').on('change', '.qc_work_money_receive_filter_month', function () {
+        qc_work.money.transfers.filter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_receive_filter_year').val());
+    });
+
+    // năm
+    $('body').on('change', '.qc_work_money_transfer_login_year', function () {
+        qc_work.money.transfers.filter($(this).data('href') + '/' + $('.qc_work_money_receive_filter_month').val() + '/' + $(this).val());
     });
 
     $('.qc_work_frm_transfer_receive').on('click', '.qc_transfer_save', function () {
         qc_work.money.receive.postTransfer($(this).parents('.qc_work_frm_transfer_receive'));
     });
-
+});
+$(document).ready(function () {
     //------------- bàn giao  tiền -------------------
     //theo ngày
     $('body').on('change', '.qc_work_money_transfer_login_day', function () {

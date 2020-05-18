@@ -22,7 +22,9 @@ $hrefIndex = route('qc.work.minus_money.get');
                             <tr style="background-color: whitesmoke;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Ngày</th>
-                                <th>Lý do</th>
+                                <th>Nguyên nhân</th>
+                                <th>Ghi chú</th>
+                                <th class="text-center">Áp dụng</th>
                                 <th class="text-right">Số tiền</th>
                             </tr>
                             <tr>
@@ -53,13 +55,28 @@ $hrefIndex = route('qc.work.minus_money.get');
                                     </select>
                                 </td>
                                 <td class="text-center"></td>
+                                <td class="text-center"></td>
+                                <td class="text-center"></td>
                                 <td class="text-right">
-                                    <b style="color: red;">{!! $hFunction->currencyFormat($totalMinusMoney) !!}</b>
                                 </td>
                             </tr>
-                            @if(count($dataMinusMoney) > 0)
-                                <?php $n_o = 0; ?>
+                            @if($hFunction->checkCount($dataMinusMoney))
+                                <?php
+                                $n_o = 0;
+                                $totalMoney = 0;
+                                ?>
                                 @foreach($dataMinusMoney as $minusMoney)
+                                    <?php
+                                    $orderAllocationId = $minusMoney->orderAllocationId();
+                                    $reason = $minusMoney->reason();
+                                    $cancelStatus = $minusMoney->checkCancelStatus();
+                                    if ($cancelStatus) {
+                                        $money = 0;
+                                    } else {
+                                        $money = $minusMoney->money();
+                                    }
+                                    $totalMoney = $totalMoney + $money;
+                                    ?>
                                     <tr @if($n_o%2) class="info" @endif>
                                         <td class="text-center">
                                             {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
@@ -70,14 +87,40 @@ $hrefIndex = route('qc.work.minus_money.get');
                                         <td>
                                             {!! $minusMoney->punishContent->name() !!}
                                         </td>
+                                        <td>
+                                            @if(!$hFunction->checkEmpty($orderAllocationId))
+                                                <em>Đơn hàng:</em>
+                                                <b>{!! $minusMoney->orderAllocation->orders->name() !!}</b>
+                                                <br/>
+                                                <em>Ghi chú báo cáo:</em>
+                                                <b>{!! $minusMoney->orderAllocation->noted() !!}</b>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            @if($cancelStatus)
+                                                <em style="color: grey;">Đã hủy</em>
+                                            @else
+                                                @if($minusMoney->checkEnableApply())
+                                                    <em>Có hiệu lực</em>
+                                                @else
+                                                    <span>Tạm thời</span>
+                                                @endif
+                                            @endif
+                                        </td>
                                         <td class="text-right">
-                                            {!! $hFunction->dotNumber($minusMoney->money()) !!}
+                                            {!! $hFunction->currencyFormat($money) !!}
                                         </td>
                                     </tr>
                                 @endforeach
+                                <tr>
+                                    <td class="text-center" colspan="5" style="background-color: black;"></td>
+                                    <td class="text-right">
+                                        <b style="color: red;">{!! $hFunction->currencyFormat($totalMoney) !!}</b>
+                                    </td>
+                                </tr>
                             @else
                                 <tr>
-                                    <td class="text-center qc-padding-none" colspan="4">
+                                    <td class="text-center qc-padding-none" colspan="5">
                                         Không có thông tin phạt
                                     </td>
                                 </tr>

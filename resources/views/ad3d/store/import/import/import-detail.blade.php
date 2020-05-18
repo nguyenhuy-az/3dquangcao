@@ -32,7 +32,7 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                                         <img class="qc-link" onclick="qc_main.rotateImage(this);" alt="..."
                                              title="Click xoay hình"
                                              src="{!! $importImage->pathFullImage($importImage->name()) !!}"
-                                             style="max-width: 100%; border: 1px solid #d7d7d7;">
+                                             style="max-width: 30%; border: 1px solid #d7d7d7;">
                                     </td>
                                 </tr>
                             </table>
@@ -66,7 +66,7 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                                 <th class="text-center">Đơn vị tính</th>
                                 <th class="text-right">Thành tiền</th>
                             </tr>
-                            @if(count($dataImportDetail) > 0)
+                            @if($hFunction->checkCount($dataImportDetail))
                                 @foreach($dataImportDetail as $importDetail)
                                     <?php
                                     $n_o = 0;

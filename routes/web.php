@@ -306,20 +306,29 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('/{companyId?}/{day?}/{month?}/{year?}/{orderFilterName?}/{staffFilterId?}/{transferStatus?}', ['as' => 'qc.ad3d.finance.order-payment.get', 'uses' => 'Ad3d\Finance\OrderPayment\OrderPaymentController@index']);
         });
 
+        #thong tin phat
         Route::group(['prefix' => 'minus-money'], function () {
-            Route::get('view/{payId?}', ['as' => 'qc.ad3d.finance.minus-money.view.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@view']);
-            //Add
-            Route::get('add/{companyLoginId?}/{workId?}/{punishId?}', ['as' => 'qc.ad3d.finance.minus-money.add.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getAdd']);
-            Route::post('add', ['as' => 'qc.ad3d.finance.minus-money.add.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postAdd']);
+            //Route::get('view/{payId?}', ['as' => 'qc.ad3d.finance.minus-money.view.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@view']);
+            //them
+            //Route::get('add/{companyLoginId?}/{workId?}/{punishId?}', ['as' => 'qc.ad3d.finance.minus-money.add.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getAdd']);
+            //Route::post('add', ['as' => 'qc.ad3d.finance.minus-money.add.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postAdd']);
 
-            //edit
-            Route::get('edit/{payId?}', ['as' => 'qc.ad3d.finance.minus-money.edit.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getEdit']);
-            Route::post('edit/{payId?}', ['as' => 'qc.ad3d.finance.minus-money.edit.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postEdit']);
+            //sua
+            //Route::get('edit/{minusId?}', ['as' => 'qc.ad3d.finance.minus-money.edit.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getEdit']);
+            //Route::post('edit/{minusId?}', ['as' => 'qc.ad3d.finance.minus-money.edit.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postEdit']);
 
-            //delete
-            Route::get('delete/{payId?}', ['as' => 'qc.ad3d.finance.minus-money.delete', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@deleteMinusMoney']);
+            //huy
+            Route::get('cancel/{minusId?}', ['as' => 'qc.ad3d.finance.minus-money.cancel', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@cancelMinusMoney']);
 
             Route::get('/{companyId?}/{day?}/{month?}/{year?}/{punishContentId?}/{name?}', ['as' => 'qc.ad3d.finance.minus-money.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@index']);
+        });
+
+        # thong tin thuong
+        Route::group(['prefix' => 'bonus'], function () {
+            //huy
+            Route::get('cancel/{bonusId?}', ['as' => 'qc.ad3d.finance.bonus.cancel', 'uses' => 'Ad3d\Finance\Bonus\BonusController@cancelBonus']);
+
+            Route::get('/{companyId?}/{day?}/{month?}/{year?}/{name?}', ['as' => 'qc.ad3d.finance.bonus.get', 'uses' => 'Ad3d\Finance\Bonus\BonusController@index']);
         });
 
         Route::group(['prefix' => 'salary'], function () {
@@ -922,18 +931,17 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::group(['prefix' => 'receive'], function () {
             Route::post('transfer', ['as' => 'qc.work.money.receive.transfer.post', 'uses' => 'Work\Money\Receive\MoneyReceiveController@postTransfer']);
 
-            Route::get('/{loginDay?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.receive.get', 'uses' => 'Work\Money\Receive\MoneyReceiveController@index']);
+            Route::get('/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.receive.get', 'uses' => 'Work\Money\Receive\MoneyReceiveController@index']);
         });
 
         # thong tin chi
-        Route::group(['prefix' => 'pay'], function () {
-            //Route::post('transfer', ['as' => 'qc.work.money.receive.transfer.post', 'uses' => 'Work\Money\Receive\MoneyReceiveController@postTransfer']);
-            Route::get('import/{loginDay?}/{loginMonth?}/{loginYear?}/{payStatus?}', ['as' => 'qc.work.money.pay.import.get', 'uses' => 'Work\Money\Pay\Import\MoneyPayImportController@index']);
+        Route::group(['prefix' => 'payment'], function () {
+            Route::get('/{object?}/{dateFilter?}/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.money.payment.get', 'uses' => 'Work\Money\Payment\PaymentController@index']);
         });
 
         # tien thu chua ban giao
         Route::group(['prefix' => 'history'], function () {
-            Route::get('receive/{loginDay?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.history.receive.get', 'uses' => 'Work\Money\History\MoneyHistoryController@historyReceive']);
+            Route::get('receive/{dateFilter?}/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.money.history.receive.get', 'uses' => 'Work\Money\History\MoneyHistoryController@historyReceive']);
         });
 
         # giao tien
@@ -942,7 +950,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::get('transfer/{loginDay?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.transfer.transfer.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferIndex']);
             # thong tin nhan tien
             Route::get('receive-confirm/{transferId?}', ['as' => 'qc.work.money.transfer.receive.confirm.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveConfirm']);
-            Route::get('receive/{loginDay?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.transfer.receive.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveIndex']);
+            Route::get('receive/{dateFilter?}/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.money.transfer.receive.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveIndex']);
         });
 
         # thong ke
@@ -1193,7 +1201,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::get('pay/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.pay.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getPay']);
         Route::post('pay/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.pay.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postPay']);
         // xóa
-        //Route::get('delete/{payId?}', ['as' => 'qc.work.pay.pay_salary.delete.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@deletePayActivity']);
+        //Route::get('delete/{payId?}', ['as' => 'qc.work.pay.pay_salary.delete.get', 'uses' => 'Work\Payment\PaySalary\PaySalaryController@deletePayActivity']);
 
         Route::get('/{loginMonth?}/{loginYear?}/{payStatus?}', ['as' => 'qc.work.pay.pay_salary.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@index']);
     });

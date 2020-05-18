@@ -37,7 +37,7 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
                         @endif
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"
@@ -98,16 +98,18 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
                             <th class="text-center" style="width:20px;">STT</th>
-                            <th style="width: 80px;">Ngày</th>
+                            <th class="text-center" style="width: 80px;">Ngày</th>
+                            <th> Dụng cụ / Vật tư</th>
                             <th>Nhân viên</th>
-                            <th>Chi chú</th>
+                            <th>Chi chú duyệt</th>
                             <th class="text-center">Thanh toán</th>
                             <th></th>
-                            <th class="text-center">Ngày duyệt</th>
+                            {{--<th class="text-center">Ngày duyệt</th>--}}
                             <th class="text-right">Thành tiền</th>
                         </tr>
                         <tr>
                             <td class="text-center qc-color-red"></td>
+                            <td></td>
                             <td></td>
                             <td class="text-center" style="padding: 0px; margin: 0;">
                                 <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
@@ -143,7 +145,7 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                                 </select>
                             </td>
                             <td></td>
-                            <td></td>
+                            {{--<td></td>--}}
                             <td class="text-right qc-color-red">
                                 <b class="qc-color-red">{!! $hFunction->currencyFormat($importTotalMoney) !!}</b>
                             </td>
@@ -161,6 +163,8 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                                 $importDate = $import->importDate();
                                 $companyImportId = $import->companyId();
                                 $dataImportPay = $import->importPayInfo();
+                                # thong tin chi tiet nhap
+                                $dataImportDetail = $import->infoDetailOfImport();
                                 ?>
                                 <tr class="qc_ad3d_list_object @if(!$import->checkExactlyStatus()) danger  @else @if($n_o%2 == 1) info @endif @endif "
                                     data-object="{!! $importId !!}">
@@ -169,6 +173,26 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                                     </td>
                                     <td>
                                         {!! date('d-m-Y', strtotime($importDate)) !!}
+                                    </td>
+                                    <td>
+                                        @if($hFunction->checkCount($dataImportDetail))
+                                            @foreach($dataImportDetail as $importDetail)
+                                                <?php
+                                                $toolId = $importDetail->toolId();
+                                                $suppliesId = $importDetail->suppliesId();
+                                                $newName = $importDetail->newName();
+                                                ?>
+                                                @if(!$hFunction->checkEmpty($toolId))
+                                                    <span>{!! $importDetail->tool->name() !!} ,</span>
+                                                @endif
+                                                @if(!$hFunction->checkEmpty($suppliesId))
+                                                    <span>{!! $importDetail->supplies->name() !!} ,</span>
+                                                @endif
+                                                <span>{!! $newName !!},</span>
+                                            @endforeach
+                                        @else
+                                            <em style="color: grey;">Không có dữ liệu</em>
+                                        @endif
                                     </td>
                                     <td>
                                         {!! $import->staffImport->fullName() !!}
@@ -230,13 +254,13 @@ $hrefIndex = route('qc.ad3d.store.import.get');
                                             <em class="qc-color-grey">Đã Duyệt</em>
                                         @endif
                                     </td>
-                                    <td class="text-center" style="color: grey;">
-                                        @if($hFunction->checkCount($dataImportPay))
-                                            <span>{!! date('d-m-Y H:i', strtotime($dataImportPay->createdAt())) !!}</span>
-                                        @else
-                                            <span>---</span>
-                                        @endif
-                                    </td>
+                                    {{--<td class="text-center" style="color: grey;">--}}
+                                        {{--@if($hFunction->checkCount($dataImportPay))--}}
+                                            {{--<span>{!! date('d-m-Y', strtotime($dataImportPay->createdAt())) !!}</span>--}}
+                                        {{--@else--}}
+                                            {{--<span>---</span>--}}
+                                        {{--@endif--}}
+                                    {{--</td>--}}
                                     <td class="text-right">
                                         {!! $hFunction->currencyFormat($import->totalMoneyOfImport()) !!}
                                     </td>

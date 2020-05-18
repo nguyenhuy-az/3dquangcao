@@ -31,15 +31,14 @@ class MoneyStatisticalController extends Controller
         $modelPayActivityDetail = new QcPayActivityDetail();
         $modelSalaryPay = new QcSalaryPay();
         $modelSalaryBeforePay = new QcSalaryBeforePay();
-
         $hFunction->dateDefaultHCM();
+        $dataAccess = [
+            'object' => 'moneyStatistical',
+            'subObjectLabel' => 'Thống kê'
+        ];
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        if (count($dataStaffLogin) > 0) {
+        if ($hFunction->checkCount($dataStaffLogin)) {
             $loginStaffId = $dataStaffLogin->staffId();
-            $dataAccess = [
-                'object' => 'moneyStatistical',
-                'subObjectLabel' => 'Thống kê'
-            ];
             $currentMonth = $hFunction->currentMonth();
             $currentYear = $hFunction->currentYear();
             $loginMonth = (empty($loginMonth)) ? $currentMonth : $loginMonth;
@@ -51,31 +50,33 @@ class MoneyStatisticalController extends Controller
             }
             # tien thu don hang
             $totalMoneyOrderPay = $modelOrderPay->totalMoneyOfStaffAndDate($loginStaffId, $filterDate);
-            # chuyen - nhan tien
-            $totalMoneyTransferReceive = $modelTransfer->totalMoneyOfReceiveStaffAndDate($loginStaffId, $filterDate);
-            $totalMoneyTransferTransfer = $modelTransfer->totalMoneyOfTransferStaffAndDate($loginStaffId, $filterDate);
-            # chi mua vat tu
-            $totalMoneyImportOfStaff = $modelImport->totalMoneyImportOfStaff($loginStaffId, $filterDate, 3); # 3 lay tat ca phieu mua bao gom da thanh toan
-            $totalMoneyImportPayOfImportStaff = $dataStaffLogin->totalMoneyImportOfStaff($loginStaffId, $filterDate,1); # nhan tien thanh toán
-            # thanh toan mua vat tu
-            $totalMoneyImportPayOfPayStaff = $modelImportPay->totalMoneyOfPayStaffAndDate($loginStaffId, $filterDate); # thanh toán tien mua vat tu cho nv
-            # chi hoat dong
-            $totalMoneyPayActivityDetailOfStaff = $modelPayActivityDetail->totalMoneyOfStaffAndDate($loginStaffId, $filterDate);
-            # thanh toan luong
-            $totalMoneySalaryPayOfStaff = $modelSalaryPay->totalMoneyOfStaffAndDate($loginStaffId, $filterDate);
-            # chi ung luong luong
-            $totalMoneySalaryBeforePayOfStaff = $modelSalaryBeforePay->totalMoneyOfStaffAndDate($loginStaffId, $filterDate);
+
+            # nhan tien da - xac nhan
+            $totalMoneyTransferReceive = $modelTransfer->totalMoneyConfirmedOfReceivedStaffAndDate($loginStaffId, $filterDate);
+
+            # thanh toan mua vat tu - da duoc xac nha
+            $totalMoneyImportPayOfPayStaff = $modelImportPay->totalMoneyConfirmedOfPayStaffAndDate($loginStaffId, $filterDate); # thanh toán tien mua vat tu cho nv
+
+            # chi hoat dong - da duyet
+            $totalMoneyPayActivityDetailOfStaff = $modelPayActivityDetail->totalMoneyConfirmedAndInvalidOfStaffAndDate($loginStaffId, $filterDate);
+
+            # thanh toan luong - nguoi nhan da xac nhan
+            $totalMoneySalaryPayOfStaff = $modelSalaryPay->totalMoneyConfirmedOfStaffAndDate($loginStaffId, $filterDate);
+
+            # chi ung luong luong - da xac nhan
+            $totalMoneySalaryBeforePayOfStaff = $modelSalaryBeforePay->totalMoneyConfirmedOfStaffAndDate($loginStaffId, $filterDate);
+
+            // chi hoan tien don hang
+            $totalPaidOrderCancelOfStaffAndDate = $modelStaff->totalPaidOrderCancelOfStaffAndDate($loginStaffId, $filterDate);
             return view('work.money.statistical.statistical', compact('dataAccess', 'modelStaff', 'loginDay', 'loginMonth', 'loginYear'),
                 [
                     'totalMoneyOrderPay' => $totalMoneyOrderPay,
                     'totalMoneyTransferReceive' => $totalMoneyTransferReceive,
-                    'totalMoneyTransferTransfer' => $totalMoneyTransferTransfer,
-                    'totalMoneyImportOfStaff' => $totalMoneyImportOfStaff,
-                    'totalMoneyImportPayOfImportStaff' => $totalMoneyImportPayOfImportStaff,
                     'totalMoneyImportPayOfPayStaff'=>$totalMoneyImportPayOfPayStaff,
                     'totalMoneyPayActivityDetailOfStaff'=>$totalMoneyPayActivityDetailOfStaff,
                     'totalMoneySalaryPayOfStaff'=>$totalMoneySalaryPayOfStaff,
-                    'totalMoneySalaryBeforePayOfStaff' => $totalMoneySalaryBeforePayOfStaff
+                    'totalMoneySalaryBeforePayOfStaff' => $totalMoneySalaryBeforePayOfStaff,
+                    'totalPaidOrderCancelOfStaffAndDate' => $totalPaidOrderCancelOfStaffAndDate
                 ]);
         } else {
             return view('work.login');

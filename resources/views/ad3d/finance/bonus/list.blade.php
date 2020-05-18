@@ -9,9 +9,9 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$hrefIndex = route('qc.ad3d.finance.minus-money.get');
+$hrefIndex = route('qc.ad3d.finance.bonus.get');
 ?>
-@extends('ad3d.finance.minus-money.index')
+@extends('ad3d.finance.bonus.index')
 @section('qc_ad3d_index_content')
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
@@ -22,7 +22,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
-                    <label class="qc-font-size-20">PHẠT</label>
+                    <label class="qc-font-size-20">THÔNG TINTHUONGWR</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
@@ -50,14 +50,14 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row"
-                 data-href-cancel="{!! route('qc.ad3d.finance.minus-money.cancel') !!}">
+                 data-href-cancel="{!! route('qc.ad3d.finance.bonus.cancel') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: whitesmoke;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Tên</th>
                             <th class="text-center">Ngày</th>
-                            <th class="text-center">Nguyên nhân</th>
+                            <th>Nguyên nhân</th>
                             <th>Ghi chú</th>
                             <th class="text-center">Áp dụng</th>
                             <th class="text-right">Thành tiền</th>
@@ -113,46 +113,33 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                 </select>
                             </td>
                             <td class="text-center" style="padding: 0px;">
-                                <select class="form-control cbPunishContentFilter" data-href="{!! $hrefIndex !!}">
-                                    <option value="0" @if($punishContentFilterId == 0) selected="selected" @endif>
-                                        Tất cả
-                                    </option>
-                                    @if($hFunction->checkCount($dataPunishContent))
-                                        @foreach($dataPunishContent as $punishContent)
-                                            <option value="{!! $punishContent->punishId() !!}"
-                                                    @if($punishContent->punishId() == $punishContentFilterId) selected="selected" @endif>
-                                                {!! $punishContent->name() !!}
-                                            </option>
-                                        @endforeach
-                                    @endif
-                                </select>
                             </td>
                             <td class="text-right"></td>
                             <td class="text-center"></td>
                             <td class="text-right">
-                                <b> {!! $hFunction->currencyFormat($totalMinusMoney)  !!}</b>
+                                <b style="color: red"> {!! $hFunction->currencyFormat($totalBonusMoney)  !!}</b>
                             </td>
                         </tr>
-                        @if($hFunction->checkCount($dataMinusMoney))
+                        @if($hFunction->checkCount($dataBonus))
                             <?php
-                            $perPage = $dataMinusMoney->perPage();
-                            $currentPage = $dataMinusMoney->currentPage();
+                            $perPage = $dataBonus->perPage();
+                            $currentPage = $dataBonus->currentPage();
                             $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
                             ?>
-                            @foreach($dataMinusMoney as $minusMoney)
+                            @foreach($dataBonus as $bonus)
                                 <?php
-                                $minusId = $minusMoney->minusId();
-                                $orderAllocationId = $minusMoney->orderAllocationId();
-                                $reason = $minusMoney->reason();
-                                $cancelStatus = $minusMoney->checkCancelStatus();
+                                $bonusId = $bonus->bonusId();
+                                $orderAllocationId = $bonus->orderAllocationId();
+                                $note = $bonus->note();
+                                $cancelStatus = $bonus->checkCancelStatus();
                                 if ($cancelStatus) {
                                     $money = 0;
                                 } else {
-                                    $money = $minusMoney->money();
+                                    $money = $bonus->money();
                                 }
-                                $dataWork = $minusMoney->work;
+                                $dataWork = $bonus->work;
                                 ?>
-                                <tr class="qc_ad3d_list_object" data-object="{!! $minusId !!}">
+                                <tr class="qc_ad3d_list_object" data-object="{!! $bonusId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
@@ -164,26 +151,22 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        {!! date('d/m/Y', strtotime($minusMoney->dateMinus())) !!}
+                                        {!! date('d/m/Y', strtotime($bonus->bonusDate())) !!}
                                     </td>
                                     <td>
-                                        {!! $minusMoney->punishContent->name() !!}
+                                        {!! $bonus->note() !!}
                                     </td>
                                     <td>
-                                        {{--{!! $minusMoney->reason() !!}--}}
                                         @if(!$hFunction->checkEmpty($orderAllocationId))
                                             <em>Đơn hàng:</em>
-                                            <b>{!! $minusMoney->orderAllocation->orders->name() !!}</b>
-                                            <br/>
-                                            <em>Ghi chú báo cáo:</em>
-                                            <b>{!! $minusMoney->orderAllocation->noted() !!}</b>
+                                            <b>{!! $bonus->orderAllocation->orders->name() !!}</b>
                                         @endif
                                     </td>
                                     <td class="text-center">
                                         @if($cancelStatus)
                                             <em style="color: grey;">Đã hủy</em>
                                         @else
-                                            @if($minusMoney->checkEnableApply())
+                                            @if($bonus->checkEnableApply())
                                                 <em>Có hiệu lực</em>
                                             @else
                                                 <span>Tạm thời</span>
@@ -199,7 +182,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                             @endforeach
                             <tr>
                                 <td class="text-center" colspan="7">
-                                    {!! $hFunction->page($dataMinusMoney) !!}
+                                    {!! $hFunction->page($dataBonus) !!}
                                 </td>
                             </tr>
                         @else

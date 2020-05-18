@@ -18,7 +18,7 @@ $dataOrder = $dataOrderAllocation->orders;
     <div class="qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
             <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-                <h3>XÁC NHẬN HOÀN THÀNH CÔNG TRÌNH </h3>
+                <h3>XÁC NHẬN HOÀN THÀNH </h3>
                 <label style="color: red;">Thời gian báo hoàn thành là giờ hiện tại</label>
             </div>
         </div>
@@ -33,9 +33,10 @@ $dataOrder = $dataOrderAllocation->orders;
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
                              @if($mobileStatus) style="padding: 0 0;" @endif>
                             <div class="form-group qc-padding-none">
-                                <h3>
+                                <em class="qc-color-grey">Đơn hàng:</em>
+                                <label style="font-size: 2em;">
                                     {!! $dataOrder->name() !!}
-                                </h3>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -44,6 +45,7 @@ $dataOrder = $dataOrderAllocation->orders;
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group qc-padding-none">
                                 <b class="qc-color-red">TỒN TẠI SẢN PHẨM CHƯA HOÀN THÀNH</b>
+                                <b class="qc-color-red"> - TẤT CẢ CÁC SẢN PHẨM SẼ KẾT THÚC THEO CÔNG TRÌNH</b>
                             </div>
                         </div>
                     </div>
@@ -51,16 +53,15 @@ $dataOrder = $dataOrderAllocation->orders;
                     <div class="row">
                         <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group">
-                                <label style="text-decoration: underline;">Lưu ý:</label><br/>
-                                <b class="qc-color-red">TẤT CẢ CÁC SẢN PHẨM SẼ KẾT THÚC THEO CÔNG TRÌNH</b>
+                                <label style="text-decoration: underline;">Ghi chú:</label><br/>
+                                <input name="txtFinishNote" class="form-control" type="text" value="" >
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group">
-                                <label style="text-decoration: underline;">Ghi chú:</label><br/>
-                                <input name="txtFinishNote" class="form-control" type="text" value="" >
+                                <b style="color: blue; font-size: 1.5em;">HOÀN THÀNH ĐH TRỄ KHÔNG PHẢI DO MÌNH, GHI CHÚ VÀO BÁO CÁO</b>
                             </div>
                         </div>
                     </div>

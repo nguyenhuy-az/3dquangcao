@@ -74,7 +74,12 @@ class TimeKeepingController extends Controller
                 $searchCompanyFilterId = $modelCompany->listIdActivity();
             }
         } else {
-            $searchCompanyFilterId = [$companyFilterId];
+            if($companyFilterId == 1000){
+                $searchCompanyFilterId = $modelCompany->listIdActivity();
+            }else{
+                $searchCompanyFilterId = [$companyFilterId];
+            }
+
         }
 
         if ($monthFilter < 8 && $yearFilter <= 2019) { # du lieu phien ban cu

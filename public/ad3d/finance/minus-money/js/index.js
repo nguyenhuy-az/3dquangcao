@@ -40,9 +40,9 @@ var qc_ad3d_finance_minus_money = {
             })
         }
     },
-    delete: function (listObject) {
-        if (confirm('Bạn muốn xóa tin này')) {
-            qc_ad3d_submit.ajaxHasReload($(listObject).parents('.qc_ad3d_list_content').data('href-del') + '/' + $(listObject).data('object'), '', false);
+    cancel: function (listObject) {
+        if (confirm('Khi Hủy sẽ KHÔNG THỂ PHỤC HỒI, đồng ý hủy')) {
+           qc_ad3d_submit.ajaxHasReload($(listObject).parents('.qc_ad3d_list_content').data('href-cancel') + '/' + $(listObject).data('object'), '', false);
         }
     }
 }
@@ -90,7 +90,7 @@ $(document).ready(function () {
     })
     $('body').on('change', '.cbPunishContentFilter', function () {
         var name = $('.textFilterName').val();
-        var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + '/' + $('.cbYearFilter').val() + '/' + $('.cbPunishContentFilter').val();
+        var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val() + '/' + $('.cbPunishContentFilter').val();
         qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + name);
     })
 });
@@ -137,7 +137,7 @@ $(document).ready(function () {
 
 //delete
 $(document).ready(function () {
-    $('.qc_ad3d_list_object').on('click', '.qc_delete', function () {
-        qc_ad3d_finance_minus_money.delete($(this).parents('.qc_ad3d_list_object'));
+    $('.qc_ad3d_list_object').on('click', '.qc_cancel_act', function () {
+        qc_ad3d_finance_minus_money.cancel($(this).parents('.qc_ad3d_list_object'));
     });
 });
