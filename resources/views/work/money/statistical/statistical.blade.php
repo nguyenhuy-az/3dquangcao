@@ -15,6 +15,7 @@ $loginStaffId = $dataStaffLogin->staffId();
 
 $totalMoneyReceive = $totalMoneyOrderPay + $totalMoneyTransferReceive;
 $totalMoneyPay = $totalMoneyImportPayOfPayStaff + $totalMoneyPayActivityDetailOfStaff + $totalMoneySalaryPayOfStaff + $totalMoneySalaryBeforePayOfStaff;
+$hrefFilter = route('qc.work.money.statistical.get');
 ?>
 @extends('work.index')
 @section('titlePage')
@@ -33,31 +34,19 @@ $totalMoneyPay = $totalMoneyImportPayOfPayStaff + $totalMoneyPayActivityDetailOf
                         <em style="color: red;"> Của {!! $dataStaffLogin->fullName() !!}</em>
                     </div>
                     <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                        <select class="qc_work_money_statistical_login_day" style="height: 25px;"
-                                data-href="{!! route('qc.work.money.statistical.get') !!}">
-                            <option value="0" @if($loginDay == null) selected="selected" @endif>
-                                Trong tháng
-                            </option>
-                            @for($d = 1; $d <=31; $d++)
-                                <option @if($loginDay == $d) selected="selected" @endif>
-                                    {!! $d !!}
-                                </option>
-                            @endfor
-                        </select>
-                        <span>/</span>
                         <select class="qc_work_money_statistical_login_month" style="height: 25px;"
-                                data-href="{!! route('qc.work.money.statistical.get') !!}">
+                                data-href="{!! $hrefFilter !!}">
                             @for($m = 1; $m <=12; $m++)
-                                <option @if($loginMonth == $m) selected="selected" @endif>
+                                <option @if($monthFilter == $m) selected="selected" @endif>
                                     {!! $m !!}
                                 </option>
                             @endfor
                         </select>
                         <span>/</span>
                         <select class="qc_work_money_statistical_login_year" style="height: 25px;"
-                                data-href="{!! route('qc.work.money.statistical.get') !!}">
+                                data-href="{!! $hrefFilter !!}">
                             @for($y = 2017; $y <=2050; $y++)
-                                <option @if($loginYear == $y) selected="selected" @endif>
+                                <option @if($yearFilter  == $y) selected="selected" @endif>
                                     {!! $y !!}
                                 </option>
                             @endfor
@@ -68,7 +57,7 @@ $totalMoneyPay = $totalMoneyImportPayOfPayStaff + $totalMoneyPayActivityDetailOf
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
-                                <tr style="background-color: whitesmoke;">
+                                <tr style="background-color: black; color:yellow;">
                                     <th class="text-center" style="width:20px;"></th>
                                     <th>Lĩnh vực</th>
                                     <th>Mô tả</th>
@@ -120,7 +109,11 @@ $totalMoneyPay = $totalMoneyImportPayOfPayStaff + $totalMoneyPayActivityDetailOf
                                         -
                                     </td>
                                     <td>
-                                        Chi hoạt động
+                                        <a class="qc-link-green-bold" href="{!! route('qc.work.money.payment.get',"activityPay/$monthFilter/$yearFilter") !!}">
+                                            Chi hoạt động &nbsp;
+                                            <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
+                                        </a>
+
                                     </td>
                                     <td>
                                         <em class="qc-color-grey">Các hoạt động của cty</em>
@@ -141,7 +134,10 @@ $totalMoneyPay = $totalMoneyImportPayOfPayStaff + $totalMoneyPayActivityDetailOf
                                         -
                                     </td>
                                     <td>
-                                        Chi ứng lương
+                                        <a class="qc-link-green-bold" href="{!! route('qc.work.money.payment.get',"salaryBeforePay/$monthFilter/$yearFilter") !!}">
+                                            Chi ứng lương &nbsp;
+                                            <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
+                                        </a>
                                     </td>
                                     <td>
                                         <em class="qc-color-grey">Chi ứng lương cho nhân viên</em>
@@ -162,7 +158,10 @@ $totalMoneyPay = $totalMoneyImportPayOfPayStaff + $totalMoneyPayActivityDetailOf
                                        -
                                     </td>
                                     <td>
-                                        Chi thanh toán lương
+                                        <a class="qc-link-green-bold" href="{!! route('qc.work.money.payment.get',"salaryPay/$monthFilter/$yearFilter") !!}">
+                                            Chi thanh toán lương &nbsp;
+                                            <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
+                                        </a>
                                     </td>
                                     <td>
                                         <em class="qc-color-grey">Thanh toán lương cho nhân viên</em>
@@ -183,7 +182,10 @@ $totalMoneyPay = $totalMoneyImportPayOfPayStaff + $totalMoneyPayActivityDetailOf
                                        -
                                     </td>
                                     <td>
-                                        Chi thanh toán mua vật tư
+                                        <a class="qc-link-green-bold" href="{!! route('qc.work.money.payment.get',"importPay/$monthFilter/$yearFilter") !!}">
+                                            Chi thanh toán mua vật tư &nbsp;
+                                            <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
+                                        </a>
                                     </td>
                                     <td>
                                         <em class="qc-color-grey">Thanh toán tiền vật tư cho NV - người mua đã xác nhận</em>
@@ -204,10 +206,15 @@ $totalMoneyPay = $totalMoneyImportPayOfPayStaff + $totalMoneyPayActivityDetailOf
                                         -
                                     </td>
                                     <td>
-                                        Chi hoàn tiền đơn hàng
+                                        <a class="qc-link-green-bold" href="{!! route('qc.work.money.payment.get',"orderCancel/$monthFilter/$yearFilter") !!}">
+                                            Chi hoàn tiền đơn hàng &nbsp;
+                                            <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
+                                        </a>
                                     </td>
                                     <td>
-                                        <em class="qc-color-grey">Hoàn tiền lại cho khách hàng</em>
+                                        <em class="qc-color-grey" >
+                                            Hoàn tiền lại cho khách hàng
+                                        </em>
                                     </td>
                                     <td class="text-right">
                                         <b style="color: blue;">

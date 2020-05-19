@@ -58,7 +58,7 @@ class QcSalaryBeforePay extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staffPay_id', 'staff_id');
     }
 
-    public function infoOfStaffAndDate($staffId, $date)
+    public function infoOfStaffAndDate($staffId, $date=null)
     {
         if (!empty($date)) {
             return QcSalaryBeforePay::where('staffPay_id', $staffId)->orderBy('pay_id', 'DESC')->where('datePay', 'like', "%$date%")->get();
@@ -140,9 +140,9 @@ class QcSalaryBeforePay extends Model
     }
 
     #============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
-    public function checkConfirm($workId = null)
+    public function checkConfirm($payId = null)
     {
-        return ($this->confirmStatus($workId) == 1) ? true : false;
+        return ($this->confirmStatus($payId) == 1) ? true : false;
     }
 
     #============ =========== ============ LAY THONG TIN ============= =========== ==========

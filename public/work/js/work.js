@@ -759,18 +759,15 @@ $(document).ready(function () {
     });
 
     //-------------thong ke -------------------
-    //theo ngày
-    $('body').on('change', '.qc_work_money_statistical_login_day', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_statistical_login_month').val() + '/' + $('.qc_work_money_statistical_login_year').val());
-    });
+
     //theo tháng
     $('body').on('change', '.qc_work_money_statistical_login_month', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $('.qc_work_money_statistical_login_day').val() + '/' + $(this).val() + '/' + $('.qc_work_money_statistical_login_year').val());
+        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_statistical_login_year').val());
     });
 
     // năm
     $('body').on('change', '.qc_work_money_statistical_login_year', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $('.qc_work_money_statistical_login_day').val() + '/' + $('.qc_work_money_statistical_login_month').val() + '/' + $(this).val());
+        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $('.qc_work_money_statistical_login_month').val() + '/' + $(this).val());
     });
 
 

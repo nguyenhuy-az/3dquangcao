@@ -20,7 +20,7 @@ use Request;
 
 class MoneyStatisticalController extends Controller
 {
-    public function index($loginDay = null, $loginMonth = null, $loginYear = null)
+    public function index($monthFilter = null, $yearFilter = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -39,36 +39,43 @@ class MoneyStatisticalController extends Controller
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         if ($hFunction->checkCount($dataStaffLogin)) {
             $loginStaffId = $dataStaffLogin->staffId();
-            $currentMonth = $hFunction->currentMonth();
-            $currentYear = $hFunction->currentYear();
-            $loginMonth = (empty($loginMonth)) ? $currentMonth : $loginMonth;
-            $loginYear = (empty($loginYear)) ? $currentYear : $loginYear;
-            If (empty($loginDay)) {
-                $filterDate = date('Y-m', strtotime("$loginYear-$loginMonth"));
+            $dateFilter = null;
+            if ($monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+                $monthFilter = date('m');
+                $yearFilter = date('Y');
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            } elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+            } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+                $dateFilter = null;
             } else {
-                $filterDate = date('Y-m-d', strtotime("$loginYear-$loginMonth-$loginDay"));
+                $dateFilter = date('Y-m');
+                $monthFilter = date('m');
+                $yearFilter = date('Y');
             }
             # tien thu don hang
-            $totalMoneyOrderPay = $modelOrderPay->totalMoneyOfStaffAndDate($loginStaffId, $filterDate);
+            $totalMoneyOrderPay = $modelOrderPay->totalMoneyOfStaffAndDate($loginStaffId, $dateFilter);
 
             # nhan tien da - xac nhan
-            $totalMoneyTransferReceive = $modelTransfer->totalMoneyConfirmedOfReceivedStaffAndDate($loginStaffId, $filterDate);
+            $totalMoneyTransferReceive = $modelTransfer->totalMoneyConfirmedOfReceivedStaffAndDate($loginStaffId, $dateFilter);
 
             # thanh toan mua vat tu - da duoc xac nha
-            $totalMoneyImportPayOfPayStaff = $modelImportPay->totalMoneyConfirmedOfPayStaffAndDate($loginStaffId, $filterDate); # thanh toán tien mua vat tu cho nv
+            $totalMoneyImportPayOfPayStaff = $modelImportPay->totalMoneyConfirmedOfPayStaffAndDate($loginStaffId, $dateFilter); # thanh toán tien mua vat tu cho nv
 
             # chi hoat dong - da duyet
-            $totalMoneyPayActivityDetailOfStaff = $modelPayActivityDetail->totalMoneyConfirmedAndInvalidOfStaffAndDate($loginStaffId, $filterDate);
+            $totalMoneyPayActivityDetailOfStaff = $modelPayActivityDetail->totalMoneyConfirmedAndInvalidOfStaffAndDate($loginStaffId, $dateFilter);
 
             # thanh toan luong - nguoi nhan da xac nhan
-            $totalMoneySalaryPayOfStaff = $modelSalaryPay->totalMoneyConfirmedOfStaffAndDate($loginStaffId, $filterDate);
+            $totalMoneySalaryPayOfStaff = $modelSalaryPay->totalMoneyConfirmedOfStaffAndDate($loginStaffId, $dateFilter);
 
             # chi ung luong luong - da xac nhan
-            $totalMoneySalaryBeforePayOfStaff = $modelSalaryBeforePay->totalMoneyConfirmedOfStaffAndDate($loginStaffId, $filterDate);
+            $totalMoneySalaryBeforePayOfStaff = $modelSalaryBeforePay->totalMoneyConfirmedOfStaffAndDate($loginStaffId, $dateFilter);
 
             // chi hoan tien don hang
-            $totalPaidOrderCancelOfStaffAndDate = $modelStaff->totalPaidOrderCancelOfStaffAndDate($loginStaffId, $filterDate);
-            return view('work.money.statistical.statistical', compact('dataAccess', 'modelStaff', 'loginDay', 'loginMonth', 'loginYear'),
+            $totalPaidOrderCancelOfStaffAndDate = $modelStaff->totalPaidOrderCancelOfStaffAndDate($loginStaffId, $dateFilter);
+            return view('work.money.statistical.statistical', compact('dataAccess', 'modelStaff','dateFilter', 'monthFilter', 'yearFilter'),
                 [
                     'totalMoneyOrderPay' => $totalMoneyOrderPay,
                     'totalMoneyTransferReceive' => $totalMoneyTransferReceive,

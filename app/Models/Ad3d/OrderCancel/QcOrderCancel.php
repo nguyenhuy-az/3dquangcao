@@ -55,7 +55,7 @@ class QcOrderCancel extends Model
 
     }
 
-    public function listOrderIdOfStaff($staffId, $date)
+    public function listOrderIdOfStaff($staffId, $date=null)
     {
         if (!empty($date)) {
             return QcOrderCancel::where('staff_id', $staffId)->where('cancelDate', 'like', "%$date%")->groupBy('order_id')->pluck('order_id');

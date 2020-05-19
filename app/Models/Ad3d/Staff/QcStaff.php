@@ -333,10 +333,16 @@ class QcStaff extends Model
         return $modelPayActivityDetail->infoOfStaff($this->checkIdNull($staffId), $date, $confirmStatus);
     }
 
+    public function payActivityDetailOfReceiveStaff($staffId, $date = null)
+    {
+        $modelPayActivityDetail = new QcPayActivityDetail();
+        return $modelPayActivityDetail->infoConfirmedAndInvalidOfStaffAndDate($staffId, $date);
+    }
+
     public function payActivityDetailConfirmedOfReceiveStaff($staffId, $date = null)
     {
         $modelPayActivityDetail = new QcPayActivityDetail();
-        return $modelPayActivityDetail->infoConfirmAndInvalidOfStaffAndDate($staffId, $date);
+        return $modelPayActivityDetail->infoConfirmedAndInvalidOfStaffAndDate($staffId, $date);
     }
 
     #----------- lương cơ bản ------------

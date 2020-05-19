@@ -955,7 +955,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
         # thong ke
         Route::group(['prefix' => 'statistical'], function () {
-            Route::get('/{loginDay?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.statistical.get', 'uses' => 'Work\Money\Statistical\MoneyStatisticalController@index']);
+            Route::get('/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.statistical.get', 'uses' => 'Work\Money\Statistical\MoneyStatisticalController@index']);
         });
     });
 

@@ -194,21 +194,26 @@ $currentMonth = $hFunction->currentMonth();
                             <table class="table table-hover table-bordered">
                                 <tr style="background-color: whitesmoke;">
                                     <th style="width: 20px;"></th>
-                                    <th>Ngày</th>
+                                    <th>Ngày thanh toán</th>
                                     <th>Người nhận</th>
                                     <th class="text-center">Bảng lương</th>
-                                    <th class="text-center">Xác nhận</th>
-                                    <th class="text-right">Số tiền</th>
+                                    <th class="text-right">Tiền chưa xác nhận</th>
+                                    <th class="text-right">Tiền đã xác nhận</th>
                                 </tr>
-                                @if(count($dataSalaryPay) > 0)
+                                @if($hFunction->checkCount($dataSalaryPay))
                                     <?php
                                     $n_o = 0;
-                                    $totalMoney = 0;
+                                    $totalMoneyConfirmed = 0;
+                                    $totalMoneyNoConfirm = 0;
                                     ?>
                                     @foreach($dataSalaryPay as $salaryPay)
                                         <?php
                                         $money = $salaryPay->money();
-                                        $totalMoney = $totalMoney + $money;
+                                        if ($salaryPay->checkConfirmed()) { #da xac nhan
+                                            $totalMoneyConfirmed = $totalMoneyConfirmed + $money;
+                                        } else { # chua xac nhan
+                                            $totalMoneyNoConfirm = $totalMoneyNoConfirm + $money;
+                                        }
                                         $dataWork = $salaryPay->salary->work;
                                         ?>
                                         <tr class="@if($n_o%2) info @endif">
@@ -227,24 +232,31 @@ $currentMonth = $hFunction->currentMonth();
                                                     {!! date('m-Y', strtotime($dataWork->fromDate())) !!}
                                                 </span>
                                             </td>
-                                            <td class="text-center">
-                                                @if($salaryPay->checkConfirmed())
-                                                    <em style="color: grey;">Đã xác nhận</em>
+                                            <td class="text-right">
+                                                @if (!$salaryPay->checkConfirmed())
+                                                    {!! $hFunction->currencyFormat($money) !!}
                                                 @else
-                                                    <em style="color: red;">Chưa xác nhận</em>
+                                                    <span>0</span>
                                                 @endif
                                             </td>
                                             <td class="text-right">
-                                                {!! $hFunction->currencyFormat($money) !!}
+                                                @if ($salaryPay->checkConfirmed())
+                                                    {!! $hFunction->currencyFormat($money) !!}
+                                                @else
+                                                    <span>0</span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
                                     <tr style="border-top: 2px solid brown;">
                                         <td class="text-right qc-color-red"
-                                            style="background-color: whitesmoke;" colspan="5">
+                                            style="background-color: whitesmoke;" colspan="4">
                                         </td>
                                         <td class="text-right qc-color-red">
-                                            <b>{!! $hFunction->currencyFormat($totalMoney) !!}</b>
+                                            <b>{!! $hFunction->currencyFormat($totalMoneyNoConfirm) !!}</b>
+                                        </td>
+                                        <td class="text-right qc-color-red">
+                                            <b>{!! $hFunction->currencyFormat($totalMoneyConfirmed) !!}</b>
                                         </td>
                                     </tr>
                                 @else

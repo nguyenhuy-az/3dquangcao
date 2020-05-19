@@ -39,7 +39,7 @@ $statisticDateView = date('m-Y', strtotime($statisticDate));
                             <th>Lý do chi</th>
                             <th class="text-right">Số tiền</th>
                         </tr>
-                        @if(count($dataPayActivityDetail) > 0)
+                        @if($hFunction->checkCount($dataPayActivityDetail))
                             <?php
                             $n_o = 0;
                             $totalMoney = 0;

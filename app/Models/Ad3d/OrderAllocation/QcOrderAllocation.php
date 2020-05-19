@@ -419,15 +419,12 @@ class QcOrderAllocation extends Model
         $lateStatus = false;
         $receiveDeadline = $this->receiveDeadline($allocationId)[0];
         if (!$this->checkActivity($allocationId)) { # cong viec da xong
-            if ($this->checkFinish()) { # co bao hoan thanh
+            if ($this->checkFinish($allocationId)) { # co bao hoan thanh
                 $finishDate = $this->finishDate($allocationId)[0];
                 if ($finishDate > $receiveDeadline){
                     //echo "$finishDate === <br/>==== $receiveDeadline";
                     //die();
                     $lateStatus = true;
-                } else{
-                    //echo "No  $finishDate ======= $receiveDeadline";
-                    //die();
                 }
             }
         } else { # don hang chưa ket thuc

@@ -15,7 +15,7 @@ $loginStaffId = $dataStaffLogin->staffId();
 ?>
 @extends('work.money.payment.index')
 @section('titlePage')
-    Thống kê thanh toán mua vật tu
+    Thống kê thanh toán lương
 @endsection
 @section('qc_work_money_payment_content')
     <div class="row">
@@ -25,51 +25,54 @@ $loginStaffId = $dataStaffLogin->staffId();
                     <tr style="background-color: black; color: yellow;">
                         <th style="width: 20px;"></th>
                         <th>Ngày thanh toán</th>
-                        <th>Người mua</th>
-                        <th class="text-center">
-                            Ngày mua
-                        </th>
+                        <th>Người nhận</th>
+                        <th class="text-center">Bảng lương</th>
                         <th class="text-right">Tiền chưa xác nhận</th>
                         <th class="text-right">Tiền đã xác nhận</th>
                     </tr>
-                    @if($hFunction->checkCount($dataImportPay))
+                    @if($hFunction->checkCount($dataSalaryPay))
                         <?php
                         $n_o = 0;
                         $totalMoneyConfirmed = 0;
                         $totalMoneyNoConfirm = 0;
                         ?>
-                        @foreach($dataImportPay as $importPay)
+                        @foreach($dataSalaryPay as $salaryPay)
                             <?php
-                            $money = $importPay->money();
-                            if ($importPay->checkConfirm()) {
+                            $payId = $salaryPay->payId();
+                            $money = $salaryPay->money();
+                            $checkConfirmStatus = $salaryPay->checkConfirmed();
+                            if ($checkConfirmStatus) { #da xac nhan
                                 $totalMoneyConfirmed = $totalMoneyConfirmed + $money;
-                            } else {
+                            } else { # chua xac nhan
                                 $totalMoneyNoConfirm = $totalMoneyNoConfirm + $money;
                             }
-                            $dataImport = $importPay->import;
+                            $dataWork = $salaryPay->salary->work;
                             ?>
                             <tr class="@if($n_o%2) info @endif">
                                 <td class="text-center">
                                     {!! $n_o = $n_o + 1 !!}
                                 </td>
                                 <td>
-                                    {!! date('d/m/Y',strtotime($importPay->createdAt()))  !!}
+                                    {!! date('d/m/Y',strtotime($salaryPay->datePay()))  !!}
                                 </td>
                                 <td>
-                                    <span>{!! $dataImport->staffImport->fullName() !!}</span>
+                                    <span>{!! $dataWork->companyStaffWork->staff->fullName() !!}</span>
                                 </td>
                                 <td class="text-center">
-                                    {!! date('d/m/Y',strtotime($dataImport->importDate()))  !!}
+                                    <span>
+                                        Tháng
+                                        {!! date('m-Y', strtotime($dataWork->fromDate())) !!}
+                                    </span>
                                 </td>
                                 <td class="text-right">
-                                    @if($importPay->checkConfirm())
-                                        <span>0</span>
-                                    @else
+                                    @if (!$checkConfirmStatus)
                                         {!! $hFunction->currencyFormat($money) !!}
+                                    @else
+                                        <span>0</span>
                                     @endif
                                 </td>
                                 <td class="text-right">
-                                    @if($importPay->checkConfirm())
+                                    @if ($checkConfirmStatus)
                                         {!! $hFunction->currencyFormat($money) !!}
                                     @else
                                         <span>0</span>
@@ -84,13 +87,13 @@ $loginStaffId = $dataStaffLogin->staffId();
                             <td class="text-right qc-color-red">
                                 <b>{!! $hFunction->currencyFormat($totalMoneyNoConfirm) !!}</b>
                             </td>
-                            <td class="text-right" style="color: blue;">
+                            <td class="text-right qc-color-red">
                                 <b>{!! $hFunction->currencyFormat($totalMoneyConfirmed) !!}</b>
                             </td>
                         </tr>
                     @else
                         <tr>
-                            <td class="text-center" colspan="6">
+                            <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="6">
                                 <em class="qc-color-red">Không có thông tin thanh toán</em>
                             </td>
                         </tr>

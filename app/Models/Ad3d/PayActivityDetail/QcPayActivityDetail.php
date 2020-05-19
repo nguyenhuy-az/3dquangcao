@@ -141,6 +141,7 @@ class QcPayActivityDetail extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
     }
 
+
     // tong tien da chua bao gom da duyet va chua duyet
     public function totalMoneyOfStaffAndDate($staffId, $date = null)
     {
@@ -213,6 +214,16 @@ class QcPayActivityDetail extends Model
     }
 
     public function infoConfirmAndInvalidOfStaffAndDate($staffId, $date = null, $order = 'DESC')
+    {
+        if (empty($date)) {
+            return QcPayActivityDetail::where('Staff_id', $staffId)->where('invalidStatus', 1)->orderBy('payDate', $order)->get();
+        } else {
+            return QcPayActivityDetail::where('Staff_id', $staffId)->where('invalidStatus', 1)->where('payDate', 'like', "%$date%")->orderBy('payDate', $order)->get();
+        }
+    }
+
+    # thong tin da xac nhan va hop le
+    public function infoConfirmedAndInvalidOfStaffAndDate($staffId, $date = null, $order = 'DESC')
     {
         if (empty($date)) {
             return QcPayActivityDetail::where('Staff_id', $staffId)->where('confirmStatus', 1)->where('invalidStatus', 1)->orderBy('payDate', $order)->get();
