@@ -59,7 +59,7 @@ $hrefFilter = route('qc.work.money.statistical.get');
                             <table class="table table-hover table-bordered">
                                 <tr style="background-color: black; color:yellow;">
                                     <th class="text-center" style="width:20px;"></th>
-                                    <th>Lĩnh vực</th>
+                                    <th>Danh mục Thu - Chi</th>
                                     <th>Mô tả</th>
                                     <th class="text-right">Thu</th>
                                     <th class="text-right">Chi</th>
@@ -69,7 +69,10 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                       -
                                     </td>
                                     <td>
-                                        Thu tiền đơn hàng
+                                        <a class="qc-link-red-bold" href="{!! route('qc.work.orders.get',"$monthFilter/$yearFilter") !!}">
+                                            Thu tiền đơn hàng &nbsp;
+                                            <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
+                                        </a>
                                     </td>
                                     <td>
                                         <em class="qc-color-grey">Thu tiền từ các đơn hàng</em>
@@ -90,7 +93,10 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                        -
                                     </td>
                                     <td>
-                                        Nhận tiền bàn giao
+                                        <a class="qc-link-red-bold" href="{!! route('qc.work.money.transfer.receive.get',"$monthFilter/$yearFilter") !!}">
+                                            Nhận tiền bàn giao &nbsp;
+                                            <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
+                                        </a>
                                     </td>
                                     <td>
                                         <em class="qc-color-grey">Nhận từ cty mẹ bàn giao</em>
@@ -113,7 +119,6 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                             Chi hoạt động &nbsp;
                                             <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
                                         </a>
-
                                     </td>
                                     <td>
                                         <em class="qc-color-grey">Các hoạt động của cty</em>

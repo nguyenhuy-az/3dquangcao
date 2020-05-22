@@ -63,22 +63,32 @@ class QcWork extends Model
         $modelWork->disableWord($workId);
     }
 
-    // ra bang luong cho nv
+    // xuat bang luong bang luong cho nv
     public function makeSalaryOfWork($workId, $benefit, $workStatus)
     {
         $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaffWorkSalary = new QcStaffWorkSalary();
         $modelSalary = new QcSalary();
-
+        $modelBonus = new QcBonus();
+        $modelMinusMoney = new QcMinusMoney();
         # kiem tra da tinh luong chưa
         if (!$modelSalary->checkExistInfoOfWork($workId)) { # chưa tinh luong
+            #duyet tu dong thong tin thuong
+            $modelBonus->autoCheckApplyBonusEndWork($workId);
+            #duyet tu dong thong tin phat
+            $modelMinusMoney->autoCheckApplyMinusMoneyEndWork($workId);
+            # thong tin lam viec
             $dataWork = $this->getInfo($workId);
             $mainMinute = $dataWork->sumMainMinute();
             $plusMinute = $dataWork->sumPlusMinute();
             $minusMinute = $dataWork->sumMinusMinute();
             $totalBeforePay = $dataWork->totalMoneyBeforePay();
-            $totalMinusMoney = $dataWork->totalMoneyMinus();
+            # tong tien thuong duoc ap dung
+            $totalBonusMoney = $dataWork->totalMoneyBonusApplied();
+            # tong tien phat da duoc ap dung phat
+            $totalMinusMoney = $dataWork->totalMoneyMinusApplied();
+
             $companyStaffWorkId = $dataWork->companyStaffWorkId();
             # phien ban moi - nv lam nhieu cty
             if (!empty($companyStaffWorkId)) {
@@ -87,17 +97,17 @@ class QcWork extends Model
                 # truong hop phien ban cu chua cap nhat
                 $staffId = $dataWork->staffId();
                 $dataStaffWorkSalary = $modelCompanyStaffWork->staffWorkSalaryActivityOfStaff($staffId);
-                if (count($dataStaffWorkSalary) > 0) $companyStaffWorkId = $dataStaffWorkSalary->workId();
+                if ($hFunction->checkCount($dataStaffWorkSalary)) $companyStaffWorkId = $dataStaffWorkSalary->workId();
             }
-            if (count($dataStaffWorkSalary) > 0) {
+            if ($hFunction->checkCount($dataStaffWorkSalary)) {
                 $workSalaryId = $dataStaffWorkSalary->workSalaryId();
-                $overtimeHour = $dataStaffWorkSalary->overtimeHour($workSalaryId);# phu cap tang ca
-                $overtimeHour = (is_int($overtimeHour))?$overtimeHour:$overtimeHour[0];
-                //$moneyOvertime = ($plusMinute / 60) * $dataStaffWorkSalary->overtimeHour(); # tien phu cap tang ca
-                //$totalMoneyMinusFuel = $this->totalMinusFuelInMonth($workId);# tru tien xang neu di lam ko du thang
-                $totalUnpaidSalary = (int)($this->totalSalaryBasicOfWorkInMonth($workId) - $totalBeforePay - $totalMinusMoney);
+                # phu cap tang ca
+                $overtimeHour = $dataStaffWorkSalary->overtimeHour($workSalaryId);
+                $overtimeHour = (is_int($overtimeHour)) ? $overtimeHour : $overtimeHour[0];
+
+                $totalUnpaidSalary = (int)($this->totalSalaryBasicOfWorkInMonth($workId) - $totalBeforePay + $totalBonusMoney - $totalMinusMoney);
                 $overtimeMoney = ($plusMinute / 60) * $overtimeHour;
-                if ($modelSalary->insert($mainMinute, $plusMinute, $minusMinute, $totalBeforePay, $totalMinusMoney, $benefit, $overtimeMoney, $totalUnpaidSalary, 0, $workId, $workSalaryId, null)) {
+                if ($modelSalary->insert($mainMinute, $plusMinute, $minusMinute, $totalBeforePay, $totalMinusMoney, $benefit, $overtimeMoney, $totalUnpaidSalary, 0, $workId, $workSalaryId, null, null, 0, $totalBonusMoney)) {
                     # vo hieu hoa bang cam cong cu
                     $this->endWork($workId);
                     if ($this->confirmExportSalary($workId)) {
@@ -135,10 +145,10 @@ class QcWork extends Model
         $companyStaffWorkId = $dataWork->companyStaffWorkId();
         if (!empty($companyStaffWorkId)) {
             $dataStaffWorkSalary = $modelStaffWorkSalary->infoActivityOfWork($companyStaffWorkId);
-            if(!empty($dataStaffWorkSalary)){
-                $overtime =  $dataStaffWorkSalary->overtimeHour($dataStaffWorkSalary->workSalaryId());
+            if (!empty($dataStaffWorkSalary)) {
+                $overtime = $dataStaffWorkSalary->overtimeHour($dataStaffWorkSalary->workSalaryId());
                 $totalSalaryOnHour = $dataStaffWorkSalary->salaryOnHour(); # lương lam trong 1 gio
-            }else{
+            } else {
                 $overtime = 0;
                 $totalSalaryOnHour = 0;
             }
@@ -159,7 +169,7 @@ class QcWork extends Model
             }
         }
 
-        $overtime = (is_int($overtime))?$overtime:$overtime[0];
+        $overtime = (is_int($overtime)) ? $overtime : $overtime[0];
         $moneyOfMainMinute = ($mainMinute / 60) * $totalSalaryOnHour;  # tong luong trong gio lam chinh
         $moneyOfPlusMinute = ($plusMinute / 60) * 1.5 * $totalSalaryOnHour; # tang ca nhan 1.5  - tong luong cua gio tang ca
         $allowanceOvertime = ($plusMinute / 60) * $overtime; # tien phu cap tang ca
@@ -332,9 +342,9 @@ class QcWork extends Model
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $dataCompanyStaffWork = $modelCompanyStaffWork->getInfo($this->companyStaffWorkId($this->checkIdNull($workId)));
-        if(count($dataCompanyStaffWork) > 0){
+        if (count($dataCompanyStaffWork) > 0) {
             return $dataCompanyStaffWork->staff;
-        }else{
+        } else {
             return null;
         }
     }
@@ -384,12 +394,14 @@ class QcWork extends Model
         $modelSalaryBeforePay = new QcSalaryBeforePay();
         return $modelSalaryBeforePay->totalMoneyOfWork($this->checkIdNull($workId));
     }
+
     # tong tien ung da xac nhan
     public function totalMoneyConfirmedBeforePay($workId = null)
     {
         $modelSalaryBeforePay = new QcSalaryBeforePay();
         return $modelSalaryBeforePay->totalMoneyConfirmedOfWork($this->checkIdNull($workId));
     }
+
     public function infoBeforePayOfWork($workId = null)
     {
         $modelSalaryBeforePay = new QcSalaryBeforePay();
@@ -437,6 +449,13 @@ class QcWork extends Model
         $modelBonus = new QcBonus();
         return $modelBonus->totalMoneyOfWork($this->checkIdNull($workId));
     }
+
+    # tong tien phat duoc ap dung
+    public function totalMoneyBonusApplied($workId = null)
+    {
+        $modelBonus = new QcBonus();
+        return $modelBonus->totalMoneyAppliedOfWork($this->checkIdNull($workId));
+    }
     //----------- phạt ------------
     public function minusMoney()
     {
@@ -449,10 +468,18 @@ class QcWork extends Model
         return $modelMinusMoney->infoOfWork($this->checkIdNull($workId));
     }
 
+    # tong tien phat tam thoi
     public function totalMoneyMinus($workId = null)
     {
         $modelMinusMoney = new QcMinusMoney();
         return $modelMinusMoney->totalMoneyOfWork($this->checkIdNull($workId));
+    }
+
+    # tong tien phat duoc ap dung
+    public function totalMoneyMinusApplied($workId = null)
+    {
+        $modelMinusMoney = new QcMinusMoney();
+        return $modelMinusMoney->totalMoneyAppliedOfWork($this->checkIdNull($workId));
     }
 
     //----------- chấm công tạm ------------
@@ -580,7 +607,7 @@ class QcWork extends Model
     {
         $workId = $this->checkIdNull($workId);
         $totalSalary = $this->totalCurrentSalary($workId);
-        $limitBeforePay = (($totalSalary - $this->totalMoneyBeforePay($workId) - $this->totalMoneyMinus($workId))* 0.6) ;
+        $limitBeforePay = (($totalSalary - $this->totalMoneyBeforePay($workId) - $this->totalMoneyMinus($workId)) * 0.6);
         return (int)$limitBeforePay - ($limitBeforePay % 100000);
 
     }
@@ -670,15 +697,17 @@ class QcWork extends Model
         $hFunction = new \Hfunction();
         $hFunction->dateDefaultHCM();
         $currentDate = date('Y-m-d');
-        $firstDateOfMonth = $hFunction->firstDateOfMonthFromDate($currentDate); # lay ngay dau thang
+        # lay ngay dau thang
+        $firstDateOfMonth = $hFunction->firstDateOfMonthFromDate($currentDate);
         //$lastDateOfMonth = $hFunction->lastDateOfMonthFromDate($currentDate); # lay ngay cuoi thang
-        $dataWorkActivity = QcWork::where('action', 1)->get(); # lay nhung bang cham cong dang lam
-        if (count($dataWorkActivity) > 0) {
+        # lay nhung bang cham cong dang lam
+        $dataWorkActivity = QcWork::where('action', 1)->get();
+        if ($hFunction->checkCount($dataWorkActivity)) {
             foreach ($dataWorkActivity as $work) {
                 $workId = $work['work_id'];
                 $firstDateOfWork = date('Y-m-01', strtotime($work['fromDate']));
                 # phien ban moi - nv lam nhieu cty
-                if ($firstDateOfMonth > $firstDateOfWork) { // tháng mới
+                if ($firstDateOfMonth > $firstDateOfWork) { // qua thang moi
                     # vo hieu hoa bang cham cong cu
                     $this->disableWord($workId);
                     # xuat bang luong cho NV

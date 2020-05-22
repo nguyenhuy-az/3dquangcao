@@ -14,7 +14,11 @@ $benefitMoney = $dataSalary->benefitMoney();
 $workId = $dataWork->workId();
 $companyStaffWorkId = $dataWork->companyStaffWorkId();
 $staffId = $dataWork->staffId();
-$totalMoneyMinus = $dataWork->totalMoneyMinus();
+# tien thuong
+$totalMoneyBonus = $dataWork->totalMoneyBonusApplied();
+#tien phat
+$totalMoneyMinus = $dataWork->totalMoneyMinusApplied();
+# tien ung
 $totalMoneyBeforePay = $dataWork->totalMoneyBeforePay();
 $sumMainMinute = $dataWork->sumMainMinute();
 $sumPlusMinute = $dataWork->sumPlusMinute();
@@ -129,12 +133,12 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                      role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <div class="modal-header" style="background-color: #d7d7d7;">
+                                            <div class="modal-header" style="background-color: black; color: yellow;">
                                                 <button type="button" class="close" data-dismiss="modal">
                                                     <span aria-hidden="true">&times;</span><span
                                                             class="sr-only">Close</span>
                                                 </button>
-                                                <h4 class="qc-color-red modal-title" id="myModalLabel">
+                                                <h4 class="modal-title" id="myModalLabel">
                                                     BẢNG LƯƠNG CƠ BẢN
                                                 </h4>
                                             </div>
@@ -248,12 +252,12 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                      tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <div class="modal-header" style="background-color: #d7d7d7;">
-                                                <button type="button" class="close" data-dismiss="modal">
-                                                    <span aria-hidden="true">&times;</span><span
-                                                            class="sr-only">Close</span>
+                                            <div class="modal-header" style="background-color: black;">
+                                                <button type="button" class="close" data-dismiss="modal" >
+                                                    <span aria-hidden="true">&times;</span>
+                                                    <span class="sr-only" style="color: yellow;">Close</span>
                                                 </button>
-                                                <h4 class="qc-color-red modal-title" id="myModalLabel">
+                                                <h4 class="modal-title" id="myModalLabel" style="color: yellow;">
                                                     THỐNG KÊ LÀM VIỆC
                                                 </h4>
                                             </div>
@@ -340,16 +344,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    P/C tăng ca ({!! floor(($sumPlusMinute-$sumPlusMinute%60)/60) !!}
-                                                    <b>h</b> {!! $sumPlusMinute%60 !!})
-                                                </td>
-                                                <td class="text-right">
-                                                    <b>+ {!! $hFunction->currencyFormat($totalMoneyOvertimeHour) !!}</b>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <em class="qc-color-grey">Mua vật tư (Đã duyệt chưa TT):</em>
+                                                    Mua vật tư (Đã duyệt chưa TT):
                                                 </td>
                                                 <td class="text-right">
                                                     <b> + {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}</b>
@@ -357,7 +352,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <em class="qc-color-grey">Cộng thêm:</em>
+                                                    Cộng thêm:
                                                 </td>
                                                 <td class="text-right">
                                                     <b>+ {!! $hFunction->currencyFormat($benefitMoney) !!}</b>
@@ -365,27 +360,34 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <em class="qc-color-grey">Ứng:</em>
+                                                    Thưởng:
                                                 </td>
                                                 <td class="text-right">
-                                                    <b>- {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}</b>
+                                                    <b>{!! $hFunction->currencyFormat($totalMoneyBonus) !!}</b>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <em class="qc-color-grey">Phạt:</em>
+                                                    Phạt:
                                                 </td>
                                                 <td class="text-right">
                                                     <b>- {!! $hFunction->currencyFormat($totalMoneyMinus) !!}</b>
                                                 </td>
                                             </tr>
-
-                                            <tr style="border-top: 1px solid whitesmoke; color: brown;">
+                                            <tr>
+                                                <td>
+                                                    Ứng:
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>- {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr style="border-top: 3px solid brown; color: brown;">
                                                 <td>
                                                     <em>Lương còn lại:</em>
                                                 </td>
                                                 <td class="text-right">
-                                                    <b>{!! $hFunction->currencyFormat($totalCurrentSalary + $totalMoneyImportOfStaff + $benefitMoney -  $totalMoneyBeforePay - $totalMoneyMinus) !!}</b>
+                                                    <b>{!! $hFunction->currencyFormat($totalCurrentSalary + $totalMoneyImportOfStaff + $benefitMoney + $totalMoneyBonus -  $totalMoneyBeforePay - $totalMoneyMinus) !!}</b>
                                                 </td>
                                             </tr>
                                         @else
@@ -403,7 +405,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                 </div>
                 {{-- Chi tiết thanh toan lương   --}}
                 <div class="row">
-                    <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <tr>
@@ -412,7 +414,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                         <label class="qc-color-red">CHI TIẾT THANH TOÁN LƯƠNG</label>
                                     </th>
                                 </tr>
-                                <tr style="background-color: whitesmoke;">
+                                <tr style="background-color: black;color: yellow;">
                                     <th class="text-center" style="width: 20px;">STT</th>
                                     <th>Ngày</th>
                                     <th>Thủ quỹ</th>
@@ -457,7 +459,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
 
                 {{-- Chi tiet cham cong   --}}
                 <div class="row">
-                    <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <tr>
@@ -466,7 +468,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                         <label class="qc-color-red">CHI TIẾT CHẤM CÔNG</label>
                                     </th>
                                 </tr>
-                                <tr style="background-color: whitesmoke;">
+                                <tr style="background-color: black;color: yellow;">
                                     <th class="text-center" style="width: 20px;">STT</th>
                                     <th class="text-center">Giờ vào</th>
                                     <th class="text-center">Giờ ra</th>

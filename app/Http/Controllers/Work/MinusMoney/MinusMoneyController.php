@@ -14,7 +14,7 @@ use Request;
 
 class MinusMoneyController extends Controller
 {    //phạt
-    public function index($monthFilter = null, $yearFilter = null)
+    public function index($monthFilter = 0, $yearFilter = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();

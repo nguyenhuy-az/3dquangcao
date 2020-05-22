@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Work\Money\Receive;
 use App\Http\Controllers\Controller;
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\Department\QcDepartment;
-use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\TransfersDetail\QcTransfersDetail;
@@ -48,7 +47,7 @@ class MoneyReceiveController extends Controller
                 $yearFilter = date('Y');
             }
             # nhan tien tu don hang
-            $dataOrderPay = $dataStaffLogin->orderPayNoTransferOfStaff($loginStaffId, $dateFilter);
+            $dataOrderPay = $dataStaffLogin->orderPayInfoOfStaff($loginStaffId, $dateFilter);
             # danh sach NV nhan tien cua cty me
             $dataStaffReceiveTransfer = $modelStaff->infoActivityOfCompany($modelCompany->getRootActivityCompanyId(), $modelDepartment->treasurerDepartmentId());
             return view('work.money.receive.receive', compact('dataAccess', 'modelStaff', 'dataOrderPay', 'dataStaffReceiveTransfer', 'dateFilter', 'dayFilter', 'monthFilter', 'yearFilter'));
@@ -80,12 +79,12 @@ class MoneyReceiveController extends Controller
             $name_img = null;
         }
 
-        $txtTotalMoney = $hFunction->convertCurrencyToInt($txtTotalMoney);
+        $txtTotalMoney = $hFunction->convertCurrencyToInt($txtTotalMoney); # doi kieu tien te sang kieu int
         if ($modelTransfer->insert($txtTotalMoney, $hFunction->carbonNow(), $txtNote, $name_img, $modelStaff->loginStaffId(), $txtStaffReceiveId, $modelStaff->companyId($txtStaffReceiveId))) {
             $newTransferId = $modelTransfer->insertGetId();
-            foreach ($listOrderPay as $key => $value) {
+            /*foreach ($listOrderPay as $key => $value) {
                 $modelTransferDetail->insert($newTransferId, $value);
-            }
+            }*/
             return redirect()->route('qc.work.money.transfer.transfer.get');
         } else {
             return redirect()->back();

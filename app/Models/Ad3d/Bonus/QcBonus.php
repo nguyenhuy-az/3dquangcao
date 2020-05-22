@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcBonus extends Model
 {
     protected $table = 'qc_bonus';
-    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus', 'created_at', 'work_id', 'orderAllocation_id'];
+    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus','action', 'created_at', 'work_id', 'orderAllocation_id'];
     protected $primaryKey = 'bonus_id';
     public $timestamps = false;
 
@@ -19,7 +19,6 @@ class QcBonus extends Model
     public function insert($money, $bonusDate, $note, $applyStatus, $workId, $orderAllocationId)
     {
         $hFunction = new \Hfunction();
-        $modelBonus = new QcBonus();
         $modelBonus = new QcBonus();
         $modelBonus->money = $money;
         $modelBonus->bonusDate = $bonusDate;
@@ -36,11 +35,6 @@ class QcBonus extends Model
         }
     }
 
-    /* public function updateInfo($bonusId, $money, $datePay, $reason, $punishId)
-     {
-         return QcBonus::where('bonus_id', $bonusId)->update(['money' => $money, 'dateMinus' => $datePay, 'reason' => $reason, 'punish_id' => $punishId]);
-     }*/
-//lay id moi them
     public function insertGetId()
     {
         return $this->lastId;
@@ -53,7 +47,7 @@ class QcBonus extends Model
 
     public function cancelBonus($bonusId = null)
     {
-        return QcBonus::where('bonus_id', $bonusId)->update(['cancelStatus' => 1]);
+        return QcBonus::where('bonus_id', $bonusId)->update(['cancelStatus' => 1, 'action'=>0]);
     }
 
     //----------- làm việc ------------
@@ -80,6 +74,16 @@ class QcBonus extends Model
     public function totalMoneyNotApplyOfWork($workId)
     {
         return QcBonus::where('work_id', $workId)->where('applyStatus', 0)->sum('money');
+    }
+
+    public function totalMoneyAppliedOfWork($workId)
+    {
+        return QcBonus::where('work_id', $workId)->where('applyStatus', 1)->where('cancelStatus', 0)->where('action', 0)->sum('money');
+    }
+
+    public function autoCheckApplyBonusEndWork($workId)
+    {
+        return QcBonus::where('work_id', $workId)->where('cancelStatus', 0)->where('action', 1)->update(['applyStatus' => 1, 'action' => 0]);
     }
 
     //---------- thong bao ban giao don hang moi -----------
@@ -170,6 +174,12 @@ class QcBonus extends Model
     {
         return $this->pluck('cancelStatus', $bonusId);
     }
+
+    public function action($bonusId = null)
+    {
+        return $this->pluck('action', $bonusId);
+    }
+
 
     public function createdAt($bonusId = null)
     {

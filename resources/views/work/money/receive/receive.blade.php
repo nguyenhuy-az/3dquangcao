@@ -15,6 +15,11 @@ $loginStaffId = $dataStaffLogin->staffId();
 $totalReceiveMoney = 0;
 # tong chi
 $totalPaidMoney = $dataStaffLogin->totalPaidMoney($loginStaffId,$dateFilter);
+
+# tong tien giao chua xac nhan
+$totalMoneyTransferUnConfirm = $dataStaffLogin->totalMoneyTransferUnConfirmed($loginStaffId,$dateFilter);
+# tong tien giao da xac nhan dong y
+$totalMoneyTransferConfirmedAndAccepted = $dataStaffLogin->totalMoneyTransferConfirmedAndAccepted($loginStaffId,$dateFilter);
 ?>
 @extends('work.index')
 @section('titlePage')
@@ -137,17 +142,17 @@ $totalPaidMoney = $dataStaffLogin->totalPaidMoney($loginStaffId,$dateFilter);
                                     </div>
                                     @if($hFunction->checkCount($dataStaffReceiveTransfer))
                                         <?php
-                                        $transferMoney = $totalReceiveMoney - $totalPaidMoney;
+                                        $transferMoney = $totalReceiveMoney - $totalPaidMoney - $totalMoneyTransferUnConfirm - $totalMoneyTransferConfirmedAndAccepted;
                                         ?>
-                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
                                             <div class="form-group form-group-sm">
-                                                <label>Số tiền đã thu:</label>
+                                                <label>Tiền đã thu:</label>
                                                 <input class="form-control" type="text" name="txtTotalReceiveMoney"
                                                        readonly
                                                        value="{!! $hFunction->currencyFormat($totalReceiveMoney) !!}">
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
                                             <div class="form-group form-group-sm">
                                                 <label>Số tiền đã chi:</label>
                                                 <input class="form-control" type="text" name="txtTotalPaidMoney"
@@ -155,34 +160,48 @@ $totalPaidMoney = $dataStaffLogin->totalPaidMoney($loginStaffId,$dateFilter);
                                                        value="{!! $hFunction->currencyFormat($totalPaidMoney) !!}">
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                                            <div class="form-group form-group-sm">
+                                                <label>Tiền giao chưa xác nhận:</label>
+                                                <input class="form-control" type="text" name="txtTotalMoneyTransferUnConfirm" readonly
+                                                       value="{!! $hFunction->currencyFormat($totalMoneyTransferUnConfirm) !!}">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                                            <div class="form-group form-group-sm">
+                                                <label>Tiền giao đã xác nhận:</label>
+                                                <input class="form-control" type="text" name="txtTotalMoneyTransferConfirmed" readonly
+                                                       value="{!! $hFunction->currencyFormat($totalMoneyTransferConfirmedAndAccepted) !!}">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
                                             <div class="form-group form-group-sm">
                                                 <label>Số tiền giao:</label>
                                                 <input class="form-control" type="text" name="txtTransferMoney" readonly
-                                                       value="{!! $hFunction->currencyFormat($totalReceiveMoney-$totalPaidMoney) !!}">
+                                                       value="{!! $hFunction->currencyFormat($transferMoney) !!}">
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                                            <div class="form-group form-group-sm">
-                                                <label>Người nhận</label> <em style="color: red;">(Từ công ty mẹ)</em>
-                                                <select class="form-control" name="cbStaffReceive">
-                                                    <option value="">Chọn người nhận</option>
-                                                    @if($hFunction->checkCount($dataStaffReceiveTransfer))
-                                                        @foreach($dataStaffReceiveTransfer as $staff)
-                                                            <option value="{!! $staff->staffId() !!}">{!! $staff->fullname() !!}</option>
-                                                        @endforeach
-                                                    @endif
-                                                </select>
+                                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                                                <div class="form-group form-group-sm">
+                                                    <label>Người nhận</label> <em style="color: red;">(Từ công ty mẹ)</em>
+                                                    <select class="form-control" name="cbStaffReceive">
+                                                        <option value="">Chọn người nhận</option>
+                                                        @if($hFunction->checkCount($dataStaffReceiveTransfer))
+                                                            @foreach($dataStaffReceiveTransfer as $staff)
+                                                                <option value="{!! $staff->staffId() !!}">{!! $staff->fullname() !!}</option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
                                         @if($transferMoney > 0)
-                                            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
                                                 <div class="form-group form-group-sm">
                                                     <label>Ảnh xác nhận:</label>
                                                     <input class="txtTransferImage" type="file" name="txtTransferImage">
                                                 </div>
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                                            <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
                                                 <div class="form-group form-group-sm">
                                                     <label>Ghi chú:</label>
                                                     <input class="form-control" type="text" name="txtNote" value="">

@@ -666,6 +666,24 @@ $(document).ready(function () {
         qc_work.timekeeping.cancel(href);
     });
 });
+//============================ tin tuc =================
+$(document).ready(function () {
+    //------ ------ thong bao -------- -------
+    /*theo tháng*/
+    $('body').on('change', '.qc_work_news_notify_filter_month', function () {
+        qc_main.url_replace(($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_news_notify_filter_year').val()));
+    });
+
+    /*năm*/
+    $('body').on('change', '.qc_work_news_notify_filter_year', function () {
+        qc_work.work.filter($(this).data('href') + '/' + $('.qc_work_news_notify_filter_month').val() + '/' + $(this).val());
+    });
+    //------ ------ ngay nghi -------- -------
+    /*năm*/
+    $('body').on('change', '.qc_work_news_date_off_filter_year', function () {
+        qc_work.work.filter($(this).data('href') + '/' + $(this).val());
+    });
+});
 
 //============================ THONG TIN LAM VIEC =================
 $(document).ready(function () {
@@ -692,7 +710,7 @@ $(document).ready(function () {
     });
 
     // năm
-    $('body').on('change', '.qc_work_money_transfer_login_year', function () {
+    $('body').on('change', '.qc_work_money_receive_filter_year', function () {
         qc_work.money.transfers.filter($(this).data('href') + '/' + $('.qc_work_money_receive_filter_month').val() + '/' + $(this).val());
     });
 
@@ -702,18 +720,14 @@ $(document).ready(function () {
 });
 $(document).ready(function () {
     //------------- bàn giao  tiền -------------------
-    //theo ngày
-    $('body').on('change', '.qc_work_money_transfer_login_day', function () {
-        qc_work.money.transfers.filter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_transfer_login_month').val() + '/' + $('.qc_work_money_transfer_login_year').val());
-    });
     //theo tháng
-    $('body').on('change', '.qc_work_money_transfer_login_month', function () {
-        qc_work.money.transfers.filter($(this).data('href') + '/' + $('.qc_work_money_transfer_login_day').val() + '/' + $(this).val() + '/' + $('.qc_work_money_transfer_login_year').val());
+    $('body').on('change', '.qc_work_money_transfer_filter_month', function () {
+        qc_work.money.transfers.filter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_transfer_filter_year').val());
     });
 
     // năm
-    $('body').on('change', '.qc_work_money_transfer_login_year', function () {
-        qc_work.money.transfers.filter($(this).data('href') + '/' + $('.qc_work_money_transfer_login_day').val() + '/' + $('.qc_work_money_transfer_login_month').val() + '/' + $(this).val());
+    $('body').on('change', '.qc_work_money_transfer_filter_year', function () {
+        qc_work.money.transfers.filter($(this).data('href') + '/' + $('.qc_work_money_transfer_filter_month').val() + '/' + $(this).val());
     });
 
     //------------- CHI -------------------

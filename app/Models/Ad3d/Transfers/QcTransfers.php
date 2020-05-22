@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcTransfers extends Model
 {
     protected $table = 'qc_transfers';
-    protected $fillable = ['transfers_id', 'transfersCode', 'money', 'transfersDate', 'reason', 'transferImage', 'confirmReceive', 'confirmDate', 'created_at', 'transfersStaff_id', 'receiveStaff_id', 'company_id'];
+    protected $fillable = ['transfers_id', 'transfersCode', 'money', 'transfersDate', 'reason', 'transferImage', 'confirmReceive', 'confirmDate', 'confirmNote', 'acceptStatus', 'created_at', 'transfersStaff_id', 'receiveStaff_id', 'company_id'];
     protected $primaryKey = 'transfers_id';
     public $timestamps = false;
 
@@ -64,12 +64,14 @@ class QcTransfers extends Model
         ]);
     }
 
-    public function updateConfirmReceive($transfersId)
+    public function updateConfirmReceive($transfersId, $confirmNote, $acceptStatus)
     {
         $hFunction = new \Hfunction();
         return QcTransfers::where('transfers_id', $transfersId)->update([
             'confirmReceive' => 1,
             'confirmDate' => $hFunction->carbonNow(),
+            'confirmNote' => $confirmNote,
+            'acceptStatus' => $acceptStatus
         ]);
     }
 
@@ -158,7 +160,7 @@ class QcTransfers extends Model
 
     }
 
-    public function totalMoneyOfTransferStaffAndDate($staffId, $date=null)
+    public function totalMoneyOfTransferStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('transfersDate', 'like', "%$date%")->sum('money');
@@ -168,13 +170,35 @@ class QcTransfers extends Model
 
     }
 
-    // tong tien da giao va da duoc xac nhan
-    public function totalMoneyConfirmedOfTransferStaffAndDate($staffId, $date=null)
+    // tong tien da giao va chua xac nhan
+    public function totalMoneyUnConfirmOfTransferStaff($staffId, $date = null)
     {
         if (!empty($date)) {
-            return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive',1)->where('transfersDate', 'like', "%$date%")->sum('money');
+            return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', 0)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
-            return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive',1)->sum('money');
+            return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', 0)->sum('money');
+        }
+
+    }
+
+    // tong tien da giao va da duoc xac nhan
+    public function totalMoneyConfirmedOfTransferStaffAndDate($staffId, $date = null)
+    {
+        if (!empty($date)) {
+            return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
+        } else {
+            return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', 1)->sum('money');
+        }
+
+    }
+
+    // tong tien da giao va da duoc xac nhan dong y
+    public function totalMoneyConfirmedAndAcceptedOfTransferStaff($staffId, $date = null)
+    {
+        if (!empty($date)) {
+            return QcTransfers::where('transfersStaff_id', $staffId)->where('acceptStatus', 1)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
+        } else {
+            return QcTransfers::where('transfersStaff_id', $staffId)->where('acceptStatus', 1)->where('confirmReceive', 1)->sum('money');
         }
 
     }
@@ -215,12 +239,13 @@ class QcTransfers extends Model
         }
 
     }
-    public function totalMoneyConfirmedOfReceivedStaffAndDate($staffId, $date=null)
+
+    public function totalMoneyConfirmedOfReceivedStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
-            return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive',1)->where('transfersDate', 'like', "%$date%")->sum('money');
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
-            return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive',1)->sum('money');
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', 1)->sum('money');
         }
 
     }

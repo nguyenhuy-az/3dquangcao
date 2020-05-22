@@ -30,7 +30,7 @@ $hrefIndex = route('qc.work.orders.provisional.get');
                                 </a>
                             </li>
                             <li class="active">
-                                <a class="qc-link" href="{!! $hrefIndex !!}">
+                                <a class="qc-link" href="{!! $hrefIndex !!}" style="background-color: whitesmoke;">
                                     <i class="qc-font-size-20 glyphicon glyphicon-refresh" style="color: red;"></i>
                                     <label class="qc-font-size-20">BÁO GIÁ</label>
                                     <em class="qc-font-size-20" style="color: red;">({!! count($dataOrders) !!})</em>
@@ -81,7 +81,7 @@ $hrefIndex = route('qc.work.orders.provisional.get');
                     <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered" style="margin-bottom: 100px;">
-                                <tr style="background-color: whitesmoke;">
+                                <tr style="background-color: black;color: yellow;">
                                     <th class="text-center"></th>
                                     <th>Mã ĐH</th>
                                     <th>Tên ĐH</th>

@@ -13,42 +13,71 @@ use Request;
 
 class MoneyTransferController extends Controller
 {
-    public function transferIndex($loginDay = null, $loginMonth = null, $loginYear = null)
+    public function transferIndex($monthFilter = 0, $yearFilter = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        $hFunction->dateDefaultHCM();
-        if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'moneyTransfer',
-                'subObjectLabel' => 'Giao tiền'
-            ];
-            $currentMonth = $hFunction->currentMonth();
-            $currentYear = $hFunction->currentYear();
-            $loginMonth = (empty($loginMonth)) ? $currentMonth : $loginMonth;
-            $loginYear = (empty($loginYear)) ? $currentYear : $loginYear;
-            return view('work.money.transfer.transfer', compact('dataAccess', 'modelStaff', 'loginDay', 'loginMonth', 'loginYear'));
+        $dataAccess = [
+            'object' => 'moneyTransfer',
+            'subObjectLabel' => 'Giao tiền'
+        ];
+
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        if ($hFunction->checkCount($dataStaffLogin)) {
+            $loginStaffId = $dataStaffLogin->staffId();
+            $dateFilter = null;
+            if ($monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+                $monthFilter = date('m');
+                $yearFilter = date('Y');
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            } elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+            } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+                $dateFilter = null;
+            } else {
+                $dateFilter = date('Y-m');
+                $monthFilter = date('m');
+                $yearFilter = date('Y');
+            }
+            $dataTransfer = $dataStaffLogin->transferOfTransferStaff($loginStaffId, $dateFilter);
+            return view('work.money.transfer.transfer', compact('dataAccess', 'modelStaff','dataTransfer','dateFilter','monthFilter', 'yearFilter'));
         } else {
             return view('work.login');
         }
 
     }
 
-    public function receiveIndex($loginDay = null, $loginMonth = null, $loginYear = null)
+    public function receiveIndex($monthFilter = 0, $yearFilter = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        $hFunction->dateDefaultHCM();
-        if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'moneyTransferReceive',
-                'subObjectLabel' => 'Nhận tiền'
-            ];
-            $currentMonth = $hFunction->currentMonth();
-            $currentYear = $hFunction->currentYear();
-            $loginMonth = (empty($loginMonth)) ? $currentMonth : $loginMonth;
-            $loginYear = (empty($loginYear)) ? $currentYear : $loginYear;
-            return view('work.money.transfer.receive', compact('dataAccess', 'modelStaff', 'loginDay', 'loginMonth', 'loginYear'));
+        $dataAccess = [
+            'object' => 'moneyTransferReceive',
+            'subObjectLabel' => 'Nhận tiền'
+        ];
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        if ($hFunction->checkCount($dataStaffLogin)) {
+            $loginStaffId = $dataStaffLogin->staffId();
+            $dateFilter = null;
+            if ($monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+                $monthFilter = date('m');
+                $yearFilter = date('Y');
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            } elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+            } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+                $dateFilter = null;
+            } else {
+                $dateFilter = date('Y-m');
+                $monthFilter = date('m');
+                $yearFilter = date('Y');
+            }
+            $dataTransfer = $dataStaffLogin->transferOfReceiveStaff($loginStaffId, $dateFilter);
+            return view('work.money.transfer.receive', compact('dataAccess', 'modelStaff','dataTransfer','dateFilter','monthFilter', 'yearFilter'));
         } else {
             return view('work.login');
         }

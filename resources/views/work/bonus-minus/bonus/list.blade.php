@@ -19,7 +19,7 @@ $hrefIndex = route('qc.work.bonus.get');
                 <div class="row">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
-                            <tr style="background-color: whitesmoke;">
+                            <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Ngày</th>
                                 <th>Nguyên nhân</th>

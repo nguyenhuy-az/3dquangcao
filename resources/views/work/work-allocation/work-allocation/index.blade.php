@@ -30,7 +30,7 @@ $workId = $dataWork->workId();
                                     <em style="color: deeppink;">(Công việc được bàn giao)</em>
                                 </th>
                             </tr>
-                            <tr style="background-color: whitesmoke;">
+                            <tr style="background-color: black;color: yellow;">
                                 <th style="width: 20px;"></th>
                                 <th class="text-center">Thi công</th>
                                 <th></th>

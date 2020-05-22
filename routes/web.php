@@ -1256,6 +1256,14 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     //nội quy
     Route::get('rules/{code?}', ['as' => 'qc.work.rules', 'uses' => 'Work\WorkController@rules']);
 
+    //tin tưc
+    Route::group(['prefix' => 'news'], function () {
+        # thong bao hoat dong
+        Route::get('notify/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.news.notify.get', 'uses' => 'Work\WorkController@notify']);
+        #ngay nghi
+        Route::get('date-off/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.news.date_off.get', 'uses' => 'Work\WorkController@dateOff']);
+    });
+
     //làm việc
     Route::get('work/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.work.get', 'uses' => 'Work\WorkController@work']);
 

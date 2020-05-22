@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcStaffNotify extends Model
 {
     protected $table = 'qc_staff_notify';
-    protected $fillable = ['notify_id', 'note', 'viewStatus', 'viewDate', 'created_at', 'order_id', 'orderAllocation_id', 'workAllocation_id', 'bonus_id','minusMoney_id', 'staff_id'];
+    protected $fillable = ['notify_id', 'note', 'viewStatus', 'viewDate', 'created_at', 'order_id', 'orderAllocation_id', 'workAllocation_id', 'bonus_id', 'minusMoney_id', 'staff_id'];
     protected $primaryKey = 'notify_id';
     public $timestamps = false;
 
@@ -15,7 +15,7 @@ class QcStaffNotify extends Model
 
     #========== ========== ========== THEM - SUA ========== ========== ==========
     #---------- Them ----------
-    public function insert($orderId = null, $staffId, $note = null, $orderAllocationId = null, $workAllocationId = null, $bonusId = null, $minusMoneyId=null)
+    public function insert($orderId = null, $staffId, $note = null, $orderAllocationId = null, $workAllocationId = null, $bonusId = null, $minusMoneyId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaffNotify = new QcStaffNotify();
@@ -47,7 +47,7 @@ class QcStaffNotify extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
     }
 
-    public function infoOfStaff($staffId, $date, $orderBy = 'DESC')
+    public function infoOfStaff($staffId, $date = null, $orderBy = 'DESC')
     {
         if (!empty($date)) {
             return QcStaffNotify::where('staff_id', $staffId)->where('created_at', 'like', "%$date%")->orderBy('created_at', $orderBy)->get();
@@ -140,6 +140,7 @@ class QcStaffNotify extends Model
     {
         return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('bonus_id')->where('viewStatus', 0)->count();
     }
+
     #cap nhat nhan vien da xem ta ca thong bao ve thuong moi
     public function updateViewedAllOfStaffAndBonus($staffId)
     {

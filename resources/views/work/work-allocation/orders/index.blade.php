@@ -77,7 +77,7 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                 <div class="qc_work_allocation_manage_list_content  row">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
-                            <tr style="background-color: whitesmoke;">
+                            <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width:20px;"></th>
                                 <th>Mã</th>
                                 <th style="min-width: 150px;">Tên ĐH</th>

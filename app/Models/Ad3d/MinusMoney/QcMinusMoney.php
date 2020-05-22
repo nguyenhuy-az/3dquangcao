@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcMinusMoney extends Model
 {
     protected $table = 'qc_minus_money';
-    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'applyStatus', 'cancelStatus', '', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id'];
+    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id'];
     protected $primaryKey = 'minus_id';
     public $timestamps = false;
 
@@ -68,7 +68,7 @@ class QcMinusMoney extends Model
 
     public function cancelMinus($minusId = null)
     {
-        return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->update(['cancelStatus'=> 1]);
+        return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->update(['cancelStatus' => 1, 'action' => 0]);
     }
 
 
@@ -113,9 +113,25 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('work_id', $workId)->orderBy('dateMinus', 'DESC')->get();
     }
 
+    /*public function infoOfWork($workId)
+    {
+        return QcMinusMoney::where('work_id', $workId)->orderBy('dateMinus', 'DESC')->get();
+    }*/
+
+    # tong tien phat khong huy trong thang lam viec - tam
     public function totalMoneyOfWork($workId)
     {
         return QcMinusMoney::where('work_id', $workId)->where('cancelStatus', 0)->sum('money');
+    }
+
+    public function totalMoneyAppliedOfWork($workId)
+    {
+        return QcMinusMoney::where('work_id', $workId)->where('applyStatus', 1)->where('cancelStatus', 0)->where('action', 0)->sum('money');
+    }
+
+    public function autoCheckApplyMinusMoneyEndWork($workId)
+    {
+        return QcMinusMoney::where('work_id', $workId)->where('cancelStatus', 0)->where('action', 1)->update(['applyStatus' => 1, 'action' => 0]);
     }
 
     //---------- ban giao don hang -----------
@@ -208,6 +224,11 @@ class QcMinusMoney extends Model
     public function cancelStatus($minusId = null)
     {
         return $this->pluck('cancelStatus', $minusId);
+    }
+
+    public function action($minusId = null)
+    {
+        return $this->pluck('action', $minusId);
     }
 
 

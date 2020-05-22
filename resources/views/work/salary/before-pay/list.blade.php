@@ -9,7 +9,7 @@
  */
 $hFunction = new Hfunction();
 //$currentMonth = $hFunction = f
-if (count($dataWork) > 0) {
+if ($hFunction->checkCount($dataWork)) {
     $workId = $dataWork->workId();
     $dataBeforePay = $dataWork->infoBeforePayOfWork();
     $dataBeforePayRequest = $dataWork->infoBeforePayRequestOfWork();
@@ -31,14 +31,6 @@ if (count($dataWork) > 0) {
     <div class="qc_work_salary_before_pay_wrap row">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="text-right col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <a class="qc_work_before_pay_request_action qc-link-red-bold"
-                       data-href="{!! route('qc.work.salary.before_pay.request.get') !!}">
-                        <em>+Đề suất Ứng</em>
-                    </a>
-                </div>
-            </div>
-            <div class="row">
                 <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <select class="qc_work_salary_before_pay_month" style="height: 25px;"
                             data-href="{!! route('qc.work.salary.before_pay.get') !!}">
@@ -57,16 +49,20 @@ if (count($dataWork) > 0) {
                             </option>
                         @endfor
                     </select>
+                    <a class="qc_work_before_pay_request_action qc-link-red-bold"
+                       data-href="{!! route('qc.work.salary.before_pay.request.get') !!}">
+                        <b style="font-size: 1.5em;">+Đề suất Ứng</b>
+                    </a>
                 </div>
             </div>
             @if($hFunction->checkCount($dataWork))
                 @if($infoSalaryBasic)
                     {{-- HAN MUC UNG LUONG   --}}
                     <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="row qc-container-table">
+                        <div class="row">
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered" style="table-layout: fixed;">
-                                    <tr style="background-color: whitesmoke;">
+                                    <tr style="background-color: black; color: yellow;">
                                         <th class="text-center">Hạn mức ứng</th>
                                         <th class="text-center">Số lần ứng</th>
                                         <th class="text-center">Tổng ứng đã ứng</th>
@@ -103,10 +99,10 @@ if (count($dataWork) > 0) {
                         </div>
                     </div>
                     <div class="row ">
-                        <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
-                                    <tr style="background-color: whitesmoke;">
+                                    <tr style="background-color: black;color: yellow;">
                                         <th class="text-center" style="width: 20px;">STT</th>
                                         <th>Ngày</th>
                                         <th>Thủ quỹ</th>
@@ -180,10 +176,10 @@ if (count($dataWork) > 0) {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
-                                    <tr style="background-color: whitesmoke;">
+                                    <tr style="background-color: black;color: yellow;">
                                         <th class="text-center" style="width: 20px;">STT</th>
                                         <th>Ngày</th>
                                         <th>Ghi chú</th>

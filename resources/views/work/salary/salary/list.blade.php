@@ -22,22 +22,24 @@ $hFunction = new Hfunction();
                     @if($hFunction->checkCount($dataSalary))
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
-                                <tr style="background-color: whitesmoke;">
+                                <tr style="background-color: black; color: yellow;">
                                     <th class="text-center" style="width: 20px;">STT</th>
                                     <th class="text-center">Từ ngày</th>
                                     <th class="text-center">Đến ngày</th>
-                                    <th class="text-right">Tổng lương</th>
+                                    <th class="text-right">Lương cơ bản</th>
                                     <th class="text-right">
                                         Mua vật tư
                                         <br/>
                                         <em>(Đã duyệt chưa TT)</em>
                                     </th>
                                     <th class="text-right">Cộng thêm</th>
-                                    <th class="text-right">Ứng</th>
+                                    <th class="text-right">Thưởng</th>
                                     <th class="text-right">Phạt</th>
+                                    <th class="text-right">Ứng</th>
                                     <th class="text-right">Đã thanh toán</th>
                                     <th class="text-right">Còn lại</th>
                                     <th class="text-center">TT thanh toán</th>
+                                    <th class="text-center">TT xác nhận</th>
                                     <th class="text-right"></th>
 
                                 </tr>
@@ -46,15 +48,25 @@ $hFunction = new Hfunction();
                                     $salaryId = $salary->salaryId();
                                     $salaryBenefit = $salary->benefitMoney();
                                     $salaryPay = $salary->salary();
-                                    $totalPaid = $salary->totalPaid();
                                     $dataSalaryPayInfo = $salary->infoSalaryPay();
                                     $dataWork = $salary->work;
+                                    # tong luong co ban
                                     $totalSalary = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
-                                    $fromDate = $salary->work->fromDate();
+                                    # thong tin lam viec
+
+                                    $fromDate = $dataWork->fromDate();
                                     $monthOfFromDate = date('m', strtotime($fromDate));
                                     $yearOfFromDate = date('Y', strtotime($fromDate));
                                     // 2 = tong tien mua vat tu da duyet chua thanh toan
-                                    $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataStaff->staffId(), date('Y-m', strtotime($fromDate)), 2);
+                                    $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataStaff->staffId(), date('Y-m', strtotime($fromDate)), 1);
+                                    # tien thuong da ap dung
+                                    $totalBonusMoney = $salary->bonusMoney();
+                                    # tien phat da ap dung
+                                    $totalMinusMoney = $salary->minusMoney();
+                                    # luong da thanh toan
+                                    $totalPaid = $salary->totalPayConfirmed();
+                                    # tong luong con lai chua thanh toan
+                                    $totalSalaryUnPaid = $totalSalary + $totalMoneyImportOfStaff + $salaryBenefit + $totalBonusMoney - $totalMinusMoney - $totalPaid;
                                     ?>
                                     <tr>
                                         <td class="text-center">
@@ -64,7 +76,7 @@ $hFunction = new Hfunction();
                                             {!! date('d/m/Y', strtotime($fromDate)) !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! date('d/m/Y', strtotime($salary->work->toDate())) !!}
+                                            {!! date('d/m/Y', strtotime($dataWork->toDate())) !!}
                                         </td>
                                         <td class="text-right qc-color-red">
                                             {!! $hFunction->currencyFormat($totalSalary) !!}
@@ -75,21 +87,31 @@ $hFunction = new Hfunction();
                                         <td class="text-right qc-color-red">
                                             + {!! $hFunction->currencyFormat($salaryBenefit) !!}
                                         </td>
-                                        <td class="text-right">
-                                            <a href="{!! route('qc.work.salary.before_pay.get', "$monthOfFromDate/$yearOfFromDate") !!}">
-                                                - {!! $hFunction->currencyFormat($dataWork->totalMoneyBeforePay()) !!}
-                                            </a>
+                                        <td class="text-right qc-color-red">
+                                            {!! $hFunction->currencyFormat($totalBonusMoney) !!}
                                         </td>
                                         <td class="text-right">
                                             <a href="{!! route('qc.work.minus_money.get', "$monthOfFromDate/$yearOfFromDate") !!}">
-                                                - {!! $hFunction->currencyFormat($dataWork->totalMoneyMinus()) !!}
+                                                - {!! $hFunction->currencyFormat($totalMinusMoney) !!}
+                                            </a>
+                                        </td>
+                                        <td class="text-right">
+                                            <a href="{!! route('qc.work.salary.before_pay.get', "$monthOfFromDate/$yearOfFromDate") !!}">
+                                                - {!! $hFunction->currencyFormat($dataWork->totalMoneyConfirmedBeforePay()) !!}
                                             </a>
                                         </td>
                                         <td class="text-right">
                                             - {!! $hFunction->currencyFormat($totalPaid) !!}
                                         </td>
                                         <td class="text-right qc-color-red">
-                                            {!! $hFunction->currencyFormat($salaryPay + $totalMoneyImportOfStaff + $salaryBenefit -$totalPaid) !!}
+                                            {!! $hFunction->currencyFormat($totalSalaryUnPaid) !!}
+                                        </td>
+                                        <td class="text-center">
+                                            @if(!$salary->checkPaid())
+                                                <em class="qc-color-grey">Chưa Thanh toán hết</em>
+                                            @else
+                                                <span>Đã Thanh toán</span>
+                                            @endif
                                         </td>
                                         <td class="text-center">
                                             @if(!$salary->checkPaid())
@@ -99,12 +121,11 @@ $hFunction = new Hfunction();
                                                         Xác nhận đã nhận tiền
                                                     </a>
                                                 @else
-                                                    <em class="qc-color-grey">Chưa Thanh toán hết</em>
+                                                    <em class="qc-color-grey">---</em>
                                                 @endif
                                             @else
-                                                <span>Đã Thanh toán |</span>
                                                 @if(!$salary->salaryPayCheckExistUnConfirm())
-                                                    <em class="qc-color-green">Đã xác nhận</em>
+                                                    <em class="qc-color-grey">Đã xác nhận</em>
                                                 @else
                                                     <a class="qc_salary_pay_confirm_get qc-link-red"
                                                        data-href="{!! route('qc.work.salary.salary.confirm.get',$salaryId) !!}">

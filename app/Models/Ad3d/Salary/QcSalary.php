@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcSalary extends Model
 {
     protected $table = 'qc_salary';
-    protected $fillable = ['salary_id', 'mainMinute', 'plusMinute', 'minusMinute', 'beforePay', 'minusMoney', 'benefitMoney', 'benefitDescription', 'overtimeMoney','kpiMoney', 'salary', 'payStatus', 'created_at', 'work_id', 'workSalary_id', 'salaryBasic_id'];
+    protected $fillable = ['salary_id', 'mainMinute', 'plusMinute', 'minusMinute', 'beforePay', 'minusMoney', 'benefitMoney', 'benefitDescription', 'overtimeMoney', 'kpiMoney', 'salary', 'payStatus', 'created_at', 'work_id', 'workSalary_id', 'salaryBasic_id'];
     protected $primaryKey = 'salary_id';
     public $timestamps = false;
 
@@ -19,20 +19,27 @@ class QcSalary extends Model
 
     //========== ========== ========== THEM && VA CAP NHAT ========== ========== ==========
     //---------- them bang luong ----------
-    public function insert($mainMinute, $plusMinute, $minusMute, $beforePay, $minusMoney, $benefitMoney, $overtimeMoney, $salary, $payStatus, $workId, $workSalaryId = null, $salaryBasicId = null, $benefitDescription = null, $kpiMoney =0)
+    public function insert($mainMinute, $plusMinute, $minusMute, $beforePay, $minusMoney, $benefitMoney, $overtimeMoney, $salary, $payStatus, $workId, $workSalaryId = null, $salaryBasicId = null, $benefitDescription = null, $kpiMoney = 0, $bonusMoney = 0)
     {
         $hFunction = new \Hfunction();
         $modelSalary = new QcSalary();
         $modelSalary->mainMinute = $mainMinute;
         $modelSalary->plusMinute = $plusMinute;
         $modelSalary->minusMinute = $minusMute;
-        $modelSalary->beforePay = $beforePay; //tong tien ung
-        $modelSalary->minusMoney = $minusMoney; // tien da pha
-        $modelSalary->benefitMoney = $benefitMoney; // thuong
+        #tong tien ung
+        $modelSalary->beforePay = $beforePay;
+        $modelSalary->bonusMoney = $bonusMoney;
+        # tien da pha
+        $modelSalary->minusMoney = $minusMoney;
+        # thuong
+        $modelSalary->benefitMoney = $benefitMoney;
         $modelSalary->benefitDescription = $benefitDescription;
-        $modelSalary->overtimeMoney = $overtimeMoney; // tien p/c tang ca
-        $modelSalary->kpiMoney = $kpiMoney; //thuong KPI
-        $modelSalary->salary = $salary; //luong chua thanh toan
+        # tien p/c tang ca
+        $modelSalary->overtimeMoney = $overtimeMoney;
+        #thuong KPI
+        $modelSalary->kpiMoney = $kpiMoney;
+        #luong chua thanh toan
+        $modelSalary->salary = $salary;
         $modelSalary->payStatus = $payStatus;
         $modelSalary->work_id = $workId;
         $modelSalary->workSalary_id = $workSalaryId;
@@ -111,6 +118,12 @@ class QcSalary extends Model
     {
         $modelSalaryPay = new QcSalaryPay();
         return $modelSalaryPay->totalPayOfSalary((empty($salaryId)) ? $this->salaryId() : $salaryId);
+    }
+
+    public function totalPayConfirmed($salaryId = null)
+    {
+        $modelSalaryPay = new QcSalaryPay();
+        return $modelSalaryPay->totalPayConfirmedOfSalary((empty($salaryId)) ? $this->salaryId() : $salaryId);
     }
 
     public function infoSalaryPay($salaryId = null)
@@ -193,6 +206,11 @@ class QcSalary extends Model
     public function beforePay($salaryId = null)
     {
         return $this->pluck('beforePay', $salaryId);
+    }
+
+    public function bonusMoney($salaryId = null)
+    {
+        return $this->pluck('bonusMoney', $salaryId);
     }
 
     public function minusMoney($salaryId = null)

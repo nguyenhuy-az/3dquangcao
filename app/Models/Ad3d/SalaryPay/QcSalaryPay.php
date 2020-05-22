@@ -126,6 +126,11 @@ class QcSalaryPay extends Model
         return QcSalaryPay::where('salary_id', $salaryId)->sum('money');
     }
 
+    public function totalPayConfirmedOfSalary($salaryId)
+    {
+        return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', 1)->sum('money');
+    }
+
     public function checkExistUnConfirmOfSalary($salaryId)
     {
         return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', 0)->exists('*');

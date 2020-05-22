@@ -38,7 +38,7 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                     <em style="color: deeppink;">(Danh sách đơn hàng được bàn giao)</em>
                                 </th>
                             </tr>
-                            <tr style="background-color: whitesmoke;">
+                            <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th class="text-center">Thi công</th>
                                 <th>Phụ trách Đơn hàng</th>

@@ -20,13 +20,13 @@ $hrefIndex = route('qc.work.orders.get');
 @endsection
 @section('qc_work_order_body')
     <div id="qc_work_orders_wrap" class="row qc_work_orders_wrap">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed #C2C2C2;">
                     <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="active">
-                                <a class="qc-link" href="{!! $hrefIndex !!}">
+                                <a class="qc-link" href="{!! $hrefIndex !!}" style="background-color: whitesmoke;">
                                     <i class="qc-font-size-20 glyphicon glyphicon-refresh" style="color: red;"></i>
                                     <label class="qc-font-size-20">ĐƠN HÀNG & THANH TOÁN</label>
                                 </a>
@@ -77,11 +77,11 @@ $hrefIndex = route('qc.work.orders.get');
                         </select>
                     </div>
                 </div>
-                <div class="qc_work_orders_list_content row" style="min-height: 3000px;" data-href-view-pay="{!! route('qc.work.orders.order_pay.view.get') !!}">
+                <div class="qc_work_orders_list_content row" data-href-view-pay="{!! route('qc.work.orders.order_pay.view.get') !!}">
                     <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered" style="margin-bottom: 100px;">
-                                <tr style="background-color: whitesmoke;">
+                                <tr style="background-color: black; color: yellow;">
                                     <th class="text-center"></th>
                                     <th>Mã ĐH</th>
                                     <th style="width: 200px;">Tên ĐH</th>
@@ -434,6 +434,14 @@ $hrefIndex = route('qc.work.orders.get');
                     </div>
 
                 </div>
+            </div>
+            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                    Về trang trước
+                </a>
+                <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
+                    Về trang chủ
+                </a>
             </div>
         </div>
     </div>

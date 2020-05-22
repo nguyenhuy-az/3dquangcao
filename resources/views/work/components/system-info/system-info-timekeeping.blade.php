@@ -14,7 +14,7 @@ $dataTimekeepingProvisional = $modelCompany->timekeepingProvisionalOfCompanyAndD
 <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12" style="max-height: 200px; overflow-y: scroll;">
     <div class="table-responsive">
         <table class="table table-hover table-bordered">
-            <tr style="background-color: whitesmoke;">
+            <tr style="background-color: black;color: yellow;">
                 <th class="text-center" style="width: 20px;">STT</th>
                 <th>Tên</th>
                 <th class="text-center">Giờ vào</th>

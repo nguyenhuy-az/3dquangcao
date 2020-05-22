@@ -824,6 +824,30 @@ class QcStaff extends Model
         return $modelTransfers->infoConfirmedOfTransferStaff($staffId, $date);
     }
 
+    #tong tien da chuyen chua xac nhan
+    public function totalMoneyTransferUnConfirmed($staffId, $dateFilter = null) // tồng tiền nhận
+    {
+        $modelTransfers = new QcTransfers();
+        return $modelTransfers->totalMoneyUnConfirmOfTransferStaff($staffId, $dateFilter);
+    }
+
+
+    #tong tien da chuyen da xac nhan dong y
+    public function totalMoneyTransferConfirmedAndAccepted($staffId, $dateFilter = null) // tồng tiền nhận
+    {
+        $modelTransfers = new QcTransfers();
+        return $modelTransfers->totalMoneyConfirmedAndAcceptedOfTransferStaff($staffId, $dateFilter);
+    }
+
+
+    #tong tien da chuyen va da duoc xac nhan
+    public function totalMoneyTransferConfirmedOfStaffAndDate($staffId, $dateFilter = null) // tồng tiền nhận
+    {
+        $modelTransfers = new QcTransfers();
+        return $modelTransfers->totalMoneyConfirmedOfTransferStaffAndDate($staffId, $dateFilter);
+    }
+
+    //---------- nhan tiền -----------
     # thông tin nhan
     public function transferReceive()
     {
@@ -877,10 +901,17 @@ class QcStaff extends Model
         return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'staff_id', 'staff_id');
     }
 
-    public function selectAllNotify($staffId = null)
+    public function infoStaffNotifyOfStaff($staffId, $date = null)
     {
         $modelStaffNotify = new QcStaffNotify();
-        return $modelStaffNotify->selectInfoOfStaff($this->checkIdNull($staffId));
+        return $modelStaffNotify->infoOfStaff($staffId, $date);
+    }
+
+
+    public function selectAllNotify($staffId = null, $date = null)
+    {
+        $modelStaffNotify = new QcStaffNotify();
+        return $modelStaffNotify->selectInfoOfStaff($this->checkIdNull($staffId), $date);
     }
 
     #tat ca thong bao moi chua xem
@@ -930,6 +961,7 @@ class QcStaff extends Model
         $modelStaffNotify = new QcStaffNotify();
         return $modelStaffNotify->totalNotifyNewMinusMoneyOfStaff($this->checkIdNull($staffId));
     }
+
     //========== ========== ========== dang nhap ========== ========== ==========
     public function login($account, $password)
     {
@@ -1378,6 +1410,7 @@ class QcStaff extends Model
         $totalReceivedMoneyOfStaffAndDate = $this->totalMoneyReceivedTransferOfStaffAndDate($staffId, $date);
         return $totalMoneyOrderPay + $totalReceivedMoneyOfStaffAndDate;
     }
+
     #TONG THU
     public function totalReceivedMoney($staffId, $date = null)
     {
@@ -1414,7 +1447,7 @@ class QcStaff extends Model
         $totalMoneyPaidSalaryBeforePay = $this->totalMoneyPaidSalaryBeforePayOfStaffAndDate($staffId, $date);
 
         #chi thanh toan luong - da duoc thanh toan
-        $totalMoneyPaidSalaryPay =  $this->totalMoneyPaidSalaryPayOfStaffAndDateAndConfirmed($staffId, $date);
+        $totalMoneyPaidSalaryPay = $this->totalMoneyPaidSalaryPayOfStaffAndDateAndConfirmed($staffId, $date);
 
         #chi thanh toan mua vat tu - da duoc duyet
         $totalMoneyPayImport = $this->totalMoneyImportPayConfirmOfStaffAndDate($staffId, $date);
@@ -1428,12 +1461,7 @@ class QcStaff extends Model
         return $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay + $totalMoneyPayImport + $totalMoneyPayActivity + $totalPaidOrderCancelOfStaffAndDate;
     }
 
-    #tong tien da chuyen va da duoc xac nhan
-    public function totalMoneyTransferConfirmedOfStaffAndDate($staffId, $dateFilter = null) // tồng tiền nhận
-    {
-        $modelTransfers = new QcTransfers();
-        return $modelTransfers->totalMoneyConfirmedOfTransferStaffAndDate($staffId, $dateFilter);
-    }
+
 
     # ------- -------- TONG CHI -------- ------
     ##tong tien chi mua vat tu / dung cu da duoc duỵet

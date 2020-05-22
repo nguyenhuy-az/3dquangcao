@@ -77,14 +77,14 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, dat
                     </div>
                 </div>
             </div>
-            <div class="qc_timekeeping_contain qc-container-table qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12"
+            <div class="qc_timekeeping_contain qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12"
                  data-href-time-end="{!! route('qc.work.timekeeping.timeEnd.get') !!}"
                  data-href-image="{!! route('qc.work.timekeeping.timekeeping_provisional_image.add.get') !!}"
                  data-href-cancel="{!! route('qc.work.timekeeping.cancel.get') !!}">
                 {{-- thong tin lam viec --}}
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black;color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Giờ vào</th>
                             <th>Giờ ra</th>
@@ -228,18 +228,18 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, dat
                 <div class="row">
                     <div class="qc-padding-top-10 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <i class="glyphicon glyphicon-calendar"></i>
-                        <span class="qc-color-red">XIN TRỄ</span>
+                        <b class="qc-color-red" style="font-size: 1.5em;">XIN TRỄ</b>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black; color: white;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Ngày</th>
                             <th>Ghi chú trễ</th>
                             <th>Ghi chú Duyệt</th>
                             <th class="text-center">Duyệt</th>
-                            <th class="text-right">Duyệt</th>
+                            <th class="text-right"></th>
                         </tr>
                         @if($hFunction->checkCount($dataLicenseLateWork))
                             @foreach($dataLicenseLateWork as $licenseLateWork)
@@ -307,18 +307,18 @@ $dataLicenseLateWork = $dataStaff->timekeepingLateWorkOfStaff($loginStaffId, dat
                 <div class="row ">
                     <div class="qc-padding-top-10 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <i class="glyphicon glyphicon-calendar"></i>
-                        <span class="qc-color-red">XIN NGHỈ</span>
+                        <b class="qc-color-red" style="font-size: 1.5em;">XIN NGHỈ</b>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black; color: white;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Ngày</th>
                             <th>Ghi chú nghỉ</th>
                             <th>Ghi chú Duyệt</th>
                             <th class="text-center">Duyệt</th>
-                            <th class="text-right">Duyệt</th>
+                            <th class="text-right"></th>
                         </tr>
                         @if($hFunction->checkCount($dataLicenseOffWork))
                             @foreach($dataLicenseOffWork as $licenseOffWork)

@@ -23,12 +23,12 @@ if (isset($dataAccess)) {
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
             <li @if($viewLoginObject == 'salary') class="active" @endif>
-                <a href="{!! route('qc.work.salary.salary.get') !!}">
+                <a href="{!! route('qc.work.salary.salary.get') !!}" @if($viewLoginObject == 'salary') style="background-color: whitesmoke;" @endif>
                     <label>Lương</label>
                 </a>
             </li>
             <li @if($viewLoginObject == 'beforePay') class="active" @endif>
-                <a href="{!! route('qc.work.salary.before_pay.get') !!}">
+                <a href="{!! route('qc.work.salary.before_pay.get') !!}" @if($viewLoginObject == 'beforePay') style="background-color: whitesmoke;" @endif>
                     <label>Ứng lương</label>
                 </a>
             </li>

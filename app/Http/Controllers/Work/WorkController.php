@@ -18,7 +18,7 @@ use Request;
 
 class WorkController extends Controller
 {
-    public function index($sysInfoObject=null)
+    public function index($sysInfoObject = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -29,11 +29,54 @@ class WorkController extends Controller
         if ($hFunction->checkCount($dataStaffLogin)) {
             # kiem tra thong tin ban giao don hang
             $modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
-            return view('work.control-panel', compact('modelCompany','modelStaff','sysInfoObject'));
+            return view('work.control-panel', compact('modelCompany', 'modelStaff', 'sysInfoObject'));
         } else {
             return view('work.login');
         }
 
+    }
+
+    public function notify($monthFilter = 0, $yearFilter = 0)
+    {
+        $modelStaff = new QcStaff();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $staffCompanyId = $dataStaffLogin->companyId();
+        $sysInfoObject = 'home_system_notify';
+        $dateFilter = null;
+        if ($monthFilter == 0 && $yearFilter == 0) { //khong chon thoi gian xem
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter == 100 && $yearFilter == null) { //xam tat ca cac thang va khong chon nam
+            $yearFilter = date('Y');
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter == 100) { //co chon thang va khong chon nam
+            $monthFilter = 100;
+            $dateFilter = null;
+        } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //co chon thang va chon nam
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+            $dateFilter = null;
+        }elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } else {
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+        }
+        $dataStaffNotify = $dataStaffLogin->infoStaffNotifyOfStaff($dataStaffLogin->staffId(),$dateFilter);
+        return view('work.news.notify.index', compact('modelCompany', 'modelStaff', 'sysInfoObject','dataStaffNotify','monthFilter','yearFilter'));
+    }
+
+    public function dateOff($yearFilter = 0){
+        $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $sysInfoObject = 'home_systemDateOff';
+        $dateFilter = null;
+        if ($yearFilter == 0)  $yearFilter = date('Y');
+        $dataSystemDateOff = $modelCompany->systemDateOfFOfCompanyAndDate($dataStaffLogin->companyId(), $yearFilter);
+        return view('work.news.date-off.index', compact('modelCompany', 'modelStaff', 'sysInfoObject','dataSystemDateOff','yearFilter'));
     }
 
     //làm việc

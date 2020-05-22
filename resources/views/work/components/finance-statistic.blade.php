@@ -13,13 +13,13 @@ $loginStaffId = $dataStaffLogin->staffId();
 $currentMonth = $hFunction->currentMonth();
 $currentYear = $hFunction->currentYear();
 $dateFilter = date('Y-m');
-$dataWork = $dataStaffLogin->firstInfoToWork($loginStaffId, date('Y-m', strtotime("$currentYear-$currentMonth")));
+$dataWork = $dataStaffLogin->firstInfoActivityToWork($loginStaffId, date('Y-m', strtotime("$currentYear-$currentMonth")));
 $companyStaffWorkId = $dataWork->companyStaffWorkId();
 // thong tin lương co ban
 $dataStaffWorkSalary = $dataStaffLogin->staffWorkSalaryActivityOfStaff($loginStaffId);
 $salaryOneHour = $dataStaffWorkSalary->salaryOnHour();#luong theo gio
 $overtimeHour = $dataStaffWorkSalary->overtimeHour();# phu cap tang ca
-if (count($dataWork) > 0) {
+if ($hFunction->checkCount($dataWork)) {
     $sumMainMinute = $dataWork->sumMainMinute();
     $sumPlusMinute = $dataWork->sumPlusMinute();
     //$totalSalary = $dataWork->totalSalaryBasicOfWorkInMonth(); // tong luong co ban
