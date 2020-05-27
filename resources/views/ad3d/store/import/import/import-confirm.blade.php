@@ -8,7 +8,6 @@
  * dataStaff
  */
 $hFunction = new Hfunction();
-$urlReferer = $hFunction->getUrlReferer();
 $importId = $dataImport->importId();
 $totalMoney = $dataImport->totalMoneyOfImport();
 $importDate = $dataImport->importDate();
@@ -196,7 +195,7 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                             <button type="button" class="qc_ad3d_import_confirm_save btn btn-sm btn-primary">
                                 Đồng ý
                             </button>
-                            <a type="button" class="btn btn-sm btn-default" href="{!! $urlReferer !!}">Đóng</a>
+                            <a type="button" class="btn btn-sm btn-default" href="{!! $hFunction->getUrlReferer() !!}">Đóng</a>
                         </div>
                     </div>
                 </div>

@@ -68,8 +68,9 @@ class WorkAllocationConstructionController extends Controller
         $hFunction = new \Hfunction();
         $modelOrderAllocation = new QcOrderAllocation();
         if (!$hFunction->checkEmpty($allocationId)) {
+            $paymentStatus = $request->input('cbPaymentStatus');
             $finishNote = $request->input('txtFinishNote');
-            $modelOrderAllocation->reportFinishAllocation($allocationId, $hFunction->carbonNow(), $finishNote);
+            $modelOrderAllocation->reportFinishAllocation($allocationId, $hFunction->carbonNow(), $finishNote, $paymentStatus);
         }
 
     }

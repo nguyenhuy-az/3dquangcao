@@ -310,8 +310,8 @@ Route::group(['prefix' => 'ad3d'], function () {
         Route::group(['prefix' => 'minus-money'], function () {
             //Route::get('view/{payId?}', ['as' => 'qc.ad3d.finance.minus-money.view.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@view']);
             //them
-            //Route::get('add/{companyLoginId?}/{workId?}/{punishId?}', ['as' => 'qc.ad3d.finance.minus-money.add.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getAdd']);
-            //Route::post('add', ['as' => 'qc.ad3d.finance.minus-money.add.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postAdd']);
+            Route::get('add/{companyLoginId?}/{workId?}/{punishId?}', ['as' => 'qc.ad3d.finance.minus-money.add.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getAdd']);
+            Route::post('add', ['as' => 'qc.ad3d.finance.minus-money.add.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postAdd']);
 
             //sua
             //Route::get('edit/{minusId?}', ['as' => 'qc.ad3d.finance.minus-money.edit.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getEdit']);
@@ -770,7 +770,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             #thay doi thong tin thanh toan
             Route::get('pay-edit/{payId?}', ['as' => 'qc.work.orders.info.pay.edit.post', 'uses' => 'Work\Orders\OrdersController@getEditInfoPay']);
             Route::post('pay-edit/{payId?}', ['as' => 'qc.work.orders.info.pay.edit.post', 'uses' => 'Work\Orders\OrdersController@postEditInfoPay']);
-            Route::get('list/{orderId?}', ['as' => 'qc.work.orders.info.get', 'uses' => 'Work\Orders\OrdersController@ordersInfo']);
+            Route::get('list/{orderId?}/{notifyId?}', ['as' => 'qc.work.orders.info.get', 'uses' => 'Work\Orders\OrdersController@ordersInfo']);
         });
         #them thiet ke
         Route::group(['prefix' => 'design'], function () {

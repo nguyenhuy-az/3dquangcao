@@ -53,6 +53,17 @@ $dataOrder = $dataOrderAllocation->orders;
                     <div class="row">
                         <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group">
+                                <label style="text-decoration: underline; background-color: red; padding: 3px; color: yellow;">Thu tiền:</label>
+                                <select class="form-control" name="cbPaymentStatus">
+                                    <option value="0">Không thu tiền</option>
+                                    <option value="1">Có thu tiền</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group">
                                 <label style="text-decoration: underline;">Ghi chú:</label><br/>
                                 <input name="txtFinishNote" class="form-control" type="text" value="" >
                             </div>

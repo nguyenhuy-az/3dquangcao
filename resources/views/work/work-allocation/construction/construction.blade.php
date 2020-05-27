@@ -45,7 +45,7 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                 <th>Khách hàng</th>
                                 <th class="text-center">Thời gian được giao</th>
                                 <th class="text-center">Thời hạn bàn giao</th>
-                                <th class="text-center">Ngày giao</th>
+                                <th class="text-center">Ngày báo hoàn thành</th>
                                 <th class="text-center">Thưởng <br/> đúng hạn</th>
                                 <th class="text-center">Phạt <br/> trễ hạn</th>
                                 <th>QL sản phẩm</th>
@@ -109,8 +109,9 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                             @else
                                                 @if($ordersAllocation->checkFinish())
                                                     <em style="color: grey;">Đã kết thúc</em>
+                                                    <i class="glyphicon glyphicon-ok" style="color: blue;"></i>
                                                 @else
-                                                    <span>Đang thi công</span>
+                                                    <span style="padding: 3px; background-color: blue; color: white;">Đang thi công</span>
                                                 @endif
                                                 @if($ordersAllocation->checkLate($allocationId))
                                                     <br/>
@@ -131,14 +132,16 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                         </td>
                                         <td class="text-center">
                                             {!! date('d-m-Y', strtotime($ordersAllocation->receiveDeadline())) !!}
-                                            <span class="qc-font-bold" style="color: brown;">{!! date('H:i', strtotime($ordersAllocation->receiveDeadline())) !!}</span>
+                                            <span class="qc-font-bold"
+                                                  style="color: brown;">{!! date('H:i', strtotime($ordersAllocation->receiveDeadline())) !!}</span>
                                         </td>
                                         <td class="text-center">
                                             @if($hFunction->checkEmpty($allocationFinishDate))
                                                 <em style="color: grey;"> ---</em>
                                             @else
                                                 {!! date('d-m-Y', strtotime($allocationFinishDate)) !!}
-                                                <span class="qc-font-bold" style="color: brown;">{!! date('H:i', strtotime($allocationFinishDate)) !!}</span>
+                                                <span class="qc-font-bold"
+                                                      style="color: brown;">{!! date('H:i', strtotime($allocationFinishDate)) !!}</span>
                                             @endif
                                         </td>
                                         <td class="text-center">
@@ -171,7 +174,7 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                                     </a>
                                                 @endif
                                             @else
-                                                    @if($ordersAllocation->checkCancelAllocation())
+                                                @if($ordersAllocation->checkCancelAllocation())
                                                     <em style="color: grey;">---</em>
                                                 @else
                                                     @if($ordersAllocation->checkConfirmFinish($allocationId))
@@ -180,7 +183,11 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                                         <em class="qc-color-grey">Không hoàn thành</em>
                                                     @endif
                                                 @endif
-
+                                                @if($ordersAllocation->checkPaymentStatus())
+                                                    <br/>
+                                                    <i class="glyphicon glyphicon-usd" style="color: blue;"></i>
+                                                    <b style="color: red;">Có thu tiền hộ</b>
+                                                @endif
                                             @endif
                                         </td>
                                     </tr>

@@ -84,14 +84,17 @@ $hrefIndex = route('qc.work.orders.get');
                                 <tr style="background-color: black; color: yellow;">
                                     <th class="text-center"></th>
                                     <th>Mã ĐH</th>
+                                    <th class="text-center">Thi công</th>
                                     <th style="width: 200px;">Tên ĐH</th>
                                     <th style="width: 200px;">Khách hàng</th>
                                     <th class="text-center">
                                         Ngày nhận <br/>
                                         <em> - Hẹn giao</em>
                                     </th>
-                                    <th class="text-center">Ngày Hoàn thành</th>
-                                    <th class="text-center">Thi công</th>
+                                    <th class="text-center">
+                                        Ngày Hoàn thành <br/>
+                                        Giao khách
+                                    </th>
                                     <th class="text-center" style="min-width: 70px;">Thu tiền</th>
                                     <th class="text-right">Tổng tiền ĐH</th>
                                     <th class="text-right">Giảm</th>
@@ -117,6 +120,7 @@ $hrefIndex = route('qc.work.orders.get');
                                         <b>{!! $hFunction->getCountFromData($dataOrders) !!}</b>
                                     </td>
                                     <td></td>
+                                    <td class="text-center"></td>
                                     <td style="padding: 0px;">
                                         <div class="input-group">
                                             <input type="text" class="txtOrderFilterKeyword form-control"
@@ -171,7 +175,6 @@ $hrefIndex = route('qc.work.orders.get');
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center"></td>
                                     <td class="text-center"></td>
                                     <td class="text-center"></td>
                                     <td class="text-center" style="padding: 0px;"> {{--phat trien sau--}}
@@ -238,12 +241,30 @@ $hrefIndex = route('qc.work.orders.get');
                                             </td>
                                             <td class="text-center">
                                                 <span class="qc-color-grey">{!! $orders->orderCode() !!}</span><br/>
-                                                @if($finishStatus)
-                                                    <i class="qc-font-size-16 qc-color-green glyphicon glyphicon-ok"
-                                                       title="Đang triển khai"></i>
+                                            </td>
+                                            <td class="text-center">
+                                                @if(!$cancelStatus)
+                                                    @if($finishStatus)
+                                                        <em>Đã kết thúc</em>
+                                                        <i class="qc-font-size-16 glyphicon glyphicon-ok" style="color: blue;"></i>
+                                                    @else
+                                                        {{--dang duoc phan cong--}}
+                                                        @if($orders->existOrderAllocationOfOrder($orderId))
+                                                            @if($orders->existOrderAllocationFinishOfOrder($orderId))
+                                                                <em style="padding: 3px; background-color: blue; color: white;">Đã thi công xong</em><br/>
+                                                            @else
+                                                                <em style="padding: 3px; background-color: green; color: yellow;">Đang làm</em><br/>
+                                                            @endif
+                                                        @else
+                                                            <em style="padding: 3px; background-color: red; color: white;">Chờ làm</em><br/>
+                                                        @endif
+                                                        <a class="qc_finish_report qc-link-green-bold"
+                                                           data-href="{!! route('work.orders.order.report.finish.get',$orderId) !!}">
+                                                            Báo hoàn thành
+                                                        </a>
+                                                    @endif
                                                 @else
-                                                    <i class="qc-font-size-16 qc-color-red glyphicon glyphicon-ok"
-                                                       title="Đã kết thúc"></i>
+                                                    <em style="color: brown;">Đã hủy</em>
                                                 @endif
                                             </td>
                                             <td>
@@ -254,8 +275,9 @@ $hrefIndex = route('qc.work.orders.get');
                                                         </a>
                                                         @if(!$checkOrderOfReceiveStaff)
                                                             <br/>
-                                                            <em class="qc-color-grey">Phụ
-                                                                trách: {!! $orders->staffReceive->lastName() !!}</em>
+                                                            <em class="qc-color-grey">
+                                                                Phụ trách: {!! $orders->staffReceive->lastName() !!}
+                                                            </em>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -329,32 +351,16 @@ $hrefIndex = route('qc.work.orders.get');
                                             </td>
                                             <td class="text-center">
                                                 @if($hFunction->checkEmpty($orderFinishDate))
-                                                    <em class="qc-color-grey">Null</em>
+                                                    <em class="qc-color-grey">---</em>
                                                 @else
                                                     {!! date('d/m/Y', strtotime($orderFinishDate)) !!}
                                                 @endif
-
-                                            </td>
-                                            <td class="text-center">
-                                                @if(!$cancelStatus)
-                                                    @if($finishStatus)
-                                                        <em>Đã kết thúc</em>
-                                                    @else
-                                                        {{--dang duoc phan cong--}}
-                                                        @if($orders->existOrderAllocationActivityOfOrder($orderId))
-                                                            <em style="color: brown;">Đang làm</em><br/>
-                                                        @else
-                                                            <em style="color: grey;">Chờ làm</em><br/>
-                                                        @endif
-                                                        <a class="qc_finish_report qc-link-green-bold"
-                                                           data-href="{!! route('work.orders.order.report.finish.get',$orderId) !!}">
-                                                            Báo hoàn thành
-                                                        </a>
-                                                    @endif
-                                                @else
-                                                    <em style="color: brown;">Đã hủy</em>
+                                                @if($orders->checkLate($orderId))
+                                                    <br/>
+                                                    <b style="background-color: red; color: yellow; padding: 3px;">Trễ</b>
                                                 @endif
                                             </td>
+
                                             <td class="text-center">
                                                 @if(!$cancelStatus)
                                                     @if(!$orders->checkFinishPayment())
@@ -371,6 +377,10 @@ $hrefIndex = route('qc.work.orders.get');
                                                         @endif
                                                     @else
                                                         <em class="qc-color-grey">Đã thanh toán xong</em>
+                                                    @endif
+                                                    @if($orders->existOrderAllocationPaymentStatus($orderId))
+                                                        <br/>
+                                                        <b style="background-color: blue; color: white; padding: 3px;">Có thu hộ</b>
                                                     @endif
                                                 @else
                                                     <em style="color: brown;">Đã hủy</em>

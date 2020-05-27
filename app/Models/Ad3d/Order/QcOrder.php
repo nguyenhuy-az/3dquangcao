@@ -588,6 +588,28 @@ class QcOrder extends Model
         //
     }
 
+    # kiem tra don hang bi tre
+    public function checkLate($orderId)
+    {
+        $currentDate = date('Y-m-d');
+        $deliveryDate = $this->deliveryDate($orderId)[0];
+        $lateStatus = false;
+        if($this->checkFinishStatus($orderId)){ # don hang da ket thuc
+            $finishDate = $this->finishDate($orderId)[0];
+            if($finishDate > $deliveryDate) $lateStatus = true;
+        }else{ # don hang chua ket thuc
+            if($deliveryDate < $currentDate) $lateStatus = true;
+        }
+        return $lateStatus;
+    }
+
+    # kiem tra do hang co thu ho
+    public function existOrderAllocationPaymentStatus($orderId = null)
+    {
+        $modelOrderConstruction = new QcOrderAllocation();
+        return $modelOrderConstruction->existPaymentStatusOfOrder($this->checkIdNull($orderId));
+    }
+
     # thong tin dang hoat dong
     public function orderAllocationActivity($orderId = null)
     {
@@ -602,16 +624,34 @@ class QcOrder extends Model
         return $modelOrderConstruction->infoAllOfOrder($this->checkIdNull($orderId));
     }
 
-    public function existOrderAllocationActivityOfOrder($orderId = null)
-    {
-        $modelOrderConstruction = new QcOrderAllocation();
-        return $modelOrderConstruction->existInfoActivityOfOrder($this->checkIdNull($orderId));
-    }
-
+    # lay tat ca thong tin ban giao don hang
     public function orderAllocationAllInfo($orderId = null)
     {
         $modelOrderConstruction = new QcOrderAllocation();
         return $modelOrderConstruction->infoOfOrder($this->checkIdNull($orderId));
+    }
+
+    # kiem tra ton tai thong tin ban giao cua don hang
+    public function existOrderAllocationOfOrder($orderId = null)
+    {
+        $modelOrderAllocation = new QcOrderAllocation();
+        return $modelOrderAllocation->existInfoOfOrder($this->checkIdNull($orderId));
+    }
+
+    # ton tai thong tin ban gia dang co hieu luc
+    public function existOrderAllocationActivityOfOrder($orderId = null)
+    {
+        $modelOrderAllocation = new QcOrderAllocation();
+        return $modelOrderAllocation->existInfoActivityOfOrder($this->checkIdNull($orderId));
+    }
+
+    #kiem tra ton tai ban giao da hoan thanh
+    public function existOrderAllocationFinishOfOrder($orderId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelOrderAllocation = new QcOrderAllocation();
+        $result = $modelOrderAllocation->infoFinishOfOrder($this->checkIdNull($orderId));
+        return ($hFunction->checkCount($result)) ? true : false;
     }
 
     //---------- thong tin thi cong san pham -----------
@@ -988,6 +1028,11 @@ class QcOrder extends Model
         return $this->pluck('staff_id', $orderId);
     }
 
+    public function staffId($orderId = null)
+    {
+        return $this->pluck('staff_id', $orderId);
+    }
+
     public function staffReceiveId($orderId = null)
     {
         return $this->pluck('staffReceive_id', $orderId);
@@ -1064,6 +1109,11 @@ class QcOrder extends Model
         return QcOrder::where('orderCode', $orderCode)->exists();
     }
 
+    public function checkLater($orderId)
+    {
+
+    }
+
     #ket thuc thanh toan
     public function checkFinishPayment($orderId = null)
     {
@@ -1099,7 +1149,9 @@ class QcOrder extends Model
     // kiem tra ket thuc don hang
     public function checkFinishStatus($orderId = null)
     {
-        return ($this->finishStatus($orderId) == 1) ? true : false;
+        $result = $this->finishStatus($orderId);
+        $result = (is_int($result))?$result:$result[0];
+        return ($result == 1) ? true : false;
     }
 
     // xac nhan dong y don hang
@@ -1129,7 +1181,7 @@ class QcOrder extends Model
     {
         $orderTotalPrice = $this->totalPrice($orderId);
         if ($orderTotalPrice < 20000000) {
-            return (int) $orderTotalPrice * 0.05;
+            return (int)$orderTotalPrice * 0.05;
         } else {
             return (int)$orderTotalPrice * 0.03;
         }

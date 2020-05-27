@@ -9,6 +9,7 @@ use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use File;
 use Illuminate\Support\Facades\Session;
 use Input;
@@ -149,9 +150,10 @@ class OrdersProvisionalController extends Controller
     // ================ XAC NHAN DAT HANG ===================
     public function getConfirm($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelOrder = new QcOrder();
         $dataOrder = $modelOrder->getInfo($orderId);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             return view('work.orders.provisional.confirm', compact('dataOrder'));
         }
     }
@@ -161,6 +163,7 @@ class OrdersProvisionalController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
+        $modelStaffNotify = new QcStaffNotify();
         $modelOrderAllocation = new QcOrderAllocation();
         $modelOrderPay = new QcOrderPay();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
@@ -170,9 +173,9 @@ class OrdersProvisionalController extends Controller
         $txtDateReceive = Request::input('txtDateReceive');
         $txtDateDelivery = Request::input('txtDateDelivery');
         $updateStatus = false;
-        if (count($dataStaffLogin) > 0) {
+        if ($hFunction->checkCount($dataStaffLogin)) {
             $staffLoginId = $dataStaffLogin->staffId();
-            if (count($dataOrder) > 0) {
+            if ($hFunction->checkCount($dataOrder)) {
                 $updateStatus = true;
                 $dataCustomer = $dataOrder->customer;
                 if ($modelOrder->confirmProvision($orderId, $txtDateReceive, $txtDateDelivery)) {
@@ -183,7 +186,14 @@ class OrdersProvisionalController extends Controller
                         # cap nhat thong tin thanh toan don hang
                         $modelOrder->updateFinishPayment($orderId);
                         # bàn giao don hang = cong trinh
-                        $modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
+                        //$modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
+                    }
+                    # thong bao them don hang
+                    $listStaffReceiveNotify = $modelStaff->infoStaffReceiveNotifyNewOrder($dataStaffLogin->companyId());
+                    if ($hFunction->checkCount($listStaffReceiveNotify)) {
+                        foreach ($listStaffReceiveNotify as $staff) {
+                            $modelStaffNotify->insert($orderId, $staff->staffId(), null);
+                        }
                     }
                 }
 

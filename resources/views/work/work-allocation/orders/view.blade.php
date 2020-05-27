@@ -29,7 +29,7 @@ $orderId = $dataOrder->orderId();
             <h3 class="qc-color-green">{!! $dataOrder->name() !!}</h3>
         </div>
         {{-- thông tin đơn hàng --}}
-        <div class="qc-container-table qc-container-table-border-none qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-6">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-6">
             <div class="table-responsive">
                 <table class="table table-hover qc-margin-bot-none">
                     <tr>
@@ -79,7 +79,7 @@ $orderId = $dataOrder->orderId();
         </div>
 
         {{-- thông tin khách hàng --}}
-        <div class="qc-container-table qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-6">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-6">
             <div class="table-responsive">
                 <table class="table table-hover qc-margin-bot-none">
                     <tr style="background-color: whitesmoke;">
@@ -128,7 +128,7 @@ $orderId = $dataOrder->orderId();
         {{-- chi tiết sản phẩm --}}
         <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row qc-padding-top-10">
-                <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">
                         <table class="table table-bordered" style="margin-bottom: 0;">
                             <tr style="background-color: whitesmoke;">
@@ -137,7 +137,7 @@ $orderId = $dataOrder->orderId();
                                     <label class="qc-font-size-14 qc-color-red">DANH SÁCH SẢN PHẨM</label>
                                 </th>
                             </tr>
-                            <tr>
+                            <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Tên SP</th>
                                 <th>Chú thích</th>
@@ -217,7 +217,7 @@ $orderId = $dataOrder->orderId();
         {{-- chi tiết Thanh toán --}}
         <div class="qc-padding-top-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row qc-padding-top-10">
-                <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">
                         <table class="table table-bordered" style="margin-bottom: 0;">
                             <tr style="background-color: whitesmoke;">
@@ -226,7 +226,7 @@ $orderId = $dataOrder->orderId();
                                     <label class="qc-font-size-14 qc-color-red">CHI TIẾT THANH TOÁN</label>
                                 </th>
                             </tr>
-                            <tr>
+                            <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Ngày</th>
                                 <th>Tên</th>
@@ -285,7 +285,7 @@ $orderId = $dataOrder->orderId();
         {{-- Thông tin thanh toán --}}
         <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="qc-container-table qc-container-table-border-none pull-right qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-6">
+                <div class="pull-right col-sx-12 col-sm-12 col-md-12 col-lg-6">
                     <div class="table-responsive">
                         <table class="table table-hover qc-margin-bot-none">
                             <tr>
@@ -342,7 +342,7 @@ $orderId = $dataOrder->orderId();
             </div>
         </div>
         <div class="qc-padding-top-10 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <a class="btn btn-sm btn-primary" href="{!! $hFunction->getUrlReferer() !!}">
+            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
                 Về trang trước
             </a>
             <a class="btn btn-sm btn-default" href="{!! route('qc.work.work_allocation.manage.get') !!}">

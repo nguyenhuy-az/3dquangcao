@@ -45,12 +45,12 @@ $dataProduct = $dataOrders->allProductOfOrder();
             </div>
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="qc_work_allocation_construction_product_list qc-container-table row">
+                <div class="qc_work_allocation_construction_product_list row">
                     <div class="table-responsive">
                         <table class="table table-bordered">
-                            <tr style="background-color: whitesmoke;">
+                            <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
-                                <th class="qc-padding-none">Tên SP</th>
+                                <th>Tên SP</th>
                                 <th class="text-center">Kích thước</th>
                                 <th class="text-center">Thiết kế</th>
                                 <th class="text-center">Ghi chú</th>

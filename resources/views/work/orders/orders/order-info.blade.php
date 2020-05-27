@@ -63,7 +63,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
 @endsection
 @section('qc_work_order_body')
     <div id="qc_work_orders_wrap" class="row qc_work_orders_wrap">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-10">
+        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <a class=" qc-link-red" onclick="qc_main.page_back_go({!! $pageBack !!});">
                     <i class="qc-font-size-14 glyphicon glyphicon-backward"></i>
@@ -102,7 +102,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                     </div>
                 </div>
                 <div id="qc_work_order_info_order_show" class="row">
-                    <div class="qc-container-table qc-container-table-border-none qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-6">
+                    <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-6">
                         <div class="table-responsive">
                             <table class="table table-hover qc-margin-bot-none">
                                 <tr>
@@ -151,7 +151,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                             </table>
                         </div>
                     </div>
-                    <div class="qc-container-table qc-container-table-border-none qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-6">
+                    <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-6">
                         <div class="table-responsive">
                             <table class="table table-hover qc-margin-bot-none">
                                 <tr>
@@ -424,7 +424,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                         <label class="qc-color-red">SẢM PHẨM</label>
                         @if(!$dataOrder->checkCancelStatus())
                             @if($finishStatus)
-                                <em class="qc-color-grey pull-right">ĐH đã kết thúc</em>
+                                <em class="pull-right" style="padding: 3px; background-color: red; color: white;">ĐH đã kết thúc</em>
                             @else
                                 <a class="qc-link-red-bold pull-right" title="Thêm sản phẩm"
                                    href="{!! route('work.orders.edit.addProduct.get',$orderId) !!}">
@@ -437,18 +437,18 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                     </div>
                 </div>
                 <div id="qc_work_order_info_product_show" class="row">
-                    <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-bordered" style="margin-bottom: 0px;">
-                                <tr style="background-color: whitesmoke;">
+                                <tr style="background-color: black; color: yellow;">
                                     <th class="text-center" style="width: 20px;">STT</th>
                                     <th>Ngày đặt</th>
                                     <th>Tên SP</th>
                                     <th>Chú thích</th>
                                     <th>Thiết kê</th>
                                     <th class="text-right">Thi công</th>
-                                    <th class="text-center">Dài<br/>(m)</th>
-                                    <th class="text-center">Rộng<br/>(m)</th>
+                                    <th class="text-center">Dài(m)</th>
+                                    <th class="text-center">Rộng(m)</th>
                                     <th class="text-center">Đơn vị</th>
                                     <th class="text-center">Số lượng</th>
                                     <th class="text-right">
@@ -604,11 +604,10 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                         </div>
                     </div>
                     <div id="qc_work_order_info_payment_show" class="row">
-                        <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                             style="padding-top: 10px;">
+                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="table-responsive">
                                 <table class="table table-bordered" style="margin-bottom: 0px;">
-                                    <tr style="background-color: whitesmoke;">
+                                    <tr style="background-color: black; color: yellow;">
                                         <th class="text-center" style="width: 20px;">STT</th>
                                         <th>Ngày</th>
                                         <th>Tên</th>
@@ -813,6 +812,14 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                 </div>
             </div>
 
+        </div>
+        <div class="qc-padding-top-10 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                Về trang trước
+            </a>
+            <a class="btn btn-sm btn-default" href="{!! route('qc.work.orders.get') !!}">
+                Về Danh mục ĐH
+            </a>
         </div>
     </div>
 @endsection

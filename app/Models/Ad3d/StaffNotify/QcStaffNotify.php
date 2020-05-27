@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcStaffNotify extends Model
 {
     protected $table = 'qc_staff_notify';
-    protected $fillable = ['notify_id', 'note', 'viewStatus', 'viewDate', 'created_at', 'order_id', 'orderAllocation_id', 'workAllocation_id', 'bonus_id', 'minusMoney_id', 'staff_id'];
+    protected $fillable = ['notify_id', 'note', 'viewStatus', 'viewDate', 'created_at', 'order_id', 'orderAllocation_id', 'orderAllocationFinish_id', 'workAllocation_id', 'bonus_id', 'minusMoney_id', 'staff_id'];
     protected $primaryKey = 'notify_id';
     public $timestamps = false;
 
@@ -15,7 +15,7 @@ class QcStaffNotify extends Model
 
     #========== ========== ========== THEM - SUA ========== ========== ==========
     #---------- Them ----------
-    public function insert($orderId = null, $staffId, $note = null, $orderAllocationId = null, $workAllocationId = null, $bonusId = null, $minusMoneyId = null)
+    public function insert($orderId = null, $staffId, $note = null, $orderAllocationId = null, $workAllocationId = null, $bonusId = null, $minusMoneyId = null, $orderAllocationFinishId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaffNotify = new QcStaffNotify();
@@ -25,6 +25,7 @@ class QcStaffNotify extends Model
         $modelStaffNotify->workAllocation_id = $workAllocationId;
         $modelStaffNotify->bonus_id = $bonusId;
         $modelStaffNotify->minusMoney_id = $minusMoneyId;
+        $modelStaffNotify->orderAllocationFinish_id = $orderAllocationFinishId;
         $modelStaffNotify->staff_id = $staffId;
         $modelStaffNotify->created_at = $hFunction->createdAt();
         if ($modelStaffNotify->save()) {
@@ -40,6 +41,11 @@ class QcStaffNotify extends Model
         return (empty($notifyId)) ? $this->cancalId() : $notifyId;
     }
 
+    public function updateViewed($notifyId)
+    {
+        $hFunction = new \Hfunction();
+        return QcStaffNotify::where('notify_id', $notifyId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+    }
     #========== ========== ========== CAC MOI QUAN HE DU LIEU ========== ========== ==========
     //---------- NHAN VIEN -----------
     public function staff()
@@ -227,6 +233,30 @@ class QcStaffNotify extends Model
 
     }
 
+    //---------- thong bao ket thuc thi cong san pham -----------
+    public function orderAllocationFinish()
+    {
+        return $this->belongsTo('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'orderAllocationFinish_id', 'allocation_id');
+    }
+
+    #cap nhat da xem thong bao hoan thanh thi cong don hang
+    public function updateViewedOfStaffAndOrderAllocationFinish($staffId, $orderAllocationFinishId)
+    {
+        $hFunction = new \Hfunction();
+        return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocationFinish_id', $orderAllocationFinishId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+    }
+
+    # kien tra da xem thong bao ban giao don hang
+    public function checkViewedOrderAllocationFinishOfStaff($staffId, $orderAllocationFinishId)
+    {
+        if (QcStaffNotify::where('staff_id', $staffId)->where('orderAllocationFinish_id', $orderAllocationFinishId)->exists()) {
+            return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocationFinish_id', $orderAllocationFinishId)->where('viewStatus', 1)->exists();
+        } else {
+            return true;
+        }
+
+    }
+
     //---------- ban giao thi cong san pham -----------
     public function workAllocation()
     {
@@ -303,6 +333,11 @@ class QcStaffNotify extends Model
     public function orderAllocationId($notifyId = null)
     {
         return $this->pluck('orderAllocation_id', $notifyId);
+    }
+
+    public function orderAllocationFinishId($notifyId = null)
+    {
+        return $this->pluck('orderAllocationFinish_id', $notifyId);
     }
 
     public function workAllocationId($notifyId = null)

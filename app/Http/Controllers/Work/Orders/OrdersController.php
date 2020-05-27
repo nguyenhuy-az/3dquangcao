@@ -771,14 +771,21 @@ class OrdersController extends Controller
     }
 
     //======= ======== ===== QUAN LY THONG TIN DƠN HANG ==== ======== ======
-    public function ordersInfo($orderId)
+    public function ordersInfo($orderId, $notifyId = null)
     {
         $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
         $modelOrders = new QcOrder();
         $dataAccess = [
             'object' => 'orders',
             'subObjectLabel' => 'Quản lý đơn hàng'
         ];
+        if (!$hFunction->checkEmpty($notifyId)) {
+            # cap nhat da xem thong tin thong bao
+            $modelStaffNotify->updateViewed($notifyId);
+        }
+
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($dataOrder)) {
             $pageBack = 1;

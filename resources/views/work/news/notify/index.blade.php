@@ -41,14 +41,15 @@ $hrefIndex = route('qc.work.news.notify.get');
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black;color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Ngày thông báo</th>
+                            <th style="width: 110px !important;">Ngày thông báo</th>
                             <th></th>
-                            <th>Mô tả</th>
+                            <th>Nội dung</th>
                         </tr>
                         <tr>
                             <td></td>
                             <td style="padding: 0;">
-                                <select class="qc_work_news_notify_filter_month" style="height: 25px;" data-href="{!! $hrefIndex !!}">
+                                <select class="qc_work_news_notify_filter_month" style="height: 25px;"
+                                        data-href="{!! $hrefIndex !!}">
                                     @for($m =1;$m<= 12; $m++)
                                         <option value="{!! $m !!}"
                                                 @if((int)$monthFilter == $m) selected="selected" @endif>
@@ -57,7 +58,8 @@ $hrefIndex = route('qc.work.news.notify.get');
                                     @endfor
                                 </select>
                                 <span>/</span>
-                                <select class="qc_work_news_notify_filter_year" style="height: 25px;" data-href="{!! $hrefIndex !!}">
+                                <select class="qc_work_news_notify_filter_year" style="height: 25px;"
+                                        data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
                                                 @if($yearFilter == $y) selected="selected" @endif>{!! $y !!}</option>
@@ -73,6 +75,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                             ?>
                             @foreach($dataStaffNotify as $staffNotify)
                                 <?php
+                                $notifyId = $staffNotify->notifyId();
                                 $notifyDate = $staffNotify->createdAt();
                                 $orderId = $staffNotify->orderId();
                                 #ban giao don hang
@@ -83,7 +86,10 @@ $hrefIndex = route('qc.work.news.notify.get');
                                 $bonusId = $staffNotify->bonusId();
                                 # phat
                                 $minusMoneyId = $staffNotify->minusMoneyId();
+                                #bao hoan thanh thi cong don hang
+                                $orderAllocationFinishId = $staffNotify->orderAllocationFinishId();
                                 ?>
+                                {{--them don hang mơi--}}
                                 @if(!$hFunction->checkEmpty($orderId))
                                     <tr class="@if($n_o%2) info @endif ">
                                         <td class="text-center">
@@ -109,8 +115,13 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                href="{!! route('qc.work.work_allocation.manage.order.view', $orderId) !!}">
                                                 {!! $staffNotify->orders->name() !!}
                                             </a>
+                                            <span style="background-color: blue; padding: 3px; color: white;">
+                                                <i class="glyphicon glyphicon-plus"></i>
+                                                <i class="glyphicon glyphicon-shopping-cart"></i>
+                                            </span>
                                         </td>
                                     </tr>
+                                    {{--ban giao don hang thi cong--}}
                                 @elseif(!$hFunction->checkEmpty($orderAllocationId))
                                     <tr class="@if($n_o%2) info @endif ">
                                         <td class="text-center">
@@ -136,8 +147,12 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                href="{!! route('qc.work.work_allocation.construction.product.get',$orderAllocationId) !!}">
                                                 {!! $staffNotify->orderAllocation->orders->name() !!}
                                             </a>
+                                            <span style="background-color: black; padding: 3px; color: white;">
+                                                <i class="glyphicon glyphicon-calendar"></i>
+                                            </span>
                                         </td>
                                     </tr>
+                                    {{--phan viec--}}
                                 @elseif(!$hFunction->checkEmpty($workAllocationId))
                                     <tr class="@if($n_o%2) info @endif ">
                                         <td class="text-center">
@@ -163,12 +178,14 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                href="{!! route('qc.work.work_allocation.detail.get', $workAllocationId) !!}">
                                                 {!! $staffNotify->workAllocation->product->productType->name() !!}
                                             </a>
+                                            <span style="background-color: black; padding: 3px; color: yellow;">
+                                                <i class="glyphicon glyphicon-plus"></i>
+                                                <i class="glyphicon glyphicon-wrench"></i>
+                                            </span>
                                         </td>
                                     </tr>
+                                    {{--thuong--}}
                                 @elseif(!$hFunction->checkEmpty($bonusId))
-                                    <?php
-                                    // $dataBonus
-                                    ?>
                                     <tr class="@if($n_o%2) info @endif ">
                                         <td class="text-center">
                                             {!! $n_o += 1 !!}
@@ -193,12 +210,14 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                href="#">
                                                 {!! $staffNotify->bonus->orderAllocation->orders->name() !!}
                                             </a>
+                                            <span style="background-color: red; padding: 3px; color: yellow;">
+                                                <i class="glyphicon glyphicon-plus"></i>
+                                                <i class="glyphicon glyphicon-usd"></i>
+                                            </span>
                                         </td>
                                     </tr>
+                                    {{--Phat--}}
                                 @elseif(!$hFunction->checkEmpty($minusMoneyId))
-                                    <?php
-                                    // $dataBonus
-                                    ?>
                                     <tr class="@if($n_o%2) info @endif ">
                                         <td class="text-center">
                                             {!! $n_o += 1 !!}
@@ -223,6 +242,45 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                href="{!! route('qc.work.minus_money.get') !!}">
                                                 {!! $staffNotify->minusMoney->orderAllocation->orders->name() !!}
                                             </a>
+                                            <span style="background-color: red; padding: 3px; color: white;">
+                                                <i class="glyphicon glyphicon-minus"></i>
+                                                <i class="glyphicon glyphicon-usd"></i>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {{--Thong bao hoan thanh don hang --}}
+                                @elseif(!$hFunction->checkEmpty($orderAllocationFinishId))
+                                    <?php
+                                        $order = $staffNotify->orderAllocationFinish->orders;
+                                        $orderId = $order->orderId();
+                                    ?>
+                                    <tr class="@if($n_o%2) info @endif ">
+                                        <td class="text-center">
+                                            {!! $n_o += 1 !!}
+                                        </td>
+                                        <td>
+                                            {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!}
+                                        </td>
+                                        <td>
+                                            <a class="qc-link-green"
+                                               href="{!! route('qc.work.orders.info.get', "$orderId/$notifyId") !!}">
+                                                Xem
+                                            </a>
+                                            @if($staffNotify->checkNewInfo())
+                                                <em style="color: red;"> - Chưa xem</em>
+                                            @else
+                                                <em style="color: grey;">- Đã xem</em>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <span style="color: black;">{!! $staffNotify->note() !!}:</span>
+                                            <a class="qc-link-green-bold"
+                                               href="{!! route('qc.work.orders.info.get',"$orderId/$notifyId") !!}">
+                                                {!! $order->name() !!}
+                                            </a>
+                                            <span style="background-color: blue; padding: 3px 10px; color: yellow;">
+                                                <i class="glyphicon glyphicon-saved"></i>
+                                            </span>
                                         </td>
                                     </tr>
                                 @endif

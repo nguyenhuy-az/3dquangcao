@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Session;
 
 class WorkAllocationManageController extends Controller
 {
-    public function index($dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = 0)
+    public function index($dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $orderFilterName = null, $orderCustomerFilterName = null, $allocationFinishStatus = 100)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -28,6 +28,7 @@ class WorkAllocationManageController extends Controller
         $dataAccess = [
             'object' => 'workAllocationManage'
         ];
+        //$allocationFinishStatus - 100 - tat ca / 0 - da thi cong xong / 1 - chua xong
         $currentMonth = $hFunction->currentMonth();
         $currentYear = $hFunction->currentYear();
         $orderFilterName = ($orderFilterName == 'null') ? null : $orderFilterName;
@@ -58,12 +59,12 @@ class WorkAllocationManageController extends Controller
             $yearFilter = date('Y');
         }
         $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-        if ($staffFilterId > 0) {
+        /*if ($staffFilterId > 0) {
             $listStaffId = [$staffFilterId];
         } else {
             $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
-        }
-
+        }*/
+        $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
         if (!empty($orderCustomerFilterName)) {
             $dataOrderSelect = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, 2);
         } else {
@@ -73,8 +74,8 @@ class WorkAllocationManageController extends Controller
 
         $dataOrder = $dataOrderSelect->paginate(50);
         //danh sach NV
-        $dataStaff = $modelCompany->staffInfoActivityOfListCompanyId([$searchCompanyFilterId]);
-        return view('work.work-allocation.orders.index', compact('modelStaff', 'dataStaff', 'dataAccess', 'dataOrder', 'dayFilter', 'monthFilter', 'yearFilter', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId'));
+        //$dataStaff = $modelCompany->staffInfoActivityOfListCompanyId([$searchCompanyFilterId]);
+        return view('work.work-allocation.orders.index', compact('modelStaff', 'dataAccess', 'dataOrder', 'dayFilter', 'monthFilter', 'yearFilter', 'orderFilterName', 'orderCustomerFilterName', 'allocationFinishStatus'));
 
     }
 

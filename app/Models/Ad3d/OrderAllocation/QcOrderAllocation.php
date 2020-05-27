@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcOrderAllocation extends Model
 {
     protected $table = 'qc_order_allocation';
-    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'noted', 'finishStatus', 'finishDate', 'finishNote', 'confirmStatus', 'confirmFinish', 'confirmDate', 'action', 'confirmStaff_id', 'order_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
+    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'noted', 'finishStatus', 'finishDate', 'finishNote', 'confirmStatus', 'confirmFinish', 'confirmDate', 'paymentStatus', 'action', 'confirmStaff_id', 'order_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
     protected $primaryKey = 'allocation_id';
     public $timestamps = false;
 
@@ -62,7 +62,7 @@ class QcOrderAllocation extends Model
 
     //========== ========= DUYET TU BAO CAO BAN GIAO CONG TRINH ========= ==========
     # bao cao hoan thanh cong trinh
-    public function reportFinishAllocation($allocationId, $reportDate, $finishNote = null)
+    public function reportFinishAllocation($allocationId, $reportDate, $finishNote = null, $paymentStatus = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -72,19 +72,22 @@ class QcOrderAllocation extends Model
         $modelOrder = new QcOrder();
         $orderId = $this->orderId($allocationId);
         $dataProduct = $modelOrder->productActivityOfOrder($orderId);
-        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['confirmFinish' => 1, 'confirmDate' => $hFunction->carbonNow(), 'finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate,'action' => 0])) {
+        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['confirmFinish' => 1, 'confirmDate' => $hFunction->carbonNow(), 'finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate, 'paymentStatus' => $paymentStatus, 'action' => 0])) {
+            $dataOrder = $modelOrder->getInfo($orderId);
+            # thong bao hoan thanh thi cong cho kinh doanh
+            $modelStaffNotify->insert(null, $dataOrder->staffId(), 'Hoàn thành thi công', null, null, null, null, $allocationId);
+
             # khong tre ngay phan cong
             if (!$this->checkLate($allocationId)) {
                 $receiveStaffId = $this->receiveStaffId($allocationId);
                 $dataWork = $modelStaff->firstInfoActivityToWork($receiveStaffId);
                 if ($hFunction->checkCount($dataWork)) {
-                    $dataOrder = $modelOrder->getInfo($orderId);
                     #tien thuong
                     $orderBonusPrice = $dataOrder->getBonusByOrderAllocation();
                     if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Thưởng hoàn thành đơn hàng', 0, $dataWork->workId(), $allocationId)) {
                         $bonusId = $modelBonus->insertGetId();
                         $receiveStaffId = (is_int($receiveStaffId)) ? $receiveStaffId : $receiveStaffId[0];
-                        $modelStaffNotify->insert(null, $receiveStaffId, 'Thưởng hoàn thành đơn hàng', null, null, $bonusId);
+                        $modelStaffNotify->insert(null, $receiveStaffId, 'Thưởng hoàn thành đơn hàng', null, null, $bonusId, null, null);
                     }
                 }
             }
@@ -216,6 +219,26 @@ class QcOrderAllocation extends Model
         return $this->belongsTo('App\Models\Ad3d\Order\QcOrder', 'order_id', 'order_id');
     }
 
+    # kiem tra ton tai thu ho cua don hang don hang
+    public function existPaymentStatusOfOrder($orderId)
+    {
+        return QcOrderAllocation::where('order_id', $orderId)->where('paymentStatus', 1)->exists();
+    }
+
+
+    # thong tin bao hoan thanh cua don hang
+    public function infoFinishOfOrder($orderId)
+    {
+        return QcOrderAllocation::where('order_id', $orderId)->where('finishStatus', 1)->where('confirmFinish', 1)->first();
+    }
+
+    # kiem tra don hang da co phan viec
+    public function existInfoOfOrder($orderId)
+    {
+        return QcOrderAllocation::where('order_id', $orderId)->exists();
+    }
+
+
     # kiem tra sam pham dang duoc phan viec
     public function existInfoActivityOfOrder($orderId)
     {
@@ -312,6 +335,11 @@ class QcOrderAllocation extends Model
         return $this->pluck('confirmFinish', $allocationId);
     }
 
+    public function paymentStatus($allocationId = null)
+    {
+        return $this->pluck('paymentStatus', $allocationId);
+    }
+
     public function confirmDate($allocationId = null)
     {
 
@@ -401,6 +429,14 @@ class QcOrderAllocation extends Model
         return ($result == 1) ? true : false;
     }
 
+    # trang thai thu ho
+    public function checkPaymentStatus($allocationId = null)
+    {
+        $result = $this->paymentStatus($allocationId);
+        $result = (is_int($result)) ? $result : $result[0];
+        return ($result == 1) ? true : false;
+    }
+
     # kiem tra huy ban giao
     public function checkCancelAllocation($allocationId = null)
     {
@@ -421,7 +457,7 @@ class QcOrderAllocation extends Model
         if (!$this->checkActivity($allocationId)) { # cong viec da xong
             if ($this->checkFinish($allocationId)) { # co bao hoan thanh
                 $finishDate = $this->finishDate($allocationId)[0];
-                if ($finishDate > $receiveDeadline){
+                if ($finishDate > $receiveDeadline) {
                     //echo "$finishDate === <br/>==== $receiveDeadline";
                     //die();
                     $lateStatus = true;
@@ -452,7 +488,7 @@ class QcOrderAllocation extends Model
             $workId = $dataWork->workId();
             if ($receiveDeadline < $checkDate) {
                 if (!$modelMinusMoney->checkExistMinusMoneyAllocationLate($allocationId)) {
-                    $punishId = (is_int($punishId))?$punishId:$punishId[0];
+                    $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
                     if ($modelMinusMoney->insert($checkDate, 'Trễ đơn hàng', $workId, null, $punishId, 0, $allocationId)) {
                         $modelStaffNotify->insert(null, $dataReceiveStaff->staffId(), 'Trễ đơn hàng', null, null, null, $modelMinusMoney->insertGetId());
                     }

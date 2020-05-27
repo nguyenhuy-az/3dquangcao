@@ -49,6 +49,14 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="row">
+                <div class="text-right col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <a class="btn btn-sm btn-primary"
+                       href="{!! route('qc.ad3d.finance.minus-money.add.get',$companyFilterId) !!}">
+                        +
+                    </a>
+                </div>
+            </div>
             <div class="qc_ad3d_list_content row"
                  data-href-cancel="{!! route('qc.ad3d.finance.minus-money.cancel') !!}">
                 <div class="table-responsive">

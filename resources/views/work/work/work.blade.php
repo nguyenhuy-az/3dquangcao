@@ -419,7 +419,7 @@ if ($hFunction->checkCount($dataWork)) {
                         </div>
                     </div>
                 </div>
-                <div class="row qc-container-table">
+                <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
@@ -429,7 +429,7 @@ if ($hFunction->checkCount($dataWork)) {
                                         <label class="qc-color-red">CHI TIẾT CHẤM CÔNG</label>
                                     </th>
                                 </tr>
-                                <tr style="background-color: whitesmoke;">
+                                <tr style="background-color: black; color: yellow;">
                                     <th class="text-center" style="width: 20px;">STT</th>
                                     <th class="text-center">Giờ vào</th>
                                     <th class="text-center">Giờ ra</th>

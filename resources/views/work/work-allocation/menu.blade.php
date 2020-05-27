@@ -48,7 +48,7 @@ $totalNotifyNewWorkAllocation = $dataStaffLogin->totalNotifyNewWorkAllocation();
                 $totalNotifyNewOrder = $dataStaffLogin->totalNotifyNewOrder();
                 ?>
                 <li @if($objectAccess == 'workAllocationManage') class="active" @endif>
-                    <a href="{!! route('qc.work.work_allocation.manage.get') !!}" title="Đang cập nhật">
+                    <a href="{!! route('qc.work.work_allocation.manage.get') !!}" @if($objectAccess == 'workAllocationManage') style="background-color: whitesmoke;" @endif title="Đang cập nhật">
                         <label>Danh sách đơn hàng</label>
                         @if($totalNotifyNewOrder > 0)
                             &nbsp;

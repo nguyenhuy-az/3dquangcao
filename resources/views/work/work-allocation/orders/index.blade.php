@@ -54,7 +54,8 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                         Tất cả
                                     </option>
                                     @for($i =1;$i<= 12; $i++)
-                                        <option value="{!! $i !!}" @if((int)$monthFilter == $i) selected="selected" @endif>
+                                        <option value="{!! $i !!}"
+                                                @if((int)$monthFilter == $i) selected="selected" @endif>
                                             Tháng {!! $i !!}
                                         </option>
                                     @endfor
@@ -79,32 +80,54 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width:20px;"></th>
-                                <th>Mã</th>
-                                <th style="min-width: 150px;">Tên ĐH</th>
-                                {{--<th>Thiết kế</th>--}}
-                                <th style="min-width: 150px;">Khách hàng</th>
-                                <th style="min-width: 100px;">NV nhận</th>
-                                <th>NV & Thi công</th>
+                                <th class="text-center">Mã ĐH</th>
+                                <th class="text-center">Quản lý Thi công</th>
+                                <th style="min-width: 150px;">Tên Đơn hàng</th>
+                                <th class="text-center">Ngày nhận</th>
+                                <th class="text-center">
+                                    Ngày hẹn giao <br/>
+                                    Khách hàng
+                                </th>
+                                <th class="text-center" >
+                                    Ngày xác nhận <br/> hoàn thành
+                                </th>
+                                <th>Phân việc</th>
                                 <th class="text-center">Hình tiến độ</th>
-                                <th class="text-center">Thời gian</th>
+                                <th class="text-center">Thưởng <br/> đúng hạn</th>
+                                <th class="text-center">Phạt <br/> trễ hạn</th>
+                                <th style="min-width: 150px;">Khách hàng</th>
                             </tr>
                             <tr>
-                                <td class="text-center qc-color-red">
-
-                                </td>
+                                <td class="text-center qc-color-red"></td>
                                 <td></td>
+                                <td class="text-center" style="padding: 0px;">
+                                    <select class="cbAllocationFinishStatus form-control"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100"
+                                                @if($allocationFinishStatus == 100) selected="selected" @endif>
+                                            Tất cả
+                                        </option>
+                                        <option value="0" @if($allocationFinishStatus == 0) selected="selected" @endif>
+                                            Chưa hoàn thành
+                                        </option>
+                                        <option value="100"
+                                                @if($allocationFinishStatus == 1) selected="selected" @endif>
+                                            Đã hoàn thành
+                                        </option>
+                                    </select>
+                                </td>
                                 <td style="padding: 0px;">
                                     <div class="input-group">
                                         <input type="text" class="txtOrderFilterKeyword form-control"
                                                name="txtOrderFilterKeyword"
                                                data-href-check-name="{!! route('qc.work.work_allocation.manage.filter.order.check.name') !!}"
                                                placeholder="Tên đơn hàng" value="{!! $orderFilterName !!}">
-                                              <span class="input-group-btn">
-                                                    <button class="btOrderFilterKeyword btn btn-default" type="button"
-                                                            style="border: none;" data-href="{!! $hrefIndex !!}">
-                                                        <i class="glyphicon glyphicon-search"></i>
-                                                    </button>
-                                              </span>
+                                          <span class="input-group-btn">
+                                                <button class="btOrderFilterKeyword btn btn-default" type="button"
+                                                        style="border: none;" data-href="{!! $hrefIndex !!}">
+                                                    <i class="glyphicon glyphicon-search"></i>
+                                                </button>
+                                          </span>
                                     </div>
                                     <div id="qc_work_allocation_filter_order_name_suggestions_wrap"
                                          class="qc-display-none col-xs-12 col-sm-12 col-md-12 col-lg-12"
@@ -119,6 +142,13 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                         </div>
                                     </div>
                                 </td>
+                                <td class="text-center"></td>
+                                <td class="text-center" style="padding: 0px;"></td>
+                                <td class="text-center"></td>
+                                <td class="text-center" style="padding: 0px;"></td>
+                                <td class="text-center"></td>
+                                <td class="text-center"></td>
+                                <td class="text-center"></td>
                                 <td style="padding: 0px; min-width: 100px;">
                                     <div class="input-group">
                                         <input type="text" class="txtOrderCustomerFilterKeyword form-control"
@@ -147,25 +177,7 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                         </div>
                                     </div>
                                 </td>
-                                <td class="text-center" style="padding: 0px;">
-                                    <select class="cbStaffFilterId form-control"
-                                            data-href="{!! $hrefIndex !!}">
-                                        <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
-                                            Tất cả
-                                        </option>
-                                        @if($hFunction->checkCount($dataStaff))
-                                            @foreach($dataStaff as $staff)
-                                                <option @if($staff->staffId() == $staffFilterId) selected="selected"
-                                                        @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </td>
-                                <td class="text-center" style="padding: 0px;">
 
-                                </td>
-                                <td class="text-center"></td>
-                                <td class="text-center"></td>
                             </tr>
                             @if($hFunction->checkCount($dataOrder))
                                 <?php
@@ -215,6 +227,26 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                                 <i class="qc-color-red glyphicon glyphicon-ok"></i>
                                             @endif
                                         </td>
+                                        <td class="text-center">
+                                            @if(!$cancelStatus)
+                                                <a class="qc-link-green" title="Click xem chi tiết thi công"
+                                                   href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderId) !!}">
+                                                    Quản lý thi công
+                                                </a>
+                                                <br/>
+                                                @if($hFunction->checkCount($dataOrderAllocation))
+                                                    <span style="padding: 3px; background-color: blue; color: white;">
+                                                        Phụ trách: {!! $dataOrderAllocation->receiveStaff->lastName() !!}
+                                                    </span>
+                                                @else
+                                                    @if(!$finishStatus)
+                                                        <span style="padding: 3px; background-color: red; color: white;">Chưa bàn giao</span>
+                                                    @else
+                                                        <em>(Đã kết thúc)</em>
+                                                    @endif
+                                                @endif
+                                            @endif
+                                        </td>
                                         <td>
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -242,43 +274,37 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                                             <i class="qc-font-size-16 glyphicon glyphicon-list-alt"></i>
                                                         </a>
                                                     @endif
-
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            {!! $order->customer->name() !!}
+                                        <td class="text-center">
+                                            {!! $hFunction->convertDateDMYFromDatetime($order->receiveDate()) !!}
                                         </td>
-                                        <td class="qc-color-grey">
-                                            {!! $dataReceiveStaff->lastName() !!}
+
+                                        <td class="text-center">
+                                            <b>{!! $hFunction->convertDateDMYFromDatetime($order->deliveryDate()) !!}</b>
+                                        </td>
+                                        <td class="text-center">
+                                            @if($order->checkLate($orderId))
+                                                <br/>
+                                                <b style="background-color: deeppink; color: white; padding: 3px 10px;">Trễ</b>
+                                            @endif
                                         </td>
                                         <td class="text-left">
                                             @if(!$cancelStatus)
-                                                <a class="qc-link-green" title="Click xem chi tiết thi công"
-                                                   href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderId) !!}">
-                                                    Quản lý thi công
-                                                    @if($finishStatus)
-                                                        (Đã kết thúc)
-                                                    @endif
-                                                </a>
-                                                <br/>
-                                                <label style="color: brown;">Bàn giao:</label>
-                                                @if($hFunction->checkCount($dataOrderAllocation))
-                                                    <span>{!! $dataOrderAllocation->receiveStaff->lastName() !!}</span>
-                                                @else
-                                                    <span style="color: red;">Chưa</span>
-                                                @endif
-
                                                 @if($hFunction->checkCount($orderWorkAllocationAllInfo))
-                                                    <br/>
-                                                    <label style="color: blue;">Thi công:</label>
                                                     @foreach($orderWorkAllocationAllInfo as $workAllocation)
                                                         @if($workAllocation->checkActivity())
                                                             <span>{!! $workAllocation->receiveStaff->lastName() !!}</span>
-                                                            ,
-                                                            &nbsp;
+                                                            ,&nbsp;
                                                         @endif
                                                     @endforeach
+                                                @else
+                                                    @if(!$finishStatus)
+                                                        <span style="background-color: red; color: yellow; padding: 3px;">Chưa phân việc</span>
+                                                    @else
+                                                        <em style="color: grey;">Không phân có phân việc</em>
+                                                    @endif
                                                 @endif
                                             @endif
                                         </td>
@@ -314,20 +340,24 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->convertDateDMYFromDatetime($order->receiveDate()) !!}
-                                            <br/>
-                                            <em class="qc-color-grey">{!! $hFunction->convertDateDMYFromDatetime($order->deliveryDate()) !!}</em>
+                                            {!! $hFunction->currencyFormat($order->getBonusByOrderAllocation()) !!}
+                                        </td>
+                                        <td class="text-center">
+                                            {!! $hFunction->currencyFormat($order->getMinusMoneyOrderAllocationLate()) !!}
+                                        </td>
+                                        <td>
+                                            {!! $order->customer->name() !!}
                                         </td>
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-center" colspan="8">
+                                    <td class="text-center" colspan="12">
                                         {!! $hFunction->page($dataOrder) !!}
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="8">
+                                    <td class="text-center" colspan="10">
                                         <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                     </td>
                                 </tr>
