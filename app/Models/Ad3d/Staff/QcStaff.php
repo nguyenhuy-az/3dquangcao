@@ -512,19 +512,21 @@ class QcStaff extends Model
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
     }*/
 
-    # danh sach NV thi cong dang hoat dong
+    # danh sach NV bo phan thi cong dang hoat dong
     public function infoActivityConstructionOfCompany($companyId, $level = 1000, $orderByName = 'ASC')
     {
         $modelDepartment = new QcDepartment();
         return $this->infoActivityOfCompany($companyId, $modelDepartment->constructionDepartmentId(), $level, $orderByName);
     }
 
+    # lay danh sach tat ca nv cua 1 cty
     public function infoOfCompany($companyId)
     {
         $modelCompanyStaffWord = new QcCompanyStaffWork();
         return QcStaff::whereIn('staff_id', $modelCompanyStaffWord->staffIdOfCompany($companyId))->orderBy('lastName', 'ASC')->get();
     }
 
+    # lay danh sach tat ca nv dang hoat dong cua 1 cty
     public function infoActivityOfCompany($companyId, $departmentId = null, $level = 1000, $orderByName = 'ASC') # mac dinh 1000 = tat ca level
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -533,19 +535,21 @@ class QcStaff extends Model
 
     }
 
+    # lay danh sach tat ca ma nv cua 1 cty
     public function listIdOfCompany($companyId)
     {
         $modelCompanyStaffWord = new QcCompanyStaffWork();
         return QcStaff::whereIn('staff_id', $modelCompanyStaffWord->staffIdOfCompany($companyId))->pluck('staff_id');
     }
 
+    # lay danh sach tat ca ma nv dang hoat dong cua 1 cty
     public function listIdActivityOfCompany($companyId)
     {
         $modelCompanyStaffWord = new QcCompanyStaffWork();
         return QcStaff::whereIn('staff_id', $modelCompanyStaffWord->staffIdActivityOfCompany($companyId))->pluck('staff_id');
     }
 
-    //danh sách mã Nv lọc theo 1 công ty và tên
+    //lay danh sách mã Nv lọc theo 1 công ty và tên
     public function listIdOfCompanyAndName($companyId, $name)
     {
         $modelCompanyStaffWord = new QcCompanyStaffWork();
@@ -1016,6 +1020,17 @@ class QcStaff extends Model
     }
 
     //========= ========== ========== lay thong tin ========== ========== ==========
+    # lay thong tin NV  bo phan thi cong cap quan ly cua 1 cong ty
+    public function infoStaffConstructionRankManage($companyId)
+    {
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()], $modelRank->manageRankId());
+        return QcStaff::whereIn('staff_id', $listStaffId)->get();
+    }
+
+    # lay thong tin NV  nhan thong bao khi them don hang moi cua 1 cty (chi bo phan cap quan ly)
     public function infoStaffReceiveNotifyNewOrder($companyId)
     {
         $modelDepartment = new QcDepartment();
@@ -1307,6 +1322,7 @@ class QcStaff extends Model
         return $modelCompanyStaffWork->checkCurrentDepartmentConstructionOfStaff($this->checkIdNull($staffId));
     }
 
+    # kiem tra bo phan thi cong cap quan ly cua 1 NV
     public function checkConstructionDepartmentAndManageRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();

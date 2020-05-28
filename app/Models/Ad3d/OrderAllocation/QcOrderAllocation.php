@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcOrderAllocation extends Model
 {
     protected $table = 'qc_order_allocation';
-    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'noted', 'finishStatus', 'finishDate', 'finishNote', 'confirmStatus', 'confirmFinish', 'confirmDate', 'paymentStatus', 'action', 'confirmStaff_id', 'order_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
+    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'noted', 'finishStatus', 'finishDate', 'finishNote', 'confirmStatus', 'confirmFinish', 'confirmDate','confirmNote', 'paymentStatus', 'action', 'confirmStaff_id', 'order_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
     protected $primaryKey = 'allocation_id';
     public $timestamps = false;
 
@@ -72,15 +72,15 @@ class QcOrderAllocation extends Model
         $modelOrder = new QcOrder();
         $orderId = $this->orderId($allocationId);
         $dataProduct = $modelOrder->productActivityOfOrder($orderId);
-        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['confirmFinish' => 1, 'confirmDate' => $hFunction->carbonNow(), 'finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate, 'paymentStatus' => $paymentStatus, 'action' => 0])) {
+        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate, 'paymentStatus' => $paymentStatus, 'action' => 0])) {
             $dataOrder = $modelOrder->getInfo($orderId);
-            # thong bao hoan thanh thi cong cho kinh doanh
-            $modelStaffNotify->insert(null, $dataOrder->staffId(), 'Hoàn thành thi công', null, null, null, null, $allocationId);
+            # thong bao hoan thanh thi cong cho quan ly thi cong (nguoi phan viec)
+            $modelStaffNotify->insert(null, $this->allocationStaffId($allocationId)[0], 'Hoàn thành thi công', null, null, null, null, $allocationId);
 
             # khong tre ngay phan cong
-            if (!$this->checkLate($allocationId)) {
+            /*if (!$this->checkLate($allocationId)) {
                 $receiveStaffId = $this->receiveStaffId($allocationId);
-                $dataWork = $modelStaff->firstInfoActivityToWork($receiveStaffId);
+                $dataWork = $modelStaff->firstInfoActivityToWork($receiveStaffId); # bang cham cong cua NV
                 if ($hFunction->checkCount($dataWork)) {
                     #tien thuong
                     $orderBonusPrice = $dataOrder->getBonusByOrderAllocation();
@@ -90,7 +90,7 @@ class QcOrderAllocation extends Model
                         $modelStaffNotify->insert(null, $receiveStaffId, 'Thưởng hoàn thành đơn hàng', null, null, $bonusId, null, null);
                     }
                 }
-            }
+            }*/
             # bao ket thuc san pham
             if ($hFunction->checkCount($dataProduct)) {
                 foreach ($dataProduct as $product) {
@@ -101,9 +101,10 @@ class QcOrderAllocation extends Model
     }
 
     // ket thuc cong viec
-    public function confirmFinishAllocation($allocationId, $confirmFinish, $confirmStaffId)
+    public function confirmFinishAllocation($allocationId, $confirmFinish, $confirmStaffId,$confirmNote = null)
     {
         $hFunction = new \Hfunction();
+        $modelStaffNotify = new QcStaffNotify();
         $modelOrder = new QcOrder();
         $allocationId = $this->checkNullId($allocationId);
         if (QcOrderAllocation::where('allocation_id', $allocationId)->update(
@@ -111,12 +112,16 @@ class QcOrderAllocation extends Model
                 'confirmStatus' => 1,
                 'confirmDate' => $hFunction->carbonNow(),
                 'confirmFinish' => $confirmFinish,
+                'confirmNote' => $confirmNote,
                 'confirmStaff_id' => $confirmStaffId,
                 'action' => 0
             ])
         ) {
             if ($confirmFinish == 1) { # xac nhan dong y  hoan thanh
-                $modelOrder->updateFinish($this->orderId($allocationId), 1, $confirmStaffId); // xac nhan hoan thanh don hang
+                $dataOrder = $modelOrder->getInfo($this->orderId($allocationId));
+                # thong bao hoan thanh thi cong cho kinh doanh
+                $modelStaffNotify->insert(null, $dataOrder->staffId(), 'Hoàn thành thi công', null, null, null, null, $allocationId);
+                //$modelOrder->updateFinish($this->orderId($allocationId), 1, $confirmStaffId); // xac nhan hoan thanh don hang
             }
             return true;
         } else {

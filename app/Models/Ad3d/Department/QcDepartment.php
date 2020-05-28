@@ -170,6 +170,7 @@ class QcDepartment extends Model
         return 7;
     }
 
+    # danh sanh ma bo phan nhan thong bao them don hang moi
     public function listIdReceiveNotifyNewOrder(){
         return [$this->businessDepartmentId(), $this->designDepartmentId(), $this->constructionDepartmentId(), $this->manageDepartmentId()];
     }

@@ -10,6 +10,7 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$dataStaffLogin = $modelStaff->loginStaffInfo();
 $dataOrderConstruction = $dataOrder->orderAllocationActivity();
 
 $orderId = $dataOrder->orderId();
@@ -213,8 +214,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
             @if($addAllocationStatus)
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-top: 1px dotted #d7d7d7;">
-                        <form id="frmWorlAllocationOrderConstructionAdd" role="form" method="post"
-                              enctype="multipart/form-data"
+                        <form id="frmWorlAllocationOrderConstructionAdd" role="form" method="post" enctype="multipart/form-data"
                               action="{!! route('qc.work.work_allocation.manage.order.construction.add.post', $orderId) !!}">
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -241,7 +241,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             <option value="">Chọn nhân viên</option>
                                             @if($hFunction->checkCount($dataReceiveStaff))
                                                 @foreach($dataReceiveStaff as $receiveStaff)
-                                                    @if($receiveStaff->checkWorkStatus())
+                                                    @if($receiveStaff->checkWorkStatus() && $dataStaffLogin->staffId() != $receiveStaff->staffId())
                                                         <option value="{!! $receiveStaff->staffId() !!}">{!! $receiveStaff->fullName() !!}</option>
                                                     @endif
                                                 @endforeach
@@ -378,10 +378,12 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                 </div>
             @else
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px; padding-bottom: 10px;">
                         <i class="qc-color-green glyphicon glyphicon-bullhorn"></i>&nbsp;&nbsp;
-                        <span> Công trình đang được bàn giao</span> <em>(Chỉ được bàn giao khi công trình đang không có
-                            người phụ trách)</em>
+                        <b style="color: red;">
+                            Công trình đang được bàn giao. Chỉ được bàn giao khi công trình đang không có
+                            người phụ trách
+                        </b>
                     </div>
                 </div>
             @endif

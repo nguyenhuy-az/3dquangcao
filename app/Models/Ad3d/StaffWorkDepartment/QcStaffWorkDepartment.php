@@ -80,8 +80,18 @@ class QcStaffWorkDepartment extends Model
         return QcStaffWorkDepartment::where(['work_id' => $workId, 'action' => 1])->pluck('department_id');
     }
 
-    # lay dang sach lam viẹc thuoc cac bo phan
+    # lay dang sach tat ca ma lam viẹc theo danh sach ma bo phan va cap bac
     public function listWorkIdOfListDepartment($listDepartmentId, $rankId = null)
+    {
+        if (empty($rankId)) {
+            return QcStaffWorkDepartment::whereIn('department_id', $listDepartmentId)->pluck('work_id');
+        } else {
+            return QcStaffWorkDepartment::whereIn('department_id', $listDepartmentId)->where('rank_id', $rankId)->pluck('work_id');
+        }
+    }
+
+    # lay dang sach ma lam viẹc dang hoat dong theo danh sach ma bo phan va cap bac
+    public function listWorkIdActivityOfListDepartment($listDepartmentId, $rankId = null)
     {
         if (empty($rankId)) {
             return QcStaffWorkDepartment::whereIn('department_id', $listDepartmentId)->where('action', 1)->pluck('work_id');
@@ -174,6 +184,7 @@ class QcStaffWorkDepartment extends Model
     }
 
     #-------------- ----------- kiem tra bo phan THI CONG ------------- --------------
+    # kiem tra thong tin lam viec dang hoat dong co thuoc bo phan thi cong cap quan ly hay khong
     public function checkCurrentDepartmentConstructionOfWork($workId)
     {
         $hFunction = new \Hfunction();
@@ -188,6 +199,7 @@ class QcStaffWorkDepartment extends Model
         return $resultStatus;
     }
 
+    # kiem tra thong tin lam viec co thuoc bo phan thi cong cap quan ly hay khong
     public function checkConstructionDepartmentAndManageRank($workId)
     {
         $hFunction = new \Hfunction();

@@ -12,6 +12,11 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $hrefIndex = route('qc.work.work_allocation.manage.get');
+# lay thong tin NV cap quan ly bo phan thi con
+$dataStaffConstruction = $modelStaff->infoStaffConstructionRankManage($dataStaffLogin->companyId());
+$actionStatus = false;
+if($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dung noi quy moi co quyen hanh dong tren trang
+//if($actionStatus) echo "yesss";else echo "No;";
 ?>
 @extends('work.work-allocation.index')
 @section('qc_work_allocation_body')
@@ -33,9 +38,14 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
             </div>
             <div class="qc_work_allocation_activity_contain col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
-                    <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0;">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0;">
                         <div class="row">
-                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+                                    <h4 style="background-color: red; color: white; margin: 0; padding: 5px;">
+                                        QUẢN LÝ THI CÔNG @if($actionStatus) "{!! $dataStaffLogin->lastName() !!}" @endif PHẢI CHIỆU TRÁCH NHIỆM THƯỞNG / PHẠT TRÊN TẤT CẢ ĐƠN HÀNG
+                                    </h4>
+                            </div>
+                            <div class="text-right col-xs-12 col-sm-12 col-md-3 col-lg-3">
                                 <select class="cbDayFilter" style="height: 25px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -88,7 +98,7 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
                                     Ngày hẹn giao <br/>
                                     Khách hàng
                                 </th>
-                                <th class="text-center" >
+                                <th class="text-center">
                                     Ngày xác nhận <br/> hoàn thành
                                 </th>
                                 <th>Phân việc</th>

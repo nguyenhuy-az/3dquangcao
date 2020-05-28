@@ -60,7 +60,7 @@ class QcDepartmentStaff extends Model
     }
 
 
-    //--------------------------kiểm tra bộ theo hiện tại của nhân viên ---------------------------
+    //--------------------------kiểm tra bộ phậno hiện tại của nhân viên ---------------------------
 
     public function checkCurrentDepartmentManageOfStaff($staffId)
     {

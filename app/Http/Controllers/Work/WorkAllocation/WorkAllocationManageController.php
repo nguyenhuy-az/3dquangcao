@@ -186,7 +186,8 @@ class WorkAllocationManageController extends Controller
             'subObjectLabel' => 'Bàn giao đơn hàng'
         ];
         $dataOrder = $modelOrders->getInfo($orderId);
-        $dataReceiveStaff = $modelStaff->infoActivityConstructionOfCompany($dataOrder->companyId()); //Lay NV cty so huu don hang
+        //Lay danh sach nv thuoc bo phan thi cong cua cty
+        $dataReceiveStaff = $modelStaff->infoActivityConstructionOfCompany($dataOrder->companyId());
         if ($hFunction->checkCount($dataOrder)) {
             # cap nhat da xem thong bao
             $modelStaffNotify->updateViewedOfStaffAndOrder($modelStaff->loginStaffId(), $orderId);

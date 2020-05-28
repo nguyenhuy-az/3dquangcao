@@ -177,11 +177,16 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                                 @if($ordersAllocation->checkCancelAllocation())
                                                     <em style="color: grey;">---</em>
                                                 @else
-                                                    @if($ordersAllocation->checkConfirmFinish($allocationId))
-                                                        <em class="qc-color-grey">Đã hoàn thành</em>
+                                                    @if($ordersAllocation->checkConfirm($allocationId))
+                                                        @if($ordersAllocation->checkConfirmFinish($allocationId))
+                                                            <em class="qc-color-grey">Đã hoàn thành</em>
+                                                        @else
+                                                            <em class="qc-color-grey">Không hoàn thành</em>
+                                                        @endif
                                                     @else
-                                                        <em class="qc-color-grey">Không hoàn thành</em>
+                                                        <em style="background-color: green; color: white; padding: 3px;">Chờ duyệt</em>
                                                     @endif
+
                                                 @endif
                                                 @if($ordersAllocation->checkPaymentStatus())
                                                     <br/>
