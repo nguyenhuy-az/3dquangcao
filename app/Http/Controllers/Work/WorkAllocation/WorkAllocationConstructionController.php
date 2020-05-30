@@ -54,16 +54,16 @@ class WorkAllocationConstructionController extends Controller
     }
 
     # xac nhan cong trinh
-    public function getConstructionConfirm($allocationId = null)
+    public function getConstructionReportFinish($allocationId = null)
     {
         $modelOrderAllocation = new QcOrderAllocation();
         $dataOrderAllocation = $modelOrderAllocation->getInfo($allocationId);
         if (count($dataOrderAllocation) > 0) {
-            return view('work.work-allocation.construction.confirm-finish', compact('dataOrderAllocation'));
+            return view('work.work-allocation.construction.report-finish', compact('dataOrderAllocation'));
         }
     }
 
-    public function postConstructionConfirm(Request $request, $allocationId = null)
+    public function postConstructionReportFinish(Request $request, $allocationId = null)
     {
         $hFunction = new \Hfunction();
         $modelOrderAllocation = new QcOrderAllocation();

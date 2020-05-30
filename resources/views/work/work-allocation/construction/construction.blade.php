@@ -168,8 +168,8 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                                 @if($ordersAllocation->checkFinish())
                                                     <em>---</em>
                                                 @else
-                                                    <a class="qc_confirm_act qc-link-green"
-                                                       data-href="{!! route('qc.work.work_allocation.construction.confirm.get', $allocationId) !!}">
+                                                    <a class="qc_report_finish_get qc-link-green"
+                                                       data-href="{!! route('qc.work.work_allocation.construction.report_finish.get', $allocationId) !!}">
                                                         Báo hoàn thành đơn hàng
                                                     </a>
                                                 @endif

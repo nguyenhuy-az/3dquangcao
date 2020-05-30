@@ -158,7 +158,7 @@ var qc_work_allocation = {
                 qc_master_submit.ajaxFormHasReload(frm, '', false);
             }
         },
-        getConfirmAllocation: function (href) {
+        getReportFinish: function (href) {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
         },
         postConfirmAllocation: function (frm) {
@@ -192,9 +192,9 @@ $(document).ready(function () {
         qc_work_allocation.construct.postProductConfirm($(this).parents('.frmWorkAllocationProductConfirm'));
     });
 
-    // xac nhan hoan thanh don hang ban giao
-    $('.qc_work_allocation_construction_wrap').on('click', '.qc_confirm_act', function () {
-        qc_work_allocation.construct.getConfirmAllocation($(this).data('href'));
+    // bao cao hoan than hoan thanh don hang ban giao
+    $('.qc_work_allocation_construction_wrap').on('click', '.qc_report_finish_get', function () {
+        qc_work_allocation.construct.getReportFinish($(this).data('href'));
     });
     $('body').on('click', '.frmWorkAllocationConstructionConfirm .qc_save', function () {
         qc_work_allocation.construct.postConfirmAllocation($(this).parents('.frmWorkAllocationConstructionConfirm'));

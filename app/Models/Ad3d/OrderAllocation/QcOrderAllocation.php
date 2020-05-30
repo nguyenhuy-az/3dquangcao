@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcOrderAllocation extends Model
 {
     protected $table = 'qc_order_allocation';
-    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'noted', 'finishStatus', 'finishDate', 'finishNote', 'confirmStatus', 'confirmFinish', 'confirmDate','confirmNote', 'paymentStatus', 'action', 'confirmStaff_id', 'order_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
+    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'noted', 'finishStatus', 'finishDate', 'finishNote', 'confirmStatus', 'confirmFinish', 'confirmDate', 'confirmNote', 'paymentStatus', 'action', 'confirmStaff_id', 'order_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
     protected $primaryKey = 'allocation_id';
     public $timestamps = false;
 
@@ -101,7 +101,7 @@ class QcOrderAllocation extends Model
     }
 
     // ket thuc cong viec
-    public function confirmFinishAllocation($allocationId, $confirmFinish, $confirmStaffId,$confirmNote = null)
+    public function confirmFinishAllocation($allocationId, $confirmFinish, $confirmStaffId, $confirmNote = null)
     {
         $hFunction = new \Hfunction();
         $modelStaffNotify = new QcStaffNotify();
@@ -243,13 +243,19 @@ class QcOrderAllocation extends Model
         return QcOrderAllocation::where('order_id', $orderId)->exists();
     }
 
-
+    #kiem tra ton tại thong tin cho duyet thi cong cua don hang
+    public function checkWaitConfirmFinish($orderId)
+    {
+        # co bao ket thuc va chua xac nhan
+        return QcOrderAllocation::where('order_id', $orderId)->where('finishStatus', 1)->where('confirmStatus', 0)->where('action', 0)->exists();
+    }
     # kiem tra sam pham dang duoc phan viec
     public function existInfoActivityOfOrder($orderId)
     {
         return QcOrderAllocation::where('order_id', $orderId)->where('action', 1)->exists();
     }
 
+    # thong tin thi cong dang hoat dong cua don hang
     public function infoActivityOfOrder($orderId)
     {
         return QcOrderAllocation::where('order_id', $orderId)->where('action', 1)->get();
@@ -417,6 +423,7 @@ class QcOrderAllocation extends Model
         $result = (is_int($result)) ? $result : $result[0];
         return ($result == 1) ? true : false;
     }
+
 
     # kiem tra xac nhan ket thuc giao viec
     public function checkConfirm($allocationId = null)

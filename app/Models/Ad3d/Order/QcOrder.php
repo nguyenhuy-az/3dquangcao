@@ -594,13 +594,20 @@ class QcOrder extends Model
         $currentDate = date('Y-m-d');
         $deliveryDate = $this->deliveryDate($orderId)[0];
         $lateStatus = false;
-        if($this->checkFinishStatus($orderId)){ # don hang da ket thuc
+        if ($this->checkFinishStatus($orderId)) { # don hang da ket thuc
             $finishDate = $this->finishDate($orderId)[0];
-            if($finishDate > $deliveryDate) $lateStatus = true;
-        }else{ # don hang chua ket thuc
-            if($deliveryDate < $currentDate) $lateStatus = true;
+            if ($finishDate > $deliveryDate) $lateStatus = true;
+        } else { # don hang chua ket thuc
+            if ($deliveryDate < $currentDate) $lateStatus = true;
         }
         return $lateStatus;
+    }
+
+    #kiem tra don hang cho duyet
+    public function checkWaitConfirmFinish($orderId = null)
+    {
+        $modelOrderConstruction = new QcOrderAllocation();
+        return $modelOrderConstruction->checkWaitConfirmFinish($this->checkIdNull($orderId));
     }
 
     # kiem tra do hang co thu ho
@@ -638,7 +645,7 @@ class QcOrder extends Model
         return $modelOrderAllocation->existInfoOfOrder($this->checkIdNull($orderId));
     }
 
-    # ton tai thong tin ban gia dang co hieu luc
+    # ton tai thong tin ban giao thi cong dang co hieu luc
     public function existOrderAllocationActivityOfOrder($orderId = null)
     {
         $modelOrderAllocation = new QcOrderAllocation();
@@ -1150,7 +1157,7 @@ class QcOrder extends Model
     public function checkFinishStatus($orderId = null)
     {
         $result = $this->finishStatus($orderId);
-        $result = (is_int($result))?$result:$result[0];
+        $result = (is_int($result)) ? $result : $result[0];
         return ($result == 1) ? true : false;
     }
 
@@ -1165,8 +1172,8 @@ class QcOrder extends Model
         return ($this->vat($orderId) == 1) ? true : false;
     }
 
-    # lay gia tri tien thuong ban giao don hang
-    public function getBonusByOrderAllocation($orderId = null)
+    # lay gia tri tien thuong - phạt tren don hang cua cap quan ly
+    public function getBonusAndMinusMoneyOfRankManage($orderId = null)
     {
         $orderTotalPrice = $this->totalPrice($orderId);
         if ($orderTotalPrice < 20000000) {
@@ -1176,14 +1183,25 @@ class QcOrder extends Model
         }
     }
 
-    # lay gia tri tien phat tre ban giao don hang
+    # lay gia tri tien thuong ban giao don hang - cap thi cong
+    public function getBonusByOrderAllocation($orderId = null)
+    {
+        $orderTotalPrice = $this->totalPrice($orderId);
+        if ($orderTotalPrice < 20000000) {
+            return (int)$orderTotalPrice * 0.03;
+        } else {
+            return (int)$orderTotalPrice * 0.02;
+        }
+    }
+
+    # lay gia tri tien phat tre ban giao don hang - cap thi cong
     public function getMinusMoneyOrderAllocationLate($orderId = null)
     {
         $orderTotalPrice = $this->totalPrice($orderId);
         if ($orderTotalPrice < 20000000) {
-            return (int)$orderTotalPrice * 0.05;
-        } else {
             return (int)$orderTotalPrice * 0.03;
+        } else {
+            return (int)$orderTotalPrice * 0.02;
         }
     }
 #============ =========== ============ STATISTICAL ============= =========== ==========

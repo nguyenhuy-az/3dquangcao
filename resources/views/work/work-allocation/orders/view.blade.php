@@ -17,13 +17,13 @@ $orderId = $dataOrder->orderId();
 @section('qc_work_allocation_body')
     <div id="qc_work_allocation_order_detail_wrap"
          class="qc-padding-top-20 qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="row">
-            <div class="qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 0;">
-                <a class="qc-font-size-20 qc-link-red" href="{!! $hFunction->getUrlReferer() !!}">
-                    <i class="glyphicon glyphicon-backward"></i>
-                    Trở lại
-                </a>
-            </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                Về trang trước
+            </a>
+            <a class="btn btn-sm btn-default" href="{!! route('qc.work.work_allocation.manage.get') !!}">
+                Về Danh mục ĐH
+            </a>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <h3 class="qc-color-green">{!! $dataOrder->name() !!}</h3>
@@ -340,14 +340,6 @@ $orderId = $dataOrder->orderId();
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="qc-padding-top-10 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                Về trang trước
-            </a>
-            <a class="btn btn-sm btn-default" href="{!! route('qc.work.work_allocation.manage.get') !!}">
-                Về Danh mục ĐH
-            </a>
         </div>
     </div>
 

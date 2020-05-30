@@ -120,7 +120,7 @@ class WorkAllocationManageController extends Controller
     }
 
     # xem thong tin don hang
-    public function viewOrder($orderId)
+    public function viewOrder($orderId, $notifyId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -130,7 +130,7 @@ class WorkAllocationManageController extends Controller
             'object' => 'workAllocationManage'
         ];
         # cap nhat da xem thong bao
-        $modelStaffNotify->updateViewedOfStaffAndOrder($modelStaff->loginStaffId(), $orderId);
+        if (!$hFunction->checkEmpty($notifyId)) $modelStaffNotify->updateViewed($notifyId);
         #lay thong tin don hang
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($dataOrder)) {
@@ -175,7 +175,7 @@ class WorkAllocationManageController extends Controller
     }
 
     # ban giao don hang - cong trinh
-    public function getOrderConstruction($orderId)
+    public function getOrderConstruction($orderId, $notifyId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -190,7 +190,7 @@ class WorkAllocationManageController extends Controller
         $dataReceiveStaff = $modelStaff->infoActivityConstructionOfCompany($dataOrder->companyId());
         if ($hFunction->checkCount($dataOrder)) {
             # cap nhat da xem thong bao
-            $modelStaffNotify->updateViewedOfStaffAndOrder($modelStaff->loginStaffId(), $orderId);
+            if (!$hFunction->checkEmpty($notifyId)) $modelStaffNotify->updateViewed($notifyId);
             return view('work.work-allocation.orders.construction', compact('modelStaff', 'dataAccess', 'dataReceiveStaff', 'dataOrder'));
         } else {
             return redirect()->back();
@@ -238,7 +238,26 @@ class WorkAllocationManageController extends Controller
         return redirect()->back();
     }
 
-    #huy ban giao thi cong
+    # --------- xac nhan hoan thanh don hang ban giao ---------
+    public function getConfirmFinishConstruction($allocationId)
+    {
+        $hFunction = new \Hfunction();
+        $modelOrderAllocation = new QcOrderAllocation();
+        $dataOrderAllocation = $modelOrderAllocation->getInfo($allocationId);
+        if ($hFunction->checkCount($dataOrderAllocation)) {
+            return view('work.work-allocation.orders.confirm-finish', compact('dataOrderAllocation'));
+        }
+    }
+
+    public function postConfirmFinishConstruction($allocationId)
+    {
+        $hFunction = new \Hfunction();
+        $modelOrderAllocation = new QcOrderAllocation();
+        $dataOrderAllocation = $modelOrderAllocation->getInfo($allocationId);
+
+    }
+
+    #--------- huy ban giao thi cong ---------
     public function deleteOrderConstruction($allocationId)
     {
         $modelOrderAllocation = new QcOrderAllocation();

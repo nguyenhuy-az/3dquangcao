@@ -40,13 +40,13 @@ $dataProduct = $dataOrder->productActivityOfOrder();
 @section('qc_work_allocation_body')
     <div id="qc_work_allocation_manage_order_construction_wrap" class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
          style="padding-bottom: 50px;">
-        <div class="row">
-            <div class="qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 0;">
-                <a class="qc-font-size-20 qc-link-red" href="{!! route('qc.work.work_allocation.manage.get') !!}">
-                    <i class="glyphicon glyphicon-backward"></i>
-                    Trở lại
-                </a>
-            </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                Về trang trước
+            </a>
+            <a class="btn btn-sm btn-default" href="{!! route('qc.work.work_allocation.manage.get') !!}">
+                Về Danh mục ĐH
+            </a>
         </div>
         {{-- BÀN GIAO CÔNG TRÌNH --}}
         <div class="row">
@@ -133,14 +133,12 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                     <th class="text-center">
                                         Thi công
                                     </th>
-                                    <th class="text-center">
-                                        Hoạt động
-                                    </th>
                                 </tr>
                                 @if($hFunction->checkCount($dataOrderAllocation))
                                     @foreach($dataOrderAllocation as $ordersAllocation)
                                         <?php
                                         $ordersAllocationId = $ordersAllocation->allocationId();
+                                        $orderId = $ordersAllocation->orderId();
                                         $allocationActivityStatus = $ordersAllocation->checkActivity();
                                         if ($allocationActivityStatus) $addAllocationStatus = false;
                                         ?>
@@ -150,6 +148,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             </td>
                                             <td>
                                                 {!! $ordersAllocation->receiveStaff->fullname() !!}
+                                                --- {!! $ordersAllocationId !!}
                                             </td>
                                             <td>
                                                 {!! $hFunction->convertDateDMYHISFromDatetime($ordersAllocation->allocationDate()) !!}
@@ -158,38 +157,43 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                 {!! $hFunction->convertDateDMYHISFromDatetime($ordersAllocation->receiveDeadline()) !!}
                                             </td>
                                             <td class="text-center">
-                                                @if(!$allocationActivityStatus)
-                                                    @if($ordersAllocation->checkConfirm())
-                                                        @if($ordersAllocation->checkConfirmFinish())
-                                                            <em class="qc-color-grey">Đã kết thúc</em>
+                                                @if($ordersAllocation->checkWaitConfirmFinish($orderId))
+                                                    <a class="qc_confirm_finish qc-link-red">
+                                                        Xác Nhận
+                                                    </a>
+                                                    <br/>
+                                                    <span style="padding: 3px; background-color: red; color: yellow;">
+                                                        Xác nhận thi công
+                                                    </span>
+                                                @else
+                                                    @if(!$allocationActivityStatus)
+                                                        @if($ordersAllocation->checkConfirm())
+                                                            @if($ordersAllocation->checkConfirmFinish())
+                                                                <em class="qc-color-grey">Hoàn thành</em>
+                                                            @else
+                                                                <em class="qc-color-grey">Không hoàn thành</em>
+                                                            @endif
                                                         @else
-                                                            <em class="qc-color-grey">Không hoàn thành</em>
+                                                            <a class="qc_confirm_finish qc-link-green">
+                                                                Đã kết thúc
+                                                            </a>
                                                         @endif
                                                     @else
-                                                        <a class="qc_confirm_finish qc-link-green">
-                                                            Đã kết thúc
+                                                        <em>Đang thi công</em>
+                                                        <br/>
+                                                        <a class="qc_delete_construction qc-link-red"
+                                                           data-href="{!! route('qc.work.work_allocation.manage.order.construction.delete',$ordersAllocationId) !!}">
+                                                            Hủy bàn giao
                                                         </a>
                                                     @endif
-                                                @else
-                                                    <em>Đang thi công</em>
-                                                @endif
-                                            </td>
-                                            <td class="text-center">
-                                                @if($allocationActivityStatus)
-                                                    <a class="qc_delete_construction qc-link-red"
-                                                       data-href="{!! route('qc.work.work_allocation.manage.order.construction.delete',$ordersAllocationId) !!}">
-                                                        Hủy bàn giao
-                                                    </a>
-                                                @else
-                                                    <em class="qc-color-grey">Đã hủy bàn giao</em>
                                                 @endif
                                             </td>
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td class="text-center" colspan="5">
-                                            <em class="qc-color-red">Chưa có người phụ trách</em>
+                                        <td colspan="5">
+                                            <span style="padding: 3px; background-color: red; color: white;" >Chưa có người phụ trách</span>
                                         </td>
                                     </tr>
                                 @endif
@@ -214,7 +218,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
             @if($addAllocationStatus)
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-top: 1px dotted #d7d7d7;">
-                        <form id="frmWorlAllocationOrderConstructionAdd" role="form" method="post" enctype="multipart/form-data"
+                        <form id="frmWorlAllocationOrderConstructionAdd" role="form" method="post"
+                              enctype="multipart/form-data"
                               action="{!! route('qc.work.work_allocation.manage.order.construction.add.post', $orderId) !!}">
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -378,7 +383,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                 </div>
             @else
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px; padding-bottom: 10px;">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                         style="padding-top: 10px; padding-bottom: 10px;">
                         <i class="qc-color-green glyphicon glyphicon-bullhorn"></i>&nbsp;&nbsp;
                         <b style="color: red;">
                             Công trình đang được bàn giao. Chỉ được bàn giao khi công trình đang không có

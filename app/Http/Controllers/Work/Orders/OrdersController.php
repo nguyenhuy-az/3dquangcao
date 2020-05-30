@@ -781,10 +781,8 @@ class OrdersController extends Controller
             'object' => 'orders',
             'subObjectLabel' => 'Quản lý đơn hàng'
         ];
-        if (!$hFunction->checkEmpty($notifyId)) {
-            # cap nhat da xem thong tin thong bao
-            $modelStaffNotify->updateViewed($notifyId);
-        }
+        # cap nhat da xem thong tin thong bao
+        if (!$hFunction->checkEmpty($notifyId)) $modelStaffNotify->updateViewed($notifyId);
 
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($dataOrder)) {

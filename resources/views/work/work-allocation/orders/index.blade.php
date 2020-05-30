@@ -15,7 +15,7 @@ $hrefIndex = route('qc.work.work_allocation.manage.get');
 # lay thong tin NV cap quan ly bo phan thi con
 $dataStaffConstruction = $modelStaff->infoStaffConstructionRankManage($dataStaffLogin->companyId());
 $actionStatus = false;
-if($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dung noi quy moi co quyen hanh dong tren trang
+if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dung noi quy moi co quyen hanh dong tren trang
 //if($actionStatus) echo "yesss";else echo "No;";
 ?>
 @extends('work.work-allocation.index')
@@ -41,9 +41,10 @@ if($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dung
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0;">
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-                                    <h4 style="background-color: red; color: white; margin: 0; padding: 5px;">
-                                        QUẢN LÝ THI CÔNG @if($actionStatus) "{!! $dataStaffLogin->lastName() !!}" @endif PHẢI CHIỆU TRÁCH NHIỆM THƯỞNG / PHẠT TRÊN TẤT CẢ ĐƠN HÀNG
-                                    </h4>
+                                <h4 style="background-color: red; color: white; margin: 0; padding: 5px;">
+                                    QUẢN LÝ THI CÔNG @if($actionStatus) "{!! $dataStaffLogin->lastName() !!}" @endif
+                                    PHẢI CHIỆU TRÁCH NHIỆM THƯỞNG / PHẠT TRÊN TẤT CẢ ĐƠN HÀNG
+                                </h4>
                             </div>
                             <div class="text-right col-xs-12 col-sm-12 col-md-3 col-lg-3">
                                 <select class="cbDayFilter" style="height: 25px;" data-href="{!! $hrefIndex !!}">
@@ -243,16 +244,21 @@ if($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dung
                                                    href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderId) !!}">
                                                     Quản lý thi công
                                                 </a>
-                                                <br/>
-                                                @if($hFunction->checkCount($dataOrderAllocation))
-                                                    <span style="padding: 3px; background-color: blue; color: white;">
+                                                @if($order->checkWaitConfirmFinish())
+                                                    <br/>
+                                                    <span style="padding: 3px; background-color: green; color: yellow;">Chờ Xác nhận hoàn thành</span>
+                                                @else
+                                                    <br/>
+                                                    @if($hFunction->checkCount($dataOrderAllocation))
+                                                        <span style="padding: 3px; background-color: blue; color: white;">
                                                         Phụ trách: {!! $dataOrderAllocation->receiveStaff->lastName() !!}
                                                     </span>
-                                                @else
-                                                    @if(!$finishStatus)
-                                                        <span style="padding: 3px; background-color: red; color: white;">Chưa bàn giao</span>
                                                     @else
-                                                        <em>(Đã kết thúc)</em>
+                                                        @if(!$finishStatus)
+                                                            <span style="padding: 3px; background-color: red; color: white;">Chưa bàn giao</span>
+                                                        @else
+                                                            <em>(Đã kết thúc)</em>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             @endif
@@ -350,10 +356,10 @@ if($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dung
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->currencyFormat($order->getBonusByOrderAllocation()) !!}
+                                            {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfRankManage()) !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->currencyFormat($order->getMinusMoneyOrderAllocationLate()) !!}
+                                            {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfRankManage()) !!}
                                         </td>
                                         <td>
                                             {!! $order->customer->name() !!}
