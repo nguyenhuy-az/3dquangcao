@@ -922,7 +922,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::post('finish/{orderId}', ['as' => 'work.orders.order.report.finish.post', 'uses' => 'Work\Orders\OrdersController@postReportFinish']);
         });
 
-        Route::get('/{loginMonth?}/{loginYear?}/{paymentStatus?}/{orderFilterName?}/{customerName?}', ['as' => 'qc.work.orders.get', 'uses' => 'Work\Orders\OrdersController@index']);
+        Route::get('/{finishStatus?}/{loginMonth?}/{loginYear?}/{paymentStatus?}/{orderFilterName?}/{customerName?}', ['as' => 'qc.work.orders.get', 'uses' => 'Work\Orders\OrdersController@index']);
     });
 
     //quản lý thu chi
@@ -1039,6 +1039,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
             # xac nhan hoan thanh thi cong don hang
             Route::get('confirm-finish/{allocationId?}', ['as' => 'qc.work.work_allocation.manage.order.construction_confirm_finish.get', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@getConfirmFinishConstruction']);
+            Route::post('confirm-finish/{allocationId?}', ['as' => 'qc.work.work_allocation.manage.order.construction_confirm_finish.post', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@postConfirmFinishConstruction']);
 
             # huy ban giao
             Route::get('delete-construction/{allocationId?}', ['as' => 'qc.work.work_allocation.manage.order.construction.delete', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@deleteOrderConstruction']);
@@ -1062,7 +1063,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::get('report-finish/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.report_finish.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@getConstructionReportFinish']);
             Route::post('report-finish/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.report_finish.post', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@postConstructionReportFinish']);
 
-            Route::get('/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.work_allocation.construction.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@index']);
+            Route::get('/{finishStatus?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.work_allocation.construction.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@index']);
         });
 
         # phan viec

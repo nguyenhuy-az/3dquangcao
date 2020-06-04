@@ -13,11 +13,6 @@ $mobileStatus = $mobile->isMobile();
 $hrefIndex = route('qc.work.work_allocation.construction.get');
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaffLogin->staffId();
-
-$dataOrdersAllocation = null;
-$dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($loginStaffId, $dateFilter);
-
-
 ?>
 @extends('work.work-allocation.index')
 @section('titlePage')
@@ -53,7 +48,22 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                             </tr>
                             <tr>
                                 <td class="text-center" style="width: 20px;"></td>
-                                <td></td>
+                                <td style="padding: 0px;">
+                                    <select class="cbWorkAllocationConstructionFinishStatus form-control"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100"
+                                                @if($finishStatus == 100) selected="selected" @endif>
+                                            Tất cả
+                                        </option>
+                                        <option value="0" @if($finishStatus == 0) selected="selected" @endif>
+                                            Chưa Xong
+                                        </option>
+                                        <option value="1"
+                                                @if($finishStatus == 1) selected="selected" @endif>
+                                            Đã Xong
+                                        </option>
+                                    </select>
+                                </td>
                                 <td></td>
                                 <td></td>
                                 <td class="text-center" style="padding: 0;">
@@ -62,10 +72,9 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                         <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả tháng
                                         </option>
-                                        @for($i =1;$i<= 12; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if((int)$monthFilter == $i) selected="selected" @endif>
-                                                Tháng {!! $i !!}
+                                        @for($m =1;$m<= 12; $m++)
+                                            <option value="{!! $m !!}" @if((int)$monthFilter == $m) selected="selected" @endif>
+                                                Tháng {!! $m !!}
                                             </option>
                                         @endfor
                                     </select>
@@ -75,9 +84,10 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                         <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả năm
                                         </option>
-                                        @for($i =2017;$i<= 2050; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                        @for($y =2017;$y<= 2050; $y++)
+                                            <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                                {!! $y !!}
+                                            </option>
                                         @endfor
                                     </select>
                                 </td>
@@ -184,7 +194,8 @@ $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($logi
                                                             <em class="qc-color-grey">Không hoàn thành</em>
                                                         @endif
                                                     @else
-                                                        <em style="background-color: green; color: white; padding: 3px;">Chờ duyệt</em>
+                                                        <em style="background-color: green; color: white; padding: 3px;">Chờ
+                                                            duyệt</em>
                                                     @endif
 
                                                 @endif

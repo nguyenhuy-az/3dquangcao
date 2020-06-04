@@ -689,6 +689,11 @@ class QcStaff extends Model
     }
 
     // lay thong tin don hang da thanh toan hoac chưa thanh toan theo tg - khong huy
+    public function selectOrderNoCancelAndPayInfoOfStaffReceive($staffId = null, $date = null, $paymentStatus = null, $finishStatus = null, $orderKeyword = null)
+    {
+        $modelOrder = new QcOrder();
+        return $modelOrder->selectInfoNoCancelAndPayOfStaffReceive($this->checkIdNull($staffId), $date, $paymentStatus, $finishStatus,$orderKeyword);
+    }
     public function orderNoCancelAndPayInfoOfStaffReceive($staffId = null, $date = null, $paymentStatus = null, $orderKeyword = null)
     {
         $modelOrder = new QcOrder();

@@ -2,12 +2,15 @@
 
 namespace App\Models\Ad3d\Order;
 
+use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderImage\QcOrderImage;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\PunishContent\QcPunishContent;
 use App\Models\Ad3d\Staff\QcStaff;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use App\Models\Ad3d\WorkAllocationReportImage\QcWorkAllocationReportImage;
 use Illuminate\Database\Eloquent\Model;
@@ -274,6 +277,7 @@ class QcOrder extends Model
 
     public function selectInfoOfListCustomer($listCustomerId, $date = null, $paymentStatus = 3, $orderBy = 'DESC')
     {
+        #$paymentStatus = 3 - tat ca /
         if (!empty($date) && $paymentStatus < 2) {
             return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('receiveDate', 'like', "%$date%")->where('paymentStatus', $paymentStatus)->orderBy('receiveDate', $orderBy)->select('*');
         } else if (!empty($date) && $paymentStatus > 1) {
@@ -286,22 +290,44 @@ class QcOrder extends Model
     }
 
     // dơn hang khong huy
-    public function infoNoCancelOfListCustomer($listCustomerId, $date = null, $paymentStatus = 3, $orderBy = 'DESC')
+    public function infoNoCancelOfListCustomer($listCustomerId, $date = null, $paymentStatus = 3, $finishStatus = 100, $orderBy = 'DESC')
     {
-        return $this->selectInfoNoCancelOfListCustomer($listCustomerId, $date, $paymentStatus, $orderBy)->get();
+        return $this->selectInfoNoCancelOfListCustomer($listCustomerId, $date, $paymentStatus, $finishStatus, $orderBy)->get();
     }
 
-    public function selectInfoNoCancelOfListCustomer($listCustomerId, $date = null, $paymentStatus = 3, $orderBy = 'DESC')
+    public function selectInfoNoCancelOfListCustomer($listCustomerId, $date = null, $paymentStatus = 3, $finishStatus = 100, $orderBy = 'DESC')
     {
-        if (!empty($date) && $paymentStatus < 2) {
-            return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->where('paymentStatus', $paymentStatus)->orderBy('receiveDate', $orderBy)->select('*');
-        } else if (!empty($date) && $paymentStatus > 1) {
-            return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->orderBy('receiveDate', $orderBy)->select('*');
-        } else if (empty($date) && $paymentStatus < 2) {
-            return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('paymentStatus', $paymentStatus)->orderBy('receiveDate', $orderBy)->select('*');
+        if ($finishStatus < 100) {
+            if($paymentStatus < 3){
+                if (!empty($date)) {
+                    return QcOrder::whereIn('customer_id', $listCustomerId)->where('finishStatus', $finishStatus)->where('paymentStatus', $paymentStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->orderBy('receiveDate', $orderBy)->select('*');
+                } else {
+                    return QcOrder::whereIn('customer_id', $listCustomerId)->where('finishStatus', $finishStatus)->where('paymentStatus', $paymentStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
+                }
+            }else{
+                if (!empty($date)) {
+                    return QcOrder::whereIn('customer_id', $listCustomerId)->where('finishStatus', $finishStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->orderBy('receiveDate', $orderBy)->select('*');
+                } else {
+                    return QcOrder::whereIn('customer_id', $listCustomerId)->where('finishStatus', $finishStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
+                }
+            }
+
         } else {
-            return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
+            if($paymentStatus < 3){
+                if (!empty($date)) {
+                    return QcOrder::whereIn('customer_id', $listCustomerId)->where('paymentStatus', $paymentStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->orderBy('receiveDate', $orderBy)->select('*');
+                } else {
+                    return QcOrder::whereIn('customer_id', $listCustomerId)->where('paymentStatus', $paymentStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
+                }
+            }else{
+                if (!empty($date)) {
+                    return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->orderBy('receiveDate', $orderBy)->select('*');
+                }else {
+                    return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
+                }
+            }
         }
+
     }
 
     // lay thong tin don hang BAO GIA cua 1 hoac nhieu khach hang
@@ -421,35 +447,44 @@ class QcOrder extends Model
     // lay thong tin don hang da thanh toan hoac chưa hoan thanh toan theo tg - khong huy
     public function infoNoCancelAndPayOfStaffReceive($staffId = null, $date = null, $paymentStatus = 3, $keyWord = null, $orderBy = 'DESC')
     {
+        return $this->selectInfoNoCancelAndPayOfStaffReceive($staffId, $date, $paymentStatus, $keyWord, $orderBy)->get();
+    }
+
+    public function selectInfoNoCancelAndPayOfStaffReceive($staffId = null, $date = null, $paymentStatus = 3, $finishStatus = 100, $keyWord = null, $orderBy = 'DESC')
+    {
         $hFunction = new \Hfunction();
         $modelOrderPay = new QcOrderPay();
         $listOrderOfPaidId = $modelOrderPay->listOrderIdOfStaff($staffId, $date);
         if (empty($keyWord)) {
-            if (!empty($date) && $paymentStatus < 3) {
-                $listOrderId = QcOrder::where('receiveDate', 'like', "%$date%")->where('paymentStatus', $paymentStatus)->pluck('order_id');
-                /*return QcOrder::where(['staffReceive_id' => $staffId])->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->where('paymentStatus', $paymentStatus)->orWhere(function ($query) use ($listOrderOfPaidId) {
-                    $query->whereIn('order_id', $listOrderOfPaidId);
-                })->orderBy('receiveDate', $orderBy)->get();*/
-            } else if (!empty($date) && $paymentStatus > 2) {
+            if (!empty($date)) {
                 $listOrderId = QcOrder::where('receiveDate', 'like', "%$date%")->pluck('order_id');
-            } else if (empty($date) && $paymentStatus < 3) {
-                $listOrderId = QcOrder::where('paymentStatus', $paymentStatus)->pluck('order_id');
             } else {
-                $listOrderId = QcOrder::pluck('order_id');
+                $listOrderId = QcOrder::select('*')->pluck('order_id');
             }
         } else {
-            if (!empty($date) && $paymentStatus < 3) {
-                $listOrderId = QcOrder::where('name', 'like', "%$keyWord%")->where('receiveDate', 'like', "%$date%")->where('paymentStatus', $paymentStatus)->pluck('order_id');
-            } else if (!empty($date) && $paymentStatus > 2) {
+            if (!empty($date)) {
                 $listOrderId = QcOrder::where('name', 'like', "%$keyWord%")->where('receiveDate', 'like', "%$date%")->pluck('order_id');
-            } else if (empty($date) && $paymentStatus < 3) {
-                $listOrderId = QcOrder::where('name', 'like', "%$keyWord%")->where('paymentStatus', $paymentStatus)->pluck('order_id');
             } else {
                 $listOrderId = QcOrder::where('name', 'like', "%$keyWord%")->pluck('order_id');
             }
         }
+
         $selectOrderId = $hFunction->arrayUnique($hFunction->arrayMergeTwo($listOrderId->toArray(), $listOrderOfPaidId->toArray()));
-        return QcOrder::where(['staffReceive_id' => $staffId])->whereIn('order_id', $selectOrderId)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->get();
+        if ($finishStatus < 100) {
+            if ($paymentStatus < 3) {
+                //dd($paymentStatus);
+                return QcOrder::where(['staffReceive_id' => $staffId])->whereIn('order_id', $selectOrderId)->where('finishStatus', $finishStatus)->where('paymentStatus', $paymentStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
+            } else {
+                return QcOrder::where(['staffReceive_id' => $staffId])->whereIn('order_id', $selectOrderId)->where('finishStatus', $finishStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
+            }
+        } else {
+            if ($paymentStatus < 3) {
+                return QcOrder::where(['staffReceive_id' => $staffId])->whereIn('order_id', $selectOrderId)->where('paymentStatus', $paymentStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
+            } else {
+                return QcOrder::where(['staffReceive_id' => $staffId])->whereIn('order_id', $selectOrderId)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
+            }
+        }
+
     }
 
     public function selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $nameFiler = null, $dateFilter = null, $paymentStatus)
@@ -482,6 +517,36 @@ class QcOrder extends Model
         return $dataOrder;
     }
 
+    # lay thong tin don hang quan ly thi cong
+    public function selectInfoManageConstruction($listStaffId, $nameFiler = null, $dateFilter = null, $finishStatus = 100)
+    {
+        $dataOrder = null;
+        if ($finishStatus == 100) { // 100 = tat ca don hang
+            if (empty($nameFiler)) {
+                if (empty($dateFilter)) {
+                    $dataOrder = QcOrder::whereIn('staff_id', $listStaffId)->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+
+                } else {
+                    $dataOrder = QcOrder::whereIn('staff_id', $listStaffId)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+                }
+
+            } else {
+                if (empty($dateFilter)) {
+                    $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->whereIn('staff_id', $listStaffId)->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+                } else {
+                    $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->whereIn('staff_id', $listStaffId)->where('created_at', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+                }
+            }
+
+        } else {
+            if (empty($nameFiler)) {
+                $dataOrder = QcOrder::where('finishStatus', $finishStatus)->whereIn('staff_id', $listStaffId)->where('created_at', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+            } else {
+                $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->where('finishStatus', $finishStatus)->whereIn('staff_id', $listStaffId)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+            }
+        }
+        return $dataOrder;
+    }
     //---------- ---------- ĐƠN HANG BÁO GIÁ ---------- ----------
     // lay thong tin don hang bao gia
     public function infoProvisionalOfStaffReceive($staffId = null, $date = null, $provisionalConfirm = 3, $keyWord = null, $orderBy = 'DESC')
@@ -582,10 +647,11 @@ class QcOrder extends Model
         return $this->hasMany('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'order_id', 'order_id');
     }
 
-    # kiem tra don hang dang trien khai
-    public function checkOrderIsConstructing()
+    # lay thong tin ket thuc thi cong cua cong trinh
+    public function infoAllocationFinish($orderId)
     {
-        //
+        $modelOrderAllocation = new QcOrderAllocation();
+        return $modelOrderAllocation->infoFinishOfOrder($orderId);
     }
 
     # kiem tra don hang bi tre
@@ -595,7 +661,7 @@ class QcOrder extends Model
         $deliveryDate = $this->deliveryDate($orderId)[0];
         $lateStatus = false;
         if ($this->checkFinishStatus($orderId)) { # don hang da ket thuc
-            $finishDate = $this->finishDate($orderId)[0];
+            $finishDate = $this->finishDate($orderId)[0]; # ngay bao ket thuc thi cong
             if ($finishDate > $deliveryDate) $lateStatus = true;
         } else { # don hang chua ket thuc
             if ($deliveryDate < $currentDate) $lateStatus = true;
@@ -607,7 +673,7 @@ class QcOrder extends Model
     public function checkWaitConfirmFinish($orderId = null)
     {
         $modelOrderConstruction = new QcOrderAllocation();
-        return $modelOrderConstruction->checkWaitConfirmFinish($this->checkIdNull($orderId));
+        return $modelOrderConstruction->checkWaitConfirmFinishOfOrder($this->checkIdNull($orderId));
     }
 
     # kiem tra do hang co thu ho
@@ -652,7 +718,7 @@ class QcOrder extends Model
         return $modelOrderAllocation->existInfoActivityOfOrder($this->checkIdNull($orderId));
     }
 
-    #kiem tra ton tai ban giao da hoan thanh
+    #kiem tra ton tai ban giao da hoan thanh da xac nhan
     public function existOrderAllocationFinishOfOrder($orderId = null)
     {
         $hFunction = new \Hfunction();
@@ -673,6 +739,12 @@ class QcOrder extends Model
     {
         $modelWorkAllocationReportImage = new QcWorkAllocationReportImage();
         return $modelWorkAllocationReportImage->infoAllOfOrder($orderId, $take);
+    }
+
+    //---------- phat tien -----------
+    public function minusMoney()
+    {
+        return $this->hasMany('App\Models\Ad3d\MinusMoney\QcMinusMoney', 'order_id', 'orderConstruction_id');
     }
 
     //---------- thong bao them don hang -----------
@@ -853,13 +925,19 @@ class QcOrder extends Model
     }
 
     // ---------- ---------- lay thong tin --------- -------
+    # lay tat ca don hang chua ket thuc
+    public function infoNoFinish()
+    {
+        return QcOrder::where('finishStatus', 0)->where('cancelStatus', 0)->get();
+    }
+
     # lay tat ca don hang
     public function infoFromSuggestionName($name)
     {
         return QcOrder::where('name', 'like', "%$name%")->get();
     }
 
-    # lay tat ca don hang
+    # lay tat ca don hang khong huy
     public function infoNoCancelFromSuggestionName($name)
     {
         return QcOrder::where('name', 'like', "%$name%")->where('cancelStatus', 0)->get();
@@ -1116,15 +1194,12 @@ class QcOrder extends Model
         return QcOrder::where('orderCode', $orderCode)->exists();
     }
 
-    public function checkLater($orderId)
-    {
-
-    }
 
     #ket thuc thanh toan
     public function checkFinishPayment($orderId = null)
     {
-        $orderId = $this->checkIdNull($orderId);
+        return ($this->paymentStatus($orderId) == 1) ? true : false;
+        /*$orderId = $this->checkIdNull($orderId);
         $totalMoneyPayment = $this->totalMoneyPayment($orderId);
         $totalPaid = $this->totalPaid($orderId);
         if ($totalMoneyPayment > $totalPaid) {
@@ -1132,7 +1207,7 @@ class QcOrder extends Model
             return false;
         } else {
             return true;
-        }
+        }*/
     }
 
     # trang thai huy
@@ -1177,9 +1252,9 @@ class QcOrder extends Model
     {
         $orderTotalPrice = $this->totalPrice($orderId);
         if ($orderTotalPrice < 20000000) {
-            return (int)$orderTotalPrice * 0.05;
-        } else {
             return (int)$orderTotalPrice * 0.03;
+        } else {
+            return (int)$orderTotalPrice * 0.02;
         }
     }
 
@@ -1188,9 +1263,9 @@ class QcOrder extends Model
     {
         $orderTotalPrice = $this->totalPrice($orderId);
         if ($orderTotalPrice < 20000000) {
-            return (int)$orderTotalPrice * 0.03;
-        } else {
             return (int)$orderTotalPrice * 0.02;
+        } else {
+            return (int)$orderTotalPrice * 0.01;
         }
     }
 
@@ -1199,43 +1274,104 @@ class QcOrder extends Model
     {
         $orderTotalPrice = $this->totalPrice($orderId);
         if ($orderTotalPrice < 20000000) {
-            return (int)$orderTotalPrice * 0.03;
-        } else {
             return (int)$orderTotalPrice * 0.02;
-        }
-    }
-#============ =========== ============ STATISTICAL ============= =========== ==========
-
-    /*
-    public function totalPaidOfCompany($listCompanyId, $dateFilter = null)
-    {
-        if (empty($dateFilter)) {
-            return QcPayment::whereIn('company_id', $listCompanyId)->sum('money');
         } else {
-            return QcPayment::whereIn('company_id', $listCompanyId)->where('datePay', 'like', "%$dateFilter%")->sum('money');
+            return (int)$orderTotalPrice * 0.01;
         }
     }
 
-    public function totalPaidOfCompanyStaffTypeDate($listCompanyId, $staffId, $paymentTypeId, $dateFilter = null)
+#============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
+    # kiem tra phat nguoi quan ly thi cong cua don hang don hang - cap quan ly
+    public function checkMinusMoneyConstruction($orderId)
     {
-        if (empty($dateFilter)) {
-            return QcPayment::whereIn('company_id', $listCompanyId)->where('staff_id',$staffId)->where('type_id', $paymentTypeId)->sum('money');
-        } else {
-            return QcPayment::whereIn('company_id', $listCompanyId)->where('staff_id',$staffId)->where('type_id', $paymentTypeId)->where('datePay', 'like', "%$dateFilter%")->sum('money');
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelPunishContent = new QcPunishContent();
+        $modelStaffNotify = new QcStaffNotify();
+        $modelMinusMoney = new QcMinusMoney();
+        $modelOrderAllocation = new QcOrderAllocation();
+        # thoi gian de kiem tra
+        $checkDate = $hFunction->carbonNow();
+        # thong tin don hang
+        $dataOrder = $this->getInfo($orderId);
+        #ngay hen giao
+        $receiveDeadline = $dataOrder->deliveryDate();
+
+        # danh muc phat quan ly thi cong tr
+        $punishId = $modelPunishContent->getPunishIdOfOrderConstructionLate();
+        if ($receiveDeadline < $checkDate) { # het han ban hen giao
+            # lay thong tin thi cong da co xac nhan hoan thanh
+            $dataOrderAllocationFinish = $modelOrderAllocation->infoFinishOfOrder($orderId);
+            if ($hFunction->checkCount($dataOrderAllocationFinish)) { # quan ly thi cong xac nhan hoan thanh
+                $confirmDate = date('Y-m-d', strtotime($dataOrderAllocationFinish->confirmDate()));
+                if ($confirmDate > $receiveDeadline) { # ngay xac nhan hoan thanh thi cong tre
+                    # phat quan ly thi cong
+                    # lay thong tin quan ly thi cong cua cty
+                    $dataStaffConstruction = $modelStaff->infoStaffConstructionRankManage($dataOrder->companyId());
+                    if ($hFunction->checkCount($dataStaffConstruction)) {
+                        foreach ($dataStaffConstruction as $staffConstruction) {
+                            if ($staffConstruction->checkApplyRule()) { # co ap dung noi quy
+                                $staffMinusMoneyId = $staffConstruction->staffId();
+                                $dataWork = $staffConstruction->workInfoActivityOfStaff();
+                                if ($hFunction->checkCount($dataWork)) {
+                                    $workId = $dataWork->workId();
+                                    if (!$modelMinusMoney->checkExistMinusMoneyOrderConstructionLate($orderId, $workId)) { # chua phat
+                                        $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
+                                        if ($modelMinusMoney->insert($checkDate, 'Quản lý thi công trễ đơn hàng', $workId, null, $punishId, 0, null, $orderId)) {
+                                            $modelStaffNotify->insert(null, $staffMinusMoneyId, 'Quản lý thi công trễ đơn hàng', null, null, null, $modelMinusMoney->insertGetId());
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+            } else { # khong co
+                # phat quan ly thi cong
+                # lay thong tin quan ly thi cong cua cty
+                $dataStaffConstruction = $modelStaff->infoStaffConstructionRankManage($dataOrder->companyId());
+                if ($hFunction->checkCount($dataStaffConstruction)) {
+                    foreach ($dataStaffConstruction as $staffConstruction) {
+                        if ($staffConstruction->checkApplyRule()) { # co ap dung noi quy
+                            $staffMinusMoneyId = $staffConstruction->staffId();
+                            $dataWork = $staffConstruction->workInfoActivityOfStaff();
+                            if ($hFunction->checkCount($dataWork)) {
+                                $workId = $dataWork->workId();
+                                if (!$modelMinusMoney->checkExistMinusMoneyOrderConstructionLate($orderId, $workId)) { # chua phat
+                                    $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
+                                    if ($modelMinusMoney->insert($checkDate, 'Quản lý thi công trễ đơn hàng', $workId, null, $punishId, 0, null, $orderId)) {
+                                        $modelStaffNotify->insert(null, $staffMinusMoneyId, 'Quản lý thi công trễ đơn hàng', null, null, null, $modelMinusMoney->insertGetId());
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+
+            }
         }
     }
 
-    public function totalPaidOfStaffAndCompany($listCompanyId, $staffId)
+    #kiem tra tu dong don hang thi cong tre
+    public function autoCheckMinusMoneyLateConstruction()
     {
-        return QcPayment::whereIn('company_id', $listCompanyId)->where('staff_id', $staffId)->sum('money');
-    }*/
+        $hFunction = new \Hfunction();
+        $modelPunishContent = new QcPunishContent();
+        #lay thong tin don hang con hoat dong
+        $dataOrder = $this->infoNoFinish();
+        if ($hFunction->checkCount($dataOrder)) {
+            $punishId = $modelPunishContent->getPunishIdOfOrderConstructionLate();
+            if (!$hFunction->checkEmpty($punishId)) {
+                foreach ($dataOrder as $order) {
+                    //echo $order->orderId()."<br/>";
+                    $this->checkMinusMoneyConstruction($order->orderId());
+                }
+            }
 
-    /* public function infoStaffCreateOrder($listCompanyId, $dateFilter = null)
-     {
-         if (empty($dateFilter)) {
-             return QcOrder::whereIn('company_id', $listCompanyId)->groupBy('staff_id')->pluck('staff_id');
-         } else {
-             return QcOrder::whereIn('company_id', $listCompanyId)->where('datePay', 'like', "%$dateFilter%")->groupBy('staff_id')->pluck('staff_id');
-         }
-     }*/
+        }
+    }
 }

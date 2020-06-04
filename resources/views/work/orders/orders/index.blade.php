@@ -56,22 +56,25 @@ $hrefIndex = route('qc.work.orders.get');
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <select class="qc_work_orders_login_month" style="height: 25px;"
-                                data-href="{!! $hrefIndex !!}">
-                            <option value="100" @if($monthFilter == 100) selected="selected" @endif>Tất cả</option>
-                            @for($i = 1; $i <=12; $i++)
-                                <option @if($monthFilter == $i) selected="selected" @endif>
-                                    {!! $i !!}
+                        <select class="qcWorkOrderMonthFilter" style="height: 25px;" data-href="{!! $hrefIndex !!}">
+                            <option value="100" @if($monthFilter == 100) selected="selected" @endif>
+                                Tất cả
+                            </option>
+                            @for($m = 1; $m <=12; $m++)
+                                <option value="{!! $m !!}" @if($monthFilter == $m) selected="selected" @endif>
+                                    {!! $m !!}
                                 </option>
                             @endfor
                         </select>
                         <span>/</span>
-                        <select class="qc_work_orders_login_year" style="height: 25px;"
+                        <select class="qcWorkOrderYearFilter" style="height: 25px;"
                                 data-href="{!! $hrefIndex !!}">
-                            <option value="100" @if($yearFilter == 100) selected="selected" @endif>Tất cả</option>
-                            @for($i = 2017; $i <=2050; $i++)
-                                <option @if($yearFilter == $i) selected="selected" @endif>
-                                    {!! $i !!}
+                            <option value="100" @if($yearFilter == 100) selected="selected" @endif>
+                                Tất cả
+                            </option>
+                            @for($y = 2017; $y <=2050; $y++)
+                                <option value="{!! $yearFilter !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                    {!! $y !!}
                                 </option>
                             @endfor
                         </select>
@@ -116,11 +119,24 @@ $hrefIndex = route('qc.work.orders.get');
                                     </th>
                                 </tr>
                                 <tr>
-                                    <td class="text-center qc-color-red">
-                                        <b>{!! $hFunction->getCountFromData($dataOrders) !!}</b>
-                                    </td>
+                                    <td class="text-center qc-color-red"></td>
                                     <td></td>
-                                    <td class="text-center"></td>
+                                    <td class="text-center" style="padding: 0;">
+                                        <select class="qcWorkOrdersFinishStatusFilter form-control"
+                                                data-href="{!! $hrefIndex !!}">
+                                            <option value="100"
+                                                    @if($finishStatus == 100) selected="selected" @endif>
+                                                Tất cả đơn hàng
+                                            </option>
+                                            <option value="0" @if($finishStatus == 0) selected="selected" @endif>
+                                                Chưa hoàn thành
+                                            </option>
+                                            <option value="1"
+                                                    @if($finishStatus == 1) selected="selected" @endif>
+                                                Đã hoàn thành
+                                            </option>
+                                        </select>
+                                    </td>
                                     <td style="padding: 0px;">
                                         <div class="input-group">
                                             <input type="text" class="txtOrderFilterKeyword form-control"
@@ -178,9 +194,7 @@ $hrefIndex = route('qc.work.orders.get');
                                     <td class="text-center"></td>
                                     <td class="text-center"></td>
                                     <td class="text-center" style="padding: 0px;"> {{--phat trien sau--}}
-                                        <select class="qc_work_orders_login_payment_status form-control"
-                                                style="display: none;"
-                                                data-href="{!! $hrefIndex !!}">
+                                        <select class="qcWorkOrderPaymentStatusFilter form-control" data-href="{!! $hrefIndex !!}">
                                             <option value="0" @if($paymentStatus == 0) selected="selected" @endif>
                                                 Chưa thanh toán Xong
                                             </option>
@@ -200,7 +214,9 @@ $hrefIndex = route('qc.work.orders.get');
                                 </tr>
                                 @if($hFunction->checkCount($dataOrders))
                                     <?php
-                                    $n_o = 0;
+                                    $perPage = $dataOrders->perPage();
+                                    $currentPage = $dataOrders->currentPage();
+                                    $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage;
                                     $sumOrderMoney = 0;
                                     $sumDiscountMoney = 0;
                                     $sumPaidMoney = 0;
@@ -412,7 +428,7 @@ $hrefIndex = route('qc.work.orders.get');
                                             </td>
                                         </tr>
                                     @endforeach
-                                    <tr>
+                                    {{--<tr>
                                         <td class="text-right" colspan="8"
                                             style="background-color: whitesmoke;">
                                         </td>
@@ -431,7 +447,12 @@ $hrefIndex = route('qc.work.orders.get');
                                         <td class="text-right" style="color: red;">
                                             <b>{!! $hFunction->currencyFormat($sumPaidMoneyInDate) !!}</b>
                                         </td>
-                                    </tr>
+                                    </tr>--}}
+                                        <tr>
+                                            <td class="text-center" colspan="13">
+                                                {!! $hFunction->page($dataOrders) !!}
+                                            </td>
+                                        </tr>
                                 @else
                                     <tr>
                                         <td class="text-center" colspan="13">

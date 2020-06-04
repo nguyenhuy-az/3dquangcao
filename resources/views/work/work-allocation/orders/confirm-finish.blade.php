@@ -19,19 +19,17 @@ $dataOrder = $dataOrderAllocation->orders;
         <div class="row">
             <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
                 <h3>XÁC NHẬN HOÀN THÀNH </h3>
-                <label style="color: red;">Thời gian báo hoàn thành là giờ hiện tại</label>
             </div>
         </div>
         <div class="row">
             <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <form class="frmWorkAllocationConstructionConfirm" role="form" method="post"
-                      action="{!! route('qc.work.work_allocation.construction.confirm.post', $dataOrderAllocation->allocationId()) !!}">
+                <form class="frmWorkAllocationConstructionConfirmFinish" role="form" method="post"
+                      action="{!! route('qc.work.work_allocation.manage.order.construction_confirm_finish.post', $dataOrderAllocation->allocationId()) !!}">
                     <div class="row">
                         <div class="notifyConfirm qc-color-red text-center col-xs-12 col-sm-12 col-md-6 col-lg-6"></div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                             @if($mobileStatus) style="padding: 0 0;" @endif>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group qc-padding-none">
                                 <em class="qc-color-grey">Đơn hàng:</em>
                                 <label style="font-size: 2em;">
@@ -40,23 +38,13 @@ $dataOrder = $dataOrderAllocation->orders;
                             </div>
                         </div>
                     </div>
-                    @if($dataOrder->checkExistsProductNotFinish())
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="form-group qc-padding-none">
-                                <b class="qc-color-red">TỒN TẠI SẢN PHẨM CHƯA HOÀN THÀNH</b>
-                                <b class="qc-color-red"> - TẤT CẢ CÁC SẢN PHẨM SẼ KẾT THÚC THEO CÔNG TRÌNH</b>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
                     <div class="row">
                         <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group">
-                                <label style="text-decoration: underline; background-color: red; padding: 3px; color: yellow;">Thu tiền:</label>
-                                <select class="form-control" name="cbPaymentStatus">
-                                    <option value="0">Không thu tiền</option>
-                                    <option value="1">Có thu tiền</option>
+                                <label style="text-decoration: underline; background-color: red; padding: 3px; color: yellow;">Trạng thái hoàn thành:</label>
+                                <select class="form-control" name="cbConfirmFinishStatus">
+                                    <option value="1">ĐÃ HOÀN THÀNH</option>
+                                    <option value="0">KHÔNG HOÀN THÀNH</option>
                                 </select>
                             </div>
                         </div>
@@ -64,15 +52,8 @@ $dataOrder = $dataOrderAllocation->orders;
                     <div class="row">
                         <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group">
-                                <label style="text-decoration: underline;">Ghi chú:</label><br/>
-                                <input name="txtFinishNote" class="form-control" type="text" value="" >
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="form-group">
-                                <b style="color: blue; font-size: 1.5em;">HOÀN THÀNH ĐH TRỄ KHÔNG PHẢI DO MÌNH, GHI CHÚ VÀO BÁO CÁO</b>
+                                <label style="text-decoration: underline;">Ghi Chú Xác Nhận:</label><br/>
+                                <input name="txtConfirmNote" class="form-control" type="text" value="" >
                             </div>
                         </div>
                     </div>

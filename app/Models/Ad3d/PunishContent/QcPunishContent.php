@@ -201,9 +201,17 @@ class QcPunishContent extends Model
     }
 
     #============= ======== lay id cua danh muc phat =========== ==========
+    # ban giao don hang tre
     public function getPunishIdOfOrderAllocationLate()
     {
         $result = QcPunishContent::where('punishCode', 'BGĐHT')->pluck('punish_id');
+        return (count($result) > 0) ? $result : null;
+    }
+
+    # quan ly đơn hàng thi cong tre
+    public function getPunishIdOfOrderConstructionLate()
+    {
+        $result = QcPunishContent::where('punishCode', 'QLĐHTCT')->pluck('punish_id');
         return (count($result) > 0) ? $result : null;
     }
 }

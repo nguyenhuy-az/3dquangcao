@@ -172,11 +172,14 @@ var qc_work_allocation = {
 
 //------------ ---------- quản lý dơn hang duoc ban giao ----------- ---------
 $(document).ready(function () {
+    $('body').on('change', '.cbWorkAllocationConstructionFinishStatus', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.cbWorkAllocationConstructionMonthFilter').val() + '/' + $('.cbWorkAllocationConstructionYearFilter').val());
+    });
     $('body').on('change', '.cbWorkAllocationConstructionMonthFilter', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.cbWorkAllocationConstructionYearFilter').val());
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbWorkAllocationConstructionFinishStatus').val() + '/' + $(this).val() + '/' + $('.cbWorkAllocationConstructionYearFilter').val());
     });
     $('body').on('change', '.cbWorkAllocationConstructionYearFilter', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbWorkAllocationConstructionMonthFilter').val() + '/' + $(this).val());
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbWorkAllocationConstructionFinishStatus').val() + '/' + $('.cbWorkAllocationConstructionMonthFilter').val() + '/' + $(this).val());
     });
     //-------- San pham --------
     //xem anh thiet chi tiet
@@ -274,19 +277,18 @@ $(document).ready(function () {
     });
 });
 
-//------------ ---------- quản lý dơn hang ----------- ---------
+//------------ ---------- quản lý dơn hang thi cong ----------- ---------
 $(document).ready(function () {
-    var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val();
-    //----- --------- tim theo ten nv vien nhan ----- ------------
-    $('body').on('change', '.qc_work_allocation_manage_wrap .cbStaffFilterId', function () {
+    var dateFilter = $('.cbAllocationManageDayFilter').val() + '/' + $('.cbAllocationManageMonthFilter').val() + '/' + $('.cbAllocationManageYearFilter').val();
+    //----- --------- tim theo trang thai thi cong ----- ------------
+    $('body').on('change', '.qc_work_allocation_manage_wrap .cbAllocationManageFinishStatus', function () {
         var txtOrderFilterKeyword = null;
         var txtOrderCustomerFilterKeyword = null;
         qc_main.url_replace($(this).data('href') + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + $(this).val());
     });
 
     //----- ----- tim theo ten don hang ----- -----
-    $('body').on('keyup', '.qc_work_allocation_manage_wrap .txtOrderFilterKeyword', function () {
-        //alert('yesssssssssss');
+    $('body').on('keyup', '.qc_work_allocation_manage_wrap .txtAllocationManageKeywordFilter', function () {
         $('#qc_work_allocation_filter_customer_name_suggestions_wrap').hide();
         var name = $(this).val();
         var addHref = $(this).data('href-check-name');
@@ -335,15 +337,15 @@ $(document).ready(function () {
     /* click vao ten don hang goi y*/
     $('body').on('click', '.qc_work_allocation_filter_order_name_suggestions_select', function () {
         var txtOrderFilterKeyword = $(this).data('name');
-        if ($('.txtOrderFilterKeyword').val(txtOrderFilterKeyword)) {
+        if ($('.txtAllocationManageKeywordFilter').val(txtOrderFilterKeyword)) {
             $('.btOrderFilterKeyword').click();
         }
     });
 
     $('body').on('click', '.btOrderFilterKeyword', function () {
         var txtOrderCustomerFilterKeyword = 'null';
-        var orderName = $('.txtOrderFilterKeyword').val();
-        var cbStaffFilterId = $('.cbStaffFilterId').val();
+        var orderName = $('.txtAllocationManageKeywordFilter').val();
+        var cbStaffFilterId = $('.cbAllocationManageFinishStatus').val();
         if (orderName.length == 0) {
             alert('Bạn phải nhập thông tin tìm kiếm');
             $('.textOrderFilterName').focus();
@@ -354,25 +356,25 @@ $(document).ready(function () {
     });
 
     // theo ngay tháng ...
-    $('body').on('change', '.cbDayFilter', function () {
+    $('body').on('change', '.cbAllocationManageDayFilter', function () {
         var txtOrderFilterKeyword = null;
         var txtOrderCustomerFilterKeyword = null;
-        var cbStaffFilterId = $('.cbStaffFilterId').val();
-        var dateFilter = $(this).val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val();
+        var cbStaffFilterId = $('.cbAllocationManageFinishStatus').val();
+        var dateFilter = $(this).val() + '/' + $('.cbAllocationManageMonthFilter').val() + '/' + $('.cbAllocationManageYearFilter').val();
         qc_main.url_replace($(this).data('href') + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
     });
-    $('body').on('change', '.cbMonthFilter', function () {
+    $('body').on('change', '.cbAllocationManageMonthFilter', function () {
         var txtOrderFilterKeyword = null;
         var txtOrderCustomerFilterKeyword = null;
-        var cbStaffFilterId = $('.cbStaffFilterId').val();
-        var dateFilter = $('.cbDayFilter').val() + '/' + $(this).val() + '/' + $('.cbYearFilter').val();
+        var cbStaffFilterId = $('.cbAllocationManageFinishStatus').val();
+        var dateFilter = $('.cbAllocationManageDayFilter').val() + '/' + $(this).val() + '/' + $('.cbAllocationManageYearFilter').val();
         qc_main.url_replace($(this).data('href') + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
     });
-    $('body').on('change', '.cbYearFilter', function () {
+    $('body').on('change', '.cbAllocationManageYearFilter', function () {
         var txtOrderFilterKeyword = null;
         var txtOrderCustomerFilterKeyword = null;
-        var cbStaffFilterId = $('.cbStaffFilterId').val();
-        var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $(this).val();
+        var cbStaffFilterId = $('.cbAllocationManageFinishStatus').val();
+        var dateFilter = $('.cbAllocationManageDayFilter').val() + '/' + $('.cbAllocationManageMonthFilter').val() + '/' + $(this).val();
         qc_main.url_replace($(this).data('href') + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
     });
 
@@ -441,6 +443,17 @@ $(document).ready(function () {
             var href = $(this).data('href');
             //100 tim tat ca thoi gian
             qc_main.url_replace($(this).data('href') + '/' + 100 + '/' + 100 + '/' + 100 + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword);
+        }
+    });
+
+    /* ---------- --------  xac nhan hoan thanh thi  cong ------- ---------*/
+    $('#qc_work_allocation_manage_order_construction_wrap').on('click', '.qc_confirm_finish_get', function () {
+        qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
+    });
+    $('body').on('click', '.frmWorkAllocationConstructionConfirmFinish .qc_save', function () {
+        if (confirm('Tôi đồng ý với thông tin xác nhận này')) {
+            qc_master_submit.ajaxFormHasReload('.frmWorkAllocationConstructionConfirmFinish', '', false);
+            //qc_master_submit.ajaxFormNotReload('.frmWorkAllocationConstructionConfirmFinish', '', false);
         }
     });
 

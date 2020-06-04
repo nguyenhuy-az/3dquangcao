@@ -22,7 +22,7 @@ $deliveryHour = $hFunction->getHourFromDate($deliveryDate);
 # thong tin ban giao
 $dataOrderAllocation = $dataOrder->orderAllocationInfoAll();
 $addAllocationStatus = true; // trang thai duoc bang giao hoac khong
-
+if ($dataOrder->existOrderAllocationFinishOfOrder()) $addAllocationStatus = false;//co xac nhan hoan thanh thi cong
 $currentDate = $hFunction->currentDay();
 $currentDay = $hFunction->currentDay();
 $currentMonth = $hFunction->currentMonth();
@@ -62,11 +62,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                         <div class="table-responsive">
                             <table class="table table-hover qc-margin-bot-none">
                                 <tr>
-                                    <td>
-                                        <em class=" qc-color-grey">Đơn hàng</em>
-                                    </td>
-                                    <td class="text-right">
-                                        <b>{!! $dataOrder->name() !!}</b>
+                                    <td colspan="2">
+                                        <b style="font-size: 2em;">{!! $dataOrder->name() !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -125,10 +122,13 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         Nhân viên
                                     </th>
                                     <th>
-                                        Ngày nhận
+                                        Ngày giao
                                     </th>
                                     <th>
-                                        Ngày giao
+                                        Hạn giao
+                                    </th>
+                                    <th>
+                                        Ngày hoàn thành
                                     </th>
                                     <th class="text-center">
                                         Thi công
@@ -138,9 +138,12 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                     @foreach($dataOrderAllocation as $ordersAllocation)
                                         <?php
                                         $ordersAllocationId = $ordersAllocation->allocationId();
+                                        $receiveDeadlineDate = $ordersAllocation->receiveDeadline();
+                                        $allocationDate = $ordersAllocation->allocationDate();
+                                        $finishDate = $ordersAllocation->finishDate();
                                         $orderId = $ordersAllocation->orderId();
                                         $allocationActivityStatus = $ordersAllocation->checkActivity();
-                                        if ($allocationActivityStatus) $addAllocationStatus = false;
+                                        if ($allocationActivityStatus || $ordersAllocation->checkWaitConfirmFinishOfOrder($orderId)) $addAllocationStatus = false;
                                         ?>
                                         <tr>
                                             <td class="text-center">
@@ -148,17 +151,24 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             </td>
                                             <td>
                                                 {!! $ordersAllocation->receiveStaff->fullname() !!}
-                                                --- {!! $ordersAllocationId !!}
                                             </td>
                                             <td>
-                                                {!! $hFunction->convertDateDMYHISFromDatetime($ordersAllocation->allocationDate()) !!}
+                                                {!! date('d/m/Y H:i', strtotime($allocationDate)) !!}
                                             </td>
                                             <td>
-                                                {!! $hFunction->convertDateDMYHISFromDatetime($ordersAllocation->receiveDeadline()) !!}
+                                                {!! date('d/m/Y H:i', strtotime($receiveDeadlineDate)) !!}
+                                            </td>
+                                            <td>
+                                                @if(empty($finishDate))
+                                                    <span>---</span>
+                                                @else
+                                                    {!! date('d/m/Y H:i', strtotime($finishDate)) !!}
+                                                @endif
                                             </td>
                                             <td class="text-center">
-                                                @if($ordersAllocation->checkWaitConfirmFinish($orderId))
-                                                    <a class="qc_confirm_finish qc-link-red">
+                                                @if($ordersAllocation->checkWaitConfirmFinish($ordersAllocationId))
+                                                    <a class="qc_confirm_finish_get qc-link-red"
+                                                       data-href="{!! route('qc.work.work_allocation.manage.order.construction_confirm_finish.get',$ordersAllocationId) !!}">
                                                         Xác Nhận
                                                     </a>
                                                     <br/>
@@ -193,7 +203,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                 @else
                                     <tr>
                                         <td colspan="5">
-                                            <span style="padding: 3px; background-color: red; color: white;" >Chưa có người phụ trách</span>
+                                            <span style="padding: 3px; background-color: red; color: white;">Chưa có người phụ trách</span>
                                         </td>
                                     </tr>
                                 @endif
@@ -233,142 +243,144 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                     @endif
                                 </div>
                             </div>
-                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <label>Nhân viên phụ trách</label>
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <label>Nhân viên phụ trách</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <select class="cbReceiveStaff form-control" name="cbReceiveStaff"
+                                                    style="height: 30px;">
+                                                <option value="">Chọn nhân viên</option>
+                                                @if($hFunction->checkCount($dataReceiveStaff))
+                                                    @foreach($dataReceiveStaff as $receiveStaff)
+                                                        @if($receiveStaff->checkWorkStatus() && $dataStaffLogin->staffId() != $receiveStaff->staffId())
+                                                            <option value="{!! $receiveStaff->staffId() !!}">{!! $receiveStaff->fullName() !!}</option>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <select class="cbReceiveStaff form-control" name="cbReceiveStaff"
-                                                style="height: 30px;">
-                                            <option value="">Chọn nhân viên</option>
-                                            @if($hFunction->checkCount($dataReceiveStaff))
-                                                @foreach($dataReceiveStaff as $receiveStaff)
-                                                    @if($receiveStaff->checkWorkStatus() && $dataStaffLogin->staffId() != $receiveStaff->staffId())
-                                                        <option value="{!! $receiveStaff->staffId() !!}">{!! $receiveStaff->fullName() !!}</option>
-                                                    @endif
-                                                @endforeach
-                                            @endif
-                                        </select>
+                                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <label>Thời gian nhận: </label>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <label>Thời gian nhận: </label>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <select class="cbAllocationDay" name="cbAllocationDay"
-                                                style="margin-top: 5px; height: 25px;">
-                                            <option value="">Ngày</option>
-                                            @for($i = 1;$i<= 31; $i++)
-                                                <option value="{!! $i !!}"
-                                                        @if($i == $currentDay) selected="selected" @endif >
-                                                    {!! $i !!}
-                                                </option>
-                                            @endfor
-                                        </select>
-                                        <span>/</span>
-                                        <select class="cbMonthAllocation" name="cbAllocationMonth"
-                                                style="margin-top: 5px; height: 25px;">
-                                            <option value="">Tháng</option>
-                                            @for($m = 1;$m<= 12; $m++)
-                                                <option value="{!! $m !!}"
-                                                        @if($m == $currentMonth) selected="selected" @endif>{!! $m !!}</option>
-                                            @endfor
-                                        </select>
-                                        <span>/</span>
-                                        <select class="cbAllocationYear" name="cbAllocationYear"
-                                                style="margin-top: 5px; height: 25px;">
-                                            <?php
-                                            $currentYear = (int)date('Y');
-                                            ?>
-                                            <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
-                                            <option value="{!! $currentYear + 1 !!}">{!! $currentYear + 1 !!}</option>
-                                        </select>
-                                        <select class="cbAllocationHours" name="cbAllocationHours"
-                                                style="margin-top: 5px; height: 25px;">
-                                            <option value="">Giờ</option>
-                                            @for($i =1;$i<= 24; $i++)
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <select class="cbAllocationDay" name="cbAllocationDay"
+                                                    style="margin-top: 5px; height: 25px;">
+                                                <option value="">Ngày</option>
+                                                @for($i = 1;$i<= 31; $i++)
+                                                    <option value="{!! $i !!}"
+                                                            @if($i == $currentDay) selected="selected" @endif >
+                                                        {!! $i !!}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                            <span>/</span>
+                                            <select class="cbMonthAllocation" name="cbAllocationMonth"
+                                                    style="margin-top: 5px; height: 25px;">
+                                                <option value="">Tháng</option>
+                                                @for($m = 1;$m<= 12; $m++)
+                                                    <option value="{!! $m !!}"
+                                                            @if($m == $currentMonth) selected="selected" @endif>{!! $m !!}</option>
+                                                @endfor
+                                            </select>
+                                            <span>/</span>
+                                            <select class="cbAllocationYear" name="cbAllocationYear"
+                                                    style="margin-top: 5px; height: 25px;">
                                                 <?php
-                                                $currentHour = ($currentHour < 8) ? 8 : $currentHour;
+                                                $currentYear = (int)date('Y');
                                                 ?>
-                                                <option value="{!! $i !!}"
-                                                        @if($i == $currentHour) selected="selected" @endif>
-                                                    {!! $i !!}
-                                                </option>
-                                            @endfor
-                                        </select>
-                                        <span>:</span>
-                                        <select class="cbAllocationMinute" name="cbAllocationMinute"
-                                                style="margin-top: 5px; height: 25px;">
-                                            @for($i =0;$i<= 50; $i = $i+10)
-                                                <option value="{!! $i !!}">{!! $i !!}</option>
-                                            @endfor
-                                        </select>
+                                                <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
+                                                <option value="{!! $currentYear + 1 !!}">{!! $currentYear + 1 !!}</option>
+                                            </select>
+                                            <select class="cbAllocationHours" name="cbAllocationHours"
+                                                    style="margin-top: 5px; height: 25px;">
+                                                <option value="">Giờ</option>
+                                                @for($i =1;$i<= 24; $i++)
+                                                    <?php
+                                                    $currentHour = ($currentHour < 8) ? 8 : $currentHour;
+                                                    ?>
+                                                    <option value="{!! $i !!}"
+                                                            @if($i == $currentHour) selected="selected" @endif>
+                                                        {!! $i !!}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                            <span>:</span>
+                                            <select class="cbAllocationMinute" name="cbAllocationMinute"
+                                                    style="margin-top: 5px; height: 25px;">
+                                                @for($i =0;$i<= 50; $i = $i+10)
+                                                    <option value="{!! $i !!}">{!! $i !!}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <label>Thời gian giao: </label>
+                                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <label>Thời gian giao: </label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <select class="cbDeadlineDay" name="cbDeadlineDay"
-                                                style="margin-top: 5px; height: 25px;">
-                                            <option value="">Ngày</option>
-                                            @for($i = 1;$i<= 31; $i++)
-                                                <option value="{!! $i !!}"
-                                                        @if($i == $currentDay) selected="selected" @endif>
-                                                    {!! $i !!}
-                                                </option>
-                                            @endfor
-                                        </select>
-                                        <span>/</span>
-                                        <select class="cbDeadlineMonth" name="cbDeadlineMonth"
-                                                style="margin-top: 5px; height: 25px;">
-                                            <option value="">Tháng</option>
-                                            @for($i = 1;$i<= 12; $i++)
-                                                <option value="{!! $i !!}"
-                                                        @if($i == $currentMonth) selected="selected" @endif>
-                                                    {!! $i !!}
-                                                </option>
-                                            @endfor
-                                        </select>
-                                        <span>/</span>
-                                        <select class="cbDeadlineYear" name="cbDeadlineYear"
-                                                style="margin-top: 5px; height: 25px;">
-                                            <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
-                                            <option value="{!! $currentYear + 1 !!}">{!! $currentYear + 1 !!}</option>
-                                        </select>
-                                        <select class="cbDeadlineHours" name="cbDeadlineHours"
-                                                style="margin-top: 5px; height: 25px;">
-                                            <option value="">Giờ</option>
-                                            @for($i =1;$i<= 24; $i++)
-                                                <?php
-                                                $currentHour = ($currentHour < 8) ? 8 : $currentHour;
-                                                ?>
-                                                <option value="{!! $i !!}"
-                                                        @if($i == $currentHour) selected="selected" @endif>
-                                                    {!! $i !!}
-                                                </option>
-                                            @endfor
-                                        </select>
-                                        <span>:</span>
-                                        <select class="cbDeadlineMinute" name="cbDeadlineMinute"
-                                                style="margin-top: 5px; height: 25px;">
-                                            @for($i =0;$i<= 55; $i = $i+5)
-                                                <option value="{!! $i !!}">{!! $i !!}</option>
-                                            @endfor
-                                        </select>
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <select class="cbDeadlineDay" name="cbDeadlineDay"
+                                                    style="margin-top: 5px; height: 25px;">
+                                                <option value="">Ngày</option>
+                                                @for($i = 1;$i<= 31; $i++)
+                                                    <option value="{!! $i !!}"
+                                                            @if($i == $currentDay) selected="selected" @endif>
+                                                        {!! $i !!}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                            <span>/</span>
+                                            <select class="cbDeadlineMonth" name="cbDeadlineMonth"
+                                                    style="margin-top: 5px; height: 25px;">
+                                                <option value="">Tháng</option>
+                                                @for($i = 1;$i<= 12; $i++)
+                                                    <option value="{!! $i !!}"
+                                                            @if($i == $currentMonth) selected="selected" @endif>
+                                                        {!! $i !!}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                            <span>/</span>
+                                            <select class="cbDeadlineYear" name="cbDeadlineYear"
+                                                    style="margin-top: 5px; height: 25px;">
+                                                <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
+                                                <option value="{!! $currentYear + 1 !!}">{!! $currentYear + 1 !!}</option>
+                                            </select>
+                                            <select class="cbDeadlineHours" name="cbDeadlineHours"
+                                                    style="margin-top: 5px; height: 25px;">
+                                                <option value="">Giờ</option>
+                                                @for($i =1;$i<= 24; $i++)
+                                                    <?php
+                                                    $currentHour = ($currentHour < 8) ? 8 : $currentHour;
+                                                    ?>
+                                                    <option value="{!! $i !!}"
+                                                            @if($i == $currentHour) selected="selected" @endif>
+                                                        {!! $i !!}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                            <span>:</span>
+                                            <select class="cbDeadlineMinute" name="cbDeadlineMinute"
+                                                    style="margin-top: 5px; height: 25px;">
+                                                @for($i =0;$i<= 55; $i = $i+5)
+                                                    <option value="{!! $i !!}">{!! $i !!}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -391,6 +403,11 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                             người phụ trách
                         </b>
                     </div>
+                    @if($dataOrder->existOrderAllocationFinishOfOrder())
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 5px; padding-bottom: 10px;">
+                            <span style="padding: 5px; background-color: blue; color: white;">Chờ bàn giao khách hàng</span>
+                        </div>
+                    @endif
                 </div>
             @endif
         @endif

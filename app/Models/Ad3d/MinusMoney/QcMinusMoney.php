@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\MinusMoney;
 
+use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcMinusMoney extends Model
 {
     protected $table = 'qc_minus_money';
-    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id'];
+    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id', 'orderConstruction_id'];
     protected $primaryKey = 'minus_id';
     public $timestamps = false;
 
@@ -18,20 +19,27 @@ class QcMinusMoney extends Model
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($dateMinus, $reason, $workId, $staffId = null, $punishId, $applyStatus = 1, $orderAllocationId = null)
+    public function insert($dateMinus, $reason, $workId, $staffId = null, $punishId, $applyStatus = 1, $orderAllocationId = null, $orderConstructionId = null)
     {
         $hFunction = new \Hfunction();
+        $modelOrder = new QcOrder();
         $modelOrderAllocation = new QcOrderAllocation();
         $modelPunishContent = new QcPunishContent();
         $modelMinusMoney = new QcMinusMoney();
         $money = 0;
-        if (empty($orderAllocationId)) {
-            # tien dinh
+        if (empty($orderAllocationId) && empty($orderConstructionId)) {  # phat theo noi quy
+            # tien phat
             $money = $modelPunishContent->money($punishId)[0];
         } else {
-            $dataOrderAllocation = $modelOrderAllocation->getInfo($orderAllocationId);
-            $dataOrder = $dataOrderAllocation->orders;
-            $money = (int)$dataOrder->getMinusMoneyOrderAllocationLate();
+            # phat theo gia tri don han
+            if (!empty($orderAllocationId)) {# phat truong thi cong
+                $dataOrderAllocation = $modelOrderAllocation->getInfo($orderAllocationId);
+                $dataOrder = $dataOrderAllocation->orders;
+                $money = (int)$dataOrder->getMinusMoneyOrderAllocationLate();
+            } elseif (!empty($orderConstructionId)) { # phat quan ly thi cong
+                $money = (int)$modelOrder->getBonusAndMinusMoneyOfRankManage($orderConstructionId);
+            }
+
         }
         $modelMinusMoney->money = $money;
         $modelMinusMoney->dateMinus = $dateMinus;
@@ -41,6 +49,7 @@ class QcMinusMoney extends Model
         $modelMinusMoney->staff_id = $staffId;
         $modelMinusMoney->punish_id = $punishId;
         $modelMinusMoney->orderAllocation_id = $orderAllocationId;
+        $modelMinusMoney->orderConstruction_id = $orderConstructionId;
         $modelMinusMoney->created_at = $hFunction->createdAt();
         if ($modelMinusMoney->save()) {
             $this->lastId = $modelMinusMoney->minus_id;
@@ -134,12 +143,27 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('work_id', $workId)->where('cancelStatus', 0)->where('action', 1)->update(['applyStatus' => 1, 'action' => 0]);
     }
 
+    //---------- quan ly don hang thi cong -----------
+    public function orderConstruction()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Order\QcOrder', 'orderConstruction_id', 'order_id');
+    }
+
+    # kiem tra da phat quan ly thi cong tre
+    public function checkExistMinusMoneyOrderConstructionLate($orderConstructionId, $workId)
+    {
+        $modelPunishContent = new QcPunishContent();
+        $punishId = $modelPunishContent->getPunishIdOfOrderConstructionLate();
+        return QcMinusMoney::where('orderConstruction_id', $orderConstructionId)->where('work_id', $workId)->where('punish_id', $punishId)->exists();
+    }
+
     //---------- ban giao don hang -----------
     public function orderAllocation()
     {
         return $this->belongsTo('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'orderAllocation_id', 'allocation_id');
     }
 
+    # kiem tra da phat thi cong tre
     public function checkExistMinusMoneyAllocationLate($orderAllocationId)
     {
         $modelPunishContent = new QcPunishContent();
@@ -256,6 +280,12 @@ class QcMinusMoney extends Model
     {
         return $this->pluck('orderAllocation_id', $minusId);
     }
+
+    public function orderConstructionId($minusId = null)
+    {
+        return $this->pluck('orderConstruction_id', $minusId);
+    }
+
 
     #========= ======
     public function checkCancelStatus($minusId = null)

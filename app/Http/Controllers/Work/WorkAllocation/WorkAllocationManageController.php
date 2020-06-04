@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Session;
 
 class WorkAllocationManageController extends Controller
 {
-    public function index($dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $orderFilterName = null, $orderCustomerFilterName = null, $allocationFinishStatus = 100)
+    public function index($dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $orderFilterName = null, $orderCustomerFilterName = null, $finishStatus = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -39,9 +39,9 @@ class WorkAllocationManageController extends Controller
         $dateFilter = null;
         if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
             $dayFilter = 100;
-            $monthFilter = date('m');
-            $yearFilter = date('Y');
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            $monthFilter = 100;// date('m');
+            $yearFilter = 100;// date('Y');
+            //$dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
@@ -68,14 +68,13 @@ class WorkAllocationManageController extends Controller
         if (!empty($orderCustomerFilterName)) {
             $dataOrderSelect = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, 2);
         } else {
-
-            $dataOrderSelect = $modelOrder->selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $orderFilterName, $dateFilter, 2);
+            $dataOrderSelect = $modelOrder->selectInfoManageConstruction($listStaffId, $orderFilterName, $dateFilter, $finishStatus);
         }
 
         $dataOrder = $dataOrderSelect->paginate(50);
         //danh sach NV
         //$dataStaff = $modelCompany->staffInfoActivityOfListCompanyId([$searchCompanyFilterId]);
-        return view('work.work-allocation.orders.index', compact('modelStaff', 'dataAccess', 'dataOrder', 'dayFilter', 'monthFilter', 'yearFilter', 'orderFilterName', 'orderCustomerFilterName', 'allocationFinishStatus'));
+        return view('work.work-allocation.orders.index', compact('modelStaff', 'dataAccess', 'dataOrder', 'dayFilter', 'monthFilter', 'yearFilter', 'orderFilterName', 'orderCustomerFilterName', 'finishStatus'));
 
     }
 
@@ -249,11 +248,15 @@ class WorkAllocationManageController extends Controller
         }
     }
 
-    public function postConfirmFinishConstruction($allocationId)
+    public function postConfirmFinishConstruction(Request $request, $allocationId)
     {
         $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
         $modelOrderAllocation = new QcOrderAllocation();
-        $dataOrderAllocation = $modelOrderAllocation->getInfo($allocationId);
+        //$dataOrderAllocation = $modelOrderAllocation->getInfo($allocationId);
+        $confirmFinishStatus = $request->input('cbConfirmFinishStatus');
+        $confirmNote = $request->input('txtConfirmNote');
+        $modelOrderAllocation->confirmFinishAllocation($allocationId, $confirmFinishStatus, $modelStaff->staffId(), $confirmNote);
 
     }
 

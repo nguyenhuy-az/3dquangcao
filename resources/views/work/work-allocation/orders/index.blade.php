@@ -12,11 +12,10 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $hrefIndex = route('qc.work.work_allocation.manage.get');
-# lay thong tin NV cap quan ly bo phan thi con
+# lay thong tin NV cap quan ly bo phan thi cong
 $dataStaffConstruction = $modelStaff->infoStaffConstructionRankManage($dataStaffLogin->companyId());
 $actionStatus = false;
 if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dung noi quy moi co quyen hanh dong tren trang
-//if($actionStatus) echo "yesss";else echo "No;";
 ?>
 @extends('work.work-allocation.index')
 @section('qc_work_allocation_body')
@@ -43,43 +42,44 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                             <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                                 <h4 style="background-color: red; color: white; margin: 0; padding: 5px;">
                                     QUẢN LÝ THI CÔNG @if($actionStatus) "{!! $dataStaffLogin->lastName() !!}" @endif
-                                    PHẢI CHIỆU TRÁCH NHIỆM THƯỞNG / PHẠT TRÊN TẤT CẢ ĐƠN HÀNG
+                                    PHẢI CHỊU TRÁCH NHIỆM THƯỞNG / PHẠT TRÊN TẤT CẢ ĐƠN HÀNG
                                 </h4>
                             </div>
                             <div class="text-right col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                                <select class="cbDayFilter" style="height: 25px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbAllocationManageDayFilter" style="height: 25px;"
+                                        data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
-                                    @for($i =1;$i<= 31; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$dayFilter == $i) selected="selected" @endif >
-                                            Ngày {!! $i !!}
+                                    @for($d =1;$d<= 31; $d++)
+                                        <option value="{!! $d !!}"
+                                                @if((int)$dayFilter == $d) selected="selected" @endif >
+                                            Ngày {!! $d !!}
                                         </option>
                                     @endfor
                                 </select>
                                 <span>/</span>
-                                <select class="cbMonthFilter" style="height: 25px;"
+                                <select class="cbAllocationManageMonthFilter" style="height: 25px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
-                                    @for($i =1;$i<= 12; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$monthFilter == $i) selected="selected" @endif>
-                                            Tháng {!! $i !!}
+                                    @for($m =1;$m<= 12; $m++)
+                                        <option value="{!! $m !!}"
+                                                @if((int)$monthFilter == $m) selected="selected" @endif>
+                                            Tháng {!! $m !!}
                                         </option>
                                     @endfor
                                 </select>
                                 <span>/</span>
-                                <select class="cbYearFilter" style="height: 25px;"
+                                <select class="cbAllocationManageYearFilter" style="height: 25px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
-                                    @for($i =2017;$i<= 2050; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @for($y =2017;$y<= 2050; $y++)
+                                        <option value="{!! $y !!}"
+                                                @if($yearFilter == $y) selected="selected" @endif>{!! $y !!}</option>
                                     @endfor
                                 </select>
                             </div>
@@ -112,24 +112,24 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                 <td class="text-center qc-color-red"></td>
                                 <td></td>
                                 <td class="text-center" style="padding: 0px;">
-                                    <select class="cbAllocationFinishStatus form-control"
+                                    <select class="cbAllocationManageFinishStatus form-control"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100"
-                                                @if($allocationFinishStatus == 100) selected="selected" @endif>
-                                            Tất cả
+                                                @if($finishStatus == 100) selected="selected" @endif>
+                                            Tất cả đơn hàng
                                         </option>
-                                        <option value="0" @if($allocationFinishStatus == 0) selected="selected" @endif>
+                                        <option value="0" @if($finishStatus == 0) selected="selected" @endif>
                                             Chưa hoàn thành
                                         </option>
-                                        <option value="100"
-                                                @if($allocationFinishStatus == 1) selected="selected" @endif>
+                                        <option value="1"
+                                                @if($finishStatus == 1) selected="selected" @endif>
                                             Đã hoàn thành
                                         </option>
                                     </select>
                                 </td>
                                 <td style="padding: 0px;">
                                     <div class="input-group">
-                                        <input type="text" class="txtOrderFilterKeyword form-control"
+                                        <input type="text" class="txtAllocationManageKeywordFilter form-control"
                                                name="txtOrderFilterKeyword"
                                                data-href-check-name="{!! route('qc.work.work_allocation.manage.filter.order.check.name') !!}"
                                                placeholder="Tên đơn hàng" value="{!! $orderFilterName !!}">
@@ -206,7 +206,8 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                     $customerId = $order->customerId();
                                     $orderReceiveDate = $order->receiveDate();
                                     $checkFinishPayment = $order->checkFinishPayment();
-                                    $finishStatus = $order->checkFinishStatus();
+                                    $orderFinishStatus = $order->checkFinishStatus();
+                                    $orderConfirmDate = $order->confirmDate();
                                     $cancelStatus = $order->checkCancelStatus();
                                     $totalPrice = $order->totalPrice();
                                     $dataReceiveStaff = $order->staffReceive; // thong tin NV nhận
@@ -219,6 +220,8 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                     $sumUnPaidMoney = $sumUnPaidMoney + $totalUnPaid;
                                     # thong tin ban giao don hang
                                     $dataOrderAllocation = $order->orderAllocationActivity()->first();
+                                    # thong tin thi cong da xac nhan hoan thanh
+                                    $dataOrderAllocationFinish = $order->infoAllocationFinish($orderId);
                                     // san pham
                                     $dataProduct = $order->allProductOfOrder();
 
@@ -232,7 +235,7 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                         </td>
                                         <td class="text-center">
                                             <em class="qc-color-grey">{!! $order->orderCode() !!}</em><br/>
-                                            @if($finishStatus)
+                                            @if($orderFinishStatus)
                                                 <i class="qc-color-green glyphicon glyphicon-ok"></i>
                                             @else
                                                 <i class="qc-color-red glyphicon glyphicon-ok"></i>
@@ -251,11 +254,18 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                                     <br/>
                                                     @if($hFunction->checkCount($dataOrderAllocation))
                                                         <span style="padding: 3px; background-color: blue; color: white;">
-                                                        Phụ trách: {!! $dataOrderAllocation->receiveStaff->lastName() !!}
-                                                    </span>
+                                                            Phụ trách: {!! $dataOrderAllocation->receiveStaff->lastName() !!}
+                                                        </span>
                                                     @else
-                                                        @if(!$finishStatus)
-                                                            <span style="padding: 3px; background-color: red; color: white;">Chưa bàn giao</span>
+                                                        @if(!$orderFinishStatus)
+                                                            {{--Da xac nhan hoan thanh thi cong--}}
+                                                            @if($hFunction->checkCount($dataOrderAllocationFinish))
+                                                                <span style="padding: 3px; background-color: blue; color: white;">
+                                                                    Chờ bàn giao khách hàng
+                                                                </span>
+                                                            @else
+                                                                <span style="padding: 3px; background-color: red; color: white;">Chưa bàn giao</span>
+                                                            @endif
                                                         @else
                                                             <em>(Đã kết thúc)</em>
                                                         @endif
@@ -301,6 +311,11 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                             <b>{!! $hFunction->convertDateDMYFromDatetime($order->deliveryDate()) !!}</b>
                                         </td>
                                         <td class="text-center">
+                                            {{--đã xác nhận hoàn thành thi công--}}
+                                            @if($hFunction->checkCount($dataOrderAllocationFinish))
+                                                {!! $hFunction->convertDateDMYFromDatetime($dataOrderAllocationFinish->confirmDate()) !!}
+                                            @endif
+                                            {{--Đơn hàng bị trễ--}}
                                             @if($order->checkLate($orderId))
                                                 <br/>
                                                 <b style="background-color: deeppink; color: white; padding: 3px 10px;">Trễ</b>
@@ -373,7 +388,7 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="10">
+                                    <td class="text-center" colspan="12">
                                         <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                     </td>
                                 </tr>

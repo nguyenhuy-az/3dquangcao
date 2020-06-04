@@ -18,18 +18,20 @@ use Illuminate\Http\Request;
 class WorkAllocationConstructionController extends Controller
 {
     // danh sach cong trinh dc ban giao
-    public function index($monthFilter = null, $yearFilter = null)
+    public function index($finishStatus = 0,$monthFilter = 0, $yearFilter = 0)
     {
         $modelStaff = new QcStaff();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataAccess = [
+            'object' => 'workAllocationConstruction'
+        ];
         if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'workAllocationConstruction'
-            ];
+            $loginStaffId = $dataStaffLogin->staffId();
             $dateFilter = null;
             if ($monthFilter == 0 && $yearFilter == 0) { //khong chon thoi gian xem
-                $monthFilter = date('m');
-                $yearFilter = date('Y');
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+                $monthFilter = 100;// date('m');
+                $yearFilter = 100;// date('Y');
+                //$dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
             } elseif ($monthFilter == 100 && $yearFilter == null) { //xam tat ca cac thang va khong chon nam
                 $yearFilter = date('Y');
                 $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
@@ -47,7 +49,9 @@ class WorkAllocationConstructionController extends Controller
                 $monthFilter = date('m');
                 $yearFilter = date('Y');
             }
-            return view('work.work-allocation.construction.construction', compact('dataAccess', 'modelStaff', 'dateFilter', 'monthFilter', 'yearFilter'));
+            $dataOrdersAllocation = null;
+            $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($loginStaffId, $dateFilter);
+            return view('work.work-allocation.construction.construction', compact('dataAccess', 'modelStaff','dataOrdersAllocation', 'dateFilter','finishStatus', 'monthFilter', 'yearFilter'));
         } else {
             return view('work.login');
         }
@@ -56,9 +60,10 @@ class WorkAllocationConstructionController extends Controller
     # xac nhan cong trinh
     public function getConstructionReportFinish($allocationId = null)
     {
+        $hFunction = new \Hfunction();
         $modelOrderAllocation = new QcOrderAllocation();
         $dataOrderAllocation = $modelOrderAllocation->getInfo($allocationId);
-        if (count($dataOrderAllocation) > 0) {
+        if ($hFunction->checkCount($dataOrderAllocation)) {
             return view('work.work-allocation.construction.report-finish', compact('dataOrderAllocation'));
         }
     }

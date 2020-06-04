@@ -32,7 +32,7 @@ class OrdersController extends Controller
         }
     }
 
-    public function index($monthFilter = 0, $yearFilter = 0, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null)
+    public function index($finishStatus = 0,$monthFilter = 0, $yearFilter = 0, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -46,6 +46,7 @@ class OrdersController extends Controller
         ];
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $loginStaffId = $dataStaffLogin->staffId();
+        //$dateFilter = null;
         if ($monthFilter == 100 && $yearFilter == 100) {//xem tất cả đơn hang
             $dateFilter = null;
         } elseif ($monthFilter < 100 && $yearFilter == 100) {
@@ -58,58 +59,21 @@ class OrdersController extends Controller
             $yearFilter = $hFunction->currentYear();
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         } elseif ($monthFilter == 0 && $yearFilter == 0) {
-            $dateFilter = date('Y-m');
-            $monthFilter = date('m');
-            $yearFilter = date('Y');
+            $dateFilter = null;// date('Y-m');
+            //$monthFilter = date('m');
+            //$yearFilter = date('Y');
 
         } else {
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
         if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-            $dataOrders = $modelOrders->infoNoCancelOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus);
+            $dataOrderSelect = $modelOrders->selectInfoNoCancelOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus,$finishStatus);
         } else {
-            $dataOrders = $dataStaffLogin->orderNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, $paymentStatus, $orderFilterName);
+            $dataOrderSelect = $dataStaffLogin->selectOrderNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, $paymentStatus,$finishStatus, $orderFilterName);
         }
+        $dataOrders = $dataOrderSelect->paginate(50);
         $dataOrdersProvisional = $dataStaffLogin->orderProvisionNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, 0, null);
-        return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional', 'dataStaffLogin', 'dateFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
-
-    }
-
-    //quan ly don hang
-    public function index_1($monthFilter = 0, $yearFilter = 0, $salesConfirm = 3, $keyWork = null)
-    {
-        $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
-        $modelOrders = new QcOrder();
-        $hFunction->dateDefaultHCM();
-        $dataAccess = [
-            'object' => 'orders'
-        ];
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
-        $loginStaffId = $dataStaffLogin->staffId();
-        //$loginMonth = (empty($loginMonth)) ? date('m') : $loginMonth;
-        //$loginYear = (empty($loginYear)) ? date('Y') : $loginYear;
-        if ($monthFilter == 100 && $yearFilter == 100) {//xem tất cả đơn hang
-            $dateFilter = null;
-        }
-        if ($monthFilter < 100 && $yearFilter == 100) { //xem tất cả đơn hang
-            $dateFilter = null;
-            $monthFilter = 100;
-        } elseif ($monthFilter == 100 && $yearFilter != 100) {
-            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-        } elseif ($monthFilter < 100 && $yearFilter == 100) {
-            $yearFilter = $hFunction->currentYear();
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($monthFilter == 0 && $yearFilter == 0) {
-            $dateFilter = date('Y-m');
-            $monthFilter = date('m');
-            $yearFilter = date('Y');
-
-        } else {
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        }
-        $dataOrders = $dataStaffLogin->orderInfoOfStaffReceive($loginStaffId, $dateFilter, $salesConfirm, $keyWork);
-        return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataStaffLogin', 'monthFilter', 'yearFilter', 'salesConfirm', 'keyWork'));
+        return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional', 'dataStaffLogin', 'dateFilter','finishStatus', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
 
     }
 
