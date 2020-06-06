@@ -53,7 +53,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                  data-href-cancel="{!! route('qc.ad3d.finance.bonus.cancel') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Tên</th>
                             <th class="text-center">Ngày</th>
@@ -130,6 +130,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                 <?php
                                 $bonusId = $bonus->bonusId();
                                 $orderAllocationId = $bonus->orderAllocationId();
+                                $orderConstructionId = $bonus->orderConstructionId();
                                 $note = $bonus->note();
                                 $cancelStatus = $bonus->checkCancelStatus();
                                 if ($cancelStatus) {
@@ -139,7 +140,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                 }
                                 $dataWork = $bonus->work;
                                 ?>
-                                <tr class="qc_ad3d_list_object" data-object="{!! $bonusId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $bonusId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
@@ -159,7 +160,11 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                     <td>
                                         @if(!$hFunction->checkEmpty($orderAllocationId))
                                             <em>Đơn hàng:</em>
-                                            <b>{!! $bonus->orderAllocation->orders->name() !!}</b>
+                                            <b style="color: red;">{!! $bonus->orderAllocation->orders->name() !!}</b>
+                                        @endif
+                                        @if(!$hFunction->checkEmpty($orderConstructionId))
+                                            <em>Đơn hàng:</em>
+                                            <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -175,7 +180,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                             <a class="qc_cancel_act qc-link-red">Hủy</a>
                                         @endif
                                     </td>
-                                    <td class="text-right">
+                                    <td class="text-right" style="color: red;">
                                         {!! $hFunction->currencyFormat($money) !!}
                                     </td>
                                 </tr>

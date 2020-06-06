@@ -16,7 +16,7 @@ $hrefIndex = route('qc.work.orders.get');
 ?>
 @extends('work.orders.index')
 @section('titlePage')
-    Danh sách đơn hàng
+    Quản lý đơn hàng
 @endsection
 @section('qc_work_order_body')
     <div id="qc_work_orders_wrap" class="row qc_work_orders_wrap">
@@ -26,7 +26,6 @@ $hrefIndex = route('qc.work.orders.get');
                     Về trang trước
                 </a>
             </div>
-
             @include('work.orders.menu')
 
             {{-- chi tiêt --}}

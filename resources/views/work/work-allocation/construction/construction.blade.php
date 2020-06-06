@@ -20,6 +20,11 @@ $loginStaffId = $dataStaffLogin->staffId();
 @endsection
 @section('qc_work_allocation_body')
     <div class="row">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom: 5px;">
+            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                Về trang trước
+            </a>
+        </div>
         <div class="qc_work_allocation_construction_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.work-allocation.menu')
 
@@ -208,9 +213,14 @@ $loginStaffId = $dataStaffLogin->staffId();
                                         </td>
                                     </tr>
                                 @endforeach
+                                <tr>
+                                    <td class="text-center" colspan="11">
+                                        {!! $hFunction->page($dataOrdersAllocation) !!}
+                                    </td>
+                                </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="8">
+                                    <td class="text-center" colspan="11">
                                         <em class="qc-color-red">Không có công trình</em>
                                     </td>
                                 </tr>

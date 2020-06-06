@@ -650,7 +650,7 @@ class OrdersController extends Controller
         if (count($dataStaffLogin) > 0) {
             $dataOrder = $modelOrder->getInfo($orderId);
             if (count($dataOrder) > 0) {
-                return view('work.orders.orders.confirm-finish', compact('dataStaffLogin', 'dataOrder'));
+                return view('work.orders.orders.report-finish', compact('dataStaffLogin', 'dataOrder'));
             }
         }
     }

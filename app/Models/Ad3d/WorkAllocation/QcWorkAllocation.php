@@ -136,6 +136,34 @@ class QcWorkAllocation extends Model
         } else {
             return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('allocationDate', 'DESC')->get();
         }
+    }
+
+    public function selectInfoOfStaffReceive($staffId, $finishStatus = 100, $dateFilter = null)
+    {
+        $modelWorkAllocationFinish = new QcWorkAllocationFinish();
+
+        if($finishStatus < 100){
+            $allocationFinishId = $modelWorkAllocationFinish->listAllocationId();
+            if($finishStatus == 0){ #chua hoan thanh
+                if (empty($dateFilter)) {
+                    return QcWorkAllocation::whereNotIn('allocation_id', $allocationFinishId)->where('receiveStaff_id', $staffId)->orderBy('allocationDate', 'DESC')->select('*');
+                } else {
+                    return QcWorkAllocation::whereNotIn('allocation_id', $allocationFinishId)->where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('allocationDate', 'DESC')->select('*');
+                }
+            }elseif($finishStatus == 1){ # da hoan thanh
+                if (empty($dateFilter)) {
+                    return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('receiveStaff_id', $staffId)->orderBy('allocationDate', 'DESC')->select('*');
+                } else {
+                    return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('allocationDate', 'DESC')->select('*');
+                }
+            }
+        }else{
+            if (empty($dateFilter)) {
+                return QcWorkAllocation::where('receiveStaff_id', $staffId)->orderBy('allocationDate', 'DESC')->select('*');
+            } else {
+                return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('allocationDate', 'DESC')->select('*');
+            }
+        }
 
     }
 

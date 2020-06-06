@@ -37,8 +37,8 @@ $hrefFilter = route('qc.work.money.statistical.get');
                         <select class="qc_work_money_statistical_login_month" style="height: 25px;"
                                 data-href="{!! $hrefFilter !!}">
                             @for($m = 1; $m <=12; $m++)
-                                <option @if($monthFilter == $m) selected="selected" @endif>
-                                    {!! $m !!}
+                                <option value="{!! $m !!}" @if($monthFilter == $m) selected="selected" @endif>
+                                   Tháng {!! $m !!}
                                 </option>
                             @endfor
                         </select>
@@ -75,7 +75,7 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                         </a>
                                     </td>
                                     <td>
-                                        <em class="qc-color-grey">Thu tiền từ các đơn hàng</em>
+                                        <em class="qc-color-grey">Nhận tiền bàn giao từ NV kinh doanh thu các đơn hàng</em>
                                     </td>
                                     <td class="text-right">
                                         <b style="color: blue;">
@@ -94,7 +94,7 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                     </td>
                                     <td>
                                         <a class="qc-link-red-bold" href="{!! route('qc.work.money.transfer.receive.get',"$monthFilter/$yearFilter") !!}">
-                                            Nhận tiền bàn giao &nbsp;
+                                            Nhận tiền đầu tư &nbsp;
                                             <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
                                         </a>
                                     </td>

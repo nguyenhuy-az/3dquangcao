@@ -61,7 +61,7 @@ $totalMoneyUnpaid = $dataOrder->totalMoneyUnpaid()
                                 <label class="col-sm-2 control-label">Số tiền:</label>
 
                                 <div class="col-sm-10">
-                                    <input class="form-control" type="text" name="txtMoney" data-money="{!! $totalMoneyUnpaid !!}" value=""
+                                    <input class="form-control" type="text" name="txtMoney" data-money="{!! $totalMoneyUnpaid !!}" value="{!! $hFunction->currencyFormat($totalMoneyUnpaid) !!}"
                                            onkeyup="qc_main.showFormatCurrency(this);"
                                            title="Nhập số tiền">
                                 </div>

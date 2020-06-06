@@ -30,15 +30,14 @@ $hrefIndex = route('qc.work.minus_money.get');
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_minus_money_month" style="height: 25px;"
-                                            data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_minus_money_month" style="height: 25px;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả tháng
                                         </option>--}}
-                                        @for($i =1;$i<= 12; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if((int)$monthFilter == $i) selected="selected" @endif>
-                                                Tháng {!! $i !!}
+                                        @for($m =1;$m<= 12; $m++)
+                                            <option value="{!! $m !!}"
+                                                    @if((int)$monthFilter == $m) selected="selected" @endif>
+                                                Tháng {!! $m !!}
                                             </option>
                                         @endfor
                                     </select>
@@ -48,9 +47,11 @@ $hrefIndex = route('qc.work.minus_money.get');
                                         {{--<option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả năm
                                         </option>--}}
-                                        @for($i =2017;$i<= 2050; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                        @for($y =2017;$y<= 2050; $y++)
+                                            <option value="{!! $y !!}"
+                                                    @if($yearFilter == $y) selected="selected" @endif>
+                                                {!! $y !!}
+                                            </option>
                                         @endfor
                                     </select>
                                 </td>
@@ -68,6 +69,7 @@ $hrefIndex = route('qc.work.minus_money.get');
                                 @foreach($dataMinusMoney as $minusMoney)
                                     <?php
                                     $orderAllocationId = $minusMoney->orderAllocationId();
+                                    $orderConstructionId = $minusMoney->orderConstructionId();
                                     $reason = $minusMoney->reason();
                                     $cancelStatus = $minusMoney->checkCancelStatus();
                                     if ($cancelStatus) {
@@ -82,18 +84,26 @@ $hrefIndex = route('qc.work.minus_money.get');
                                             {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
                                         </td>
                                         <td>
-                                            {!! date('d/m/Y', strtotime($minusMoney->dateMinus())) !!}
+                                            {!! date('d-m-Y', strtotime($minusMoney->dateMinus())) !!}
                                         </td>
                                         <td>
                                             {!! $minusMoney->punishContent->name() !!}
                                         </td>
                                         <td>
+                                            <b>{!! $minusMoney->reason() !!}</b>
                                             @if(!$hFunction->checkEmpty($orderAllocationId))
-                                                <em>Đơn hàng:</em>
-                                                <b>{!! $minusMoney->orderAllocation->orders->name() !!}</b>
                                                 <br/>
-                                                <em>Ghi chú báo cáo:</em>
-                                                <b>{!! $minusMoney->orderAllocation->noted() !!}</b>
+                                                <em>Đơn hàng:</em>
+                                                <a class="qc-link-red" href="{!! route('qc.work.work_allocation.construction.product.get',$orderAllocationId) !!}">
+                                                    {!! $minusMoney->orderAllocation->orders->name() !!}
+                                                </a>
+                                            @endif
+                                            @if(!$hFunction->checkEmpty($orderConstructionId))
+                                                <br/>
+                                                <em>Đơn hàng:</em>
+                                                <a class="qc-link-red" href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderConstructionId) !!}">
+                                                    {!! $minusMoney->orderConstruction->name() !!}
+                                                </a>
                                             @endif
                                         </td>
                                         <td class="text-center">
@@ -108,7 +118,9 @@ $hrefIndex = route('qc.work.minus_money.get');
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            {!! $hFunction->currencyFormat($money) !!}
+                                            <span style="color: blue;">
+                                                {!! $hFunction->currencyFormat($money) !!}
+                                            </span>
                                         </td>
                                     </tr>
                                 @endforeach

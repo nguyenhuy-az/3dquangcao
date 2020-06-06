@@ -20,61 +20,18 @@ $hrefIndex = route('qc.work.orders.provisional.get');
 @section('qc_work_order_body')
     <div class="row qc_work_orders_provisional_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed #C2C2C2;">
-                    <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li>
-                                <a class="qc-link" href="{!! route('qc.work.orders.get') !!}">
-                                    <label class="qc-font-size-20">ĐƠN HÀNG & THANH TOÁN</label>
-                                </a>
-                            </li>
-                            <li class="active">
-                                <a class="qc-link" href="{!! $hrefIndex !!}" style="background-color: whitesmoke;">
-                                    <i class="qc-font-size-20 glyphicon glyphicon-refresh" style="color: red;"></i>
-                                    <label class="qc-font-size-20">BÁO GIÁ</label>
-                                    <em class="qc-font-size-20" style="color: red;">({!! count($dataOrders) !!})</em>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="text-right col-sx-12 col-sm-12 col-md-6 col-lg-6">
-                        <a class="qc_work_before_pay_request_action qc-link-green-bold"
-                           href="{!! route('qc.work.orders.add.get') !!}">
-                            THÊM ĐƠN HÀNG
-                        </a>
-                        &nbsp; | &nbsp;
-                        <a class="qc-link-red-bold" title="Báo giá" href="{!! route('qc.work.orders.add.get',0) !!}">
-                            BÁO GIÁ
-                        </a>
-                    </div>
-                </div>
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom: 5px;">
+                <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                    Về trang trước
+                </a>
+                <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
+                    Về trang chủ
+                </a>
             </div>
+
+            @include('work.orders.menu')
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="row">
-                    <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <select class="qc_work_orders_provisional_login_month" style="height: 25px;"
-                                data-href="{!! $hrefIndex !!}">
-                            <option value="100" @if($monthFilter == 100) selected="selected" @endif>Tất cả</option>
-                            @for($i = 1; $i <=12; $i++)
-                                <option @if($monthFilter == $i) selected="selected" @endif>
-                                    {!! $i !!}
-                                </option>
-                            @endfor
-                        </select>
-                        <span>/</span>
-                        <select class="qc_work_orders_provisional_login_year" style="height: 25px;"
-                                data-href="{!! $hrefIndex !!}">
-                            <option value="100" @if($yearFilter == 100) selected="selected" @endif>Tất cả</option>
-                            @for($i = 2017; $i <=2050; $i++)
-                                <option @if($yearFilter == $i) selected="selected" @endif>
-                                    {!! $i !!}
-                                </option>
-                            @endfor
-                        </select>
-                    </div>
-                </div>
                 <div class="qc_work_orders_provisional_list_content row" style="min-height: 3000px;"
                      data-href-cancel="{!! route('qc.work.orders.provisional.cancel.get') !!}"
                      data-href-confirm="{!! route('qc.work.orders.provisional.confirm.get') !!}">
@@ -156,7 +113,26 @@ $hrefIndex = route('qc.work.orders.provisional.get');
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center"></td>
+                                    <td class="text-center" style="padding: 0; width: 120px;">
+                                        <select class="qc_work_orders_provisional_login_month" style="height: 25px;"
+                                                data-href="{!! $hrefIndex !!}">
+                                            <option value="100" @if($monthFilter == 100) selected="selected" @endif>Tất cả</option>
+                                            @for($m = 1; $m <=12; $m++)
+                                                <option @if($monthFilter == $m) selected="selected" @endif>
+                                                    {!! $m !!}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <select class="qc_work_orders_provisional_login_year" style="height: 25px;"
+                                                data-href="{!! $hrefIndex !!}">
+                                            <option value="100" @if($yearFilter == 100) selected="selected" @endif>Tất cả</option>
+                                            @for($y = 2017; $y <=2050; $y++)
+                                                <option @if($yearFilter == $y) selected="selected" @endif>
+                                                    {!! $y !!}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                    </td>
                                     <td class="text-center" style="padding: 0px;"></td>
                                     <td class="text-right"></td>
                                     <td class="text-right"></td>

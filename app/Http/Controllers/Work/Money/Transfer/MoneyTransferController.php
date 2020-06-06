@@ -42,7 +42,7 @@ class MoneyTransferController extends Controller
                 $yearFilter = date('Y');
             }
             $dataTransfer = $dataStaffLogin->transferOfTransferStaff($loginStaffId, $dateFilter);
-            return view('work.money.transfer.transfer', compact('dataAccess', 'modelStaff','dataTransfer','dateFilter','monthFilter', 'yearFilter'));
+            return view('work.money.transfer.transfer', compact('dataAccess', 'modelStaff', 'dataTransfer', 'dateFilter', 'monthFilter', 'yearFilter'));
         } else {
             return view('work.login');
         }
@@ -77,7 +77,7 @@ class MoneyTransferController extends Controller
                 $yearFilter = date('Y');
             }
             $dataTransfer = $dataStaffLogin->transferOfReceiveStaff($loginStaffId, $dateFilter);
-            return view('work.money.transfer.receive', compact('dataAccess', 'modelStaff','dataTransfer','dateFilter','monthFilter', 'yearFilter'));
+            return view('work.money.transfer.receive', compact('dataAccess', 'modelStaff', 'dataTransfer', 'dateFilter', 'monthFilter', 'yearFilter'));
         } else {
             return view('work.login');
         }
@@ -87,6 +87,6 @@ class MoneyTransferController extends Controller
     public function receiveConfirm($transfersId)
     {
         $modelTransfer = new QcTransfers();
-        $modelTransfer->updateConfirmReceive($transfersId);
+        $modelTransfer->updateConfirmReceive($transfersId, 'Xác nhận đã nhận tiền', 1);
     }
 }

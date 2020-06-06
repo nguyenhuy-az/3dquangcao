@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\Order;
 
+use App\Models\Ad3d\Bonus\QcBonus;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
@@ -172,11 +173,14 @@ class QcOrder extends Model
             $modelOrderAllocation->confirmFinishFromFinishOrder($orderId, 1, 1, $staffReportFinishId);
 
             # bao ket thuc san pham
-            if (count($dataProduct) > 0) {
+            if ($hFunction->checkCount($dataProduct)) {
                 foreach ($dataProduct as $product) {
                     $modelProduct->confirmFinishFromFinishOrder($product->productId(), $staffReportFinishId);
                 }
             }
+
+            # -------------- ----------  xet thuong cho quan ly thi cong ---------- ----------
+            $this->checkBonusConstruction($orderId);
             return true;
 
         } else {
@@ -298,13 +302,13 @@ class QcOrder extends Model
     public function selectInfoNoCancelOfListCustomer($listCustomerId, $date = null, $paymentStatus = 3, $finishStatus = 100, $orderBy = 'DESC')
     {
         if ($finishStatus < 100) {
-            if($paymentStatus < 3){
+            if ($paymentStatus < 3) {
                 if (!empty($date)) {
                     return QcOrder::whereIn('customer_id', $listCustomerId)->where('finishStatus', $finishStatus)->where('paymentStatus', $paymentStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->orderBy('receiveDate', $orderBy)->select('*');
                 } else {
                     return QcOrder::whereIn('customer_id', $listCustomerId)->where('finishStatus', $finishStatus)->where('paymentStatus', $paymentStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
                 }
-            }else{
+            } else {
                 if (!empty($date)) {
                     return QcOrder::whereIn('customer_id', $listCustomerId)->where('finishStatus', $finishStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->orderBy('receiveDate', $orderBy)->select('*');
                 } else {
@@ -313,16 +317,16 @@ class QcOrder extends Model
             }
 
         } else {
-            if($paymentStatus < 3){
+            if ($paymentStatus < 3) {
                 if (!empty($date)) {
                     return QcOrder::whereIn('customer_id', $listCustomerId)->where('paymentStatus', $paymentStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->orderBy('receiveDate', $orderBy)->select('*');
                 } else {
                     return QcOrder::whereIn('customer_id', $listCustomerId)->where('paymentStatus', $paymentStatus)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
                 }
-            }else{
+            } else {
                 if (!empty($date)) {
                     return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('cancelStatus', 0)->where('receiveDate', 'like', "%$date%")->orderBy('receiveDate', $orderBy)->select('*');
-                }else {
+                } else {
                     return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('cancelStatus', 0)->orderBy('receiveDate', $orderBy)->select('*');
                 }
             }
@@ -641,7 +645,13 @@ class QcOrder extends Model
 
     }
 
-    //---------- ban giao don hang -----------
+    //---------- thương trien khai thi cong -----------
+    public function bonus()
+    {
+        return $this->hasMany('App\Models\Ad3d\Bonus\QcBonus', 'order_id', 'orderConstruction_id');
+    }
+
+    //---------- ban giao don hang thi cong -----------
     public function orderAllocation()
     {
         return $this->hasMany('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'order_id', 'order_id');
@@ -676,12 +686,20 @@ class QcOrder extends Model
         return $modelOrderConstruction->checkWaitConfirmFinishOfOrder($this->checkIdNull($orderId));
     }
 
-    # kiem tra do hang co thu ho
+    # kiem tra don hang co thu ho
     public function existOrderAllocationPaymentStatus($orderId = null)
     {
         $modelOrderConstruction = new QcOrderAllocation();
         return $modelOrderConstruction->existPaymentStatusOfOrder($this->checkIdNull($orderId));
     }
+
+    # thong tin thu ho cua don hang
+    public function infoOrderAllocationPaymentStatus($orderId = null)
+    {
+        $modelOrderConstruction = new QcOrderAllocation();
+        return $modelOrderConstruction->infoPaymentStatusOfOrder($this->checkIdNull($orderId));
+    }
+
 
     # thong tin dang hoat dong
     public function orderAllocationActivity($orderId = null)
@@ -1281,6 +1299,49 @@ class QcOrder extends Model
     }
 
 #============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
+    # kiem tra thuong nguoi quan ly thi cong
+    public function checkBonusConstruction($orderId)
+    {
+        $hFunction = new \Hfunction();
+        $modelBonus = new QcBonus();
+        $modelStaffNotify = new QcStaffNotify();
+        $modelOrderAllocation = new QcOrderAllocation();
+        $dataOrderAllocationFinish = $modelOrderAllocation->infoFinishOfOrder($orderId);
+        # co thong tin xac nhan hoan thanh
+        if ($hFunction->checkCount($dataOrderAllocationFinish)) {
+            # ngay xac nhan hoan thanh thi cong don hang
+            $allocationConfirmDate = $dataOrderAllocationFinish->confirmDate();
+            $allocationConfirmDate = date('Y-m-d', strtotime($allocationConfirmDate));
+            # ngay hen giao don hang
+            $orderDeliveryDate = $this->deliveryDate($orderId);
+            $orderDeliveryDate = date('Y-m-d', strtotime($orderDeliveryDate[0]));
+            # khong bi tre
+            if ($allocationConfirmDate <= $orderDeliveryDate) {
+                # lay thong tin cua quan ly ban giao
+                $dataAllocationStaff = $dataOrderAllocationFinish->allocationStaff;
+                # thong tin lam viec
+                $dataWork = $dataAllocationStaff->workInfoActivityOfStaff();
+                if ($hFunction->checkCount($dataWork)) {
+                    $workId = $dataWork->workId();
+                    if (!$modelBonus->checkExistBonusWorkOfOrderConstruction($workId, $orderId)) { # chua ap dung thuong
+                        #tien thuong hoan thanh thi cong
+                        $orderBonusPrice = $this->getBonusAndMinusMoneyOfRankManage($orderId);
+                        if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý triển khai thi công', 0, $workId, null, $orderId)) {
+                            $bonusId = $modelBonus->insertGetId();
+                            $allocationStaffId = $dataAllocationStaff->staffId();
+                            $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
+                            # thong bao cho nguoi nhan thuong
+                            $modelStaffNotify->insert(null, $allocationStaffId, 'Quản lý triển khai thi công', null, null, $bonusId, null, null);
+                        }
+                    }
+                }
+            } else {
+                echo "$allocationConfirmDate = $orderDeliveryDate Bonus No";
+            }
+
+        }
+    }
+
     # kiem tra phat nguoi quan ly thi cong cua don hang don hang - cap quan ly
     public function checkMinusMoneyConstruction($orderId)
     {

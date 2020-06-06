@@ -906,6 +906,10 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
             Route::get('/{loginMonth?}/{loginYear?}/{orderFilterName?}/{orderCustomerFilterName?}', ['as' => 'qc.work.orders.provisional.get', 'uses' => 'Work\Orders\OrdersProvisionalController@index']);
         });
+        # quan ly don hang toan hen
+        Route::group(['prefix' => 'manage'], function () {
+            Route::get('/{finishStatus?}/{monthFilter?}/{yearFilter?}/{paymentStatus?}/{orderFilterName?}/{orderCustomerFilterName?}', ['as' => 'qc.work.orders.manage.get', 'uses' => 'Work\Orders\OrdersManageController@index']);
+        });
 
         #loc don hang
         Route::group(['prefix' => 'filter'], function () {
@@ -1084,7 +1088,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         #Hủy báo cáo
         Route::get('report/cancel/{reportId?}', ['as' => 'qc.work.work_allocation.report.cancel.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@cancelReport']);
 
-        Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.work_allocation.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@index']);
+        Route::get('/{finishStatus?}/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.work_allocation.get', 'uses' => 'Work\WorkAllocation\WorkAllocationController@index']);
 
     });
 

@@ -36,6 +36,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Ngày</th>
                                 <th>Người nhận</th>
+                                <th>Ghi chú</th>
                                 <th class="text-center">Xác nhận</th>
                                 <th class="text-right">Số tiền</th>
                             </tr>
@@ -82,11 +83,14 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                         <td>
                                             <span>{!! $transfer->receiveStaff->fullname() !!}</span>
                                         </td>
+                                        <td>
+                                            {!! $transfer->reason() !!}
+                                        </td>
                                         <td class="text-center qc-color-grey">
                                             @if($transfer->checkConfirmReceive())
                                                 <em>Đã xác nhận</em>
                                             @else
-                                                <em>Chưa xác nhận</em>
+                                                <span style="background-color: red; color: white; padding: 3px;">Chưa xác nhận</span>
                                             @endif
                                         </td>
                                         <td class="text-right">
@@ -96,7 +100,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                 @endforeach
                                 <tr>
                                     <td class="text-right qc-color-red"
-                                        style="background-color: whitesmoke;" colspan="4">
+                                        style="background-color: whitesmoke;" colspan="5">
                                     </td>
                                     <td class="text-right qc-color-red">
                                         {!! $hFunction->currencyFormat($totalMoney)  !!}
@@ -104,7 +108,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="5">
+                                    <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="6">
                                         <em class="qc-color-red">Không có thông tin  giao tiền</em>
                                     </td>
                                 </tr>

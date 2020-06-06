@@ -165,6 +165,7 @@ class QcDepartment extends Model
         return 6; # nhân sự
     }
 
+    # thủ quỹ
     public function treasurerDepartmentId()
     {
         return 7;

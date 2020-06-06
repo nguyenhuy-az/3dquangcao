@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcTransfers extends Model
 {
     protected $table = 'qc_transfers';
-    protected $fillable = ['transfers_id', 'transfersCode', 'money', 'transfersDate', 'reason', 'transferImage', 'confirmReceive', 'confirmDate', 'confirmNote', 'acceptStatus', 'created_at', 'transfersStaff_id', 'receiveStaff_id', 'company_id'];
+    protected $fillable = ['transfers_id', 'transfersCode', 'money', 'transfersDate', 'reason', 'transferImage', 'transferType', 'confirmReceive', 'confirmDate', 'confirmNote', 'acceptStatus', 'created_at', 'transfersStaff_id', 'receiveStaff_id', 'company_id'];
     protected $primaryKey = 'transfers_id';
     public $timestamps = false;
 
@@ -19,8 +19,9 @@ class QcTransfers extends Model
     //---------- Insert ----------
 
     // insert
-    public function insert($money, $transfersDate, $reason, $transferImage, $transfersStaffId, $receiveStaffId, $companyId = null)
+    public function insert($money, $transfersDate, $reason, $transferImage, $transfersStaffId, $receiveStaffId, $companyId = null, $transferType = 1)
     {
+        #transferType 1 - nhan tu don hang / 2 - nhan dau tu
         $hFunction = new \Hfunction();
         $modelTransfers = new QcTransfers();
         $modelStaff = new QcStaff();
@@ -32,6 +33,7 @@ class QcTransfers extends Model
         $modelTransfers->transfersDate = $transfersDate;
         $modelTransfers->reason = $reason;
         $modelTransfers->transferImage = $transferImage;
+        $modelTransfers->transferType = $transferType;
         $modelTransfers->transfersStaff_id = $transfersStaffId;
         $modelTransfers->receiveStaff_id = $receiveStaffId;
         $modelTransfers->company_id = (empty($companyId)) ? $modelStaff->companyId($receiveStaffId) : $companyId;
@@ -128,6 +130,32 @@ class QcTransfers extends Model
         }
     }
     //========== ========= ========= RELATION ========== ========= ==========
+    //---------- company -----------
+    public function company()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'transfersStaff_id', 'company_id');
+    }
+
+    # tong tien da nhan va da xac nhan tu tien thu don hang cua 1 cong ty
+    public function totalMoneyReceivedFromOrderPayOfCompanyAndDate($companyId, $date = null)
+    {
+        /*if (!empty($date)) {
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 1)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
+        } else {
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 1)->where('confirmReceive', 1)->sum('money');
+        }*/
+    }
+
+    # tong tien da nhan va da xac nhan tu dau tu cua 1 cong ty
+    public function totalMoneyReceivedFromInvestmentOfCompanyAndDate($companyId, $date = null)
+    {
+        /*if (!empty($date)) {
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 2)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
+        } else {
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 2)->where('confirmReceive', 1)->sum('money');
+        }*/
+    }
+
     //---------- transfers - staff -----------
     public function transfersStaff()
     {
@@ -237,9 +265,9 @@ class QcTransfers extends Model
         } else {
             return QcTransfers::where('receiveStaff_id', $staffId)->sum('money');
         }
-
     }
 
+    # tong tien da nhan va da xac nhan
     public function totalMoneyConfirmedOfReceivedStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
@@ -247,7 +275,26 @@ class QcTransfers extends Model
         } else {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', 1)->sum('money');
         }
+    }
 
+# tong tien da nhan va da xac nhan tu tien thu don hang
+    public function totalMoneyReceivedFromOrderPayOfStaffAndDate($staffId, $date = null)
+    {
+        if (!empty($date)) {
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 1)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
+        } else {
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 1)->where('confirmReceive', 1)->sum('money');
+        }
+    }
+
+# tong tien da nhan va da xac nhan tu dau tu
+    public function totalMoneyReceivedFromInvestmentOfStaffAndDate($staffId, $date = null)
+    {
+        if (!empty($date)) {
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 2)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
+        } else {
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 2)->where('confirmReceive', 1)->sum('money');
+        }
     }
 
     //---------- chi tiet chuyen tien -----------
@@ -327,6 +374,12 @@ class QcTransfers extends Model
         return $this->pluck('transferImage', $transfersId);
     }
 
+    public function transferType($transfersId = null)
+    {
+
+        return $this->pluck('transferType', $transfersId);
+    }
+
     public function confirmDate($transfersId = null)
     {
 
@@ -376,6 +429,31 @@ class QcTransfers extends Model
     public function checkConfirmReceive($transfersId = null)
     {
         return ($this->confirmReceive($transfersId) == 0) ? false : true;
+    }
+
+    #ten hinh thuc giao tien
+    public function transferTypeName($transfersId = null)
+    {
+        if ($this->checkTransferOrderPay($transfersId)) {
+            return 'Thu từ đơn hàng';
+        } elseif ($this->checkTransferInvestment($transfersId)) {
+            return 'Tiền đầu tư';
+        } else {
+            return 'Chưa xác định';
+        }
+
+    }
+
+    # chuyen tien nhan don hang
+    public function checkTransferOrderPay($transfersId = null)
+    {
+        return ($this->transferType($transfersId) == 1) ? true : false;
+    }
+
+    # chuyen tien dau tu
+    public function checkTransferInvestment($transfersId = null)
+    {
+        return ($this->transferType($transfersId) == 2) ? true : false;
     }
 
     #============ =========== ============ thong ke ============= =========== ==========

@@ -55,11 +55,11 @@ class MoneyStatisticalController extends Controller
                 $monthFilter = date('m');
                 $yearFilter = date('Y');
             }
-            # tien thu don hang
-            $totalMoneyOrderPay = $modelOrderPay->totalMoneyOfStaffAndDate($loginStaffId, $dateFilter);
+            # tien nhan tu chuyen tien thu cua don hang
+            $totalMoneyOrderPay = $modelStaff->totalMoneyReceiveTransferOrderPayConfirmed($loginStaffId, $dateFilter);
 
-            # nhan tien da - xac nhan
-            $totalMoneyTransferReceive = $modelTransfer->totalMoneyConfirmedOfReceivedStaffAndDate($loginStaffId, $dateFilter);
+            # nhan tien dau tu - xac nhan
+            $totalMoneyTransferReceive = $modelStaff->totalMoneyReceiveTransferInvestmentConfirmed($loginStaffId, $dateFilter);
 
             # thanh toan mua vat tu - da duoc xac nha
             $totalMoneyImportPayOfPayStaff = $modelImportPay->totalMoneyConfirmedOfPayStaffAndDate($loginStaffId, $dateFilter); # thanh toán tien mua vat tu cho nv

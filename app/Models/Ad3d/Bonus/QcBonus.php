@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcBonus extends Model
 {
     protected $table = 'qc_bonus';
-    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus','action', 'created_at', 'work_id', 'orderAllocation_id'];
+    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'orderAllocation_id', 'orderConstruction_id'];
     protected $primaryKey = 'bonus_id';
     public $timestamps = false;
 
@@ -16,7 +16,7 @@ class QcBonus extends Model
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($money, $bonusDate, $note, $applyStatus, $workId, $orderAllocationId)
+    public function insert($money, $bonusDate, $note, $applyStatus, $workId, $orderAllocationId = null, $orderConstructionId = null)
     {
         $hFunction = new \Hfunction();
         $modelBonus = new QcBonus();
@@ -26,6 +26,7 @@ class QcBonus extends Model
         $modelBonus->applyStatus = $applyStatus;
         $modelBonus->work_id = $workId;
         $modelBonus->orderAllocation_id = $orderAllocationId;
+        $modelBonus->orderConstruction_id = $orderConstructionId;
         $modelBonus->created_at = $hFunction->createdAt();
         if ($modelBonus->save()) {
             $this->lastId = $modelBonus->bonus_id;
@@ -47,7 +48,18 @@ class QcBonus extends Model
 
     public function cancelBonus($bonusId = null)
     {
-        return QcBonus::where('bonus_id', $bonusId)->update(['cancelStatus' => 1, 'action'=>0]);
+        return QcBonus::where('bonus_id', $bonusId)->update(['cancelStatus' => 1, 'action' => 0]);
+    }
+
+    # ---------- trien khai don hang thi cong -----------------
+    public function orderConstruction()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Order\QcOrder', 'orderConstruction_id', 'order_id');
+    }
+
+    public function checkExistBonusWorkOfOrderConstruction($workId, $orderConstructionId)
+    {
+        return QcBonus::where('work_id', $workId)->where('orderConstruction_id', $orderConstructionId)->exists();
     }
 
     //----------- làm việc ------------
@@ -63,7 +75,7 @@ class QcBonus extends Model
 
     public function totalMoneyOfWork($workId)
     {
-        return QcBonus::where('work_id', $workId)->where('cancelStatus',0)->sum('money');
+        return QcBonus::where('work_id', $workId)->where('cancelStatus', 0)->sum('money');
     }
 
     public function totalMoneyApplyOfWork($workId)
@@ -92,6 +104,11 @@ class QcBonus extends Model
         return $this->belongsTo('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'orderAllocation_id', 'allocation_id');
     }
 
+    public function checkExistBonusWorkOfOrderAllocation($workId, $orderAllocationId)
+    {
+        return QcBonus::where('work_id', $workId)->where('orderAllocation_id', $orderAllocationId)->exists();
+    }
+
     //---------- thong bao ban giao don hang moi -----------
     public function staffNotify()
     {
@@ -103,6 +120,7 @@ class QcBonus extends Model
         $modelStaffAllocation = new QcStaffNotify();
         return $modelStaffAllocation->checkViewedBonusOfStaff($staffId, $bonusId);
     }
+
     #============ =========== ============ GET INFO ============= =========== ==========
     public function selectInfoHasFilter($listWorkId, $dateFilter)
     {
@@ -195,7 +213,13 @@ class QcBonus extends Model
     {
         return $this->pluck('orderAllocation_id', $bonusId);
     }
-    #========= ======
+
+    public function orderConstructionId($bonusId = null)
+    {
+        return $this->pluck('orderConstruction_id', $bonusId);
+    }
+
+    #========= ============= ============= ============= =============
     public function checkCancelStatus($minusId = null)
     {
         return ($this->cancelStatus($minusId) == 1) ? true : false;

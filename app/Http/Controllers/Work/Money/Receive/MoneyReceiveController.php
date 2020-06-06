@@ -32,11 +32,14 @@ class MoneyReceiveController extends Controller
             $loginStaffId = $dataStaffLogin->staffId();
             $dateFilter = null;
             if ($monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
-                $monthFilter = date('m');
+                $monthFilter = 100;
                 $yearFilter = date('Y');
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
             } elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
                 $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+            } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter == 100) { //xem tất cả các ngày trong tháng
+                $yearFilter = date('Y');
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
             } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
                 $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
             } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
@@ -47,9 +50,9 @@ class MoneyReceiveController extends Controller
                 $yearFilter = date('Y');
             }
             # nhan tien tu don hang
-            $dataOrderPay = $dataStaffLogin->orderPayInfoOfStaff($loginStaffId, $dateFilter);
-            # danh sach NV nhan tien cua cty me
-            $dataStaffReceiveTransfer = $modelStaff->infoActivityOfCompany($modelCompany->getRootActivityCompanyId(), $modelDepartment->treasurerDepartmentId());
+            $dataOrderPay = $dataStaffLogin->orderPayNoTransferOfStaff($loginStaffId, $dateFilter);
+            # danh sach NV nhan tien la bo phan thu quy
+            $dataStaffReceiveTransfer = $modelStaff->infoActivityOfCompany($dataStaffLogin->companyId(), $modelDepartment->treasurerDepartmentId());
             return view('work.money.receive.receive', compact('dataAccess', 'modelStaff', 'dataOrderPay', 'dataStaffReceiveTransfer', 'dateFilter', 'dayFilter', 'monthFilter', 'yearFilter'));
         } else {
             return view('work.login');
@@ -82,9 +85,10 @@ class MoneyReceiveController extends Controller
         $txtTotalMoney = $hFunction->convertCurrencyToInt($txtTotalMoney); # doi kieu tien te sang kieu int
         if ($modelTransfer->insert($txtTotalMoney, $hFunction->carbonNow(), $txtNote, $name_img, $modelStaff->loginStaffId(), $txtStaffReceiveId, $modelStaff->companyId($txtStaffReceiveId))) {
             $newTransferId = $modelTransfer->insertGetId();
-            /*foreach ($listOrderPay as $key => $value) {
+            # them chi tiet chuyen tien
+            foreach ($listOrderPay as $key => $value) {
                 $modelTransferDetail->insert($newTransferId, $value);
-            }*/
+            }
             return redirect()->route('qc.work.money.transfer.transfer.get');
         } else {
             return redirect()->back();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ad3d\Statistic\Revenue\Company;
 
 use App\Models\Ad3d\Company\QcCompany;
+use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Payment\QcPayment;
 use App\Models\Ad3d\Staff\QcStaff;
@@ -15,6 +16,7 @@ class RevenueCompanyController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
         $modelCompany = new QcCompany();
         $modelPayment = new QcPayment();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
@@ -55,7 +57,8 @@ class RevenueCompanyController extends Controller
         }
 
         $dataCompanyStatistic = $modelCompany->getInfo($companyStatisticId);
-        $dataStaffOfCompany = $dataCompanyStatistic->staffInfoActivityOfListCompanyId([$companyStatisticId]);
+        //$dataStaffOfCompany = $dataCompanyStatistic->staffInfoActivityOfListCompanyId([$companyStatisticId]);
+        $dataStaffOfCompany = $modelStaff->infoActivityOfCompany($companyStatisticId, $modelDepartment->treasurerDepartmentId());
         return view('ad3d.statistic.revenue.company.list', compact('modelStaff', 'modelCompany', 'dataAccess', 'dataCompany', 'dataCompanyStatistic', 'dataStaffOfCompany', 'dateFilter', 'dayFilter', 'monthFilter', 'yearFilter'));
 
     }

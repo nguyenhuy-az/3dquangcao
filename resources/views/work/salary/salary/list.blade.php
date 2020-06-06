@@ -15,7 +15,6 @@ $hFunction = new Hfunction();
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             {{--system info--}}
             @include('work.components.finance-statistic', compact('modelStaff'))
-
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_salary_salary_content row">
@@ -65,8 +64,10 @@ $hFunction = new Hfunction();
                                     $totalMinusMoney = $salary->minusMoney();
                                     # luong da thanh toan
                                     $totalPaid = $salary->totalPayConfirmed();
+                                    # luong da ung
+                                    $totalMoneyConfirmedBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
                                     # tong luong con lai chua thanh toan
-                                    $totalSalaryUnPaid = $totalSalary + $totalMoneyImportOfStaff + $salaryBenefit + $totalBonusMoney - $totalMinusMoney - $totalPaid;
+                                    $totalSalaryUnPaid = $totalSalary + $totalMoneyImportOfStaff + $salaryBenefit + $totalBonusMoney - $totalMinusMoney - $totalMoneyConfirmedBeforePay - $totalPaid;
                                     ?>
                                     <tr>
                                         <td class="text-center">
@@ -97,7 +98,7 @@ $hFunction = new Hfunction();
                                         </td>
                                         <td class="text-right">
                                             <a href="{!! route('qc.work.salary.before_pay.get', "$monthOfFromDate/$yearOfFromDate") !!}">
-                                                - {!! $hFunction->currencyFormat($dataWork->totalMoneyConfirmedBeforePay()) !!}
+                                                - {!! $hFunction->currencyFormat($totalMoneyConfirmedBeforePay) !!}
                                             </a>
                                         </td>
                                         <td class="text-right">

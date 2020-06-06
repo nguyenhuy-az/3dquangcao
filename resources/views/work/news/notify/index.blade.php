@@ -188,37 +188,75 @@ $hrefIndex = route('qc.work.news.notify.get');
                                 @elseif(!$hFunction->checkEmpty($bonusId))
                                     <?php
                                     $dataBonus = $staffNotify->bonus;
+                                    $orderAllocationId = $dataBonus->orderAllocationId();
+                                    $orderConstructionId = $dataBonus->orderConstructionId();
                                     ?>
-                                    <tr class="@if($n_o%2) info @endif ">
-                                        <td class="text-center">
-                                            {!! $n_o += 1 !!}
-                                        </td>
-                                        <td>
-                                            {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!}
-                                        </td>
-                                        <td>
-                                            <a class="qc-link-green" href="{!! route('qc.work.bonus.get') !!}"
-                                               title="Xem thông tin thưởng">
-                                                Xem
-                                            </a>
-                                            @if($staffNotify->checkNewInfo())
-                                                <em style="color: red;"> - Chưa xem</em>
-                                            @else
-                                                <em style="color: grey;">- Đã xem</em>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <span style="color: red;">{!! $staffNotify->note() !!}:</span>
-                                            <a class="qc-link-green-bold"
-                                               href="{!! route('qc.work.work_allocation.construction.product.get',$dataBonus->orderAllocationId()) !!}">
-                                                {!! $staffNotify->bonus->orderAllocation->orders->name() !!}
-                                            </a>
+                                    {{--Thưởng quản lý thi công--}}
+                                    @if(!empty($orderAllocationId))
+                                        <tr class="@if($n_o%2) info @endif ">
+                                            <td class="text-center">
+                                                {!! $n_o += 1 !!}
+                                            </td>
+                                            <td>
+                                                {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!}
+                                            </td>
+                                            <td>
+                                                <a class="qc-link-green" href="{!! route('qc.work.bonus.get') !!}"
+                                                   title="Xem thông tin thưởng">
+                                                    Xem
+                                                </a>
+                                                @if($staffNotify->checkNewInfo())
+                                                    <em style="color: red;"> - Chưa xem</em>
+                                                @else
+                                                    <em style="color: grey;">- Đã xem</em>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <span style="color: red;">{!! $staffNotify->note() !!}:</span>
+                                                <a class="qc-link-green-bold"
+                                                   href="{!! route('qc.work.work_allocation.construction.product.get',$dataBonus->orderAllocationId()) !!}">
+                                                    {!! $dataBonus->orderAllocation->orders->name() !!}
+                                                </a>
                                             <span style="background-color: red; padding: 3px; color: yellow;">
                                                 <i class="glyphicon glyphicon-plus"></i>
                                                 <i class="glyphicon glyphicon-usd"></i>
                                             </span>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                    {{--thưởng quản lý đơn hàng--}}
+                                    @if(!empty($orderConstructionId))
+                                        <tr class="@if($n_o%2) info @endif ">
+                                            <td class="text-center">
+                                                {!! $n_o += 1 !!}
+                                            </td>
+                                            <td>
+                                                {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!} -- {!! $orderConstructionId !!}
+                                            </td>
+                                            <td>
+                                                <a class="qc-link-green" href="{!! route('qc.work.bonus.get') !!}"
+                                                   title="Xem thông tin thưởng">
+                                                    Xem
+                                                </a>
+                                                @if($staffNotify->checkNewInfo())
+                                                    <em style="color: red;"> - Chưa xem</em>
+                                                @else
+                                                    <em style="color: grey;">- Đã xem</em>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <span style="color: red;">{!! $staffNotify->note() !!}:</span>
+                                                <a class="qc-link-green-bold"
+                                                   href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderConstructionId) !!}">
+                                                    {!! $dataBonus->orderConstruction->name() !!}
+                                                </a>
+                                            <span style="background-color: red; padding: 3px; color: yellow;">
+                                                <i class="glyphicon glyphicon-plus"></i>
+                                                <i class="glyphicon glyphicon-usd"></i>
+                                            </span>
+                                            </td>
+                                        </tr>
+                                    @endif
                                     {{--Phat--}}
                                 @elseif(!$hFunction->checkEmpty($minusMoneyId))
                                     <?php
@@ -259,7 +297,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                             </td>
                                         </tr>
                                     @endif
-                                    {{--Phat quan ly thi cong--}}
+                                    {{--Phat quan ly, triển khai thi cong--}}
                                     @if(!empty($orderConstructionId))
                                         <tr class="@if($n_o%2) info @endif ">
                                             <td class="text-center">

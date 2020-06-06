@@ -132,6 +132,12 @@ class QcCompany extends Model
         return $this->hasManyThrough('App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment', 'App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'company_id','work_id','detail_id');
     }*/
 
+    #----------- chuyen tien ------------
+    public function transfer()
+    {
+        return $this->hasMany('App\Models\Ad3d\Transfers\QcTransfers', 'company_id', 'company_id');
+    }
+
     #----------- ngay nghi he thong ------------
     public function systemDateOff()
     {
@@ -506,11 +512,12 @@ class QcCompany extends Model
     {
         $modelOrderPay = new QcOrderPay();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $listStaffId = $modelCompanyStaffWork->listStaffIdOfListCompanyId([$companyId]);
+        $totalMoney = 0;
+        //$listStaffId = $modelCompanyStaffWork->listStaffIdOfListCompanyId([$companyId]);
         # thu tien tu đơn hàng
-        $totalOrderPay = $modelOrderPay->totalMoneyOfListStaffAndDate($listStaffId, $dateFilter);
+        //$totalOrderPay = $modelOrderPay->totalMoneyOfListStaffAndDate($listStaffId, $dateFilter);
         # thu tu cong ty me
-        return $totalOrderPay;
+        return $totalMoney;
     }
 
     # tong tien da thu cua cong ty theo thoi gian

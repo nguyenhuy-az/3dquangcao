@@ -37,6 +37,8 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                 <th class="text-center" style="width: 20px;"></th>
                                 <th>Ngày nhận</th>
                                 <th>Người giao</th>
+                                <th>Hình thức</th>
+                                <th>Ghi chú</th>
                                 <th class="text-center">Xác nhận</th>
                                 <th class="text-right">Số tiền</th>
                             </tr>
@@ -60,6 +62,7 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                         @endfor
                                     </select>
                                 </td>
+                                <td></td>
                                 <td></td>
                                 <td class="text-center"></td>
                                 <td class="text-right"></td>
@@ -86,25 +89,31 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                         <td>
                                             <span>{!! $transfer->transfersStaff->fullname() !!}</span>
                                         </td>
+                                        <td>
+                                            {!! $transfer->transferTypeName() !!}
+                                        </td>
+                                        <td>
+                                            {!! $transfer->reason() !!}
+                                        </td>
                                         <td class="text-center qc-color-grey qc-padding-none">
                                             @if($transfer->checkConfirmReceive())
                                                 <em>Đã xác nhận</em>
                                             @else
-                                                <a class="qc_receive_confirm_act qc-link-green"
+                                                <a class="qc_receive_confirm_act qc-link-red"
                                                    data-money="{!! $transferMoney !!}"
                                                    data-href="{!! route('qc.work.money.transfer.receive.confirm.get',$transferId) !!}">
                                                     Xác nhận
                                                 </a>
                                             @endif
                                         </td>
-                                        <td class="text-right qc-padding-none">
+                                        <td class="text-right">
                                             {!! $hFunction->currencyFormat($transfer->money()) !!}
                                         </td>
                                     </tr>
                                 @endforeach
                                 <tr>
                                     <td class="text-right qc-color-red"
-                                        style="background-color: whitesmoke;" colspan="4">
+                                        style="background-color: whitesmoke;" colspan="6">
                                     </td>
                                     <td class="text-right qc-color-red">
                                         {!! $hFunction->currencyFormat($totalMoney)  !!}
@@ -112,7 +121,7 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="6">
+                                    <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="8">
                                         <em class="qc-color-red">Không có thông tin nhận tiền</em>
                                     </td>
                                 </tr>

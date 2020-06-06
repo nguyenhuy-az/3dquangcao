@@ -17,6 +17,11 @@ $workId = $dataWork->workId();
 @extends('work.work-allocation.index')
 @section('qc_work_allocation_body')
     <div class="row">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom: 5px;">
+            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                Về trang trước
+            </a>
+        </div>
         <div class="qc_work_allocation_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.work-allocation.menu',compact('modelStaff'))
 
@@ -43,7 +48,22 @@ $workId = $dataWork->workId();
                             </tr>
                             <tr>
                                 <td></td>
-                                <td></td>
+                                <td style="padding: 0;">
+                                    <select class="cbWorkAllocationFinishStatus form-control"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100"
+                                                @if($finishStatus == 100) selected="selected" @endif>
+                                            Tất cả
+                                        </option>
+                                        <option value="0" @if($finishStatus == 0) selected="selected" @endif>
+                                            Chưa Xong
+                                        </option>
+                                        <option value="1"
+                                                @if($finishStatus == 1) selected="selected" @endif>
+                                            Đã Xong
+                                        </option>
+                                    </select>
+                                </td>
                                 <td></td>
                                 <td></td>
                                 <td class="text-center" style="padding:0;">
@@ -52,10 +72,10 @@ $workId = $dataWork->workId();
                                         <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả tháng
                                         </option>
-                                        @for($i =1;$i<= 12; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if((int)$monthFilter == $i) selected="selected" @endif>
-                                                Tháng {!! $i !!}
+                                        @for($m =1;$m<= 12; $m++)
+                                            <option value="{!! $m !!}"
+                                                    @if((int)$monthFilter == $m) selected="selected" @endif>
+                                                Tháng {!! $m !!}
                                             </option>
                                         @endfor
                                     </select>
@@ -65,12 +85,14 @@ $workId = $dataWork->workId();
                                         <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả năm
                                         </option>
-                                        @for($i =2017;$i<= 2050; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                        @for($y =2017;$y<= 2050; $y++)
+                                            <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                                {!! $y !!}
+                                            </option>
                                         @endfor
                                     </select>
                                 </td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -177,22 +199,20 @@ $workId = $dataWork->workId();
                                         </td>
                                     </tr>
                                 @endforeach
+                                    <tr>
+                                        <td class="text-center" colspan="9">
+                                            {!! $hFunction->page($dataWorkAllocation) !!}
+                                        </td>
+                                    </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="8">
+                                    <td class="text-center" colspan="9">
                                         <span class="qc-color-red">Không có công việc</span>
                                     </td>
                                 </tr>
                             @endif
                         </table>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <a class="btn btn-primary" href="{!! route('qc.work.home') !!}">
-                        Về Trang chủ
-                    </a>
                 </div>
             </div>
         </div>

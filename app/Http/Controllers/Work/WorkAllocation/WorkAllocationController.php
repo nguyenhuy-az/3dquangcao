@@ -15,7 +15,7 @@ use App\Http\Controllers\Controller;
 
 class WorkAllocationController extends Controller
 {
-    public function index($monthFilter = null,$yearFilter = null)
+    public function index($finishStatus = 0, $monthFilter = 0,$yearFilter = 0)
     {
         $modelStaff = new QcStaff();
         if ($modelStaff->checkLogin()) {
@@ -24,15 +24,14 @@ class WorkAllocationController extends Controller
             ];
             $dateFilter = null;
             if ($monthFilter == 0 && $yearFilter == 0) { //khong chon thoi gian xem
-                $monthFilter = date('m');
-                $yearFilter = date('Y');
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            } elseif ($monthFilter == 100 && $yearFilter == null) { //xam tat ca cac thang va khong chon nam
+                $monthFilter = 100;
+                $yearFilter = 100;
+            } elseif ($monthFilter == 100 && $yearFilter == 0) { //xam tat ca cac thang va khong chon nam
                 $yearFilter = date('Y');
                 $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
             } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter == 100) { //co chon thang va khong chon nam
-                $monthFilter = 100;
-                $dateFilter = null;
+                $yearFilter = date('Y');
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
             } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //co chon thang va chon nam
                 $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
             } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
@@ -45,8 +44,8 @@ class WorkAllocationController extends Controller
                 $yearFilter = date('Y');
             }
             $dataStaff = $modelStaff->loginStaffInfo();
-            $dataWorkAllocation = $dataStaff->workAllocationOfStaffReceive($dataStaff->staffId(),$dateFilter);
-            return view('work.work-allocation.work-allocation.index', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataWorkAllocation','monthFilter','yearFilter'));
+            $dataWorkAllocation = $dataStaff->selectWorkAllocationOfStaffReceive($dataStaff->staffId(),$finishStatus,$dateFilter)->paginate(50);
+            return view('work.work-allocation.work-allocation.index', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataWorkAllocation','finishStatus','monthFilter','yearFilter'));
         } else {
             return view('work.login');
         }

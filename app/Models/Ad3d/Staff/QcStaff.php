@@ -418,6 +418,13 @@ class QcStaff extends Model
         return $modelOrdersAllocation->infoOfReceiveStaff($this->checkIdNull($staffId), $date);
     }
 
+    public function selectOrderAllocationInfoOfReceiveStaff($staffId, $date, $finishStatus = 100)
+    {
+        $modelOrdersAllocation = new QcOrderAllocation();
+        return $modelOrdersAllocation->selectInfoOfReceiveStaff($this->checkIdNull($staffId), $date, $finishStatus);
+    }
+
+
     public function orderAllocationAllocationStaff()
     {
         return $this->hasMany('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'allocationStaff_id', 'staff_id');
@@ -439,6 +446,12 @@ class QcStaff extends Model
     {
         $modelWorkAllocation = new QcWorkAllocation();
         return $modelWorkAllocation->infoOfStaffReceive($staffId, $dateFilter);
+    }
+
+    public function selectWorkAllocationOfStaffReceive($staffId, $finishStatus = 100, $dateFilter = null)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+        return $modelWorkAllocation->selectInfoOfStaffReceive($staffId, $finishStatus, $dateFilter);
     }
 
     #lay thong tin phan cong dang nhan
@@ -692,8 +705,9 @@ class QcStaff extends Model
     public function selectOrderNoCancelAndPayInfoOfStaffReceive($staffId = null, $date = null, $paymentStatus = null, $finishStatus = null, $orderKeyword = null)
     {
         $modelOrder = new QcOrder();
-        return $modelOrder->selectInfoNoCancelAndPayOfStaffReceive($this->checkIdNull($staffId), $date, $paymentStatus, $finishStatus,$orderKeyword);
+        return $modelOrder->selectInfoNoCancelAndPayOfStaffReceive($this->checkIdNull($staffId), $date, $paymentStatus, $finishStatus, $orderKeyword);
     }
+
     public function orderNoCancelAndPayInfoOfStaffReceive($staffId = null, $date = null, $paymentStatus = null, $orderKeyword = null)
     {
         $modelOrder = new QcOrder();
@@ -737,12 +751,14 @@ class QcStaff extends Model
         return $this->hasMany('App\Models\Ad3d\OrderPay\QcOrderPay', 'staff_id', 'staff_id');
     }
 
+    # tat ca tien thu don hang chua giao
     public function orderPayInfoOfStaff($staffId, $date, $orderBy = 'DESC')
     {
         $modelOrderPay = new QcOrderPay();
         return $modelOrderPay->infoOfStaff($this->checkIdNull($staffId), $date, $orderBy);
     }
 
+    # tien thu don hang chua giao
     public function orderPayNoTransferOfStaff($staffId, $date = null, $orderBy = 'DESC')
     {
         $modelOrderPay = new QcOrderPay();
@@ -873,6 +889,20 @@ class QcStaff extends Model
     {
         $modelTransfers = new QcTransfers();
         return $modelTransfers->infoConfirmedOfReceiveStaff($staffId, $date);
+    }
+
+    # tong tien nhan chuyen tu thu don hang va da xac nhan
+    public function totalMoneyReceiveTransferOrderPayConfirmed($staffId, $date = null)
+    {
+        $modelTransfer = new QcTransfers();
+        return $modelTransfer->totalMoneyReceivedFromOrderPayOfStaffAndDate($staffId, $date);
+    }
+
+    # tong tien nhan chuyen tu dau tu va da xac nhan
+    public function totalMoneyReceiveTransferInvestmentConfirmed($staffId, $date = null)
+    {
+        $modelTransfer = new QcTransfers();
+        return $modelTransfer->totalMoneyReceivedFromInvestmentOfStaffAndDate($staffId, $date);
     }
 
     //----------- GIU TIEN ------------

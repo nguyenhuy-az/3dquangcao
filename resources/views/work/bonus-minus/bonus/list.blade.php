@@ -22,7 +22,7 @@ $hrefIndex = route('qc.work.bonus.get');
                             <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Ngày</th>
-                                <th>Nguyên nhân</th>
+                                <th>Lý do</th>
                                 <th>Ghi chú</th>
                                 <th class="text-center">Áp dụng</th>
                                 <th class="text-right">Số tiền</th>
@@ -66,14 +66,15 @@ $hrefIndex = route('qc.work.bonus.get');
                                 ?>
                                 @foreach($dataBonus as $bonus)
                                     <?php
-                                        $orderAllocationId = $bonus->orderAllocationId();
-                                        $cancelStatus = $bonus->checkCancelStatus();
-                                        if ($cancelStatus) {
-                                            $money = 0;
-                                        } else {
-                                            $money = $bonus->money();
-                                        }
-                                        $totalMoney = $totalMoney + $money;
+                                    $orderAllocationId = $bonus->orderAllocationId();
+                                    $orderConstructionId = $bonus->orderConstructionId();
+                                    $cancelStatus = $bonus->checkCancelStatus();
+                                    if ($cancelStatus) {
+                                        $money = 0;
+                                    } else {
+                                        $money = $bonus->money();
+                                    }
+                                    $totalMoney = $totalMoney + $money;
                                     ?>
                                     <tr @if($n_o%2) class="info" @endif>
                                         <td class="text-center">
@@ -88,7 +89,11 @@ $hrefIndex = route('qc.work.bonus.get');
                                         <td>
                                             @if(!$hFunction->checkEmpty($orderAllocationId))
                                                 <em>Đơn hàng:</em>
-                                                <b>{!! $bonus->orderAllocation->orders->name() !!}</b>
+                                                <b style="color: red;">{!! $bonus->orderAllocation->orders->name() !!}</b>
+                                            @endif
+                                            @if(!$hFunction->checkEmpty($orderConstructionId))
+                                                <em>Đơn hàng:</em>
+                                                <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
                                             @endif
                                         </td>
                                         <td class="text-center">
@@ -103,16 +108,18 @@ $hrefIndex = route('qc.work.bonus.get');
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            {!! $hFunction->currencyFormat($money) !!}
+                                            <span style="color: blue;">
+                                                {!! $hFunction->currencyFormat($money) !!}
+                                            </span>
                                         </td>
                                     </tr>
                                 @endforeach
-                                    <tr>
-                                        <td colspan="5" style="background-color: black;"></td>
-                                        <td class="text-right">
-                                            <b style="color: red;">{!! $hFunction->currencyFormat($totalMoney) !!}</b>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td colspan="5" style="background-color: black;"></td>
+                                    <td class="text-right">
+                                        <b style="color: red;">{!! $hFunction->currencyFormat($totalMoney) !!}</b>
+                                    </td>
+                                </tr>
                             @else
                                 <tr>
                                     <td class="text-center qc-padding-none" colspan="6">

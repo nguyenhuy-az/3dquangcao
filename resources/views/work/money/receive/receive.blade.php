@@ -14,12 +14,12 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaffLogin->staffId();
 $totalReceiveMoney = 0;
 # tong chi
-$totalPaidMoney = $dataStaffLogin->totalPaidMoney($loginStaffId,$dateFilter);
+//$totalPaidMoney = $dataStaffLogin->totalPaidMoney($loginStaffId, $dateFilter);
 
 # tong tien giao chua xac nhan
-$totalMoneyTransferUnConfirm = $dataStaffLogin->totalMoneyTransferUnConfirmed($loginStaffId,$dateFilter);
+//$totalMoneyTransferUnConfirm = $dataStaffLogin->totalMoneyTransferUnConfirmed($loginStaffId, $dateFilter);
 # tong tien giao da xac nhan dong y
-$totalMoneyTransferConfirmedAndAccepted = $dataStaffLogin->totalMoneyTransferConfirmedAndAccepted($loginStaffId,$dateFilter);
+//$totalMoneyTransferConfirmedAndAccepted = $dataStaffLogin->totalMoneyTransferConfirmedAndAccepted($loginStaffId, $dateFilter);
 ?>
 @extends('work.index')
 @section('titlePage')
@@ -57,6 +57,9 @@ $totalMoneyTransferConfirmedAndAccepted = $dataStaffLogin->totalMoneyTransferCon
                                         <td style="padding: 0">
                                             <select class="qc_work_money_receive_filter_month" style="height: 25px;"
                                                     data-href="{!! route('qc.work.money.receive.get') !!}">
+                                                <option value="100" @if($monthFilter == 100) selected="selected" @endif>
+                                                    Tất cả
+                                                </option>
                                                 @for($m = 1; $m <=12; $m++)
                                                     <option @if($monthFilter == $m) selected="selected" @endif>
                                                         {!! $m !!}
@@ -125,8 +128,8 @@ $totalMoneyTransferConfirmedAndAccepted = $dataStaffLogin->totalMoneyTransferCon
                                         </tr>
                                     @else
                                         <tr>
-                                            <td class="qc-padding-top-20 qc-padding-bot-20 text-center" colspan="7">
-                                                <em class="qc-color-red">Không có thông tin thu</em>
+                                            <td colspan="7" style="padding: 10px !important;">
+                                                <em class="qc-color-red">Không có thông tin thu chưa giao</em>
                                             </td>
                                         </tr>
                                     @endif
@@ -137,14 +140,13 @@ $totalMoneyTransferConfirmedAndAccepted = $dataStaffLogin->totalMoneyTransferCon
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <div class="form-group form-group-sm"
                                              style="border-bottom: 1px dashed #d7d7d7;">
-                                            <label class="qc-color-red">Giao tiền</label>
+                                            <b style="background-color: red; padding: 5px; color: white;">
+                                                GIAO TIỀN CHO THỦ QUỸ
+                                            </b>
                                         </div>
                                     </div>
                                     @if($hFunction->checkCount($dataStaffReceiveTransfer))
-                                        <?php
-                                        $transferMoney = $totalReceiveMoney - $totalPaidMoney - $totalMoneyTransferUnConfirm - $totalMoneyTransferConfirmedAndAccepted;
-                                        ?>
-                                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                                             <div class="form-group form-group-sm">
                                                 <label>Tiền đã thu:</label>
                                                 <input class="form-control" type="text" name="txtTotalReceiveMoney"
@@ -152,56 +154,34 @@ $totalMoneyTransferConfirmedAndAccepted = $dataStaffLogin->totalMoneyTransferCon
                                                        value="{!! $hFunction->currencyFormat($totalReceiveMoney) !!}">
                                             </div>
                                         </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
-                                            <div class="form-group form-group-sm">
-                                                <label>Số tiền đã chi:</label>
-                                                <input class="form-control" type="text" name="txtTotalPaidMoney"
-                                                       readonly
-                                                       value="{!! $hFunction->currencyFormat($totalPaidMoney) !!}">
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
-                                            <div class="form-group form-group-sm">
-                                                <label>Tiền giao chưa xác nhận:</label>
-                                                <input class="form-control" type="text" name="txtTotalMoneyTransferUnConfirm" readonly
-                                                       value="{!! $hFunction->currencyFormat($totalMoneyTransferUnConfirm) !!}">
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
-                                            <div class="form-group form-group-sm">
-                                                <label>Tiền giao đã xác nhận:</label>
-                                                <input class="form-control" type="text" name="txtTotalMoneyTransferConfirmed" readonly
-                                                       value="{!! $hFunction->currencyFormat($totalMoneyTransferConfirmedAndAccepted) !!}">
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                                             <div class="form-group form-group-sm">
                                                 <label>Số tiền giao:</label>
                                                 <input class="form-control" type="text" name="txtTransferMoney" readonly
-                                                       value="{!! $hFunction->currencyFormat($transferMoney) !!}">
+                                                       value="{!! $hFunction->currencyFormat($totalReceiveMoney) !!}">
                                             </div>
                                         </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
-                                                <div class="form-group form-group-sm">
-                                                    <label>Người nhận</label> <em style="color: red;">(Từ công ty mẹ)</em>
-                                                    <select class="form-control" name="cbStaffReceive">
-                                                        <option value="">Chọn người nhận</option>
-                                                        @if($hFunction->checkCount($dataStaffReceiveTransfer))
-                                                            @foreach($dataStaffReceiveTransfer as $staff)
-                                                                <option value="{!! $staff->staffId() !!}">{!! $staff->fullname() !!}</option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
-                                                </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                            <div class="form-group form-group-sm">
+                                                <label>Người nhận</label> <em style="color: red;">(Là thủ quỹ cty)</em>
+                                                <select class="form-control" name="cbStaffReceive">
+                                                    <option value="">Chọn người nhận</option>
+                                                    @if($hFunction->checkCount($dataStaffReceiveTransfer))
+                                                        @foreach($dataStaffReceiveTransfer as $staff)
+                                                            <option value="{!! $staff->staffId() !!}">{!! $staff->fullname() !!}</option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
                                             </div>
-                                        @if($transferMoney > 0)
-                                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
-                                                <div class="form-group form-group-sm">
-                                                    <label>Ảnh xác nhận:</label>
-                                                    <input class="txtTransferImage" type="file" name="txtTransferImage">
-                                                </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                                            <div class="form-group form-group-sm">
+                                                <label>Ảnh xác nhận:</label>
+                                                <input class="txtTransferImage" type="file" name="txtTransferImage">
                                             </div>
-                                            <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+                                        </div>
+                                        @if($totalReceiveMoney > 0)
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <div class="form-group form-group-sm">
                                                     <label>Ghi chú:</label>
                                                     <input class="form-control" type="text" name="txtNote" value="">
@@ -220,8 +200,10 @@ $totalMoneyTransferConfirmedAndAccepted = $dataStaffLogin->totalMoneyTransferCon
                                             </div>
                                         @else
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                <div class="text-center form-group form-group-sm">
-                                                    <label style="font-size: 1.5em; color: deeppink;">Không có tiền để giao</label>
+                                                <div class="form-group form-group-sm">
+                                                    <span style="font-size: 1.5em; color: deeppink;">
+                                                        Không có tiền để giao
+                                                    </span>
                                                 </div>
                                             </div>
                                         @endif

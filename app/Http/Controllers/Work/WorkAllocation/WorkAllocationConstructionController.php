@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 class WorkAllocationConstructionController extends Controller
 {
     // danh sach cong trinh dc ban giao
-    public function index($finishStatus = 0,$monthFilter = 0, $yearFilter = 0)
+    public function index($finishStatus = 0, $monthFilter = 0, $yearFilter = 0)
     {
         $modelStaff = new QcStaff();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
@@ -29,15 +29,14 @@ class WorkAllocationConstructionController extends Controller
             $loginStaffId = $dataStaffLogin->staffId();
             $dateFilter = null;
             if ($monthFilter == 0 && $yearFilter == 0) { //khong chon thoi gian xem
-                $monthFilter = 100;// date('m');
-                $yearFilter = 100;// date('Y');
-                //$dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            } elseif ($monthFilter == 100 && $yearFilter == null) { //xam tat ca cac thang va khong chon nam
+                $monthFilter = 100;
+                $yearFilter = 100;
+            } elseif ($monthFilter == 100 && $yearFilter == 0) { //xam tat ca cac thang va khong chon nam
                 $yearFilter = date('Y');
                 $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
             } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter == 100) { //co chon thang va khong chon nam
-                $monthFilter = 100;
-                $dateFilter = null;
+                $yearFilter = date('Y');
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
             } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //co chon thang va chon nam
                 $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
             } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
@@ -49,9 +48,8 @@ class WorkAllocationConstructionController extends Controller
                 $monthFilter = date('m');
                 $yearFilter = date('Y');
             }
-            $dataOrdersAllocation = null;
-            $dataOrdersAllocation = $dataStaffLogin->orderAllocationInfoOfReceiveStaff($loginStaffId, $dateFilter);
-            return view('work.work-allocation.construction.construction', compact('dataAccess', 'modelStaff','dataOrdersAllocation', 'dateFilter','finishStatus', 'monthFilter', 'yearFilter'));
+            $dataOrdersAllocation = $dataStaffLogin->selectOrderAllocationInfoOfReceiveStaff($loginStaffId, $dateFilter, $finishStatus)->paginate(50);
+            return view('work.work-allocation.construction.construction', compact('dataAccess', 'modelStaff', 'dataOrdersAllocation', 'dateFilter', 'finishStatus', 'monthFilter', 'yearFilter'));
         } else {
             return view('work.login');
         }

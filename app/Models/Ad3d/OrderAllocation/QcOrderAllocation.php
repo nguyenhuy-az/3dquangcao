@@ -117,16 +117,20 @@ class QcOrderAllocation extends Model
                     $receiveStaffId = $this->receiveStaffId($allocationId);
                     $dataWork = $modelStaff->firstInfoActivityToWork($receiveStaffId); # bang cham cong cua NV
                     if ($hFunction->checkCount($dataWork)) {
-                        #tien thuong hoan thanh thi cong
-                        $orderBonusPrice = $dataOrder->getBonusByOrderAllocation();
-                        if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Thưởng hoàn thành thi công', 0, $dataWork->workId(), $allocationId)) {
-                            $bonusId = $modelBonus->insertGetId();
-                            $receiveStaffId = (is_int($receiveStaffId)) ? $receiveStaffId : $receiveStaffId[0];
-                            # thong bao cho nguoi nhan thuong
-                            $modelStaffNotify->insert(null, $receiveStaffId, 'Thưởng hoàn thành thi công', null, null, $bonusId, null, null);
+                        $workId = $dataWork->workId();
+                        if (!$modelBonus->checkExistBonusWorkOfOrderAllocation($workId, $allocationId)) { # chua ap dung thuong
+                            #tien thuong hoan thanh thi cong
+                            $orderBonusPrice = $dataOrder->getBonusByOrderAllocation();
+                            if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Thưởng hoàn thành thi công', 0, $workId, $allocationId, null)) {
+                                $bonusId = $modelBonus->insertGetId();
+                                $receiveStaffId = (is_int($receiveStaffId)) ? $receiveStaffId : $receiveStaffId[0];
+                                # thong bao cho nguoi nhan thuong
+                                $modelStaffNotify->insert(null, $receiveStaffId, 'Thưởng hoàn thành thi công', null, null, $bonusId, null, null);
+                            }
                         }
                     }
                 }
+
             } else {
                 # xac nhan khong hoan thanh thi cong
                 # ap phat khong hoan thanh
@@ -144,7 +148,15 @@ class QcOrderAllocation extends Model
     public function confirmFinishFromFinishOrder($orderId, $finishStatus, $confirmFinish, $staffReportConformId)
     {
         $hFunction = new \Hfunction();
-        return QcOrderAllocation::where('order_id', $orderId)->where('action', 1)->update(
+        # lay thong tin ban giao thi cong chua xac nhan
+        $dataOrderAllocation = QcOrderAllocation::where('order_id', $orderId)->where('confirmStatus', 0)->get();
+        if ($hFunction->checkCount($dataOrderAllocation)) {
+            foreach ($dataOrderAllocation as $orderAllocation) {
+                $this->confirmFinishAllocation($orderAllocation->allocationId(), $confirmFinish, $staffReportConformId, $confirmNote = 'Kinh doanh báo kết thúc đơn hàng');
+            }
+        }
+        //
+        /*return QcOrderAllocation::where('order_id', $orderId)->where('action', 1)->update(
             [
                 'finishStatus' => $finishStatus,
                 'finishDate' => $hFunction->carbonNow(),
@@ -153,7 +165,7 @@ class QcOrderAllocation extends Model
                 'confirmFinish' => $confirmFinish,
                 'confirmStaff_id' => $staffReportConformId,
                 'action' => 0
-            ]);
+            ]);*/
     }
 
     //========== ========= ========= RELATION ========== ========= ==========
@@ -209,9 +221,26 @@ class QcOrderAllocation extends Model
     public function infoOfReceiveStaff($staffId, $date = null, $order = 'DESC')
     {
         if (!empty($date)) {
-            return QcOrderAllocation::where(['receiveStaff_id' => $staffId])->where('allocationDate', 'like', "%$date%")->orderBy('allocationDate', $order)->get();
+            return QcOrderAllocation::where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$date%")->orderBy('allocationDate', $order)->get();
         } else {
-            return QcOrderAllocation::where(['receiveStaff_id' => $staffId])->orderBy('allocationDate', $order)->get();
+            return QcOrderAllocation::where('receiveStaff_id', $staffId)->orderBy('allocationDate', $order)->get();
+        }
+    }
+
+    public function selectInfoOfReceiveStaff($staffId, $date = null, $finishStatus = 100, $order = 'DESC')
+    {
+        if (!empty($date)) {
+            if ($finishStatus == 100) {
+                return QcOrderAllocation::where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$date%")->orderBy('allocationDate', $order)->select('*');
+            } else {
+                return QcOrderAllocation::where('receiveStaff_id', $staffId)->where('finishStatus', $finishStatus)->where('allocationDate', 'like', "%$date%")->orderBy('allocationDate', $order)->select('*');
+            }
+        } else {
+            if ($finishStatus == 100) {
+                return QcOrderAllocation::where('receiveStaff_id', $staffId)->orderBy('allocationDate', $order)->select('*');
+            } else {
+                return QcOrderAllocation::where('receiveStaff_id', $staffId)->where('finishStatus', $finishStatus)->orderBy('allocationDate', $order)->select('*');
+            }
         }
     }
 
@@ -221,7 +250,7 @@ class QcOrderAllocation extends Model
         return QcOrderAllocation::where('receiveStaff_id', $receiveStaffId)->where('action', 1)->orderBy('receiveDeadline', 'ASC')->get();
     }
 
-    # lay thong tin viec da ket thuc cua nhan vien cua nhan vien
+    # lay thong tin viec da ket thuc cua nhan vien
     public function infoFinishOfStaffReceive($receiveStaffId)
     {
         return QcOrderAllocation::where('receiveStaff_id', $receiveStaffId)->where('action', 0)->orderBy('receiveDeadline', 'ASC')->get();
@@ -239,11 +268,16 @@ class QcOrderAllocation extends Model
         return QcOrderAllocation::where('order_id', $orderId)->where('paymentStatus', 1)->exists();
     }
 
+    # lấy thong tin thu ho don hang
+    public function infoPaymentStatusOfOrder($orderId)
+    {
+        return QcOrderAllocation::where('order_id', $orderId)->where('paymentStatus', 1)->get();
+    }
 
     # thong tin co xac nhan bao hoan thanh hoan thanh cua don hang
     public function infoFinishOfOrder($orderId)
     {
-        return QcOrderAllocation::where('order_id', $orderId)->where('finishStatus', 1)->where('confirmFinish', 1)->first();
+        return QcOrderAllocation::where('order_id', $orderId)->where('finishStatus', 1)->where('confirmStatus', 1)->where('confirmFinish', 1)->first();
     }
 
     # kiem tra don hang da co phan viec

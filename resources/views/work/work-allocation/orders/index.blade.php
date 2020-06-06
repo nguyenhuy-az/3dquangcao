@@ -20,6 +20,11 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
 @extends('work.work-allocation.index')
 @section('qc_work_allocation_body')
     <div class="row">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                Về trang trước
+            </a>
+        </div>
         <div class="qc_work_allocation_manage_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.work-allocation.menu',compact('modelStaff'))
 
@@ -396,11 +401,6 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                         </table>
                     </div>
                 </div>
-            </div>
-            <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <a class="btn btn-primary" href="{!! route('qc.work.home') !!}">
-                    Về Trang chủ
-                </a>
             </div>
         </div>
     </div>

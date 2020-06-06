@@ -205,11 +205,16 @@ $(document).ready(function () {
 });
 //------------ ---------- quan ly phan viec ----------- ---------
 $(document).ready(function () {
+    //Theo trạng thái hoàn thành
+    $('body').on('change', '.cbWorkAllocationFinishStatus', function () {
+        qc_main.url_replace($(this).data('href')+ '/' + $(this).val() + '/' + $('.cbWorkAllocationMonthFilter').val() + '/' + $('.cbWorkAllocationYearFilter').val());
+    });
+    // lọc theo ngay thang
     $('body').on('change', '.cbWorkAllocationMonthFilter', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.cbWorkAllocationYearFilter').val());
+        qc_main.url_replace($(this).data('href')+ '/' + $('.cbWorkAllocationFinishStatus').val() + '/' + $(this).val() + '/' + $('.cbWorkAllocationYearFilter').val());
     });
     $('body').on('change', '.cbWorkAllocationYearFilter', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbWorkAllocationMonthFilter').val() + '/' + $(this).val());
+        qc_main.url_replace($(this).data('href')+ '/' + $('.cbWorkAllocationFinishStatus').val() + '/' + $('.cbWorkAllocationMonthFilter').val() + '/' + $(this).val());
     });
     //form bao cao
     $('body').on('click', '.qc_work_allocation_report_act', function () {

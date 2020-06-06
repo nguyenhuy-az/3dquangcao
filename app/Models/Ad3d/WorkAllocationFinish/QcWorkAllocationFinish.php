@@ -15,7 +15,7 @@ class QcWorkAllocationFinish extends Model
     private $lastId;
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
-    //---------- th�m ----------
+    //---------- them ----------
     public function insert($finishDate, $finishStatus, $finishLevel, $finishReason, $noted, $allocationId)
     {
         $hFunction = new \Hfunction();
@@ -70,6 +70,11 @@ class QcWorkAllocationFinish extends Model
         } else {
             return false;
         }
+    }
+
+    public function listAllocationId()
+    {
+        return QcWorkAllocationFinish::select('*')->pluck('allocation_id');
     }
 
     //========= ========== ========== l?y th�ng tin ========== ========== ==========

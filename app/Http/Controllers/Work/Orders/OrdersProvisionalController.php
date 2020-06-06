@@ -26,7 +26,7 @@ class OrdersProvisionalController extends Controller
         $hFunction->dateDefaultHCM();
         if ($modelStaff->checkLogin()) {
             $dataAccess = [
-                'object' => 'orders'
+                'object' => 'ordersProvisional'
             ];
             $dataStaffLogin = $modelStaff->loginStaffInfo();
             $loginStaffId = $dataStaffLogin->staffId();
