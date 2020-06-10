@@ -19,6 +19,7 @@ use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\SystemDateOff\QcSystemDateOff;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
+use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
 
@@ -510,17 +511,28 @@ class QcCompany extends Model
     # tong tien da thu cua cong ty theo thoi gian
     public function statisticalTotalCollectMoney($companyId, $dateFilter = null)
     {
-        $modelOrderPay = new QcOrderPay();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $totalMoney = 0;
-        //$listStaffId = $modelCompanyStaffWork->listStaffIdOfListCompanyId([$companyId]);
         # thu tien tu đơn hàng
-        //$totalOrderPay = $modelOrderPay->totalMoneyOfListStaffAndDate($listStaffId, $dateFilter);
+        $statisticalTotalCollectMoneyFromOrderPay = $this->statisticalTotalCollectMoneyFromOrderPay($companyId, $dateFilter);
         # thu tu cong ty me
-        return $totalMoney;
+        $statisticalTotalCollectMoneyFromInvestment = $this->statisticalTotalCollectMoneyFromInvestment($companyId, $dateFilter);
+        return $statisticalTotalCollectMoneyFromOrderPay + $statisticalTotalCollectMoneyFromInvestment;
     }
 
-    # tong tien da thu cua cong ty theo thoi gian
+    # tong tien thu tu don hang cua cty
+    public function statisticalTotalCollectMoneyFromOrderPay($companyId, $dateFilter = null)
+    {
+        $modelTransfer = new QcTransfers();
+        return $modelTransfer->totalMoneyReceivedFromOrderPayOfCompanyAndDate($companyId, $dateFilter);
+    }
+
+    # tong tien thu tu dau tu cua cty
+    public function statisticalTotalCollectMoneyFromInvestment($companyId, $dateFilter = null)
+    {
+        $modelTransfer = new QcTransfers();
+        return $modelTransfer->totalMoneyReceivedFromInvestmentOfCompanyAndDate($companyId, $dateFilter);
+    }
+
+    # tong tien da thanh toan cua cong ty theo thoi gian
     public function statisticalTotalPaymentMoney($companyId, $dateFilter = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();

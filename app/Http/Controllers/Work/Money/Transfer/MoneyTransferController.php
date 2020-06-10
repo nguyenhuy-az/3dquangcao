@@ -13,6 +13,7 @@ use Request;
 
 class MoneyTransferController extends Controller
 {
+    #================================ chuyen tien ========================
     public function transferIndex($monthFilter = 0, $yearFilter = 0)
     {
         $hFunction = new \Hfunction();
@@ -49,6 +50,14 @@ class MoneyTransferController extends Controller
 
     }
 
+    public function transferView($transferId)
+    {
+        $modelTransfer = new QcTransfers();
+        $dataTransfer = $modelTransfer->getInfo($transferId);
+        return view('work.money.transfer.transfer-view', compact('dataAccess', 'modelStaff', 'dataTransfer'));
+    }
+
+    #================================ nhan tien ========================
     public function receiveIndex($monthFilter = 0, $yearFilter = 0)
     {
         $hFunction = new \Hfunction();
@@ -88,5 +97,10 @@ class MoneyTransferController extends Controller
     {
         $modelTransfer = new QcTransfers();
         $modelTransfer->updateConfirmReceive($transfersId, 'Xác nhận đã nhận tiền', 1);
+    }
+    public function receiveView($transferId){
+        $modelTransfer = new QcTransfers();
+        $dataTransfer = $modelTransfer->getInfo($transferId);
+        return view('work.money.transfer.receive-view', compact('dataAccess', 'modelStaff', 'dataTransfer'));
     }
 }

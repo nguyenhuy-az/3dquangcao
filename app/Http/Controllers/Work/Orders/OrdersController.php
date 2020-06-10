@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Work\Orders;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\Customer\QcCustomer;
+use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
@@ -32,13 +33,16 @@ class OrdersController extends Controller
         }
     }
 
-    public function index($finishStatus = 0,$monthFilter = 0, $yearFilter = 0, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null)
+    public function index($finishStatus = 0, $monthFilter = 0, $yearFilter = 0, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = 999999999)
     {
+        # $paymentStatus = tat ca / 0 chua thanh toan xong / 1- da thanh toan xong
         $hFunction = new \Hfunction();
+        $modelDepartment = new QcDepartment();
         $modelStaff = new QcStaff();
         $modelOrders = new QcOrder();
         $modelCustomer = new QcCustomer();
         $hFunction->dateDefaultHCM();
+        $manageStatus = false;
         $orderFilterName = ($orderFilterName == 'null') ? null : $orderFilterName;
         $orderCustomerFilterName = ($orderCustomerFilterName == 'null') ? null : $orderCustomerFilterName;
         $dataAccess = [
@@ -46,7 +50,9 @@ class OrdersController extends Controller
         ];
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $loginStaffId = $dataStaffLogin->staffId();
-        //$dateFilter = null;
+        $loginStaffCompanyId = $dataStaffLogin->companyId();
+        # kiem tra la nguoi quan ly
+        if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = true;
         if ($monthFilter == 100 && $yearFilter == 100) {//xem tất cả đơn hang
             $dateFilter = null;
         } elseif ($monthFilter < 100 && $yearFilter == 100) {
@@ -59,21 +65,43 @@ class OrdersController extends Controller
             $yearFilter = $hFunction->currentYear();
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         } elseif ($monthFilter == 0 && $yearFilter == 0) {
-            $dateFilter = null;// date('Y-m');
-            //$monthFilter = date('m');
-            //$yearFilter = date('Y');
-
+            $dateFilter = null;
         } else {
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
-        if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-            $dataOrderSelect = $modelOrders->selectInfoNoCancelOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus,$finishStatus);
+        # nhan vien cap quan ly
+        if ($manageStatus) {
+            #co tim theo ten don hang hoac khach hang
+            if (!$hFunction->checkEmpty($orderFilterName) || !$hFunction->checkEmpty($orderCustomerFilterName)) {
+                $staffFilterId = 0; # tat ca NV
+                #tim tren tat ca ca don hang
+                $staffSelectedId = $modelStaff->listIdOfListCompany([$loginStaffCompanyId]);
+            } else {
+                # mac dinh
+                if ($staffFilterId == 999999999) {
+                    $staffSelectedId = [$loginStaffId]; // nhan vien dang nhap
+                    $staffFilterId = $loginStaffId;
+                    //$staffFilterId = $modelStaff->listIdOfListCompany([$dataStaffLogin->companyId()]);
+                } elseif ($staffFilterId == 0) { // chon tat ca nhan vien cua cty
+                    $staffSelectedId = $modelStaff->listIdOfListCompany([$loginStaffCompanyId]);
+                } else {
+                    $staffSelectedId = [$staffFilterId];
+                }
+            }
+            # danh sach nhav kinh doanh
+            $dataStaffFilter = $modelStaff->infoOfCompany($loginStaffCompanyId, $modelDepartment->businessDepartmentId());
         } else {
-            $dataOrderSelect = $dataStaffLogin->selectOrderNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, $paymentStatus,$finishStatus, $orderFilterName);
+            $staffSelectedId = [$loginStaffId]; // nhan vien dang nhap
+            $dataStaffFilter = $modelStaff->getInfoByListStaffId([$loginStaffId]);
+        }
+        if (!$hFunction->checkEmpty($orderCustomerFilterName)) { # tim theo ten khach hang
+            $dataOrderSelect = $modelOrders->selectInfoNoCancelOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus, $finishStatus);
+        } else {
+            $dataOrderSelect = $dataStaffLogin->selectOrderNoCancelAndPayInfoOfListStaffReceive($staffSelectedId, $dateFilter, $paymentStatus, $finishStatus, $orderFilterName);
         }
         $dataOrders = $dataOrderSelect->paginate(50);
         $dataOrdersProvisional = $dataStaffLogin->orderProvisionNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, 0, null);
-        return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional', 'dataStaffLogin', 'dateFilter','finishStatus', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
+        return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional','dataStaffFilter','staffFilterId', 'dateFilter', 'finishStatus', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
 
     }
 
@@ -751,7 +779,7 @@ class OrdersController extends Controller
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($dataOrder)) {
             $pageBack = 1;
-            return view('work.orders.orders.order-info', compact('dataAccess', 'dataOrder', 'pageBack'));
+            return view('work.orders.orders.order-info', compact('modelStaff','dataAccess', 'dataOrder', 'pageBack'));
         }
     }
 

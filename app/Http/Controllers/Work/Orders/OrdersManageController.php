@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Work\Orders;
 
 use App\Models\Ad3d\Customer\QcCustomer;
+use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\Staff\QcStaff;
 use Illuminate\Http\Request;
@@ -10,10 +11,11 @@ use App\Http\Controllers\Controller;
 
 class OrdersManageController extends Controller
 {
-    public function index($finishStatus = 0,$monthFilter = 0, $yearFilter = 0, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null)
+    public function index($finishStatus = 0, $monthFilter = 0, $yearFilter = 0, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
         $modelOrders = new QcOrder();
         $modelCustomer = new QcCustomer();
         $hFunction->dateDefaultHCM();
@@ -45,13 +47,23 @@ class OrdersManageController extends Controller
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
         if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-            $dataOrderSelect = $modelOrders->selectInfoNoCancelOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus,$finishStatus);
+            $dataOrderSelect = $modelOrders->selectInfoNoCancelOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus, $finishStatus);
         } else {
-            $dataOrderSelect = $dataStaffLogin->selectOrderNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, $paymentStatus,$finishStatus, $orderFilterName);
+            $dataOrderSelect = $dataStaffLogin->selectOrderNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, $paymentStatus, $finishStatus, $orderFilterName);
         }
         $dataOrders = $dataOrderSelect->paginate(50);
         $dataOrdersProvisional = $dataStaffLogin->orderProvisionNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, 0, null);
-        return view('work.orders.manage.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional', 'dataStaffLogin', 'dateFilter','finishStatus', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
+        //$dataStaffReceiveTransfer = $modelStaff->infoActivityOfCompany($dataStaffLogin->companyId(), $modelDepartment->treasurerDepartmentId());
+
+        if ($staffFilterId > 0) {
+            //$listStaffId = [$staffFilterId];
+        } else {
+           // $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
+        }
+        if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) {
+
+        }
+        return view('work.orders.manage.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional', 'dataStaffLogin', 'dateFilter', 'finishStatus', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
 
     }
 }

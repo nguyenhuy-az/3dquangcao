@@ -57,7 +57,7 @@ $hFunction = new Hfunction();
                                     $monthOfFromDate = date('m', strtotime($fromDate));
                                     $yearOfFromDate = date('Y', strtotime($fromDate));
                                     // 2 = tong tien mua vat tu da duyet chua thanh toan
-                                    $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataStaff->staffId(), date('Y-m', strtotime($fromDate)), 1);
+                                    $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataStaff->staffId(), date('Y-m', strtotime($fromDate)), 2);
                                     # tien thuong da ap dung
                                     $totalBonusMoney = $salary->bonusMoney();
                                     # tien phat da ap dung

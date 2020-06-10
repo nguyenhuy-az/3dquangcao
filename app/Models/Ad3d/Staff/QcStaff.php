@@ -533,10 +533,11 @@ class QcStaff extends Model
     }
 
     # lay danh sach tat ca nv cua 1 cty
-    public function infoOfCompany($companyId)
+    public function infoOfCompany($companyId, $departmentId = null, $level = 1000)
     {
-        $modelCompanyStaffWord = new QcCompanyStaffWork();
-        return QcStaff::whereIn('staff_id', $modelCompanyStaffWord->staffIdOfCompany($companyId))->orderBy('lastName', 'ASC')->get();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdHasFilter($companyId, $departmentId, $level);
+        return QcStaff::whereIn('staff_id', $listStaffId)->orderBy('lastName', 'ASC')->get();
     }
 
     # lay danh sach tat ca nv dang hoat dong cua 1 cty
@@ -707,6 +708,14 @@ class QcStaff extends Model
         $modelOrder = new QcOrder();
         return $modelOrder->selectInfoNoCancelAndPayOfStaffReceive($this->checkIdNull($staffId), $date, $paymentStatus, $finishStatus, $orderKeyword);
     }
+
+    // lay thong tin don hang da thanh toan hoac chưa thanh toan theo tg - khong huy cua 1 hoac nhieu nguoi
+    public function selectOrderNoCancelAndPayInfoOfListStaffReceive($listStaffId, $date = null, $paymentStatus = null, $finishStatus = null, $orderKeyword = null)
+    {
+        $modelOrder = new QcOrder();
+        return $modelOrder->selectInfoNoCancelAndPayOfListStaffReceive($listStaffId, $date, $paymentStatus, $finishStatus, $orderKeyword);
+    }
+
 
     public function orderNoCancelAndPayInfoOfStaffReceive($staffId = null, $date = null, $paymentStatus = null, $orderKeyword = null)
     {
@@ -1494,6 +1503,16 @@ class QcStaff extends Model
     # tong chi
     public function totalPaidMoney($staffId, $date = null) # thong tien nv giư cua cty
     {
+        #bien phi
+        $totalPaidMoneyVariable = $this->totalPaidMoneyVariable($staffId, $date);
+        #phi co dinh
+        $totalPaidMoneyPermanent = $this->totalPaidMoneyPermanent($staffId, $date);
+        return $totalPaidMoneyVariable + $totalPaidMoneyPermanent;
+    }
+
+    #bien phi
+    public function totalPaidMoneyVariable($staffId, $date = null)
+    {
         #chi ứng luong
         $totalMoneyPaidSalaryBeforePay = $this->totalMoneyPaidSalaryBeforePayOfStaffAndDate($staffId, $date);
 
@@ -1502,16 +1521,19 @@ class QcStaff extends Model
 
         #chi thanh toan mua vat tu - da duoc duyet
         $totalMoneyPayImport = $this->totalMoneyImportPayConfirmOfStaffAndDate($staffId, $date);
-
-        #chi hoat dong - da duoc duyet
-        $totalMoneyPayActivity = $this->totalMoneyPayActivityConfirmedAndInvalidOfStaff($staffId, $date);
-
         #hoan tien don hang
         $totalPaidOrderCancelOfStaffAndDate = $this->totalPaidOrderCancelOfStaffAndDate($staffId, $date);
 
-        return $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay + $totalMoneyPayImport + $totalMoneyPayActivity + $totalPaidOrderCancelOfStaffAndDate;
+        return $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay + $totalMoneyPayImport + $totalPaidOrderCancelOfStaffAndDate;
     }
 
+    #phi co dinh
+    public function totalPaidMoneyPermanent($staffId, $date = null)
+    {
+        #chi hoat dong - da duoc duyet
+        $totalMoneyPayActivity = $this->totalMoneyPayActivityConfirmedAndInvalidOfStaff($staffId, $date);
+        return $totalMoneyPayActivity;
+    }
 
 
     # ------- -------- TONG CHI -------- ------

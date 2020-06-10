@@ -10,6 +10,8 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$dataStaffLogin = $modelStaff->loginStaffInfo();
+$loginStaffId = $dataStaffLogin->staffId();
 # thong tin don hang
 $orderId = $dataOrder->orderId();
 $customerId = $dataOrder->customerId();
@@ -610,7 +612,8 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                     <tr style="background-color: black; color: yellow;">
                                         <th class="text-center" style="width: 20px;">STT</th>
                                         <th>Ngày</th>
-                                        <th>Tên</th>
+                                        <th>Người thu</th>
+                                        <th>Tên người nộp</th>
                                         <th>Ghi chú</th>
                                         <th class="text-center">Điện thoại</th>
                                         <th class="text-right">Số tiền</th>
@@ -621,12 +624,18 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                     ?>
                                     @if($hFunction->checkCount($dataOrderPay))
                                         @foreach($dataOrderPay as $orderPay)
+                                            <?php
+                                            $payId = $orderPay->payId();
+                                            ?>
                                             <tr>
                                                 <td class="text-center">
                                                     {!! $n_o_pay =(isset($n_o_pay)?$n_o_pay+1: 1) !!}
                                                 </td>
                                                 <td>
                                                     {!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}
+                                                </td>
+                                                <td>
+                                                    {!! $orderPay->staff->fullName() !!}
                                                 </td>
                                                 <td>
                                                     @if(!empty($orderPay->payerName()))
@@ -650,11 +659,15 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                 </td>
                                                 <td class="text-center">
                                                     @if(!$cancelStatus)
-                                                        <a class="qc_work_order_info_payment_edit_act qc-link-red"
-                                                           data-href="{!! route('qc.work.orders.info.pay.edit.post',$orderPay->payId()) !!}"
-                                                           title="Sửa thanh toán">
-                                                            <i class=" glyphicon glyphicon-pencil"></i>
-                                                        </a>
+                                                        @if($orderPay->checkOwnerStatusOfStaff($loginStaffId,$payId))
+                                                            <a class="qc_work_order_info_payment_edit_act qc-link-red"
+                                                               data-href="{!! route('qc.work.orders.info.pay.edit.post',$payId) !!}"
+                                                               title="Sửa thanh toán">
+                                                                <i class=" glyphicon glyphicon-pencil"></i>
+                                                            </a>
+                                                        @else
+                                                            <em class="qc-color-grey">---</em>
+                                                        @endif
                                                     @else
                                                         <em class="qc-color-grey">---</em>
                                                     @endif
@@ -663,7 +676,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td class="text-center" colspan="7">
+                                            <td class="text-center" colspan="8">
                                                 Không có thông tin thanh toán
                                             </td>
                                         </tr>

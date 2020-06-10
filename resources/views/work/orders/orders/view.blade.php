@@ -250,7 +250,8 @@ $orderId = $dataOrders->orderId();
                                 <tr style="background-color: black; color: yellow;">
                                     <th class="text-center" style="width: 20px;">STT</th>
                                     <th>Ngày</th>
-                                    <th>Tên</th>
+                                    <th>Người thu</th>
+                                    <th>Người nộp</th>
                                     <th>Điện thoại</th>
                                     <th class="text-right">Số tiền</th>
                                 </tr>
@@ -266,6 +267,9 @@ $orderId = $dataOrders->orderId();
                                             </td>
                                             <td>
                                                 {!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}
+                                            </td>
+                                            <td>
+                                                {!! $orderPay->staff->fullName() !!}
                                             </td>
                                             <td>
                                                 @if(!$hFunction->checkEmpty($orderPay->payerName()))
@@ -288,7 +292,7 @@ $orderId = $dataOrders->orderId();
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td class="qc-padding-top-10" colspan="5">
+                                        <td class="qc-padding-top-10" colspan="6">
                                             @if($dataOrders->discount()== 100)
                                                 <em class="qc-color-red">Giảm 100%</em>
                                             @else

@@ -10,9 +10,12 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$dataStaffLogin = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaffLogin->staffId();
 #$totalMoneyOrder = $modelOrders->totalMoneyOfListOrder($dataOrders);
 $hrefIndex = route('qc.work.orders.get');
+$manageStatus = false;
+if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = true;
 ?>
 @extends('work.orders.index')
 @section('titlePage')
@@ -26,9 +29,26 @@ $hrefIndex = route('qc.work.orders.get');
                     Về trang trước
                 </a>
             </div>
-
-            @include('work.orders.menu')
-
+            <div class="row">
+                <div class="col-sx-12 col-sm-12 col-md-9 col-lg-9">
+                    @include('work.orders.menu')
+                </div>
+                <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                    <select class="qcWorkOrdersStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
+                        @if($manageStatus)
+                            <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                Tất cả nhân viên
+                            </option>
+                        @endif
+                        @if($hFunction->checkCount($dataStaffFilter))
+                            @foreach($dataStaffFilter as $staff)
+                                <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                        @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+            </div>
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_orders_list_content row"
@@ -111,7 +131,7 @@ $hrefIndex = route('qc.work.orders.get');
                                             </div>
                                         </div>
                                     </td>
-                                    <td style="padding: 0px;"   >
+                                    <td style="padding: 0px;">
                                         <div class="input-group">
                                             <input type="text" class="txtOrderCustomerFilterKeyword form-control"
                                                    name="txtOrderCustomerFilterKeyword"
@@ -140,12 +160,14 @@ $hrefIndex = route('qc.work.orders.get');
                                         </div>
                                     </td>
                                     <td class="text-center" style="width: 120px; padding: 0;">
-                                        <select class="qcWorkOrderMonthFilter" style="height: 25px;" data-href="{!! $hrefIndex !!}">
+                                        <select class="qcWorkOrderMonthFilter" style="height: 25px;"
+                                                data-href="{!! $hrefIndex !!}">
                                             <option value="100" @if($monthFilter == 100) selected="selected" @endif>
                                                 Tất cả
                                             </option>
                                             @for($m = 1; $m <=12; $m++)
-                                                <option value="{!! $m !!}" @if($monthFilter == $m) selected="selected" @endif>
+                                                <option value="{!! $m !!}"
+                                                        @if($monthFilter == $m) selected="selected" @endif>
                                                     {!! $m !!}
                                                 </option>
                                             @endfor
@@ -156,7 +178,8 @@ $hrefIndex = route('qc.work.orders.get');
                                                 Tất cả
                                             </option>
                                             @for($y = 2017; $y <=2050; $y++)
-                                                <option value="{!! $yearFilter !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                                <option value="{!! $yearFilter !!}"
+                                                        @if($yearFilter == $y) selected="selected" @endif>
                                                     {!! $y !!}
                                                 </option>
                                             @endfor
@@ -220,8 +243,10 @@ $hrefIndex = route('qc.work.orders.get');
                                         $checkDateOfSort = $hFunction->firstDateOfMonthFromDate(date('Y/m/d', strtotime("1-$monthFilter-$yearFilter")));
                                         $finishStatus = $orders->checkFinishStatus();
                                         $cancelStatus = $orders->checkCancelStatus();
-                                        $checkOrderOfReceiveStaff = ($loginStaffId == $orders->staffReceiveId()) ? true : false; // kiem tra don hang thuoc nguoi dang nhap
                                         # trien khai thi cong
+
+                                        # don cu nguoi dang nhap
+                                        $ownerStatus = $orders->checkOwnerStatus($loginStaffId,$orderId);
 
                                         ?>
                                         <tr class="qc_work_list_content_object @if($checkDateOfSort > $orderReceiveDate) danger @elseif($n_o%2) info @endif"
@@ -255,10 +280,13 @@ $hrefIndex = route('qc.work.orders.get');
                                                                 Chờ làm
                                                             </em><br/>
                                                         @endif
-                                                        <a class="qc_finish_report qc-link-green-bold"
-                                                           data-href="{!! route('work.orders.order.report.finish.get',$orderId) !!}">
-                                                            Báo hoàn thành
-                                                        </a>
+                                                        {{--nguoi so huu hoac là nguoi quan ly--}}
+                                                        @if($ownerStatus ||$manageStatus)
+                                                            <a class="qc_finish_report qc-link-green-bold"
+                                                               data-href="{!! route('work.orders.order.report.finish.get',$orderId) !!}">
+                                                                Báo hoàn thành
+                                                            </a>
+                                                        @endif
                                                     @endif
                                                 @else
                                                     <em style="color: brown;">Đã hủy</em>
@@ -270,7 +298,7 @@ $hrefIndex = route('qc.work.orders.get');
                                                         <a class="qc-link" title="Click xem menu">
                                                             {!! $orders->name() !!}
                                                         </a>
-                                                        @if(!$checkOrderOfReceiveStaff)
+                                                        @if(!$ownerStatus)
                                                             <br/>
                                                             <em class="qc-color-grey">
                                                                 Phụ trách: {!! $orders->staffReceive->lastName() !!}
@@ -280,7 +308,7 @@ $hrefIndex = route('qc.work.orders.get');
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                        @if($checkOrderOfReceiveStaff)
+                                                        @if($ownerStatus)
                                                             <a class="qc-link" title="Quản lý ĐH"
                                                                href="{!! route('qc.work.orders.info.get',$orderId) !!}">
                                                                 <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
@@ -305,7 +333,7 @@ $hrefIndex = route('qc.work.orders.get');
                                                                 </a>
                                                             @endif
                                                             @if(!$finishStatus)
-                                                                @if($orders->checkStaffInput($dataStaffLogin->staffId()))
+                                                                @if($ownerStatus)
                                                                     &nbsp;&nbsp;
                                                                     <a class="qc_delete qc-link-red"
                                                                        data-href="{!! route('qc.work.orders.order.delete.get',$orderId) !!}">
@@ -333,7 +361,7 @@ $hrefIndex = route('qc.work.orders.get');
                                                 <a class="qc-link-red"
                                                    href="{!! route('qc.work.orders.add.get',"1/$customerId/$orderId") !!}">
                                                     <i class="qc-font-size-14 glyphicon glyphicon-shopping-cart"
-                                                       title="Đặt hàng"></i>
+                                                       title="Tạo đơn hàng mới"></i>
                                                 </a>
                                                 <span>|</span>
                                                 <a class="qc-link-green"
@@ -363,7 +391,8 @@ $hrefIndex = route('qc.work.orders.get');
                                             <td class="text-center">
                                                 @if(!$cancelStatus)
                                                     @if(!$orders->checkFinishPayment())
-                                                        @if($checkOrderOfReceiveStaff)
+                                                        {{--chu so hua hoac quan ly--}}
+                                                        @if($ownerStatus || $manageStatus)
                                                             <a class="qc-link-red" title="Thanh toán đơn hàng"
                                                                href="{!! route('qc.work.orders.payment.get', $orderId) !!} ">
                                                                 Thanh toán <br/>

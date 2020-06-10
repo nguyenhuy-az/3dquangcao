@@ -14,13 +14,13 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaffLogin->staffId();
 $hrefFilter = route('qc.work.money.transfer.transfer.get');
 ?>
-@extends('work.index')
+@extends('work.money.transfer.index')
 @section('titlePage')
     Giao tiền
 @endsection
-@section('qc_work_body')
+@section('qc_work_money_transfer_body')
     <div class="row">
-        <div class="qc_work_money_receive_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="qc_work_money_transfer_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.money.money-menu')
             {{-- chi tiêt --}}
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -46,7 +46,8 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                     <select class="qc_work_money_transfer_filter_month" style="height: 30px;"
                                             data-href="{!! $hrefFilter !!}">
                                         @for($m = 1; $m <=12; $m++)
-                                            <option value="{!! $m !!}" @if($monthFilter == $m) selected="selected" @endif>
+                                            <option value="{!! $m !!}"
+                                                    @if($monthFilter == $m) selected="selected" @endif>
                                                 Tháng {!! $m !!}
                                             </option>
                                         @endfor
@@ -54,7 +55,8 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                     <select class="qc_work_money_transfer_filter_year" style="height: 30px;"
                                             data-href="{!! $hrefFilter !!}">
                                         @for($y = 2017; $y <=2050; $y++)
-                                            <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                            <option value="{!! $y !!}"
+                                                    @if($yearFilter == $y) selected="selected" @endif>
                                                 Năm {!! $y !!}
                                             </option>
                                         @endfor
@@ -71,6 +73,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                 ?>
                                 @foreach($dataTransfer as $transfer)
                                     <?php
+                                    $transfersId = $transfer->transfersId();
                                     $totalMoney = $totalMoney + $transfer->money();
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
@@ -78,7 +81,11 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                             {!! $n_o = $n_o + 1 !!}
                                         </td>
                                         <td>
-                                            {!! date('d/m/Y',strtotime($transfer->transfersDate()))  !!}
+                                            <a class="qcMoneyTransferView qc-link-green"
+                                               data-href="{!! route('qc.work.money.transfer.transfer.view',$transfersId) !!}">
+                                                {!! date('d/m/Y',strtotime($transfer->transfersDate()))  !!}
+                                                &nbsp; <i class="glyphicon glyphicon-eye-open"></i>
+                                            </a>
                                         </td>
                                         <td>
                                             <span>{!! $transfer->receiveStaff->fullname() !!}</span>
@@ -109,7 +116,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                             @else
                                 <tr>
                                     <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="6">
-                                        <em class="qc-color-red">Không có thông tin  giao tiền</em>
+                                        <em class="qc-color-red">Không có thông tin giao tiền</em>
                                     </td>
                                 </tr>
                             @endif

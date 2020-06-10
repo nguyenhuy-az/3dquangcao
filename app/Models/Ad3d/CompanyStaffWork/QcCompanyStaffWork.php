@@ -108,11 +108,11 @@ class QcCompanyStaffWork extends Model
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         if (!empty($departmentId) && $level < 1000) { # theo bo phan va cap bac
-            $listWorkId = $modelStaffWorkDepartment->workIdActivityOfDepartment($departmentId);
+            $listWorkId = $modelStaffWorkDepartment->workIdOfDepartment($departmentId);
             return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('level', $level)->pluck('staff_id');
         } elseif (!empty($departmentId) && $level == 1000) { # theo bo phan va ko can cap bac
-            $listWorkId = $modelStaffWorkDepartment->workIdActivityOfDepartment($departmentId);
-            return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('staff_id', $listWorkId)->pluck('staff_id');
+            $listWorkId = $modelStaffWorkDepartment->workIdOfDepartment($departmentId);
+            return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->pluck('staff_id');
         } elseif (empty($departmentId) && $level < 1000) { # theo cap bat, khong phan biet bo phan
             return QcCompanyStaffWork::where('company_id', $companyId)->where('level', $level)->pluck('staff_id');
         } else {

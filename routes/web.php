@@ -926,7 +926,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::post('finish/{orderId}', ['as' => 'work.orders.order.report.finish.post', 'uses' => 'Work\Orders\OrdersController@postReportFinish']);
         });
 
-        Route::get('/{finishStatus?}/{loginMonth?}/{loginYear?}/{paymentStatus?}/{orderFilterName?}/{customerName?}', ['as' => 'qc.work.orders.get', 'uses' => 'Work\Orders\OrdersController@index']);
+        Route::get('/{finishStatus?}/{loginMonth?}/{loginYear?}/{paymentStatus?}/{orderFilterName?}/{customerName?}/{staffFilterId?}', ['as' => 'qc.work.orders.get', 'uses' => 'Work\Orders\OrdersController@index']);
     });
 
     //quản lý thu chi
@@ -952,9 +952,11 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::group(['prefix' => 'transfer'], function () {
             # thong tin giao tien
             Route::get('transfer/{loginDay?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.transfer.transfer.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferIndex']);
+            Route::get('transfer-view/{transferId?}', ['as' => 'qc.work.money.transfer.transfer.view', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferView']);
             # thong tin nhan tien
             Route::get('receive-confirm/{transferId?}', ['as' => 'qc.work.money.transfer.receive.confirm.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveConfirm']);
             Route::get('receive/{dateFilter?}/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.money.transfer.receive.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveIndex']);
+            Route::get('receive-view/{transferId?}', ['as' => 'qc.work.money.transfer.receive.view', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveView']);
         });
 
         # thong ke

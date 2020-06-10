@@ -70,10 +70,16 @@ class QcOrderPay extends Model
     }
 
     //kiem tra thanh toan thuoc nhan vien
-    public function checkStaffInput($staffId, $orderId = null)
+    public function checkOwnerStatusOfStaff($staffId, $payId)
     {
-        $orderId = (empty($orderId)) ? $this->orderId() : $orderId;
-        return (QcOrderPay::where('staff_id', $staffId)->where('order_id', $orderId)->count() > 0) ? true : false;
+        return (QcOrderPay::where('staff_id', $staffId)->where('pay_id', $payId)->count() > 0) ? true : false;
+    }
+
+    //kiem tra thanh toan thuoc nhan vien
+    public function checkStaffInput($staffId, $payId = null)
+    {
+        $payId = (empty($payId)) ? $this->payId() : $payId;
+        return (QcOrderPay::where('staff_id', $staffId)->where('pay_id', $payId)->count() > 0) ? true : false;
     }
 
     public function infoOfStaff($staffId, $date, $orderBy = 'DESC')
@@ -86,12 +92,23 @@ class QcOrderPay extends Model
 
     }
 
+    # danh sach ma thanh toan cua 1 nv
     public function listOrderIdOfStaff($staffId, $date)
     {
         if (!empty($date)) {
             return QcOrderPay::where('staff_id', $staffId)->where('datePay', 'like', "%$date%")->groupBy('order_id')->pluck('order_id');
         } else {
             return QcOrderPay::where('staff_id', $staffId)->groupBy('order_id')->pluck('order_id');
+        }
+    }
+
+    # danh sach ma thanh toan cua 1 nv hoac nhieu nv
+    public function listOrderIdOfListStaff($listStaffId, $date)
+    {
+        if (!empty($date)) {
+            return QcOrderPay::whereIn('staff_id', $listStaffId)->where('datePay', 'like', "%$date%")->groupBy('order_id')->pluck('order_id');
+        } else {
+            return QcOrderPay::whereIn('staff_id', $listStaffId)->groupBy('order_id')->pluck('order_id');
         }
     }
 

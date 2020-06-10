@@ -8,8 +8,10 @@
 $hFunction = new Hfunction();
 $staffId = $dataStaff->staffId();
 #======  ======== THU ========= ===============
-// thu tien tu don hang
-$totalMoneyOrderPay = $dataStaff->totalReceiveMoneyFromOrderPay($staffId, $statisticDate);
+#tong thu tu don hang da xac nhan
+$statisticalTotalMoneyFromOrder = $dataStaff->totalMoneyReceiveTransferOrderPayConfirmed($staffId, $statisticDate);
+#tong thu tu dau tu da xac nhan
+$statisticalTotalMoneyFromInvestment = $dataStaff->totalMoneyReceiveTransferInvestmentConfirmed($staffId, $statisticDate);
 
 // tien duoc giao
 $totalReceivedMoneyOfStaffAndDate = $dataStaff->totalMoneyReceivedTransferOfStaffAndDate($staffId, $statisticDate);
@@ -68,12 +70,15 @@ $totalMoneyImportPayOfStaffAndDate = $dataStaff->totalMoneyImportPayConfirmOfSta
                                         -
                                     </td>
                                     <td>
-                                        <a class="qc_detail_view qc-link" title="Click để xem chi tiết" data-href="{!! route('qc.ad3d.statistic.revenue.company.staff.order_pay.view',"$staffId/$statisticDate") !!}">
+                                        {{--<a class="qc_detail_view qc-link" title="Click để xem chi tiết" data-href="{!! route('qc.ad3d.statistic.revenue.company.staff.order_pay.view',"$staffId/$statisticDate") !!}">
+                                            Thu tiền từ đơn hàng
+                                        </a>--}}
+                                        <a class="qc_detail_view qc-link" title="Click để xem chi tiết" data-href="{!! route('qc.ad3d.statistic.revenue.company.staff.receive_money.view',"$staffId/$statisticDate") !!}">
                                             Thu tiền từ đơn hàng
                                         </a>
                                     </td>
                                     <td class="text-right">
-                                        {!! $hFunction->currencyFormat($totalMoneyOrderPay)  !!}
+                                        {!! $hFunction->currencyFormat($statisticalTotalMoneyFromOrder)  !!}
                                     </td>
                                     <td class="text-right">
                                         0
@@ -84,12 +89,13 @@ $totalMoneyImportPayOfStaffAndDate = $dataStaff->totalMoneyImportPayConfirmOfSta
                                         -
                                     </td>
                                     <td>
-                                        <a class="qc_detail_view qc-link" title="Click để xem chi tiết" data-href="{!! route('qc.ad3d.statistic.revenue.company.staff.receive_money.view',"$staffId/$statisticDate") !!}">
-                                            Được giao tiền - "ĐÃ XÁC NHẬN"
-                                        </a>
+                                        {{--<a class="qc_detail_view qc-link" title="Click để xem chi tiết" data-href="{!! route('qc.ad3d.statistic.revenue.company.staff.receive_money.view',"$staffId/$statisticDate") !!}">
+                                            Thu tiền từ đầu tư
+                                        </a>--}}
+                                        <span>Thu tiền từ đầu tư</span>
                                     </td>
                                     <td class="text-right">
-                                        {!! $hFunction->currencyFormat($totalReceivedMoneyOfStaffAndDate)  !!}
+                                        {!! $hFunction->currencyFormat($statisticalTotalMoneyFromInvestment)  !!}
                                     </td>
                                     <td class="text-right">
                                         0
@@ -180,7 +186,7 @@ $totalMoneyImportPayOfStaffAndDate = $dataStaff->totalMoneyImportPayConfirmOfSta
 
                                     </td>
                                     <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($totalMoneyOrderPay + $totalReceivedMoneyOfStaffAndDate )  !!}
+                                        {!! $hFunction->currencyFormat($statisticalTotalMoneyFromOrder + $statisticalTotalMoneyFromInvestment )  !!}
                                     </td>
                                     <td class="text-right qc-color-red">
                                         {!! $hFunction->currencyFormat($totalPaidOrderCancelOfStaffAndDate + $totalMoneyPayActivity +  $totalMoneyPaidSalaryBeforePay + $totalMoneyPaidSalaryPay + $totalMoneyImportPayOfStaffAndDate)  !!}

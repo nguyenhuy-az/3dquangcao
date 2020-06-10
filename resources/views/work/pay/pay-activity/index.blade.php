@@ -12,12 +12,7 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $loginStaffId = $dataStaff->staffId();
 $currentMonth = $hFunction->currentMonth();
-if (empty($loginDay)) {
-    $loginDate = date('Y-m', strtotime("$loginYear-$loginMonth"));
-} else {
-    $loginDate = date('Y-m-d', strtotime("$loginYear-$loginMonth-$loginDay"));
-}
-$dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($loginStaffId, $confirmStatus, $loginDate);
+$hrefIndex = route('qc.work.pay.pay_activity.get');
 ?>
 @extends('work.index')
 @section('qc_work_body')
@@ -31,30 +26,30 @@ $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($loginStaffId,
                 <div class="row">
                     <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <select class="qc_work_import_login_day" style="height: 25px;"
-                                data-href="{!! route('qc.work.pay.pay_activity.get') !!}">
-                            <option value="0" @if($loginDay == null) selected="selected" @endif>
+                                data-href="{!! $hrefIndex !!}">
+                            <option value="0" @if($dayFilter == null) selected="selected" @endif>
                                 Trong tháng
                             </option>
-                            @for($i = 1; $i <=31; $i++)
-                                <option @if($loginDay == $i) selected="selected" @endif>
-                                    {!! $i !!}
+                            @for($d = 1; $d <=31; $d++)
+                                <option @if($dayFilter == $d) selected="selected" @endif>
+                                    {!! $d !!}
                                 </option>
                             @endfor
                         </select>
                         <select class="qc_work_import_login_month" style="height: 25px;"
-                                data-href="{!! route('qc.work.pay.pay_activity.get') !!}">
-                            @for($i = 1; $i <=12; $i++)
-                                <option @if($loginMonth == $i) selected="selected" @endif>
-                                    {!! $i !!}
+                                data-href="{!! $hrefIndex !!}">
+                            @for($m = 1; $m <=12; $m++)
+                                <option @if($monthFilter == $m) selected="selected" @endif>
+                                    {!! $m !!}
                                 </option>
                             @endfor
                         </select>
                         <span>/</span>
                         <select class="qc_work_import_login_year" style="height: 25px;"
-                                data-href="{!! route('qc.work.pay.pay_activity.get') !!}">
-                            @for($i = 2017; $i <=2050; $i++)
-                                <option @if($loginYear == $i) selected="selected" @endif>
-                                    {!! $i !!}
+                                data-href="{!! $hrefIndex !!}">
+                            @for($y = 2017; $y <=2050; $y++)
+                                <option @if($yearFilter == $y) selected="selected" @endif>
+                                    {!! $y !!}
                                 </option>
                             @endfor
                         </select>
@@ -124,7 +119,7 @@ $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($loginStaffId,
                                         <td class="text-center">
                                             {!! $n_o = $n_o+ 1 !!}
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             {!! date('d/m/Y',strtotime($payDate))  !!}
                                         </td>
                                         <td>
@@ -137,7 +132,7 @@ $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($loginStaffId,
                                                 <em class="qc-color-grey">---</em>
                                             @endif
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             @if(!$payActivityDetail->checkConfirm())
                                                 <em class="qc-color-grey">Chờ duyệt</em>
                                                 <span>|</span>

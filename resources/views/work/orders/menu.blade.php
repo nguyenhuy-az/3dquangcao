@@ -10,7 +10,7 @@ $totalOrdersProvisional = (isset($dataOrdersProvisional)) ? $hFunction->getCount
 ?>
 <div class="row">
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-        <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8">
             <ul class="nav nav-tabs" role="tablist">
                 <li @if($viewLoginObject == 'orders') class="active" @endif>
                     <a class="qc-link" href="{!! route('qc.work.orders.get') !!}"
@@ -26,17 +26,17 @@ $totalOrdersProvisional = (isset($dataOrdersProvisional)) ? $hFunction->getCount
                         <em class="qc-font-size-14" style="color: red;">({!! $totalOrdersProvisional !!})</em>
                     </a>
                 </li>
-                @if($dataStaffLogin->checkBusinessDepartmentAndManageRank())
+               {{-- @if($dataStaffLogin->checkBusinessDepartmentAndManageRank())
                     <li @if($viewLoginObject == 'ordersManage') class="active" @endif>
                         <a class="qc-link" href="{!! route('qc.work.orders.manage.get') !!}"
                            @if($viewLoginObject == 'ordersManage') style="background-color: whitesmoke;" @endif>
                             Quản lý đơn hàng
                         </a>
                     </li>
-                @endif
+                @endif--}}
             </ul>
         </div>
-        <div class="text-right col-sx-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="text-right col-sx-12 col-sm-12 col-md-4 col-lg-4">
             <a class="qc_work_before_pay_request_action qc-link-green-bold"
                href="{!! route('qc.work.orders.add.get') !!}">
                 THÊM ĐƠN HÀNG

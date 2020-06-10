@@ -748,13 +748,20 @@ $(document).ready(function () {
 });
 /* ---------- LOC THONG TIN -----------------*/
 $(document).ready(function () {
+    /*lọc theo nhan vien cua bo phan quan ly*/
+    $('body').on('change', '.qcWorkOrdersStaffFilterId', function () {
+        var txtOrderFilterKeyword = 'null';
+        var txtOrderCustomerFilterKeyword = 'null';
+        qc_work_orders.filter($(this).data('href') + '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword +  '/' + $(this).val());
+    });
+
     /*theo tháng*/
     $('body').on('change', '.qcWorkOrderMonthFilter', function () {
         var txtOrderFilterKeyword = $('.txtOrderFilterKeyword').val();
         txtOrderFilterKeyword = (txtOrderFilterKeyword.length == 0) ? 'null' : txtOrderFilterKeyword;
         var txtOrderCustomerFilterKeyword = $('.txtOrderCustomerFilterKeyword').val();
         txtOrderCustomerFilterKeyword = (txtOrderCustomerFilterKeyword.length == 0) ? 'null' : txtOrderCustomerFilterKeyword;
-        qc_work_orders.filter($(this).data('href') + '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $(this).val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword);
+        qc_work_orders.filter($(this).data('href') + '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $(this).val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword +  '/' + $('.qcWorkOrdersStaffFilterId').val());
     });
     /* năm*/
     $('body').on('change', '.qcWorkOrderYearFilter', function () {
@@ -762,7 +769,7 @@ $(document).ready(function () {
         txtOrderFilterKeyword = (txtOrderFilterKeyword.length == 0) ? 'null' : txtOrderFilterKeyword;
         var txtOrderCustomerFilterKeyword = $('.txtOrderCustomerFilterKeyword').val();
         txtOrderCustomerFilterKeyword = (txtOrderCustomerFilterKeyword.length == 0) ? 'null' : txtOrderCustomerFilterKeyword;
-        qc_work_orders.filter($(this).data('href')+ '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $(this).val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword);
+        qc_work_orders.filter($(this).data('href')+ '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $(this).val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword+  '/' + $('.qcWorkOrdersStaffFilterId').val());
     });
     /* loc theo ten don hang*/
     $('body').on('keyup', '#qc_work_orders_wrap .txtOrderFilterKeyword', function () {
@@ -900,11 +907,11 @@ $(document).ready(function () {
     });
     /*theo trang thai hoan thanh*/
     $('body').on('change', '.qcWorkOrdersFinishStatusFilter', function () {
-        qc_work_orders.filter($(this).data('href')+ '/' + $(this).val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() +  '/' + $('.qcWorkOrderPaymentStatusFilter').val());
+        qc_work_orders.filter($(this).data('href')+ '/' + $(this).val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() +  '/' + $('.qcWorkOrderPaymentStatusFilter').val()  + '/' + 'null' + '/' + 'null' +  '/' + $('.qcWorkOrdersStaffFilterId').val());
     });
-    /*theo trang thai xac nhan*/
+    /*theo trang thai thanh toam*/
     $('body').on('change', '.qcWorkOrderPaymentStatusFilter', function () {
-        qc_work_orders.filter($(this).data('href')+ '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $(this).val());
+        qc_work_orders.filter($(this).data('href')+ '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $(this).val()  + '/' + 'null' + '/' + 'null' +  '/' + $('.qcWorkOrdersStaffFilterId').val());
     });
 });
 /* ---------- THANH TOAN DON HANG -----------------*/

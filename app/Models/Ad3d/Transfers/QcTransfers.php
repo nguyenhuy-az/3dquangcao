@@ -139,21 +139,21 @@ class QcTransfers extends Model
     # tong tien da nhan va da xac nhan tu tien thu don hang cua 1 cong ty
     public function totalMoneyReceivedFromOrderPayOfCompanyAndDate($companyId, $date = null)
     {
-        /*if (!empty($date)) {
-            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 1)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
+        if (!empty($date)) {
+            return QcTransfers::where('company_id', $companyId)->where('transferType', 1)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
-            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 1)->where('confirmReceive', 1)->sum('money');
-        }*/
+            return QcTransfers::where('company_id', $companyId)->where('transferType', 1)->where('confirmReceive', 1)->sum('money');
+        }
     }
 
     # tong tien da nhan va da xac nhan tu dau tu cua 1 cong ty
     public function totalMoneyReceivedFromInvestmentOfCompanyAndDate($companyId, $date = null)
     {
-        /*if (!empty($date)) {
-            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 2)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
+        if (!empty($date)) {
+            return QcTransfers::where('company_id', $companyId)->where('transferType', 2)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
-            return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', 2)->where('confirmReceive', 1)->sum('money');
-        }*/
+            return QcTransfers::where('company_id', $companyId)->where('transferType', 2)->where('confirmReceive', 1)->sum('money');
+        }
     }
 
     //---------- transfers - staff -----------
@@ -277,7 +277,7 @@ class QcTransfers extends Model
         }
     }
 
-# tong tien da nhan va da xac nhan tu tien thu don hang
+# tong tien da nhan va da xac nhan tu tien thu don hang cua 1 NV
     public function totalMoneyReceivedFromOrderPayOfStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
@@ -287,7 +287,7 @@ class QcTransfers extends Model
         }
     }
 
-# tong tien da nhan va da xac nhan tu dau tu
+# tong tien da nhan va da xac nhan tu dau tu cua 1 NV
     public function totalMoneyReceivedFromInvestmentOfStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {

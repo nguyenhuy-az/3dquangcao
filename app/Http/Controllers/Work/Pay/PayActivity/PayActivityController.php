@@ -22,7 +22,7 @@ use Request;
 
 class PayActivityController extends Controller
 {
-    public function index($loginDay = null, $loginMonth = null, $loginYear = null, $confirmStatus = 3)
+    public function index($dayFilter = null, $monthFilter = null, $yearFilter = null, $confirmStatus = 3)
     {
         $modelStaff = new QcStaff();
         if ($modelStaff->checkLogin()) {
@@ -31,10 +31,15 @@ class PayActivityController extends Controller
                 'subObjectLabel' => 'Hoạt động cty'
             ];
             $dataStaff = $modelStaff->loginStaffInfo();
-            $loginMonth = (empty($loginMonth)) ? date('m') : $loginMonth;
-            $loginYear = (empty($loginYear)) ? date('Y') : $loginYear;
-
-            return view('work.pay.pay-activity.index', compact('dataAccess', 'modelStaff', 'dataStaff', 'loginDay', 'loginMonth', 'loginYear', 'confirmStatus'));
+            $monthFilter = (empty($monthFilter)) ? date('m') : $monthFilter;
+            $yearFilter = (empty($yearFilter)) ? date('Y') : $yearFilter;
+            if (empty($dayFilter)) {
+                $loginDate = date('Y-m', strtotime("$yearFilter-$monthFilter"));
+            } else {
+                $loginDate = date('Y-m-d', strtotime("$yearFilter-$monthFilter-$dayFilter"));
+            }
+            $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($dataStaff->staffId(), $confirmStatus, $loginDate);
+            return view('work.pay.pay-activity.index', compact('dataAccess', 'modelStaff', 'dataStaff','dataPayActivityDetail', 'dayFilter', 'monthFilter', 'yearFilter', 'confirmStatus'));
         } else {
             return view('work.login');
         }

@@ -272,9 +272,6 @@ var qc_work = {
             filter: function (href) {
                 qc_main.url_replace(href);
             },
-            receiveConfirm: function (href) {
-                qc_master_submit.ajaxHasReload(href, '', false);
-            }
         },
         history: {
             reciveFilter: function (href) {
@@ -719,17 +716,6 @@ $(document).ready(function () {
     });
 });
 $(document).ready(function () {
-    //------------- bàn giao  tiền -------------------
-    //theo tháng
-    $('body').on('change', '.qc_work_money_transfer_filter_month', function () {
-        qc_work.money.transfers.filter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_transfer_filter_year').val());
-    });
-
-    // năm
-    $('body').on('change', '.qc_work_money_transfer_filter_year', function () {
-        qc_work.money.transfers.filter($(this).data('href') + '/' + $('.qc_work_money_transfer_filter_month').val() + '/' + $(this).val());
-    });
-
     //------------- CHI -------------------
     //theo ngày
     $('body').on('change', '.qc_work_money_pay_import_login_day', function () {
@@ -764,13 +750,6 @@ $(document).ready(function () {
         qc_work.money.history.reciveFilter($(this).data('href') + '/' + $('.qc_work_money_history_receive_login_day').val() + '/' + $('.qc_work_money_history_receive_login_month').val() + '/' + $(this).val());
     });
 
-    //------------- Nhận tiền -------------------
-    $('.qc_work_money_transfer_receive_list_content').on('click', '.qc_receive_confirm_act', function () {
-        if (confirm('Xác nhận tôi đã nhận số tiền ' + $(this).data('money'))) {
-            qc_work.money.transfers.receiveConfirm($(this).data('href'));
-        }
-
-    });
 
     //-------------thong ke -------------------
 

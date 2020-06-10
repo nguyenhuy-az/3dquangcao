@@ -14,11 +14,11 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaffLogin->staffId();
 $hrefFilter = route('qc.work.money.transfer.receive.get');
 ?>
-@extends('work.index')
+@extends('work.money.transfer.index')
 @section('titlePage')
     Nhận tiền
 @endsection
-@section('qc_work_body')
+@section('qc_work_money_transfer_body')
     <div class="row">
         <div class="qc_work_money_transfer_receive_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.money.money-menu')
@@ -84,7 +84,11 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                             {!! $n_o !!}
                                         </td>
                                         <td>
-                                            {!! date('d/m/Y',strtotime($transfer->transfersDate()))  !!}
+                                            <a class="qcMoneyReceiveView qc-link-green"
+                                               data-href="{!! route('qc.work.money.transfer.receive.view',$transferId) !!}">
+                                                {!! date('d/m/Y',strtotime($transfer->transfersDate()))  !!}
+                                                &nbsp; <i class="glyphicon glyphicon-eye-open"></i>
+                                            </a>
                                         </td>
                                         <td>
                                             <span>{!! $transfer->transfersStaff->fullname() !!}</span>

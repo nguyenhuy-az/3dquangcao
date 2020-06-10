@@ -30,7 +30,7 @@ $mobileStatus = $mobile->isMobile();
                             </tr>
                             <tr>
                                 <th class="text-center" style="width: 20px;">STT</th>
-                                <th>Thủ quỹ</th>
+                                <th>Người thu</th>
                                 <th>Tên KH</th>
                                 <th>Điện thoại KH</th>
                                 <th>Ngày</th>
