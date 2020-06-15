@@ -160,10 +160,10 @@ $loginStaffId = $dataStaffLogin->staffId();
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->currencyFormat($orders->getBonusByOrderAllocation()) !!}
+                                            {!! $hFunction->currencyFormat($orders->getBonusAndMinusMoneyOfStaffRank()) !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->currencyFormat($orders->getMinusMoneyOrderAllocationLate()) !!}
+                                            {!! $hFunction->currencyFormat($orders->getBonusAndMinusMoneyOfStaffRank()) !!}
                                         </td>
                                         <td>
                                             <a class="qc-link-green"

@@ -107,15 +107,20 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                             </li>
                             <li @if($accessObject == 'punish') class="active" @endif>
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    Phạt <span class="caret"></span>
+                                    Thưởng - Phạt <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="qc-link-bold" href="{!! route('qc.ad3d.system.punish-type.get') !!}">
-                                            Lĩnh vực phạt
+                                    <li @if($accessObject == 'bonusDepartment') class="active" @endif>
+                                        <a class="qc-link-bold" href="{!! route('qc.ad3d.system.bonus_department.get') !!}">
+                                            Thưởng theo bộ phận
                                         </a>
                                     </li>
-                                    <li @if($accessObject == 'department') class="active" @endif>
+                                    <li style="border-top: 1px solid grey;" @if($accessObject == 'punishType') class="active" @endif>
+                                        <a class="qc-link-bold" href="{!! route('qc.ad3d.system.punish-type.get') !!}">
+                                            Lĩnh vực tiền phạt
+                                        </a>
+                                    </li>
+                                    <li @if($accessObject == 'punishContent') class="active" @endif>
                                         <a class="qc-link-bold"
                                            href="{!! route('qc.ad3d.system.punish-content.get') !!}">
                                             Danh mục phạt

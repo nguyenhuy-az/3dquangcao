@@ -20,17 +20,19 @@ class PunishContentController extends Controller
     {
         $modelStaff = new QcStaff();
         $modelPunishType = new QcPunishType();
+        $modelPunishContent = new QcPunishContent();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataAccess = [
             'accessObject' => 'punishContent'
         ];
 
         if (empty($punishTypeId)) {
-            $dataPunishContent = QcPunishContent::orderBy('name', 'ASC')->select('*')->paginate(30);
+            $selectPunishContent = $modelPunishContent->selectInfoAll();
         } else {
-            $dataPunishContent = QcPunishContent::where('type_id', $punishTypeId)->orderBy('name', 'ASC')->select('*')->paginate(30);
+            $selectPunishContent = $modelPunishContent->selectInfoByPunishType($punishTypeId);
         }
 
+        $dataPunishContent = $selectPunishContent->paginate(30);
         return view('ad3d.system.punish-content.list', compact('modelStaff', 'modelPunishType', 'dataPunishContent', 'dataAccess', 'punishTypeId'));
 
     }
@@ -67,7 +69,7 @@ class PunishContentController extends Controller
 
         if ($modelPunishContent->existPunishCode($txtPunishName)) {
             Session::put('notifyAdd', "Thêm thất bại, Mã <b>'$txtPunishName'</b> đã tồn tại.");
-        }else{
+        } else {
             if ($modelPunishContent->existName($txtName)) {
                 Session::put('notifyAdd', "Thêm thất bại <b>'$txtName'</b> đã tồn tại.");
             } else {

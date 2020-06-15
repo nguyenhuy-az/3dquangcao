@@ -8,7 +8,7 @@
 ?>
 @extends('ad3d.system.index')
 @section('titlePage')
-    Nội dung phạt
+    Thưởng theo bộ phận
 @endsection
 @section('qc_ad3d_system_body')
     <div class="qc_ad3d_index_content col-xs-12 col-md-12 col-md-12 col-lg-12">
@@ -17,6 +17,6 @@
 @endsection
 
 @section('qc_js_footer')
-    <script src="{{ url('public/ad3d/system/punish-content/js/index.js')}}"></script>
+    <script src="{{ url('public/ad3d/system/bonus-department/js/index.js')}}"></script>
 @endsection
 

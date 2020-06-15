@@ -136,7 +136,25 @@ class QcPayActivityList extends Model
 
     public function typeLabel($payListId = null)
     {
-        return ($this->type($payListId) == 1) ? 'Cố định' : 'Không cố định';
+        if ($this->checkTypePermanent($payListId)) {
+            return 'Cố định';
+        } elseif ($this->checkTypeVariable($payListId)) {
+            return 'Không cố định';
+        } else {
+            return 'Chưa xác định';
+        }
+    }
+
+    # kiem tra lai loai phi khong co đinh
+    public function checkTypeVariable($payListId = null)
+    {
+        return ($this->type($payListId) == 2) ? true : false;
+    }
+
+    # kiem tra lai loai phi la co đinh
+    public function checkTypePermanent($payListId = null)
+    {
+        return ($this->type($payListId) == 1) ? true : false;
     }
     #============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
     #TON TAI TEN

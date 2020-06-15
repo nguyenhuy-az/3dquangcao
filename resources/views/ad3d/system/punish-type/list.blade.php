@@ -28,7 +28,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
                     <div class="row">
                         <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a class="qc-font-size-16 qc-link-green-bold" title="Thêm mới" href="{!! route('qc.ad3d.system.punish-type.add.get') !!}">
+                            <a class="qc-font-size-16 qc-link-green-bold" title="Thêm mới"
+                               href="{!! route('qc.ad3d.system.punish-type.add.get') !!}">
                                 <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
                                 Thêm
                             </a>
@@ -42,7 +43,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                  data-href-del="{!! route('qc.ad3d.system.punish-type.delete') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Tên</th>
                             <th></th>

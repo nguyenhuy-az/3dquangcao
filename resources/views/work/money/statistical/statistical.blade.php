@@ -69,7 +69,7 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                       -
                                     </td>
                                     <td>
-                                        <a class="qc-link-red-bold" href="{!! route('qc.work.orders.get',"$monthFilter/$yearFilter") !!}">
+                                        <a class="qc-link-red-bold" href="{!! route('qc.work.money.transfer.receive.get',"$monthFilter/$yearFilter") !!}">
                                             Thu tiền đơn hàng &nbsp;
                                             <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
                                         </a>

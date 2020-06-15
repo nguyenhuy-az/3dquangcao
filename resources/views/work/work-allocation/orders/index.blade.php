@@ -376,10 +376,10 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfRankManage()) !!}
+                                            {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfManageRank()) !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfRankManage()) !!}
+                                            {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfManageRank()) !!}
                                         </td>
                                         <td>
                                             {!! $order->customer->name() !!}

@@ -58,6 +58,11 @@ class QcRank extends Model
         return $this->hasMany('App\Models\Ad3d\DepartmentStaff\QcDepartmentStaff', 'rank_id', 'rank_id');
     }
 
+    #----------- thuong theo cap bac-----------
+    public function bonusDepartment()
+    {
+        return $this->hasMany('App\Models\Ad3d\BonusDepartment\QcBonusDepartment', 'rank_id', 'rank_id');
+    }
     #============ =========== ============ GET INFO ============= =========== ==========
     public function getInfo($rankId = '', $field = '')
     {

@@ -21,12 +21,17 @@ $mobileStatus = $mobile->isMobile();
                 <form class="frmEdit" name="frmEdit" role="form" method="post" action="{!! route('qc.ad3d.system.department.post.get', $dataDepartment->departmentId()) !!}">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="frm_notify form-group qc-color-red"></div>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="form-group form-group-sm">
+                                    <label>Mã bộ phận:</label>
+                                    <input type="text" name="txtDepartmentCode" class="form-control" readonly
+                                           placeholder="Nhập mã bộ phận" value="{!! $dataDepartment->departmentCode() !!}">
+                                </div>
+                            </div>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group form-group-sm">
                                     <label>
                                         Tên bộ phận
@@ -34,17 +39,6 @@ $mobileStatus = $mobile->isMobile();
                                     </label>
                                     <input type="text" name="txtName" class="form-control" placeholder="Nhập tên cty"
                                            value="{!! $dataDepartment->name() !!}">
-                                </div>
-                            </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
-                                <div class="form-group form-group-sm">
-                                    <label>
-                                        Mã bộ phận:
-                                        <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
-                                    </label>
-                                    <input type="text" name="txtDepartmentCode" class="form-control"
-                                           placeholder="Nhập mã bộ phận" value="{!! $dataDepartment->departmentCode() !!}">
                                 </div>
                             </div>
                         </div>

@@ -32,7 +32,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                         {{--@if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
                         @endif--}}
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"
@@ -49,69 +49,68 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
-                    <form name="" action="">
-                        <div class="row">
-                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <select class="cbDayFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! $hrefIndex !!}">
-                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >Tất cả
-                                    </option>
-                                    @for($i =1;$i<= 31; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! $hrefIndex !!}">
-                                    <option value="0" @if($monthFilter == 0) selected="selected" @endif>Tất cả</option>
-                                    @for($i =1;$i<= 12; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbYearFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! $hrefIndex !!}">
-                                    @for($i =2017;$i<= 2050; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
             <div class="qc_ad3d_list_content qc-ad3d-table-container row"
                  data-href-view="{!! route('qc.ad3d.finance.pay_activity.view.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
-                            <th class="text-center">Ngày</th>
+                        <tr style="background-color: black; color:yellow;">
+                            <th class="text-center" style="width: 20px;">STT</th>
+                            <th>Ngày</th>
                             <th>Danh mục chi</th>
-                            <th class="text-center">Ghi chú chi</th>
-                            <th class="text-center">Thủ quỹ</th>
-                            <th class="text-center">Người duyệt</th>
-                            <th class="text-center">Ghi chú duyệt</th>
-                            <th class="text-right"></th>
+                            <th>Ghi chú chi</th>
+                            <th>Loại chi phí</th>
+                            <th>Người chi</th>
+                            <th>Người duyệt</th>
+                            <th>Ghi chú duyệt</th>
+                            <th>Xác nhận</th>
                             <th class="text-right">Số tiền</th>
                         </tr>
                         <tr>
                             <td class="text-center"></td>
-                            <td class="text-center"></td>
+                            <td style="padding: 0;">
+                                <select class="cbDayFilter" style="height: 30px;"
+                                        data-href="{!! $hrefIndex !!}">
+                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($d =1;$d<= 31; $d++)
+                                        <option value="{!! $d !!}"
+                                                @if((int)$dayFilter == $d) selected="selected" @endif >
+                                            {!! $d !!}
+                                        </option>
+                                    @endfor
+                                </select>
+                                <select class="cbMonthFilter" style="height: 30px;"
+                                        data-href="{!! $hrefIndex !!}">
+                                    <option value="0" @if($monthFilter == 0) selected="selected" @endif>
+                                        Tất cả
+                                    </option>
+                                    @for($m =1;$m<= 12; $m++)
+                                        <option value="{!! $m !!}"
+                                                @if((int)$monthFilter == $m) selected="selected" @endif>
+                                            {!! $m !!}
+                                        </option>
+                                    @endfor
+                                </select>
+                                <select class="cbYearFilter" style="height: 30px;"
+                                        data-href="{!! $hrefIndex !!}">
+                                    @for($y =2017;$y<= 2050; $y++)
+                                        <option value="{!! $y !!}"
+                                                @if($yearFilter == $y) selected="selected" @endif>
+                                            {!! $y !!}
+                                        </option>
+                                    @endfor
+                                </select>
+                            </td>
                             <td></td>
-                            <td class="text-center"></td>
-                            <td class="text-center" style="padding: 0;">
+                            <td></td>
+                            <td></td>
+                            <td style="padding: 0;">
                                 <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
                                         Tất cả
                                     </option>
-                                    @if(count($dataStaff)> 0)
+                                    @if($hFunction->checkCount($dataStaff))
                                         @foreach($dataStaff as $staff)
                                             <option @if($staff->staffId() == $staffFilterId) selected="selected"
                                                     @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
@@ -119,9 +118,10 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                     @endif
                                 </select>
                             </td>
+                            <td></td>
+
                             <td class="text-center"></td>
-                            <td class="text-center"></td>
-                            <td class="text-right" style="padding: 0;">
+                            <td style="padding: 0;">
                                 <select class="cbConfirmStatusFilter form-control" name="cbConfirmStatusFilter"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="3" @if($confirmStatusFilter == 3) selected="selected" @endif>Tất cả
@@ -137,9 +137,8 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                             <td class="text-right">
                                 <b class="qc-color-red">{!! $hFunction->currencyFormat($totalMoneyPayActivity)  !!}</b>
                             </td>
-
                         </tr>
-                        @if(count($dataPayActivityDetail) > 0)
+                        @if($hFunction->checkCount($dataPayActivityDetail))
                             <?php $n_o = 0; ?>
                             @foreach($dataPayActivityDetail as $payActivityDetail)
                                 <?php
@@ -154,37 +153,40 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                     <td class="text-center">
                                         {!! $n_o = $n_o+1 !!}
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         {!! date('d/m/Y',strtotime($payDate))  !!}
                                     </td>
                                     <td>
                                         {!! $payActivityDetail->payActivityList->name()  !!}
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         @if(!empty($payActivityDetail->note()))
                                             {!! $payActivityDetail->note()  !!}
                                         @else
                                             <em class="qc-color-grey">---</em>
                                         @endif
                                     </td>
-                                    <td class="text-center qc-color-grey">
+                                    <td style="color: grey;">
+                                        {!! $payActivityDetail->payActivityList->typeLabel() !!}
+                                    </td>
+                                    <td style="color: grey;">
                                         {!! $payActivityDetail->staff->fullName()  !!}
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         @if($confirmStatus)
                                             {!! $payActivityDetail->confirmStaff->fullName()  !!}
                                         @else
                                             <em>---</em>
                                         @endif
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         @if(!empty($payActivityDetail->confirmNote()))
                                             {!! $payActivityDetail->confirmNote()  !!}
                                         @else
                                             <em class="qc-color-grey">---</em>
                                         @endif
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         @if(!$confirmStatus)
                                             @if($payCompanyId == $companyLoginId)
                                                 <a class="qc_confirm_get qc-link-green-bold"
@@ -201,7 +203,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
 
                                         @endif
                                     </td>
-                                    <td class="text-right qc-color-red">
+                                    <td class="text-right" style="color: blue;">
                                         {!! $hFunction->currencyFormat($money)  !!}
                                     </td>
 

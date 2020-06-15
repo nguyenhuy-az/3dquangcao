@@ -48,7 +48,7 @@ $indexHref = route('qc.ad3d.system.pay_activity_list.get');
                  data-href-del="{!! route('qc.ad3d.system.pay_activity_list.delete') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Tên</th>
                             <th>Mô tả</th>
@@ -74,7 +74,7 @@ $indexHref = route('qc.ad3d.system.pay_activity_list.get');
                                         {!! $payActivityList->name() !!}
                                     </td>
                                     <td class="qc-link-grey">
-                                        @if(!$hFunction->checkCount($description))
+                                        @if(!$hFunction->checkEmpty($description))
                                             {!! $description !!}
                                         @else
                                             <em>---</em>

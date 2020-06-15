@@ -575,6 +575,23 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('list/{companyId?}', ['as' => 'qc.ad3d.system.salary.get', 'uses' => 'Ad3d\System\Salary\StaffSalaryController@index']);
 
         });
+        // thuong theo bo phan
+        Route::group(['prefix' => 'bonus-department'], function () {
+            //Route::get('view/{typeId?}', ['as' => 'qc.ad3d.system.bonus_department.view.get', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@view']);
+
+            //sửa
+            //Route::get('edit/{typeId?}', ['as' => 'qc.ad3d.system.bonus_department.edit.get', 'uses' => 'Ad3d\System\PunishType\PunishTypeController@getEdit']);
+            //Route::post('edit/{typeId?}', ['as' => 'qc.ad3d.system.bonus_department.post.get', 'uses' => 'Ad3d\System\PunishType\PunishTypeController@postEdit']);
+
+            //thêm mới
+            Route::get('add/{departmentId?}/{rankId?}', ['as' => 'qc.ad3d.system.bonus_department.add.get', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@getAdd']);
+            Route::post('add/{departmentId?}/{rankId?}', ['as' => 'qc.ad3d.system.bonus_department.add.post', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@postAdd']);
+
+            //xóa
+            Route::get('delete/{bonusId?}', ['as' => 'qc.ad3d.system.bonus_department.delete', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@deleteInfo']);
+
+            Route::get('/', ['as' => 'qc.ad3d.system.bonus_department.get', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@index']);
+        });
         // phat
         Route::group(['prefix' => 'punish-type'], function () {
             Route::get('view/{typeId?}', ['as' => 'qc.ad3d.system.punish-type.view.get', 'uses' => 'Ad3d\System\PunishType\PunishTypeController@view']);

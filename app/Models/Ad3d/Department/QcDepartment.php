@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\Department;
 
+use App\Models\Ad3d\BonusDepartment\QcBonusDepartment;
 use Illuminate\Database\Eloquent\Model;
 
 class QcDepartment extends Model
@@ -34,6 +35,11 @@ class QcDepartment extends Model
     public function insertGetId()
     {
         return $this->lastId;
+    }
+
+    public function checkNullId($id = null)
+    {
+        return (empty($id)) ? $this->departmentId() : $id;
     }
 
     #----------- update ----------
@@ -76,7 +82,38 @@ class QcDepartment extends Model
         return $this->hasMany('App\Models\Ad3d\Kpi\QcKpi', 'department_id', 'department_id');
     }
 
+    #----------- thuong theo cap bac-----------
+    public function bonusDepartment()
+    {
+        return $this->hasMany('App\Models\Ad3d\BonusDepartment\QcBonusDepartment', 'department_id', 'department_id');
+    }
+
+    # thong tin thuong tho cap quan ly cua bo phan dang hoat dong
+    public function bonusInfoActivityManageRank($departmentId = null)
+    {
+        $modelBonusDepartment = new QcBonusDepartment();
+        return $modelBonusDepartment->infoActivityOfManageRank($this->checkNullId($departmentId));
+    }
+
+    # thong tin thuong tho cap nhan vien cua bo phan dang hoat dong
+    public function bonusInfoActivityStaffRank($departmentId = null)
+    {
+        $modelBonusDepartment = new QcBonusDepartment();
+        return $modelBonusDepartment->infoActivityOfStaffRank($this->checkNullId($departmentId));
+    }
+
     #============ =========== ============ GET INFO ============= =========== ==========
+    public function selectInfoAllActivity()
+    {
+        return QcDepartment::where('activityStatus', 1)->select('*');
+    }
+
+    public function selectInfoAll()
+    {
+        return QcDepartment::select('*');
+    }
+
+
     public function getInfo($departmentId = '', $field = '')
     {
         if (empty($departmentId)) {
@@ -140,6 +177,7 @@ class QcDepartment extends Model
     {
         return 1; # quản lý
     }
+
     public function constructionDepartmentId()
     {
         return 2; # thi công
@@ -172,9 +210,11 @@ class QcDepartment extends Model
     }
 
     # danh sanh ma bo phan nhan thong bao them don hang moi
-    public function listIdReceiveNotifyNewOrder(){
+    public function listIdReceiveNotifyNewOrder()
+    {
         return [$this->businessDepartmentId(), $this->designDepartmentId(), $this->constructionDepartmentId(), $this->manageDepartmentId()];
     }
+
     #----------- KIỂM TRA THÔNG TIN -------------
     public function existName($name)
     {

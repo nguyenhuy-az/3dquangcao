@@ -72,6 +72,16 @@ class QcPunishContent extends Model
     }
 
     //========= ========== ========== GET INFO ========== ========== ==========
+    public function selectInfoAll()
+    {
+        return QcPunishContent::orderBy('name', 'ASC')->select('*');
+    }
+
+    public function selectInfoByPunishType($punishTypeId)
+    {
+        return QcPunishContent::where('type_id', $punishTypeId)->orderBy('name', 'ASC')->select('*');
+    }
+
     public function getInfo($punishId = '', $field = '')
     {
         if (empty($punishId)) {

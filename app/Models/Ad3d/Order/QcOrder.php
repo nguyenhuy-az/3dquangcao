@@ -3,6 +3,8 @@
 namespace App\Models\Ad3d\Order;
 
 use App\Models\Ad3d\Bonus\QcBonus;
+use App\Models\Ad3d\BonusDepartment\QcBonusDepartment;
+use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
@@ -1322,37 +1324,51 @@ class QcOrder extends Model
         return ($this->vat($orderId) == 1) ? true : false;
     }
 
-    # lay gia tri tien thuong - phạt tren don hang cua cap quan ly
-    public function getBonusAndMinusMoneyOfRankManage($orderId = null)
+    # lay gia tri tien thuong - phạt tren don hang cua cap quan ly cua bo phan thi cong
+    public function getBonusAndMinusMoneyOfManageRank($orderId = null)
     {
-        $orderTotalPrice = $this->totalPrice($orderId);
-        if ($orderTotalPrice < 20000000) {
-            return (int)$orderTotalPrice * 0.03;
+        $hFunction = new \Hfunction();
+        $modelDepartment = new QcDepartment();
+        $modelBonusDepartment = new QcBonusDepartment();
+        $dataBonusDepartment = $modelBonusDepartment->infoActivityOfManageRank($modelDepartment->constructionDepartmentId());
+        # co ap dung thuong
+        if ($hFunction->checkCount($dataBonusDepartment)) {
+            $orderTotalPrice = $this->totalPrice($orderId);
+            $percent = $dataBonusDepartment->percent();
+            return (int)$orderTotalPrice * ($percent / 100);
         } else {
-            return (int)$orderTotalPrice * 0.02;
+            return 0;
         }
+
     }
 
-    # lay gia tri tien thuong ban giao don hang - cap thi cong
+    # lay gia tri tien thuong - phạt tren don hang cua cap nhan vien
+    public function getBonusAndMinusMoneyOfStaffRank($orderId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelDepartment = new QcDepartment();
+        $modelBonusDepartment = new QcBonusDepartment();
+        $dataBonusDepartment = $modelBonusDepartment->infoActivityOfStaffRank($modelDepartment->constructionDepartmentId());
+        # co ap dung thuong
+        if ($hFunction->checkCount($dataBonusDepartment)) {
+            $orderTotalPrice = $this->totalPrice($orderId);
+            $percent = $dataBonusDepartment->percent();
+            return (int)$orderTotalPrice * ($percent / 100);
+        } else {
+            return 0;
+        }
+
+    }
+    # ------ code cu - bo
     public function getBonusByOrderAllocation($orderId = null)
     {
-        $orderTotalPrice = $this->totalPrice($orderId);
-        if ($orderTotalPrice < 20000000) {
-            return (int)$orderTotalPrice * 0.02;
-        } else {
-            return (int)$orderTotalPrice * 0.01;
-        }
+        return $this->getBonusAndMinusMoneyOfStaffRank($orderId);
     }
 
     # lay gia tri tien phat tre ban giao don hang - cap thi cong
     public function getMinusMoneyOrderAllocationLate($orderId = null)
     {
-        $orderTotalPrice = $this->totalPrice($orderId);
-        if ($orderTotalPrice < 20000000) {
-            return (int)$orderTotalPrice * 0.02;
-        } else {
-            return (int)$orderTotalPrice * 0.01;
-        }
+        return $this->getBonusAndMinusMoneyOfStaffRank($orderId);
     }
 
 #============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
@@ -1382,7 +1398,7 @@ class QcOrder extends Model
                     $workId = $dataWork->workId();
                     if (!$modelBonus->checkExistBonusWorkOfOrderConstruction($workId, $orderId)) { # chua ap dung thuong
                         #tien thuong hoan thanh thi cong
-                        $orderBonusPrice = $this->getBonusAndMinusMoneyOfRankManage($orderId);
+                        $orderBonusPrice = $this->getBonusAndMinusMoneyOfManageRank($orderId);
                         if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý triển khai thi công', 0, $workId, null, $orderId)) {
                             $bonusId = $modelBonus->insertGetId();
                             $allocationStaffId = $dataAllocationStaff->staffId();
@@ -1499,10 +1515,10 @@ class QcOrder extends Model
         $hFunction = new \Hfunction();
         $dataOrder = $this->get();
         if ($hFunction->checkCount($dataOrder)) {
-            foreach($dataOrder as $order){
-                if($order->checkFinishPayment()){
+            foreach ($dataOrder as $order) {
+                if ($order->checkFinishPayment()) {
                     $order->finishPayment();
-                }else{
+                } else {
                     $order->cancelFinishPayment();
                 }
             }

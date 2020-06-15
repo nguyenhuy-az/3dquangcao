@@ -34,17 +34,8 @@ $dataPunishType = $modelPunishType->getInfo();
                     <form name="" action="">
                         <div class="row">
                             <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <select class="cbPunishTypeFilter" name="cbPunishTypeFilter"
-                                        style="margin-top: 5px; height: 25px;" data-href="{!! $indexHref !!}">
-                                    <option value="0">Tất cả</option>
-                                    @if($hFunction->checkCount($dataPunishType))
-                                        @foreach($dataPunishType as $punishType)
-                                            <option value="{!! $punishType->typeId() !!}"
-                                                    @if($punishTypeId == $punishType->typeId()) selected="selected" @endif >{!! $punishType->name() !!}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                                <a class="qc-link-green-bold" href="{!! route('qc.ad3d.system.punish-content.add.get') !!}">
+                                <a class="qc-link-green-bold"
+                                   href="{!! route('qc.ad3d.system.punish-content.add.get') !!}">
                                     <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
                                     Thêm
                                 </a>
@@ -59,11 +50,12 @@ $dataPunishType = $modelPunishType->getInfo();
                  data-href-del="{!! route('qc.ad3d.system.punish-content.delete') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black;color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Mã</th>
                             <th>Tên</th>
                             <th>Mô tả</th>
+                            <th>Loại tiền phạt</th>
                             <th class="text-right">Số tiền</th>
                             <th></th>
                         </tr>
@@ -90,6 +82,9 @@ $dataPunishType = $modelPunishType->getInfo();
                                     <td>
                                         {!! $punishContent->note() !!}
                                     </td>
+                                    <td>
+                                        {!! $punishContent->punishType->name() !!}
+                                    </td>
                                     <td class="text-right">
                                         {!! $hFunction->currencyFormat($punishContent->money()) !!}
                                     </td>
@@ -109,7 +104,7 @@ $dataPunishType = $modelPunishType->getInfo();
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="6">
+                                <td class="text-center" colspan="7">
                                     {!! $hFunction->page($dataPunishContent) !!}
                                 </td>
                             </tr>
