@@ -218,6 +218,11 @@ class QcStaff extends Model
         }
     }
 
+    public function pathDefaultImage()
+    {
+        return asset('public/images/icons/people.jpeg');
+    }
+
     public function updateImage($staffId, $image)
     {
         return QcStaff::where('staff_id', $staffId)->update(['image' => $image]);
@@ -1064,7 +1069,27 @@ class QcStaff extends Model
     }
 
     //========= ========== ========== lay thong tin ========== ========== ==========
-    # lay thong tin NV  bo phan thi cong cap quan ly cua 1 cong ty
+    public function selectInfoAll($listStaffId = null, $workStatus = 100)
+    {
+        # chon tat ca thong tin
+        if (empty($listStaffId) && $workStatus == 100) {
+            return QcStaff::select('*');
+        } else {
+            if (!empty($listStaffId)) {
+                if ($workStatus == 100) {
+                    return QcStaff::whereIn('staff_id', $listStaffId)->select('*');
+                } else {
+                    return QcStaff::whereIn('staff_id', $listStaffId)->where('workStatus', $workStatus)->select('*');
+                }
+            } else {
+                if ($workStatus < 100) {
+                    return QcStaff::where('workStatus', $workStatus)->select('*');
+                }
+            }
+        }
+    }
+
+    # lay thong tin NV la  bo phan thi cong cap quan ly cua 1 cong ty
     public function infoStaffConstructionRankManage($companyId)
     {
         $modelDepartment = new QcDepartment();

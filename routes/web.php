@@ -531,13 +531,17 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('open-work/{companyStaffWorkId?}', ['as' => 'qc.ad3d.system.staff.open_work.get', 'uses' => 'Ad3d\System\Staff\StaffController@openWork']);
 
             //sửa
-            Route::get('edit/{staffId?}', ['as' => 'qc.ad3d.system.staff.edit.get', 'uses' => 'Ad3d\System\Staff\StaffController@getEdit']);
+            Route::get('info/{staffId?}', ['as' => 'qc.ad3d.system.staff.info.get', 'uses' => 'Ad3d\System\Staff\StaffController@getInfo']);
             #thong tin co ban
-            Route::post('edit/info/{staffId?}', ['as' => 'qc.ad3d.system.staff.info.edit.post', 'uses' => 'Ad3d\System\Staff\StaffController@postInfoEdit']);
+            Route::get('edit/basic/{staffId?}', ['as' => 'qc.ad3d.system.staff.info_basic.edit.get', 'uses' => 'Ad3d\System\Staff\StaffController@getInfoBasicEdit']);
+            Route::post('edit/basic/{staffId?}', ['as' => 'qc.ad3d.system.staff.info_basic.edit.post', 'uses' => 'Ad3d\System\Staff\StaffController@postInfoBasicEdit']);
+
             #thong tin lam viec
-            Route::post('edit/work/{staffId?}', ['as' => 'qc.ad3d.system.staff.work.edit.post', 'uses' => 'Ad3d\System\Staff\StaffController@postCompanyWorkEdit']);
+            Route::get('edit/work/{staffId?}', ['as' => 'qc.ad3d.system.staff_info.work.edit.get', 'uses' => 'Ad3d\System\Staff\StaffController@getCompanyWorkEdit']);
+            Route::post('edit/work/{staffId?}', ['as' => 'qc.ad3d.system.staff_info.work.edit.post', 'uses' => 'Ad3d\System\Staff\StaffController@postCompanyWorkEdit']);
             #luong
-            Route::post('edit/salary/{staffId?}', ['as' => 'qc.ad3d.system.staff.salary.edit.post', 'uses' => 'Ad3d\System\Staff\StaffController@postCompanySalaryEdit']);
+            Route::get('edit/salary/{staffId?}', ['as' => 'qc.ad3d.system.staff_info.salary.edit.get', 'uses' => 'Ad3d\System\Staff\StaffController@getCompanySalaryEdit']);
+            Route::post('edit/salary/{staffId?}', ['as' => 'qc.ad3d.system.staff_info.salary.edit.post', 'uses' => 'Ad3d\System\Staff\StaffController@postCompanySalaryEdit']);
 
             //them hinh anh
             Route::get('image/add/{staffId?}', ['as' => 'qc.ad3d.system.staff.image.add.get', 'uses' => 'Ad3d\System\Staff\StaffController@getAddImage']);
@@ -560,7 +564,7 @@ Route::group(['prefix' => 'ad3d'], function () {
             //xóa NV
             Route::get('delete/{staffId?}', ['as' => 'qc.ad3d.system.staff.delete', 'uses' => 'Ad3d\System\Staff\StaffController@deleteStaff']);
 
-            Route::get('list/{companyId?}', ['as' => 'qc.ad3d.system.staff.get', 'uses' => 'Ad3d\System\Staff\StaffController@index']);
+            Route::get('list/{companyId?}/{workStatus?}', ['as' => 'qc.ad3d.system.staff.get', 'uses' => 'Ad3d\System\Staff\StaffController@index']);
 
         });
         //lương cơ bản NV

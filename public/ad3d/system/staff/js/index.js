@@ -47,10 +47,10 @@ var qc_ad3d_staff_staff = {
         }
     },
     add: {
-        addDepartment: function (href) {
-            qc_ad3d_submit.ajaxNotReload(href, '#qc_staff_permission_contain', false);
-        },
-
+        /*addDepartment: function (href) {
+         qc_ad3d_submit.ajaxNotReload(href, '#qc_staff_permission_contain', false);
+         },
+         */
         save: function (formObject) {
             var cbCompany = $(formObject).find("select[name='cbCompany']");
             var txtFirstName = $(formObject).find("input[name='txtFirstName']");
@@ -66,7 +66,7 @@ var qc_ad3d_staff_staff = {
             if (qc_main.check.inputNull(txtFirstName, 'Nhập họ')) {
                 return false;
             } else {
-                if (qc_main.check.inputMaxLength(txtFirstName, 30, 'Hô không dài quá 30 ký tự')) return false;
+                if (qc_main.check.inputMaxLength(txtFirstName, 30, 'Họ không dài quá 30 ký tự')) return false;
             }
             if (qc_main.check.inputNull(txtLastName, 'Nhập tên')) {
                 return false;
@@ -105,6 +105,14 @@ var qc_ad3d_staff_staff = {
                 return false;
             }
 
+            // thông tin chon vị tri lam viec
+            if (!qc_ad3d_staff_staff.add.checkSelectDepartmentManageRank()) {
+                if (!qc_ad3d_staff_staff.add.checkSelectDepartmentStaffRank()) {
+                    alert('Phải chọn 1 vị trí làm việc');
+                    return false;
+                }
+            }
+            // thong tin luong
             if (txtTotalSalary.val() == '' || txtTotalSalary.val() == 0) {
                 txtTotalSalary.focus();
                 alert('Nhập lương tổng');
@@ -114,39 +122,54 @@ var qc_ad3d_staff_staff = {
                 if (numberTotalSalaryRemainShow > 0) {
                     alert('Phải phân bổ hết mức lương chưa phát');
                     return false;
+                } else {
+                    qc_ad3d_submit.ajaxFormNotReload('#frmAdd', '', false);
+                    //qc_ad3d_submit.ajaxFormHasReload('#frmAdd', '', false);
+                    qc_main.scrollTop();
+                    $('.qc_reset').click();
                 }
             }
-            // thông tin bộ pha
-            if ($('#frmAdd .qc_ad3d_staff_add_department').length > 0) {
-                qc_ad3d_staff_staff.add.checkDepartmentInput();
-            } else {
-                alert('Nhập bộ phận');
-                return false;
-            }
+            ;
         },
-        checkDepartmentInput: function () {
-            $('#frmAdd .qc_ad3d_staff_add_department').filter(function () {
-                if ($(this).is(':last-child')) {
-                    var cbDepartment = $(this).find('.cbDepartment');
-                    var cbRank = $(this).find('.cbRank');
-                    if (qc_main.check.inputNull(cbDepartment, 'Chọn bộ phận')) {
-                        cbDepartment.focus();
-                        return false;
-                    }
-
-                    if (cbRank.val() == 0 || cbRank.val() == '') {
-                        alert('Chọn cấp bậc');
-                        cbRank.focus();
-                        return false;
-                    } else {
-                        qc_ad3d_submit.ajaxFormHasReload('#frmAdd', '', false);
-                        qc_main.scrollTop();
-                        $('.qc_reset').click();
-                    }
-                }
-
+        // kiem tra co chon bo phan cap quan ly
+        checkSelectDepartmentManageRank: function () {
+            var checkStatus = false;
+            $('#frmAdd .departmentManageRank').filter(function () {
+                if ($(this).is(':checked')) checkStatus = true;
             });
+            return checkStatus;
         },
+        // kiem tra co chon bo phan cap nhan vien
+        checkSelectDepartmentStaffRank: function () {
+            var checkStatus = false;
+            $('#frmAdd .departmentStaffRank').filter(function () {
+                if ($(this).is(':checked')) checkStatus = true;
+            });
+            return checkStatus;
+        },
+        /*checkDepartmentInput: function () {
+         $('#frmAdd .qc_ad3d_staff_add_department').filter(function () {
+         if ($(this).is(':last-child')) {
+         var cbDepartment = $(this).find('.cbDepartment');
+         var cbRank = $(this).find('.cbRank');
+         if (qc_main.check.inputNull(cbDepartment, 'Chọn bộ phận')) {
+         cbDepartment.focus();
+         return false;
+         }
+
+         if (cbRank.val() == 0 || cbRank.val() == '') {
+         alert('Chọn cấp bậc');
+         cbRank.focus();
+         return false;
+         } else {
+         qc_ad3d_submit.ajaxFormHasReload('#frmAdd', '', false);
+         qc_main.scrollTop();
+         $('.qc_reset').click();
+         }
+         }
+
+         });
+         },*/
         showInput: function () {
             var txtTotalSalary = $('#frmAdd').find("input[name='txtTotalSalary']");
             var txtTotalSalaryRemain = $('#frmAdd').find("input[name='txtTotalSalaryRemain']");
@@ -281,122 +304,141 @@ var qc_ad3d_staff_staff = {
         }
     },
     edit: {
-        addDepartment: function (href) {
-            $.ajax({
-                url: href,
-                type: 'GET',
-                cache: false,
-                data: {},
-                beforeSend: function () {
-                    qc_ad3d.loadStatus();
-                },
-                success: function (data) {
-                    if (data) {
-                        $('#qc_staff_permission_contain_edit').append(data);
-                    }
-                },
-                complete: function () {
-                    qc_ad3d.loadStatus();
-                }
-            });
-        },
+        /*addDepartment: function (href) {
+         $.ajax({
+         url: href,
+         type: 'GET',
+         cache: false,
+         data: {},
+         beforeSend: function () {
+         qc_ad3d.loadStatus();
+         },
+         success: function (data) {
+         if (data) {
+         $('#qc_staff_permission_contain_edit').append(data);
+         }
+         },
+         complete: function () {
+         qc_ad3d.loadStatus();
+         }
+         });
+         },*/
         get: function (listObject) {
             qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-edit') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
         },
-        saveSalary: function (frm) {
-            var txtTotalSalary = $(frm).find("input[name='txtTotalSalary']");
-            var txtTotalSalaryRemainShow = $(frm).find("input[name='txtTotalSalaryRemainShow']");
-            if (txtTotalSalary.val() == '' || txtTotalSalary.val() == 0) {
-                txtTotalSalary.focus();
-                alert('Nhập lương tổng');
-                return false;
-            } else {
-                var numberTotalSalaryRemainShow = qc_main.getNumberInput(txtTotalSalaryRemainShow.val());
-                if (numberTotalSalaryRemainShow > 0) {
-                    alert('Phải phân bổ hết mức lương chưa phát');
+        infoSalary: {
+            get: function (href) {
+                qc_ad3d_submit.ajaxNotReload(href, $('#staffInfoSalaryContainer'), true);
+            },
+            save: function (frm) {
+                var txtTotalSalary = $(frm).find("input[name='txtTotalSalary']");
+                var txtTotalSalaryRemainShow = $(frm).find("input[name='txtTotalSalaryRemainShow']");
+                if (txtTotalSalary.val() == '' || txtTotalSalary.val() == 0) {
+                    txtTotalSalary.focus();
+                    alert('Nhập lương tổng');
                     return false;
                 } else {
-                    if (confirm('Bạng muốn cập nhật bảng lương?')) {
-                        qc_ad3d_submit.ajaxFormHasReload(frm, '.frm_staff_salary_notify', true);
-                        $('#qc_container_content').animate({
-                            scrollTop: 0
-                        })
+                    var numberTotalSalaryRemainShow = qc_main.getNumberInput(txtTotalSalaryRemainShow.val());
+                    if (numberTotalSalaryRemainShow > 0) {
+                        alert('Phải phân bổ hết mức lương chưa phát');
+                        return false;
+                    } else {
+                        if (confirm('Bạng muốn cập nhật bảng lương?')) {
+                            qc_ad3d_submit.ajaxFormHasReload(frm, '.frm_staff_salary_notify', true);
+                            $('#qc_container_content').animate({
+                                scrollTop: 0
+                            })
+                        }
                     }
                 }
-            }
 
+            }
         },
-        saveInfo: function (frm) {
-            var txtFirstName = $(frm).find("input[name='txtFirstName']");
-            var txtLastName = $(frm).find("input[name='txtLastName']");
-            var txtIdentityCard = $(frm).find("input[name='txtIdentityCard']");
-            var cbGender = $(frm).find("select[name='cbGender']");
-            var txtPhone = $(frm).find("input[name='txtPhone']");
-            var txtAddress = $(frm).find("input[name='txtAddress']");
-            var txtEmail = $(frm).find("input[name='txtEmail']");
-            if (qc_main.check.inputNull(txtFirstName, 'Nhập họ')) {
-                return false;
-            } else {
-                if (qc_main.check.inputMaxLength(txtFirstName, 30, 'Hô không dài quá 30 ký tự')) return false;
-            }
-            if (qc_main.check.inputNull(txtLastName, 'Nhập tên')) {
-                return false;
-            } else {
-                if (qc_main.check.inputMaxLength(txtLastName, 20, 'Tên dài không quá 30 ký tự')) return false;
-            }
-            if (qc_main.check.inputNull(txtIdentityCard, 'Nhập chứng minh thư')) {
-                return false;
-            } else {
-                if (qc_main.check.inputMaxLength(txtIdentityCard, 20, 'Chứng minh thư dài không quá 20 ký tự')) return false;
-            }
 
-            if (qc_main.check.inputNull(cbGender, 'Chọn giới tính')) {
-                return false;
-            }
+        // cap nha thong tin co ban
+        infoBasic: {
+            get: function (href) {
+                qc_ad3d_submit.ajaxNotReload(href, $('#staffInfoBasicContainer'), true);
+            },
+            save: function (frm) {
+                var txtFirstName = $(frm).find("input[name='txtFirstName']");
+                var txtLastName = $(frm).find("input[name='txtLastName']");
+                var txtIdentityCard = $(frm).find("input[name='txtIdentityCard']");
+                var cbGender = $(frm).find("select[name='cbGender']");
+                var txtPhone = $(frm).find("input[name='txtPhone']");
+                var txtAddress = $(frm).find("input[name='txtAddress']");
+                var txtEmail = $(frm).find("input[name='txtEmail']");
+                if (qc_main.check.inputNull(txtFirstName, 'Nhập họ')) {
+                    return false;
+                } else {
+                    if (qc_main.check.inputMaxLength(txtFirstName, 30, 'Hô không dài quá 30 ký tự')) return false;
+                }
+                if (qc_main.check.inputNull(txtLastName, 'Nhập tên')) {
+                    return false;
+                } else {
+                    if (qc_main.check.inputMaxLength(txtLastName, 20, 'Tên dài không quá 30 ký tự')) return false;
+                }
+                if (qc_main.check.inputNull(txtIdentityCard, 'Nhập chứng minh thư')) {
+                    return false;
+                } else {
+                    if (qc_main.check.inputMaxLength(txtIdentityCard, 20, 'Chứng minh thư dài không quá 20 ký tự')) return false;
+                }
 
-            if (qc_main.check.inputNull(txtPhone, 'Nhập số điện thoại')) {
-                return false;
-            } else {
-                if (qc_main.check.inputMaxLength(txtPhone, 30, 'Số điện thoại không quá 30 ký tự')) return false;
-            }
-
-            if (qc_main.check.inputNull(txtAddress, 'Nhập địa chỉ')) {
-                if (qc_main.check.inputMaxLength(txtAddress, 50, 'Địa chỉ dài quá 50 ký tự')) return false;
-                return false;
-            }
-            if (txtEmail.val().length > 0) {
-                var email = txtEmail.val();
-                if (!qc_main.check.emailJavascript(email)) {
-                    alert('Email không hợp lệ');
-                    txtEmail.focus();
+                if (qc_main.check.inputNull(cbGender, 'Chọn giới tính')) {
                     return false;
                 }
-            }
-            if (qc_main.check.inputNull(txtAddress, 'Nhập địa chỉ')) {
-                if (qc_main.check.inputMaxLength(txtAddress, 50, 'Địa chỉ dài quá 50 ký tự')) return false;
-                return false;
-            } else {
-                qc_ad3d_submit.ajaxFormHasReload('#frmStaffInfoEdit', '.frm_info_edit_notify', true);
-                $('#qc_container_content').animate({
-                    scrollTop: 0
-                })
-            }
 
+                if (qc_main.check.inputNull(txtPhone, 'Nhập số điện thoại')) {
+                    return false;
+                } else {
+                    if (qc_main.check.inputMaxLength(txtPhone, 30, 'Số điện thoại không quá 30 ký tự')) return false;
+                }
+
+                if (qc_main.check.inputNull(txtAddress, 'Nhập địa chỉ')) {
+                    if (qc_main.check.inputMaxLength(txtAddress, 50, 'Địa chỉ dài quá 50 ký tự')) return false;
+                    return false;
+                }
+                if (txtEmail.val().length > 0) {
+                    var email = txtEmail.val();
+                    if (!qc_main.check.emailJavascript(email)) {
+                        alert('Email không hợp lệ');
+                        txtEmail.focus();
+                        return false;
+                    }
+                }
+                if (qc_main.check.inputNull(txtAddress, 'Nhập địa chỉ')) {
+                    if (qc_main.check.inputMaxLength(txtAddress, 50, 'Địa chỉ dài quá 50 ký tự')) return false;
+                    return false;
+                } else {
+                    qc_ad3d_submit.ajaxFormHasReload('#frmStaffInfoEdit', '.frm_info_edit_notify', true);
+                    $('#qc_container_content').animate({
+                        scrollTop: 0
+                    })
+                }
+
+            },
         },
-        saveWork: function (frm) {
-            var txtDateWork = $(frm).find("input[name='txtDateWork']");
-            var containNotify = $(frm).find('.frm_notify');
-            if (qc_main.check.inputNull(txtDateWork, 'Nhập Ngày vào')) {
-                return false;
-            }
-            // thông tin bộ pha
-            if ($('#frmStaffWorkEdit .qc_ad3d_staff_add_department').length > 0) {
-                qc_ad3d_staff_staff.edit.checkDepartmentInput();
-            } else {
-                alert('Chon bộ phận làm việc');
-                return false;
-            }
 
+        //cap nhat thong tin lam viiec
+        infoWork: {
+            get: function (href) {
+                qc_ad3d_submit.ajaxNotReload(href, $('#staffInfoWorkContainer'), true);
+            },
+            save: function (frm) {
+                var txtDateWork = $(frm).find("input[name='txtDateWork']");
+                var containNotify = $(frm).find('.frm_notify');
+                if (qc_main.check.inputNull(txtDateWork, 'Nhập Ngày vào')) {
+                    return false;
+                }
+                // thông tin bộ pha
+                if ($('#frmStaffWorkEdit .qc_ad3d_staff_add_department').length > 0) {
+                    qc_ad3d_staff_staff.edit.checkDepartmentInput();
+                } else {
+                    alert('Chon bộ phận làm việc');
+                    return false;
+                }
+
+            },
         },
         checkDepartmentInput: function () {
             $('#frmStaffWorkEdit .qc_ad3d_staff_add_department').filter(function () {
@@ -717,12 +759,15 @@ $(document).ready(function () {
 
 //-------------------- filter ------------
 $(document).ready(function () {
+    //loc theo cty
     $('body').on('change', '.cbCompanyFilter', function () {
-        var companyId = $(this).val();
-        var href = $(this).data('href-filter');
-        if (companyId != '') {
-            href = href + '/' + companyId;
-        }
+        var href = $(this).data('href') + '/' + $(this).val() + '/' + $('.cbWorkStatus').val();
+        qc_ad3d_staff_staff.filter(href);
+    });
+
+    // loc theo trang thai lam viec
+    $('body').on('change', '.cbWorkStatus', function () {
+        var href = $(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $(this).val();
         qc_ad3d_staff_staff.filter(href);
     })
 });
@@ -733,27 +778,42 @@ $(document).ready(function () {
         qc_ad3d_staff_staff.edit.get($(this).parents('.qc_ad3d_list_object'));
     });
 
-    //--------- cap nhat thong tin lam viec
-    //them bo phan
-    $('body').on('click', '.frmStaffWorkEdit .qc_staff_department_edit_add_action', function () {
-        qc_ad3d_staff_staff.edit.addDepartment($(this).data('href'));
+    //--------- cap nhat thong tin lam viec---------
+    /* //them bo phan ---- CU
+     $('body').on('click', '.frmStaffWorkEdit .qc_staff_department_edit_add_action', function () {
+     qc_ad3d_staff_staff.edit.($(this).data('href'));
+     });
+     //xoa bo phan --------- CU
+     $('body').on('click', '.frmStaffWorkEdit .qc_ad3d_staff_add_department .qc_delete', function () {
+     $(this).parents('.qc_ad3d_staff_add_department').remove();
+     });*/
+    // lay form sua thong tin
+    $('body').on('click', '.qc_staffInfoWorkContainerEdit', function () {
+        qc_ad3d_staff_staff.edit.infoWork.get($(this).data('href'));
     });
-    //xoa bo phan
-    $('body').on('click', '.frmStaffWorkEdit .qc_ad3d_staff_add_department .qc_delete', function () {
-        $(this).parents('.qc_ad3d_staff_add_department').remove();
+    // luu thong tin cap nhat
+    $('body').on('click', '.frmStaffInfoWorkEdit .qc_save', function () {
+        qc_ad3d_staff_staff.edit.infoWork.save($(this).parents('.frmStaffInfoWorkEdit'));
     });
-    $('body').on('click', '.frmStaffWorkEdit .qc_save', function () {
-        qc_ad3d_staff_staff.edit.saveWork($(this).parents('.frmStaffWorkEdit'));
-    })
 
-    //--------cap nhat thong tin co ban
-    $('body').on('click', '.frmStaffInfoEdit .qc_save', function () {
-        qc_ad3d_staff_staff.edit.saveInfo($(this).parents('.frmStaffInfoEdit'));
+    //----------- ----------- cap nhat thong tin co ban ------------- ----------
+    // lay form sua thong tin
+    $('body').on('click', '.qc_staffInfoBasicContainerEdit', function () {
+        qc_ad3d_staff_staff.edit.infoBasic.get($(this).data('href'));
     });
 
-    //--------cap nhat thong tin lương
+    $('body').on('click', '.frmStaffInfoBasicEdit .qc_save', function () {
+        qc_ad3d_staff_staff.edit.infoBasic.save($(this).parents('.frmStaffInfoBasicEdit'));
+    });
+
+    //-------- ---------  cap nhat thong tin lương  -------- ----------
+    // lay form sua thong tin
+    $('body').on('click', '.qc_staffInfoSalaryContainerEdit', function () {
+        qc_ad3d_staff_staff.edit.infoSalary.get($(this).data('href'));
+    });
+
     $('body').on('click', '.frmStaffSalaryEdit .qc_save', function () {
-        qc_ad3d_staff_staff.edit.saveSalary($(this).parents('.frmStaffSalaryEdit'));
+        qc_ad3d_staff_staff.edit.infoSalary.save($(this).parents('.frmStaffSalaryEdit'));
     });
 });
 
@@ -779,12 +839,12 @@ $(document).ready(function () {
         qc_ad3d_staff_staff.delete($(this).parents('.qc_ad3d_list_object'));
     })
 });
-//-------------------- add ------------
+//-------------------- them nhan vien moi  ------------
 $(document).ready(function () {
     //add department
-    $('#frmAdd').on('click', '.qc_staff_department_add_action', function () {
-        qc_ad3d_staff_staff.add.addDepartment($(this).data('href'));
-    })
+    /*$('#frmAdd').on('click', '.qc_staff_department_add_action', function () {
+     qc_ad3d_staff_staff.add.addDepartment($(this).data('href'));
+     })*/
 
     //delete product
     $('body').on('click', '#frmAdd .qc_ad3d_staff_add_department .qc_delete', function () {

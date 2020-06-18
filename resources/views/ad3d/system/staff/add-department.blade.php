@@ -56,7 +56,9 @@ if (isset($staffWorkDepartment)) {
                 @if(count($dataRank) > 0)
                     @foreach($dataRank as $rank)
                         <option @if($editStatus && $rank->rankId() == $oldRankId) selected="selected"
-                                @endif value="{!! $rank->rankId() !!}">{!! $rank->name() !!}</option>
+                                @endif value="{!! $rank->rankId() !!}">
+                            {!! $rank->name() !!}
+                        </option>
                     @endforeach
                 @endif
             </select>

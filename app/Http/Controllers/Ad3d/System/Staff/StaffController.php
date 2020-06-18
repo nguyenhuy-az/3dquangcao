@@ -24,31 +24,33 @@ use Request;
 
 class StaffController extends Controller
 {
-    public function index($companyFilterId = null)
+    public function index($companyFilterId = null, $workStatus = 1)
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelDepartment = new QcDepartment();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
         $dataAccess = [
             'accessObject' => 'staff'
         ];
 
-        if (empty($companyFilterId)) {
+        if ($companyFilterId == null) {
             if (!$dataStaffLogin->checkRootManage()) {
                 $companyFilterId = $dataStaffLogin->companyId();
             }
         }
         $dataCompany = $modelCompany->getInfo();
+
         if (empty($companyFilterId)) {
-            $dataStaff = QcStaff::where('workStatus', 1)->orderBy('lastName', 'ASC')->select('*')->paginate(30);
+            $listStaffId = null;
         } else {
             $listStaffId = $modelCompanyStaffWork->staffIdActivityOfCompany($companyFilterId);
-            //dd($companyFilterId);
-            $dataStaff = QcStaff::whereIn('staff_id', $listStaffId)->where(['workStatus' => 1])->orderBy('lastName', 'ASC')->select('*')->paginate(30);
         }
-        return view('ad3d.system.staff.list', compact('modelStaff', 'modelCompanyStaffWork', 'modelDepartment', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId'));
+        $selectStaff = $modelStaff->selectInfoAll($listStaffId, $workStatus);
+        $dataStaff = $selectStaff->paginate(30);
+        return view('ad3d.system.staff.list', compact('modelStaff', 'modelCompanyStaffWork', 'modelDepartment', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'workStatus'));
 
     }
 
@@ -148,6 +150,8 @@ class StaffController extends Controller
         $name_img = null;
         $name_img_front = null;
         $name_img_back = null;
+        dd($account);
+        die();
         if (count($txtImage) > 0) {
             $name_img = stripslashes($_FILES['txtImage']['name']);
             $name_img = 'avatar' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
@@ -200,9 +204,10 @@ class StaffController extends Controller
 
     }
 
-    //sửa thông tin con ban
-    public function getEdit($staffId = null)
+    //quan ly thong tin nhan vien
+    public function getInfo($staffId = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelDepartment = new QcDepartment();
@@ -211,12 +216,23 @@ class StaffController extends Controller
         $dataDepartment = $modelDepartment->getInfo();
         $dataStaff = $modelStaff->getInfo($staffId);
         $dataRank = $modelRank->getInfo();
-        if (count($dataStaff) > 0) {
-            return view('ad3d.system.staff.edit', compact('modelStaff', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank'));
+        if ($hFunction->checkCount($dataStaff)) {
+            return view('ad3d.system.staff.info', compact('modelStaff', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank'));
         }
     }
 
-    public function postInfoEdit($staffId)
+    # ---------- ------- cap nhat thong tin co ban ---------- --------------
+    public function getInfoBasicEdit($staffId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $dataStaff = $modelStaff->getInfo($staffId);
+        if ($hFunction->checkCount($dataStaff)) {
+            return view('ad3d.system.staff.info-basic-edit', compact('modelStaff', 'dataStaff'));
+        }
+    }
+
+    public function postInfoBasicEdit($staffId)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -233,7 +249,23 @@ class StaffController extends Controller
         }
     }
 
-    //sửa thông tin lam viec
+    //-------- ------------- cap nhat thong tin lam viec ------------- ----------------
+    public function getCompanyWorkEdit($staffId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $dataCompany = $modelCompany->getInfo();
+        $dataDepartment = $modelDepartment->getInfo();
+        $dataStaff = $modelStaff->getInfo($staffId);
+        $dataRank = $modelRank->getInfo();
+        if ($hFunction->checkCount($dataStaff)) {
+            return view('ad3d.system.staff.info-work-edit', compact('modelStaff', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank'));
+        }
+    }
+
     public function postCompanyWorkEdit($staffId)
     {
         $hFunction = new \Hfunction();
@@ -363,7 +395,22 @@ class StaffController extends Controller
         return redirect()->back();
     }
 
-    //sửa thông tin lương
+    //-------- -------------  sửa thông tin lương -------- -------------
+    public function getCompanySalaryEdit($staffId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $dataCompany = $modelCompany->getInfo();
+        $dataDepartment = $modelDepartment->getInfo();
+        $dataStaff = $modelStaff->getInfo($staffId);
+        $dataRank = $modelRank->getInfo();
+        if ($hFunction->checkCount($dataStaff)) {
+            return view('ad3d.system.staff.info-salary-edit', compact('modelStaff', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank'));
+        }
+    }
     public function postCompanySalaryEdit($staffId)
     {
         $hFunction = new \Hfunction();

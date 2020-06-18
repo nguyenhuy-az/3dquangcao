@@ -18,48 +18,30 @@ $indexHref = route('qc.ad3d.system.staff.get');
 @section('qc_ad3d_index_content')
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed brown;">
+             style="margin-bottom: 10px;">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green"
                        href="{!! $indexHref !!}">
                         <i class="glyphicon glyphicon-refresh qc-font-size-20"></i>
                     </a>
-                    <label class="qc-font-size-20">NHÂN VIÊN</label><br/>
-                    <a href="{!! route('qc.ad3d.system.staff.change-pass.get') !!}">
-                        <em>Đổi mật khẩu</em>
-                    </a><span>&nbsp; | &nbsp;</span>
-                    <a href="{!! route('qc.ad3d.system.staff.change-account.get') !!}">
-                        <em>Đổi Tài khoản</em>
-                    </a>
-                </div>
-                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
-                            data-href-filter="{!! route('qc.ad3d.system.staff.get') !!}">
-                        @if($dataStaffLogin->checkRootManage())
-                            <option value="">Tất cả</option>
-                        @endif
-                        @if($hFunction->checkCount($dataCompany))
-                            @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
-                                    <option value="{!! $company->companyId() !!}"
-                                            @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
-                                @else
-                                    @if($companyFilterId == $company->companyId())
-                                        <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
-                                    @endif
-                                @endif
-                            @endforeach
-                        @endif
-                    </select>
+                    <label class="qc-font-size-20">NHÂN VIÊN</label>
                 </div>
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
                     <div class="row">
-                        <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                            <a href="{!! route('qc.ad3d.system.staff.change-pass.get') !!}">
+                                <em>Đổi mật khẩu</em>
+                            </a><span>&nbsp; | &nbsp;</span>
+                            <a href="{!! route('qc.ad3d.system.staff.change-account.get') !!}">
+                                <em>Đổi Tài khoản</em>
+                            </a>
+                        </div>
+                        <div class="text-right col-xs-12 col-sm-6 col-md-6 col-lg-6">
                             <a class="qc-link-green-bold " href="{!! route('qc.ad3d.system.staff.add.get') !!}">
                                 <i class="qc-font-size-14 glyphicon glyphicon-plus"></i>
                                 <span class="qc-font-size-14">Thêm</span>
@@ -74,10 +56,11 @@ $indexHref = route('qc.ad3d.system.staff.get');
                  data-href-del="{!! route('qc.ad3d.system.staff.delete') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black;color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th class="text-center">Ảnh</th>
                             <th>Tên</th>
+                            <th>Làm việc</th>
                             <th>
                                 Công ty
                                 <br/> (Đang làm)
@@ -88,7 +71,7 @@ $indexHref = route('qc.ad3d.system.staff.get');
                                 <br/> (cơ bản)
                             </th>
                             <th>
-                                Làm việc <br/> (chấm công)
+                                Chấm Công
                             </th>
                             <th class="text-center">
                                 Quyền Admin
@@ -100,27 +83,46 @@ $indexHref = route('qc.ad3d.system.staff.get');
                             <th class="text-center">
                                 TT Đăng nhập
                             </th>
-                            <th style="width: 60px;"></th>
                         </tr>
-                        {{--<tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                        <tr>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td style="padding: 0 !important;">
-                                <select class="cbWorkStatus form-control" name="cbWorkStatus">
-                                    <option class="1">Đang làm</option>
-                                    <option class="0">Đã nghỉ</option>
-                                    <option class="100">Tất cả</option>
+                                <select class="cbWorkStatus form-control" name="cbWorkStatus" data-href="{!! route('qc.ad3d.system.staff.get') !!}">
+                                    <option value="1" @if($workStatus == 1) selected="selected" @endif>Đang làm</option>
+                                    <option value="0" @if($workStatus == 0) selected="selected" @endif>Đã nghỉ</option>
                                 </select>
                             </td>
-                        </tr>--}}
+                            <td style="padding: 0 !important;">
+                                <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
+                                        data-href="{!! route('qc.ad3d.system.staff.get') !!}">
+                                    @if($dataStaffLogin->checkRootManage())
+                                        <option value="null" @if($companyFilterId == null) selected="selected" @endif>
+                                            Tất cả
+                                        </option>
+                                    @endif
+                                    @if($hFunction->checkCount($dataCompany))
+                                        @foreach($dataCompany as $company)
+                                            @if($dataStaffLogin->checkRootManage())
+                                                <option value="{!! $company->companyId() !!}"
+                                                        @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
+                                            @else
+                                                @if($companyFilterId == $company->companyId())
+                                                    <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
+                                                @endif
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
                         @if($hFunction->checkCount($dataStaff))
                             <?php
                             $perPage = $dataStaff->perPage();
@@ -130,117 +132,152 @@ $indexHref = route('qc.ad3d.system.staff.get');
                             @foreach($dataStaff as $staff)
                                 <?php
                                 $staffId = $staff->staffId();
+                                # dang lam cho 1 cty
                                 $dataCompanyStaffWork = $staff->companyStaffWorkInfoActivity($staffId);
+                                # anh dai dien
                                 $image = $staff->image();
                                 if ($hFunction->checkEmpty($image)) {
-                                    $src = asset('public/images/icons/people.jpeg');
+                                    $src = $staff->pathDefaultImage();
                                 } else {
                                     $src = $staff->pathFullImage($image);
                                 }
+                                # trạng thái làm
+                                $checkWorkStatus = $staff->checkWorkStatus();
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $staffId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
-                                    <td class="text-canter">
+                                    <td class="text-canter" style="padding: 0;">
                                         <a class="qc-link-green"
-                                           href="{!! route('qc.ad3d.system.staff.edit.get', $staffId) !!}">
-                                            <img style="margin: 5px 0px; max-width: 50px;height: 50px;"
+                                           href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
+                                            <img style="max-width: 50px;height: 50px;"
                                                  src="{!! $src !!}">
                                         </a>
                                     </td>
                                     <td>
                                         {!! $staff->firstName().' '.$staff->lastName() !!}
-                                    </td>
-                                    <td>
-                                        @if($hFunction->checkCount($dataCompanyStaffWork))
-                                            {!! $dataCompanyStaffWork->company->nameCode() !!}
-                                        @else
-                                            <em class="qc-color-grey">Chưa phân bổ CV</em>
+                                        @if($checkWorkStatus)
+                                            <br/>
+                                            @if($staff->checkRootStatus())
+                                                @if($dataStaffLogin->checkRootStatus())
+                                                    <a class="qc_edit qc-link" title="Quản lý thông tin"
+                                                       href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
+                                                        <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                                    </a>
+                                                @endif
+                                            @else
+                                                <a class="qc_edit qc-link" title="Quản lý thông tin"
+                                                   href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
+                                                    <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                                </a>
+                                                <span>|</span>
+                                                <a class="qc_delete qc-link-red" href="#" title="Xóa nghỉ làm">
+                                                    <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
+                                                </a>
+                                            @endif
                                         @endif
                                     </td>
                                     <td>
-                                        @if($hFunction->checkCount($dataCompanyStaffWork))
-                                            <?php
-                                            $listIdDepartment = $staff->departmentActivityOfStaff();
-                                            ?>
-                                            @if($hFunction->checkCount($listIdDepartment))
-                                                @foreach($listIdDepartment as $department)
-                                                    {!! $modelDepartment->name($department)[0].',' !!}
-                                                @endforeach
+                                        @if($checkWorkStatus)
+                                            <span>Đang làm</span>
+                                        @else
+                                            <em style=" color: red;">Đã nghỉ</em>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($checkWorkStatus)
+                                            @if($hFunction->checkCount($dataCompanyStaffWork))
+                                                {!! $dataCompanyStaffWork->company->nameCode() !!}
                                             @else
                                                 <em class="qc-color-grey">Chưa phân bổ CV</em>
                                             @endif
                                         @else
-                                            <em class="qc-color-grey">Chưa phân bổ CV</em>
+                                            <em style=" color: red;">Đã nghỉ</em>
                                         @endif
                                     </td>
                                     <td>
-                                        @if($hFunction->checkCount($dataCompanyStaffWork))
-                                            @if($dataCompanyStaffWork->checkExistsActivityStaffWorkSalary())
-                                                <em>Đã có</em>
+                                        @if($checkWorkStatus)
+                                            @if($hFunction->checkCount($dataCompanyStaffWork))
+                                                <?php
+                                                $listIdDepartment = $staff->departmentActivityOfStaff();
+                                                ?>
+                                                @if($hFunction->checkCount($listIdDepartment))
+                                                    @foreach($listIdDepartment as $department)
+                                                        {!! $modelDepartment->name($department)[0].',' !!}
+                                                    @endforeach
+                                                @else
+                                                    <em class="qc-color-grey">Chưa phân bổ CV</em>
+                                                @endif
                                             @else
-                                                <em class="qc-color-grey">Chư có</em>
+                                                <em class="qc-color-grey">Chưa phân bổ CV</em>
                                             @endif
                                         @else
-                                            <em class="qc-color-grey">Chưa có </em>
+                                            <em style=" color: red;">Đã nghỉ</em>
                                         @endif
                                     </td>
                                     <td>
-                                        @if($hFunction->checkCount($dataCompanyStaffWork))
-                                            @if($dataCompanyStaffWork->checkExistsActivityWork())
-                                                <em>Đang mở</em>
+                                        @if($checkWorkStatus)
+                                            @if($hFunction->checkCount($dataCompanyStaffWork))
+                                                @if($dataCompanyStaffWork->checkExistsActivityStaffWorkSalary())
+                                                    <em>Đã có</em>
+                                                @else
+                                                    <em class="qc-color-grey">Chư có</em>
+                                                @endif
                                             @else
-                                                <em class="qc-color-grey">Đã tắt</em>
-                                                <br/>
-                                                <a class="qc_ad3d_staff_open_work_act qc-link-red"
-                                                   data-href="{!! route('qc.ad3d.system.staff.open_work.get', $dataCompanyStaffWork->workId()) !!}">
-                                                    Mở chấm công
-                                                </a>
+                                                <em class="qc-color-grey">Chưa có </em>
                                             @endif
                                         @else
-                                            <em class="qc-color-grey">Chưa phân bổ CV</em>
+                                            <em style=" color: red;">Đã nghỉ</em>
                                         @endif
                                     </td>
-                                    <td class="text-center">
-                                        @if($staff->checkLoginAdmin())
-                                            <em class="qc-color-grey">Có quyền</em>
-                                        @else
-                                            <em class="qc-color-grey">Không có quyền</em>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        @if($staff->checkApplyRule())
-                                            <em class="qc-color-grey">Có</em>
-                                        @else
-                                            <em class="qc-color-grey">Không</em>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <a class="qc_reset_pass qc-link-green" href="#">Reset Mật khẩu</a>
-                                    </td>
-                                    <td class="text-right">
-                                        @if($staff->checkRootStatus())
-                                            @if($dataStaffLogin->checkRootStatus())
-                                                <a class="qc_edit qc-link" title="Quản lý thông tin"
-                                                   href="{!! route('qc.ad3d.system.staff.edit.get', $staffId) !!}">
-                                                    <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
-                                                </a>
-                                                <span>|</span>
-                                                {{--<a class="qc_delete qc-link-green" href="#">Xóa</a>--}}
-                                                <em class="qc-color-grey">---</em>
+                                    <td>
+                                        @if($checkWorkStatus)
+                                            @if($hFunction->checkCount($dataCompanyStaffWork))
+                                                @if($dataCompanyStaffWork->checkExistsActivityWork())
+                                                    <em>Đang mở</em>
+                                                @else
+                                                    <em class="qc-color-grey">Đã tắt</em>
+                                                    <br/>
+                                                    <a class="qc_ad3d_staff_open_work_act qc-link-red"
+                                                       data-href="{!! route('qc.ad3d.system.staff.open_work.get', $dataCompanyStaffWork->workId()) !!}">
+                                                        Mở chấm công
+                                                    </a>
+                                                @endif
                                             @else
-                                                <em class="qc-color-grey">---</em>
+                                                <em class="qc-color-grey">Chưa phân bổ CV</em>
                                             @endif
                                         @else
-                                            <a class="qc_edit qc-link" title="Quản lý thông tin"
-                                               href="{!! route('qc.ad3d.system.staff.edit.get', $staffId) !!}">
-                                                <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
-                                            </a>
-                                            <span>|</span>
-                                            <a class="qc_delete qc-link-red" href="#" title="Xóa">
-                                                <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
-                                            </a>
+                                            <em style=" color: red;">Đã nghỉ</em>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($checkWorkStatus)
+                                            @if($staff->checkLoginAdmin())
+                                                <em class="qc-color-grey">Có quyền</em>
+                                            @else
+                                                <em class="qc-color-grey">Không có quyền</em>
+                                            @endif
+                                        @else
+                                            <em style=" color: red;">Đã nghỉ</em>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($checkWorkStatus)
+                                            @if($staff->checkApplyRule())
+                                                <em class="qc-color-grey">Có</em>
+                                            @else
+                                                <em class="qc-color-grey">Không</em>
+                                            @endif
+                                        @else
+                                            <em style=" color: red;">Đã nghỉ</em>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($checkWorkStatus)
+                                            <a class="qc_reset_pass qc-link-green" href="#">Reset Mật khẩu</a>
+                                        @else
+                                            <em style=" color: red;">Đã nghỉ</em>
                                         @endif
                                     </td>
                                 </tr>
