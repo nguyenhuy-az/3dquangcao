@@ -89,11 +89,24 @@ class QcCompanyStaffWork extends Model
         return $this->hasMany('App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment', 'work_id', 'work_id');
     }
 
+    public function checkExistActivityWorkDepartmentAndRank($departmentId, $rankId, $workId = null)
+    {
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        return $modelStaffWorkDepartment->checkExistWorkActivityOfDepartmentAndRank($this->checkIdNull($workId), $departmentId, $rankId);
+    }
+
     # danh sach ma bo phan cua NV theo bang cham cong
     public function listIdDepartmentOfWork($workId = null)
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         return $modelStaffWorkDepartment->listIdDepartmentOfWork($this->checkIdNull($workId));
+    }
+
+    # danh sach ma bo phan cua NV theo bang cham cong dang hoat dong
+    public function listIdActivityDepartmentOfWork($workId = null)
+    {
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        return $modelStaffWorkDepartment->listIdDepartmentActivityOfWork($this->checkIdNull($workId));
     }
 
     # lay thong tin bp phan lam viec dang hoat dong
@@ -139,6 +152,7 @@ class QcCompanyStaffWork extends Model
             return null;
         }
     }
+
 # lay danh sach ma nv dang hoat dong theo ma cong ty va ma bo phan va cap bac lam viec
     public function listStaffIdActivityHasFilter($companyId, $departmentId = null, $level = 1000)
     {
@@ -243,6 +257,7 @@ class QcCompanyStaffWork extends Model
         $modelStaffWorkSalary = new QcStaffWorkSalary();
         return $modelStaffWorkSalary->checkExistsActivityOfWork($this->checkIdNull($workId));
     }
+
     # lay thong tin bang luong co ban dang hoat dong theo ma lam viec
     public function staffWorkSalaryActivity($workId = null)
     {

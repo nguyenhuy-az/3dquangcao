@@ -55,9 +55,9 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color:yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Ngày</th>
+                            <th style="width: 170px;">Ngày</th>
                             <th>Danh mục chi</th>
-                            <th>Ghi chú chi</th>
+                            <th style="width: 400px;">Ghi chú chi</th>
                             <th>Loại chi phí</th>
                             <th>Người chi</th>
                             <th>Người duyệt</th>
@@ -67,7 +67,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                         </tr>
                         <tr>
                             <td class="text-center"></td>
-                            <td style="padding: 0;">
+                            <td style="padding: 0 !important;">
                                 <select class="cbDayFilter" style="height: 30px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
@@ -105,7 +105,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td style="padding: 0;">
+                            <td style="padding: 0 !important;">
                                 <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
                                         Tất cả
@@ -121,7 +121,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                             <td></td>
 
                             <td class="text-center"></td>
-                            <td style="padding: 0;">
+                            <td style="padding: 0 !important;">
                                 <select class="cbConfirmStatusFilter form-control" name="cbConfirmStatusFilter"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="3" @if($confirmStatusFilter == 3) selected="selected" @endif>Tất cả

@@ -89,14 +89,15 @@ class StaffController extends Controller
     public function postAdd()
     {
         $hFunction = new \Hfunction();
+        $modelRank = new QcRank();
         $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
         $modelStaffWorkMethod = new QcStaffWorkMethod();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $modelStaffWorkSalary = new QcStaffWorkSalary();
-        $staffLoginId = $modelStaff->loginStaffId();
         $modelWork = new QcWork();
-
+        $staffLoginId = $modelStaff->loginStaffId();
         $firstName = Request::input('txtFirstName');
         $lastName = Request::input('txtLastName');
         $txtIdentityCard = Request::input('txtIdentityCard');
@@ -113,7 +114,7 @@ class StaffController extends Controller
         #thong tin lam viec
         $level = Request::input('cbLevel');
         $companyId = Request::input('cbCompany');
-        $cbDepartment = Request::input('cbDepartment');
+        //$cbDepartment = Request::input('cbDepartment');
         $cbRank = Request::input('cbRank');
         $cbPermission = Request::input('cbPermission');
         $cbWorkMethod = Request::input('cbWorkMethod');
@@ -150,8 +151,9 @@ class StaffController extends Controller
         $name_img = null;
         $name_img_front = null;
         $name_img_back = null;
-        dd($account);
-        die();
+
+        # lay danh sach bo phan
+        $dataDepartment = $modelDepartment->getInfo();
         if (count($txtImage) > 0) {
             $name_img = stripslashes($_FILES['txtImage']['name']);
             $name_img = 'avatar' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
@@ -170,22 +172,30 @@ class StaffController extends Controller
             $source_img = $_FILES['txtIdentityCardBack']['tmp_name'];
             if (!$modelStaff->uploadImage($source_img, $name_img_back)) $name_img_back = null;
         }
-
-
         if ($modelStaff->insert($firstName, $lastName, $txtIdentityCard, $account, $birthDay, $gender, $name_img, $name_img_front, $name_img_back, $email, $address, $phone, $level, $txtBankAccount, $cbBankName)) {
             $newStaffId = $modelStaff->insertGetId();
             #them vao cong ty lam viec
             if ($modelCompanyStaffWork->insert($fromDateWork, $level, $newStaffId, $staffLoginId, $companyId)) {
                 $newWorkId = $modelCompanyStaffWork->insertGetId();
-                # them vao bo phan lam viec
-                if (count($cbDepartment) > 0) {
-                    foreach ($cbDepartment as $key => $value) {
-                        $departmentId = $value;
-                        $rankId = $cbRank[$key];
-                        $permission = $cbPermission[$key];
-                        $modelStaffWorkDepartment->insert($fromDateWork, $permission, $newWorkId, $departmentId, $rankId);
+                # them vi tri lam viec
+                if ($hFunction->checkCount($dataDepartment)) {
+                    foreach ($dataDepartment as $department) {
+                        $departmentId = $department->departmentId();
+                        $rankId = null;
+                        $manageRank = Request::input('chkDepartmentManageRank_' . $departmentId);
+                        # xet co chon cap quan ly - uu tien cap quan ly
+                        if ($manageRank) {
+                            $rankId = $modelRank->manageRankId();
+                        } else {
+                            # xet co chon cap nhan vien
+                            $staffRank = Request::input('chkDepartmentStaffRank_' . $departmentId);
+                            if ($staffRank) $rankId = $modelRank->staffRankId();
+                        }
+                        // co chon vi tri lam viẹc
+                        if (!empty($rankId)) $modelStaffWorkDepartment->insert($newWorkId, $departmentId, $rankId, $fromDateWork);
                     }
                 }
+
                 # them luong cho nv
                 $modelStaffWorkSalary->insert($txtTotalSalary, $txtSalary, $txtResponsibility, $txtUsePhone, $txtInsurance, $txtFuel, $txtDateOff, $txtOvertimeHour, $newWorkId);
             }
@@ -217,7 +227,7 @@ class StaffController extends Controller
         $dataStaff = $modelStaff->getInfo($staffId);
         $dataRank = $modelRank->getInfo();
         if ($hFunction->checkCount($dataStaff)) {
-            return view('ad3d.system.staff.info', compact('modelStaff', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank'));
+            return view('ad3d.system.staff.info', compact('modelStaff', 'modelRank', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank'));
         }
     }
 
@@ -245,7 +255,7 @@ class StaffController extends Controller
         $address = Request::input('txtAddress');
         $email = Request::input('txtEmail');
         if (!$modelStaff->updateInfo($staffId, $firstName, $lastName, $txtIdentityCard, $birthDay, $gender, $email, $address, $phone)) {
-            return 'Hệ thống đang ập nhật';
+            return 'Hệ thống đang cập nhật';
         }
     }
 
@@ -262,13 +272,15 @@ class StaffController extends Controller
         $dataStaff = $modelStaff->getInfo($staffId);
         $dataRank = $modelRank->getInfo();
         if ($hFunction->checkCount($dataStaff)) {
-            return view('ad3d.system.staff.info-work-edit', compact('modelStaff', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank'));
+            return view('ad3d.system.staff.info-work-edit', compact('modelStaff', 'modelRank', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank'));
         }
     }
 
     public function postCompanyWorkEdit($staffId)
     {
         $hFunction = new \Hfunction();
+        $modelRank = new QcRank();
+        $modelDepartment = new QcDepartment();
         $modelStaff = new QcStaff();
         $modelWork = new QcWork();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -285,9 +297,15 @@ class StaffController extends Controller
         $cbDepartment = Request::input('cbDepartment');
         $cbRank = Request::input('cbRank');
         $cbPermission = Request::input('cbPermission');
-        $salaryStatus = Request::input('salaryStatus');
+        //$salaryStatus = Request::input('salaryStatus');
         $cbWorkMethod = Request::input('cbWorkMethod');
         $cbApplyRule = Request::input('cbApplyRule');
+
+        # lay danh sach bo phan
+        $dataDepartment = $modelDepartment->getInfo();
+        $manageRankId = $modelRank->manageRankId();
+        $staffRankId = $modelRank->staffRankId();
+
         # thay doi phương thuc lam viec
         if (!$modelStaffWorkMethod->checkExistActivityMethodApplyRuleOfStaff($staffId, $cbWorkMethod, $cbApplyRule)) { # thong tin moi
             $modelStaffWorkMethod->disableInfoActivity($staffId);# vo hieu thong tin cũ
@@ -296,39 +314,69 @@ class StaffController extends Controller
 
         # lay thong tin cty cu dang hoat dong
         $dataCompanyStaffWorkOld = $modelCompanyStaffWork->infoActivityOfStaff($staffId);
-        if (count($dataCompanyStaffWorkOld) > 0) {
+        if ($hFunction->checkCount($dataCompanyStaffWorkOld)) {
             $oldCompanyStaffWorkId = $dataCompanyStaffWorkOld->workId();
             $oldCompanyId = $dataCompanyStaffWorkOld->companyId();
             # lam lai cong ty cu
             if ($oldCompanyId == $companyId) {
                 # cap nhat level truy cap admin
                 $modelCompanyStaffWork->updateLevel($level, $oldCompanyStaffWorkId);
-                # lay cac bo phan cu dang lam
-                $oldListIdDepartment = $dataCompanyStaffWorkOld->listIdDepartmentOfWork();
-                # kiem tra thay doi bo phan lam viec
-                $keepDepartmentId[] = null;
-                foreach ($oldListIdDepartment as $key => $value) {
-                    if (!in_array($value, $cbDepartment)) {
-                        # xoa bo phan cu bi huy
-                        $modelStaffWorkDepartment->disableWorkDepartment($oldCompanyStaffWorkId, $value);
-                    } else {
-                        $keepDepartmentId[] = $value;
-                    }
-                }
-                # them bo phan moi
-                foreach ($cbDepartment as $key => $value) {
-                    $rankId = $cbRank[$key];
-                    $permission = $cbPermission[$key];
-                    if (!empty($keepDepartmentId)) {
-                        if (!in_array($value, $keepDepartmentId)) {
-                            # them vao tru bo phan dang ton tai
-                            $modelStaffWorkDepartment->insert($hFunction->carbonNow(), $permission, $oldCompanyStaffWorkId, $value, $rankId);
+                # lay thong tin vi tri lam cu
+                $dataStaffWorkDepartment = $dataCompanyStaffWorkOld->staffWorkDepartmentInfoActivity();
+                # duỵet danh sach bo phan cua he thong
+                if ($hFunction->checkCount($dataDepartment)) {
+                    foreach ($dataDepartment as $department) {
+                        $departmentId = $department->departmentId();
+                        $rankId = null;
+                        $manageRank = Request::input('chkDepartmentManageRank_' . $departmentId);
+                        # lay cap bac duoc chon khi cap nhat
+                        # xet co chon cap quan ly - uu tien cap quan ly
+                        if ($manageRank) {
+                            $rankId = $manageRankId;
+                        } else {
+                            # xet co chon cap nhan vien
+                            $staffRank = Request::input('chkDepartmentStaffRank_' . $departmentId);
+                            if ($staffRank) $rankId = $staffRankId;
                         }
-                    } else {
-                        # them vao tu tat ca ca bo phan da duoc chon
-                        $modelStaffWorkDepartment->insert($hFunction->carbonNow(), $permission, $oldCompanyStaffWorkId, $value, $rankId);
+                        # bo phan khong duoc chon - khi khong co chon cap quan ly/cap nhan vien (RankId = null)
+                        if ($hFunction->checkEmpty($rankId)) {
+                            if ($hFunction->checkCount($dataStaffWorkDepartment)) {
+                                # duyet vi tri lam cu
+                                foreach ($dataStaffWorkDepartment as $staffWorkDepartment) {
+                                    $oldDepartmentId = $staffWorkDepartment->departmentId();
+                                    #  vị tri cu duoc chon ma vi tri moi khong duoc chon
+                                    if ($departmentId == $oldDepartmentId) {
+                                        # vo hieu hoa vi tri cu
+                                        $modelStaffWorkDepartment->disableWorkDepartment($oldCompanyStaffWorkId, $oldDepartmentId);
+                                    }
+                                }
+                            }
+                        } else {
+                            # bo phan duoc chon
+                            if ($hFunction->checkCount($dataStaffWorkDepartment)) {
+                                # duyet vi tri lam cu
+                                foreach ($dataStaffWorkDepartment as $staffWorkDepartment) {
+                                    $oldDepartmentId = $staffWorkDepartment->departmentId();
+                                    $oldRankId = $staffWorkDepartment->rankId();
+                                    if ($departmentId == $oldDepartmentId) { # lam lai bo phan cu
+                                        if ($rankId != $oldRankId) { # thay doi vi tri / tu cap quan ly sang cap nhan vien hoac nguoc lai
+                                            # vo hieu hoa vi tri cu
+                                            $modelStaffWorkDepartment->disableWorkDepartment($oldCompanyStaffWorkId, $departmentId);
+                                            # thay vi tri moi
+                                            if (!$modelStaffWorkDepartment->checkExistWorkActivityOfDepartmentAndRank($oldCompanyStaffWorkId, $departmentId, $rankId)) {
+                                                $modelStaffWorkDepartment->insert($oldCompanyStaffWorkId, $departmentId, $rankId, $hFunction->carbonNow());
+                                            }
+                                        }
+                                    } else {
+                                        # lam bo phan moi
+                                        if (!$modelStaffWorkDepartment->checkExistWorkActivityOfDepartmentAndRank($oldCompanyStaffWorkId, $departmentId, $rankId)) {
+                                            $modelStaffWorkDepartment->insert($oldCompanyStaffWorkId, $departmentId, $rankId, $hFunction->carbonNow());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-
                 }
             } else {
                 # thay doi cty lam viec
@@ -345,11 +393,32 @@ class StaffController extends Controller
                     if ($modelCompanyStaffWork->insert($txtDateWork, $level, $staffId, $staffLoginId, $companyId)) {
                         $newCompanyStaffWorkId = $modelCompanyStaffWork->insertGetId();
                         # them bo phan lam viec tai cty moi
-                        foreach ($cbDepartment as $key => $value) {
-                            $rankId = $cbRank[$key];
-                            $permission = $cbPermission[$key];
-                            $modelStaffWorkDepartment->insert($hFunction->carbonNow(), $permission, $newCompanyStaffWorkId, $value, $rankId);
+                        if ($hFunction->checkCount($dataDepartment)) {
+                            foreach ($dataDepartment as $department) {
+                                $departmentId = $department->departmentId();
+                                $rankId = null;
+                                $manageRank = Request::input('chkDepartmentManageRank_' . $departmentId);
+                                # lay cap bac duoc chon khi cap nhat
+                                # xet co chon cap quan ly - uu tien cap quan ly
+                                if ($manageRank) {
+                                    $rankId = $modelRank->manageRankId();
+                                } else {
+                                    # xet co chon cap nhan vien
+                                    $staffRank = Request::input('chkDepartmentStaffRank_' . $departmentId);
+                                    if ($staffRank) $rankId = $modelRank->staffRankId();
+                                }
+                                # bo phan khong duoc chon - khi khong co chon cap quan ly/cap nhan vien (RankId = null)
+                                if (!$hFunction->checkEmpty($rankId)) {
+                                    # kiem tra thong tin truoc khi them
+                                    if (!$modelStaffWorkDepartment->checkExistWorkActivityOfDepartmentAndRank($newCompanyStaffWorkId, $departmentId, $rankId)) {
+                                        $modelStaffWorkDepartment->insert($newCompanyStaffWorkId, $departmentId, $rankId, $hFunction->carbonNow());
+                                    }
+
+                                }
+                            }
                         }
+
+
                         #them bang luong moi theo bang luong cua cty cu
                         $modelStaffWorkSalary->insert($oldDataStaffWorkSalary->totalSalary(), $oldDataStaffWorkSalary->salary(), $oldDataStaffWorkSalary->responsibility(), $oldDataStaffWorkSalary->usePhone(), $oldDataStaffWorkSalary->insurance(), $oldDataStaffWorkSalary->fuel(), $oldDataStaffWorkSalary->dateOff(), $oldDataStaffWorkSalary->overtimeHour(), $newCompanyStaffWorkId);
                         #---------  lap bang cham cong moi -----
@@ -411,6 +480,7 @@ class StaffController extends Controller
             return view('ad3d.system.staff.info-salary-edit', compact('modelStaff', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank'));
         }
     }
+
     public function postCompanySalaryEdit($staffId)
     {
         $hFunction = new \Hfunction();

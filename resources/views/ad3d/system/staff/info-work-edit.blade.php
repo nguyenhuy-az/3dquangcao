@@ -28,7 +28,10 @@ $bankName = $dataStaff->bankName();
 $dateAdd = $dataStaff->createdAt();
 # lay thong tin lam viec tai cty
 $dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
-if ($hFunction->checkCount($dataCompanyStaffWork)) {
+$companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true : false; # co dang lam cho 1 cty hay ko
+if ($companyStaffWorkStatus) {
+    $manageRankId = $modelRank->manageRankId();
+    $staffRankId = $modelRank->staffRankId();
     # ap dung chuyen doi tu phien ban cua phan tích moi nv chi lam tai 1 cty
     # thiet ke moi
     $companyId = $dataCompanyStaffWork->companyId();
@@ -47,6 +50,7 @@ if ($hFunction->checkCount($dataCompanyStaffWork)) {
     $dataStaffWorkSalary = null;
     $departmentStaff = null;
 }
+$beginDate = date('Y-m-d', strtotime($beginDate));
 # hinh thuc lam viec
 $dataStaffWorkMethod = $dataStaff->infoActivityStaffWorkMethod();
 if ($hFunction->checkCount($dataStaffWorkMethod)) {
@@ -76,7 +80,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                     <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                 </label>
                 <select class="form-control" name="cbCompany">
-                    @if(count($dataCompany) > 0)
+                    @if($hFunction->checkCount($dataCompany))
                         @foreach($dataCompany as $company)
                             <option value="{!! $company->companyId() !!}"
                                     @if($company->companyId() == $companyId ) selected="true" @endif >{!! $company->name() !!}</option>
@@ -171,7 +175,14 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
     </div>
     {{--them bo phan--}}
     <div class="table-responsive">
-        <table class="table table-condensed">
+        <table class="table table-hover table-condensed">
+            <tr>
+                <th colspan="3">
+                    <label style="background-color: red; color: yellow; padding: 3px;">LƯU Ý</label>
+                    Trong <span style="color: red;">1 bộ phận</span> 1 NV chỉ đảm nhiệm <span style="color: red;">1 vị trí</span>.
+                    Cấp <span style="color: red;">quản lý</span> làm được <span style="color: red;">Tất cả CV</span> của cấp  <span style="color: red;">Nhân viên</span>
+                </th>
+            </tr>
             <tr>
                 <th>
                     BỘ PHẬN
@@ -185,18 +196,38 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
             </tr>
             @if($hFunction->checkCount($dataDepartment))
                 @foreach($dataDepartment as $department)
-                    <tr>
-                        <td>
-                            <i class="glyphicon glyphicon-arrow-right"></i>
-                            {!! $department->name() !!}
-                        </td>
-                        <td class="text-center">
-                            <input type="checkbox">
-                        </td>
-                        <td class="text-center">
-                            <input type="checkbox">
-                        </td>
-                    </tr>
+                    <?php
+                    $departmentId = $department->departmentId();
+                    ?>
+                    @if($companyStaffWorkStatus)
+                        <tr>
+                            <td>
+                                <i class="glyphicon glyphicon-arrow-right"></i>
+                                {!! $department->name() !!}
+                            </td>
+                            <td class="text-center">
+                                <input class="departmentManageRank" type="checkbox" name="chkDepartmentManageRank_{!! $departmentId !!}"
+                                       @if($dataCompanyStaffWork->checkExistActivityWorkDepartmentAndRank($departmentId, $manageRankId)) checked="checked" @endif>
+                            </td>
+                            <td class="text-center">
+                                <input class="departmentStaffRank" type="checkbox" name="chkDepartmentStaffRank_{!! $departmentId !!}"
+                                       @if($dataCompanyStaffWork->checkExistActivityWorkDepartmentAndRank($departmentId, $staffRankId)) checked="checked" @endif>
+                            </td>
+                        </tr>
+                    @else
+                        <tr>
+                            <td>
+                                <i class="glyphicon glyphicon-arrow-right"></i>
+                                {!! $department->name() !!}
+                            </td>
+                            <td class="text-center">
+                                <input class="departmentManageRank" type="checkbox" name="chkDepartmentManageRank_{!! $departmentId !!}">
+                            </td>
+                            <td class="text-center">
+                                <input class="departmentStaffRank" type="checkbox" name="chkDepartmentStaffRank_{!! $departmentId !!}">
+                            </td>
+                        </tr>
+                    @endif
                 @endforeach
             @endif
         </table>
@@ -205,18 +236,17 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
     <div class="row qc-padding-top-10 qc-padding-bot-10">
         <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8 ">
             <div class="form-group form-group-sm" style="margin: 0;">
-                <label class="radio-inline">
+                <label class="radio-inline" style="color: red;">
                     <input type="radio" checked="checked" name="salaryStatus" value="1">
-                    Theo bảng lương
-                    cũ
+                    Theo bảng lương cũ khi thay đổi công ty
                 </label>
             </div>
         </div>
         <div class="text-right  col-sx-12 col-sm-12 col-md-4 col-lg-4 ">
             <div class="form-group form-group-sm" style="margin: 0;">
                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                <button type="button" class="qc_save btn btn-sm btn-primary">Lưu thay đổi
-                </button>
+                <button type="button" class="qc_save btn btn-sm btn-primary">Lưu thay đổi</button>
+                <button type="reset" class="btn btn-sm btn-default">Nhập lại</button>
                 <button type="button" class="btn btn-sm btn-default"
                         onclick="qc_main.window_reload();">
                     Đóng

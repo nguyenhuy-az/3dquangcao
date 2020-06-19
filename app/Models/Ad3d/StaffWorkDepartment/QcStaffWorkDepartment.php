@@ -17,7 +17,7 @@ class QcStaffWorkDepartment extends Model
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($beginDate, $permission, $workId, $departmentId, $rankId)
+    public function insert($workId, $departmentId, $rankId, $beginDate, $permission = 'f')
     {
         $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
@@ -36,7 +36,7 @@ class QcStaffWorkDepartment extends Model
         }
     }
 
-    // l?y id m?i th�m
+    // lay ID moi them
     public function insertGetId()
     {
         return $this->lastId;
@@ -64,10 +64,16 @@ class QcStaffWorkDepartment extends Model
         return QcStaffWorkDepartment::where(['work_id' => $workId, 'action' => 1])->get();
     }
 
+    # kiem tra ton tai dang lam viec tai 1 bo phan
     public function checkExistWorkOfDepartment($workId, $departmentId)
     {
-        $result = QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId, 'action' => 1])->count();
-        return ($result > 0) ? true : false;
+        return QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId, 'action' => 1])->exists();
+    }
+
+    # kiem tra ton tai dang lam viec tai 1 bo phan va vi tri lam
+    public function checkExistWorkActivityOfDepartmentAndRank($workId, $departmentId, $rankId)
+    {
+        return QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId,'rank_id'=>$rankId, 'action' => 1])->exists();
     }
 
     public function listIdDepartmentOfWork($workId)

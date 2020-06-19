@@ -123,8 +123,8 @@ var qc_ad3d_staff_staff = {
                     alert('Phải phân bổ hết mức lương chưa phát');
                     return false;
                 } else {
-                    qc_ad3d_submit.ajaxFormNotReload('#frmAdd', '', false);
-                    //qc_ad3d_submit.ajaxFormHasReload('#frmAdd', '', false);
+                    //--- qc_ad3d_submit.ajaxFormNotReload('#frmAdd', '', false);
+                    qc_ad3d_submit.ajaxFormHasReload('#frmAdd', '', false);
                     qc_main.scrollTop();
                     $('.qc_reset').click();
                 }
@@ -147,29 +147,6 @@ var qc_ad3d_staff_staff = {
             });
             return checkStatus;
         },
-        /*checkDepartmentInput: function () {
-         $('#frmAdd .qc_ad3d_staff_add_department').filter(function () {
-         if ($(this).is(':last-child')) {
-         var cbDepartment = $(this).find('.cbDepartment');
-         var cbRank = $(this).find('.cbRank');
-         if (qc_main.check.inputNull(cbDepartment, 'Chọn bộ phận')) {
-         cbDepartment.focus();
-         return false;
-         }
-
-         if (cbRank.val() == 0 || cbRank.val() == '') {
-         alert('Chọn cấp bậc');
-         cbRank.focus();
-         return false;
-         } else {
-         qc_ad3d_submit.ajaxFormHasReload('#frmAdd', '', false);
-         qc_main.scrollTop();
-         $('.qc_reset').click();
-         }
-         }
-
-         });
-         },*/
         showInput: function () {
             var txtTotalSalary = $('#frmAdd').find("input[name='txtTotalSalary']");
             var txtTotalSalaryRemain = $('#frmAdd').find("input[name='txtTotalSalaryRemain']");
@@ -304,25 +281,6 @@ var qc_ad3d_staff_staff = {
         }
     },
     edit: {
-        /*addDepartment: function (href) {
-         $.ajax({
-         url: href,
-         type: 'GET',
-         cache: false,
-         data: {},
-         beforeSend: function () {
-         qc_ad3d.loadStatus();
-         },
-         success: function (data) {
-         if (data) {
-         $('#qc_staff_permission_contain_edit').append(data);
-         }
-         },
-         complete: function () {
-         qc_ad3d.loadStatus();
-         }
-         });
-         },*/
         get: function (listObject) {
             qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-edit') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
         },
@@ -410,7 +368,7 @@ var qc_ad3d_staff_staff = {
                     if (qc_main.check.inputMaxLength(txtAddress, 50, 'Địa chỉ dài quá 50 ký tự')) return false;
                     return false;
                 } else {
-                    qc_ad3d_submit.ajaxFormHasReload('#frmStaffInfoEdit', '.frm_info_edit_notify', true);
+                    qc_ad3d_submit.ajaxFormHasReload(frm, '.frm_info_edit_notify', true);
                     $('#qc_container_content').animate({
                         scrollTop: 0
                     })
@@ -427,43 +385,36 @@ var qc_ad3d_staff_staff = {
             save: function (frm) {
                 var txtDateWork = $(frm).find("input[name='txtDateWork']");
                 var containNotify = $(frm).find('.frm_notify');
+                // thông tin chon vị tri lam viec
+                if (!qc_ad3d_staff_staff.edit.infoWork.checkSelectDepartmentManageRank()) {
+                    if (!qc_ad3d_staff_staff.edit.infoWork.checkSelectDepartmentStaffRank()) {
+                        alert('Phải chọn 1 vị trí làm việc');
+                        return false;
+                    }
+                }
                 if (qc_main.check.inputNull(txtDateWork, 'Nhập Ngày vào')) {
                     return false;
-                }
-                // thông tin bộ pha
-                if ($('#frmStaffWorkEdit .qc_ad3d_staff_add_department').length > 0) {
-                    qc_ad3d_staff_staff.edit.checkDepartmentInput();
                 } else {
-                    alert('Chon bộ phận làm việc');
-                    return false;
+                    //qc_ad3d_submit.ajaxFormHasReload(frm, containNotify, true);
+                    qc_ad3d_submit.ajaxFormNotReload(frm, containNotify, true);
                 }
-
             },
-        },
-        checkDepartmentInput: function () {
-            $('#frmStaffWorkEdit .qc_ad3d_staff_add_department').filter(function () {
-                if ($(this).is(':last-child')) {
-                    var cbDepartment = $(this).find('.cbDepartment');
-                    var cbRank = $(this).find('.cbRank');
-                    if (qc_main.check.inputNull(cbDepartment, 'Chọn bộ phận')) {
-                        cbDepartment.focus();
-                        return false;
-                    }
-
-                    if (cbRank.val() == 0 || cbRank.val() == '') {
-                        alert('Chọn cấp bậc');
-                        cbRank.focus();
-                        return false;
-                    } else {
-                        qc_ad3d_submit.normalForm('#frmStaffWorkEdit');
-                        /*qc_ad3d_submit.ajaxFormHasReload('#frmStaffWorkEdit', '.frm_work_notify', true);
-                         $('#qc_container_content').animate({
-                         scrollTop: 0
-                         })*/
-                    }
-                }
-
-            });
+            // kiem tra co chon bo phan cap quan ly
+            checkSelectDepartmentManageRank: function () {
+                var checkStatus = false;
+                $('#frmStaffInfoWorkEdit .departmentManageRank').filter(function () {
+                    if ($(this).is(':checked')) checkStatus = true;
+                });
+                return checkStatus;
+            },
+            // kiem tra co chon bo phan cap nhan vien
+            checkSelectDepartmentStaffRank: function () {
+                var checkStatus = false;
+                $('#frmStaffInfoWorkEdit .departmentStaffRank').filter(function () {
+                    if ($(this).is(':checked')) checkStatus = true;
+                });
+                return checkStatus;
+            },
         },
         checkInputTotalSalary: function () {
             var txtTotalSalary = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalary']");
@@ -803,6 +754,7 @@ $(document).ready(function () {
     });
 
     $('body').on('click', '.frmStaffInfoBasicEdit .qc_save', function () {
+
         qc_ad3d_staff_staff.edit.infoBasic.save($(this).parents('.frmStaffInfoBasicEdit'));
     });
 

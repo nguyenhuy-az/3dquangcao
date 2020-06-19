@@ -28,8 +28,7 @@ $companyLoginId = $dataStaffLogin->companyId();
             <form id="frmAdd" class="frmAdd" name="frmAdd" role="form" method="post" enctype="multipart/form-data"
                   action="{!! route('qc.ad3d.system.staff.add.post') !!}">
                 <div class="row">
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                         @if($mobileStatus) style="padding: 0 0;" @endif>
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         @if (Session::has('notifyAdd'))
                             <div class="form-group form-group-sm text-center qc-color-red">
                                 {!! Session::get('notifyAdd') !!}
@@ -73,8 +72,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4"
-                             @if($mobileStatus) style="padding: 0 0;" @endif>
+                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Giới tính</label>
                                 <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
@@ -96,8 +94,7 @@ $companyLoginId = $dataStaffLogin->companyId();
 
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4"
-                             @if($mobileStatus) style="padding: 0 0;" @endif>
+                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Điện thoại<i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                                 <input type="text" class="form-control" name="txtPhone"
@@ -106,8 +103,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8"
-                             @if($mobileStatus) style="padding: 0 0;" @endif>
+                        <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Địa chỉ</label>
                                 <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
@@ -124,22 +120,19 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4"
-                             @if($mobileStatus) style="padding: 0 0;" @endif>
+                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Ảnh cá nhân</label>
                                 <input type="file" name="txtImage" title="Ảnh cá nhân" value="">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4"
-                             @if($mobileStatus) style="padding: 0 0;" @endif>
+                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Ảnh CMND mặt trước</label>
                                 <input type="file" name="txtIdentityCardFront" title="Ảnh CMND mặt trước" value="">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4"
-                             @if($mobileStatus) style="padding: 0 0;" @endif>
+                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Ảnh CMND mặt sau</label>
                                 <input type="file" name="txtIdentityCardBack" title="Ảnh CMND mặt sau" value="">
@@ -166,7 +159,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                     <option value="">
                                         Chọn công ty
                                     </option>
-                                    @if(count($dataCompany) > 0)
+                                    @if($hFunction->checkCount($dataCompany))
                                         @foreach($dataCompany as $company)
                                             <option value="{!! $company->companyId() !!}">
                                                 {!! $company->name() !!}
@@ -184,16 +177,11 @@ $companyLoginId = $dataStaffLogin->companyId();
                                 </label>
                                 <em style="color: brown;">Cấp < 4 sẽ truy cập vào trang quản lý</em>
                                 <select class="form-control" name="cbLevel">
-                                    <option value="1">1
-                                    </option>
-                                    <option value="2">2
-                                    </option>
-                                    <option value="3">3
-                                    </option>
-                                    <option value="4">4
-                                    </option>
-                                    <option value="5" selected="selected">5
-                                    </option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5" selected="selected">5</option>
                                 </select>
                             </div>
                         </div>
@@ -210,8 +198,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                 </script>
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4"
-                             @if($mobileStatus) style="padding: 0 0;" @endif>
+                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>
                                     Hình thức làm<i class="qc-color-red glyphicon glyphicon-star-empty"></i>
@@ -226,8 +213,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4"
-                             @if($mobileStatus) style="padding: 0 0;" @endif>
+                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>
                                     Áp dụng nội quy<i class="qc-color-red glyphicon glyphicon-star-empty"></i>
@@ -250,8 +236,9 @@ $companyLoginId = $dataStaffLogin->companyId();
                                 <table class="table table-hover table-condensed">
                                     <tr>
                                         <th colspan="3">
-                                            Trong <span style="color: red;">1 bộ phận</span> 1 NV chỉ đảm nhiệm <span style="color: red;">1 vị trí</span><br/>
-                                            Cấp quản lý làm được <span style="color: red;">Tất cả CV</span> của cấp  <span style="color: red;">Nhân viên</span>
+                                            <label style="background-color: red; color: yellow; padding: 3px;">LƯU Ý</label>
+                                            Trong <span style="color: red;">1 bộ phận</span> 1 NV chỉ đảm nhiệm <span style="color: red;">1 vị trí</span>.
+                                            Cấp <span style="color: red;">quản lý</span> làm được <span style="color: red;">Tất cả CV</span> của cấp  <span style="color: red;">Nhân viên</span>
                                         </th>
                                     </tr>
                                     <tr>
@@ -273,7 +260,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                             <tr>
                                                 <td>
                                                     <i class="glyphicon glyphicon-arrow-right"></i>
-                                                    {!! $department->name() !!} --- {!! $departmentId !!}
+                                                    {!! $department->name() !!}
                                                     <input type="hidden" value="{!! $department->departmentId() !!}"
                                                            name="txtDepartment_{!! $departmentId !!}">
                                                 </td>

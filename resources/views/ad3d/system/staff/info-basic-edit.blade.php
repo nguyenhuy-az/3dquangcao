@@ -126,8 +126,7 @@ $dateAdd = $dataStaff->createdAt();
             <input type="hidden" name="_token" value="{!! csrf_token() !!}">
             <button type="button" class="qc_save btn btn-sm btn-primary">Lưu thay đổi
             </button>
-            <button type="button" class="btn btn-sm btn-default"
-                    onclick="qc_main.window_reload();">
+            <button type="button" class="btn btn-sm btn-default" onclick="qc_main.window_reload();">
                 Đóng
             </button>
         </div>
