@@ -20,7 +20,7 @@ use Request;
 class SalaryBeforePayController extends Controller
 {
     //ứng lương
-    public function index($monthFilter = null, $yearFilter = null)
+    public function index($monthFilter = 0, $yearFilter = 0)
     {
         $modelStaff = new QcStaff();
         $modelWork = new QcWork();

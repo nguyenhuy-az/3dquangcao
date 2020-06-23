@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ad3d\Finance\KeepMoney;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\KeepMoney\QcKeepMoney;
+use App\Models\Ad3d\Salary\QcSalary;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Staff\QcStaff;
 use Illuminate\Support\Facades\Session;
@@ -18,6 +19,7 @@ class KeepMoneyController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelSalary = new QcSalary();
         $modelCompany = new QcCompany();
         $modelKeepMoney = new QcKeepMoney();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
@@ -70,7 +72,8 @@ class KeepMoneyController extends Controller
             $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
         }
         $listWorkId = $modelStaff->allListWorkIdOfListStaffId($listStaffId);
-        $dataKeepMoneySelect = $modelKeepMoney->selectInfoOfListWork($listWorkId, $dateFilter, $payStatus);
+        $listSalaryId = $modelSalary->listIdOfListWorkId($listWorkId);
+        $dataKeepMoneySelect = $modelKeepMoney->selectInfoOfListSalary($listSalaryId, $dateFilter, $payStatus);
         $dataKeepMoney = $dataKeepMoneySelect->paginate(30);
         //danh sach NV
         $dataStaff = $modelCompany->staffInfoActivityOfListCompanyId([$searchCompanyFilterId]);

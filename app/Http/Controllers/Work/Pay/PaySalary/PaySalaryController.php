@@ -97,7 +97,7 @@ class PaySalaryController extends Controller
         } else {
             if ($modelSalaryPay->insert($txtMoney, $hFunction->carbonNow(), $salaryId, $staffLoginId)) {
                 if ($txtMoney == $upPaid) {
-                    $modelSalary->updatePayStatus($salaryId);
+                    $modelSalary->updateFinishPay($salaryId);
                 }
             } else {
                 echo "Ngày thanh toán phải lớn hơn ngày tính lương";
@@ -152,6 +152,7 @@ class PaySalaryController extends Controller
         $txtKeepMoney = Request::input('txtKeepMoney');
         $txtKeepMoney = $hFunction->convertCurrencyToInt($txtKeepMoney);
         $txtKeepMoneyDescription = Request::input('txtKeepMoneyDescription');
+        $txtSalaryMoney = $txtSalaryMoney - $txtKeepMoney;
         # cap nhat thuong
         if ($txtBenefitMoney > 0) {
             $modelSalary->updateBenefitMoney($salaryId, $txtBenefitMoney, $txtBenefitMoneyDescription);# thuong them
@@ -159,11 +160,11 @@ class PaySalaryController extends Controller
         }
         # thanh toan luong
         if ($modelSalaryPay->insert($txtSalaryMoney, $hFunction->carbonNow(), $salaryId, $staffLoginId)) {
-            $modelSalary->updatePayStatus($salaryId);
+            $modelSalary->updateFinishPay($salaryId);
         }
         # giu tien
         if ($txtKeepMoney > 0) { # giu  lại tien
-            $modelKeepMoney->insert($txtKeepMoney, $txtKeepMoneyDescription, $dataSalary->workId(), $staffLoginId);
+            $modelKeepMoney->insert($txtKeepMoney, $txtKeepMoneyDescription, $salaryId, $staffLoginId);
         }
         # thanh toan nhap vat tu
         $dataStaff = $dataWork->staffInfoOfWork();

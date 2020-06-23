@@ -3,6 +3,7 @@
 namespace App\Models\Ad3d\Salary;
 
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
+use App\Models\Ad3d\KeepMoney\QcKeepMoney;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Work\QcWork;
@@ -59,7 +60,17 @@ class QcSalary extends Model
         return $this->lastId;
     }
 
+    public function checkIdNull($salaryId = null)
+    {
+        return (empty($salaryId)) ? $this->salaryId() : $salaryId;
+    }
+
     public function updatePayStatus($salaryId)
+    {
+        return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => 1]);
+    }
+
+    public function updateFinishPay($salaryId)
     {
         return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => 1]);
     }
@@ -69,6 +80,19 @@ class QcSalary extends Model
         return QcSalary::where('salary_id', $salaryId)->update(['benefitMoney' => $benefitMoney, 'benefitDescription' => $benefitDescription]);
     }
     //========== ========== ========== CAC MOI QUAN HE ========== ========== ==========
+    //----------- GIU TIEN ------------
+    public function keepMoney()
+    {
+        return $this->hasMany('App\Models\Ad3d\KeepMoney\QcKeepMoney', 'salary_id', 'salary_id');
+    }
+
+    # tong tien giu  tren 1 bang cham cong
+    public function totalKeepMoney($salaryId = null)
+    {
+        $modelKeepMoney = new QcKeepMoney();
+        return $modelKeepMoney->totalMoneyOfSalary($this->checkIdNull($salaryId));
+    }
+
     //-----------  luong co ban   ------------ phien ban cu
     public function salaryBasic()
     {

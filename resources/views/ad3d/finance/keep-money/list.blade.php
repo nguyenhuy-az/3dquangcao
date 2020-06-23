@@ -134,7 +134,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                             @foreach($dataKeepMoney as $keepMoney)
                                 <?php
                                 $keepMoneyId = $keepMoney->keepId();
-                                $dataWork = $keepMoney->work;
+                                $dataWork = $keepMoney->salary->work;
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
                                     data-object="{!! $keepMoneyId !!}">

@@ -1163,6 +1163,10 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     Route::post('change-account', ['as' => 'qc.work.change-account.post', 'uses' => 'Work\WorkController@postChangeAccount']);
     // lương
     Route::group(['prefix' => 'salary'], function () {
+        //giu tien tu lương
+        Route::group(['prefix' => 'keep-money'], function () {
+            Route::get('/{monthFilter?}/{yearFilter?}/{payStatus?}', ['as' => 'qc.work.salary.keep_money.get', 'uses' => 'Work\Salary\KeepMoney\KeepMoneyController@index']);
+        });
         //luong
         Route::group(['prefix' => 'salary'], function () {
             # xac nhan da nhan luong

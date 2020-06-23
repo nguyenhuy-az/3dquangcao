@@ -188,19 +188,6 @@ class QcWork extends Model
     }
 
     //========== ========== ========== CAC MOI QUAN HE ========== ========== ==========
-    //----------- GIU TIEN ------------
-    public function keepMoney()
-    {
-        return $this->hasMany('App\Models\Ad3d\KeepMoney\QcKeepMoney', 'work_id', 'work_id');
-    }
-
-    # tong tien giu  tren 1 bang cham cong
-    public function totalKeepMoney($workId = null)
-    {
-        $modelKeepMoney = new QcKeepMoney();
-        return $modelKeepMoney->totalMoneyOfWork($this->checkIdNull($workId));
-    }
-
     //----------- THONG TIN LAM VIEC TAI CHI NHANH /CTY ------------
     public function companyStaffWork()
     {

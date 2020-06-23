@@ -32,6 +32,11 @@ if (isset($dataAccess)) {
                     <label>Ứng lương</label>
                 </a>
             </li>
+            <li @if($viewLoginObject == 'keepMoney') class="active" @endif>
+                <a href="{!! route('qc.work.salary.keep_money.get') !!}" @if($viewLoginObject == 'keepMoney') style="background-color: whitesmoke;" @endif>
+                    <label>Giữ lương</label>
+                </a>
+            </li>
         </ul>
     </div>
 </div>

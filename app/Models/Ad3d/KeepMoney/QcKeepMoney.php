@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcKeepMoney extends Model
 {
     protected $table = 'qc_keep_money';
-    protected $fillable = ['keep_id', 'keepDate', 'money', 'description', 'created_at', 'cancelStatus', 'work_id', 'confirmStaff_id'];
+    protected $fillable = ['keep_id', 'keepDate', 'money', 'description', 'created_at', 'cancelStatus', 'salary_id', 'confirmStaff_id'];
     protected $primaryKey = 'keep_id';
     public $timestamps = false;
 
@@ -15,14 +15,14 @@ class QcKeepMoney extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($money, $description, $workId, $confirmStaffId)
+    public function insert($money, $description, $salaryId, $confirmStaffId)
     {
         $hFunction = new \Hfunction();
         $modelKeepMoney = new QcKeepMoney();
         $modelKeepMoney->money = $money;
         $modelKeepMoney->description = $description;
         $modelKeepMoney->keepDate = $hFunction->carbonNow();
-        $modelKeepMoney->work_id = $workId;
+        $modelKeepMoney->salary_id = $salaryId;
         $modelKeepMoney->confirmStaff_id = $confirmStaffId;
         $modelKeepMoney->created_at = $hFunction->createdAt();
         if ($modelKeepMoney->save()) {
@@ -48,16 +48,16 @@ class QcKeepMoney extends Model
         return QcKeepMoney::where('keep_id', $this->checkIdNull($keepId))->update(['cancelStatus' => 1]);
     }
     //========== ========= ========= CAC MOI QUAN HE DU LIEU ========== ========= ==========
-    //---------- lam viec-----------
-    public function work()
+    //---------- bang luong-----------
+    public function salary()
     {
-        return $this->belongsTo('App\Models\Ad3d\Work\QcWork', 'work_id', 'work_id');
+        return $this->belongsTo('App\Models\Ad3d\Salary\QcSalary', 'salary_id', 'salary_id');
     }
 
     # tong tien giu cua 1 bang cham cong
-    public function totalMoneyOfWork($workId)
+    public function totalMoneyOfSalary($salaryId)
     {
-        return QcKeepMoney::where('work_id', $workId)->sum('money');
+        return QcKeepMoney::where('salary_id', $salaryId)->sum('money');
     }
 
     //---------- NHAN VIEN XAC NHAN -----------
@@ -73,12 +73,12 @@ class QcKeepMoney extends Model
 
     }
 
-    public function selectInfoOfListWork($listWorkId, $dateFilter = null, $payStatus = null)
+    public function selectInfoOfListSalary($listSalaryId, $dateFilter = null, $payStatus = null)
     {
         if (empty($dateFilter)) {
-            return QcKeepMoney::whereIn('work_id', $listWorkId)->orderBy('keep_id', 'DESC')->select('*');
+            return QcKeepMoney::whereIn('salary_id', $listSalaryId)->orderBy('keep_id', 'DESC')->select('*');
         } else {
-            return QcKeepMoney::whereIn('work_id', $listWorkId)->where('keepDate', 'like', "%$dateFilter%")->orderBy('keep_id', 'DESC')->select('*');
+            return QcKeepMoney::whereIn('salary_id', $listSalaryId)->where('keepDate', 'like', "%$dateFilter%")->orderBy('keep_id', 'DESC')->select('*');
         }
     }
 
@@ -138,7 +138,7 @@ class QcKeepMoney extends Model
 
     public function workId($keepId = null)
     {
-        return $this->pluck('work_id', $keepId);
+        return $this->pluck('salary_id', $keepId);
     }
 
     public function confirmStaffId($keepId = null)

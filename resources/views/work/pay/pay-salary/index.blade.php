@@ -63,7 +63,7 @@ $currentMonth = $hFunction->currentMonth();
                                 <th class="text-right">Cộng thêm</th>
                                 <th class="text-right">Đã thanh toán</th>
                                 <th class="text-right">Chưa thanh toán</th>
-                                <th class="text-right">Giữ tiền</th>
+                                <th class="text-right">Giữ tiền lại</th>
                             </tr>
                             <tr>
                                 <td></td>
@@ -96,7 +96,8 @@ $currentMonth = $hFunction->currentMonth();
                                 $sumSalaryPaid = 0;
                                 $sumSalaryUnpaid = 0;
                                 $sumSalaryBenefit = 0;
-                                $sumMoneyImportOfStaff = 0
+                                $sumMoneyImportOfStaff = 0;
+                                $sumKeepMoney = 0;
                                 ?>
                                 @foreach($dataSalary as $salary)
                                     <?php
@@ -113,6 +114,9 @@ $currentMonth = $hFunction->currentMonth();
                                     // tong tien mua vat tu xac nhan chưa thanh toan
                                     $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataWork->companyStaffWork->staff->staffId(), date('Y-m', strtotime($fromDate)), 2);
                                     $sumMoneyImportOfStaff = $sumMoneyImportOfStaff + $totalMoneyImportOfStaff;
+                                    # giu tiem trong thang
+                                    $totalKeepMoney = $salary->totalKeepMoney();
+                                    $sumKeepMoney = $sumKeepMoney + $totalKeepMoney;
                                     ?>
                                     <tr>
                                         <td class="text-center">
@@ -154,10 +158,12 @@ $currentMonth = $hFunction->currentMonth();
                                             {!! $hFunction->currencyFormat($totalPaid) !!}
                                         </td>
                                         <td class="text-right qc-color-red">
-                                            {!! $hFunction->currencyFormat($salaryPay + $totalMoneyImportOfStaff + $benefitMoney -$totalPaid) !!}
+                                            {!! $hFunction->currencyFormat($salaryPay + $totalMoneyImportOfStaff + $benefitMoney -$totalPaid - $totalKeepMoney) !!}
                                         </td>
                                         <td class="text-right">
-                                            {{--{!! $hFunction->currencyFormat($totalPaid) !!}--}}
+                                            <a class="qc-link-green">
+                                                {!! $hFunction->currencyFormat($totalKeepMoney) !!}
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -179,8 +185,8 @@ $currentMonth = $hFunction->currentMonth();
                                     <td class="text-right qc-color-red">
                                         {!! $hFunction->currencyFormat($sumSalaryUnpaid)  !!}
                                     </td>
-                                    <td>
-
+                                    <td class="text-right">
+                                        {!! $hFunction->currencyFormat($sumKeepMoney)  !!}
                                     </td>
                                 </tr>
                             @else

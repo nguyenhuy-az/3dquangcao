@@ -18,31 +18,31 @@ $hFunction = new Hfunction();
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_salary_salary_content row">
-                    @if($hFunction->checkCount($dataSalary))
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered">
-                                <tr style="background-color: black; color: yellow;">
-                                    <th class="text-center" style="width: 20px;">STT</th>
-                                    <th class="text-center">Từ ngày</th>
-                                    <th class="text-center">Đến ngày</th>
-                                    <th class="text-center">TT xác nhận</th>
-                                    <th class="text-center">TT thanh toán</th>
-                                    <th class="text-right">Lương cơ bản</th>
-                                    <th class="text-right">
-                                        Mua vật tư
-                                        <br/>
-                                        <em>(Đã duyệt chưa TT)</em>
-                                    </th>
-                                    <th class="text-right">Cộng thêm</th>
-                                    <th class="text-right">Thưởng</th>
-                                    <th class="text-right">Phạt</th>
-                                    <th class="text-right">Ứng</th>
-                                    <th class="text-right">Đã thanh toán</th>
-                                    <th class="text-right">Còn lại</th>
 
-                                    <th class="text-right"></th>
-
-                                </tr>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered">
+                            <tr style="background-color: black; color: yellow;">
+                                <th class="text-center" style="width: 20px;">STT</th>
+                                <th class="text-center">Từ ngày</th>
+                                <th class="text-center">Đến ngày</th>
+                                <th class="text-center">TT xác nhận</th>
+                                <th class="text-center">TT thanh toán</th>
+                                <th class="text-right">Lương cơ bản</th>
+                                <th class="text-right">
+                                    Mua vật tư
+                                    <br/>
+                                    <em>(Đã duyệt chưa TT)</em>
+                                </th>
+                                <th class="text-right">Cộng thêm</th>
+                                <th class="text-right">Thưởng</th>
+                                <th class="text-right">Phạt</th>
+                                <th class="text-right">Ứng</th>
+                                <th class="text-right">Đã thanh toán</th>
+                                <th class="text-right">Chưa thanh toán</th>
+                                <th class="text-right">Giữ tiền lại</th>
+                                <th class="text-right"></th>
+                            </tr>
+                            @if($hFunction->checkCount($dataSalary))
                                 @foreach($dataSalary as $salary)
                                     <?php
                                     $salaryId = $salary->salaryId();
@@ -64,11 +64,14 @@ $hFunction = new Hfunction();
                                     # tien phat da ap dung
                                     $totalMinusMoney = $salary->minusMoney();
                                     # luong da thanh toan
-                                    $totalPaid = $salary->totalPayConfirmed();
+                                    $totalPaid = $salary->totalPaid();//totalPayConfirmed();
                                     # luong da ung
                                     $totalMoneyConfirmedBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
+                                    # tong tien giu
+                                    $totalKeepMoney = $salary->totalKeepMoney();
                                     # tong luong con lai chua thanh toan
-                                    $totalSalaryUnPaid = $totalSalary + $totalMoneyImportOfStaff + $salaryBenefit + $totalBonusMoney - $totalMinusMoney - $totalMoneyConfirmedBeforePay - $totalPaid;
+                                    $totalSalaryUnPaid = $totalSalary + $totalMoneyImportOfStaff + $salaryBenefit + $totalBonusMoney - $totalKeepMoney - $totalMinusMoney - $totalMoneyConfirmedBeforePay - $totalPaid;
+
                                     ?>
                                     <tr>
                                         <td class="text-center">
@@ -83,7 +86,8 @@ $hFunction = new Hfunction();
                                         <td class="text-center">
                                             @if(!$salary->checkPaid())
                                                 @if($salary->salaryPayCheckExistUnConfirm())
-                                                    <a class="qc_salary_pay_confirm_get qc-link" style="background-color: red; padding: 3px; color: yellow !important;"
+                                                    <a class="qc_salary_pay_confirm_get qc-link"
+                                                       style="background-color: red; padding: 3px; color: yellow !important;"
                                                        data-href="{!! route('qc.work.salary.salary.confirm.get',$salaryId) !!}">
                                                         Xác nhận đã nhận tiền
                                                     </a>
@@ -94,7 +98,8 @@ $hFunction = new Hfunction();
                                                 @if(!$salary->salaryPayCheckExistUnConfirm())
                                                     <em class="qc-color-grey">Đã xác nhận</em>
                                                 @else
-                                                    <a class="qc_salary_pay_confirm_get qc-link" style="background-color: red; padding: 3px; color: yellow !important;"
+                                                    <a class="qc_salary_pay_confirm_get qc-link"
+                                                       style="background-color: red; padding: 3px; color: yellow !important;"
                                                        data-href="{!! route('qc.work.salary.salary.confirm.get',$salaryId) !!}">
                                                         Xác nhận đã nhận tiền
                                                     </a>
@@ -136,6 +141,11 @@ $hFunction = new Hfunction();
                                         <td class="text-right qc-color-red">
                                             {!! $hFunction->currencyFormat($totalSalaryUnPaid) !!}
                                         </td>
+                                        <td class="text-right qc-color-red">
+                                            <a class="qc-link-green-bold" href="{!! route('qc.work.salary.keep_money.get') !!}" title="Click xem chi tiết">
+                                                {!! $hFunction->currencyFormat($totalKeepMoney) !!}
+                                            </a>
+                                        </td>
                                         <td class="text-right">
                                             <a class="qc_work_salary_view"
                                                href="{!! route('qc.work.salary.salary.detail',$salaryId) !!}">
@@ -144,19 +154,17 @@ $hFunction = new Hfunction();
                                         </td>
                                     </tr>
                                 @endforeach
-                            </table>
-                        </div>
-                    @else
-                        <div class="qc_ad3d_list_object qc-ad3d-list-object row">
-                            <div class="qc-padding-top-5 qc-padding-bot-5 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <em class="qc-color-red">Chưa có bảng lương</em>
-                            </div>
-                        </div>
-                    @endif
+                            @else
+                                <tr>
+                                    <td class="text-center" colspan="15">
+                                        <em class="qc-color-red">Chưa có bảng lương</em>
+                                    </td>
+                                </tr>
+                            @endif
+                        </table>
+                    </div>
                 </div>
             </div>
-
-
             <div class="row">
                 <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <a href="{!! route('qc.work.home') !!}">
