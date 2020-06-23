@@ -79,7 +79,6 @@ $workId = $dataWork->workId();
                                             </option>
                                         @endfor
                                     </select>
-                                    <span>/</span>
                                     <select class="cbWorkAllocationYearFilter" style="height: 25px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >

@@ -105,6 +105,13 @@ class QcSalaryPay extends Model
         return $this->belongsTo('App\Models\Ad3d\Salary\QcSalary', 'salary_id', 'salary_id');
     }
 
+    # thong tin thanh toan chua xac nhan cua nhieu bang luong
+    public function getInfoUnConfirmOfListSalaryId($listSalaryId)
+    {
+        return QcSalaryPay::whereIn('salary_id', $listSalaryId)->where('confirmStatus', 0)->get();
+    }
+
+    # thong tin thanh toan chua xac nhan cua 1 bang luong
     public function getInfoUnConfirmOfSalary($salaryId)
     {
         return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', 0)->get();

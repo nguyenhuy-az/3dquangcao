@@ -62,13 +62,13 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
             </div>
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="table-responsive qc-container-table">
+                    <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Ngày</th>
                                 <th>Danh mục chi</th>
-                                <th>Ghi chú</th>
+                                <th style="width: 400px !important;">Ghi chú</th>
                                 <th class="text-right"></th>
                                 <th>Ghi chú duyệt</th>
                                 <th class="text-right">Số tiền</th>

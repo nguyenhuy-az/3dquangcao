@@ -81,6 +81,13 @@ class QcImport extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'importStaff_id', 'staff_id');
     }
 
+    # lay danh sach ma vat tu da thanh toan cua 1 nhan vien nhap
+    public function listImportIdPaidOfStaffImport($staffId)
+    {
+        return $this->listIdOfStaff($staffId, null, 1);
+    }
+
+    # thong tin tat ca don hang mua vat tu cua 1 nhan vien
     public function infoOfStaff($staffId = null, $date = null, $payStatus = 3, $order = 'DESC')#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
     {
         $modelImportPay = new QcImportPay();
@@ -120,8 +127,8 @@ class QcImport extends Model
                 return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->pluck('import_id');
             } elseif ($payStatus == 1) { # da thanh toan
                 return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->pluck('import_id');
-            }elseif($payStatus == 2){
-                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus',1)->where('importDate', 'like', "%$date%")->pluck('import_id');
+            } elseif ($payStatus == 2) {
+                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus', 1)->where('importDate', 'like', "%$date%")->pluck('import_id');
             } else {
                 return QcImport::where(['importStaff_id' => $staffId])->where('importDate', 'like', "%$date%")->pluck('import_id');
             }
@@ -130,14 +137,15 @@ class QcImport extends Model
                 return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->pluck('import_id');
             } elseif ($payStatus == 1) {
                 return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->pluck('import_id');
-            }elseif($payStatus == 2){
-                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus',1)->pluck('import_id');
+            } elseif ($payStatus == 2) {
+                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus', 1)->pluck('import_id');
             } else {
                 return QcImport::where(['importStaff_id' => $staffId])->pluck('import_id');
             }
         }
     }
 
+    # tong tien tat ca don hang mua vat tu cua 1 nhan vien
     public function totalMoneyImportOfStaff($staffId, $date = null, $payStatus = 3)
     {
         $modelImportDetail = new QcImportDetail();
@@ -166,7 +174,6 @@ class QcImport extends Model
             }
         }
     }
-
 
 
     public function infoConfirmedAndAgreeOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan

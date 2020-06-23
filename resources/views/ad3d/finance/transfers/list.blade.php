@@ -20,8 +20,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     <a class="qc-link-green-bold" href="{!! route('qc.ad3d.finance.transfers.get') !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
-                    <label class="qc-font-size-20">GIAO TIỀN</label>
+                    <label class="qc-font-size-20">GIAO TIỀN / NHẬN TIỀN</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
 
@@ -30,7 +29,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
                         @endif
-                        @if(count($dataCompany)> 0)
+                        @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"
@@ -49,54 +48,14 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
-                    <form name="" action="">
-                        <div class="row">
-                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <select class="cbDayFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.finance.transfers.get') !!}">
-                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >Tất cả
-                                    </option>
-                                    @for($i =1;$i<= 31; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.finance.transfers.get') !!}">
-                                    @for($i =1;$i<= 12; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbYearFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.finance.transfers.get') !!}">
-                                    @for($i =2017;$i<= 2050; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <select class="cbTransfersStatus" name="cbTransfersStatus"
-                                        style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.finance.transfers.get') !!}">
-                                    @if($dataStaffLogin->checkRootManage())
-                                        <option value="all">Tất cả</option>
-                                    @endif
-                                    <option value="transfers"
-                                            @if($transfersStatus == 'transfers') selected="selected" @endif>Chuyển tiền
-                                    </option>
-                                    <option value="receive"
-                                            @if($transfersStatus == 'receive') selected="selected" @endif >Nhận tiền
-                                    </option>
-                                </select>
-                                <a class="btn btn-sm btn-primary" style="height: 25px;"
-                                   href="{!! route('qc.ad3d.finance.transfers.add.get') !!}">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                </a>
-                            </div>
+                    <div class="row">
+                        <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            {{-- <a class="btn btn-sm btn-primary" style="height: 25px;"
+                                href="{!! route('qc.ad3d.finance.transfers.add.get') !!}">
+                                 <i class="glyphicon glyphicon-plus"></i>
+                             </a>--}}
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
             <div class="qc_ad3d_list_content row"
@@ -105,17 +64,64 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                  data-href-del="{!! route('qc.ad3d.finance.transfers.delete') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
-                            <th></th>
+                        <tr style="background-color: black; color: yellow;">
+                            <th style="width:20px;">STT</th>
                             <th>Ngày</th>
+                            <th>Hình thức</th>
                             <th>Người chuyển</th>
                             <th>Người nhận</th>
                             <th>Ghi chú</th>
-                            <th>Xác nhận</th>
+                            <th class="text-center">Xác nhận</th>
                             <th></th>
                             <th class="text-right">Số tiền</th>
                         </tr>
-                        @if(count($dataTransfers) > 0)
+                        <tr>
+                            <td></td>
+                            <td style="padding: 0;">
+                                <select class="cbDayFilter" style="height: 30px;"
+                                        data-href="{!! route('qc.ad3d.finance.transfers.get') !!}">
+                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >Tất cả
+                                    </option>
+                                    @for($i =1;$i<= 31; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                                <select class="cbMonthFilter" style="height: 30px;"
+                                        data-href="{!! route('qc.ad3d.finance.transfers.get') !!}">
+                                    @for($i =1;$i<= 12; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                                <select class="cbYearFilter" style="height: 30px;"
+                                        data-href="{!! route('qc.ad3d.finance.transfers.get') !!}">
+                                    @for($i =2017;$i<= 2050; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                            </td>
+                            <td style="padding: 0;">
+                                <select class="cbTransfersStatus" name="cbTransfersStatus"
+                                        style="height: 30px;"
+                                        data-href="{!! route('qc.ad3d.finance.transfers.get') !!}">
+                                    <option value="transfers"
+                                            @if($transfersStatus == 'transfers') selected="selected" @endif>Chuyển tiền
+                                    </option>
+                                    <option value="receive"
+                                            @if($transfersStatus == 'receive') selected="selected" @endif >Nhận tiền
+                                    </option>
+                                </select>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        @if($hFunction->checkCount($dataTransfers))
                             <?php
                             $perPage = $dataTransfers->perPage();
                             $currentPage = $dataTransfers->currentPage();
@@ -125,23 +131,31 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 <?php
                                 $transfersId = $transfers->transfersId();
                                 ?>
-                                <tr class="qc_ad3d_list_object" data-object="{!! $transfersId !!}">
-                                    <td class="text-center qc-padding-none">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
+                                    data-object="{!! $transfersId !!}">
+                                    <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
-                                    <td class="qc-padding-none">
+                                    <td>
                                         {!! date('d/m/Y', strtotime($transfers->transfersDate())) !!}
                                     </td>
-                                    <td class="qc-padding-none">
+                                    <td>
+                                        @if($transfersStatus == 'transfers')
+                                            <span>Chuyển tiền</span>
+                                        @else
+                                            <span>Nhận tiền</span>
+                                        @endif
+                                    </td>
+                                    <td>
                                         {!! $transfers->transfersStaff->lastName() !!}
                                     </td>
-                                    <td class="qc-padding-none">
+                                    <td>
                                         {!! $transfers->receiveStaff->lastName() !!}
                                     </td>
-                                    <td class="qc-padding-none">
+                                    <td>
                                         <em>{!! $transfers->reason() !!}</em>
                                     </td>
-                                    <td class="qc-padding-none">
+                                    <td class="text-center">
                                         @if($transfers->checkConfirmReceive())
                                             <em class="qc-color-grey">Đã Nhận tiền</em>
                                         @else
@@ -156,7 +170,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 
                                         @endif
                                     </td>
-                                    <td class="text-right qc-padding-none">
+                                    <td class="text-right">
                                         <a class="qc_view qc-link-green">
                                             Chi tiết
                                         </a>
@@ -171,19 +185,19 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             </a>
                                         @endif
                                     </td>
-                                    <td class="text-right qc-color-red qc-padding-none">
-                                        {!! number_format($transfers->money()) !!}
+                                    <td class="text-right qc-color-red">
+                                        {!! $hFunction->currencyFormat($transfers->money()) !!}
                                     </td>
                                 </tr>
                             @endforeach
-                                <tr>
-                                    <td class="text-center" colspan="8">
-                                        {!! $hFunction->page($dataTransfers) !!}
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td class="text-center" colspan="9">
+                                    {!! $hFunction->page($dataTransfers) !!}
+                                </td>
+                            </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="8">
+                                <td class="text-center" colspan="9">
                                     <em class="qc-color-red">Không tìm thấy thông tin</em>
                                 </td>
                             </tr>

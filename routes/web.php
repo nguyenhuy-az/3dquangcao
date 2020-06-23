@@ -248,6 +248,11 @@ Route::group(['prefix' => 'ad3d'], function () {
 
     //tài chính
     Route::group(['prefix' => 'finance', 'middleware' => 'Ad3dMiddleware'], function () {
+        # giu tien NV
+        Route::group(['prefix' => 'keep-money'], function () {
+            Route::get('/{companyFilterId?}/{day?}/{month?}/{year?}/{staffId?}/{payStatus?}', ['as' => 'qc.ad3d.finance.keep_money.get', 'uses' => 'Ad3d\Finance\KeepMoney\KeepMoneyController@index']);
+        });
+        # giao tien
         Route::group(['prefix' => 'transfers'], function () {
             Route::get('view/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.view.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@view']);
 
@@ -264,7 +269,7 @@ Route::group(['prefix' => 'ad3d'], function () {
             //xóa
             Route::get('delete/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.delete', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@deleteTransfers']);
 
-            Route::get('/{transfersId?}/{day?}/{month?}/{year?}/{typeId?}', ['as' => 'qc.ad3d.finance.transfers.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@index']);
+            Route::get('/{companyId?}/{day?}/{month?}/{year?}/{typeId?}', ['as' => 'qc.ad3d.finance.transfers.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@index']);
         });
 
         // chi hoat dong cty

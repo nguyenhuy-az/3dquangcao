@@ -1359,6 +1359,7 @@ class QcOrder extends Model
         }
 
     }
+
     # ------ code cu - bo
     public function getBonusByOrderAllocation($orderId = null)
     {

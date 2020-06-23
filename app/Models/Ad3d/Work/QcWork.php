@@ -4,6 +4,7 @@ namespace App\Models\Ad3d\Work;
 
 use App\Models\Ad3d\Bonus\QcBonus;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
+use App\Models\Ad3d\KeepMoney\QcKeepMoney;
 use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
 use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
@@ -191,6 +192,13 @@ class QcWork extends Model
     public function keepMoney()
     {
         return $this->hasMany('App\Models\Ad3d\KeepMoney\QcKeepMoney', 'work_id', 'work_id');
+    }
+
+    # tong tien giu  tren 1 bang cham cong
+    public function totalKeepMoney($workId = null)
+    {
+        $modelKeepMoney = new QcKeepMoney();
+        return $modelKeepMoney->totalMoneyOfWork($this->checkIdNull($workId));
     }
 
     //----------- THONG TIN LAM VIEC TAI CHI NHANH /CTY ------------
@@ -456,6 +464,7 @@ class QcWork extends Model
         $modelBonus = new QcBonus();
         return $modelBonus->totalMoneyAppliedOfWork($this->checkIdNull($workId));
     }
+
     //----------- phạt ------------
     public function minusMoney()
     {

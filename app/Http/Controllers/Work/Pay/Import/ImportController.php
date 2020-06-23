@@ -20,21 +20,43 @@ use Request;
 
 class ImportController extends Controller
 {
-    public function index($loginDay = null, $loginMonth = null, $loginYear = null, $loginPayStatus = 3)
+    public function index($dayFilter = null, $monthFilter = 0, $yearFilter = 0, $loginPayStatus = 3)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'payImport',
-                'subObjectLabel' =>'Mua vật tư'
-            ];
-            $dataStaff = $modelStaff->loginStaffInfo();
-            $loginMonth = (empty($loginMonth)) ? date('m') : $loginMonth;
-            $loginYear = (empty($loginYear)) ? date('Y') : $loginYear;
-            return view('work.pay.import.import', compact('dataAccess', 'modelStaff', 'dataStaff', 'loginDay', 'loginMonth', 'loginYear', 'loginPayStatus'));
+        $dataStaff = $modelStaff->loginStaffInfo();
+        $dataAccess = [
+            'object' => 'payImport',
+            'subObjectLabel' =>'Mua vật tư'
+        ];
+        $loginStaffId = $dataStaff->staffId();
+        $dataStaff = $modelStaff->loginStaffInfo();
+        $dateFilter = null;
+        $currentMonth = $hFunction->currentMonth();
+        $currentYear = $hFunction->currentYear();
+        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $monthFilter = $currentMonth;
+            $yearFilter = $currentYear;
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+            $dateFilter = null;
         } else {
-            return view('work.login');
+            $dateFilter = date('Y-m');
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
         }
+        $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $dateFilter);
+        return view('work.pay.import.import', compact('dataAccess', 'modelStaff', 'dataImport', 'dayFilter', 'monthFilter', 'yearFilter', 'loginPayStatus'));
 
     }
 

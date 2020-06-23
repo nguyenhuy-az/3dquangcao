@@ -30,21 +30,30 @@ class SalaryBeforePayController extends Controller
             'object' => 'beforePay',
             'subObjectLabel' => 'Ứng lương'
         ];
-        if (count($dataStaff) > 0) {
-            if (count($dataStaff) > 0) {
-                if ($monthFilter == null && $yearFilter == null) { //xem tất cả các ngày trong tháng
-                    $dateFilter = date('Y-m');
-                    $monthFilter = date('m');
-                    $yearFilter = date('Y');
-                } else {
-                    $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-                }
-                $dataWork = $modelWork->firstInfoOfStaff($dataStaff->staffId(), $dateFilter);
-                return view('work.salary.before-pay.list', compact('dataAccess', 'modelStaff', 'modelStaffWorkSalary', 'dataWork', 'monthFilter', 'yearFilter'));
-            }
+        $dateFilter = null;
+        if ($monthFilter == 0 && $yearFilter == 0) { //khong chon thoi gian xem
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter == 100 && $yearFilter == null) { //xam tat ca cac thang va khong chon nam
+            $yearFilter = date('Y');
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter == 100) { //co chon thang va khong chon nam
+            $monthFilter = 100;
+            $dateFilter = null;
+        } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //co chon thang va chon nam
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+            $dateFilter = null;
+        }elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } else {
-            return redirect()->route('qc.work.login.get');
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
         }
+        $dataWork = $modelWork->firstInfoOfStaff($dataStaff->staffId(), $dateFilter);
+        return view('work.salary.before-pay.list', compact('dataAccess', 'modelStaff', 'modelStaffWorkSalary', 'dataWork', 'monthFilter', 'yearFilter'));
     }
 
     //đề suất ứng

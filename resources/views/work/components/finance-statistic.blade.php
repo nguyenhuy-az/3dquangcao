@@ -14,7 +14,7 @@ $currentMonth = $hFunction->currentMonth();
 $currentYear = $hFunction->currentYear();
 $dateFilter = date('Y-m');
 $dataWork = $dataStaffLogin->firstInfoActivityToWork($loginStaffId, date('Y-m', strtotime("$currentYear-$currentMonth")));
-$companyStaffWorkId = $dataWork->companyStaffWorkId();
+
 // thong tin lương co ban
 $dataStaffWorkSalary = $dataStaffLogin->staffWorkSalaryActivityOfStaff($loginStaffId);
 $salaryOneHour = $dataStaffWorkSalary->salaryOnHour();#luong theo gio

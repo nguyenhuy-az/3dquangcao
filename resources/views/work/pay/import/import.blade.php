@@ -10,15 +10,10 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
 $hrefIndex = route('qc.work.import.get');
 $currentMonth = $hFunction->currentMonth();
-If (empty($loginDay)) {
-    $loginDate = date('Y-m', strtotime("$loginYear-$loginMonth"));
-} else {
-    $loginDate = date('Y-m-d', strtotime("$loginYear-$loginMonth-$loginDay"));
-}
-$dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $loginDate);
 ?>
 @extends('work.index')
 @section('qc_work_body')
@@ -28,50 +23,28 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
             @include('work.pay.pay-menu')
 
             {{-- chi tiêt --}}
-            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="row">
-                    <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <select class="qc_work_import_login_day" style="height: 25px;" data-href="{!! $hrefIndex !!}">
-                            <option value="0" @if($loginDay == null) selected="selected" @endif>
-                                Trong tháng
-                            </option>
-                            @for($d = 1; $d <=31; $d++)
-                                <option value="{!! $d !!}" @if($loginDay == $d) selected="selected" @endif>
-                                    Ngày {!! $d !!}
-                                </option>
-                            @endfor
-                        </select>
-                        <select class="qc_work_import_login_month" style="height: 25px;" data-href="{!! $hrefIndex !!}">
-                            @for($m = 1; $m <=12; $m++)
-                                <option value="{!! $m !!}" @if($loginMonth == $m) selected="selected" @endif>
-                                    {!! $m !!}
-                                </option>
-                            @endfor
-                        </select>
-                        <span>/</span>
-                        <select class="qc_work_import_login_year" style="height: 25px;" data-href="{!! $hrefIndex !!}">
-                            @for($y = 2017; $y <=2050; $y++)
-                                <option value="{!! $y !!}" @if($loginYear == $y) selected="selected" @endif>
-                                    {!! $y !!}
-                                </option>
-                            @endfor
-                        </select>
-                        <a class="qc_work_before_pay_request_action qc-link-green "
-                           href="{!! route('qc.work.import.add.get') !!}">
-                            <b style="font-size: 1.5em;">+ Thêm</b>
-                        </a>
-                    </div>
+            <div class="row" style="margin-top: 5px;">
+                <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
+                    <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                        Về trang trước
+                    </a>
+                </div>
+                <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <a class="qc_work_before_pay_request_action qc-link-green "
+                       href="{!! route('qc.work.import.add.get') !!}">
+                        <b style="font-size: 1.5em;">+ Thêm</b>
+                    </a>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="table-responsive qc-container-table">
+                    <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
-                                <th></th>
-                                <th>Ngày chi</th>
-                                <th>Chi chú</th>
+                                <th style="width: 20px;"></th>
+                                <th style="width: 190px;">Ngày chi</th>
                                 <th class="text-center">Thanh toán</th>
+                                <th>Chi chú</th>
                                 <th class="text-center"></th>
                                 <th class="text-center">Duyệt</th>
                                 <th class="text-right">Số tiền</th>
@@ -80,8 +53,38 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
                             </tr>
                             <tr>
                                 <td></td>
-                                <td></td>
-                                <td></td>
+                                <td style="padding: 0 !important;">
+                                    <select class="qc_work_import_login_day" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                        <option value="100" @if($dayFilter == null) selected="selected" @endif>
+                                            Tất cả
+                                        </option>
+                                        @for($d = 1; $d <=31; $d++)
+                                            <option value="{!! $d !!}" @if($dayFilter == $d) selected="selected" @endif>
+                                                Ngày {!! $d !!}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <select class="qc_work_import_login_month" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                        <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                            Tất cả
+                                        </option>
+                                        @for($m = 1; $m <=12; $m++)
+                                            <option value="{!! $m !!}" @if($monthFilter == $m) selected="selected" @endif>
+                                                {!! $m !!}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <select class="qc_work_import_login_year" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                        <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                                            Tất cả
+                                        </option>
+                                        @for($y = 2017; $y <=2050; $y++)
+                                            <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                                {!! $y !!}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                </td>
                                 <td class="text-center" style="padding: 0;">
                                     <select class="qc_work_import_login_status form-control"
                                             data-href="{!! $hrefIndex !!}"
@@ -97,6 +100,7 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
                                         </option>
                                     </select>
                                 </td>
+                                <td></td>
                                 <td class="text-center"></td>
                                 <td class="text-right"></td>
                                 <td class="text-right"></td>
@@ -133,16 +137,13 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
                                         <td>
                                             {!! date('d/m/Y',strtotime($importDate))  !!}
                                         </td>
-                                        <td>
-                                            <em class="qc-color-grey">{!! $import->confirmNote() !!}</em>
-                                        </td>
                                         <td class="text-center">
                                             @if($import->checkExactlyStatus())
                                                 @if($import->checkPay())
                                                     @if($import->checkPayConfirmOfImport($importId))
                                                         <em class="qc-color-grey">Đã Nhận tiền</em>
                                                     @else
-                                                        <a class="qc_work_import_confirm_pay_act qc-link-green"
+                                                        <a class="qc_work_import_confirm_pay_act qc-link" style="background-color: red; padding: 3px; color: yellow !important;"
                                                            data-href="{!! route('qc.work.import.confirm_pay.get',$importId) !!}">
                                                             Xác nhận thanh toán
                                                         </a>
@@ -154,6 +155,9 @@ $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $log
                                                 <em class="qc-color-red">Không được chấp nhận</em>
                                             @endif
 
+                                        </td>
+                                        <td>
+                                            <em class="qc-color-grey">{!! $import->confirmNote() !!}</em>
                                         </td>
                                         <td class="text-center">
                                             <a href="{!! route('qc.work.import.view.get',$importId) !!}">

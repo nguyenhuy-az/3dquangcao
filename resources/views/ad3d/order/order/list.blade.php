@@ -50,43 +50,41 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0;">
-                    <form name="" action="">
-                        <div class="row">
-                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <select class="cbDayFilter" style="height: 25px;" data-href="{!! $hrefIndex !!}">
-                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
-                                        Tất cả
-                                    </option>
-                                    @for($i =1;$i<= 31; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbMonthFilter" style="height: 25px;"
-                                        data-href="{!! $hrefIndex !!}">
-                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
-                                        Tất cả
-                                    </option>
-                                    @for($i =1;$i<= 12; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbYearFilter" style="height: 25px;"
-                                        data-href="{!! $hrefIndex !!}">
-                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
-                                        Tất cả
-                                    </option>
-                                    @for($i =2017;$i<= 2050; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                            </div>
+                    <div class="row">
+                        <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <select class="cbDayFilter" style="height: 25px;" data-href="{!! $hrefIndex !!}">
+                                <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
+                                    Tất cả
+                                </option>
+                                @for($i =1;$i<= 31; $i++)
+                                    <option value="{!! $i !!}"
+                                            @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
+                                @endfor
+                            </select>
+                            <span>/</span>
+                            <select class="cbMonthFilter" style="height: 25px;"
+                                    data-href="{!! $hrefIndex !!}">
+                                <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                    Tất cả
+                                </option>
+                                @for($i =1;$i<= 12; $i++)
+                                    <option value="{!! $i !!}"
+                                            @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                @endfor
+                            </select>
+                            <span>/</span>
+                            <select class="cbYearFilter" style="height: 25px;"
+                                    data-href="{!! $hrefIndex !!}">
+                                <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                                    Tất cả
+                                </option>
+                                @for($i =2017;$i<= 2050; $i++)
+                                    <option value="{!! $i !!}"
+                                            @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                @endfor
+                            </select>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
             <div class="qc_ad3d_list_content qc-ad3d-table-container row"

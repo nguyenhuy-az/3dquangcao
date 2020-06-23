@@ -37,7 +37,7 @@ class QcMinusMoney extends Model
                 $dataOrder = $dataOrderAllocation->orders;
                 $money = (int)$dataOrder->getMinusMoneyOrderAllocationLate();
             } elseif (!empty($orderConstructionId)) { # phat quan ly thi cong
-                $money = (int)$modelOrder->getBonusAndMinusMoneyOfRankManage($orderConstructionId);
+                $money = (int)$modelOrder->getBonusAndMinusMoneyOfManageRank($orderConstructionId);
             }
 
         }

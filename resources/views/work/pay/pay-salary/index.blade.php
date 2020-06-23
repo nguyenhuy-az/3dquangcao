@@ -48,7 +48,7 @@ $currentMonth = $hFunction->currentMonth();
                     <label style="color: deeppink;">*** Bảng lương </label>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="table-responsive qc-container-table">
+                    <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
@@ -62,7 +62,8 @@ $currentMonth = $hFunction->currentMonth();
                                 </th>
                                 <th class="text-right">Cộng thêm</th>
                                 <th class="text-right">Đã thanh toán</th>
-                                <th class="text-right">còn lại</th>
+                                <th class="text-right">Chưa thanh toán</th>
+                                <th class="text-right">Giữ tiền</th>
                             </tr>
                             <tr>
                                 <td></td>
@@ -87,7 +88,7 @@ $currentMonth = $hFunction->currentMonth();
                                 <td></td>
                                 <td></td>
                                 <td></td>
-
+                                <td></td>
                             </tr>
                             @if($hFunction->checkCount($dataSalary))
                                 <?php
@@ -95,6 +96,7 @@ $currentMonth = $hFunction->currentMonth();
                                 $sumSalaryPaid = 0;
                                 $sumSalaryUnpaid = 0;
                                 $sumSalaryBenefit = 0;
+                                $sumMoneyImportOfStaff = 0
                                 ?>
                                 @foreach($dataSalary as $salary)
                                     <?php
@@ -102,7 +104,6 @@ $currentMonth = $hFunction->currentMonth();
                                     $benefitMoney = $salary->benefitMoney();
                                     $sumSalaryBenefit = $sumSalaryBenefit + $benefitMoney;
                                     $salaryPay = $salary->salary();
-
                                     $sumSalary = $sumSalary + $salaryPay;
                                     $totalPaid = $salary->totalPaid();
                                     $sumSalaryPaid = $sumSalaryPaid + $totalPaid;
@@ -111,6 +112,7 @@ $currentMonth = $hFunction->currentMonth();
                                     $fromDate = $dataWork->fromDate();
                                     // tong tien mua vat tu xac nhan chưa thanh toan
                                     $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataWork->companyStaffWork->staff->staffId(), date('Y-m', strtotime($fromDate)), 2);
+                                    $sumMoneyImportOfStaff = $sumMoneyImportOfStaff + $totalMoneyImportOfStaff;
                                     ?>
                                     <tr>
                                         <td class="text-center">
@@ -154,14 +156,19 @@ $currentMonth = $hFunction->currentMonth();
                                         <td class="text-right qc-color-red">
                                             {!! $hFunction->currencyFormat($salaryPay + $totalMoneyImportOfStaff + $benefitMoney -$totalPaid) !!}
                                         </td>
-
+                                        <td class="text-right">
+                                            {{--{!! $hFunction->currencyFormat($totalPaid) !!}--}}
+                                        </td>
                                     </tr>
                                 @endforeach
                                 <tr>
                                     <td class="text-right qc-color-red" style="background-color: whitesmoke;"
-                                        colspan="5"></td>
+                                        colspan="4"></td>
                                     <td class="text-right qc-color-red">
                                         {!! $hFunction->currencyFormat($sumSalary)  !!}
+                                    </td>
+                                    <td class="text-right qc-color-red">
+                                        {!! $hFunction->currencyFormat($sumMoneyImportOfStaff)  !!}
                                     </td>
                                     <td class="text-right qc-color-red">
                                         {!! $hFunction->currencyFormat($sumSalaryBenefit)  !!}
@@ -172,10 +179,13 @@ $currentMonth = $hFunction->currentMonth();
                                     <td class="text-right qc-color-red">
                                         {!! $hFunction->currencyFormat($sumSalaryUnpaid)  !!}
                                     </td>
+                                    <td>
+
+                                    </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="9">
+                                    <td class="text-center" colspan="10">
                                         <em class="qc-color-red">Không có bảng lương</em>
                                     </td>
                                 </tr>

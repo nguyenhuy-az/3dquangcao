@@ -27,78 +27,86 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
     }
 </style>
 @section('qc_work_body')
-    {{--system info--}}
-    @include('work.components.system-info.system-info', compact('modelCompany','modelStaff','dataTimekeepingProvisional'))
+    @if($dataStaffLogin->checkActivityWork())
+        {{--system info--}}
+        @include('work.components.system-info.system-info', compact('modelCompany','modelStaff','dataTimekeepingProvisional'))
 
-    {{--control panel--}}
-    <div class="row">
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.timekeeping.get') !!}">
-                CHẤM CÔNG
-            </a>
-        </div>
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.work_allocation.get') !!}">
-                THI CÔNG
-            </a>
-        </div>
-        @if($dataStaffLogin->checkBusinessDepartment() || $dataStaffLogin->checkDesignDepartment())
+        {{--control panel--}}
+        <div class="row">
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.orders.get') !!}">
-                    ĐƠN HÀNG
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.timekeeping.get') !!}">
+                    CHẤM CÔNG
                 </a>
             </div>
-        @endif
-        {{--<div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.import.get') !!}">
-                Mua vật tư
-            </a>
-        </div>--}}
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.import.get') !!}">
-                CHI
-            </a>
-        </div>
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.money.receive.get') !!}">
-                QUẢN LÝ THU -CHI
-            </a>
-        </div>
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.work_allocation.get') !!}">
+                    THI CÔNG
+                </a>
+            </div>
+            @if($dataStaffLogin->checkBusinessDepartment() || $dataStaffLogin->checkDesignDepartment())
+                <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <a class="qc-work-panel-icon-link" href="{!! route('qc.work.orders.get') !!}">
+                        ĐƠN HÀNG
+                    </a>
+                </div>
+            @endif
+            {{--<div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.import.get') !!}">
+                    Mua vật tư
+                </a>
+            </div>--}}
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.import.get') !!}">
+                    CHI
+                </a>
+            </div>
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.money.receive.get') !!}">
+                    QUẢN LÝ THU -CHI
+                </a>
+            </div>
 
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.salary.salary.get') !!}">
-                LƯƠNG
-            </a>
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.salary.salary.get') !!}">
+                    LƯƠNG
+                </a>
+            </div>
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.minus_money.get') !!}">
+                    THƯỞNG - PHẠT
+                </a>
+            </div>
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.tool.get') !!}">
+                    ĐỒ NGHỀ
+                </a>
+            </div>
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.product_type_price.get') !!}">
+                    BẢNG GIÁ
+                </a>
+            </div>
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.rules') !!}">
+                    NỘI QUY
+                </a>
+            </div>
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.change-account.get') !!}">
+                    Đổi tài khoản
+                </a>
+            </div>
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.logout.get') !!}">
+                    Thoát
+                </a>
+            </div>
         </div>
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.minus_money.get') !!}">
-                THƯỞNG - PHẠT
-            </a>
+    @else
+        <div class="row">
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <h2 style="background-color: red; color: yellow; padding: 10px;">BẢNG CHẤM CÔNG ĐÃ TẮT</h2>
+            </div>
         </div>
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.tool.get') !!}">
-                ĐỒ NGHỀ
-            </a>
-        </div>
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.product_type_price.get') !!}">
-                BẢNG GIÁ
-            </a>
-        </div>
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.rules') !!}">
-                NỘI QUY
-            </a>
-        </div>
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.change-account.get') !!}">
-                Đổi tài khoản
-            </a>
-        </div>
-        <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-            <a class="qc-work-panel-icon-link" href="{!! route('qc.work.logout.get') !!}">
-                Thoát
-            </a>
-        </div>
-    </div>
+    @endif
 @endsection

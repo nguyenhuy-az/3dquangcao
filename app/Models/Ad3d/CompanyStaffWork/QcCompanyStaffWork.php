@@ -200,6 +200,12 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::where(['staff_id' => $staffId])->pluck('work_id');
     }
 
+    # lay danh sach tat ca ma lam viec cua nhieu nv
+    public function listIdOfListStaffId($listStaffId)
+    {
+        return QcCompanyStaffWork::whereIn('staff_id', $listStaffId)->pluck('work_id');
+    }
+
     //lay thong tin dang lam viec cua NV
     public function infoActivityOfStaff($staffId)
     {

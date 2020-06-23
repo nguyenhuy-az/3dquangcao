@@ -25,6 +25,8 @@ $hFunction = new Hfunction();
                                     <th class="text-center" style="width: 20px;">STT</th>
                                     <th class="text-center">Từ ngày</th>
                                     <th class="text-center">Đến ngày</th>
+                                    <th class="text-center">TT xác nhận</th>
+                                    <th class="text-center">TT thanh toán</th>
                                     <th class="text-right">Lương cơ bản</th>
                                     <th class="text-right">
                                         Mua vật tư
@@ -37,8 +39,7 @@ $hFunction = new Hfunction();
                                     <th class="text-right">Ứng</th>
                                     <th class="text-right">Đã thanh toán</th>
                                     <th class="text-right">Còn lại</th>
-                                    <th class="text-center">TT thanh toán</th>
-                                    <th class="text-center">TT xác nhận</th>
+
                                     <th class="text-right"></th>
 
                                 </tr>
@@ -79,6 +80,34 @@ $hFunction = new Hfunction();
                                         <td class="text-center">
                                             {!! date('d/m/Y', strtotime($dataWork->toDate())) !!}
                                         </td>
+                                        <td class="text-center">
+                                            @if(!$salary->checkPaid())
+                                                @if($salary->salaryPayCheckExistUnConfirm())
+                                                    <a class="qc_salary_pay_confirm_get qc-link" style="background-color: red; padding: 3px; color: yellow !important;"
+                                                       data-href="{!! route('qc.work.salary.salary.confirm.get',$salaryId) !!}">
+                                                        Xác nhận đã nhận tiền
+                                                    </a>
+                                                @else
+                                                    <em class="qc-color-grey">---</em>
+                                                @endif
+                                            @else
+                                                @if(!$salary->salaryPayCheckExistUnConfirm())
+                                                    <em class="qc-color-grey">Đã xác nhận</em>
+                                                @else
+                                                    <a class="qc_salary_pay_confirm_get qc-link" style="background-color: red; padding: 3px; color: yellow !important;"
+                                                       data-href="{!! route('qc.work.salary.salary.confirm.get',$salaryId) !!}">
+                                                        Xác nhận đã nhận tiền
+                                                    </a>
+                                                @endif
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            @if(!$salary->checkPaid())
+                                                <em class="qc-color-grey">Chưa Thanh toán hết</em>
+                                            @else
+                                                <span>Đã Thanh toán</span>
+                                            @endif
+                                        </td>
                                         <td class="text-right qc-color-red">
                                             {!! $hFunction->currencyFormat($totalSalary) !!}
                                         </td>
@@ -107,41 +136,12 @@ $hFunction = new Hfunction();
                                         <td class="text-right qc-color-red">
                                             {!! $hFunction->currencyFormat($totalSalaryUnPaid) !!}
                                         </td>
-                                        <td class="text-center">
-                                            @if(!$salary->checkPaid())
-                                                <em class="qc-color-grey">Chưa Thanh toán hết</em>
-                                            @else
-                                                <span>Đã Thanh toán</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            @if(!$salary->checkPaid())
-                                                @if($salary->salaryPayCheckExistUnConfirm())
-                                                    <a class="qc_salary_pay_confirm_get qc-link-red"
-                                                       data-href="{!! route('qc.work.salary.salary.confirm.get',$salaryId) !!}">
-                                                        Xác nhận đã nhận tiền
-                                                    </a>
-                                                @else
-                                                    <em class="qc-color-grey">---</em>
-                                                @endif
-                                            @else
-                                                @if(!$salary->salaryPayCheckExistUnConfirm())
-                                                    <em class="qc-color-grey">Đã xác nhận</em>
-                                                @else
-                                                    <a class="qc_salary_pay_confirm_get qc-link-red"
-                                                       data-href="{!! route('qc.work.salary.salary.confirm.get',$salaryId) !!}">
-                                                        Xác nhận đã nhận tiền
-                                                    </a>
-                                                @endif
-                                            @endif
-                                        </td>
                                         <td class="text-right">
                                             <a class="qc_work_salary_view"
                                                href="{!! route('qc.work.salary.salary.detail',$salaryId) !!}">
-                                                Chi tiết lương
+                                                Xem Chi tiết
                                             </a>
                                         </td>
-
                                     </tr>
                                 @endforeach
                             </table>

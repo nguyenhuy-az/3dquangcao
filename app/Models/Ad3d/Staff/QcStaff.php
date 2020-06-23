@@ -488,10 +488,10 @@ class QcStaff extends Model
 
 
     #----------- làm việc ------------
-    public function work()
+    /*public function work()
     {
         return $this->hasMany('App\Models\Ad3d\Work\QcWork', 'staff_id', 'staff_id');
-    }
+    }*/
 
     public function firstInfoToWork($staffId = null, $date = null)
     {
@@ -515,6 +515,26 @@ class QcStaff extends Model
     {
         $modelWork = new QcWork();
         return $modelWork->infoActivityOfStaff($this->checkIdNull($staffId), $date);
+    }
+
+    # danh sach ma bang cham cong lam viec cua 1 nhan vien
+    public function allListWorkId($staffId)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelWork = new QcWork();
+        $oldListWorkId = $modelWork->listIdOfListStaffId([$staffId])->toArray();//phien ban cu
+        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfStaff($staffId);
+        $newListWorkId = $modelWork->listIdOfListCompanyStaffWork($listCompanyStaffWorkId)->toArray();//phien ban moi
+        return array_merge($oldListWorkId, $newListWorkId);
+    }
+
+    # danh sach ma bang cham cong lam viec cua 1 nhan vien
+    public function allListWorkIdOfListStaffId($listStaffId)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelWork = new QcWork();
+        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListStaffId($listStaffId);
+        return $modelWork->listIdOfListCompanyStaffWork($listCompanyStaffWorkId)->toArray();//phien ban moi
     }
 
     //---------- bộ phận cty -----------
@@ -1704,6 +1724,14 @@ class QcStaff extends Model
         return $modelRequest->totalNewRequest($companyId);
     }
 
+    # kiem tra ton tai bang cham cong dang hoat dong
+    public function checkActivityWork($staffId = null)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkCount($this->workInfoActivityOfStaff($this->checkIdNull($staffId)))) ? true : false;
+    }
+
+    # kiem tra tu tin cong cuoi thang
     public function checkAutoInfo()
     {
         $modelWork = new QcWork();

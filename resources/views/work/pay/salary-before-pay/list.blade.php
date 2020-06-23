@@ -55,7 +55,7 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
             </div>
             <div class="qc_work_pay_salary_before_pay_list row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="table-responsive qc-container-table">
+                    <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>

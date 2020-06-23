@@ -35,7 +35,7 @@ if ($hFunction->checkCount($dataCompanyStaffWork)) {
     ///$companyName = $dataCompanyStaffWork->company->name();
     ///$level = $dataCompanyStaffWork->level();
     ///$beginDate = $dataCompanyStaffWork->beginDate();
-   /// $dataStaffWorkDepartment = $dataCompanyStaffWork->staffWorkDepartmentInfoActivity();
+    /// $dataStaffWorkDepartment = $dataCompanyStaffWork->staffWorkDepartmentInfoActivity();
     $dataStaffWorkSalary = $dataCompanyStaffWork->staffWorkSalaryActivity();
 } else {
     # thiet ke cu
@@ -45,7 +45,7 @@ if ($hFunction->checkCount($dataCompanyStaffWork)) {
     ///$beginDate = $hFunction->carbonNow();
     //$dataStaffWorkDepartment = null;
     $dataStaffWorkSalary = null;
-   // $departmentStaff = null;
+    // $departmentStaff = null;
 }
 if (count($dataStaffWorkSalary) > 0) {
     $totalSalary = $dataStaffWorkSalary->totalSalary();
@@ -79,7 +79,7 @@ if (count($dataStaffWorkSalary) > 0) {
                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                 <input type="text" class="form-control" name="txtTotalSalary"
                        placeholder="Tổng lương nhân viên"
-                       onkeyup="qc_ad3d_staff_staff.edit.checkInputTotalSalary();"
+                       onkeyup="qc_ad3d_staff_staff.edit.infoSalary.checkInputTotalSalary();"
                        value="{!! $hFunction->currencyFormat($totalSalary) !!}">
             </div>
         </div>
@@ -89,7 +89,7 @@ if (count($dataStaffWorkSalary) > 0) {
                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                 <input type="text" class="form-control" name="txtSalary"
                        placeholder="VND"
-                       onkeyup="qc_ad3d_staff_staff.edit.checkInputSalary(this);"
+                       onkeyup="qc_ad3d_staff_staff.edit.infoSalary.checkInputSalary(this);"
                        value="{!! $hFunction->currencyFormat($salary) !!}">
             </div>
         </div>
@@ -135,7 +135,7 @@ if (count($dataStaffWorkSalary) > 0) {
                 <label>P/C Điện thoại(VNĐ) <i
                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                 <input type="text" class="form-control" name="txtUsePhone"
-                       onkeyup="qc_ad3d_staff_staff.edit.showInputRemain(this);"
+                       onkeyup="qc_ad3d_staff_staff.edit.infoSalary.showInputRemain(this);"
                        title="Phụ cấp sử dụng điện thoại"
                        placeholder="VND"
                        value="{!! $hFunction->currencyFormat($usePhone) !!}">
@@ -146,7 +146,7 @@ if (count($dataStaffWorkSalary) > 0) {
                 <label>P/C Trách nhiệm(VNĐ):</label>
                 <input type="text" class="form-control" name="txtResponsibility"
                        placeholder="VND"
-                       onkeyup="qc_ad3d_staff_staff.edit.showInputRemain(this);"
+                       onkeyup="qc_ad3d_staff_staff.edit.infoSalary.showInputRemain(this);"
                        title="Phụ cấp trách nhiệm thi công"
                        value="{!! $hFunction->currencyFormat($responsibility) !!}">
             </div>
@@ -157,7 +157,7 @@ if (count($dataStaffWorkSalary) > 0) {
                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                 <input type="text" class="form-control" name="txtFuel"
                        title="Phụ cấp sử dụng điện thoại" placeholder="VND"
-                       onkeyup="qc_ad3d_staff_staff.edit.showInputRemain(this);"
+                       onkeyup="qc_ad3d_staff_staff.edit.infoSalary.showInputRemain(this);"
                        value="{!! $hFunction->currencyFormat($fuel) !!}">
             </div>
         </div>
@@ -197,8 +197,7 @@ if (count($dataStaffWorkSalary) > 0) {
                 <button type="button" class="qc_save btn btn-sm btn-primary">Lưu thay đổi
                 </button>
                 <button type="reset" class="btn btn-sm btn-default">Nhập lại</button>
-                <button type="button"
-                        class="frmStaffSalaryEdit_close btn btn-sm btn-default"
+                <button type="button" class="frmStaffSalaryEdit_close btn btn-sm btn-default"
                         onclick="qc_main.window_reload();">
                     Đóng
                 </button>

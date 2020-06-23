@@ -21,7 +21,6 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                     <a class="qc-link-green-bold" href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
                     <label class="qc-font-size-20">BẢNG LƯƠNG</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
@@ -49,44 +48,29 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
-                    <form name="" action="">
-                        <div class="row">
-                            <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                <div class="input-group">
-                                    <input type="text" class="textFilterName form-control" name="textFilterName"
-                                           placeholder="Tìm theo tên" value="{!! $nameFiler !!}" style="height: 25px;">
-                                      <span class="input-group-btn">
-                                            <button class="btFilterName btn btn-default" type="button"
-                                                    style="height: 25px;"
-                                                    data-href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">Tìm
-                                            </button>
-                                      </span>
-                                </div>
-                            </div>
-                            <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">
-                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
-                                        Tất cả
+                    <div class="row">
+                        <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;"
+                                    data-href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">
+                                <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
+                                    Tất cả
+                                </option>
+                                @for($m =1;$m<= 12; $m++)
+                                    <option value="{!! $m !!}"
+                                            @if((int)$monthFilter == $m) selected="selected" @endif>
+                                        {!! $m !!}
                                     </option>
-                                    @for($i =1;$i<= 12; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$monthFilter == $i) selected="selected" @endif>
-                                            {!! $i !!}
-                                        </option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbYearFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">
-                                    @for($i =2017;$i<= 2050; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                            </div>
+                                @endfor
+                            </select>
+                            <select class="cbYearFilter" style="margin-top: 5px; height: 25px;"
+                                    data-href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">
+                                @for($y =2017;$y<= 2050; $y++)
+                                    <option value="{!! $y !!}"
+                                            @if($yearFilter == $y) selected="selected" @endif>{!! $y !!}</option>
+                                @endfor
+                            </select>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
             <div class="qc_ad3d_list_content row"
@@ -94,10 +78,10 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                  data-href-add="{!! route('qc.ad3d.finance.salary.payment.add.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black;color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Tên</th>
-                            <th class="text-center"></th>
+                            <th class="text-center">Thanh toán</th>
                             <th class="text-right">Tổng lương</th>
                             <th class="text-right">
                                 Mua vật tư <br/>
@@ -105,10 +89,31 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                             </th>
                             <th class="text-right">Ứng</th>
                             <th class="text-right">Phạt</th>
-                            <th class="text-right">Tổng lãnh </th>
+                            <th class="text-right">Tổng lãnh</th>
                             <th class="text-right">Đã thanh toán</th>
                             <th class="text-right">Chưa thanh toán</th>
-
+                        </tr>
+                        <tr>
+                            <td class="text-center"></td>
+                            <td style="padding: 0px;">
+                                <div class="input-group">
+                                    <input type="text" class="textFilterName form-control" name="textFilterName"
+                                           placeholder="Tìm theo tên" value="{!! $nameFiler !!}">
+                                      <span class="input-group-btn">
+                                            <button class="btFilterName btn btn-default" type="button"
+                                                    data-href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">Tìm
+                                            </button>
+                                      </span>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                         @if($hFunction->checkCount($dataSalary))
                             <?php
@@ -185,13 +190,13 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="9">
+                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="10">
                                     {!! $hFunction->page($dataSalary) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="qc-padding-top-20 qc-padding-bot-20 text-center" colspan="9">
+                                <td class="qc-padding-top-20 qc-padding-bot-20 text-center" colspan="10">
                                     <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                 </td>
                             </tr>

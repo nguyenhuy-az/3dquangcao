@@ -34,33 +34,29 @@ class PaySalaryController extends Controller
             'object' => 'paySalary',
             'subObjectLabel' => 'Thanh toán lương'
         ];
-        if ($hFunction->checkCount($dataStaff)) {
-            $loginStaffId = $modelStaff->loginStaffId();
-            if (empty($filterMonth) && empty($filterYear)) {
-                $dateFilter = date('Y-m');
-                $filterMonth = date('m');
-                $filterYear = date('Y');
-            } elseif ($filterMonth == 0) { //xem tat ca cac thang
-                $dateFilter = date('Y', strtotime("1-1-$filterYear"));
-            } else {
-                $dateFilter = date('Y-m', strtotime("1-$filterMonth-$filterYear"));
-            }
-            $searchCompanyFilterId = [$dataStaff->companyId()];
-            if ($filterMonth < 8 && $filterYear <= 2019) { # du lieu cu phien ban cu --  loc theo staff_id
-                $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
-                $listWorkId = $modelWork->listIdOfListStaffInBeginDate($listStaffId, $dateFilter);
-            } else { # du lieu phien ban moi - loc theo thong tin lam viec tai cty (companyStaffWork)
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId);
-                $listWorkId = $modelWork->listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter);
-            }
-            #thong tin bang lương
-            $dataSalary = $modelSalary->selectInfoByListWork($listWorkId)->get();
-            # thong tin thanh toan trong tháng
-            $dataSalaryPay = $modelSalaryPay->infoOfStaffAndDate($loginStaffId, $dateFilter);
-            return view('work.pay.pay-salary.index', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSalary', 'dataSalaryPay', 'dateFilter', 'filterMonth', 'filterYear', 'payStatus'));
+        $loginStaffId = $modelStaff->loginStaffId();
+        if (empty($filterMonth) && empty($filterYear)) {
+            $dateFilter = date('Y-m');
+            $filterMonth = date('m');
+            $filterYear = date('Y');
+        } elseif ($filterMonth == 0) { //xem tat ca cac thang
+            $dateFilter = date('Y', strtotime("1-1-$filterYear"));
         } else {
-            return view('work.login');
+            $dateFilter = date('Y-m', strtotime("1-$filterMonth-$filterYear"));
         }
+        $searchCompanyFilterId = [$dataStaff->companyId()];
+        if ($filterMonth < 8 && $filterYear <= 2019) { # du lieu cu phien ban cu --  loc theo staff_id
+            $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
+            $listWorkId = $modelWork->listIdOfListStaffInBeginDate($listStaffId, $dateFilter);
+        } else { # du lieu phien ban moi - loc theo thong tin lam viec tai cty (companyStaffWork)
+            $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId);
+            $listWorkId = $modelWork->listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter);
+        }
+        #thong tin bang lương
+        $dataSalary = $modelSalary->selectInfoByListWork($listWorkId)->get();
+        # thong tin thanh toan trong tháng
+        $dataSalaryPay = $modelSalaryPay->infoOfStaffAndDate($loginStaffId, $dateFilter);
+        return view('work.pay.pay-salary.index', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSalary', 'dataSalaryPay', 'dateFilter', 'filterMonth', 'filterYear', 'payStatus'));
 
     }
 
@@ -147,9 +143,8 @@ class PaySalaryController extends Controller
         $dataWork = $dataSalary->work;
         $salaryPay = $dataSalary->salary();
         $totalPaid = $dataSalary->totalPaid();
-        $txtSalaryMoney = $salaryPay - $totalPaid;  # tong tien luong can thanh toán
-        $totalKPIMoney = 0;
-
+        # tong tien luong can thanh toán
+        $txtSalaryMoney = $salaryPay - $totalPaid;
         //$txtImport = Request::input('txtImport');
         $txtBenefitMoney = Request::input('txtBenefitMoney');
         $txtBenefitMoney = $hFunction->convertCurrencyToInt($txtBenefitMoney);

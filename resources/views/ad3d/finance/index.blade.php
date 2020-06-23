@@ -111,6 +111,11 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                     Giao tiền
                                 </a>
                             </li>
+                            <li @if($accessObject == 'keepMoney') class="active" @endif>
+                                <a href="{!! route('qc.ad3d.finance.keep_money.get') !!}">
+                                    Giữ tiền tiền
+                                </a>
+                            </li>
                         </ul>
 
                         <ul class="nav navbar-nav navbar-right">

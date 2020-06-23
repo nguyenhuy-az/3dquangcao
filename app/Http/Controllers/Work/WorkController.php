@@ -32,7 +32,7 @@ class WorkController extends Controller
             # kiem tra quan ly thi cong don hang
             $modelOrder->autoCheckMinusMoneyLateConstruction();
             # kiem tra thong tin ban giao don hang
-            $modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
+            //$modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
             return view('work.control-panel', compact('modelCompany', 'modelStaff', 'sysInfoObject'));
         } else {
             return view('work.login');
@@ -147,17 +147,12 @@ class WorkController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelRules = new QcRules();
-        $dataAccess = [
-            'object' => 'rules'
-        ];
-        if (!$modelStaff->checkLogin()) {
-            return redirect()->route('qc.work.login.get');
-        } else {
-            $dataStaff = $modelStaff->loginStaffInfo();
-            if ($hFunction->checkCount($dataStaff)) {
-                $dataRule = $modelRules->getInfo();
-                return view('work.rules.rules', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataRule'));
-            }
+        $dataStaff = $modelStaff->loginStaffInfo();
+        if ($hFunction->checkCount($dataStaff)) {
+            $dataRule = $modelRules->getInfo();
+            return view('work.rules.rules', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataRule'));
+        }{
+
         }
     }
 

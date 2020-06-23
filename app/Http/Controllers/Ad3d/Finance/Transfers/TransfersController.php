@@ -14,25 +14,40 @@ use Request;
 
 class TransfersController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = null, $monthFilter = null, $yearFilter = null, $transfersStatus = null)
+    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $transfersStatus = 'transfers')
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $staffLoginId = $dataStaffLogin->staffId();
+        $currentMonth = $hFunction->currentMonth();
+        $currentYear = $hFunction->currentYear();
         $dataAccess = [
             'accessObject' => 'transfers'
         ];
         $dataCompany = $modelCompany->getInfo();
-        if (empty($dayFilter) && empty($monthFilter) && empty($yearFilter)) {
-            $dateFilter = date('Y-m');
-            //$dayFilter = date('d');
+        $dateFilter = null;
+        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+            $dayFilter = 100;
             $monthFilter = date('m');
             $yearFilter = date('Y');
-        } elseif ($dayFilter == 0) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $monthFilter = $currentMonth;
+            $yearFilter = $currentYear;
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
+        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+            $dateFilter = null;
         } else {
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
+            $dateFilter = date('Y-m');
+            $dayFilter = 100;
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
         }
 
         if ($dataStaffLogin->checkRootManage()) {

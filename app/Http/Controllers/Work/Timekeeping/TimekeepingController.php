@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers\Work\Timekeeping;
 
+use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
+use App\Models\Ad3d\Import\QcImport;
+use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
 use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
 use App\Models\Ad3d\Rule\QcRules;
 use App\Models\Ad3d\Salary\QcSalary;
+use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
 use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
@@ -25,18 +29,13 @@ class TimekeepingController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelWork = new QcWork();
-        if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'timekeeping'
-            ];
-            $dataStaff = $modelStaff->loginStaffInfo();
-            $modelWork->checkAutoTimekeepingOfActivityWork();
-            $dateFilter = date('Y-m-d');
-            return view('work.timekeeping.timekeeping', compact('dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
-        } else {
-            return view('work.login');
-        }
-
+        $dataAccess = [
+            'object' => 'timekeeping'
+        ];
+        $dataStaff = $modelStaff->loginStaffInfo();
+        $modelWork->checkAutoTimekeepingOfActivityWork();
+        $dateFilter = date('Y-m-d');
+        return view('work.timekeeping.timekeeping', compact('dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
     }
 
     //xem anh bao cao
@@ -107,13 +106,35 @@ class TimekeepingController extends Controller
     //báo giờ ra
     public function getTimeEnd($timekeepingId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelSalary = new QcSalary();
+        $modelSalaryPay = new QcSalaryPay();
+        $modelImport = new QcImport();
+        $modelImportPay = new QcImportPay();
         $modelTimekeeping = new QcTimekeepingProvisional();
-        if ($modelStaff->checkLogin()) {
+        $dataStaff = $modelStaff->loginStaffInfo();
+        $loginStaffId = $dataStaff->staffId();
+        //-------- ---------- lay thong tin chua xac nhan thanh toan luong ---------- ---------
+        # danh sach ma cham cong
+        $listWorkId = $modelStaff->allListWorkId($loginStaffId);
+        # danh dach ma bang luong theo ma cham cong
+        $listSalaryId = $modelSalary->listIdOfListWorkId($listWorkId);
+        # thong tin thanh toan chua xac nhan
+        $dataSalaryPay = $modelSalaryPay->getInfoUnConfirmOfListSalaryId($listSalaryId);
+        //-------- ---------- lay thong tin chua xac nhan thanh toan mua vat tu ---------- ---------
+        # lay danh sach nhap vat tu da thanh toan
+        $listImportId = $modelImport->listImportIdPaidOfStaffImport($loginStaffId);
+        # lay thong tin thanh toan nhap vat tu chua duoc xac nhan theo danh sach don nhap
+        $dataImportPay =  $modelImportPay->infoUnConfirmOfListImportId($listImportId);
+
+        # co thong tin chua xac nhan
+        if ($hFunction->checkCount($dataSalaryPay) || $hFunction->checkCount($dataImportPay)) {
+            return view('work.components.notify.warning-confirm', compact('modelStaff', 'dataSalaryPay', 'dataImportPay'));
+        } else {
             $dataStaff = $modelStaff->loginStaffInfo();
             $dataTimekeepingProvisional = $modelTimekeeping->getInfo($timekeepingId);
             return view('work.timekeeping.time-end', compact('modelStaff', 'dataStaff', 'dataTimekeepingProvisional'));
-
         }
     }
 

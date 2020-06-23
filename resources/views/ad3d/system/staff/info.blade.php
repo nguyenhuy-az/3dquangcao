@@ -85,7 +85,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                     <table class="table table-hover table-bordered">
                         {{--THONG TIN CO BAN--}}
                         <tr>
-                            <td style="background-color: black; color: red;">
+                            <td style="background-color: black; color: red;padding-bottom: 0;">
                                 <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
                                 <label style="font-size: 1.5em;">Thông tin cơ bản</label>
                                 <a class="qc_staffInfoBasicContainerEdit qc-link-red pull-right "
@@ -236,7 +236,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                         </tr>
                         {{--THONG TIN LAM VIEC--}}
                         <tr>
-                            <td style="background-color: black;color: red;">
+                            <td style="background-color: black;color: red;padding-bottom: 0;">
                                 <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
                                 <label style="font-size: 1.5em;">Làm việc</label>
                                 <a class="qc_staffInfoWorkContainerEdit qc-link-red pull-right"
@@ -331,7 +331,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                         </tr>
                         {{--THONG TIN LUONG--}}
                         <tr>
-                            <td style="background-color: black; color: red;">
+                            <td style="background-color: black; color: red; padding-bottom: 0;">
                                 <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
                                 <label style="font-size: 1.5em;">Lương</label>
                                 <a class="qc_staffInfoSalaryContainerEdit qc-link-red pull-right" title="Sửa thông tin"

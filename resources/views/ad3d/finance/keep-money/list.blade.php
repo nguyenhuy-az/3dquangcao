@@ -4,33 +4,31 @@
  * User: HUY
  * Date: 12/28/2017
  * Time: 2:32 PM
- *
- * dataOrder
  */
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$hrefIndex = route('qc.ad3d.finance.order-payment.get');
+$hrefIndex = route('qc.ad3d.finance.keep_money.get');
 ?>
-@extends('ad3d.finance.order-payment.index')
+@extends('ad3d.finance.keep-money.index')
 @section('qc_ad3d_index_content')
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed brown;">
+             style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed black;">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <label class="qc-font-size-20">THU ĐƠN HÀNG</label>
+                    <label class="qc-font-size-20">GIỮ TIỀN NHÂN VIÊN</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
                             data-href-filter="{!! $hrefIndex !!}">
-                        {{--@if($dataStaffLogin->checkRootManage())
+                        @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
-                        @endif--}}
+                        @endif
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -48,28 +46,24 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="qc_ad3d_list_content qc-order-order-object row"
-                 data-href-view="{!! route('qc.ad3d.finance.order-payment.view.get') !!}"
-                 data-href-del="{!! route('qc.ad3d.finance.order-payment.delete') !!}">
+            <div class="qc_ad3d_list_content row">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: black;color: yellow;">
-                            <th class="text-center"></th>
-                            <th>Mã ĐH</th>
-                            <th class="text-center">Ngày thu</th>
-                            <th>Tên ĐH</th>
-                            <th>Thủ quỹ</th>
-                            <th class="text-right"></th>
-                            <th class="text-center">Giao tiền</th>
-                            <th class="text-right">Thành tiền</th>
+                        <tr style="background-color: black; color: yellow;">
+                            <th style="width:20px;">STT</th>
+                            <th>Ngày giữ</th>
+                            <th>Nhân viên</th>
+                            <th>Ghi chú</th>
+                            <th>Tháng lương giữ</th>
+                            <th class="text-center">Thanh toán</th>
+                            <th class="text-right">Số tiền</th>
                         </tr>
                         <tr>
-                            <td class="text-center"></td>
                             <td></td>
                             <td style="padding: 0;">
                                 <select class="cbDayFilter" style="height: 30px;"
                                         data-href="{!! $hrefIndex !!}">
-                                    <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($d =1;$d<= 31; $d++)
@@ -80,6 +74,9 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                     @endfor
                                 </select>
                                 <select class="cbMonthFilter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
                                     @for($m =1;$m<= 12; $m++)
                                         <option value="{!! $m !!}"
                                                 @if((int)$monthFilter == $m) selected="selected" @endif>
@@ -96,20 +93,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                     @endfor
                                 </select>
                             </td>
-                            <td class="text-center" style="padding: 0px;">
-                                <div class="input-group">
-                                    <input type="text" class="textOrderFilterName form-control"
-                                           name="textOrderFilterName"
-                                           placeholder="Tìm theo tên" value="{!! $orderFilterName !!}">
-                                      <span class="input-group-btn">
-                                            <button class="btOrderFilterName btn btn-default" type="button"
-                                                    data-href="{!! $hrefIndex !!}">
-                                                <i class="glyphicon glyphicon-search"></i>
-                                            </button>
-                                      </span>
-                                </div>
-                            </td>
-                            <td class="text-center" style="padding: 0px;">
+                            <td style="padding: 0;">
                                 <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
                                         Tất cả
@@ -124,80 +108,76 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                     @endif
                                 </select>
                             </td>
-                            <td class="text-right"></td>
-                            <td style="padding: 0px;">
-                                <select class="cbTransferStatus form-control" data-href="{!! $hrefIndex !!}">
-                                    <option value="2" @if($transferStatus == 2) selected="selected" @endif>Tất cả
+                            <td></td>
+                            <td style="padding: 0;">
+                                <select class="cbPayStatus" name="cbPayStatus" style="height: 30px; width: 100%;"
+                                        data-href="{!! $hrefIndex !!}">
+                                    <option value="0" @if($payStatus == 0) selected="selected" @endif>
+                                        Tất cả
                                     </option>
-                                    <option value="1" @if($transferStatus == 1) selected="selected" @endif>
-                                        Đã bàn giao
+                                    <option value="1" @if($payStatus == 1) selected="selected" @endif>
+                                        Chưa Thanh toán
                                     </option>
-                                    <option value="0" @if($transferStatus == 0) selected="selected" @endif>
-                                        Chưa bàn giao
+                                    <option value="2" @if($payStatus == 2) selected="selected" @endif >
+                                        Đã Thanh toán
                                     </option>
                                 </select>
                             </td>
-                            <td class="text-right qc-color-red">
-                                <b>{!! $hFunction->dotNumber($totalOrderPay) !!}</b>
-                            </td>
+                            <td></td>
                         </tr>
-                        @if($hFunction->checkCount($dataOrderPay))
+                        @if($hFunction->checkCount($dataKeepMoney))
                             <?php
-                            $perPage = $dataOrderPay->perPage();
-                            $currentPage = $dataOrderPay->currentPage();
+                            $perPage = $dataKeepMoney->perPage();
+                            $currentPage = $dataKeepMoney->currentPage();
                             $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
                             ?>
-                            @foreach($dataOrderPay as $orderPay)
+                            @foreach($dataKeepMoney as $keepMoney)
                                 <?php
-                                $payId = $orderPay->payid();
+                                $keepMoneyId = $keepMoney->keepId();
+                                $dataWork = $keepMoney->work;
                                 ?>
-                                <tr class="qc_ad3d_list_object  @if($n_o%2 == 1) info @endif"
-                                    data-object="{!! $payId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
+                                    data-object="{!! $keepMoneyId !!}">
                                     <td class="text-center">
-                                        <b>{!! $n_o += 1 !!}</b>
-                                    </td>
-                                    <td class="qc-color-grey">
-                                        {!! $orderPay->order->orderCode() !!}
-                                    </td>
-                                    <td class="text-center">
-                                        {!! date('d/m/Y', strtotime($orderPay->datePay())) !!}
+                                        {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        {!! $orderPay->order->name() !!}
+                                        {!! date('d/m/Y', strtotime($keepMoney->keepDate())) !!}
                                     </td>
                                     <td>
-                                        {!! $orderPay->staff->fullName() !!}
-                                    </td>
-                                    <td class="text-right">
-                                        <a class="qc_view qc-link-green" href="#">
-                                            Chi tiết
-                                        </a>
-                                        @if($orderPay->checkStaffInput($dataStaffLogin->staffId()))
-                                            <span>|</span>
-                                            <a class="qc_delete qc-link-green" href="#">Hủy</a>
-                                        @endif
-                                    </td>
-                                    <td class="text-center qc-color-grey">
-                                        @if($orderPay->checkExistTransfersDetail())
-                                            <i class="glyphicon glyphicon-ok-circle qc-color-green" title="Đã giao"></i>
+                                        @if(!empty($dataWork->companyStaffWorkId()))
+                                            {!! $dataWork->companyStaffWork->staff->fullName() !!}
                                         @else
-                                            <i class="glyphicon glyphicon-ok-circle qc-color-red" title="Chưa giao"></i>
+                                            {!! $dataWork->staff->fullName() !!}
                                         @endif
                                     </td>
-                                    <td class="text-right">
-                                        <b>{!! $hFunction->currencyFormat($orderPay->money()) !!}</b>
+                                    <td>
+                                        {!! $keepMoney->description() !!}
+                                    </td>
+                                    <td>
+                                        {!! date('m/Y', strtotime($dataWork->fromDate())) !!}
+                                    </td>
+                                    <td class="text-center">
+                                        @if($keepMoney->checkPaid($keepMoneyId))
+                                            <span>Đã thanh toán</span>
+                                        @else
+                                            <span>Chưa thanh toán</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-right qc-color-red">
+                                        {!! $hFunction->currencyFormat($keepMoney->money()) !!}
                                     </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="8">
-                                    {!! $hFunction->page($dataOrderPay) !!}
+                                <td class="text-center" colspan="7">
+                                    {!! $hFunction->page($dataKeepMoney) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-right qc-color-red" colspan="8">
-                                    <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
+                                <td class="text-center" colspan="7">
+                                    <em class="qc-color-red">Không tìm thấy thông tin</em>
                                 </td>
                             </tr>
                         @endif
@@ -206,4 +186,4 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
             </div>
         </div>
     </div>
-@endsection()
+@endsection

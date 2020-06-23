@@ -310,6 +310,237 @@ var qc_ad3d_staff_staff = {
                     }
                 }
 
+            },
+            checkInputTotalSalary: function () {
+                var txtTotalSalary = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalary']");
+                var txtTotalSalaryRemain = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalaryRemain']");
+                var txtTotalSalaryRemainShow = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalaryRemainShow']");
+                var txtSalary = $('#frmStaffInfoSalaryEdit').find("input[name='txtSalary']");
+                var txtResponsibility = $('#frmStaffInfoSalaryEdit').find("input[name='txtResponsibility']");
+                var txtInsurance = $('#frmStaffInfoSalaryEdit').find("input[name='txtInsurance']");
+                var txtDateOff = $('#frmStaffInfoSalaryEdit').find("input[name='txtDateOff']");
+                var txtUsePhone = $('#frmStaffInfoSalaryEdit').find("input[name='txtUsePhone']");
+                var txtFuel = $('#frmStaffInfoSalaryEdit').find("input[name='txtFuel']");
+
+                var valTotalSalary = txtTotalSalary.val();
+                if (valTotalSalary == '') valTotalSalary = '0';
+                var numberTotalSalary = parseInt(qc_main.getNumberInput(valTotalSalary)); // chuyen sang dang so
+                var numberDateOffNew = Math.floor(parseInt(numberTotalSalary / 26));
+                txtDateOff.val(qc_main.formatCurrency(String(numberDateOffNew)));
+                txtSalary.val(0);
+                txtResponsibility.val(0);
+                txtInsurance.val(0);
+                txtUsePhone.val(0);
+                txtFuel.val(0);
+
+                var numberTotalSalaryRemain = numberTotalSalary - numberDateOffNew;
+                txtTotalSalaryRemain.val(qc_main.formatCurrency(String(numberTotalSalaryRemain)));
+                txtTotalSalaryRemainShow.val(qc_main.formatCurrency(String(numberTotalSalaryRemain)));
+                txtTotalSalary.val(qc_main.formatCurrency(String(numberTotalSalary))); // hien lai dang tien te
+            },
+            checkInputSalary: function () {
+                var txtTotalSalary = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalary']");
+                var txtTotalSalaryRemain = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalaryRemain']");
+                var txtTotalSalaryRemainShow = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalaryRemainShow']");
+                var txtSalary = $('#frmStaffInfoSalaryEdit').find("input[name='txtSalary']");
+                var txtResponsibility = $('#frmStaffInfoSalaryEdit').find("input[name='txtResponsibility']");
+                var txtInsurance = $('#frmStaffInfoSalaryEdit').find("input[name='txtInsurance']");
+                var txtDateOff = $('#frmStaffInfoSalaryEdit').find("input[name='txtDateOff']");
+                var txtUsePhone = $('#frmStaffInfoSalaryEdit').find("input[name='txtUsePhone']");
+                var txtFuel = $('#frmStaffInfoSalaryEdit').find("input[name='txtFuel']");
+                if (qc_main.check.inputNull(txtTotalSalary, 'Phải nhập tổng lương')) {
+                    $(txtTotalSalary).focus();
+                    (txtSalary).val(0);
+                    return false;
+                } else {
+                    var valTotalSalary = txtTotalSalary.val();
+                    var numberTotalSalary = parseInt(qc_main.getNumberInput(valTotalSalary));
+
+                    var valSalary = txtSalary.val();
+                    if (valSalary == '') valSalary = '0';
+                    var numberSalary = parseInt(qc_main.getNumberInput(valSalary)); //chuyen sang kieu so
+
+                    var valInsurance = txtInsurance.val();
+                    var numberInsurance = parseInt(qc_main.getNumberInput(valInsurance)); //chuyen sang kieu so
+
+                    var valDateOff = txtDateOff.val();
+                    var numberDateOff = parseInt(qc_main.getNumberInput(valDateOff)); //chuyen sang kieu so
+
+                    var valTotalSalaryRemain = txtTotalSalaryRemain.val();
+                    var numberTotalSalaryRemain = parseInt(qc_main.getNumberInput(valTotalSalaryRemain)); //chuyen sang kieu so
+
+                    //xu ly luong co ban
+                    if (numberSalary > numberTotalSalary) {
+                        alert('Lương cơ bản phải nhỏ hơn lương tổng');
+                        var stringSalary = String(numberSalary);
+                        numberSalary = stringSalary.substring(0, stringSalary.length - 1);// xoa bo so moi nhap
+                        txtSalary.val(qc_main.formatCurrency(numberSalary));
+                        $(txtSalary).focus();
+                        if (parseInt(numberSalary) > 0) {
+                            txtInsurance.val(qc_main.formatCurrency(String(parseInt(numberSalary) * 0.215)));
+                        } else {
+                            txtInsurance.val(0);
+                        }
+                        txtTotalSalaryRemain.val(qc_main.formatCurrency(String(numberTotalSalaryRemain)));
+                        return false;
+                    } else {
+                        qc_main.showFormatCurrency(txtSalary);
+                        if (numberSalary > (numberTotalSalary * 0.785)) { //luong co ban + bao hiem lon hon luong tong
+                            txtInsurance.val(0);
+                        } else {
+                            if (numberSalary > 0) {
+                                txtInsurance.val(qc_main.formatCurrency(String(numberSalary * 0.215)));
+                            } else {
+                                txtInsurance.val(0);
+                            }
+                        }
+                        //var numberDateOffNew = Math.floor(parseInt(numberTotalSalary / 26));
+                        numberTotalSalaryRemain = numberTotalSalary - numberSalary - (parseInt(numberSalary) * 0.215) - numberDateOff;
+                        if (numberTotalSalaryRemain > 0) {
+                            txtTotalSalaryRemain.val(qc_main.formatCurrency(String(Math.floor(numberTotalSalaryRemain))));
+                            txtTotalSalaryRemainShow.val(qc_main.formatCurrency(String(Math.floor(numberTotalSalaryRemain))));
+                        } else {
+                            txtTotalSalaryRemain.val(0);
+                            txtTotalSalaryRemainShow.val(0);
+                        }
+                    }
+                    txtUsePhone.val(0);
+                    txtResponsibility.val(0);
+                    txtFuel.val(0);
+
+                }
+            },
+            showInput: function () {
+                var txtTotalSalary = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalary']");
+                var txtTotalSalaryRemain = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalaryRemain']");
+                var txtTotalSalaryRemainShow = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalaryRemainShow']");
+                var txtSalary = $('#frmStaffInfoSalaryEdit').find("input[name='txtSalary']");
+                var txtResponsibility = $('#frmStaffInfoSalaryEdit').find("input[name='txtResponsibility']");
+                var txtInsurance = $('#frmStaffInfoSalaryEdit').find("input[name='txtInsurance']");
+                var txtDateOff = $('#frmStaffInfoSalaryEdit').find("input[name='txtDateOff']");
+                var txtUsePhone = $('#frmStaffInfoSalaryEdit').find("input[name='txtUsePhone']");
+                var txtFuel = $('#frmStaffInfoSalaryEdit').find("input[name='txtFuel']");
+                if (qc_main.check.inputNull(txtTotalSalary, 'Phải nhập tổng lương')) {
+                    $(txtTotalSalary).focus();
+                    $(txtSalary).val(0);
+                    return false;
+                } else {
+                    var valTotalSalary = txtTotalSalary.val();
+                    var numberTotalSalary = parseInt(qc_main.getNumberInput(valTotalSalary));
+
+                    var valSalary = txtSalary.val();
+                    var numberSalary = parseInt(qc_main.getNumberInput(valSalary)); //chuyen sang kieu so
+
+                    var valInsurance = txtInsurance.val();
+                    var numberInsurance = parseInt(qc_main.getNumberInput(valInsurance)); //chuyen sang kieu so
+
+                    var valDateOff = txtDateOff.val();
+                    var numberDateOff = parseInt(qc_main.getNumberInput(valDateOff)); //chuyen sang kieu so
+
+                    var valTotalSalaryRemain = txtTotalSalaryRemain.val();
+                    var numberTotalSalaryRemain = parseInt(qc_main.getNumberInput(valTotalSalaryRemain)); //chuyen sang kieu so
+
+                    //hien so tien ngay nghi
+                    /*if (numberTotalSalary > 0) {
+                     var numberDateOffNew = Math.floor(parseInt(numberTotalSalary / 26));
+                     txtDateOff.val(qc_main.formatCurrency(String(numberDateOffNew)));
+                     qc_main.showFormatCurrency(txtTotalSalary);
+                     numberTotalSalaryRemain = numberTotalSalary - numberSalary - (parseInt(numberSalary) * 0.215) - numberDateOffNew;
+                     if (numberTotalSalaryRemain > 0) {
+                     txtTotalSalaryRemain.val(qc_main.formatCurrency(String(numberTotalSalaryRemain)));
+                     txtTotalSalaryRemainShow.val(qc_main.formatCurrency(String(numberTotalSalaryRemain)));
+                     } else {
+                     txtTotalSalaryRemain.val(0);
+                     txtTotalSalaryRemainShow.val(0);
+                     }
+                     } else {
+                     txtDateOff.val(0);
+                     }*/
+
+                    //xu ly luong co ban
+                    if (numberSalary > numberTotalSalary) {
+                        alert('Lương cơ bản phải nhỏ hơn lương tổng');
+                        var stringSalary = String(numberSalary);
+                        numberSalary = stringSalary.substring(0, stringSalary.length - 1);// xoa bo so moi nhap
+                        txtSalary.val(qc_main.formatCurrency(numberSalary));
+                        $(txtSalary).focus();
+                        if (parseInt(numberSalary) > 0) {
+                            txtInsurance.val(qc_main.formatCurrency(String(parseInt(numberSalary) * 0.215)));
+                        } else {
+                            txtInsurance.val(0);
+                        }
+                        return false;
+                    } else {
+                        qc_main.showFormatCurrency(txtSalary);
+                        if (numberSalary > (numberTotalSalary * 0.785)) { //luong co ban + bao hiem lon hon luong tong
+                            txtInsurance.val(0);
+                        } else {
+                            if (numberSalary > 0) {
+                                txtInsurance.val(qc_main.formatCurrency(String(numberSalary * 0.215)));
+                            } else {
+                                txtInsurance.val(0);
+                            }
+                        }
+
+
+                    }
+                    txtUsePhone.val(0);
+                    txtResponsibility.val(0);
+                    txtFuel.val(0);
+
+                }
+                //var cbCompany = $('#frmAdd').find("input[name='txtTotalSalary']");
+            },
+            showInputRemain: function (objectInput) {
+                var txtTotalSalaryRemain = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalaryRemain']");
+                var txtTotalSalaryRemainShow = $('#frmStaffInfoSalaryEdit').find("input[name='txtTotalSalaryRemainShow']");
+                var txtUsePhone = $('#frmStaffInfoSalaryEdit').find("input[name='txtUsePhone']");
+                var txtResponsibility = $('#frmStaffInfoSalaryEdit').find("input[name='txtResponsibility']");
+                var txtFuel = $('#frmStaffInfoSalaryEdit').find("input[name='txtFuel']");
+
+                var valTotalSalaryRemain = txtTotalSalaryRemain.val();
+                if (valTotalSalaryRemain == '') valTotalSalaryRemain = '0';
+                var numberTotalSalaryRemain = parseInt(qc_main.getNumberInput(valTotalSalaryRemain)); //chuyen sang kieu so
+
+                var valTotalSalaryRemainShorw = txtTotalSalaryRemainShow.val();
+                if (valTotalSalaryRemainShorw == 0) valTotalSalaryRemainShorw = '0';
+                var numberTotalSalaryRemainShow = parseInt(qc_main.getNumberInput(valTotalSalaryRemainShorw)); //chuyen sang kieu so
+
+                var valUsePhone = txtUsePhone.val();
+                if (valUsePhone == '') valUsePhone = '0';
+                var numberUsePhone = parseInt(qc_main.getNumberInput(valUsePhone)); //chuyen sang kieu so
+
+                var valResponsibility = txtResponsibility.val();
+                if (valResponsibility == '') valResponsibility = '0';
+                var numberResponsibility = parseInt(qc_main.getNumberInput(valResponsibility)); //chuyen sang kieu so
+
+                var valFuel = txtFuel.val();
+                if (valFuel == '') valFuel = '0';
+                var numberFuel = parseInt(qc_main.getNumberInput(valFuel)); //chuyen sang kieu so
+
+                var valObjectInput = $(objectInput).val();
+                if (valObjectInput == '') valObjectInput = '0';
+                var numberObjectInput = parseInt(qc_main.getNumberInput(valObjectInput)); //chuyen sang kieu so
+
+                var totalCheck = parseInt(numberUsePhone) + parseInt(numberResponsibility) + parseInt(numberFuel);
+
+                //alert(numberTotalSalaryRemainShow  + '--' + numberUsePhone + '--' + numberResponsibility + '--' + numberFuel);
+
+                if (totalCheck > numberTotalSalaryRemain) {
+                    alert('Không được nhập vượt lương tổng còn lại');
+                    var stringObjectInput = String(numberObjectInput);
+                    valObjectInput = stringObjectInput.substring(0, stringObjectInput.length - 1);// xoa bo so moi nhap
+                    $(objectInput).val(qc_main.formatCurrency(valObjectInput));
+                    $(objectInput).focus();
+                    //txtTotalSalaryRemainShow.val(qc_main.formatCurrency(String(numberTotalSalaryRemain - parseInt(valObjectInput) - parseInt(numberResponsibility) - parseInt(numberFuel))));
+                    return false;
+                } else {
+                    var newNumberTotalSalaryRemainShow = numberTotalSalaryRemain - (numberUsePhone + numberResponsibility + numberFuel);
+                    //alert(numberTotalSalaryRemain + '--' + numberUsePhone + '--' + numberResponsibility + '--' + numberFuel);
+                    txtTotalSalaryRemainShow.val(qc_main.formatCurrency(String(newNumberTotalSalaryRemainShow)));
+                    $(objectInput).val(qc_main.formatCurrency(String(numberObjectInput)));
+                }
+
             }
         },
 
@@ -415,238 +646,8 @@ var qc_ad3d_staff_staff = {
                 });
                 return checkStatus;
             },
-        },
-        checkInputTotalSalary: function () {
-            var txtTotalSalary = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalary']");
-            var txtTotalSalaryRemain = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalaryRemain']");
-            var txtTotalSalaryRemainShow = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalaryRemainShow']");
-            var txtSalary = $('#frmStaffSalaryEdit').find("input[name='txtSalary']");
-            var txtResponsibility = $('#frmStaffSalaryEdit').find("input[name='txtResponsibility']");
-            var txtInsurance = $('#frmStaffSalaryEdit').find("input[name='txtInsurance']");
-            var txtDateOff = $('#frmStaffSalaryEdit').find("input[name='txtDateOff']");
-            var txtUsePhone = $('#frmStaffSalaryEdit').find("input[name='txtUsePhone']");
-            var txtFuel = $('#frmStaffSalaryEdit').find("input[name='txtFuel']");
-
-            var valTotalSalary = txtTotalSalary.val();
-            if (valTotalSalary == '') valTotalSalary = '0';
-            var numberTotalSalary = parseInt(qc_main.getNumberInput(valTotalSalary)); // chuyen sang dang so
-            var numberDateOffNew = Math.floor(parseInt(numberTotalSalary / 26));
-            txtDateOff.val(qc_main.formatCurrency(String(numberDateOffNew)));
-            txtSalary.val(0);
-            txtResponsibility.val(0);
-            txtInsurance.val(0);
-            txtUsePhone.val(0);
-            txtFuel.val(0);
-
-            var numberTotalSalaryRemain = numberTotalSalary - numberDateOffNew;
-            txtTotalSalaryRemain.val(qc_main.formatCurrency(String(numberTotalSalaryRemain)));
-            txtTotalSalaryRemainShow.val(qc_main.formatCurrency(String(numberTotalSalaryRemain)));
-            txtTotalSalary.val(qc_main.formatCurrency(String(numberTotalSalary))); // hien lai dang tien te
-        },
-        checkInputSalary: function () {
-            var txtTotalSalary = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalary']");
-            var txtTotalSalaryRemain = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalaryRemain']");
-            var txtTotalSalaryRemainShow = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalaryRemainShow']");
-            var txtSalary = $('#frmStaffSalaryEdit').find("input[name='txtSalary']");
-            var txtResponsibility = $('#frmStaffSalaryEdit').find("input[name='txtResponsibility']");
-            var txtInsurance = $('#frmStaffSalaryEdit').find("input[name='txtInsurance']");
-            var txtDateOff = $('#frmStaffSalaryEdit').find("input[name='txtDateOff']");
-            var txtUsePhone = $('#frmStaffSalaryEdit').find("input[name='txtUsePhone']");
-            var txtFuel = $('#frmStaffSalaryEdit').find("input[name='txtFuel']");
-            if (qc_main.check.inputNull(txtTotalSalary, 'Phải nhập tổng lương')) {
-                $(txtTotalSalary).focus();
-                (txtSalary).val(0);
-                return false;
-            } else {
-                var valTotalSalary = txtTotalSalary.val();
-                var numberTotalSalary = parseInt(qc_main.getNumberInput(valTotalSalary));
-
-                var valSalary = txtSalary.val();
-                if (valSalary == '') valSalary = '0';
-                var numberSalary = parseInt(qc_main.getNumberInput(valSalary)); //chuyen sang kieu so
-
-                var valInsurance = txtInsurance.val();
-                var numberInsurance = parseInt(qc_main.getNumberInput(valInsurance)); //chuyen sang kieu so
-
-                var valDateOff = txtDateOff.val();
-                var numberDateOff = parseInt(qc_main.getNumberInput(valDateOff)); //chuyen sang kieu so
-
-                var valTotalSalaryRemain = txtTotalSalaryRemain.val();
-                var numberTotalSalaryRemain = parseInt(qc_main.getNumberInput(valTotalSalaryRemain)); //chuyen sang kieu so
-
-                //xu ly luong co ban
-                if (numberSalary > numberTotalSalary) {
-                    alert('Lương cơ bản phải nhỏ hơn lương tổng');
-                    var stringSalary = String(numberSalary);
-                    numberSalary = stringSalary.substring(0, stringSalary.length - 1);// xoa bo so moi nhap
-                    txtSalary.val(qc_main.formatCurrency(numberSalary));
-                    $(txtSalary).focus();
-                    if (parseInt(numberSalary) > 0) {
-                        txtInsurance.val(qc_main.formatCurrency(String(parseInt(numberSalary) * 0.215)));
-                    } else {
-                        txtInsurance.val(0);
-                    }
-                    txtTotalSalaryRemain.val(qc_main.formatCurrency(String(numberTotalSalaryRemain)));
-                    return false;
-                } else {
-                    qc_main.showFormatCurrency(txtSalary);
-                    if (numberSalary > (numberTotalSalary * 0.785)) { //luong co ban + bao hiem lon hon luong tong
-                        txtInsurance.val(0);
-                    } else {
-                        if (numberSalary > 0) {
-                            txtInsurance.val(qc_main.formatCurrency(String(numberSalary * 0.215)));
-                        } else {
-                            txtInsurance.val(0);
-                        }
-                    }
-                    //var numberDateOffNew = Math.floor(parseInt(numberTotalSalary / 26));
-                    numberTotalSalaryRemain = numberTotalSalary - numberSalary - (parseInt(numberSalary) * 0.215) - numberDateOff;
-                    if (numberTotalSalaryRemain > 0) {
-                        txtTotalSalaryRemain.val(qc_main.formatCurrency(String(Math.floor(numberTotalSalaryRemain))));
-                        txtTotalSalaryRemainShow.val(qc_main.formatCurrency(String(Math.floor(numberTotalSalaryRemain))));
-                    } else {
-                        txtTotalSalaryRemain.val(0);
-                        txtTotalSalaryRemainShow.val(0);
-                    }
-                }
-                txtUsePhone.val(0);
-                txtResponsibility.val(0);
-                txtFuel.val(0);
-
-            }
-        },
-        showInput: function () {
-            var txtTotalSalary = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalary']");
-            var txtTotalSalaryRemain = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalaryRemain']");
-            var txtTotalSalaryRemainShow = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalaryRemainShow']");
-            var txtSalary = $('#frmStaffSalaryEdit').find("input[name='txtSalary']");
-            var txtResponsibility = $('#frmStaffSalaryEdit').find("input[name='txtResponsibility']");
-            var txtInsurance = $('#frmStaffSalaryEdit').find("input[name='txtInsurance']");
-            var txtDateOff = $('#frmStaffSalaryEdit').find("input[name='txtDateOff']");
-            var txtUsePhone = $('#frmStaffSalaryEdit').find("input[name='txtUsePhone']");
-            var txtFuel = $('#frmStaffSalaryEdit').find("input[name='txtFuel']");
-            if (qc_main.check.inputNull(txtTotalSalary, 'Phải nhập tổng lương')) {
-                $(txtTotalSalary).focus();
-                $(txtSalary).val(0);
-                return false;
-            } else {
-                var valTotalSalary = txtTotalSalary.val();
-                var numberTotalSalary = parseInt(qc_main.getNumberInput(valTotalSalary));
-
-                var valSalary = txtSalary.val();
-                var numberSalary = parseInt(qc_main.getNumberInput(valSalary)); //chuyen sang kieu so
-
-                var valInsurance = txtInsurance.val();
-                var numberInsurance = parseInt(qc_main.getNumberInput(valInsurance)); //chuyen sang kieu so
-
-                var valDateOff = txtDateOff.val();
-                var numberDateOff = parseInt(qc_main.getNumberInput(valDateOff)); //chuyen sang kieu so
-
-                var valTotalSalaryRemain = txtTotalSalaryRemain.val();
-                var numberTotalSalaryRemain = parseInt(qc_main.getNumberInput(valTotalSalaryRemain)); //chuyen sang kieu so
-
-                //hien so tien ngay nghi
-                /*if (numberTotalSalary > 0) {
-                 var numberDateOffNew = Math.floor(parseInt(numberTotalSalary / 26));
-                 txtDateOff.val(qc_main.formatCurrency(String(numberDateOffNew)));
-                 qc_main.showFormatCurrency(txtTotalSalary);
-                 numberTotalSalaryRemain = numberTotalSalary - numberSalary - (parseInt(numberSalary) * 0.215) - numberDateOffNew;
-                 if (numberTotalSalaryRemain > 0) {
-                 txtTotalSalaryRemain.val(qc_main.formatCurrency(String(numberTotalSalaryRemain)));
-                 txtTotalSalaryRemainShow.val(qc_main.formatCurrency(String(numberTotalSalaryRemain)));
-                 } else {
-                 txtTotalSalaryRemain.val(0);
-                 txtTotalSalaryRemainShow.val(0);
-                 }
-                 } else {
-                 txtDateOff.val(0);
-                 }*/
-
-                //xu ly luong co ban
-                if (numberSalary > numberTotalSalary) {
-                    alert('Lương cơ bản phải nhỏ hơn lương tổng');
-                    var stringSalary = String(numberSalary);
-                    numberSalary = stringSalary.substring(0, stringSalary.length - 1);// xoa bo so moi nhap
-                    txtSalary.val(qc_main.formatCurrency(numberSalary));
-                    $(txtSalary).focus();
-                    if (parseInt(numberSalary) > 0) {
-                        txtInsurance.val(qc_main.formatCurrency(String(parseInt(numberSalary) * 0.215)));
-                    } else {
-                        txtInsurance.val(0);
-                    }
-                    return false;
-                } else {
-                    qc_main.showFormatCurrency(txtSalary);
-                    if (numberSalary > (numberTotalSalary * 0.785)) { //luong co ban + bao hiem lon hon luong tong
-                        txtInsurance.val(0);
-                    } else {
-                        if (numberSalary > 0) {
-                            txtInsurance.val(qc_main.formatCurrency(String(numberSalary * 0.215)));
-                        } else {
-                            txtInsurance.val(0);
-                        }
-                    }
-
-
-                }
-                txtUsePhone.val(0);
-                txtResponsibility.val(0);
-                txtFuel.val(0);
-
-            }
-            //var cbCompany = $('#frmAdd').find("input[name='txtTotalSalary']");
-        },
-        showInputRemain: function (objectInput) {
-            var txtTotalSalaryRemain = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalaryRemain']");
-            var txtTotalSalaryRemainShow = $('#frmStaffSalaryEdit').find("input[name='txtTotalSalaryRemainShow']");
-            var txtUsePhone = $('#frmStaffSalaryEdit').find("input[name='txtUsePhone']");
-            var txtResponsibility = $('#frmStaffSalaryEdit').find("input[name='txtResponsibility']");
-            var txtFuel = $('#frmStaffSalaryEdit').find("input[name='txtFuel']");
-
-            var valTotalSalaryRemain = txtTotalSalaryRemain.val();
-            if (valTotalSalaryRemain == '') valTotalSalaryRemain = '0';
-            var numberTotalSalaryRemain = parseInt(qc_main.getNumberInput(valTotalSalaryRemain)); //chuyen sang kieu so
-
-            var valTotalSalaryRemainShorw = txtTotalSalaryRemainShow.val();
-            if (valTotalSalaryRemainShorw == 0) valTotalSalaryRemainShorw = '0';
-            var numberTotalSalaryRemainShow = parseInt(qc_main.getNumberInput(valTotalSalaryRemainShorw)); //chuyen sang kieu so
-
-            var valUsePhone = txtUsePhone.val();
-            if (valUsePhone == '') valUsePhone = '0';
-            var numberUsePhone = parseInt(qc_main.getNumberInput(valUsePhone)); //chuyen sang kieu so
-
-            var valResponsibility = txtResponsibility.val();
-            if (valResponsibility == '') valResponsibility = '0';
-            var numberResponsibility = parseInt(qc_main.getNumberInput(valResponsibility)); //chuyen sang kieu so
-
-            var valFuel = txtFuel.val();
-            if (valFuel == '') valFuel = '0';
-            var numberFuel = parseInt(qc_main.getNumberInput(valFuel)); //chuyen sang kieu so
-
-            var valObjectInput = $(objectInput).val();
-            if (valObjectInput == '') valObjectInput = '0';
-            var numberObjectInput = parseInt(qc_main.getNumberInput(valObjectInput)); //chuyen sang kieu so
-
-            var totalCheck = parseInt(numberUsePhone) + parseInt(numberResponsibility) + parseInt(numberFuel);
-
-            //alert(numberTotalSalaryRemainShow  + '--' + numberUsePhone + '--' + numberResponsibility + '--' + numberFuel);
-
-            if (totalCheck > numberTotalSalaryRemain) {
-                alert('Không được nhập vượt lương tổng còn lại');
-                var stringObjectInput = String(numberObjectInput);
-                valObjectInput = stringObjectInput.substring(0, stringObjectInput.length - 1);// xoa bo so moi nhap
-                $(objectInput).val(qc_main.formatCurrency(valObjectInput));
-                $(objectInput).focus();
-                //txtTotalSalaryRemainShow.val(qc_main.formatCurrency(String(numberTotalSalaryRemain - parseInt(valObjectInput) - parseInt(numberResponsibility) - parseInt(numberFuel))));
-                return false;
-            } else {
-                var newNumberTotalSalaryRemainShow = numberTotalSalaryRemain - (numberUsePhone + numberResponsibility + numberFuel);
-                //alert(numberTotalSalaryRemain + '--' + numberUsePhone + '--' + numberResponsibility + '--' + numberFuel);
-                txtTotalSalaryRemainShow.val(qc_main.formatCurrency(String(newNumberTotalSalaryRemainShow)));
-                $(objectInput).val(qc_main.formatCurrency(String(numberObjectInput)));
-            }
-
         }
+
     },
     resetPass: {
         getFrom: function (listObject) {
@@ -764,8 +765,8 @@ $(document).ready(function () {
         qc_ad3d_staff_staff.edit.infoSalary.get($(this).data('href'));
     });
 
-    $('body').on('click', '.frmStaffSalaryEdit .qc_save', function () {
-        qc_ad3d_staff_staff.edit.infoSalary.save($(this).parents('.frmStaffSalaryEdit'));
+    $('body').on('click', '.frmStaffInfoSalaryEdit .qc_save', function () {
+        qc_ad3d_staff_staff.edit.infoSalary.save($(this).parents('.frmStaffInfoSalaryEdit'));
     });
 });
 

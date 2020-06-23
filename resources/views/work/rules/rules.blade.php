@@ -8,8 +8,6 @@
  * dataStaff
  */
 $hFunction = new Hfunction();
-$dataWork = $dataStaff->workInfoActivityOfStaff();
-$dataMinusMoney = $dataWork->infoMinusMoneyOfWork();
 ?>
 @extends('work.index')
 @section('qc_work_body')

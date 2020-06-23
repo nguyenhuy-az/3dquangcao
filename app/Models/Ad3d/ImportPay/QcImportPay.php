@@ -52,9 +52,16 @@ class QcImportPay extends Model
         return $this->belongsTo('App\Models\Ad3d\Import\QcImport', 'import_id', 'import_id');
     }
 
+    # thong tin thanh toan cua 1 don nhap
     public function infoOfImport($importId)
     {
         return QcImportPay::where('import_id', $importId)->first();
+    }
+
+    # thong tin thanh toan chua xac nhan cua nhieu don nhap
+    public function infoUnConfirmOfListImportId($listImportId)
+    {
+        return QcImportPay::whereIn('import_id', $listImportId)->where('confirmStatus', 0)->get();
     }
 
     public function checkPayOfImport($importId)
@@ -109,9 +116,9 @@ class QcImportPay extends Model
     public function infoAllOfPayStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
-            return QcImportPay::where('staff_id', $staffId)->where('created_at', 'like', "%$date%")->orderBy('created_at','DESC')->get();
+            return QcImportPay::where('staff_id', $staffId)->where('created_at', 'like', "%$date%")->orderBy('created_at', 'DESC')->get();
         } else {
-            return QcImportPay::where('staff_id', $staffId)->orderBy('created_at','DESC')->get();
+            return QcImportPay::where('staff_id', $staffId)->orderBy('created_at', 'DESC')->get();
         }
     }
 

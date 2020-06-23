@@ -29,18 +29,11 @@ class SalaryController extends Controller
         $dataAccess = [
             'object' => 'salary'
         ];
-        if (!$modelStaff->checkLogin()) {
-            return redirect()->route('qc.work.login.get');
-        } else {
-            $dataStaff = $modelStaff->loginStaffInfo();
-            $loginStaffId = $dataStaff->staffId();
-            $oldListWorkId = $modelWork->listIdOfListStaffId([$loginStaffId])->toArray();//phien ban cu
-            $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfStaff($loginStaffId);
-            $newListWorkId = $modelWork->listIdOfListCompanyStaffWork($listCompanyStaffWorkId)->toArray();//phien ban moi
-            //echo "$oldListWorkId ===== $newListWorkId";
-            $dataSalary = $modelSalary->infoOfListWorkId(array_merge($oldListWorkId, $newListWorkId));
-            return view('work..salary.salary.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSalary'));
-        }
+        $dataStaff = $modelStaff->loginStaffInfo();
+        $loginStaffId = $dataStaff->staffId();
+        $listWorkId = $modelStaff->allListWorkId($loginStaffId);
+        $dataSalary = $modelSalary->infoOfListWorkId($listWorkId);
+        return view('work..salary.salary.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSalary'));
     }
 
     //thanh toán lương
@@ -49,14 +42,13 @@ class SalaryController extends Controller
         $modelStaff = new QcStaff();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelSalary = new QcSalary();
-
+        $dataAccess = [
+            'object' => 'salary',
+            'subObjectLabel' => 'Chi tiết lương'
+        ];
         if (empty($salaryId)) {
             return redirect()->route('qc.work.salary');
         } else {
-            $dataAccess = [
-                'object' => 'salary',
-                'subObjectLabel' => 'Chi tiết lương'
-            ];
             $dataStaff = $modelStaff->loginStaffInfo();
             if (count($dataStaff) > 0) {
                 $dataSalary = $modelSalary->getInfo($salaryId);
