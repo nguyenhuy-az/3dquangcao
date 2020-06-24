@@ -48,6 +48,7 @@ $hrefIndex = route('qc.work.salary.keep_money.get');
                             </select>
                         </td>
                         <td></td>
+                        <td></td>
                         <td style="padding: 0;">
                             <select class="cbPayStatus" name="cbPayStatus" style="height: 30px; width: 100%;"
                                     data-href="{!! $hrefIndex !!}">
@@ -62,7 +63,6 @@ $hrefIndex = route('qc.work.salary.keep_money.get');
                                 </option>
                             </select>
                         </td>
-                        <td></td>
                         <td></td>
                     </tr>
                     @if($hFunction->checkCount($dataKeepMoney))

@@ -36,7 +36,7 @@ class StaffController extends Controller
             'accessObject' => 'staff'
         ];
 
-        if ($companyFilterId == null) {
+        if ($companyFilterId == null || $companyFilterId == 0) {
             if (!$dataStaffLogin->checkRootManage()) {
                 $companyFilterId = $dataStaffLogin->companyId();
             }
@@ -46,7 +46,7 @@ class StaffController extends Controller
         if (empty($companyFilterId)) {
             $listStaffId = null;
         } else {
-            $listStaffId = $modelCompanyStaffWork->staffIdActivityOfCompany($companyFilterId);
+            $listStaffId = $modelCompanyStaffWork->staffIdOfCompany($companyFilterId);
         }
         $selectStaff = $modelStaff->selectInfoAll($listStaffId, $workStatus);
         $dataStaff = $selectStaff->paginate(30);

@@ -72,6 +72,7 @@ class QcSalary extends Model
 
     public function updateFinishPay($salaryId)
     {
+       // $totalSalary
         return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => 1]);
     }
 

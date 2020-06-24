@@ -20,6 +20,12 @@ $hotlinePhone = (empty($hotlinePhone)) ? 'Null' : $hotlinePhone;
 $dataProduct = $dataOrders->productActivityOfOrder();
 #anh thiet ke tong quat
 $dataOrderImage = $dataOrders->orderImageInfoActivity();
+# thong tin nguoi nhan don hang
+$dataStaffOrder = $dataOrders->staff()->first();
+$staffOrderName = $dataStaffOrder->lastName();
+$staffOrderName = (empty($staffOrderName)) ? '-----------' : $staffOrderName;
+$staffOrderPhone = $dataStaffOrder->phone();
+$staffOrderPhone = (empty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
 ?>
 @extends('work.orders.index')
 @section('titlePage')
@@ -47,7 +53,7 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                 <div class="table-responsive">
                                     <table class="table table-hover qc-margin-bot-none">
                                         <tr class="qc-color-grey">
-                                            <td style="width: 130px;">
+                                            <td style="width: 110px;">
                                                 <em class=" qc-color-grey">Mã đơn hàng:</em>
                                             </td>
                                             <td class="text-right">
@@ -81,22 +87,20 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                         </tr>
                                         <tr>
                                             <td>
-                                                <em class="qc-color-grey">Phụ trách sx thi công:</em>
+                                                <em class="qc-color-grey">Phụ trách SX TC:</em>
                                             </td>
                                             <td class="text-right">
                                                 <b>ĐT: {!! $hotlinePhone !!}</b>
-                                                &nbsp;
-                                                <span>({!! $hotlineName !!})</span>
+                                                <span>- {!! $hotlineName !!}</span>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
-                                                <em class="qc-color-grey">Phụ trách kinh doanh:</em>
+                                                <em class="qc-color-grey">Phụ trách KD:</em>
                                             </td>
                                             <td class="text-right">
-                                                <b>ĐT: 09.077.077.28</b>
-                                                &nbsp;
-                                                <span>(Mr.Hoàng)</span>
+                                                <b>ĐT: {!! $staffOrderPhone !!}</b>
+                                                <span>- {!! $staffOrderName !!}</span>
                                             </td>
                                         </tr>
                                         <tr>

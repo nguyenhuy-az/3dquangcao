@@ -1234,7 +1234,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::get('/{loginDay?}/{loginMonth?}/{loginYear?}/{loginPayStatus?}', ['as' => 'qc.work.pay.pay_activity.get', 'uses' => 'Work\Pay\PayActivity\PayActivityController@index']);
     });
 
-    # than toan luong
+    # thanh toan luong
     Route::group(['prefix' => 'pay-salary'], function () {
         Route::get('detail/{payId?}', ['as' => 'qc.work.pay.pay_salary.detail.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@detailPay']);
 
@@ -1249,6 +1249,11 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::get('/{loginMonth?}/{loginYear?}/{payStatus?}', ['as' => 'qc.work.pay.pay_salary.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@index']);
     });
 
+    # thanh toan tien giu
+    # giu tien NV
+    Route::group(['prefix' => 'keep-money'], function () {
+        Route::get('/{month?}/{year?}/{staffId?}/{payStatus?}', ['as' => 'qc.work.pay.keep_money.get', 'uses' => 'Work\Pay\PayKeepMoney\KeepMoneyController@index']);
+    });
     # chi
     Route::group(['prefix' => 'pay'], function () {
         # chi ung luong

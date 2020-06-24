@@ -59,6 +59,9 @@ if ($viewLoginObject == 'work') {
 } elseif ($viewLoginObject == 'salary') {
     $label = 'Bảng lương';
     $href = route('qc.work.salary.salary.get');
+}elseif ($viewLoginObject == 'keepMoney') {
+    $label = 'Giữ lương';
+    $href = route('qc.work.salary.salary.get');
 } elseif ($viewLoginObject == 'minusMoney') {
     $label = 'Phạt';
     $href = route('qc.work.minus_money.get');

@@ -15,7 +15,6 @@ $loginStaffId = $dataStaff->staffId();
 $currentMonth = $hFunction->currentMonth();
 ?>
 @extends('work.index')
-
 @section('qc_work_body')
     <div class="row qc_work_pay_salary_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">

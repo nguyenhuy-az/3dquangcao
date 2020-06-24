@@ -38,14 +38,19 @@ if (isset($dataAccess)) {
                         Công Nợ
                     </a>
                 </li>--}}
+                <li @if($viewLoginObject == 'paySalaryBeforePay') class="active" @endif>
+                    <a href="{!! route('qc.work.pay.salary_before_pay.get') !!}" @if($viewLoginObject == 'paySalaryBeforePay') style="background-color: whitesmoke;" @endif >
+                        Ứng lương mua vật tư
+                    </a>
+                </li>
                 <li @if($viewLoginObject == 'paySalary') class="active" @endif>
                     <a href="{!! route('qc.work.pay.pay_salary.get') !!}" @if($viewLoginObject == 'paySalary') style="background-color: whitesmoke" @endif>
                         Thanh toán lương
                     </a>
                 </li>
-                <li @if($viewLoginObject == 'paySalaryBeforePay') class="active" @endif>
-                    <a href="{!! route('qc.work.pay.salary_before_pay.get') !!}" @if($viewLoginObject == 'paySalaryBeforePay') style="background-color: whitesmoke;" @endif >
-                        Ứng lương mua vật tư
+                <li @if($viewLoginObject == 'keepMoney') class="active" @endif>
+                    <a href="{!! route('qc.work.pay.keep_money.get') !!}" @if($viewLoginObject == 'keepMoney') style="background-color: whitesmoke" @endif>
+                        Thanh toán tiền giữ
                     </a>
                 </li>
             @endif
