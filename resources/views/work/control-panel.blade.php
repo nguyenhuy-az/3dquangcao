@@ -8,6 +8,7 @@
  * modelStaff
  */
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+echo phpversion();
 ?>
 @extends('work.index')
 @section('titlePage')
