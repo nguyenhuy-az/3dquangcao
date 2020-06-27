@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Work\Pay\Import;
+namespace App\Http\Controllers\Work\Import;
 
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportDetail\QcImportDetail;
@@ -56,47 +56,45 @@ class ImportController extends Controller
             $yearFilter = date('Y');
         }
         $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $dateFilter);
-        return view('work.pay.import.list', compact('dataAccess', 'modelStaff', 'dataImport', 'dayFilter', 'monthFilter', 'yearFilter', 'loginPayStatus'));
+        return view('work.import.list', compact('dataAccess', 'modelStaff', 'dataImport', 'dayFilter', 'monthFilter', 'yearFilter', 'loginPayStatus'));
 
     }
 
+    // --------- ----------- xem chi tiet -------------- -------------- -------
     public function viewImport($importId)
     {
         $modelStaff = new QcStaff();
         $modelImport = new QcImport();
         $dataAccess = [
-            'object' => 'payImport',
+            'object' => 'import',
             'subObjectLabel' => 'Chi tiết mua vật tư'
         ];
         $dataImport = $modelImport->getInfo($importId);
-        return view('work.pay.import.import-detail', compact('dataAccess', 'modelStaff', 'dataImport'));
+        return view('work.import.import-detail', compact('dataAccess', 'modelStaff', 'dataImport'));
     }
 
+    // ---------- -------- them hoa don nhap moi  --------- ----------
+    # lay form nhap vat tu
     public function getAdd()
     {
         $modelStaff = new QcStaff();
         $modelSupplies = new QcSupplies();
         $modelTool = new QcTool();
-        if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'payImport',
-                'subObjectLabel' => 'Thông tin mua vật tư'
-            ];
-            $dataStaff = $modelStaff->loginStaffInfo();
-            $dataSupplies = $modelSupplies->getInfoActivity();
-            $dataTool = $modelTool->getInfoOrderByName();
-            return view('work.pay.import.add-import', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSupplies', 'dataTool'));
-        } else {
-            return view('work.login');
-        }
+        $dataAccess = [
+            'object' => 'payImport',
+            'subObjectLabel' => 'Thông tin mua vật tư'
+        ];
+        $dataStaff = $modelStaff->loginStaffInfo();
+        $dataSupplies = $modelSupplies->getInfoActivity();
+        $dataTool = $modelTool->getInfoOrderByName();
+        return view('work.import.add', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSupplies', 'dataTool'));
     }
-
+    # them anh hoa don
     public function getAddImage()
     {
         return view('work.pay.import.add-image');
     }
 
-    // --------------- ------------ chon vat tu -------------- -------------
     # lay vat tu theo thu khoa
     public function checkSuppliesName($name)
     {
@@ -123,23 +121,16 @@ class ImportController extends Controller
         $modelStaff = new QcStaff();
         $modelSupplies = new QcSupplies();
         $dataSupplies = $modelSupplies->getInfoActivity();
-        return view('work.pay.import.add-supplies', compact('modelStaff', 'dataAccess', 'dataSupplies'));
+        return view('work.import.add-supplies', compact('modelStaff', 'dataAccess', 'dataSupplies'));
     }
-
-    // --------------- ------------ chon dung cu -------------- -------------
-    # them mua dung cu
+    # them cong cu
     public function getAddTool()
     {
         $modelTool = new QcTool();
         $dataTool = $modelTool->getInfoOrderByName();
-        return view('work.pay.import.add-tool', compact('dataAccess', 'dataTool'));
+        return view('work.import.add-tool', compact('dataAccess', 'dataTool'));
     }
 
-    public function getAddSuppliesTool()
-    {
-        $modelStaff = new QcStaff();
-        return view('work.pay.import.add-supplies-tool-new', compact('modelStaff'));
-    }
 
     public function postAdd()
     {
@@ -263,6 +254,7 @@ class ImportController extends Controller
         return redirect()->back();
     }
 
+
     // xác nhận thanh toán
     public function getConfirmPay($importId)
     {
@@ -270,6 +262,7 @@ class ImportController extends Controller
         $modelImport->updateConfirmPayOfImport($importId);
     }
 
+    # huy thong tin nhap
     //xóa
     public function deleteImport($importId)
     {

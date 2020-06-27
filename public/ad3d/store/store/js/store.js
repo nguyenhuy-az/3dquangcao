@@ -11,42 +11,27 @@ var qc_ad3d_store_store = {
 $(document).ready(function () {
     //khi chọn công ty...
     $('body').on('change', '.cbCompanyFilter', function () {
-        var companyId = $(this).val();
-        var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val();
-        var href = $(this).data('href-filter');
-        if (companyId != '') {
-            href = href + '/' + companyId + '/' + dateFilter + '/' + $('.textFilterName').val();;
-        }
-        qc_main.url_replace(href);
-    })
+        var name = $('.textFilterName').val();
+        if(name.length == 0) name = 'null';
+        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + name +'/' + $('.cbType').val());
+    });
+    //khi theo loai cong cu
+    $('body').on('change', '.cbType', function () {
+        var name = $('.textFilterName').val();
+        if(name.length == 0) name = 'null';
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + name +'/' + $(this).val());
+    });
 
     //khi tìm theo tên ..
     $('body').on('click', '.btFilterName', function () {
         var name = $('.textFilterName').val();
-        var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val()
         if (name.length == 0) {
             alert('Bạn phải nhập thông tin tìm kiếm');
             $('.textFilterName').focus();
             return false;
         } else {
-            qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + name);
+            qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + name +'/' + $('.cbType').val());
         }
-    })
-    // theo ngay tháng ...
-    $('body').on('change', '.cbDayFilter', function () {
-        var name = $('.textFilterName').val();
-        var dateFilter = $(this).val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + name);
-    })
-    $('body').on('change', '.cbMonthFilter', function () {
-        var name = $('.textFilterName').val();
-        var dateFilter = $('.cbDayFilter').val() + '/' + $(this).val() + '/' + $('.cbYearFilter').val()
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + name);
-    })
-    $('body').on('change', '.cbYearFilter', function () {
-        var name = $('.textFilterName').val();
-        var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $(this).val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + name);
-    })
+    });
 });
 

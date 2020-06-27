@@ -13,19 +13,10 @@ $mobileStatus = $mobile->isMobile();
 $loginStaffId = $dataStaff->staffId();
 $currentDate = date('d/m/Y', strtotime($hFunction->carbonNow()));
 ?>
-@extends('work.index')
-@section('qc_work_body')
+@extends('work.import.index')
+@section('qc_work_import_body')
     <div class="row">
         <div class="qc_work_import_add qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
-                        <a class="qc-link-red" onclick="qc_main.page_back();">
-                            <i class="glyphicon glyphicon-backward"></i> Trở lại
-                        </a>
-                    </div>
-                </div>
-            </div>
             <form id="frm_work_import_add" role="form" method="post" enctype="multipart/form-data"
                   action="{!! route('qc.work.import.add.post') !!}">
                 <div class="row" style="padding-top: 20px;">
@@ -42,7 +33,7 @@ $currentDate = date('d/m/Y', strtotime($hFunction->carbonNow()));
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
                                  style="border-bottom: 1px solid grey;">
                                 <i class="glyphicon glyphicon-pencil qc-color-green"></i>
-                                <span class="qc-color-red qc-font-size-16">Thông tin mua</span>
+                                <span class="qc-color-red qc-font-size-16">THÔNG TIN MUA VẬT TƯ - DỤNG CỤ</span>
                             </div>
                         </div>
                         <div class="row">
@@ -50,7 +41,7 @@ $currentDate = date('d/m/Y', strtotime($hFunction->carbonNow()));
                                 <div class="form-group form-group-sm qc-margin-none">
                                     <label>Ngày mua:<i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                                     <input id="txtImportDate" type="text" name="txtImportDate" class="form-control"
-                                           value="{!! $currentDate !!}" style="height: 25px;"
+                                           value="{!! $currentDate !!}"
                                            placeholder="Ngày mua">
                                     <script type="text/javascript">
                                         qc_main.setDatepicker('#txtImportDate');

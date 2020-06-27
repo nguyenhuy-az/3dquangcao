@@ -25,17 +25,17 @@ $dataToolAllocation = 0;// $dataStaff->toolAllocationOfReceiveStaffInfo();
             </div>
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="qc_container_table row">
+                <div class="row">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
-                            <tr style="background-color: whitesmoke;">
-                                <th class="text-center">STT</th>
+                            <tr style="background-color: black;color: yellow;">
+                                <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Dụng cụ</th>
                                 <th class="text-center">Ngày phát</th>
                                 <th class="text-center">Số lượng</th>
                                 <th class="text-right">Trạng thái</th>
                             </tr>
-                            @if(count($dataToolAllocationDetail) > 0)
+                            @if($hFunction->checkCount($dataToolAllocationDetail))
                                 @foreach($dataToolAllocationDetail as $toolAllocationDetail)
                                     <?php
                                     $detailId = $toolAllocationDetail->detailId();
@@ -43,7 +43,7 @@ $dataToolAllocation = 0;// $dataStaff->toolAllocationOfReceiveStaffInfo();
                                     $allocationDate = $dataToolAllocation->allocationDate();
                                     $allocationId = $dataToolAllocation->allocationId();
                                     ?>
-                                    <tr class="qc_work_allocation_detail" data-detail="{!! $detailId !!}" >
+                                    <tr data-detail="{!! $detailId !!}" >
                                         <td class="text-center">
                                             {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
                                         </td>

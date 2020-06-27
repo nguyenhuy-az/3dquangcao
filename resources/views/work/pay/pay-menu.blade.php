@@ -48,8 +48,8 @@ if (isset($dataAccess)) {
                         Thanh toán lương
                     </a>
                 </li>
-                <li @if($viewLoginObject == 'keepMoney') class="active" @endif>
-                    <a href="{!! route('qc.work.pay.keep_money.get') !!}" @if($viewLoginObject == 'keepMoney') style="background-color: whitesmoke" @endif>
+                <li @if($viewLoginObject == 'payKeepMoney') class="active" @endif>
+                    <a href="{!! route('qc.work.pay.keep_money.get') !!}" @if($viewLoginObject == 'payKeepMoney') style="background-color: whitesmoke" @endif>
                         Thanh toán tiền giữ
                     </a>
                 </li>

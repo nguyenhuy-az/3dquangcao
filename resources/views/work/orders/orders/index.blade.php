@@ -246,7 +246,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                         # trien khai thi cong
 
                                         # don cu nguoi dang nhap
-                                        $ownerStatus = $orders->checkOwnerStatus($loginStaffId,$orderId);
+                                        $ownerStatus = $orders->checkOwnerStatus($loginStaffId, $orderId);
 
                                         ?>
                                         <tr class="qc_work_list_content_object @if($checkDateOfSort > $orderReceiveDate) danger @elseif($n_o%2) info @endif"
@@ -261,6 +261,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                                 @if(!$cancelStatus)
                                                     @if($finishStatus)
                                                         <em>Đã kết thúc</em>
+                                                        <br/>
                                                         <i class="qc-font-size-16 glyphicon glyphicon-ok"
                                                            style="color: blue;"></i>
                                                     @else

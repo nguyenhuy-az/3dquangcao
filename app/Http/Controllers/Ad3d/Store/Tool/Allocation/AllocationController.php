@@ -21,7 +21,7 @@ use Request;
 
 class AllocationController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $nameFiler = null)
+    public function index($companyFilterId = null, $nameFiler = null)
     {
         $hFunction = new \Hfunction();
         $hFunction->defaultTimezone();
@@ -33,17 +33,6 @@ class AllocationController extends Controller
         $dataAccess = [
             'accessObject' => 'tool'
         ];
-        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) {
-            $yearFilter = date('Y');
-            $dateFilter = date('Y');
-        } elseif ($dayFilter == 0 && $monthFilter > 0) { //xe tat ca cac ngay trong thang
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 0) { //xe tat ca trong nam
-            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-        } else {
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
-        }
-
         $dataCompany = $modelCompany->getInfo();
         if (empty($companyFilterId)) {
             if (!$dataStaffLogin->checkRootManage()) {
@@ -63,8 +52,8 @@ class AllocationController extends Controller
             $listStaffId = $modelCompanyStaffWork->staffIdOfListCompany($searchCompanyFilterId);
         }
 
-        $dataToolAllocation = $modelToolAllocation->selectInfoOfListReceiveStaffAndDate($listStaffId, $dateFilter)->paginate(30);
-        return view('ad3d.store.tool.allocation.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataToolAllocation', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));
+        $dataToolAllocation = null;// $modelToolAllocation->selectInfoOfListReceiveStaffAndDate($listStaffId, $dateFilter)->paginate(30);
+        return view('ad3d.store.tool.allocation.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataToolAllocation', 'companyFilterId', 'nameFiler'));
 
 
     }

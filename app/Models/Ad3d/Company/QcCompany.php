@@ -3,6 +3,7 @@
 namespace App\Models\Ad3d\Company;
 
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
+use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportPay\QcImportPay;
@@ -249,6 +250,12 @@ class QcCompany extends Model
     public function companyStore()
     {
         return $this->hasMany('App\Models\Ad3d\CompanyStore\QcCompanyStore', 'company_id', 'company_id');
+    }
+
+    public function totalTool($companyId, $toolId)
+    {
+        $modelCompanyStore = new QcCompanyStore();
+        return $modelCompanyStore->totalToolOfCompany($companyId, $toolId);
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========

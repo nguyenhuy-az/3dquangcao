@@ -18,7 +18,7 @@ use Request;
 
 class KeepMoneyController extends Controller
 {
-    public function index($monthFilter = 0, $yearFilter = 0,$staffFilterId = 0,  $payStatus = 3)
+    public function index($monthFilter = 0, $yearFilter = 0, $staffFilterId = 0, $payStatus = 3)
     {
         $hFunction = new \Hfunction();
         $modelCompany = new QcCompany();
@@ -30,8 +30,8 @@ class KeepMoneyController extends Controller
         $modelWork = new QcWork();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataAccess = [
-            'object' => 'keepMoney',
-            'subObjectLabel' => 'Thanh tiền giữ'
+            'object' => 'payKeepMoney',
+            'subObjectLabel' => 'Thanh toán tiền giữ'
         ];
         $loginStaffId = $modelStaff->loginStaffId();
         if ($monthFilter == 100 && $yearFilter == 100) {//xem tất cả đơn hang
@@ -64,8 +64,28 @@ class KeepMoneyController extends Controller
         $dataKeepMoney = $dataKeepMoneySelect->paginate(30);
         //danh sach NV
         $dataStaff = $modelCompany->staffInfoActivityOfListCompanyId($searchCompanyFilterId);
-        return view('work.pay.keep-money.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSalary', 'dataKeepMoney', 'dateFilter', 'monthFilter', 'yearFilter','staffFilterId', 'payStatus'));
+        return view('work.pay.keep-money.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSalary', 'dataKeepMoney', 'dateFilter', 'monthFilter', 'yearFilter', 'staffFilterId', 'payStatus'));
 
     }
 
+    public function getAddPay($staffId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelSalary = new QcSalary();
+        $modelKeepMoney = new QcKeepMoney();
+        $dataAccess = [
+            'object' => 'payKeepMoney',
+            'subObjectLabel' => 'Thanh toán tiền giữ'
+        ];
+        $listSalaryId = $modelSalary->listIdOfListWorkId($modelStaff->allListWorkId($staffId));
+
+        $dataKeepMoney = $modelKeepMoney->selectInfoUnPaiOfListSalary($listSalaryId, null)->get();
+        return view('work.pay.keep-money.pay', compact('dataAccess', 'modelStaff', 'dataKeepMoney'));
+    }
+
+    public function postAddPay($staffId)
+    {
+
+    }
 }

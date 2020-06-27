@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcSupplies extends Model
 {
     protected $table = 'qc_supplies';
-    protected $fillable = ['supplies_id', 'name', 'unit','confirmStatus','applyStatus', 'action', 'created_at'];
+    protected $fillable = ['supplies_id', 'name', 'unit', 'confirmStatus', 'applyStatus', 'action', 'created_at'];
     protected $primaryKey = 'supplies_id';
     public $timestamps = false;
 
@@ -15,7 +15,7 @@ class QcSupplies extends Model
 
     #========== ========== ========== Thêm && cập nhật ========== ========== ==========
     #---------- Thêm ----------
-    public function insert($name, $unit,$confirmStatus = 1, $applyStatus = 1)
+    public function insert($name, $unit, $confirmStatus = 1, $applyStatus = 1)
     {
         $hFunction = new \Hfunction();
         $modelSupplies = new QcSupplies();
@@ -63,6 +63,11 @@ class QcSupplies extends Model
 
 
     #============ =========== ============ Lấy thông tin ============= =========== ==========
+    public function infoFromSuggestionName($name)
+    {
+        return QcSupplies::where('name', 'like', "%$name%")->get();
+    }
+
     public function selectAllInfo()
     {
         return QcSupplies::orderBy('name', 'ASC')->select('*');
@@ -91,6 +96,7 @@ class QcSupplies extends Model
     {
         return QcSupplies::where('action', 1)->orderBy('name', $oderBy)->get();
     }
+
     public function getInfoOrderByName($suppliesId = null, $field = null, $oderBy = 'ASC')
     {
         if (empty($suppliesId)) {
@@ -142,10 +148,12 @@ class QcSupplies extends Model
     {
         return $this->pluck('confirmStatus', $suppliesId);
     }
+
     public function applyStatus($suppliesId = null)
     {
         return $this->pluck('applyStatus', $suppliesId);
     }
+
     public function action($suppliesId = null)
     {
         return $this->pluck('action', $suppliesId);

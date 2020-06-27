@@ -72,34 +72,6 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                       </span>
                                 </div>
                             </div>
-                            <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                <select class="cbDayFilter" style="margin-top: 5px; "
-                                        data-href="{!! route('qc.ad3d.store.tool.allocation.get') !!}">
-                                    <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >Tất cả
-                                    </option>
-                                    @for($i =1;$i<= 31; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbMonthFilter" style="margin-top: 5px; "
-                                        data-href="{!! route('qc.ad3d.store.tool.allocation.get') !!}">
-                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >Tất cả
-                                    @for($i =1;$i<= 12; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbYearFilter" style="margin-top: 5px;"
-                                        data-href="{!! route('qc.ad3d.store.tool.allocation.get') !!}">
-                                    @for($i =2017;$i<= 2050; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                            </div>
                         </div>
                     </form>
                 </div>
@@ -115,6 +87,14 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             <th>Người giao</th>
                             <th class="text-center">Xác nhận</th>
                             <th class="text-right"></th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                         @if(count($dataToolAllocation) > 0)
                             <?php

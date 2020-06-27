@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\KeepMoney;
 
+use App\Models\Ad3d\KeepMoneyPay\QcKeepMoneyPay;
 use Illuminate\Database\Eloquent\Model;
 
 class QcKeepMoney extends Model
@@ -60,6 +61,34 @@ class QcKeepMoney extends Model
         return QcKeepMoney::where('salary_id', $salaryId)->sum('money');
     }
 
+    public function selectInfoOfListSalary($listSalaryId, $dateFilter = null, $payStatus = null)
+    {
+        if (empty($dateFilter)) {
+            return QcKeepMoney::whereIn('salary_id', $listSalaryId)->orderBy('keep_id', 'DESC')->select('*');
+        } else {
+            return QcKeepMoney::whereIn('salary_id', $listSalaryId)->where('keepDate', 'like', "%$dateFilter%")->orderBy('keep_id', 'DESC')->select('*');
+        }
+    }
+
+    public function selectInfoUnPaiOfListSalary($listSalaryId, $dateFilter = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelKeepMoneyPay = new QcKeepMoneyPay();
+        $listKeepId = $modelKeepMoneyPay->getListId();
+        if($hFunction->checkCount($listKeepId)){
+            if (empty($dateFilter)) {
+                return QcKeepMoney::whereIn('salary_id', $listSalaryId)->whereNotIn('keep_id', $listKeepId)->orderBy('keep_id', 'DESC')->select('*');
+            } else {
+                return QcKeepMoney::whereIn('salary_id', $listSalaryId)->whereNotIn('keep_id', $listKeepId)->where('keepDate', 'like', "%$dateFilter%")->orderBy('keep_id', 'DESC')->select('*');
+            }
+        }else{
+            if (empty($dateFilter)) {
+                return QcKeepMoney::whereIn('salary_id', $listSalaryId)->orderBy('keep_id', 'DESC')->select('*');
+            } else {
+                return QcKeepMoney::whereIn('salary_id', $listSalaryId)->where('keepDate', 'like', "%$dateFilter%")->orderBy('keep_id', 'DESC')->select('*');
+            }
+        }
+    }
     //---------- NHAN VIEN XAC NHAN -----------
     # nha vien xac nhan
     public function confirmStaff()
@@ -73,14 +102,7 @@ class QcKeepMoney extends Model
 
     }
 
-    public function selectInfoOfListSalary($listSalaryId, $dateFilter = null, $payStatus = null)
-    {
-        if (empty($dateFilter)) {
-            return QcKeepMoney::whereIn('salary_id', $listSalaryId)->orderBy('keep_id', 'DESC')->select('*');
-        } else {
-            return QcKeepMoney::whereIn('salary_id', $listSalaryId)->where('keepDate', 'like', "%$dateFilter%")->orderBy('keep_id', 'DESC')->select('*');
-        }
-    }
+
 
     public function getInfo($keepId = '', $field = '')
     {

@@ -101,6 +101,7 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                     <?php
                                     $keepMoneyId = $keepMoney->keepId();
                                     $dataWork = $keepMoney->salary->work;
+                                    $dataStaffWork = $dataWork->staffInfoOfWork();
                                     ?>
                                     <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
                                         data-object="{!! $keepMoneyId !!}">
@@ -111,11 +112,7 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                             {!! date('d/m/Y', strtotime($keepMoney->keepDate())) !!}
                                         </td>
                                         <td>
-                                            @if(!empty($dataWork->companyStaffWorkId()))
-                                                {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                                            @else
-                                                {!! $dataWork->staff->fullName() !!}
-                                            @endif
+                                            {!! $dataStaffWork->fullName() !!}
                                         </td>
                                         <td>
                                             {!! $keepMoney->description() !!}
@@ -127,7 +124,10 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                             @if($keepMoney->checkPaid($keepMoneyId))
                                                 <span>Đã thanh toán</span>
                                             @else
-                                                <span>Chưa thanh toán</span>
+                                                <a href="{!! route('qc.work.pay.keep_money.add.get',$dataStaffWork->staffId()) !!}"
+                                                   style="background-color: red; color: yellow; padding: 3px;">
+                                                    Thanh toán
+                                                </a>
                                             @endif
                                         </td>
                                         <td class="text-right qc-color-red">

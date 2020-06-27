@@ -44,20 +44,21 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                  data-href-del="{!! route('qc.ad3d.store.tool.tool.del.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
-                            <th class="text-center">STT</th>
-                            <th class="qc-padding-none">Tên</th>
-                            <th class="text-center">Đơn vị tính</th>
+                        <tr style="background-color: black;color: yellow;">
+                            <th class="text-center" style="width: 20px;">STT</th>
+                            <th>Tên</th>
+                            <th class="text-center">Đơn vị</th>
+                            <th>Loại</th>
                             <th class="text-right"></th>
                         </tr>
-                        @if(count($dataTool) > 0)
+                        @if($hFunction->checkCount($dataTool))
                             <?php
                             $perPage = $dataTool->perPage();
                             $currentPage = $dataTool->currentPage();
                             $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
                             ?>
                             @foreach($dataTool as $tool)
-                                <tr class="qc_ad3d_list_object qc-ad3d-list-object" data-object="{!! $tool->toolId() !!}" >
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $tool->toolId() !!}" >
                                     <td class="text-center">
                                         {!! $n_o +=1 !!}
                                     </td>
@@ -67,25 +68,32 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     <td class="text-center">
                                         {!! $tool->unit() !!}
                                     </td>
+                                    <td>
+                                        {!! $tool->getLabelType() !!}
+                                    </td>
                                     <td class="text-right">
                                         <a class="qc_view qc-link-green" href="#">
-                                            Chi tiết
+                                            <i class="glyphicon glyphicon-eye-open"></i>
                                         </a>
                                         <span>|</span>
-                                        <a class="qc_edit qc-link-green" href="#">Sửa</a>
+                                        <a class="qc_edit qc-link-green" href="#">
+                                            <i class="glyphicon glyphicon-pencil"></i>
+                                        </a>
                                         <span>|</span>
-                                        <a class="qc_delete qc-link-green" href="#">Xóa</a>
+                                        <a class="qc_delete qc-link-green" href="#">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="4">
+                                <td class="text-center" colspan="5">
                                     {!! $hFunction->page($dataTool) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="4">
+                                <td class="text-center" colspan="5">
                                     Không có đữ liệu
                                 </td>
                             </tr>

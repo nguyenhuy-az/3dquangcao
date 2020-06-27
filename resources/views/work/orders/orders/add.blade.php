@@ -11,7 +11,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $currentDate = $hFunction->carbonNow();
 $mobileStatus = $mobile->isMobile();
-if (count($dataCustomer) > 0) {
+if ($hFunction->checkCount($dataCustomer)) {
     $customerName = $dataCustomer->name();
     $customerAddress = $dataCustomer->address();
     $customerPhone = $dataCustomer->phone();
@@ -22,7 +22,7 @@ if (count($dataCustomer) > 0) {
     $customerPhone = null;
     $customerZalo = null;
 }
-if (count($dataOrders)) {
+if ($hFunction->checkCount($dataOrders)) {
     $orderName = $dataOrders->name();
     $orderConstructionAddress = $dataOrders->constructionAddress();
     $orderConstructionPhone = $dataOrders->constructionPhone();

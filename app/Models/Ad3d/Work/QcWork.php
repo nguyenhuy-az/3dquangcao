@@ -340,7 +340,7 @@ class QcWork extends Model
         if (count($dataCompanyStaffWork) > 0) {
             return $dataCompanyStaffWork->staff;
         } else {
-            return null;
+            return $this->staff;
         }
     }
 

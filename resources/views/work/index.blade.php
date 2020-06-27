@@ -77,6 +77,9 @@ if ($viewLoginObject == 'work') {
 } elseif ($viewLoginObject == 'paySalary') { # thong tin chi
     $label = 'Chi';
     $href = route('qc.work.pay.pay_salary.get');
+}elseif ($viewLoginObject == 'payKeepMoney') { # thanh toan tien giu
+    $label = 'Thanh toán tiền giữ';
+    $href = route('qc.work.pay.keep_money.get');
 } elseif ($viewLoginObject == 'tool') {
     $label = 'Đồ nghề';
     $href = route('qc.work.tool.get');

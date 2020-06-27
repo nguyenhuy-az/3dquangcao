@@ -15,27 +15,10 @@ $loginStaffId = $dataStaff->staffId();
 $hrefIndex = route('qc.work.import.get');
 $currentMonth = $hFunction->currentMonth();
 ?>
-@extends('work.index')
-@section('qc_work_body')
+@extends('work.import.index')
+@section('qc_work_import_body')
     <div class="row qc_work_import_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            {{-- Menu --}}
-            @include('work.pay.pay-menu')
-
-            {{-- chi tiêt --}}
-            <div class="row" style="margin-top: 5px;">
-                <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
-                    <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                        Về trang trước
-                    </a>
-                </div>
-                <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <a class="qc_work_before_pay_request_action qc-link-green "
-                       href="{!! route('qc.work.import.add.get') !!}">
-                        <b style="font-size: 1.5em;">+ Thêm</b>
-                    </a>
-                </div>
-            </div>
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">
@@ -54,7 +37,7 @@ $currentMonth = $hFunction->currentMonth();
                             <tr>
                                 <td></td>
                                 <td style="padding: 0 !important;">
-                                    <select class="qc_work_import_login_day" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_import_day_filter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if($dayFilter == null) selected="selected" @endif>
                                             Tất cả
                                         </option>
@@ -64,7 +47,7 @@ $currentMonth = $hFunction->currentMonth();
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_import_login_month" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_import_month_filter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả
                                         </option>
@@ -74,7 +57,7 @@ $currentMonth = $hFunction->currentMonth();
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_import_login_year" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_import_year_filter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả
                                         </option>
@@ -86,7 +69,7 @@ $currentMonth = $hFunction->currentMonth();
                                     </select>
                                 </td>
                                 <td class="text-center" style="padding: 0;">
-                                    <select class="qc_work_import_login_status form-control"
+                                    <select class="qc_work_import_pay_status form-control"
                                             data-href="{!! $hrefIndex !!}"
                                             style="border: 0;">
                                         <option value="3" @if($loginPayStatus == 3) selected="selected" @endif>

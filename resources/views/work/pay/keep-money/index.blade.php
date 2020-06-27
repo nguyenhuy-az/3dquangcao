@@ -23,5 +23,5 @@ $mobileStatus = $mobile->isMobile();
     </div>
 @endsection
 @section('qc_js_footer')
-    <script src="{{ url('public/work/pay/salary-before-pay/js/index.js')}}"></script>
+    <script src="{{ url('public/work/pay/keep-money/js/index.js')}}"></script>
 @endsection

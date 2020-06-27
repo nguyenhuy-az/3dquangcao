@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcTool extends Model
 {
     protected $table = 'qc_tools';
-    protected $fillable = ['tool_id', 'name', 'unit', 'description', 'created_at'];
+    protected $fillable = ['tool_id', 'name', 'unit', 'description', 'type', 'created_at'];
     protected $primaryKey = 'tool_id';
     public $timestamps = false;
 
@@ -18,13 +18,14 @@ class QcTool extends Model
 
     #========== ========== ========== Thêm && cập nhật ========== ========== ==========
     #---------- Thêm ----------
-    public function insert($name, $unit, $description = null)
+    public function insert($name, $unit, $description = null, $type = 2)
     {
         $hFunction = new \Hfunction();
         $modelTool = new QcTool();
         $modelTool->name = $name;
         $modelTool->unit = $unit;
         $modelTool->description = $description;
+        $modelTool->type = $type;
         $modelTool->created_at = $hFunction->createdAt();
         if ($modelTool->save()) {
             $this->lastId = $modelTool->tool_id;
@@ -38,6 +39,11 @@ class QcTool extends Model
     public function insertGetId()
     {
         return $this->lastId;
+    }
+
+    public function checkNullId($id = null)
+    {
+        return (empty($id)) ? $this->toolId() : $id;
     }
 
     #----------- cập nhật thông tin ----------
@@ -83,6 +89,16 @@ class QcTool extends Model
     }
 
     #============ =========== ============ Lấy thông tin ============= =========== ==========
+    # lay thong tin theo loai cong cu
+    public function selectAllInfo($type = null)
+    {
+        if (empty($type)) {
+            return QcTool::orderBy('name', 'DESC')->select('*');
+        } else {
+            return QcTool::where('type', $type)->orderBy('name', 'DESC')->select('*');
+        }
+    }
+
     public function listIdByName($name)
     {
         return QcTool::where('name', 'like', "%$name%")->pluck('tool_id');
@@ -159,6 +175,11 @@ class QcTool extends Model
         return $this->pluck('description', $toolId);
     }
 
+    public function type($toolId = null)
+    {
+        return $this->pluck('type', $toolId);
+    }
+
     public function createdAt($toolId = null)
     {
         return $this->pluck('created_at', $toolId);
@@ -170,6 +191,28 @@ class QcTool extends Model
         return QcTool::count();
     }
 
+    # kiem tra loại dung chung
+    public function checkPublicType($toolId = null)
+    {
+        return ($this->type($this->checkNullId($toolId))[0] == 1) ? true : false;
+    }
+
+    # kieu dung de phat cho ca nhan
+    public function checkPrivateType($toolId = null)
+    {
+        return ($this->type($this->checkNullId($toolId))[0] == 2) ? true : false;
+    }
+
+    public function getLabelType($toolId = null)
+    {
+        if ($this->checkPublicType($toolId)) {
+            return 'Dùng chung';
+        } elseif ($this->checkPrivateType($toolId)) {
+            return 'Dùng cấp phát';
+        } else {
+            return 'Null';
+        }
+    }
     #============ =========== ============ kiểm tra thông tin ============= =========== ==========
     //số lượng tồn kho
     public function amountInventoryOfTool($toolId = null)

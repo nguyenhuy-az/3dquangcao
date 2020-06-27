@@ -43,6 +43,7 @@ class QcCompanyStore extends Model
     {
         return (empty($storeId)) ? $this->storeId() : $storeId;
     }
+
     // cập nhật thông tin
     public function updateInfo($storeId, $amount)
     {
@@ -83,6 +84,11 @@ class QcCompanyStore extends Model
         } else {
             return QcCompanyStore::whereIn('company_id', $listCompanyId)->whereIn('tool_id', $listToolId)->orderBy('updateDate', $orderBy)->select();
         }
+    }
+
+    public function totalToolOfCompany($companyId, $toolId)
+    {
+        return QcCompanyStore::where('company_id', $companyId)->where('tool_id',$toolId)->sum('amount');
     }
 
     //---------- phat dung cu -----------

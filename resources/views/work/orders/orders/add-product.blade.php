@@ -11,7 +11,8 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 ?>
-<div class="qc_work_orders_product_add qc-margin-top-5 col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-left: 3px solid brown; padding: 0;">
+<div class="qc_work_orders_product_add qc-margin-top-5 col-xs-12 col-sm-12 col-md-12 col-lg-12"
+     style="border-left: 3px solid brown; padding: 0;">
     <table class="table" style=" margin: 0; border: 1px solid #d7d7d7;">
         <tr>
             <td>
@@ -35,8 +36,8 @@ $mobileStatus = $mobile->isMobile();
                     </div>
                     <div class="col-xs-6 col-sm-12 col-md-2 col-lg-2">
                         <div class="form-group form-group-sm qc-margin-none">
-                            <label>Rộng<em>(mm)</em>: <i
-                                        class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
+                            <label>Rộng<em>(mm)</em>:
+                                <i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                             <input class="txtWidth form-control" type="text" onkeyup="qc_main.showNumberInput(this);"
                                    name="txtWidth[]" style="height: 25px;" placeholder="Chiều rộng sản phẩm" value="">
                         </div>

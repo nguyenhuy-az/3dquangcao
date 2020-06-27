@@ -8,7 +8,6 @@
  * modelStaff
  */
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-echo phpversion();
 ?>
 @extends('work.index')
 @section('titlePage')
@@ -51,11 +50,11 @@ echo phpversion();
                     </a>
                 </div>
             @endif
-            {{--<div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.import.get') !!}">
-                    Mua vật tư
+                    MUA VẬT TƯ
                 </a>
-            </div>--}}
+            </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.import.get') !!}">
                     CHI

@@ -122,61 +122,6 @@ var qc_work = {
             }
         }
     },
-    /*salary: {
-     /!*salary: {
-     getConfirm: function (href) {
-     qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-     },
-     save: function (form) {
-     var notifyContent = $(form).find('.frm_notify');
-     if (confirm('Tôi đã nhận số lương này')) {
-     qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
-     qc_main.scrollTop();
-     }
-
-     },
-     },*!/
-     /!*salaryBeforePay: {
-     request: {
-     getForm: function (href) {
-     qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-     },
-     save: function (form) {
-     var txtMoneyRequest = $(form).find("input[name='txtMoneyRequest']");
-     if (txtMoneyRequest.val().length > 0) {
-     if (parseInt(txtMoneyRequest.val()) > parseInt(txtMoneyRequest.data('limit'))) {
-     alert('Số tiền không được vượt hạn mức');
-     txtMoneyRequest.focus();
-     return false;
-     } else {
-     var notifyContent = $(form).find('.frm_notify');
-     if (confirm('Bạn muốn ứng ' + txtMoneyRequest.val() + '?')) {
-     qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
-     qc_main.scrollTop();
-     }
-     }
-     } else {
-     alert('Nhập số tiền ứng');
-     txtMoneyRequest.focus();
-     return false;
-     }
-
-     },
-     cancel: function (href) {
-     if (confirm('Bạn muốn hủy yêu cầu?')) {
-     qc_master_submit.ajaxHasReload(href, '#qc_master', false);
-     }
-     }
-     }
-     },*!/
-
-     },
-     kpi: {
-     getRegister: function (href) {
-     qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-     }
-     },*/
-
     workAllocation: {
         construction: {
             filter: function (href) {
@@ -207,44 +152,6 @@ var qc_work = {
     work: {
         filter: function (href) {
             qc_main.url_replace(href);
-        }
-    },
-    import: {
-        filter: function (href) {
-            qc_main.url_replace(href);
-        },
-        add: {
-            addImage: function (href) {
-                qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_import_add_image_wrap', false);
-            },
-            addSupplies: function (href) {
-                qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_import_add_supplies_wrap', false);
-            },
-            addTool: function (href) {
-                qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_import_add_tool_wrap', false);
-            },
-            addSuppliesToolNew: function (href) {
-                qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_import_supplies_tool_new_wrap', false);
-            },
-            save: function (form) {
-                //var cbDayBegin = $(form).find("select[name='cbDayBegin']");
-                //var cbHoursBegin = $(form).find("select[name='cbHoursBegin']");
-                //var notifyContent = $(form).find('.frm_notify');
-                //qc_master_submit.ajaxFormHasReload(form, '', true);
-                //qc_main.scrollTop();
-                //$('.qc_work_import_reset').click();
-                qc_master_submit.normalForm(form);
-            },
-        },
-        delete: function (href) {
-            if (confirm('Bạn muốn xóa hóa đơn này?')) {
-                qc_master_submit.ajaxHasReload(href, '#qc_master', false);
-            }
-        },
-        confirmPay: function (href) {
-            if (confirm('Tôi đã được thanh toán hóa đơn này')) {
-                qc_master_submit.ajaxHasReload(href, '#qc_master', false);
-            }
         }
     },
     tool: {
@@ -470,78 +377,7 @@ $(document).ready(function () {
         qc_work.tool.confirmReceive($(this).data('href'));
     });
 });
-//====================== MUA VAT TU ========================
-$(document).ready(function () {
-    //theo này
-    $('body').on('change', '.qc_work_import_login_day', function () {
-        qc_work.import.filter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_import_login_month').val() + '/' + $('.qc_work_import_login_year').val() + '/' + $('.qc_work_import_login_status').val());
-    });
-    //theo tháng
-    $('body').on('change', '.qc_work_import_login_month', function () {
-        qc_work.import.filter($(this).data('href') + '/' + $('.qc_work_import_login_day').val() + '/' + $(this).val() + '/' + $('.qc_work_import_login_year').val() + '/' + $('.qc_work_import_login_status').val());
-    });
-    // năm
-    $('body').on('change', '.qc_work_import_login_year', function () {
-        qc_work.import.filter($(this).data('href') + '/' + $('.qc_work_import_login_day').val() + '/' + $('.qc_work_import_login_month').val() + '/' + $(this).val() + '/' + $('.qc_work_import_login_status').val());
-    })
-    //theo trang thai thanh toan
-    $('body').on('change', '.qc_work_import_login_status', function () {
-        qc_work.import.filter($(this).data('href') + '/' + $('.qc_work_import_login_day').val() + '/' + $('.qc_work_import_login_month').val() + '/' + $('.qc_work_import_login_year').val() + '/' + $(this).val());
-    });
-});
-$(document).ready(function () {
-    $('body').on('click', '#frm_work_import_add .qc_work_import_save', function () {
-        //qc_work.login($(this).parents('.frmWorkLogin'));
-    });
-
-    // thêm hình ảnh
-    $('body').on('click', '#frm_work_import_add .qc_work_import_add_image', function () {
-        qc_work.import.add.addImage($(this).data('href'));
-    });
-    $('body').on('click', '#frm_work_import_add .qc_work_import_image_add .qc_delete', function () {
-        $(this).parents('.qc_work_import_image_add').remove();
-    });
-
-    // thêm vật tư
-    $('body').on('click', '#frm_work_import_add .qc_work_import_add_supplies', function () {
-        qc_work.import.add.addSupplies($(this).data('href'));
-    });
-    $('body').on('click', '#frm_work_import_add .qc_work_import_supplies_add .qc_delete', function () {
-        $(this).parents('.qc_work_import_supplies_add').remove();
-    });
-
-    // thêm dụng cụ
-    $('body').on('click', '#frm_work_import_add .qc_work_import_add_tool', function () {
-        qc_work.import.add.addTool($(this).data('href'));
-    });
-    $('body').on('click', '#frm_work_import_add .qc_work_import_tool_add .qc_delete', function () {
-        $(this).parents('.qc_work_import_tool_add').remove();
-    });
-
-    // thêm vật tư mới
-    $('body').on('click', '#frm_work_import_add .qc_work_import_supplies_tool_add_new', function () {
-        qc_work.import.add.addSuppliesToolNew($(this).data('href'));
-    });
-    $('body').on('click', '#frm_work_import_add .qc_work_import_supplies_tool_new_add .qc_delete', function () {
-        $(this).parents('.qc_work_import_supplies_tool_new_add').remove();
-    });
-
-    //lưu
-    $('body').on('click', '#frm_work_import_add .qc_work_import_save', function () {
-        qc_work.import.add.save($(this).parents('#frm_work_import_add'));
-    });
-
-    //xác nhận thanh toán
-    $('body').on('click', '.qc_work_import_wrap .qc_work_import_confirm_pay_act', function () {
-        qc_work.import.confirmPay($(this).data('href'));
-    });
-
-    //xóa
-    $('body').on('click', '.qc_work_import_wrap .qc_work_import_delete', function () {
-        qc_work.import.delete($(this).data('href'));
-    });
-});
-
+//====================== DANG NHAP ========================
 $(document).ready(function () {
     $('body').on('click', '.qc_work_login', function () {
         qc_work.login($(this).parents('.frmWorkLogin'));
