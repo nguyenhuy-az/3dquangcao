@@ -11,7 +11,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $loginStaffId = $dataStaff->staffId();
-$currentDate = date('d/m/Y', strtotime($hFunction->carbonNow()));
+$currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
 ?>
 @extends('work.import.index')
 @section('qc_work_import_body')
@@ -28,7 +28,7 @@ $currentDate = date('d/m/Y', strtotime($hFunction->carbonNow()));
                             ?>
                         </div>
                     @endif
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px;">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                         <div class="row" style="margin-bottom: 10px;">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
                                  style="border-bottom: 1px solid grey;">
@@ -52,7 +52,7 @@ $currentDate = date('d/m/Y', strtotime($hFunction->carbonNow()));
                     </div>
 
                     {{-- Ảnh hóa đơn nhập --}}
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px;">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <i class="glyphicon glyphicon-pencil qc-color-green"></i>
@@ -75,54 +75,77 @@ $currentDate = date('d/m/Y', strtotime($hFunction->carbonNow()));
                         </div>
                     </div>
 
-                    {{-- Vật tư --}}
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px;">
+                    {{-- Vật tư / dụng cu --}}
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="color: red;">
                                 <i class="glyphicon glyphicon-pencil qc-color-green"></i>
-                                <span class="qc-font-size-16">Vật Tư</span>
+                                <span class="qc-font-size-16">Vật Tư / Dụng cụ</span>
                             </div>
                         </div>
                         <div class="row">
-                            <div id="qc_work_import_add_supplies_wrap" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                @include('work.pay.import.add-supplies', compact('dataSupplies'))
+                            <div id="qc_work_import_add_object_wrap" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                @include('work.import.add-object')
                             </div>
                         </div>
                         <div class="row">
                             <div class="qc-padding-top-5 qc-border-none text-left col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                <a class="qc_work_import_add_supplies qc-link-green qc-font-size-12"
-                                   data-href="{!! route('qc.work.import.add.supplies.get') !!}">
+                                <a class="qc_work_import_add_object qc-link-green qc-font-size-12"
+                                   data-href="{!! route('qc.work.import.add.object.get') !!}">
                                     <i class="glyphicon glyphicon-plus"></i>
-                                    Thêm vật tư
+                                    Thêm vật tư / dụng cụ
                                 </a>
                             </div>
                         </div>
                     </div>
+                    {{-- Vật tư --}}
+                    {{--<div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">--}}
+                        {{--<div class="row">--}}
+                            {{--<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="color: red;">--}}
+                                {{--<i class="glyphicon glyphicon-pencil qc-color-green"></i>--}}
+                                {{--<span class="qc-font-size-16">Vật Tư</span>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="row">--}}
+                            {{--<div id="qc_work_import_add_supplies_wrap" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">--}}
+                                {{--@include('work.import.add-supplies')--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="row">--}}
+                            {{--<div class="qc-padding-top-5 qc-border-none text-left col-sx-12 col-sm-12 col-md-12 col-lg-12">--}}
+                                {{--<a class="qc_work_import_add_supplies qc-link-green qc-font-size-12"--}}
+                                   {{--data-href="{!! route('qc.work.import.add.supplies.get') !!}">--}}
+                                    {{--<i class="glyphicon glyphicon-plus"></i>--}}
+                                    {{--Thêm vật tư--}}
+                                {{--</a>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
 
 
                     {{-- Dụng cụ --}}
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="color: red;">
-                                <i class="glyphicon glyphicon-pencil qc-color-green"></i>
-                                <span class="qc-font-size-16">Dụng cụ</span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div id="qc_work_import_add_tool_wrap" class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                @include('work.pay.import.add-tool', compact('dataTool'))
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="qc-padding-top-5 qc-border-none text-left col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                <a class="qc_work_import_add_tool qc-font-size-12 qc-link-green"
-                                   data-href="{!! route('qc.work.import.add.tool.get') !!}">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    Thêm dụng cụ
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    {{--<div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">--}}
+                        {{--<div class="row">--}}
+                            {{--<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="color: red;">--}}
+                                {{--<i class="glyphicon glyphicon-pencil qc-color-green"></i>--}}
+                                {{--<span class="qc-font-size-16">Dụng cụ</span>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="row">--}}
+                            {{--<div id="qc_work_import_add_tool_wrap" class="col-sx-12 col-sm-12 col-md-12 col-lg-12">--}}
+                                {{--@include('work.import.add-tool')--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="row">--}}
+                            {{--<div class="qc-padding-top-5 qc-border-none text-left col-sx-12 col-sm-12 col-md-12 col-lg-12">--}}
+                                {{--<a class="qc_work_import_add_tool qc-font-size-12 qc-link-green"--}}
+                                   {{--data-href="{!! route('qc.work.import.add.tool.get') !!}">--}}
+                                    {{--<i class="glyphicon glyphicon-plus"></i>--}}
+                                    {{--Thêm dụng cụ--}}
+                                {{--</a>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
                 </div>
                 <div class="row">
                     <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">

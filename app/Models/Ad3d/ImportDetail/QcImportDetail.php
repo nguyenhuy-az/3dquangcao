@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcImportDetail extends Model
 {
     protected $table = 'qc_import_detail';
-    protected $fillable = ['detail_id', 'price', 'amount', 'totalMoney', 'created_at', 'import_id', 'tool_id', 'supplies_id', 'newName', 'product_id'];
+    protected $fillable = ['detail_id', 'price', 'amount', 'totalMoney', 'created_at', 'import_id', 'tool_id', 'supplies_id', 'newName','newUnit', 'product_id'];
     protected $primaryKey = 'detail_id';
     public $timestamps = false;
 
@@ -15,7 +15,7 @@ class QcImportDetail extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($price, $amount, $totalMoney, $importId, $toolId = null, $suppliesId = null, $newName = null, $productId = null)
+    public function insert($price, $amount, $totalMoney, $importId, $toolId = null, $suppliesId = null, $newName = null, $newUnit = null, $productId = null)
     {
         $hFunction = new \Hfunction();
         $modelImportDetail = new QcImportDetail();
@@ -26,6 +26,7 @@ class QcImportDetail extends Model
         $modelImportDetail->tool_id = $toolId;
         $modelImportDetail->supplies_id = $suppliesId;
         $modelImportDetail->newName = $newName;
+        $modelImportDetail->newUnit = $newUnit;
         $modelImportDetail->product_id = $productId;
         $modelImportDetail->created_at = $hFunction->createdAt();
         if ($modelImportDetail->save()) {
@@ -86,6 +87,7 @@ class QcImportDetail extends Model
     {
         return QcImportDetail::whereIn('import_id', $listImportId)->sum('totalMoney');
     }
+
     //---------- công cụ -----------
     public function tool()
     {
@@ -169,6 +171,11 @@ class QcImportDetail extends Model
     public function newName($detailId = null)
     {
         return $this->pluck('newName', $detailId);
+    }
+
+    public function newUnit($detailId = null)
+    {
+        return $this->pluck('newUnit', $detailId);
     }
 
     public function productId($detailId = null)

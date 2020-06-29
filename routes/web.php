@@ -790,25 +790,19 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     Route::group(['prefix' => 'import'], function () {
         // xem chi tiết
         Route::get('view/{importId?}', ['as' => 'qc.work.import.view.get', 'uses' => 'Work\Import\ImportController@viewImport']);
-        //nhập hóa đơn
-        //Route::get('add/supplies', ['as' => 'qc.work.import.supplies.get', 'uses' => 'Work\Import\ImportController@addProduct']);
-
         # lay form nhan vat tu
         Route::get('add', ['as' => 'qc.work.import.add.get', 'uses' => 'Work\Import\ImportController@getAdd']);
         # them hinh anh hoa don
         Route::get('add/image', ['as' => 'qc.work.import.add.image.get', 'uses' => 'Work\Import\ImportController@getAddImage']);
-        # them vat tu
-        Route::get('add/supplies', ['as' => 'qc.work.import.add.supplies.get', 'uses' => 'Work\Import\ImportController@getAddSupplies']);
-        # kiem tra goi y vat tu
-        Route::get('check-supplies/{name?}', ['as' => 'qc.work.import.add.check_name.name', 'uses' => 'Work\Import\ImportController@checkSuppliesName']);
-        #them cong cu
-        Route::get('add/tool', ['as' => 'qc.work.import.add.tool.get', 'uses' => 'Work\Import\ImportController@getAddTool']);
-        #Route::get('add/supplies-tool', ['as' => 'qc.work.pay.import.add.supplies_tool.get', 'uses' => 'Work\Pay\Import\ImportController@getAddSuppliesTool']);
+        # them vat tu / dung cu
+        Route::get('add/object', ['as' => 'qc.work.import.add.object.get', 'uses' => 'Work\Import\ImportController@getAddObject']);
+        # kiem tra goi y nhap
+        Route::get('check-import/{name?}', ['as' => 'qc.work.import.check_name.get', 'uses' => 'Work\Import\ImportController@checkImportName']);
         # them
         Route::post('add', ['as' => 'qc.work.import.add.post', 'uses' => 'Work\Import\ImportController@postAdd']);
 
         // xác nhận thanh toán
-        Route::get('confirm-pay/{importId?}', ['as' => 'qc.work.import.confirm_pay.get', 'uses' => 'Work\Pay\Import\ImportController@getConfirmPay']);
+        Route::get('confirm-pay/{importId?}', ['as' => 'qc.work.import.confirm_pay.get', 'uses' => 'Work\Import\ImportController@getConfirmPay']);
         // xóa
         Route::get('delete/{importId?}', ['as' => 'qc.work.import.delete.get', 'uses' => 'Work\Import\ImportController@deleteImport']);
 
@@ -1232,31 +1226,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     //--------------------- CHI ---------------------
     #thanh toan mua vat tu
     Route::group(['prefix' => 'pay-import'], function () {
-        // xem chi tiết
-        Route::get('view/{importId?}', ['as' => 'qc.work.pay.import.view.get', 'uses' => 'Work\Pay\Import\ImportController@viewImport']);
-        //nhập hóa đơn
-        Route::get('add/supplies', ['as' => 'qc.work.pay.import.supplies.get', 'uses' => 'Work\Pay\Import\ImportController@addProduct']);
-
-        # lay form nhan vat tu
-        Route::get('add', ['as' => 'qc.work.pay.import.add.get', 'uses' => 'Work\Pay\Import\ImportController@getAdd']);
-        # them hinh anh hoa don
-        Route::get('add/image', ['as' => 'qc.work.pay.import.add.image.get', 'uses' => 'Work\Pay\Import\ImportController@getAddImage']);
-        # them vat tu
-        Route::get('add/supplies', ['as' => 'qc.work.pay.import.add.supplies.get', 'uses' => 'Work\Pay\Import\ImportController@getAddSupplies']);
-        # kiem tra goi y vat tu
-        Route::get('check-supplies/{name?}', ['as' => 'qc.work.pay.import.add.check_name.name', 'uses' => 'Work\Pay\Import\ImportController@checkSuppliesName']);
-        #them cong cu
-        Route::get('add/tool', ['as' => 'qc.work.import.add.tool.get', 'uses' => 'Work\Pay\Import\ImportController@getAddTool']);
-        Route::get('add/supplies-tool', ['as' => 'qc.work.pay.import.add.supplies_tool.get', 'uses' => 'Work\Pay\Import\ImportController@getAddSuppliesTool']);
-        # them
-        Route::post('add', ['as' => 'qc.work.pay.import.add.post', 'uses' => 'Work\Pay\Import\ImportController@postAdd']);
-
-        // xác nhận thanh toán
-        Route::get('confirm-pay/{importId?}', ['as' => 'qc.work.pay.import.confirm_pay.get', 'uses' => 'Work\Pay\Import\ImportController@getConfirmPay']);
-        // xóa
-        Route::get('delete/{importId?}', ['as' => 'qc.work.pay.import.delete.get', 'uses' => 'Work\Pay\Import\ImportController@deleteImport']);
-
-        Route::get('/{loginDay?}/{loginMonth?}/{loginYear?}/{loginPayStatus?}', ['as' => 'qc.work.pay.import.get', 'uses' => 'Work\Pay\Import\ImportController@index']);
+        Route::get('/{$monthFilter?}/{$yearFilter?}/{payStatusFilter?}/{staffFilterId?}', ['as' => 'qc.work.pay.import.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@detailPay']);
     });
 
     #chi hoat dong

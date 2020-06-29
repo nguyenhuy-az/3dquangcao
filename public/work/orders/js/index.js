@@ -1067,7 +1067,7 @@ $(document).ready(function () {
         }
     });
 
-    /*kiem tra goi y don hang co san */
+    /*-------- ------- kiem tra goi y don hang co san ------- --------- */
     $('body').on('keyup', '#frmWorkOrdersAdd .txtOrderName', function () {
         $('#qc_customer_phone_suggestions_wrap').hide();
         $('#qc_customer_name_suggestions_wrap').hide();
@@ -1131,7 +1131,7 @@ $(document).ready(function () {
         $('#qc_order_add_name_suggestions_content').empty();
     });
 
-    /*kiem tra loai san pham */
+    /* ------- ----------- kiem tra loai san pham -------- -------- */
     $('body').on('keyup', '#frmWorkOrdersAdd .qc_work_orders_product_add .txtProductType', function () {
         var objectWrap = $(this).parents('.qc_work_orders_product_add');
         var suggestions_wrap = objectWrap.find('.qc_order_add_product_type_suggestions_wrap');
@@ -1180,7 +1180,7 @@ $(document).ready(function () {
             });
         }
     });
-    $('body').on('click', '#frmWorkOrdersAdd .qc_work_orders_product_add .qc_order_add_product_type_suggestions_close', function () {
+    $('body').on('click', '#frmWorkOrdersAdd .qc_work_orders_product_add .qc_order_add_product_type_suggestions_wrap', function () {
         $(this).parents('.qc_order_add_product_type_suggestions_wrap').hide();
     });
     /*chon don loai san pham goi y*/

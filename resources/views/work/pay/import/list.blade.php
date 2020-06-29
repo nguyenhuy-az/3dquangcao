@@ -30,7 +30,7 @@ $currentMonth = $hFunction->currentMonth();
                     </a>
                 </div>
                 <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <a class="qc_work_before_pay_request_action qc-link-green "
+                    <a class=" qc-link-green "
                        href="{!! route('qc.work.import.add.get') !!}">
                         <b style="font-size: 1.5em;">+ Thêm</b>
                     </a>

@@ -89,6 +89,11 @@ class QcTool extends Model
     }
 
     #============ =========== ============ Lấy thông tin ============= =========== ==========
+    public function infoFromSuggestionName($name)
+    {
+        return QcTool::where('name', 'like', "%$name%")->orderBy('name', 'DESC')->get();
+    }
+
     # lay thong tin theo loai cong cu
     public function selectAllInfo($type = null)
     {

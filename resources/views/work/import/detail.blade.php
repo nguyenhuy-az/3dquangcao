@@ -15,14 +15,11 @@ $importDate = $dataImport->importDate();
 $dataImportDetail = $dataImport->infoDetailOfImport();
 $dataImportImage = $dataImport->importImageInfoOfImport();
 ?>
-@extends('work.index')
-@section('qc_work_body')
+@extends('work.import.index')
+@section('qc_work_import_body')
     <div class="row">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed #C2C2C2;">
-                <a class="qc-link-red" onclick="qc_main.page_back();">
-                    <i class="glyphicon glyphicon-backward"></i> Trở lại
-                </a>
                 <h3>CHI TIẾT HÓA ĐƠN</h3>
             </div>
             @if(count($dataImportImage) > 0)
@@ -57,12 +54,12 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
             </div>
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="qc-container-table row">
-                    @if(count($dataImportDetail) > 0)
+                <div class="row">
+                    @if($hFunction->checkCount($dataImportDetail))
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
-                                <tr style="background-color: whitesmoke;">
-                                    <th class="text-center">STT</th>
+                                <tr style="background-color: black; color: yellow;">
+                                    <th class="text-center" style="width: 20px;">STT</th>
                                     <th>Tên VT/DC</th>
                                     <th class="text-center">Làm sản phẩm</th>
                                     <th class="text-center">Phân loại</th>

@@ -20,6 +20,6 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 @endsection
 
 @section('qc_js_footer')
-    <script src="{{ url('public/ad3d/store/import/js/import.js')}}"></script>
+    <script src="{{ url('public/ad3d/store/import/js/index.js')}}"></script>
 @endsection
 

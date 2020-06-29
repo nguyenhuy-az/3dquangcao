@@ -2,112 +2,108 @@
  * Created by HUY on 12/29/2017.
  */
 var qc_work_pay_import = {
-    filter: function (href) {
-        qc_main.url_replace(href);
+    view: function (listObject) {
+        qc_master_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-view'), $('#' + qc_ad3d.bodyIdName()), false);
+        qc_main.scrollTop();
     },
-    add: {
-        addImage: function (href) {
-            qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_pay_import_import_add_image_wrap', false);
-        },
-        addSupplies: function (href) {
-            qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_pay_import_import_add_supplies_wrap', false);
-        },
-        addTool: function (href) {
-            qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_pay_import_import_add_tool_wrap', false);
-        },
-        addSuppliesToolNew: function (href) {
-            qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_pay_import_import_supplies_tool_new_wrap', false);
+    confirm: {
+        get: function (href) {
+            qc_master_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
+            qc_main.scrollTop();
         },
         save: function (form) {
-            //var cbDayBegin = $(form).find("select[name='cbDayBegin']");
-            //var cbHoursBegin = $(form).find("select[name='cbHoursBegin']");
-            //var notifyContent = $(form).find('.frm_notify');
-            //qc_master_submit.ajaxFormHasReload(form, '', true);
+            var payStatus = $(form).find('.cbPayStatus').val();
+            if (payStatus == 2) {
+                qc_master_submit.ajaxFormHasReload(form);
+            } else {
+                if (qc_work_pay_import.confirm.checkInput()) {
+                    qc_master_submit.ajaxFormHasReload(form);
+                    //qc_master_submit.normalForm(form);
+                } else {
+                    alert('Chọn phân loại vật tư / đơn vị tính');
+                    return false;
+                }
+            }
             //qc_main.scrollTop();
-            //$('.qc_work_pay_import_import_reset').click();
-            qc_master_submit.normalForm(form);
         },
-    },
-    delete: function (href) {
-        if (confirm('Bạn muốn xóa hóa đơn này?')) {
-            qc_master_submit.ajaxHasReload(href, '#qc_master', false);
+        checkInput: function () {
+            var result = true;
+            $('#frm_ad3d_import_confirm .cbNewSuppliesTool').filter(function () {
+                var cbNewSuppliesTool = $(this).val();
+                if (cbNewSuppliesTool == '') {
+                    result = false;
+                }
+            });
+            $('#frm_ad3d_import_confirm .txtUnit').filter(function () {
+                var txtUnit = $(this).val();
+                if (txtUnit == '') {
+                    result = false;
+                }
+            });
+            return result;
         }
     },
-    confirmPay: function (href) {
-        if (confirm('Tôi đã được thanh toán hóa đơn này')) {
-            qc_master_submit.ajaxHasReload(href, '#qc_master', false);
+    pay: {
+        getPay: function (href) {
+            qc_master_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
+            qc_main.scrollTop();
+        },
+        savePay: function (form) {
+            if (confirm('Bạn xác nhận đã thanh toán hóa dơn này')) {
+                qc_master_submit.ajaxFormHasReload(form, ''.false);
+            }
         }
     }
 }
-
-//====================== MUA VAT TU ========================
+//-------------------- filter ------------
 $(document).ready(function () {
-    //theo ngày
-    $('body').on('change', '.qc_work_pay_import_day_filter', function () {
-        qc_work_pay_import.import.filter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_pay_import_month_filter').val() + '/' + $('.qc_work_pay_import_year_filter').val() + '/' + $('.qc_work_pay_import_pay_status').val());
-    });
-    //theo tháng
-    $('body').on('change', '.qc_work_pay_import_month_filter', function () {
-        qc_work_pay_import.import.filter($(this).data('href') + '/' + $('.qc_work_pay_import_day_filter').val() + '/' + $(this).val() + '/' + $('.qc_work_pay_import_year_filter').val() + '/' + $('.qc_work_pay_import_pay_status').val());
-    });
-    // năm
-    $('body').on('change', '.qc_work_pay_import_year_filter', function () {
-        qc_work_pay_import.import.filter($(this).data('href') + '/' + $('.qc_work_pay_import_day_filter').val() + '/' + $('.qc_work_pay_import_month_filter').val() + '/' + $(this).val() + '/' + $('.qc_work_pay_import_pay_status').val());
+    //khi chọn công ty...
+    $('body').on('change', '.cbCompanyFilter', function () {
+        var companyId = $(this).val();
+        var href = $(this).data('href-filter');
+        if (companyId != '') {
+            href = href + '/' + companyId + '/' + $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val() + '/' + $('.cbPayStatusFilter').val() + '/' + $('.cbStaffFilterId').val();
+        }
+        qc_main.url_replace(href);
     })
-    //theo trang thai thanh toan
-    $('body').on('change', '.qc_work_pay_import_pay_status', function () {
-        qc_work_pay_import.import.filter($(this).data('href') + '/' + $('.qc_work_pay_import_day_filter').val() + '/' + $('.qc_work_pay_import_month_filter').val() + '/' + $('.qc_work_pay_import_year_filter').val() + '/' + $(this).val());
-    });
+
+    //khi tìm theo tên ..
+    $('body').on('change', '.cbStaffFilterId', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val() + '/' + $('.cbPayStatusFilter').val() + '/' + $(this).val());
+    })
+    // theo ngay tháng ...
+    $('body').on('change', '.cbDayFilter', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $(this).val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val() + '/' + $('.cbPayStatusFilter').val() + '/' + $('.cbStaffFilterId').val());
+    }),
+        $('body').on('change', '.cbMonthFilter', function () {
+            qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $('.cbDayFilter').val() + '/' + $(this).val() + '/' + $('.cbYearFilter').val() + '/' + $('.cbPayStatusFilter').val() + '/' + $('.cbStaffFilterId').val());
+        }),
+        $('body').on('change', '.cbYearFilter', function () {
+            qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $(this).val() + '/' + $('.cbPayStatusFilter').val() + '/' + $('.cbStaffFilterId').val());
+        }),
+        $('body').on('change', '.cbPayStatusFilter', function () {
+            qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val() + '/' + $(this).val() + '/' + $('.cbStaffFilterId').val());
+        })
 });
+
+
+//view
 $(document).ready(function () {
-    $('body').on('click', '#frm_work_import_add .qc_work_pay_import_import_save', function () {
-        //qc_work_pay_import.login($(this).parents('.frmWorkLogin'));
+    $('.qc_ad3d_list_object').on('click', '.qc_ad3d_import_pay_act', function () {
+        qc_work_pay_import.pay.getPay($(this).data('href'));
     });
 
-    // thêm hình ảnh
-    $('body').on('click', '#frm_work_import_add .qc_work_pay_import_import_add_image', function () {
-        qc_work_pay_import.import.add.addImage($(this).data('href'));
-    });
-    $('body').on('click', '#frm_work_import_add .qc_work_pay_import_import_image_add .qc_delete', function () {
-        $(this).parents('.qc_work_pay_import_import_image_add').remove();
-    });
+    $('body').on('click', '.qc_ad3d_frm_import_pay .qc_save', function () {
+        qc_work_pay_import.pay.savePay($(this).parents('.qc_ad3d_frm_import_pay'));
+    })
+});
 
-    // thêm vật tư
-    $('body').on('click', '#frm_work_import_add .qc_work_pay_import_import_add_supplies', function () {
-        qc_work_pay_import.import.add.addSupplies($(this).data('href'));
+//-------------------- confirm ------------
+$(document).ready(function () {
+    $('.qc_ad3d_list_object').on('click', '.qc_confirm_get', function () {
+        qc_work_pay_import.confirm.get($(this).data('href'));
     });
-    $('body').on('click', '#frm_work_import_add .qc_work_pay_import_import_supplies_add .qc_delete', function () {
-        $(this).parents('.qc_work_pay_import_import_supplies_add').remove();
-    });
-
-    // thêm dụng cụ
-    $('body').on('click', '#frm_work_import_add .qc_work_pay_import_import_add_tool', function () {
-        qc_work_pay_import.import.add.addTool($(this).data('href'));
-    });
-    $('body').on('click', '#frm_work_import_add .qc_work_pay_import_import_tool_add .qc_delete', function () {
-        $(this).parents('.qc_work_pay_import_import_tool_add').remove();
-    });
-
-    // thêm vật tư mới
-    $('body').on('click', '#frm_work_import_add .qc_work_pay_import_import_supplies_tool_add_new', function () {
-        qc_work_pay_import.import.add.addSuppliesToolNew($(this).data('href'));
-    });
-    $('body').on('click', '#frm_work_import_add .qc_work_pay_import_import_supplies_tool_new_add .qc_delete', function () {
-        $(this).parents('.qc_work_pay_import_import_supplies_tool_new_add').remove();
-    });
-
-    //lưu
-    $('body').on('click', '#frm_work_import_add .qc_work_pay_import_import_save', function () {
-        qc_work_pay_import.import.add.save($(this).parents('#frm_work_import_add'));
-    });
-
-    //xác nhận thanh toán
-    $('body').on('click', '.qc_work_pay_import_import_wrap .qc_work_pay_import_import_confirm_pay_act', function () {
-        qc_work_pay_import.import.confirmPay($(this).data('href'));
-    });
-
-    //xóa
-    $('body').on('click', '.qc_work_pay_import_import_wrap .qc_work_pay_import_import_delete', function () {
-        qc_work_pay_import.import.delete($(this).data('href'));
-    });
+    $('body').on('click', '#frm_ad3d_import_confirm .qc_ad3d_import_confirm_save', function () {
+        qc_work_pay_import.confirm.save($(this).parents('#frm_ad3d_import_confirm'));
+    })
 });

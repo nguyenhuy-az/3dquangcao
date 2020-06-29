@@ -70,7 +70,7 @@ class ImportController extends Controller
             'subObjectLabel' => 'Chi tiết mua vật tư'
         ];
         $dataImport = $modelImport->getInfo($importId);
-        return view('work.import.import-detail', compact('dataAccess', 'modelStaff', 'dataImport'));
+        return view('work.import.detail', compact('dataAccess', 'modelStaff', 'dataImport'));
     }
 
     // ---------- -------- them hoa don nhap moi  --------- ----------
@@ -89,48 +89,54 @@ class ImportController extends Controller
         $dataTool = $modelTool->getInfoOrderByName();
         return view('work.import.add', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSupplies', 'dataTool'));
     }
+
     # them anh hoa don
     public function getAddImage()
     {
         return view('work.pay.import.add-image');
     }
 
-    # lay vat tu theo thu khoa
-    public function checkSuppliesName($name)
+    # ---------- ---------- kiem tra ten nhap --------- -----------
+    public function checkImportName($name)
     {
         $hFunction = new \Hfunction();
         $modelSupplies = new QcSupplies();
+        $modelTool = new QcTool();
+        # thong tin vat tu - uu tien vat tu
         $dataSupplies = $modelSupplies->infoFromSuggestionName($name);
         if ($hFunction->checkCount($dataSupplies)) {
             $result = array(
                 'status' => 'exist',
+                'object' => 'tool',
                 'content' => $dataSupplies
             );
         } else {
-            $result = array(
-                'status' => 'notExist',
-                'content' => "null"
-            );
+            # thong tin dung cu
+            $dataTool = $modelTool->infoFromSuggestionName($name);
+            if ($hFunction->checkCount($dataTool)) {
+                $result = array(
+                    'status' => 'exist',
+                    'object' => 'supplies',
+                    'content' => $dataTool
+                );
+            } else {
+                $result = array(
+                    'status' => 'notExist',
+                    'object' => 'null',
+                    'content' => "null"
+                );
+            }
+
         }
         die(json_encode($result));
     }
 
     # them mua vat tu
-    public function getAddSupplies()
+    public function getAddObject()
     {
         $modelStaff = new QcStaff();
-        $modelSupplies = new QcSupplies();
-        $dataSupplies = $modelSupplies->getInfoActivity();
-        return view('work.import.add-supplies', compact('modelStaff', 'dataAccess', 'dataSupplies'));
+        return view('work.import.add-object', compact('modelStaff'));
     }
-    # them cong cu
-    public function getAddTool()
-    {
-        $modelTool = new QcTool();
-        $dataTool = $modelTool->getInfoOrderByName();
-        return view('work.import.add-tool', compact('dataAccess', 'dataTool'));
-    }
-
 
     public function postAdd()
     {
@@ -144,111 +150,65 @@ class ImportController extends Controller
 
         $staffLoginId = $modelStaff->loginStaffId();
 
-        $cbImportDay = Request::input('cbImportDay');
-        $cbImportMonth = Request::input('cbImportMonth');
-        $cbImportYear = Request::input('cbImportYear');
-
-        //hình ảnh
+        $txtImportDate = Request::input('txtImportDate');
+        //hinh anh
         $txtImportImage = Request::file('txtImportImage');
-        //vật tư
-        $supplies = Request::input('cbImportSupplies');
-        $txtSuppliesAmount = Request::input('txtSuppliesAmount');
-        $txtSuppliesMoney = Request::input('txtSuppliesMoney');
-        $cbSuppliesProduct = Request::input('cbSuppliesProduct');
-
-        //Dụng cụ
-        $tool = Request::input('cbImportTool');
-        $txtToolAmount = Request::input('txtToolAmount');
-        $txtToolMoney = Request::input('txtToolMoney');
-
-        //Dụng cụ vật tư mới
-        $txtSuppliesToolNew = Request::input('txtSuppliesToolNew');
-        $txtSuppliesToolNewAmount = Request::input('txtSuppliesToolNewAmount');
-        $txtSuppliesToolNewMoney = Request::input('txtSuppliesToolNewMoney');
-        $cbSuppliesToolNewProduct = Request::input('cbSuppliesToolNewProduct');
-
-        //$insertStatus = false;
-        //$imageStatus = false;
-        $suppliesStatus = false;
-        $toolStatus = false;
-        $newStatus = false;
-        if (count($supplies) > 0) {
-            foreach ($supplies as $key => $value) {
-                if ($value > 0) $suppliesStatus = true;
+        //thong tin mua
+        $txtImportName = Request::input('txtImportName');
+        $txtObjectAmount = Request::input('txtObjectAmount');
+        $txtObjectUnit = Request::input('txtObjectUnit');
+        $txtObjectMoney = Request::input('txtObjectMoney');
+        $cbImportProduct = Request::input('cbImportProduct');
+        $companyId = $modelStaff->companyId($staffLoginId);
+        if ($modelImport->insert($txtImportDate, $companyId, null, $staffLoginId)) {
+            $importId = $modelImport->insertGetId();
+            // them anh hoa don
+            if (count($txtImportImage) > 0) {
+                $n_o = 0;
+                foreach ($_FILES['txtImportImage']['name'] as $name => $value) {
+                    $name_img = stripslashes($_FILES['txtImportImage']['name'][$name]);
+                    if (!empty($name_img)) {
+                        $n_o = $n_o + 1;
+                        $name_img = $hFunction->getTimeCode() . "_$n_o." . $hFunction->getTypeImg($name_img);
+                        $source_img = $_FILES['txtImportImage']['tmp_name'][$name];
+                        if ($modelImportImage->uploadImage($source_img, $name_img, 500)) {
+                            $modelImportImage->insert($name_img, $importId);
+                        }
+                    }
+                }
             }
-        }
-        if (count($tool) > 0) {
-            foreach ($tool as $key => $value) {
-                if ($value > 0) $toolStatus = true;
+            // mua dụng cụ
+            if ($txtImportName) {
+                foreach ($txtImportName as $key => $importName) {
+                    $name = $importName;
+                    $amount = $txtObjectAmount[$key];
+                    $unit = $txtObjectUnit[$key];
+                    $money = $txtObjectMoney[$key];
+                    $money = $hFunction->convertCurrencyToInt($money);
+                    $productId = $cbImportProduct[$key];
+                    $productId = ($productId == 0) ? null : $productId;
+                    # gia / sp
+                    $price = $money / $amount;
+                    # lay thong tin vat tu mua the ten nhap
+                    $dataSupplies = $modelSupplies->getInfoByName($name);
+                    if ($hFunction->checkCount($dataSupplies)) { # vat tu dang co trong he thong
+                        $suppliesId = $dataSupplies->suppliesId();
+                        $modelImportDetail->insert($price, $amount, $money, $importId, null, $suppliesId, null, $unit, $productId);
+                    } else {
+                        # lay thong tin dung cu theo ten nhap
+                        $dataTool = $modelTool->getInfoByName($name);
+                        if ($hFunction->checkCount($dataTool)) { # dung cu dang co trong he thong
+                            $toolId = $dataTool->toolId();
+                            $modelImportDetail->insert($price, $amount, $money, $importId, $toolId, null, null, $unit, $productId);
+                        } else {
+                            # chua xac dinh la vat tu / dung cu
+                            $modelImportDetail->insert($price, $amount, $money, $importId, null, null, $name, $unit, $productId);
+                        }
+                    }
+                }
             }
-        }
-        if (count($txtSuppliesToolNew) > 0) {
-            foreach ($txtSuppliesToolNew as $key => $value) {
-                if (count($value) > 0) $newStatus = true;
-            }
-        }
-
-        if ($suppliesStatus || $toolStatus || $newStatus) {
-            $companyId = $modelStaff->companyId($staffLoginId);
-            $importDate = $hFunction->convertStringToDatetime("$cbImportMonth/$cbImportDay/$cbImportYear 00:00:00");
-            if ($modelImport->insert($importDate, $companyId, null, $staffLoginId)) {
-                $importId = $modelImport->insertGetId();
-                //ảnh hóa đơn
-                if (count($txtImportImage) > 0) {
-                    $n_o = 0;
-                    foreach ($_FILES['txtImportImage']['name'] as $name => $value) {
-                        $name_img = stripslashes($_FILES['txtImportImage']['name'][$name]);
-                        if (!empty($name_img)) {
-                            $n_o = $n_o + 1;
-                            $name_img = $hFunction->getTimeCode() . "_$n_o." . $hFunction->getTypeImg($name_img);
-                            $source_img = $_FILES['txtImportImage']['tmp_name'][$name];
-                            if ($modelImportImage->uploadImage($source_img, $name_img, 500)) {
-                                $modelImportImage->insert($name_img, $importId);
-                            }
-                        }
-                    }
-                }
-
-                // mua vật tư
-                if ($suppliesStatus) {
-                    foreach ($supplies as $key => $value) {
-                        $suppliesId = $value;
-                        $suppliesAmount = $txtSuppliesAmount[$key];
-                        $suppliesMoney = $hFunction->convertCurrencyToInt($txtSuppliesMoney[$key]);
-                        $suppliesProductId = $cbSuppliesProduct[$key];
-                        $suppliesProductId = ($suppliesProductId == 0) ? null : $suppliesProductId;
-                        if ($suppliesId > 0) {
-                            $modelImportDetail->insert($suppliesMoney / $suppliesAmount, $suppliesAmount, $suppliesMoney, $importId, null, $suppliesId, null, $suppliesProductId);
-                        }
-                    }
-                }
-                // mua dụng cụ
-                if ($toolStatus) {
-                    foreach ($tool as $key => $value) {
-                        $toolId = $value;
-                        $toolAmount = $txtToolAmount[$key];
-                        $toolMoney = $hFunction->convertCurrencyToInt($txtToolMoney[$key]);
-                        if ($toolId > 0) {
-                            $modelImportDetail->insert($toolMoney / $toolAmount, $toolAmount, $toolMoney, $importId, $toolId, null, null, null);
-                        }
-                    }
-                }
-                // vật liệu mới
-                if ($newStatus) {
-                    foreach ($txtSuppliesToolNew as $key => $value) {
-                        $name = $value;
-                        $suppliesToolNewAmount = $txtSuppliesToolNewAmount[$key];
-                        $suppliesToolNewMoney = $hFunction->convertCurrencyToInt($txtSuppliesToolNewMoney[$key]);
-                        $suppliesToolNewProductId = $cbSuppliesToolNewProduct[$key];
-                        $suppliesToolNewProductId = ($suppliesToolNewProductId == 0) ? null : $suppliesToolNewProductId;
-                        if (count($name) > 0) {
-                            $modelImportDetail->insert($suppliesToolNewMoney / $suppliesToolNewAmount, $suppliesToolNewAmount, $suppliesToolNewMoney, $importId, null, null, $name, $suppliesToolNewProductId);
-                        }
-                    }
-                }
-            };
             Session::put('notifyAddImport', 'Thêm thành công');
-        } else {
+        }else{
             Session::put('notifyAddImport', 'Thêm thất bại, hãy thử lại');
         }
         return redirect()->back();

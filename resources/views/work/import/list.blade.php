@@ -147,8 +147,8 @@ $currentMonth = $hFunction->currentMonth();
                                                 Chi tiết
                                             </a>
                                             @if(!$import->checkConfirm())
-                                                <span>&nbsp || &nbsp</span>
-                                                <a class="qc_work_import_delete qc-link"
+                                                <span>&nbsp | &nbsp</span>
+                                                <a class="qc_work_import_delete qc-link-red-bold"
                                                    data-href="{!! route('qc.work.import.delete.get',$importId) !!}">
                                                     Hủy
                                                 </a>
