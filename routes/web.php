@@ -1226,7 +1226,25 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     //--------------------- CHI ---------------------
     #thanh toan mua vat tu
     Route::group(['prefix' => 'pay-import'], function () {
-        Route::get('/{$monthFilter?}/{$yearFilter?}/{payStatusFilter?}/{staffFilterId?}', ['as' => 'qc.work.pay.import.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@detailPay']);
+        //xem chi tiết
+        Route::get('view/{importId?}', ['as' => 'qc.work.pay.import.get.view.get', 'uses' => 'Work\Pay\Import\ImportController@viewImport']);
+
+        //thêm mới
+        //Route::get('add', ['as' => 'qc.ad3d.store.import.add.get', 'uses' => 'Ad3d\Store\Import\ImportController@getAdd']);
+        //Route::post('add', ['as' => 'qc.ad3d.Store.import.add.post', 'uses' => 'Ad3d\Store\Import\ImportController@postAdd']);
+
+        //Xóa
+        //Route::get('del/{importId?}', ['as' => 'qc.ad3d.store.import.del.get', 'uses' => 'Ad3d\Store\Import\ImportController@deleteSupplies']);
+
+        //tanh toan hoa don
+        #Route::get('pay/{importId?}', ['as' => 'qc.work.pay.import.pay.get', 'uses' => 'Work\Pay\Import\ImportController@getPay']);
+        #Route::post('pay/{importId?}', ['as' => 'qc.work.pay.import.pay.post', 'uses' => 'Work\Pay\Import\ImportController@postPay']);
+
+        //Duyệt
+        Route::get('confirm/{importId?}', ['as' => 'qc.work.pay.import.confirm.get', 'uses' => 'Work\Pay\Import\ImportController@getConfirm']);
+        Route::post('confirm/{importId?}', ['as' => 'qc.work.pay.import.confirm.post', 'uses' => 'Work\Pay\Import\ImportController@postConfirm']);
+
+        Route::get('/{monthFilter?}/{yearFilter?}/{payStatusFilter?}/{staffFilterId?}', ['as' => 'qc.work.pay.import.get', 'uses' => 'Work\Pay\Import\ImportController@index']);
     });
 
     #chi hoat dong

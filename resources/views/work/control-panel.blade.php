@@ -56,7 +56,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.import.get') !!}">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.pay.import.get') !!}">
                     CHI
                 </a>
             </div>

@@ -70,7 +70,7 @@ if ($viewLoginObject == 'work') {
     $href = route('qc.work.salary.before_pay.get');
 } elseif ($viewLoginObject == 'payImport') { # thong tin chi
     $label = 'Chi';
-    $href = route('qc.work.import.get');
+    $href = route('qc.work.pay.import.get');
 } elseif ($viewLoginObject == 'payActivity') { # thong tin chi
     $label = 'Chi';
     $href = route('qc.work.pay.pay_activity.get');
