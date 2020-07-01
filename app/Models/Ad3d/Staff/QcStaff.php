@@ -29,6 +29,7 @@ use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
+use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Work\QcWork;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
@@ -826,6 +827,21 @@ class QcStaff extends Model
     {
         $modelToolAllocation = new QcToolAllocation();
         return $modelToolAllocation->listIdOfReceiveStaff($this->checkIdNull($receiveStaffId));
+    }
+
+    //---------- ----------- cong cu ----------- -----------
+    # tai tat ca cty
+    public function totalToolReceive($toolId, $staffId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        return $modelToolAllocationDetail->totalToolOfStaff($toolId, $staffId);
+    }
+
+    # tai 1 cty
+    public function totalToolReceiveOfCompany($toolId, $staffId, $companyId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        return $modelToolAllocationDetail->totalToolOfStaffAndCompany($staffId, $companyId, $toolId);
     }
 
     //---------- trả vật tư -----------

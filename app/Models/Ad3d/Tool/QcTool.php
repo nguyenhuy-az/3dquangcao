@@ -91,22 +91,23 @@ class QcTool extends Model
     #============ =========== ============ Lấy thông tin ============= =========== ==========
     public function infoFromSuggestionName($name)
     {
-        return QcTool::where('name', 'like', "%$name%")->orderBy('name', 'DESC')->get();
+        return QcTool::where('name', 'like', "%$name%")->orderBy('name', 'ASC')->get();
     }
 
     # lay thong tin theo loai cong cu
     public function selectAllInfo($type = null)
     {
         if (empty($type)) {
-            return QcTool::orderBy('name', 'DESC')->select('*');
+            return QcTool::orderBy('name', 'ASC')->select('*');
         } else {
-            return QcTool::where('type', $type)->orderBy('name', 'DESC')->select('*');
+            return QcTool::where('type', $type)->orderBy('name', 'ASC')->select('*');
         }
     }
 
-    public function listIdByName($name)
+    # lay thong tin theo danh sach ma cong cu co san
+    public function getInfoByListId($listId)
     {
-        return QcTool::where('name', 'like', "%$name%")->pluck('tool_id');
+        return QcTool::whereIn('tool_id', $listId)->get();
     }
 
     public function getInfoByName($name)

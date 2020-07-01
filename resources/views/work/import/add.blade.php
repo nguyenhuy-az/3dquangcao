@@ -61,7 +61,7 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                         </div>
                         <div class="row">
                             <div id="qc_work_import_add_image_wrap" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                @include('work.pay.import.add-image')
+                                @include('work.import.add-image')
                             </div>
                         </div>
                         <div class="row">

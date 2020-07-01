@@ -154,13 +154,6 @@ var qc_work = {
             qc_main.url_replace(href);
         }
     },
-    tool: {
-        confirmReceive: function (href) {
-            if (confirm('Tôi đã nhận đồ nghề này')) {
-                qc_master_submit.ajaxHasReload(href, '#qc_master', false);
-            }
-        }
-    },
     money: {
         receive: {
             postTransfer: function (form) {
@@ -371,12 +364,6 @@ $(document).ready(function () {
 
 });
 
-//===================== ĐO NGHE ===========================
-$(document).ready(function () {
-    $('body').on('click', '.qc_work_tool_wrap .qc_work_tool_confirm_receive_act', function () {
-        qc_work.tool.confirmReceive($(this).data('href'));
-    });
-});
 //====================== DANG NHAP ========================
 $(document).ready(function () {
     $('body').on('click', '.qc_work_login', function () {

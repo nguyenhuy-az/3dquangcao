@@ -10,19 +10,16 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
-
-$dataToolAllocation = 0;// $dataStaff->toolAllocationOfReceiveStaffInfo();
+$companyId = $dataStaff->companyId();
+$hrefIndex = route('qc.work.tool.private.get');
+$currentMonth = $hFunction->currentMonth();
 ?>
-@extends('work.index')
-@section('qc_work_body')
+@extends('work.tool.private.index')
+@section('qc_work_tool_private_body')
     <div class="row qc_work_tool_wrap">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <h3>Danh sách đồ nghề</h3>
-                </div>
-            </div>
+        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-6 col-lg-6">
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
@@ -31,38 +28,41 @@ $dataToolAllocation = 0;// $dataStaff->toolAllocationOfReceiveStaffInfo();
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Dụng cụ</th>
-                                <th class="text-center">Ngày phát</th>
-                                <th class="text-center">Số lượng</th>
-                                <th class="text-right">Trạng thái</th>
+                                <th class="text-center">Số lượng nhận</th>
+                                <th class="text-center">Số lượng trả</th>
+                                <th class="text-center">Trạng thái</th>
                             </tr>
-                            @if($hFunction->checkCount($dataToolAllocationDetail))
-                                @foreach($dataToolAllocationDetail as $toolAllocationDetail)
+                            @if($hFunction->checkCount($dataTool))
+                                @foreach($dataTool as $tool)
                                     <?php
-                                    $detailId = $toolAllocationDetail->detailId();
-                                    $dataToolAllocation = $toolAllocationDetail->toolAllocation;
-                                    $allocationDate = $dataToolAllocation->allocationDate();
-                                    $allocationId = $dataToolAllocation->allocationId();
+                                    $toolId = $tool->toolId();
+                                    $toolName = $tool->name();
+                                    $totalToolReceiveOfStaff = $dataStaff->totalToolReceiveOfCompany($toolId, $loginStaffId, $companyId);
+                                    $totalToolReturnOfStaff = 0;
                                     ?>
-                                    <tr data-detail="{!! $detailId !!}" >
+                                    <tr class="@if($totalToolReceiveOfStaff == 0) info @endif"
+                                        data-detail="{!! $toolId !!}">
                                         <td class="text-center">
                                             {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
                                         </td>
                                         <td>
-                                            {!!  $toolAllocationDetail->tool->name() !!}
+                                            {!!  $toolName !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! date('d-m-Y',strtotime($allocationDate)) !!}
+                                            {!! $totalToolReceiveOfStaff !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! $toolAllocationDetail->amount() !!}
+                                            {!! $toolId !!}
                                         </td>
-                                        <td class="text-right">
-                                            @if($dataToolAllocation->checkConfirm())
-                                                <em class="qc-color-grey">Đã xác nhận</em>
+                                        <td class="text-center">
+                                            @if($totalToolReceiveOfStaff > $totalToolReturnOfStaff)
+                                                <a class="qc-link-green-bold"
+                                                   href="{!! route('qc.work.tool.private.return.get', $toolId) !!}">
+                                                    Giao lại
+                                                </a>
                                             @else
-                                                <a class="qc_work_tool_confirm_receive_act qc-link-green"
-                                                   data-href="{!! route('qc.work.tool.confirm_receive.get', $allocationId)  !!}">
-                                                    Xác nhận
+                                                <a class="qc-link-bold">
+                                                    Yêu cầu phát
                                                 </a>
                                             @endif
                                         </td>

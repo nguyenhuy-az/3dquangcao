@@ -64,7 +64,7 @@ class ImportController extends Controller
         $dataImport = $dataImportAll->paginate(30);
         //danh sach NV
         $dataListStaff = $modelCompany->staffInfoActivityOfListCompanyId($searchCompanyFilterId);
-        return view('work.pay.import.list', compact('dataAccess', 'modelStaff','dataListStaff', 'dataImport', 'dayFilter', 'monthFilter', 'yearFilter', 'payStatusFilter', 'staffFilterId'));
+        return view('work.pay.import.list', compact('dataAccess', 'modelStaff', 'dataListStaff', 'dataImport', 'dayFilter', 'monthFilter', 'yearFilter', 'payStatusFilter', 'staffFilterId'));
 
     }
 
@@ -74,15 +74,16 @@ class ImportController extends Controller
         $modelStaff = new QcStaff();
         $modelImport = new QcImport();
         $dataImport = $modelImport->getInfo($importId);
-        return view('work.pay.import.view', compact('modelStaff','dataImport'));
+        return view('work.pay.import.view', compact('modelStaff', 'dataImport'));
     }
-        # ======== ====== xac nhan hoa don mua ========= ========
+
+    # ======== ====== xac nhan hoa don mua ========= ========
     public function getConfirm($importId)
     {
         $modelStaff = new QcStaff();
         $modelImport = new QcImport();
         $dataImport = $modelImport->getInfo($importId);
-        return view('work.pay.import.confirm', compact('modelStaff','dataImport'));
+        return view('work.pay.import.confirm', compact('modelStaff', 'dataImport'));
     }
 
     public function postConfirm($importId)
@@ -116,14 +117,15 @@ class ImportController extends Controller
         }
         # chi tiet hoa don mua
         $dataImportDetail = $modelImportDetail->infoOfImport($importId);
-        echo $confirmPayStatus;
-        die();
+        # xac nhan hoa don
         if ($modelImport->confirmImport($importId, $confirmPayStatus, $exactlyStatus, $loginStaffId, $confirmNote)) {
-            if ($confirmPayStatus < 2) { // nhap chinh xac
-                //thanh toan cho nguoi mua
+            # nhap chinh xac - dươc duỵet
+            if ($modelImport->checkExactlyStatus($importId)) {
+                //co thanh toan cho nguoi mua
                 if ($confirmPayStatus == 1) {
                     $modelImportPay->insert($modelImport->totalMoneyOfImport($importId), $importId, $loginStaffId);
                 }
+
                 //cap nhat chi tiet
                 foreach ($dataImportDetail as $key => $importDetail) {
                     $detailId = $importDetail->detailId();
@@ -133,11 +135,11 @@ class ImportController extends Controller
                     $importToolId = $importDetail->toolId();
                     $importSuppliesId = $importDetail->suppliesId();
                     $importNewName = $importDetail->newName();
+                    //$importNewUnit = $importDetail->newUnit();
                     if ($detailId == $confirmDetailId[$key]) {
-                        if (!empty($importNewName)) {
-                            // vat lieu moi
+                        if (!empty($importNewName)) { # vat lieu moi
                             if ($confirmNewSuppliesTool[$key] == 1) {
-                                // 1 - phan loai vat tu
+                                // 1 - phan loai la vat tu
                                 $dataCheckSupplies = $modelSupplies->getInfoByName($importNewName);
                                 #kiem tra vat đa ton tai theo ten
                                 if (count($dataCheckSupplies) > 0) {
@@ -152,13 +154,13 @@ class ImportController extends Controller
                                 }
                                 #thêm vật tư mới vào hệ thống
                                 if (!empty($suppliesId)) {
-                                    // cập nhật chi tiết nhập
+                                    #cập nhật chi tiết nhập
                                     $modelImportDetail->updateInfo($detailId, $importPrice, $importAmount, $importTotalMoney, $importToolId, $suppliesId, $importNewName);
-                                    // thêm vậy tư vào kho
+                                    #thêm vậy tư vào kho
                                     $modelCompanyStore->insert($importAmount, $importCompanyId, null, $suppliesId);
                                 }
                             } elseif ($confirmNewSuppliesTool[$key] == 2) {
-                                // phan loai dung cu
+                                // phan loai la dung cu
                                 $dataCheckTool = $modelTool->getInfoByName($importNewName);
                                 #kiem tra cong cu đa ton tai theo ten
                                 if (count($dataCheckTool) > 0) {
@@ -180,9 +182,10 @@ class ImportController extends Controller
                                         $newStoreId = $modelCompanyStore->insertGetId();
                                         // cap phat dụng cụ cho nhân viên mua
                                         if ($allocationStatus[$key] == 1) { // phát luôn cho nhân viên
-                                            if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffId)) {  //phieu cap phat dung cu
+                                            if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffId, 1)) {  //phieu cap phat dung cu
                                                 $newAllocationId = $modelToolAllocation->insertGetId();
-                                                $modelToolAllocationDetail->insert($importAmount, 1, $toolId, $newAllocationId, $importCompanyId, $newStoreId); // chi tiet cap phat
+                                                $newStatus = 1; # dụng cu moi
+                                                $modelToolAllocationDetail->insert($importAmount, $newStatus, $toolId, $newAllocationId, $importCompanyId, $newStoreId); // chi tiet cap phat
                                             }
                                         }
                                     }
@@ -209,9 +212,10 @@ class ImportController extends Controller
                                 }
                                 // cap phat dụng cu cho nhân viên mua
                                 if ($allocationStatus[$key] == 1) { // phát luôn cho nhân viên
-                                    if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffId)) {  //phieu cap dung cu
+                                    if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffId, 1)) {  //phieu cap dung cu
                                         $newAllocationId = $modelToolAllocation->insertGetId();
-                                        $modelToolAllocationDetail->insert($importAmount, 1, $importToolId, $newAllocationId, $importCompanyId, $storeId); // chi tiet cap
+                                        $newStatus = 1; # dụng cu moi
+                                        $modelToolAllocationDetail->insert($importAmount, $newStatus, $importToolId, $newAllocationId, $importCompanyId, $storeId); // chi tiet cap
                                     }
                                 }
                             }
@@ -219,9 +223,7 @@ class ImportController extends Controller
                     }
                 }
             }
-
         }
-        // return redirect()->back();// route('qc.ad3d.store.import.get');
     }
 
     # ======== ====== Thanh toan ========= ========

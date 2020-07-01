@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\ToolAllocationDetail;
 
+use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 use Illuminate\Database\Eloquent\Model;
 
 class QcToolAllocationDetail extends Model
@@ -74,10 +75,18 @@ class QcToolAllocationDetail extends Model
         return $this->belongsTo('App\Models\Ad3d\ToolAllocation\QcToolAllocation', 'allocation_id', 'allocation_id');
     }
 
+    # tong so luong tat ca cong cu cua 1 lan giao
     public function totalAmountOfAllocation($allocationId)
     {
         return QcToolAllocationDetail::where('allocation_id', $allocationId)->sum('amount');
     }
+
+    # tong so luong tat ca cong cu cua 1 lan hoac nhieu lan giao
+    public function totalAmountOfListAllocationId($listAllocationId)
+    {
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->sum('amount');
+    }
+
 
     public function toolAllocationDetailOfAllocation($allocationId)
     {
@@ -89,9 +98,60 @@ class QcToolAllocationDetail extends Model
         return QcToolAllocationDetail::where('allocation_id', $allocationId)->get();
     }
 
+    #thong tin cua tat ca cty
     public function infoOfListToolAllocation($listAllocationId)
     {
         return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->orderBy('created_at', 'DESC')->get();
+    }
+
+    #thong tin cua 1 cty
+    public function infoOfListToolAllocationAndCompany($listAllocationId, $companyId)
+    {
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('company_id', $companyId)->orderBy('created_at', 'DESC')->get();
+    }
+
+
+    # tong so luong 1 cong cu cua 1 lan giao
+    public function totalToolOfAllocation($allocationId, $toolId)
+    {
+        return QcToolAllocationDetail::where('allocation_id', $allocationId)->where('tool_id', $toolId)->sum('amount');
+    }
+
+    # tong so luong 1 cong cu cua 1 lan hoac nhieu lan giao tai cac cty
+    public function totalToolOfListAllocationId($listAllocationId, $toolId)
+    {
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('tool_id', $toolId)->sum('amount');
+    }
+
+    # tong so luong 1 cong cu cua 1 lan hoac nhieu lan giao tai 1 cty
+    public function totalToolOfListAllocationAndCompany($listAllocationId, $companyId, $toolId)
+    {
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('company_id',$companyId)->where('tool_id', $toolId)->sum('amount');
+    }
+
+
+    # danh sanh ma dung cu da ban giao cho nhan vien
+    public function listToolIdOfStaffAndCompany($staffId, $companyId)
+    {
+        $modelToolAllocation = new QcToolAllocation();
+        $listAllocationId = $modelToolAllocation->listIdOfReceiveStaff($staffId);
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('company_id',$companyId)->groupBy('tool_id')->pluck('tool_id');
+    }
+
+    //========= ========== ========== lay thong tin cua nhan vien ========== ========== ==========
+    # tai tat ca cac cty
+    public function totalToolOfStaff($staffId, $toolId)
+    {
+        $modelToolAllocation = new QcToolAllocation();
+        return $this->totalToolOfListAllocationId($modelToolAllocation->listIdOfReceiveStaff($staffId), $toolId);
+    }
+
+    # cua 1 cty
+    public function totalToolOfStaffAndCompany($staffId,$companyId, $toolId)
+    {
+        $modelToolAllocation = new QcToolAllocation();
+        $listAllocationId = $modelToolAllocation->listIdOfReceiveStaff($staffId);
+        return $this->totalToolOfListAllocationAndCompany($listAllocationId, $companyId, $toolId);
     }
 
     //========= ========== ========== lấy thông tin ========== ========== ==========

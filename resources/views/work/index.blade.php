@@ -82,7 +82,7 @@ if ($viewLoginObject == 'work') {
     $href = route('qc.work.pay.keep_money.get');
 } elseif ($viewLoginObject == 'tool') {
     $label = 'Đồ nghề';
-    $href = route('qc.work.tool.get');
+    $href = route('qc.work.tool.private.get');
 } elseif ($viewLoginObject == 'productTypePrice') {
     $label = 'Bảng giá';
     $href = route('qc.work.product_type_price.get');

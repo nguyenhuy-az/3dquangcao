@@ -139,56 +139,6 @@ $companyFilterId = $dataCompanyFilter->companyId();
                             </tr>
                         @endif
 
-                        {{--cu--}}
-                        @if($hFunction->checkCount($dataCompanyStore))
-                            <?php
-                            $perPage = $dataCompanyStore->perPage();
-                            $currentPage = $dataCompanyStore->currentPage();
-                            $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
-                            ?>
-                            @foreach($dataCompanyStore as $companyStore)
-                                <?php
-                                $storeId = $companyStore->storeId();
-                                $updateDate = $companyStore->updateDate();
-                                $amount = $companyStore->amount();
-                                $toolAllocationDetailTotalAmount = $companyStore->toolAllocationDetailTotalAmount();
-                                $amountInventoryInStore = $amount - $toolAllocationDetailTotalAmount;
-
-                                $dataTool = $companyStore->tool;
-                                ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $storeId !!}">
-                                    <td class="text-center">
-                                        {!! $n_o +=1 !!}
-                                    </td>
-                                    <td>
-                                        {!! $dataTool->name() !!}
-                                    </td>
-                                    <td>
-                                        {!! $dataTool->getLabelType() !!}
-                                    </td>
-                                    <td class="qc-color-red text-center">
-                                        {!! $companyStore->amount() !!}
-                                    </td>
-                                    <td class="text-center">
-                                        {!! $toolAllocationDetailTotalAmount !!}
-                                    </td>
-                                    <td class="qc-color-red text-center">
-                                        {!! $amountInventoryInStore !!}
-                                    </td>
-                                </tr>
-                            @endforeach
-                            <tr>
-                                <td class="text-center" colspan="6">
-                                    {!! $hFunction->page($dataCompanyStore) !!}
-                                </td>
-                            </tr>
-                        @else
-                            <tr>
-                                <td class="text-center" colspan="6">
-                                    Không có đữ liệu
-                                </td>
-                            </tr>
-                        @endif
                     </table>
                 </div>
             </div>

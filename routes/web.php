@@ -1237,8 +1237,8 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         //Route::get('del/{importId?}', ['as' => 'qc.ad3d.store.import.del.get', 'uses' => 'Ad3d\Store\Import\ImportController@deleteSupplies']);
 
         //tanh toan hoa don
-        #Route::get('pay/{importId?}', ['as' => 'qc.work.pay.import.pay.get', 'uses' => 'Work\Pay\Import\ImportController@getPay']);
-        #Route::post('pay/{importId?}', ['as' => 'qc.work.pay.import.pay.post', 'uses' => 'Work\Pay\Import\ImportController@postPay']);
+        Route::get('pay/{importId?}', ['as' => 'qc.work.pay.import.pay.get', 'uses' => 'Work\Pay\Import\ImportController@getPay']);
+        Route::post('pay/{importId?}', ['as' => 'qc.work.pay.import.pay.post', 'uses' => 'Work\Pay\Import\ImportController@postPay']);
 
         //Duyệt
         Route::get('confirm/{importId?}', ['as' => 'qc.work.pay.import.confirm.get', 'uses' => 'Work\Pay\Import\ImportController@getConfirm']);
@@ -1303,16 +1303,20 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
     //nhận đồ nghề
     Route::group(['prefix' => 'tool'], function () {
-        // xem chi tiết
-        Route::get('view/{toolId?}', ['as' => 'qc.work.tool.view.get', 'uses' => 'Work\Tool\ToolController@viewTool']);
+        Route::group(['prefix' => 'private'], function () {
+            #xem chi tiết
+            Route::get('view/{toolId?}', ['as' => 'qc.work.tool.private.view.get', 'uses' => 'Work\Tool\ToolController@viewTool']);
 
-        //Route::get('add', ['as' => 'qc.work.import.add.get', 'uses' => 'Work\Import\ImportController@getAdd']);
-        //Route::post('add', ['as' => 'qc.work.import.add.post', 'uses' => 'Work\Import\ImportController@postAdd']);
+            # tra lai do nghe
+            Route::get('add/{toolId?}', ['as' => 'qc.work.tool.private.return.get', 'uses' => 'Work\Tool\ToolController@getReturn']);
+            Route::post('add', ['as' => 'qc.work.tool.private.return.post', 'uses' => 'Work\Tool\ToolController@postReturn']);
 
-        //xác nhận đồ nghề
-        Route::get('confirm-receive/{allocationId?}', ['as' => 'qc.work.tool.confirm_receive.get', 'uses' => 'Work\Tool\ToolController@getConfirmReceive']);
+            #xác nhận đồ nghề
+            Route::get('confirm-receive/{allocationId?}', ['as' => 'qc.work.tool.private.confirm_receive.get', 'uses' => 'Work\Tool\ToolController@getConfirmReceive']);
 
-        Route::get('/', ['as' => 'qc.work.tool.get', 'uses' => 'Work\Tool\ToolController@index']);
+            Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.tool.private.get', 'uses' => 'Work\Tool\ToolController@index']);
+        });
+
     });
 
     //nhận đồ nghề

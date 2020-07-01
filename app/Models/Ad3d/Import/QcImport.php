@@ -433,6 +433,8 @@ class QcImport extends Model
 
     public function checkExactlyStatus($importId = null)
     {
-        return ($this->exactlyStatus($importId) == 0) ? false : true;
+        $exactlyStatus = $this->exactlyStatus($importId);
+        $exactlyStatus = (is_int($exactlyStatus)) ?$exactlyStatus:$exactlyStatus[0] ;
+        return ($exactlyStatus == 0) ? false : true;
     }
 }

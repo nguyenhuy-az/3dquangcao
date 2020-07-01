@@ -16,10 +16,11 @@ class QcToolAllocation extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($allocationDate, $allocationStaffId, $receiveStaffId)
+    public function insert($allocationDate, $allocationStaffId, $receiveStaffId, $confirmStatus = 0)
     {
         $hFunction = new \Hfunction();
         $modelToolAllocation = new QcToolAllocation();
+        $modelToolAllocation->confirmStatus = $confirmStatus;
         $modelToolAllocation->allocationDate = $allocationDate;
         $modelToolAllocation->allocationStaff_id = $allocationStaffId;
         $modelToolAllocation->receiveStaff_id = $receiveStaffId;
@@ -104,7 +105,7 @@ class QcToolAllocation extends Model
     {
         if (empty($dateFilter)) {
             return QcToolAllocation::whereIn('receiveStaff_id', $listStaffId)->orderBy('allocationDate', 'DESC')->select('*');
-        }else{
+        } else {
             return QcToolAllocation::whereIn('receiveStaff_id', $listStaffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('allocationDate', 'DESC')->select('*');
         }
     }
