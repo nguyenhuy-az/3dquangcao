@@ -89,6 +89,16 @@ class QcTool extends Model
     }
 
     #============ =========== ============ Lấy thông tin ============= =========== ==========
+    # lay danh sach id the type
+    public function listIdByType($type = 0)
+    {
+        if ($type > 0) {
+            return QcTool::where('type', $type)->pluck('tool_id');
+        } else { # mac dinh lay tat ca
+            return QcTool::select('*')->pluck('tool_id');
+        }
+    }
+
     # lay danh sach ma dong cu dung chung
     public function publicListId()
     {

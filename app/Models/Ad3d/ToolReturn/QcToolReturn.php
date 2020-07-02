@@ -15,11 +15,11 @@ class QcToolReturn extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($returnDate, $workId)
+    public function insert($workId)
     {
         $hFunction = new \Hfunction();
         $modelToolReturn = new QcToolReturn();
-        $modelToolReturn->returnDate = $returnDate;
+        $modelToolReturn->returnDate = $hFunction->carbonNow();
         $modelToolReturn->work_id = $workId;
         $modelToolReturn->created_at = $hFunction->createdAt();
         if ($modelToolReturn->save()) {
@@ -41,6 +41,25 @@ class QcToolReturn extends Model
         return QcToolReturn::where('return_id', $returnId)->delete();
     }
     //========== ========= ========= RELATION ========== ========= ==========
+    //---------- nhân viên tra -----------
+    public function companyStaffWork()
+    {
+        return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
+    }
+
+    # lay thong tin tra
+    public function infoOfWork($workId)
+    {
+
+        return QcToolReturn::where('work_id', $workId)->orderBy('returnDate', 'DESC')->get();
+    }
+
+    # danh sach ma ban giao
+    public function listIdOfWork($workId)
+    {
+        return QcToolReturn::where('work_id', $workId)->orderBy('returnDate', 'DESC')->pluck('return_id');
+    }
+
     //---------- thong tin giao -----------
     public function work()
     {

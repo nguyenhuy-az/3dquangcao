@@ -7,6 +7,7 @@ use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
+use App\Models\Ad3d\ToolReturnDetail\QcToolReturnDetail;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
 
@@ -67,6 +68,18 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::where('work_id', $this->checkIdNull($workId))->update(['level' => $level]);
     }
 
+    # ---------- ---------- tra do nghe ---------- ----------
+    public function toolReturn()
+    {
+        return $this->hasMany('App\Models\Ad3d\ToolReturn\QcToolReturn', 'work_id ', 'work_id');
+    }
+
+    # thong tin tra cua 1 NV
+    public function totalToolReturn($toolId, $workId)
+    {
+        $modelToolReturnDetail = new QcToolReturnDetail();
+        return $modelToolReturnDetail->totalToolOfWork($toolId, $workId);
+    }
     # ---------- ---------- giao do nghe ---------- ----------
     public function toolAllocation()
     {
@@ -87,7 +100,7 @@ class QcCompanyStaffWork extends Model
     }
 
     //---------- ----------- cong cu ----------- -----------
-    # tai tat ca cty
+    # thong nhan dung cu tai tat ca cty
     public function totalToolReceive($toolId, $workId)
     {
         $modelToolAllocationDetail = new QcToolAllocationDetail();

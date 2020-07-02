@@ -91,6 +91,11 @@ class QcCompanyStore extends Model
         return QcCompanyStore::where('company_id', $companyId)->where('tool_id', $toolId)->sum('amount');
     }
 
+    public function getInfoOfListToolAndCompany($companyId, $listToolId)
+    {
+        return QcCompanyStore::where('company_id', $companyId)->whereIn('tool_id', $listToolId)->get();
+    }
+
     //---------- phat dung cu -----------
     public function toolAllocationDetail()
     {
@@ -129,6 +134,12 @@ class QcCompanyStore extends Model
     public function amountOfTool($toolId)
     {
         return QcCompanyStore::where('tool_id', $toolId)->sum('amount');
+    }
+
+    # lay danh sach ma kho cua cong cu
+    public function listIdOfTool($toolId)
+    {
+        return QcCompanyStore::where('tool_id', $toolId)->pluck('store_id');
     }
 
     #danh sach ma dung cu theo kho

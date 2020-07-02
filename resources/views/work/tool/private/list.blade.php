@@ -51,8 +51,12 @@ $dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
                                         $dataTool = $companyStore->tool;
                                         $toolId = $dataTool->toolId();
                                         $toolName = $dataTool->name();
+                                        # so dung cu da duoc ban giao
                                         $totalToolReceiveOfStaff = $dataCompanyStaffWork->totalToolReceive($toolId, $workId);
-                                        $totalToolReturnOfStaff = 0;
+                                        # so luong dung cu dc duoc bao tra
+                                        $totalToolReturnOfStaff = $dataCompanyStaffWork->totalToolReturn($toolId, $workId);
+                                        # so luong dung cu tra duoc xac nhan
+                                        $totalToolReturnConfirmed = 0;
                                         ?>
                                         <tr class="@if($totalToolReceiveOfStaff == 0) info @endif">
                                             <td class="text-center">
@@ -65,10 +69,10 @@ $dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
                                                 {!! $totalToolReceiveOfStaff !!}
                                             </td>
                                             <td class="text-center">
-                                                {!! $toolId !!}
+                                                {!! $totalToolReturnOfStaff !!}
                                             </td>
                                             <td class="text-center">
-                                                {!! $toolId !!}
+                                                {!! $totalToolReturnConfirmed !!}
                                             </td>
                                             <td class="text-center">
                                                 @if($totalToolReceiveOfStaff > $totalToolReturnOfStaff)
@@ -77,10 +81,10 @@ $dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
                                                         Giao lại
                                                     </a>
                                                 @else
-                                                    <a class="qc-link-bold">
+                                                    <em class="qc-color-grey">
                                                         {{--Yêu cầu phát--}}
                                                         Chưa có
-                                                    </a>
+                                                    </em>
                                                 @endif
                                             </td>
                                         </tr>

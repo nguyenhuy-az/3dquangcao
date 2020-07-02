@@ -106,7 +106,7 @@ class ImportController extends Controller
         $importStaffId = $modelImport->importStaffId($importId)[0];
         # lay ma lam viec tai cty NV nhap hoa don
         $importStaffWorkId = $modelCompanyStaffWork->workIdActivityOfStaff($importStaffId);
-        $importStaffWorkId = (is_int($importStaffWorkId))?$importStaffWorkId:$importStaffWorkId[0];
+        $importStaffWorkId = (is_int($importStaffWorkId)) ? $importStaffWorkId : $importStaffWorkId[0];
 
         $confirmDetailId = Request::input('txtDetail');
         $confirmNewSuppliesTool = Request::input('cbNewSuppliesTool');
@@ -186,15 +186,18 @@ class ImportController extends Controller
                                     $modelImportDetail->updateInfo($detailId, $importPrice, $importAmount, $importTotalMoney, $toolId, $importSuppliesId, $importNewName);
 
                                     // thêm dụng cụ mới vào kho
-                                    if ($modelCompanyStore->insert($importAmount, $importCompanyId, $toolId, null)) {
-                                        $newStoreId = $modelCompanyStore->insertGetId();
-                                        // cap phat dụng cụ cho nhân viên mua
-                                        if ($allocationStatus[$key] == 1) { // phát luôn cho nhân viên
-                                            if (!empty($importStaffWorkId)) {
-                                                if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffWorkId, 1)) {  //phieu cap phat dung cu
-                                                    $newAllocationId = $modelToolAllocation->insertGetId();
-                                                    $newStatus = 1; # dụng cu moi
-                                                    $modelToolAllocationDetail->insert($importAmount, $newStatus, $toolId, $newAllocationId, $importCompanyId, $newStoreId); // chi tiet cap phat
+                                    $dataCompanyStore = $modelCompanyStore->infoOfToolAndCompany($toolId, $importCompanyId);
+                                    if (!$hFunction->checkCount($dataCompanyStore)) {
+                                        if ($modelCompanyStore->insert($importAmount, $importCompanyId, $toolId, null)) {
+                                            $newStoreId = $modelCompanyStore->insertGetId();
+                                            // cap phat dụng cụ cho nhân viên mua
+                                            if ($allocationStatus[$key] == 1) { // phát luôn cho nhân viên
+                                                if (!empty($importStaffWorkId)) {
+                                                    if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffWorkId, 1)) {  //phieu cap phat dung cu
+                                                        $newAllocationId = $modelToolAllocation->insertGetId();
+                                                        $newStatus = 1; # dụng cu moi
+                                                        $modelToolAllocationDetail->insert($importAmount, $newStatus, $newAllocationId, $newStoreId); // chi tiet cap phat
+                                                    }
                                                 }
                                             }
                                         }
@@ -226,7 +229,7 @@ class ImportController extends Controller
                                         if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffWorkId, 1)) {  //phieu cap dung cu
                                             $newAllocationId = $modelToolAllocation->insertGetId();
                                             $newStatus = 1; # dụng cu moi
-                                            $modelToolAllocationDetail->insert($importAmount, $newStatus, $importToolId, $newAllocationId, $importCompanyId, $storeId); // chi tiet cap
+                                            $modelToolAllocationDetail->insert($importAmount, $newStatus, $newAllocationId, $storeId); // chi tiet cap
                                         }
                                     }
                                 }

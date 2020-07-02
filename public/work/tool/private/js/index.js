@@ -23,7 +23,7 @@ var qc_work_tool_private = {
         },
         checkSelectTool: function () {
             var checkStatus = false;
-            $('#frmWorkToolPrivateReturn .txtReturnTool').filter(function () {
+            $('#frmWorkToolPrivateReturn .txtReturnStore').filter(function () {
                 if ($(this).is(':checked')) {
                     checkStatus = true;
                 }

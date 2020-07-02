@@ -2,13 +2,14 @@
 
 namespace App\Models\Ad3d\ToolAllocationDetail;
 
+use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 use Illuminate\Database\Eloquent\Model;
 
 class QcToolAllocationDetail extends Model
 {
     protected $table = 'qc_tool_allocation_detail';
-    protected $fillable = ['detail_id', 'amount', 'newStatus', 'created_at', 'tool_id', 'company_id', 'store_id', 'allocation_id'];
+    protected $fillable = ['detail_id', 'amount', 'newStatus', 'created_at', 'store_id', 'allocation_id'];
     protected $primaryKey = 'detail_id';
     public $timestamps = false;
 
@@ -16,15 +17,13 @@ class QcToolAllocationDetail extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($amount, $newStatus, $toolId, $allocationId, $companyId, $storeId)
+    public function insert($amount, $newStatus, $allocationId, $storeId)
     {
         $hFunction = new \Hfunction();
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         $modelToolAllocationDetail->amount = $amount;
         $modelToolAllocationDetail->newStatus = $newStatus;
-        $modelToolAllocationDetail->tool_id = $toolId;
         $modelToolAllocationDetail->store_id = $storeId;
-        $modelToolAllocationDetail->company_id = $companyId;
         $modelToolAllocationDetail->allocation_id = $allocationId;
         $modelToolAllocationDetail->created_at = $hFunction->createdAt();
         if ($modelToolAllocationDetail->save()) {
@@ -57,16 +56,10 @@ class QcToolAllocationDetail extends Model
         return QcToolAllocationDetail::where('store_id', $storeId)->sum('amount');
     }
 
-    //---------- công cụ -----------
-    public function tool()
+    # danh sach ma kho cua cac lan ban giao
+    public function listStoreIdOfListAllocation($listAllocationId)
     {
-        return $this->belongsTo('App\Models\Ad3d\Tool\QcTool', 'tool_id', 'tool_id');
-    }
-
-    // số lượng đã bàn giao của dụng cụ
-    public function amountAllocatedOfTool($toolId)
-    {
-        return QcToolAllocationDetail::where('tool_id', $toolId)->sum('amount');
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('store_id')->pluck('store_id');
     }
 
     //---------- phiếu bàn giao -----------
@@ -114,19 +107,21 @@ class QcToolAllocationDetail extends Model
     # tong so luong 1 cong cu cua 1 lan giao
     public function totalToolOfAllocation($allocationId, $toolId)
     {
-        return QcToolAllocationDetail::where('allocation_id', $allocationId)->where('tool_id', $toolId)->sum('amount');
+        return 1000;// QcToolAllocationDetail::where('allocation_id', $allocationId)->where('tool_id', $toolId)->sum('amount');
     }
 
     # tong so luong 1 cong cu cua 1 lan hoac nhieu lan giao tai cac cty
     public function totalToolOfListAllocationId($listAllocationId, $toolId)
     {
-        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('tool_id', $toolId)->sum('amount');
+        $modelCompanyStore = new QcCompanyStore();
+        $listStoreId = $modelCompanyStore->listIdOfTool($toolId);
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->whereIn('store_id', $listStoreId)->sum('amount');
     }
 
     # tong so luong 1 cong cu cua 1 lan hoac nhieu lan giao tai 1 cty
     public function totalToolOfListAllocationAndCompany($listAllocationId, $companyId, $toolId)
     {
-        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('company_id',$companyId)->where('tool_id', $toolId)->sum('amount');
+        return 3000;//QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('company_id',$companyId)->where('tool_id', $toolId)->sum('amount');
     }
 
 
@@ -147,8 +142,8 @@ class QcToolAllocationDetail extends Model
     }
 
     //========= ========== ========== lay thong tin cua nhan vien ========== ========== ==========
-    # tai tat ca cac cty
-    public function totalToolOfWork($toolId,$workId)
+    # tong dung cu cua 1 NV khi lam viec o 1 cty
+    public function totalToolOfWork($toolId, $workId)
     {
         $modelToolAllocation = new QcToolAllocation();
         return $this->totalToolOfListAllocationId($modelToolAllocation->listIdOfWork($workId), $toolId);

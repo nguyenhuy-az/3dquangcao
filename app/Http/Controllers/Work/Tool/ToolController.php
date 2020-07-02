@@ -11,6 +11,7 @@ use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 //use Illuminate\Http\Request;
 use App\Models\Ad3d\ToolReturn\QcToolReturn;
+use App\Models\Ad3d\ToolReturnDetail\QcToolReturnDetail;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use File;
@@ -60,8 +61,6 @@ class ToolController extends Controller
         $listStoreId = $modelToolAllocationDetail->listStoreIdOfWork($modelCompanyStaffWork->workIdActivityOfStaff($dataStaffLogin->staffId()));
         # chi danh sach cong cu da ban giao trong kho
         $dataCompanyStore = $modelCompanyStore->getInfoByListId($listStoreId);
-        //$listToolId = $modelToolAllocationDetail->listToolIdOfWork($modelCompanyStaffWork->workIdActivityOfStaff($dataStaffLogin->staffId()));
-        //$dataTool = $modelTool->getInfoByListId($listToolId);
         return view('work.tool.private.return', compact('dataAccess', 'modelStaff', 'dataCompanyStore', 'selectedStoreId'));
     }
 
@@ -71,20 +70,21 @@ class ToolController extends Controller
 
         $modelStaff = new QcStaff();
         $modelToolReturn = new QcToolReturn();
+        $modelToolReturnDetail = new QcToolReturnDetail();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelToolAllocation = new QcToolAllocation();
-        $returnTool = Request::input('txtReturnTool');
+        $returnStore = Request::input('txtReturnStore');
         $workId = $modelCompanyStaffWork->workIdActivityOfStaff($modelStaff->loginStaffId());
-        die();
+        $workId = (is_int($workId))?$workId:$workId[0];
         if (!$hFunction->checkEmpty($workId)) {
-            if ($modelToolReturn->insert($hFunction->carbonNow(), $workId)) {
+            if ($modelToolReturn->insert($workId)) {
                 $returnId = $modelToolReturn->insertGetId();
-                foreach ($returnTool as $tool) {
-                    $amount = Request::input('txtReturnAmount_' . $tool);
+                foreach ($returnStore as $storeId) {
+                    $amount = Request::input('txtReturnAmount_' . $storeId);
+                    $modelToolReturnDetail->insert($amount, $storeId, $returnId);
                 }
             }
         }
-
+        return redirect()->route('qc.work.tool.private.get');
         //dd($amount);
         //die();
     }

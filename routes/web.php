@@ -1301,7 +1301,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         });
     });
 
-    //nhận đồ nghề
+    //do nghe duoc giao
     Route::group(['prefix' => 'tool'], function () {
         Route::group(['prefix' => 'private'], function () {
             #xem chi tiết
@@ -1318,7 +1318,13 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         });
 
     });
+    //------ kho do nghe cua he thong -------
+    Route::group(['prefix' => 'store'], function () {
+        Route::group(['prefix' => 'tool'], function (){
+            Route::get('/{type?}', ['as' => 'qc.work.store.tool.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@index']);
+        });
 
+    });
     //nhận đồ nghề
     Route::group(['prefix' => 'product-type-price'], function () {
         Route::get('/{nameFilter?}', ['as' => 'qc.work.product_type_price.get', 'uses' => 'Work\ProductTypePrice\ProductTypePriceController@index']);

@@ -55,11 +55,11 @@ $dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
                                             ?>
                                             {{--chi tra nhung dung cu con lai--}}
                                             @if($totalToolReceiveOfStaff > $totalToolReturnOfStaff)
-                                                <tr class="@if($selectedToolId == $toolId) info @endif">
+                                                <tr class="@if($selectedStoreId == $storeId) info @endif">
                                                     <td class="text-center" style="padding: 0;">
                                                         <div class="form-group" style="margin: 0;">
-                                                            <input type="checkbox" class="txtReturnTool form-control"
-                                                                   name="txtReturnTool[]"
+                                                            <input type="checkbox" class="txtReturnStore form-control"
+                                                                   name="txtReturnStore[]"
                                                                    @if($selectedStoreId == $storeId) checked="checked"
                                                                    @endif value="{!! $storeId !!}">
                                                         </div>
