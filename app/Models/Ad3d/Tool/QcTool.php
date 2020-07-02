@@ -89,6 +89,30 @@ class QcTool extends Model
     }
 
     #============ =========== ============ Lấy thông tin ============= =========== ==========
+    # lay danh sach ma dong cu dung chung
+    public function publicListId()
+    {
+        return QcTool::where('type', $this->publicType())->pluck('tool_id');
+    }
+
+    # lay danh sach ma dong cu dung rieng
+    public function privateListId()
+    {
+        return QcTool::where('type', $this->privateType())->pluck('tool_id');
+    }
+
+    # dung chung
+    public function publicType()
+    {
+        return 1;
+    }
+
+    # phat cho ca nhan
+    public function privateType()
+    {
+        return 2;
+    }
+
     public function infoFromSuggestionName($name)
     {
         return QcTool::where('name', 'like', "%$name%")->orderBy('name', 'ASC')->get();

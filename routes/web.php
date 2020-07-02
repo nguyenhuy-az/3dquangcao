@@ -1308,8 +1308,8 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::get('view/{toolId?}', ['as' => 'qc.work.tool.private.view.get', 'uses' => 'Work\Tool\ToolController@viewTool']);
 
             # tra lai do nghe
-            Route::get('add/{toolId?}', ['as' => 'qc.work.tool.private.return.get', 'uses' => 'Work\Tool\ToolController@getReturn']);
-            Route::post('add', ['as' => 'qc.work.tool.private.return.post', 'uses' => 'Work\Tool\ToolController@postReturn']);
+            Route::get('return/{storeId?}', ['as' => 'qc.work.tool.private.return.get', 'uses' => 'Work\Tool\ToolController@getReturn']);
+            Route::post('return', ['as' => 'qc.work.tool.private.return.post', 'uses' => 'Work\Tool\ToolController@postReturn']);
 
             #xác nhận đồ nghề
             Route::get('confirm-receive/{allocationId?}', ['as' => 'qc.work.tool.private.confirm_receive.get', 'uses' => 'Work\Tool\ToolController@getConfirmReceive']);

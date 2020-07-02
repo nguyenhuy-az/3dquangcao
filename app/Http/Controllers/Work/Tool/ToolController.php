@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Work\Tool;
 
 
+use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
+use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Tool\QcTool;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 //use Illuminate\Http\Request;
+use App\Models\Ad3d\ToolReturn\QcToolReturn;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use File;
@@ -19,6 +22,7 @@ class ToolController extends Controller
     public function index($monthFilter = 0, $yearFilter = 0)
     {
         $modelStaff = new QcStaff();
+        $modelCompanyStore = new QcCompanyStore();
         $modelTool = new QcTool();
         $modelToolAllocation = new QcToolAllocation();
         $modelToolAllocationDetail = new QcToolAllocationDetail();
@@ -26,10 +30,11 @@ class ToolController extends Controller
             'object' => 'toolPrivate'
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
-        # danh sach dung cu cua he thong
-        $type = 2; // chi lay dung cu cap phat (1 - dùng chung / 2 - cap phat)
-        $dataTool = $modelTool->selectAllInfo($type)->get();
-        return view('work.tool.private.list', compact('dataAccess', 'modelStaff', 'dataTool', 'monthFilter', 'yearFilter'));
+        # danh sach dung cu dung de phat cho ca nha
+        $listToolId = $modelTool->privateListId();
+        # danh dach dung cua trong kho cua 1 cty
+        $dataCompanyStore = $modelCompanyStore->getInfoByListToolAndCompany($listToolId, $dataStaff->companyId());
+        return view('work.tool.private.list', compact('dataAccess', 'modelStaff', 'dataCompanyStore', 'monthFilter', 'yearFilter'));
     }
 
     #xac nhan da nhan do nghe
@@ -40,30 +45,47 @@ class ToolController extends Controller
     }
 
     # ------- -------- tra lai do nghe  -------- --------
-    public function getReturn($selectedToolId = null)
+    public function getReturn($selectedStoreId = null)
     {
+        $modelCompanyStore = new QcCompanyStore();
         $modelStaff = new QcStaff();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelTool = new QcTool();
-        $modelToolAllocation = new QcToolAllocation();
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         $dataAccess = [
             'object' => 'toolPrivate'
         ];
-        # chi danh sach cong cu da ban giao
-        $listToolId = $modelToolAllocationDetail->listToolIdOfStaff($modelStaff->loginStaffId());
-        $dataTool = $modelTool->getInfoByListId($listToolId);
-        return view('work.tool.private.return', compact('dataAccess', 'modelStaff', 'dataTool', 'selectedToolId'));
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        # danh sach ma kho
+        $listStoreId = $modelToolAllocationDetail->listStoreIdOfWork($modelCompanyStaffWork->workIdActivityOfStaff($dataStaffLogin->staffId()));
+        # chi danh sach cong cu da ban giao trong kho
+        $dataCompanyStore = $modelCompanyStore->getInfoByListId($listStoreId);
+        //$listToolId = $modelToolAllocationDetail->listToolIdOfWork($modelCompanyStaffWork->workIdActivityOfStaff($dataStaffLogin->staffId()));
+        //$dataTool = $modelTool->getInfoByListId($listToolId);
+        return view('work.tool.private.return', compact('dataAccess', 'modelStaff', 'dataCompanyStore', 'selectedStoreId'));
     }
 
     public function postReturn()
     {
+        $hFunction = new \Hfunction();
+
         $modelStaff = new QcStaff();
+        $modelToolReturn = new QcToolReturn();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelToolAllocation = new QcToolAllocation();
         $returnTool = Request::input('txtReturnTool');
-        //$returnAmount = Request::input('txtReturnAmount');
-        foreach($returnTool as $tool){
-            $amount = Request::input('txtReturnAmount_'.$tool);
-        }
+        $workId = $modelCompanyStaffWork->workIdActivityOfStaff($modelStaff->loginStaffId());
         die();
+        if (!$hFunction->checkEmpty($workId)) {
+            if ($modelToolReturn->insert($hFunction->carbonNow(), $workId)) {
+                $returnId = $modelToolReturn->insertGetId();
+                foreach ($returnTool as $tool) {
+                    $amount = Request::input('txtReturnAmount_' . $tool);
+                }
+            }
+        }
+
+        //dd($amount);
+        //die();
     }
 }

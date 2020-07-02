@@ -131,28 +131,36 @@ class QcToolAllocationDetail extends Model
 
 
     # danh sanh ma dung cu da ban giao cho nhan vien
-    public function listToolIdOfStaffAndCompany($staffId, $companyId)
+    public function listToolIdOfWork($workId)
     {
         $modelToolAllocation = new QcToolAllocation();
-        $listAllocationId = $modelToolAllocation->listIdOfReceiveStaff($staffId);
-        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('company_id',$companyId)->groupBy('tool_id')->pluck('tool_id');
+        $listAllocationId = $modelToolAllocation->listIdOfWork($workId);
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('tool_id')->pluck('tool_id');
+    }
+
+    # danh sanh ma kho da ban giao cho nhan vien
+    public function listStoreIdOfWork($workId)
+    {
+        $modelToolAllocation = new QcToolAllocation();
+        $listAllocationId = $modelToolAllocation->listIdOfWork($workId);
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('store_id')->pluck('store_id');
     }
 
     //========= ========== ========== lay thong tin cua nhan vien ========== ========== ==========
     # tai tat ca cac cty
-    public function totalToolOfStaff($staffId, $toolId)
+    public function totalToolOfWork($toolId,$workId)
     {
         $modelToolAllocation = new QcToolAllocation();
-        return $this->totalToolOfListAllocationId($modelToolAllocation->listIdOfReceiveStaff($staffId), $toolId);
+        return $this->totalToolOfListAllocationId($modelToolAllocation->listIdOfWork($workId), $toolId);
     }
 
     # cua 1 cty
-    public function totalToolOfStaffAndCompany($staffId,$companyId, $toolId)
+    /*public function totalToolOfStaffAndCompany($staffId,$companyId, $toolId)
     {
         $modelToolAllocation = new QcToolAllocation();
         $listAllocationId = $modelToolAllocation->listIdOfReceiveStaff($staffId);
         return $this->totalToolOfListAllocationAndCompany($listAllocationId, $companyId, $toolId);
-    }
+    }*/
 
     //========= ========== ========== lấy thông tin ========== ========== ==========
     public function getInfo($detailId = '', $field = '')

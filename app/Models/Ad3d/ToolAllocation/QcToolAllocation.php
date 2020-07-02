@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcToolAllocation extends Model
 {
     protected $table = 'qc_tool_allocation';
-    protected $fillable = ['allocation_id', 'confirmStatus', 'confirmDate', 'allocationDate', 'created_at', 'allocationStaff_id', 'receiveStaff_id'];
+    protected $fillable = ['allocation_id', 'confirmStatus', 'confirmDate', 'allocationDate', 'created_at', 'allocationStaff_id', 'work_id'];
     protected $primaryKey = 'allocation_id';
     public $timestamps = false;
 
@@ -16,14 +16,14 @@ class QcToolAllocation extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($allocationDate, $allocationStaffId, $receiveStaffId, $confirmStatus = 0)
+    public function insert($allocationDate, $allocationStaffId, $workId, $confirmStatus = 0)
     {
         $hFunction = new \Hfunction();
         $modelToolAllocation = new QcToolAllocation();
         $modelToolAllocation->confirmStatus = $confirmStatus;
         $modelToolAllocation->allocationDate = $allocationDate;
         $modelToolAllocation->allocationStaff_id = $allocationStaffId;
-        $modelToolAllocation->receiveStaff_id = $receiveStaffId;
+        $modelToolAllocation->work_id = $workId;
         $modelToolAllocation->created_at = $hFunction->createdAt();
         if ($modelToolAllocation->save()) {
             $this->lastId = $modelToolAllocation->allocation_id;
@@ -61,25 +61,28 @@ class QcToolAllocation extends Model
     }
 
     //---------- nhân viên nhận -----------
-    public function receiveStaff()
+    public function companyStaffWork()
     {
-        return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'receiveStaff_id', 'staff_id');
+        return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
     }
 
-    public function infoOfReceiveStaff($receiveStaffId)
+    # lay thong tin ban giao
+    public function infoOfWork($workId)
     {
-        return QcToolAllocation::where('receiveStaff_id', $receiveStaffId)->orderBy('allocationDate', 'DESC')->get();
+        
+        return QcToolAllocation::where('work_id', $workId)->orderBy('allocationDate', 'DESC')->get();
     }
 
-    public function listIdOfReceiveStaff($receiveStaffId)
+    # danh sach ma ban giao
+    public function listIdOfWork($workId)
     {
-        return QcToolAllocation::where('receiveStaff_id', $receiveStaffId)->orderBy('allocationDate', 'DESC')->pluck('allocation_id');
+        return QcToolAllocation::where('work_id', $workId)->orderBy('allocationDate', 'DESC')->pluck('allocation_id');
     }
 
     //---------- Chi tiết cấp -----------
     public function toolAllocationDetail()
     {
-        return $this->belongsTo('App\Models\Ad3d\ToolAllocationDetail\QcStaff', 'allocation_id', 'allocation_id');
+        return $this->belongsTo('App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail', 'allocation_id', 'allocation_id');
     }
 
     public function totalAmountToolOfAllocation($allocationId = null)
@@ -101,12 +104,12 @@ class QcToolAllocation extends Model
     }
 
     //========= ========== ========== lấy thông tin ========== ========== ==========
-    public function selectInfoOfListReceiveStaffAndDate($listStaffId, $dateFilter = null)
+    public function selectInfoOfListWorkAndDate($listStaffId, $dateFilter = null)
     {
         if (empty($dateFilter)) {
-            return QcToolAllocation::whereIn('receiveStaff_id', $listStaffId)->orderBy('allocationDate', 'DESC')->select('*');
+            return QcToolAllocation::whereIn('work_id', $listStaffId)->orderBy('allocationDate', 'DESC')->select('*');
         } else {
-            return QcToolAllocation::whereIn('receiveStaff_id', $listStaffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('allocationDate', 'DESC')->select('*');
+            return QcToolAllocation::whereIn('work_id', $listStaffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('allocationDate', 'DESC')->select('*');
         }
     }
 
@@ -160,9 +163,9 @@ class QcToolAllocation extends Model
         return $this->pluck('allocationStaff_id', $allocationId);
     }
 
-    public function receiveStaffId($allocationId = null)
+    public function WorkId($allocationId = null)
     {
-        return $this->pluck('receiveStaff_id', $allocationId);
+        return $this->pluck('work_id', $allocationId);
     }
 
     // last id

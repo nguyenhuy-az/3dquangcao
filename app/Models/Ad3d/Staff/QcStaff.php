@@ -270,7 +270,7 @@ class QcStaff extends Model
     {
         return $this->hasMany('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'staff_id', 'staff_id');
     }
-
+    # thong tin đang lam viec tai 1 cty
     public function companyStaffWorkInfoActivity($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -806,46 +806,15 @@ class QcStaff extends Model
         return $this->hasMany('App\Models\Ad3d\ToolStaff\QcToolStaff', 'staff_id', 'staff_id');
     }
 
-    //---------- phiếu giao vật tư -----------
+    //---------- nguoi giao do nghe -----------
     public function toolAllocation()
     {
         return $this->hasMany('App\Models\Ad3d\ToolAllocation\QcToolAllocation', 'allocationStaff_id', 'staff_id');
     }
 
-    public function toolAllocationReceive()
-    {
-        return $this->hasMany('App\Models\Ad3d\ToolAllocation\QcToolAllocation', 'receiveStaff_id ', 'staff_id');
-    }
 
-    public function toolAllocationOfReceiveStaffInfo($staffId = null)
-    {
-        $modelToolAllocation = new QcToolAllocation();
-        return $modelToolAllocation->infoOfReceiveStaff($this->checkIdNull($staffId));
-    }
-
-    public function toolAllocationListIdOfReceiveStaff($receiveStaffId = null)
-    {
-        $modelToolAllocation = new QcToolAllocation();
-        return $modelToolAllocation->listIdOfReceiveStaff($this->checkIdNull($receiveStaffId));
-    }
-
-    //---------- ----------- cong cu ----------- -----------
-    # tai tat ca cty
-    public function totalToolReceive($toolId, $staffId)
-    {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
-        return $modelToolAllocationDetail->totalToolOfStaff($toolId, $staffId);
-    }
-
-    # tai 1 cty
-    public function totalToolReceiveOfCompany($toolId, $staffId, $companyId)
-    {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
-        return $modelToolAllocationDetail->totalToolOfStaffAndCompany($staffId, $companyId, $toolId);
-    }
-
-    //---------- trả vật tư -----------
-    public function toolReturnStaff()
+    //---------- xac nhan tra vat tu -----------
+    public function toolReturn()
     {
         return $this->hasMany('App\Models\Ad3d\ToolReturn\QcToolReturn', 'returnStaff_id', 'staff_id');
     }

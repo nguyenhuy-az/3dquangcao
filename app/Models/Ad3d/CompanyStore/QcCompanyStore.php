@@ -88,7 +88,7 @@ class QcCompanyStore extends Model
 
     public function totalToolOfCompany($companyId, $toolId)
     {
-        return QcCompanyStore::where('company_id', $companyId)->where('tool_id',$toolId)->sum('amount');
+        return QcCompanyStore::where('company_id', $companyId)->where('tool_id', $toolId)->sum('amount');
     }
 
     //---------- phat dung cu -----------
@@ -131,6 +131,12 @@ class QcCompanyStore extends Model
         return QcCompanyStore::where('tool_id', $toolId)->sum('amount');
     }
 
+    #danh sach ma dung cu theo kho
+    public function listToolIdOfListStore($listStoreId)
+    {
+        return QcCompanyStore::whereIn('store_id', $listStoreId)->pluck('tool_id');
+    }
+
     //---------- vật tư -----------
     public function supplies()
     {
@@ -155,6 +161,18 @@ class QcCompanyStore extends Model
     }
 
     //========= ========== ========== GET INFO ========== ========== ==========
+    # lay thong tin theo dung cu da ban giao nhan vien theo cong ty
+    public function getInfoByListId($listStoreId)
+    {
+        return QcCompanyStore::whereIn('store_id', $listStoreId)->get();
+    }
+
+    # lay thong tin theo dung cu va cong ty
+    public function getInfoByListToolAndCompany($listToolId, $companyId)
+    {
+        return QcCompanyStore::whereIn('tool_id', $listToolId)->where('company_id', $companyId)->get();
+    }
+
     public function getInfo($storeId = '', $field = '')
     {
         if (empty($storeId)) {

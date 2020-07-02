@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Work\Pay\Import;
 
 use App\Models\Ad3d\Company\QcCompany;
+use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportDetail\QcImportDetail;
@@ -90,6 +91,7 @@ class ImportController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelSupplies = new QcSupplies();
         $modelTool = new QcTool();
         $modelImport = new QcImport();
@@ -98,9 +100,13 @@ class ImportController extends Controller
         $modelCompanyStore = new QcCompanyStore();
         $modelToolAllocation = new QcToolAllocation();
         $modelToolAllocationDetail = new QcToolAllocationDetail();
-        $loginStaffId = $modelStaff->loginStaffId();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $loginStaffId = $dataStaffLogin->staffId();
         $importCompanyId = $modelImport->companyId($importId)[0];
         $importStaffId = $modelImport->importStaffId($importId)[0];
+        # lay ma lam viec tai cty NV nhap hoa don
+        $importStaffWorkId = $modelCompanyStaffWork->workIdActivityOfStaff($importStaffId);
+        $importStaffWorkId = (is_int($importStaffWorkId))?$importStaffWorkId:$importStaffWorkId[0];
 
         $confirmDetailId = Request::input('txtDetail');
         $confirmNewSuppliesTool = Request::input('cbNewSuppliesTool');
@@ -108,6 +114,8 @@ class ImportController extends Controller
         $allocationStatus = Request::input('cbAllocationStatus');
         $confirmPayStatus = Request::input('cbPayStatus');
         $confirmNote = Request::input('txtConfirmNote');
+
+        # thong tin dang lam viec
         $confirmPayStatus = (empty($confirmPayStatus)) ? 0 : $confirmPayStatus;
         if ($confirmPayStatus == 2) { # nhap khong dung
             $exactlyStatus = 0;  # ko chinh xac
@@ -142,7 +150,7 @@ class ImportController extends Controller
                                 // 1 - phan loai la vat tu
                                 $dataCheckSupplies = $modelSupplies->getInfoByName($importNewName);
                                 #kiem tra vat đa ton tai theo ten
-                                if (count($dataCheckSupplies) > 0) {
+                                if ($hFunction->checkCount($dataCheckSupplies)) {
                                     $suppliesId = $dataCheckSupplies->suppliesId();
                                 } else {
                                     //thêm dụng cụ mới vào hệ thống
@@ -182,10 +190,12 @@ class ImportController extends Controller
                                         $newStoreId = $modelCompanyStore->insertGetId();
                                         // cap phat dụng cụ cho nhân viên mua
                                         if ($allocationStatus[$key] == 1) { // phát luôn cho nhân viên
-                                            if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffId, 1)) {  //phieu cap phat dung cu
-                                                $newAllocationId = $modelToolAllocation->insertGetId();
-                                                $newStatus = 1; # dụng cu moi
-                                                $modelToolAllocationDetail->insert($importAmount, $newStatus, $toolId, $newAllocationId, $importCompanyId, $newStoreId); // chi tiet cap phat
+                                            if (!empty($importStaffWorkId)) {
+                                                if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffWorkId, 1)) {  //phieu cap phat dung cu
+                                                    $newAllocationId = $modelToolAllocation->insertGetId();
+                                                    $newStatus = 1; # dụng cu moi
+                                                    $modelToolAllocationDetail->insert($importAmount, $newStatus, $toolId, $newAllocationId, $importCompanyId, $newStoreId); // chi tiet cap phat
+                                                }
                                             }
                                         }
                                     }
@@ -203,7 +213,7 @@ class ImportController extends Controller
                             }
                             if (!empty($importToolId)) { //dung cu
                                 $dataCompanyStore = $modelCompanyStore->infoOfToolAndCompany($importToolId, $importCompanyId);
-                                if (count($dataCompanyStore) > 0) { // da ton tai trong kho -> cap nhat so luong
+                                if ($hFunction->checkCount($dataCompanyStore)) { // da ton tai trong kho -> cap nhat so luong
                                     $modelCompanyStore->updateInfoByToolOrSupplies($importCompanyId, $importAmount, $importToolId, null);
                                     $storeId = $dataCompanyStore->storeId();
                                 } else { // then dung cu vao kho
@@ -212,10 +222,12 @@ class ImportController extends Controller
                                 }
                                 // cap phat dụng cu cho nhân viên mua
                                 if ($allocationStatus[$key] == 1) { // phát luôn cho nhân viên
-                                    if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffId, 1)) {  //phieu cap dung cu
-                                        $newAllocationId = $modelToolAllocation->insertGetId();
-                                        $newStatus = 1; # dụng cu moi
-                                        $modelToolAllocationDetail->insert($importAmount, $newStatus, $importToolId, $newAllocationId, $importCompanyId, $storeId); // chi tiet cap
+                                    if (!empty($importStaffWorkId)) {
+                                        if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffWorkId, 1)) {  //phieu cap dung cu
+                                            $newAllocationId = $modelToolAllocation->insertGetId();
+                                            $newStatus = 1; # dụng cu moi
+                                            $modelToolAllocationDetail->insert($importAmount, $newStatus, $importToolId, $newAllocationId, $importCompanyId, $storeId); // chi tiet cap
+                                        }
                                     }
                                 }
                             }

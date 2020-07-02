@@ -5,6 +5,8 @@ namespace App\Models\Ad3d\CompanyStaffWork;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
+use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
+use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
 
@@ -63,6 +65,40 @@ class QcCompanyStaffWork extends Model
     public function updateLevel($level, $workId = null)
     {
         return QcCompanyStaffWork::where('work_id', $this->checkIdNull($workId))->update(['level' => $level]);
+    }
+
+    # ---------- ---------- giao do nghe ---------- ----------
+    public function toolAllocation()
+    {
+        return $this->hasMany('App\Models\Ad3d\ToolAllocation\QcToolAllocation', 'work_id ', 'work_id');
+    }
+
+    #thong tin nhan do nghe
+    public function toolAllocationOfWork($workId = null)
+    {
+        $modelToolAllocation = new QcToolAllocation();
+        return $modelToolAllocation->infoOfWork($this->checkIdNull($workId));
+    }
+
+    public function toolAllocationListIdOfWork($workId = null)
+    {
+        $modelToolAllocation = new QcToolAllocation();
+        return $modelToolAllocation->listIdOfWork($this->checkIdNull($workId));
+    }
+
+    //---------- ----------- cong cu ----------- -----------
+    # tai tat ca cty
+    public function totalToolReceive($toolId, $workId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        return $modelToolAllocationDetail->totalToolOfWork($toolId, $workId);
+    }
+
+    # tai 1 cty
+    public function totalToolReceiveOfCompany($toolId, $staffId, $companyId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        return $modelToolAllocationDetail->totalToolOfStaffAndCompany($staffId, $companyId, $toolId);
     }
 
     # ----------- thong tin lam viec trong thang--------------
@@ -204,6 +240,12 @@ class QcCompanyStaffWork extends Model
     public function listIdOfListStaffId($listStaffId)
     {
         return QcCompanyStaffWork::whereIn('staff_id', $listStaffId)->pluck('work_id');
+    }
+
+    # lay ma dang lam viec cua 1 nhan vien
+    public function workIdActivityOfStaff($staffId)
+    {
+        return QcCompanyStaffWork::where('staff_id', $staffId)->where('action', 1)->pluck('work_id');
     }
 
     //lay thong tin dang lam viec cua NV

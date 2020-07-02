@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcToolReturn extends Model
 {
     protected $table = 'qc_tool_return';
-    protected $fillable = ['return_id','returnDate', 'created_at', 'returnStaff_id', 'confirmStaff_id'];
+    protected $fillable = ['return_id','returnDate','confirmStatus','confirmDate', 'created_at', 'work_id', 'confirmStaff_id'];
     protected $primaryKey = 'return_id';
     public $timestamps = false;
 
@@ -15,13 +15,12 @@ class QcToolReturn extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($returnDate, $returnStaffId, $confirmStaffId)
+    public function insert($returnDate, $workId)
     {
         $hFunction = new \Hfunction();
         $modelToolReturn = new QcToolReturn();
         $modelToolReturn->returnDate = $returnDate;
-        $modelToolReturn->returnStaff_id = $returnStaffId;
-        $modelToolReturn->confirmStaff_id = $confirmStaffId;
+        $modelToolReturn->work_id = $workId;
         $modelToolReturn->created_at = $hFunction->createdAt();
         if ($modelToolReturn->save()) {
             $this->lastId = $modelToolReturn->return_id;
@@ -38,14 +37,14 @@ class QcToolReturn extends Model
 
     public function deleteReturn($returnId = null)
     {
-        $returnId = (empty($returnId)) ? $this->allocationId() : $returnId;
+        $returnId = (empty($returnId)) ? $this->returnId() : $returnId;
         return QcToolReturn::where('return_id', $returnId)->delete();
     }
     //========== ========= ========= RELATION ========== ========= ==========
-    //---------- nhân viên bàn giao -----------
-    public function returnStaff()
+    //---------- thong tin giao -----------
+    public function work()
     {
-        return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'returnStaff_id', 'staff_id');
+        return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
     }
 
     //---------- nhân viên nhận -----------
@@ -89,19 +88,30 @@ class QcToolReturn extends Model
         return $this->pluck('returnDate', $returnId);
     }
 
-    public function createdAt($returnId = null)
+    public function confirmStatus($returnId = null)
     {
-        return $this->pluck('created_at', $returnId);
+
+        return $this->pluck('confirmStatus', $returnId);
     }
 
-    public function returnStaffId($returnId = null)
+    public function confirmDate($returnId = null)
     {
-        return $this->pluck('returnStaff_id', $returnId);
+
+        return $this->pluck('confirmDate', $returnId);
+    }
+
+    public function workId($returnId = null)
+    {
+        return $this->pluck('work_id', $returnId);
     }
 
     public function confirmStaffId($returnId = null)
     {
         return $this->pluck('confirmStaff_id', $returnId);
+    }
+    public function createdAt($returnId = null)
+    {
+        return $this->pluck('created_at', $returnId);
     }
 
     // last id

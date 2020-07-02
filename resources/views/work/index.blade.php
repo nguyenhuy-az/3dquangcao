@@ -80,7 +80,7 @@ if ($viewLoginObject == 'work') {
 }elseif ($viewLoginObject == 'payKeepMoney') { # thanh toan tien giu
     $label = 'Thanh toán tiền giữ';
     $href = route('qc.work.pay.keep_money.get');
-} elseif ($viewLoginObject == 'tool') {
+} elseif ($viewLoginObject == 'toolPrivate') {
     $label = 'Đồ nghề';
     $href = route('qc.work.tool.private.get');
 } elseif ($viewLoginObject == 'productTypePrice') {
