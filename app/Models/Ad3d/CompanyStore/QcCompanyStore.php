@@ -102,7 +102,8 @@ class QcCompanyStore extends Model
         return $this->belongsTo('App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail', 'store_id', 'store_id');
     }
 
-    public function toolAllocationDetailTotalAmount($storeId = null)
+    # tong so luong da phat
+    public function totalAmountAllocation($storeId = null)
     {
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         return $modelToolAllocationDetail->totalAmountOfStore($this->checkIdNull($storeId));
@@ -131,9 +132,16 @@ class QcCompanyStore extends Model
         return QcCompanyStore::where('tool_id', $toolId)->where('company_id', $companyId)->first();
     }
 
+    # so lương dung cu trong kho cua tat ca cty
     public function amountOfTool($toolId)
     {
         return QcCompanyStore::where('tool_id', $toolId)->sum('amount');
+    }
+
+    # so lương dung cu trong kho cua 1 cty
+    public function amountOfToolAndCompany($toolId, $companyId)
+    {
+        return QcCompanyStore::where('tool_id', $toolId)->where('company_id', $companyId)->sum('amount');
     }
 
     # lay danh sach ma kho cua cong cu
@@ -141,6 +149,7 @@ class QcCompanyStore extends Model
     {
         return QcCompanyStore::where('tool_id', $toolId)->pluck('store_id');
     }
+
 
     #danh sach ma dung cu theo kho
     public function listToolIdOfListStore($listStoreId)

@@ -18,7 +18,7 @@ use Request;
 
 class CompanyStoreController extends Controller
 {
-    public function index($type = 0)
+    public function index($typeFilter = 0)
     {
         $modelStaff = new QcStaff();
         $modelCompanyStore = new QcCompanyStore();
@@ -27,14 +27,14 @@ class CompanyStoreController extends Controller
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         $dataAccess = [
             'object' => 'storeTool',
-            'subObjectLabel' => 'đồ nghề'
+            'subObjectLabel' => 'Đồ nghề'
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
         # danh sach dung cu dung de phat cho ca nha
-        $listToolId = $modelTool->listIdByType($type);
+        $listToolId = $modelTool->listIdByType($typeFilter);
         # danh dach dung cua trong kho cua 1 cty
         $dataCompanyStore = $modelCompanyStore->getInfoOfListToolAndCompany($dataStaff->companyId(), $listToolId);
-        return view('work.store.tool.list', compact('dataAccess', 'modelStaff', 'dataCompanyStore', 'type'));
+        return view('work.store.tool.list', compact('dataAccess', 'modelStaff', 'dataCompanyStore', 'typeFilter'));
     }
 
 }

@@ -80,6 +80,7 @@ class QcCompanyStaffWork extends Model
         $modelToolReturnDetail = new QcToolReturnDetail();
         return $modelToolReturnDetail->totalToolOfWork($toolId, $workId);
     }
+
     # ---------- ---------- giao do nghe ---------- ----------
     public function toolAllocation()
     {
@@ -624,6 +625,12 @@ class QcCompanyStaffWork extends Model
     public function company()
     {
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
+    }
+
+    # lay danh sach tat ca ma lam viec tai 1 cty
+    public function listIdOfCompany($companyId)
+    {
+        return QcCompanyStaffWork::where('company_id', $companyId)->pluck('work_id');
     }
 
     # lay danh sach ma thong tin lam theo danh sach cong ty va danh sach NV

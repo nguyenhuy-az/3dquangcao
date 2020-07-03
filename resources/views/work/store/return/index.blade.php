@@ -11,14 +11,14 @@ $hFunction = new Hfunction();
 ?>
 @extends('work.index')
 @section('qc_work_body')
-    <div class="row qc_work_store_index">
+    <div class="row qc_work_store_return_index">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.store.menu')
             {{-- Noi dung --}}
-            @yield('qc_work_store_tool_body')
+            @yield('qc_work_store_return_body')
         </div>
     </div>
 @endsection
 @section('qc_js_footer')
-    <script src="{{ url('public/work/store/tool/js/index.js')}}"></script>
+    <script src="{{ url('public/work/store/return/js/index.js')}}"></script>
 @endsection

@@ -28,8 +28,8 @@ if (isset($dataAccess)) {
                     Đồ nghề
                 </a>
             </li>
-            <li @if($viewLoginObject == 'toolPublic') class="active" @endif>
-                <a class="qc-link-bold" href="{!! route('qc.work.store.tool.get') !!}"
+            <li @if($viewLoginObject == 'storeReturn') class="active" @endif>
+                <a class="qc-link-bold" href="{!! route('qc.work.store.return.get') !!}"
                    @if($viewLoginObject == 'storeReturn') style="background-color: whitesmoke;" @endif>
                     Trả đồ nghề
                 </a>

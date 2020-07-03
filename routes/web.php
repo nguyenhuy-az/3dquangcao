@@ -1320,10 +1320,18 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     });
     //------ kho do nghe cua he thong -------
     Route::group(['prefix' => 'store'], function () {
+        # thong tin kho
         Route::group(['prefix' => 'tool'], function (){
             Route::get('/{type?}', ['as' => 'qc.work.store.tool.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@index']);
         });
+        # ban giao lai dung cu
+        Route::group(['prefix' => 'return'], function (){
+            # xac nhan tra
+            Route::get('confirm/{returnId?}', ['as' => 'qc.work.store.return.confirm.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@getConfirm']);
+            Route::post('confirm/{returnId?}', ['as' => 'qc.work.store.return.confirm.post', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@postConfirm']);
 
+            Route::get('/{confirmStatus?}', ['as' => 'qc.work.store.return.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@index']);
+        });
     });
     //nhận đồ nghề
     Route::group(['prefix' => 'product-type-price'], function () {

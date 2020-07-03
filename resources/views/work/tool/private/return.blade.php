@@ -59,7 +59,7 @@ $dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
                                                     <td class="text-center" style="padding: 0;">
                                                         <div class="form-group" style="margin: 0;">
                                                             <input type="checkbox" class="txtReturnStore form-control"
-                                                                   name="txtReturnStore[]"
+                                                                   name="txtReturnStore[]" style="margin: 0;"
                                                                    @if($selectedStoreId == $storeId) checked="checked"
                                                                    @endif value="{!! $storeId !!}">
                                                         </div>

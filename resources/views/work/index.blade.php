@@ -86,6 +86,9 @@ if ($viewLoginObject == 'work') {
 }elseif ($viewLoginObject == 'storeTool') {
     $label = 'Kho';
     $href = route('qc.work.store.tool.get');
+}elseif ($viewLoginObject == 'storeReturn') {
+    $label = 'Trả đồ nghề';
+    $href = route('qc.work.store.tool.get');
 } elseif ($viewLoginObject == 'productTypePrice') {
     $label = 'Bảng giá';
     $href = route('qc.work.product_type_price.get');

@@ -25,8 +25,6 @@ class ToolController extends Controller
         $modelStaff = new QcStaff();
         $modelCompanyStore = new QcCompanyStore();
         $modelTool = new QcTool();
-        $modelToolAllocation = new QcToolAllocation();
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
         $dataAccess = [
             'object' => 'toolPrivate'
         ];
@@ -51,7 +49,6 @@ class ToolController extends Controller
         $modelCompanyStore = new QcCompanyStore();
         $modelStaff = new QcStaff();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelTool = new QcTool();
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         $dataAccess = [
             'object' => 'toolPrivate'
@@ -85,7 +82,6 @@ class ToolController extends Controller
             }
         }
         return redirect()->route('qc.work.tool.private.get');
-        //dd($amount);
-        //die();
+
     }
 }

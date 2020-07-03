@@ -13,7 +13,7 @@ $mobileStatus = $mobile->isMobile();
 $dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
 $companyId = $dataStaff->companyId();
-$hrefIndex = route('qc.work.tool.private.get');
+$hrefIndex = route('qc.work.store.tool.get');
 $currentMonth = $hFunction->currentMonth();
 
 ?>
@@ -29,15 +29,15 @@ $currentMonth = $hFunction->currentMonth();
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Dụng cụ</th>
-                                <th class="text-center">
+                                <th>
                                     Loại
                                 </th>
                                 <th class="text-center">
                                     Số lượng
                                 </th>
-                                <th class="text-center">
+                                {{--<th class="text-center">
                                     Bị hư
-                                </th>
+                                </th>--}}
                                 <th class="text-center">
                                     Đã giao
                                 </th>
@@ -49,11 +49,12 @@ $currentMonth = $hFunction->currentMonth();
                                 <td></td>
                                 <td></td>
                                 <td style="padding: 0">
-                                   <select class="cbToolType form-control" name="cbToolType">
-                                       <option value="0">Tất cả</option>
-                                       <option value="1">Dùng chung</option>
-                                       <option value="2">Dùng cấp phát</option>
-                                   </select>
+                                    <select class="cbToolTypeFilter form-control" name="cbToolTypeFilter"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="0" @if($typeFilter == 0) selected="selected" @endif>Tất cả</option>
+                                        <option value="1" @if($typeFilter == 1) selected="selected" @endif>Dùng chung</option>
+                                        <option value="2" @if($typeFilter == 2) selected="selected" @endif>Dùng cấp phát</option>
+                                    </select>
                                 </td>
                                 <td></td>
                                 <td></td>
@@ -70,11 +71,11 @@ $currentMonth = $hFunction->currentMonth();
                                     $toolId = $dataTool->toolId();
                                     $toolName = $dataTool->name();
                                     # so luong da giao
-                                    $totalAllocation = 1;
+                                    $totalAllocation = $companyStore->totalAmountAllocation();
                                     # so luong da huy
                                     $totalCancel = 2;
-                                    # chu phat
-                                    $totalNoAllocation = 3;
+                                    # chua phat
+                                    $totalNoAllocation = $totalAmount - $totalAllocation;
                                     $n_o = $n_o + 1;
                                     ?>
                                     <tr class="@if($totalNoAllocation == 0) warning @elseif($n_o%2) info @endif">
@@ -84,26 +85,30 @@ $currentMonth = $hFunction->currentMonth();
                                         <td>
                                             {!!  $toolName !!}
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             {!! $dataTool->getLabelType() !!}
                                         </td>
                                         <td class="text-center">
-                                            {!! $totalAmount !!}
+                                            <b style="color: blue;">{!! $totalAmount !!}</b>
                                         </td>
-                                        <td class="text-center">
+                                        {{--<td class="text-center">
                                             {!! $totalCancel !!}
+                                        </td>--}}
+                                        <td class="text-center">
+                                            <b style="color: brown;">{!! $totalAllocation !!}</b>
                                         </td>
                                         <td class="text-center">
-                                            {!! $totalAllocation !!}
-                                        </td>
-                                        <td class="text-center">
-                                            {!! $totalNoAllocation !!}
+                                            @if($totalNoAllocation == 0)
+                                                <b style="color: red;">{!! $totalNoAllocation !!}</b>
+                                            @else
+                                                <b style="color: green;">{!! $totalNoAllocation !!}</b>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="7">
+                                    <td class="text-center" colspan="6">
                                         Không có thông tin phạt
                                     </td>
                                 </tr>

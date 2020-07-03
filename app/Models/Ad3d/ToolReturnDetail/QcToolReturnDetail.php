@@ -20,13 +20,13 @@ class QcToolReturnDetail extends Model
     public function insert($amount, $storeId, $returnId)
     {
         $hFunction = new \Hfunction();
-        $modelToolAllocationDetail = new QcToolReturnDetail();
-        $modelToolAllocationDetail->amount = $amount;
-        $modelToolAllocationDetail->store_id = $storeId;
-        $modelToolAllocationDetail->return_id = $returnId;
-        $modelToolAllocationDetail->created_at = $hFunction->createdAt();
-        if ($modelToolAllocationDetail->save()) {
-            $this->lastId = $modelToolAllocationDetail->detail_id;
+        $modelToolReturnDetail = new QcToolReturnDetail();
+        $modelToolReturnDetail->amount = $amount;
+        $modelToolReturnDetail->store_id = $storeId;
+        $modelToolReturnDetail->return_id = $returnId;
+        $modelToolReturnDetail->created_at = $hFunction->createdAt();
+        if ($modelToolReturnDetail->save()) {
+            $this->lastId = $modelToolReturnDetail->detail_id;
             return true;
         } else {
             return false;
@@ -59,6 +59,17 @@ class QcToolReturnDetail extends Model
     public function toolReturn()
     {
         return $this->belongsTo('App\Models\Ad3d\ToolReturn\QcToolReturn', 'return_id', 'return_id');
+    }
+
+    public function getInfoOfReturn($returnId)
+    {
+        return QcToolReturnDetail::where('return_id', $returnId)->get();
+    }
+
+    # tong so luong cua 1 lan abstract
+    public function totalAmountOfReturn($returnId)
+    {
+        return QcToolReturnDetail::where('return_id', $returnId)->sum('amount');
     }
 
     //========= ========== ========== LAY THONG TIN ========== ========== ==========
