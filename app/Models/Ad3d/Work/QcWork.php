@@ -205,11 +205,13 @@ class QcWork extends Model
         return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->update(['action' => 0]);
     }
 
+    # lay 1 bang cham cong dang lam viec
     public function infoActivityOfCompanyStaffWork($companyStaffWorkId)
     {
         return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->where('action', 1)->first();
     }
 
+    # lay nhieu bang cham cong dang lam viec
     public function infoActivityOfListCompanyStaffWork($listCompanyStaffWorkId)
     {
         return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('action', 1)->get();

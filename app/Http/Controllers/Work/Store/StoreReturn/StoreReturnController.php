@@ -22,23 +22,41 @@ use Request;
 
 class StoreReturnController extends Controller
 {
-    public function index($cbConfirmStatusFilter = 0)
+    public function index($cbConfirmStatusFilter = 100,$staffFilterId = 0)
     {
         $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelToolReturn = new QcToolReturn();
         $dataAccess = [
             'object' => 'storeReturn',
             'subObjectLabel' => 'Trả đồ nghề'
         ];
-        $dataStaff = $modelStaff->loginStaffInfo();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $searchCompanyFilterId = [$dataStaffLogin->companyId()];
+        if ($staffFilterId > 0) {
+            $listStaffId = [$staffFilterId];
+        } else {
+            $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
+        }
         # danh sach thong tin lam viec
-        $listWorkId = $modelCompanyStaffWork->listIdOfCompany($dataStaff->companyId());
+        $listWorkId = $modelCompanyStaffWork->listIdOfListStaffId($listStaffId);
         # thong tin bao tra dung cu
         $dataToolReturn = $modelToolReturn->infoOfListWork($listWorkId, $cbConfirmStatusFilter);
-        return view('work.store.return.list', compact('dataAccess', 'modelStaff', 'dataToolReturn', 'cbConfirmStatusFilter'));
+        # danh sach NV
+        $dataListStaff = $modelCompany->staffInfoActivityOfListCompanyId($searchCompanyFilterId);
+        return view('work.store.return.list', compact('dataAccess', 'modelStaff','dataListStaff', 'dataToolReturn','staffFilterId', 'cbConfirmStatusFilter'));
     }
 
+    public function getView($returnId)
+    {
+        $modelStaff = new QcStaff();
+        $modelToolReturn = new QcToolReturn();
+        $dataToolReturn = $modelToolReturn->getInfo($returnId);
+        return view('work.store.return.view', compact('modelStaff', 'dataToolReturn'));
+    }
+
+    #-------------- ------------- Xac nhan ban  giao ------------------ -------------
     public function getConfirm($returnId)
     {
         $modelStaff = new QcStaff();

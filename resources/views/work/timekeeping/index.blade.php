@@ -52,21 +52,28 @@ if ($hFunction->checkCount($dataWork)) {
                 {{-- thông tin khách hàng --}}
                 <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
-                        <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                            <em>Tên:</em>
-                            <span class="qc-font-bold">{!! $dataStaff->fullName() !!}</span>
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            <em class="qc-text-under">Tháng:</em>
+                            <b class="qc-color-red">&nbsp; {!! date('m-Y',strtotime($dataWork->fromDate())) !!}</b>
                         </div>
-                        <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                            <em class="qc-text-under">Từ:</em>
-                            <b class="qc-color-red">&nbsp; {!! date('d-m-Y',strtotime($dataWork->fromDate())) !!}</b>
-                            <span>&nbsp;&nbsp;</span>
-                            <em class="qc-text-under">đến: </em>
-                            <b class="qc-color-red">&nbsp; {!! date('d-m-Y',strtotime($dataWork->toDate())) !!}</b>
+                        <div class="text-center col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <span class="qc-font-bold"
+                                  style="background-color: red; color: white; padding: 3px; font-size: 1.5em;">
+                                17h30
+                            </span>
+                            <span class="qc-font-bold"
+                                  style="background-color: red; color: yellow; padding: 3px; font-size: 1.5em;">
+                                KHÔNG BÁO ẢNH TIẾN ĐỘ CÔNG VIỆC
+                            </span>
+                            <span class="qc-font-bold"
+                                  style="background-color: red; color: white; padding: 3px; font-size: 1.5em;">
+                                SẼ BỊ PHẠT
+                            </span>
                         </div>
-                        <div class="qc-padding-top-5 qc-padding-bot-5 text-right col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="text-right col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <a class="qc_time_begin_action qc-link-green-bold"
                                data-href="{!! route('qc.work.timekeeping.timeBegin.get') !!}">
-                                Báo giờ vào
+                                BÁO GIỜ VÀO
                             </a>
                             <span>&nbsp;||&nbsp;</span>
                             <a class="ac_off_work_action qc-link-green-bold"
@@ -94,7 +101,7 @@ if ($hFunction->checkCount($dataWork)) {
                                 <th>Giờ ra</th>
                                 <th class="text-center">Làm trưa</th>
                                 <th>Ảnh BC</th>
-                                <th class="text-center">Ghi chú</th>
+                                <th>Ghi chú</th>
                                 <th></th>
                             </tr>
                             @if($hFunction->checkCount($dataTimekeepingProvisional))
@@ -180,21 +187,19 @@ if ($hFunction->checkCount($dataWork)) {
                                                 <span>---</span>
                                             @endif
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             @if(!$hFunction->checkEmpty($timekeepingNote))
                                                 <em class="qc-color-grey">{!! $timekeepingNote !!}</em>
-                                            @else
-                                                <span>---</span>
                                             @endif
                                         </td>
                                         <td class="text-right">
                                             @if($hFunction->checkEmpty($timeEnd))
                                                 @if($endCheckStatus)
-                                                    <a class="qc_time_end_action qc-link-bold">Báo giờ ra</a>
-                                                    <span class="qc-color-grey"> &nbsp; | &nbsp; </span>
                                                     <a class="qc_timekeeping_provisional_image_action qc-link-bold">
-                                                        Ảnh tiếnđộ CV
+                                                        Ảnh tiến độ CV
                                                     </a>
+                                                    <span class="qc-color-grey"> &nbsp; | &nbsp; </span>
+                                                    <a class="qc_time_end_action qc-link-bold">Báo giờ ra</a>
                                                     <span class="qc-color-grey"> &nbsp; | &nbsp; </span>
                                                     <a class="qc_time_end_cancel qc-link-red-bold">
                                                         <i class="glyphicon glyphicon-trash" title="Hủy"></i>
@@ -206,10 +211,8 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @if($checkConfirmStatus)
                                                     <span class="qc-color-grey">Đã duyệt</span>
                                                 @else
-                                                    <a class="qc_timekeeping_provisional_image_action qc-link-bold">Ảnh
-                                                        tiến
-                                                        độ
-                                                        CV</a>
+                                                    <a class="qc_timekeeping_provisional_image_action qc-link-bold">
+                                                        Ảnh tiến độ CV</a>
                                                     <span class="qc-color-grey"> &nbsp; | &nbsp; </span>
                                                     <a class="qc_time_end_cancel qc-link-red-bold">
                                                         <i class="glyphicon glyphicon-trash" title="Hủy chấm công"></i>

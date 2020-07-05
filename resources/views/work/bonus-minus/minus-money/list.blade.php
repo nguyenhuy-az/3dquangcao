@@ -12,7 +12,7 @@ $hrefIndex = route('qc.work.minus_money.get');
 ?>
 @extends('work.bonus-minus.minus-money.index')
 @section('qc_work_minus_money_body')
-    <div class="row">
+    <div class="row qc_work_minius_money_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             {{-- chi tiêt --}}
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -24,13 +24,15 @@ $hrefIndex = route('qc.work.minus_money.get');
                                 <th>Ngày</th>
                                 <th>Nguyên nhân</th>
                                 <th>Ghi chú</th>
+                                <th>Phản hồi</th>
                                 <th class="text-center">Áp dụng</th>
                                 <th class="text-right">Số tiền</th>
                             </tr>
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_minus_money_month" style="height: 25px;" data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_minus_money_month" style="height: 25px;"
+                                            data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả tháng
                                         </option>--}}
@@ -55,6 +57,7 @@ $hrefIndex = route('qc.work.minus_money.get');
                                         @endfor
                                     </select>
                                 </td>
+                                <td class="text-center"></td>
                                 <td class="text-center"></td>
                                 <td class="text-center"></td>
                                 <td class="text-center"></td>
@@ -94,17 +97,24 @@ $hrefIndex = route('qc.work.minus_money.get');
                                             @if(!$hFunction->checkEmpty($orderAllocationId))
                                                 <br/>
                                                 <em>Đơn hàng:</em>
-                                                <a class="qc-link-red" href="{!! route('qc.work.work_allocation.construction.product.get',$orderAllocationId) !!}">
+                                                <a class="qc-link-red"
+                                                   href="{!! route('qc.work.work_allocation.construction.product.get',$orderAllocationId) !!}">
                                                     {!! $minusMoney->orderAllocation->orders->name() !!}
                                                 </a>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderConstructionId))
                                                 <br/>
                                                 <em>Đơn hàng:</em>
-                                                <a class="qc-link-red" href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderConstructionId) !!}">
+                                                <a class="qc-link-red"
+                                                   href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderConstructionId) !!}">
                                                     {!! $minusMoney->orderConstruction->name() !!}
                                                 </a>
                                             @endif
+                                        </td>
+                                        <td>
+                                            <a class="qc_minus_money_feedback qc-link-green-bold">
+                                                Gửi phản hồi
+                                            </a>
                                         </td>
                                         <td class="text-center">
                                             @if($cancelStatus)

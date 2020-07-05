@@ -2,6 +2,8 @@
 
 namespace App\Models\Ad3d\ToolReturnConfirm;
 
+use App\Models\Ad3d\CompanyStore\QcCompanyStore;
+use App\Models\Ad3d\ToolReturn\QcToolReturn;
 use Illuminate\Database\Eloquent\Model;
 
 class QcToolReturnConfirm extends Model
@@ -41,7 +43,13 @@ class QcToolReturnConfirm extends Model
     {
         return $this->belongsTo('App\Models\Ad3d\CompanyStore\QcCompanyStore', 'store_id', 'store_id');
     }
-    
+
+    # tong so duoc xac nhan tra kho
+    public function amountOfReturnAndStore($returnId, $storeId)
+    {
+        return QcToolReturnConfirm::where('return_id', $returnId)->where('store_id', $storeId)->pluck('amount');
+    }
+
     //---------- phieu ban giao -----------
     public function toolReturn()
     {

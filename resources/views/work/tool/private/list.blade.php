@@ -56,26 +56,41 @@ $dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
                                         # so luong dung cu dc duoc bao tra
                                         $totalToolReturnOfStaff = $dataCompanyStaffWork->totalToolReturn($toolId, $workId);
                                         # so luong dung cu tra duoc xac nhan
-                                        $totalToolReturnConfirmed = 0;
+                                        $totalToolReturnConfirmed = $dataCompanyStaffWork->totalToolReturnConfirm($toolId, $workId);
+                                        # trang thai dang giu
+                                        $keepStatus = ($totalToolReceiveOfStaff == $totalToolReturnConfirmed) ? false : true;
                                         ?>
-                                        <tr class="@if($totalToolReceiveOfStaff == 0) info @endif">
-                                            <td class="text-center">
+                                        <tr class="@if(!$keepStatus) info @endif">
+                                            {{--<td class="text-center">
                                                 {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
+                                            </td>--}}
+                                            <td class="text-center" style="padding: 0;">
+                                                <div class="form-group" style="margin: 0;">
+                                                    <input type="checkbox" class="form-control" disabled
+                                                           name="txtReturnStore[]" style="margin: 0;"
+                                                           @if($keepStatus) checked="checked"@endif>
+                                                </div>
                                             </td>
                                             <td>
                                                 {!!  $toolName !!}
                                             </td>
                                             <td class="text-center">
-                                                {!! $totalToolReceiveOfStaff !!}
+                                                <b style="color: blue;">
+                                                    {!! $totalToolReceiveOfStaff !!}
+                                                </b>
                                             </td>
                                             <td class="text-center">
-                                                {!! $totalToolReturnOfStaff !!}
+                                                <b style="color: green;">
+                                                    {!! $totalToolReturnOfStaff !!}
+                                                </b>
                                             </td>
                                             <td class="text-center">
-                                                {!! $totalToolReturnConfirmed !!}
+                                                <b style="color: red;">
+                                                    {!! $totalToolReturnConfirmed !!}
+                                                </b>
                                             </td>
                                             <td class="text-center">
-                                                @if($totalToolReceiveOfStaff > $totalToolReturnOfStaff)
+                                                @if($totalToolReceiveOfStaff > $totalToolReturnConfirmed)
                                                     <a class="qc-link-green-bold"
                                                        href="{!! route('qc.work.tool.private.return.get', $storeId) !!}">
                                                         Giao lại

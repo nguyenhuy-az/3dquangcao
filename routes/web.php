@@ -1326,11 +1326,13 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         });
         # ban giao lai dung cu
         Route::group(['prefix' => 'return'], function (){
+            #xem chi tiet
+            Route::get('view/{returnId?}', ['as' => 'qc.work.store.return.view.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@getView']);
             # xac nhan tra
             Route::get('confirm/{returnId?}', ['as' => 'qc.work.store.return.confirm.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@getConfirm']);
             Route::post('confirm/{returnId?}', ['as' => 'qc.work.store.return.confirm.post', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@postConfirm']);
 
-            Route::get('/{confirmStatus?}', ['as' => 'qc.work.store.return.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@index']);
+            Route::get('/{confirmStatus?}/{staffFilterId?}', ['as' => 'qc.work.store.return.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@index']);
         });
     });
     //nhận đồ nghề

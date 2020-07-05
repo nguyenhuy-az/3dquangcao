@@ -7,6 +7,7 @@ use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
+use App\Models\Ad3d\ToolReturnConfirm\QcToolReturnConfirm;
 use App\Models\Ad3d\ToolReturnDetail\QcToolReturnDetail;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
@@ -74,11 +75,18 @@ class QcCompanyStaffWork extends Model
         return $this->hasMany('App\Models\Ad3d\ToolReturn\QcToolReturn', 'work_id ', 'work_id');
     }
 
-    # thong tin tra cua 1 NV
+    # thong tin bao tra cua 1 NV
     public function totalToolReturn($toolId, $workId)
     {
         $modelToolReturnDetail = new QcToolReturnDetail();
         return $modelToolReturnDetail->totalToolOfWork($toolId, $workId);
+    }
+
+    # thong tin bao tra cua 1 NV duoc xac nhan
+    public function totalToolReturnConfirm($toolId, $workId)
+    {
+        $modelToolReturnConfirm = new QcToolReturnConfirm();
+        return $modelToolReturnConfirm->totalToolOfWork($toolId, $workId);
     }
 
     # ---------- ---------- giao do nghe ---------- ----------

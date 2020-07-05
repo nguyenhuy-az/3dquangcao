@@ -35,7 +35,7 @@ class TimekeepingController extends Controller
         $dataStaff = $modelStaff->loginStaffInfo();
         $modelWork->checkAutoTimekeepingOfActivityWork();
         $dateFilter = date('Y-m-d');
-        return view('work.timekeeping.timekeeping', compact('dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
+        return view('work.timekeeping.index', compact('dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
     }
 
     //xem anh bao cao

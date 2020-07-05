@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\ToolReturn;
 
+use App\Models\Ad3d\ToolReturnConfirm\QcToolReturnConfirm;
 use App\Models\Ad3d\ToolReturnDetail\QcToolReturnDetail;
 use Illuminate\Database\Eloquent\Model;
 
@@ -84,6 +85,19 @@ class QcToolReturn extends Model
         return QcToolReturn::where('work_id', $workId)->orderBy('returnDate', 'DESC')->pluck('return_id');
     }
 
+    //---------- thong tin xac nhan bao tra -----------
+    public function toolReturnConfirm()
+    {
+        return $this->hasMany('App\Models\Ad3d\ToolReturnConfirm\QcCompanyStaffWork', 'return_id', 'return_id');
+    }
+
+    #so dung cu tra ve kho duoc xac nhan
+    public function amountReturnConfirmOfStore($returnId, $storeId)
+    {
+        $modelToolReturnConfirm = new QcToolReturnConfirm();
+        return $modelToolReturnConfirm->amountOfReturnAndStore($returnId, $storeId);
+    }
+
     //---------- thong tin giao -----------
     public function work()
     {
@@ -108,7 +122,7 @@ class QcToolReturn extends Model
         return $modelToolReturnDetail->getInfoOfReturn($this->checkNullId($returnId));
     }
 
-    # tong so dung cu bao abstract
+    # tong so dung cu bao tra
     public function totalAmountStoreReturn($returnId = null)
     {
         $modelToolReturnDetail = new QcToolReturnDetail();

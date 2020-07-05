@@ -2,6 +2,9 @@
  * Created by HUY on 12/29/2017.
  */
 var qc_work_store_return = {
+    view: function (href) {
+        qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+    },
     confirm: {
         getForm: function (href) {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
@@ -14,11 +17,22 @@ var qc_work_store_return = {
         }
     }
 }
+// -------------- ---------- Xem chi tiet ----------- -----------
+$(document).ready(function () {
+    $('.qc_work_store_return_wrap').on('click', '.qc_view_get', function () {
+        qc_work_store_return.view($(this).data('href'));
+    });
+});
+
 // -------------- ----------   Loc thong tin ----------- -----------
 $(document).ready(function () {
+    // lôc theo nv tra
+    $('.qc_work_store_return_wrap').on('change', '.cbStaffFilterId', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbConfirmStatusFilter').val() + '/'+ $(this).val());
+    });
     //loc theo trang thai xac nhan
     $('.qc_work_store_return_wrap').on('change', '.cbConfirmStatusFilter', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $(this).val());
+        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.cbStaffFilterId').val());
     });
 });
 

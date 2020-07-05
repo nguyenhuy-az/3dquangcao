@@ -41,7 +41,19 @@ $currentMonth = $hFunction->currentMonth();
                             </tr>
                             <tr>
                                 <td></td>
-                                <td></td>
+                                <td class="text-center" style="padding: 0px; margin: 0;">
+                                    <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
+                                        <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                            Tất cả
+                                        </option>
+                                        @if($hFunction->checkCount($dataListStaff))
+                                            @foreach($dataListStaff as $staff)
+                                                <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                                        @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </td>
                                 <td></td>
                                 <td></td>
                                 <td style="padding: 0">
@@ -88,7 +100,11 @@ $currentMonth = $hFunction->currentMonth();
                                         </td>
                                         <td class="text-center">
                                             @if($toolReturn->checkConfirm())
-                                                <em>Đã duyệt</em>
+                                                <a class="qc_view_get qc-link"
+                                                   data-href="{!! route('qc.work.store.return.view.get', $returnId) !!}">
+                                                    Đã duyệt <br/>
+                                                    <i class="glyphicon glyphicon-eye-open"></i>
+                                                </a>
                                             @else
                                                 <a class="qc_confirm_get qc-link-green-bold"
                                                    data-href="{!! route('qc.work.store.return.confirm.get', $returnId) !!}">

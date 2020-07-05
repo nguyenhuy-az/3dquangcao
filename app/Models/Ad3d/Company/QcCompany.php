@@ -259,7 +259,15 @@ class QcCompany extends Model
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
+    # danh sach bang cham cong cua cty
+    public function getWorkActivityInfo($companyId)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelWork = new QcWork();
+        return $modelWork->infoActivityOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfCompany($companyId));
+    }
 
+    # thong tin cty me
     public function infoRootActivity()
     {
         return QcCompany::where('companyType', 0)->where('action', 1)->get();
@@ -270,6 +278,7 @@ class QcCompany extends Model
         return QcCompany::where('companyType', 0)->where('action', 1)->pluck('company_id');
     }
 
+    # lay hotline cua bo phan thi cong cua cong ty
     public function hotlineConstructionDepartment($companyId)
     {
         $hFunction = new \Hfunction();
