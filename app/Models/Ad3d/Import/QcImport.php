@@ -74,7 +74,12 @@ class QcImport extends Model
     {
         return QcImport::where('import_id', $this->checkIdNull($importId))->delete();
     }
-    //========== ========= ========= RELATION ========== ========= ==========
+    //========== ========= ========= RELATION ========== ========= =========='
+    //---------- nhap kho -----------
+    public function companyStore()
+    {
+        return $this->hasMany('App\Models\Ad3d\CompanyStore\QcCompanyStore', 'import_id', 'import_id');
+    }
     //---------- nhân viên nhập -----------
     public function staffImport()
     {

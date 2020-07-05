@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcCompanyStore extends Model
 {
     protected $table = 'qc_company_store';
-    protected $fillable = ['store_id', 'amount', 'updateDate', 'created_at', 'company_id', 'tool_id', 'supplies_id'];
+    protected $fillable = ['store_id', 'name', 'created_at', 'company_id', 'tool_id', 'supplies_id', 'import_id'];
     protected $primaryKey = 'store_id';
     public $timestamps = false;
 
@@ -16,15 +16,15 @@ class QcCompanyStore extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($amount, $companyId, $toolId = null, $suppliesId = null)
+    public function insert($name, $companyId, $toolId = null, $suppliesId = null, $importId = null)
     {
         $hFunction = new \Hfunction();
         $modelCompanyStore = new QcCompanyStore();
-        $modelCompanyStore->amount = $amount;
-        $modelCompanyStore->updateDate = $hFunction->createdAt();
+        $modelCompanyStore->name = $name;
         $modelCompanyStore->company_id = $companyId;
         $modelCompanyStore->tool_id = $toolId;
         $modelCompanyStore->supplies_id = $suppliesId;
+        $modelCompanyStore->import_id = $importId;
         $modelCompanyStore->created_at = $hFunction->createdAt();
         if ($modelCompanyStore->save()) {
             $this->lastId = $modelCompanyStore->store_id;
@@ -44,32 +44,10 @@ class QcCompanyStore extends Model
         return (empty($storeId)) ? $this->storeId() : $storeId;
     }
 
-    // cập nhật thông tin
-    public function updateInfo($storeId, $amount)
+    public function deleteStore($storeId = null)
     {
-        $hFunction = new \Hfunction();
-        $oldAmount = $this->amount($storeId);
-        return QcCompanyStore::where('store_id', $storeId)->update([
-            'amount' => (int)$oldAmount + (int)$amount,
-            'updateDate' => $hFunction->createdAt(),
-        ]);
+        return QcCompanyStore::where('store_id', $this->checkIdNull($storeId))->delete();
     }
-
-    public function updateInfoByToolOrSupplies($companyId, $amount, $toolId, $suppliesId)
-    {
-        $hFunction = new \Hfunction();
-        $oldAmount = QcCompanyStore::where('company_id', $companyId)->where('tool_id', $toolId)->where('supplies_id', $suppliesId)->sum('amount');
-        return QcCompanyStore::where('company_id', $companyId)->where('tool_id', $toolId)->where('supplies_id', $suppliesId)->update([
-            'amount' => (int)$oldAmount + (int)$amount,
-            'updateDate' => $hFunction->createdAt(),
-        ]);
-    }
-
-    /*public function deleteDetail($storeId = null)
-    {
-        $storeId = (empty($storeId)) ? $this->paymentId() : $storeId;
-        return QcCompanyStore::where('store_id', $storeId)->delete();
-    }*/
     //========== ========= ========= CAC MON QUAN HE ========== ========= ==========
     //---------- công ty -----------
     public function company()
@@ -80,15 +58,15 @@ class QcCompanyStore extends Model
     public function selectInfoToolOfListCompanyAndListToolAnd($listCompanyId, $listToolId, $orderBy = 'DESC')
     {
         if (empty($listToolId)) {
-            return QcCompanyStore::whereIn('company_id', $listCompanyId)->whereNotNull('tool_id')->orderBy('updateDate', $orderBy)->select();
+            return QcCompanyStore::whereIn('company_id', $listCompanyId)->whereNotNull('tool_id')->orderBy('store_id', $orderBy)->select();
         } else {
-            return QcCompanyStore::whereIn('company_id', $listCompanyId)->whereIn('tool_id', $listToolId)->orderBy('updateDate', $orderBy)->select();
+            return QcCompanyStore::whereIn('company_id', $listCompanyId)->whereIn('tool_id', $listToolId)->orderBy('store_id', $orderBy)->select();
         }
     }
 
     public function totalToolOfCompany($companyId, $toolId)
     {
-        return QcCompanyStore::where('company_id', $companyId)->where('tool_id', $toolId)->sum('amount');
+        return QcCompanyStore::where('company_id', $companyId)->where('tool_id', $toolId)->count();
     }
 
     public function getInfoOfListToolAndCompany($companyId, $listToolId)
@@ -135,13 +113,13 @@ class QcCompanyStore extends Model
     # so lương dung cu trong kho cua tat ca cty
     public function amountOfTool($toolId)
     {
-        return QcCompanyStore::where('tool_id', $toolId)->sum('amount');
+        return QcCompanyStore::where('tool_id', $toolId)->count();
     }
 
     # so lương dung cu trong kho cua 1 cty
     public function amountOfToolAndCompany($toolId, $companyId)
     {
-        return QcCompanyStore::where('tool_id', $toolId)->where('company_id', $companyId)->sum('amount');
+        return QcCompanyStore::where('tool_id', $toolId)->where('company_id', $companyId)->count();
     }
 
     # lay danh sach ma kho cua cong cu
@@ -180,6 +158,11 @@ class QcCompanyStore extends Model
         return QcCompanyStore::where('supplies_id', $suppliesId)->count();
     }
 
+    //---------- thong tin nhap -----------
+    public function import()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Import\QcImport', 'import_id', 'import_id');
+    }
     //========= ========== ========== GET INFO ========== ========== ==========
     # lay thong tin theo dung cu da ban giao nhan vien theo cong ty
     public function getInfoByListId($listStoreId)
@@ -221,16 +204,10 @@ class QcCompanyStore extends Model
         return $this->store_id;
     }
 
-    public function amount($storeId = null)
+    public function name($storeId = null)
     {
 
-        return $this->pluck('amount', $storeId);
-    }
-
-    public function updateDate($storeId = null)
-    {
-
-        return $this->pluck('updateDate', $storeId);
+        return $this->pluck('name', $storeId);
     }
 
     public function createdAt($storeId = null)
@@ -251,6 +228,11 @@ class QcCompanyStore extends Model
     public function suppliesId($storeId = null)
     {
         return $this->pluck('supplies_id', $storeId);
+    }
+
+    public function importId($storeId = null)
+    {
+        return $this->pluck('import_id', $storeId);
     }
 
     // last id

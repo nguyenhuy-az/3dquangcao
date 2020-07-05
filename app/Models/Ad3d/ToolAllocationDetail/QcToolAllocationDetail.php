@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcToolAllocationDetail extends Model
 {
     protected $table = 'qc_tool_allocation_detail';
-    protected $fillable = ['detail_id', 'amount', 'newStatus', 'created_at', 'store_id', 'allocation_id'];
+    protected $fillable = ['detail_id', 'image', 'newStatus', 'created_at', 'store_id', 'allocation_id'];
     protected $primaryKey = 'detail_id';
     public $timestamps = false;
 
@@ -17,11 +17,11 @@ class QcToolAllocationDetail extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($amount, $newStatus, $allocationId, $storeId)
+    public function insert($image, $newStatus, $allocationId, $storeId)
     {
         $hFunction = new \Hfunction();
         $modelToolAllocationDetail = new QcToolAllocationDetail();
-        $modelToolAllocationDetail->amount = $amount;
+        $modelToolAllocationDetail->image = $image;
         $modelToolAllocationDetail->newStatus = $newStatus;
         $modelToolAllocationDetail->store_id = $storeId;
         $modelToolAllocationDetail->allocation_id = $allocationId;
@@ -53,7 +53,7 @@ class QcToolAllocationDetail extends Model
 
     public function totalAmountOfStore($storeId)
     {
-        return QcToolAllocationDetail::where('store_id', $storeId)->sum('amount');
+        return QcToolAllocationDetail::where('store_id', $storeId)->count();
     }
 
     # danh sach ma kho cua cac lan ban giao
@@ -71,13 +71,13 @@ class QcToolAllocationDetail extends Model
     # tong so luong tat ca cong cu cua 1 lan giao
     public function totalAmountOfAllocation($allocationId)
     {
-        return QcToolAllocationDetail::where('allocation_id', $allocationId)->sum('amount');
+        return QcToolAllocationDetail::where('allocation_id', $allocationId)->count();
     }
 
     # tong so luong tat ca cong cu cua 1 lan hoac nhieu lan giao
     public function totalAmountOfListAllocationId($listAllocationId)
     {
-        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->sum('amount');
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->count();
     }
 
 
@@ -115,7 +115,7 @@ class QcToolAllocationDetail extends Model
     {
         $modelCompanyStore = new QcCompanyStore();
         $listStoreId = $modelCompanyStore->listIdOfTool($toolId);
-        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->whereIn('store_id', $listStoreId)->sum('amount');
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->whereIn('store_id', $listStoreId)->count();
     }
 
     # tong so luong 1 cong cu cua 1 lan hoac nhieu lan giao tai 1 cty
@@ -186,9 +186,9 @@ class QcToolAllocationDetail extends Model
         return $this->detail_id;
     }
 
-    public function amount($detailId = null)
+    public function image($detailId = null)
     {
-        return $this->pluck('amount', $detailId);
+        return $this->pluck('image', $detailId);
     }
 
     public function newStatus($detailId = null)

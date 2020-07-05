@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcToolAllocation extends Model
 {
     protected $table = 'qc_tool_allocation';
-    protected $fillable = ['allocation_id', 'confirmStatus', 'confirmDate', 'allocationDate', 'created_at', 'allocationStaff_id', 'work_id'];
+    protected $fillable = ['allocation_id', 'action', 'allocationDate', 'created_at', 'allocationStaff_id', 'work_id'];
     protected $primaryKey = 'allocation_id';
     public $timestamps = false;
 
@@ -16,11 +16,10 @@ class QcToolAllocation extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($allocationDate, $allocationStaffId, $workId, $confirmStatus = 0)
+    public function insert($allocationDate, $allocationStaffId, $workId)
     {
         $hFunction = new \Hfunction();
         $modelToolAllocation = new QcToolAllocation();
-        $modelToolAllocation->confirmStatus = $confirmStatus;
         $modelToolAllocation->allocationDate = $allocationDate;
         $modelToolAllocation->allocationStaff_id = $allocationStaffId;
         $modelToolAllocation->work_id = $workId;
@@ -42,11 +41,9 @@ class QcToolAllocation extends Model
     {
         return (empty($allocationId)) ? $this->allocationId() : $allocationId;
     }
-
-    public function receiveConfirm($allocationId = null)
+    public function disableAllocation($allocationId = null)
     {
-        $hFunction = new \Hfunction();
-        return QcToolAllocation::where('allocation_id', $this->checkIdNull($allocationId))->update(['confirmStatus' => 1, 'confirmDate' => $hFunction->createdAt()]);
+        return QcToolAllocation::where('allocation_id', $this->checkIdNull($allocationId))->update(['action'=> 0]);
     }
 
     public function deleteAllocation($allocationId = null)
@@ -147,12 +144,6 @@ class QcToolAllocation extends Model
         return $this->pluck('allocationDate', $allocationId);
     }
 
-    public function confirmStatus($allocationId = null)
-    {
-
-        return $this->pluck('confirmStatus', $allocationId);
-    }
-
     public function createdAt($allocationId = null)
     {
         return $this->pluck('created_at', $allocationId);
@@ -175,8 +166,4 @@ class QcToolAllocation extends Model
         return (empty($result)) ? 0 : $result->allocation_id;
     }
 
-    public function checkConfirm($allocationId = null)
-    {
-        return ($this->confirmStatus($allocationId) == 0) ? false : true;
-    }
 }

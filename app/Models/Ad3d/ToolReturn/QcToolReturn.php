@@ -56,12 +56,12 @@ class QcToolReturn extends Model
     }
     //========== ========= ========= RELATION ========== ========= ==========
     //---------- nhân viên tra -----------
-    public function companyStaffWork()
+    public function toolAllocationDetail()
     {
-        return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
+        return $this->belongsTo('App\Models\Ad3d\ToolAllocationDetail\QcCompanyStaffWork', 'detail_id', 'detail_id');
     }
 
-    # lay thong tin tra cua 1 NV
+    /*# lay thong tin tra cua 1 NV
     public function infoOfWork($workId)
     {
         return QcToolReturn::where('work_id', $workId)->orderBy('returnDate', 'DESC')->get();
@@ -83,50 +83,12 @@ class QcToolReturn extends Model
     public function listIdOfWork($workId)
     {
         return QcToolReturn::where('work_id', $workId)->orderBy('returnDate', 'DESC')->pluck('return_id');
-    }
-
-    //---------- thong tin xac nhan bao tra -----------
-    public function toolReturnConfirm()
-    {
-        return $this->hasMany('App\Models\Ad3d\ToolReturnConfirm\QcCompanyStaffWork', 'return_id', 'return_id');
-    }
-
-    #so dung cu tra ve kho duoc xac nhan
-    public function amountReturnConfirmOfStore($returnId, $storeId)
-    {
-        $modelToolReturnConfirm = new QcToolReturnConfirm();
-        return $modelToolReturnConfirm->amountOfReturnAndStore($returnId, $storeId);
-    }
-
-    //---------- thong tin giao -----------
-    public function work()
-    {
-        return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
-    }
+    }*/
 
     //---------- nhan vien xac nhan -----------
     public function confirmStaff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'confirmStaff_id', 'staff_id');
-    }
-
-    //---------- chi tiet ban giao -----------
-    public function toolReturnDetail()
-    {
-        return $this->hasMany('App\Models\Ad3d\ToolReturnDetail\QcToolReturnDetail', 'return_id', 'return_id');
-    }
-
-    public function toolReturnDetailInfo($returnId = null)
-    {
-        $modelToolReturnDetail = new QcToolReturnDetail();
-        return $modelToolReturnDetail->getInfoOfReturn($this->checkNullId($returnId));
-    }
-
-    # tong so dung cu bao tra
-    public function totalAmountStoreReturn($returnId = null)
-    {
-        $modelToolReturnDetail = new QcToolReturnDetail();
-        return $modelToolReturnDetail->totalAmountOfReturn($this->checkNullId($returnId));
     }
 
     //========= ========== ========== lấy thông tin ========== ========== ==========
@@ -164,6 +126,18 @@ class QcToolReturn extends Model
         return $this->pluck('returnDate', $returnId);
     }
 
+    public function image($returnId = null)
+    {
+
+        return $this->pluck('image', $returnId);
+    }
+
+    public function acceptStatus($returnId = null)
+    {
+
+        return $this->pluck('acceptStatus', $returnId);
+    }
+
     public function confirmStatus($returnId = null)
     {
 
@@ -176,9 +150,9 @@ class QcToolReturn extends Model
         return $this->pluck('confirmDate', $returnId);
     }
 
-    public function workId($returnId = null)
+    public function detailId($returnId = null)
     {
-        return $this->pluck('work_id', $returnId);
+        return $this->pluck('detail_id', $returnId);
     }
 
     public function confirmStaffId($returnId = null)
