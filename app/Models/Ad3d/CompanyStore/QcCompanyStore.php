@@ -87,6 +87,13 @@ class QcCompanyStore extends Model
         return $modelToolAllocationDetail->totalAmountOfStore($this->checkIdNull($storeId));
     }
 
+    # lay thong tin lan phat sau cung
+    public function toolAllocationDetailLastInfo($storeId = null)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        return $modelToolAllocationDetail->lastInfoOfCompanyStore($this->checkIdNull($storeId));
+    }
+
     //---------- công cụ -----------
     public function tool()
     {
@@ -122,12 +129,17 @@ class QcCompanyStore extends Model
         return QcCompanyStore::where('tool_id', $toolId)->where('company_id', $companyId)->count();
     }
 
-    # lay danh sach ma kho cua cong cu
+    # lay danh sach ma kho cua dung cu cua tat ca cty
     public function listIdOfTool($toolId)
     {
         return QcCompanyStore::where('tool_id', $toolId)->pluck('store_id');
     }
 
+    # lay danh sach ma kho cua dung cu tat 1 cty
+    public function listIdOfToolAndCompany($toolId, $companyId)
+    {
+        return QcCompanyStore::where('tool_id', $toolId)->where('company_id', $companyId)->pluck('store_id');
+    }
 
     #danh sach ma dung cu theo kho
     public function listToolIdOfListStore($listStoreId)

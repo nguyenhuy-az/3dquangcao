@@ -82,14 +82,23 @@ class QcTool extends Model
         return $modelCompanyStore->existOfTool((empty($toolId)) ? $this->toolId() : $toolId);
     }
 
+    # toan he thong
     public function amountInStore($toolId = null)
     {
         $modelCompanyStore = new QcCompanyStore();
         return $modelCompanyStore->amountOfTool((empty($toolId)) ? $this->toolId() : $toolId);
     }
 
+    # cua 1 cty
+    public function amountOfCompany($toolId, $companyId)
+    {
+        $modelCompanyStore = new QcCompanyStore();
+        return $modelCompanyStore->totalToolOfCompany($companyId,$toolId);
+    }
+
+
     #============ =========== ============ Lấy thông tin ============= =========== ==========
-    # lay danh sach id the type
+    # lay danh sach id theo type
     public function listIdByType($type = 0)
     {
         if ($type > 0) {

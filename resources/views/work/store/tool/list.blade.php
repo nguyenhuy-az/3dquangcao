@@ -12,17 +12,16 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
-$companyId = $dataStaff->companyId();
+$companyId = $dataCompany->companyId();
 $hrefIndex = route('qc.work.store.tool.get');
 $currentMonth = $hFunction->currentMonth();
-
 ?>
 @extends('work.store.tool.index')
 @section('qc_work_store_tool_body')
     <div class="row qc_work_store_tool_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-6 col-lg-6">
             {{-- chi tiêt --}}
-            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
@@ -35,12 +34,12 @@ $currentMonth = $hFunction->currentMonth();
                                 <th class="text-center">
                                     Số lượng
                                 </th>
+                                <th class="text-center">
+                                    Đang giao
+                                </th>
                                 {{--<th class="text-center">
                                     Bị hư
                                 </th>--}}
-                                <th class="text-center">
-                                    Đã giao
-                                </th>
                                 <th class="text-center">
                                     Còn lại
                                 </th>
@@ -51,31 +50,33 @@ $currentMonth = $hFunction->currentMonth();
                                 <td style="padding: 0">
                                     <select class="cbToolTypeFilter form-control" name="cbToolTypeFilter"
                                             data-href="{!! $hrefIndex !!}">
-                                        <option value="0" @if($typeFilter == 0) selected="selected" @endif>Tất cả</option>
-                                        <option value="1" @if($typeFilter == 1) selected="selected" @endif>Dùng chung</option>
-                                        <option value="2" @if($typeFilter == 2) selected="selected" @endif>Dùng cấp phát</option>
+                                        <option value="0" @if($typeFilter == 0) selected="selected" @endif>Tất cả
+                                        </option>
+                                        <option value="1" @if($typeFilter == 1) selected="selected" @endif>Dùng chung
+                                        </option>
+                                        <option value="2" @if($typeFilter == 2) selected="selected" @endif>Dùng cấp
+                                            phát
+                                        </option>
                                     </select>
                                 </td>
-                                <td></td>
+                                {{--<td></td>--}}
                                 <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
-                            @if($hFunction->checkCount($dataCompanyStore))
+                            @if($hFunction->checkCount($dataTool))
                                 <?php $n_o = 0; ?>
-                                @foreach($dataCompanyStore as $companyStore)
+                                @foreach($dataTool as $tool)
                                     <?php
-                                    $storeId = $companyStore->storeId();
-                                    $totalAmount = $companyStore->amount();
-                                    $dataTool = $companyStore->tool;
-                                    $toolId = $dataTool->toolId();
-                                    $toolName = $dataTool->name();
-                                    # so luong da giao
-                                    $totalAllocation = $companyStore->totalAmountAllocation();
+                                    $toolId = $tool->toolId();
+                                    $totalAmountOfCompany = $tool->amountOfCompany($toolId, $companyId);
+                                    $toolName = $tool->name();
+                                    # so luong dang ban giao
+                                    $totalAllocationActivity = $dataCompany->totalToolAllocationActivity($companyId, $toolId);// $companyStore->totalAmountAllocation();
                                     # so luong da huy
-                                    $totalCancel = 2;
+                                    $totalCancel = 0;
                                     # chua phat
-                                    $totalNoAllocation = $totalAmount - $totalAllocation;
+                                    $totalNoAllocation = $totalAmountOfCompany - $totalAllocationActivity;
                                     $n_o = $n_o + 1;
                                     ?>
                                     <tr class="@if($totalNoAllocation == 0) warning @elseif($n_o%2) info @endif">
@@ -86,16 +87,16 @@ $currentMonth = $hFunction->currentMonth();
                                             {!!  $toolName !!}
                                         </td>
                                         <td>
-                                            {!! $dataTool->getLabelType() !!}
+                                            {!! $tool->getLabelType() !!}
                                         </td>
                                         <td class="text-center">
-                                            <b style="color: blue;">{!! $totalAmount !!}</b>
+                                            <b style="color: blue;">{!! $totalAmountOfCompany !!}</b>
                                         </td>
                                         {{--<td class="text-center">
                                             {!! $totalCancel !!}
                                         </td>--}}
                                         <td class="text-center">
-                                            <b style="color: brown;">{!! $totalAllocation !!}</b>
+                                            <b style="color: brown;">{!! $totalAllocationActivity !!}</b>
                                         </td>
                                         <td class="text-center">
                                             @if($totalNoAllocation == 0)
@@ -109,7 +110,7 @@ $currentMonth = $hFunction->currentMonth();
                             @else
                                 <tr>
                                     <td class="text-center" colspan="6">
-                                        Không có thông tin phạt
+                                        Hê thống chưa có đồ nghề
                                     </td>
                                 </tr>
                             @endif

@@ -10,11 +10,20 @@ var qc_work_store_return = {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
         },
         save: function (frm) {
-            if (confirm('Tôi đồng ý xác nhận này?')) {
+            if (confirm('Tôi đồng ý với xác nhận này?')) {
                 qc_master_submit.ajaxFormHasReload(frm);
                 qc_main.scrollTop();
             }
         }
+        /*checkSelectReturn: function () {
+            var checkStatus = false;
+            $('#frmWorkStoreReturnConfirm .txtToolReturn').filter(function () {
+                if ($(this).is(':checked')) {
+                    checkStatus = true;
+                }
+            });
+            return checkStatus;
+        },*/
     }
 }
 // -------------- ---------- Xem chi tiet ----------- -----------
@@ -28,7 +37,7 @@ $(document).ready(function () {
 $(document).ready(function () {
     // lôc theo nv tra
     $('.qc_work_store_return_wrap').on('change', '.cbStaffFilterId', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbConfirmStatusFilter').val() + '/'+ $(this).val());
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbConfirmStatusFilter').val() + '/' + $(this).val());
     });
     //loc theo trang thai xac nhan
     $('.qc_work_store_return_wrap').on('change', '.cbConfirmStatusFilter', function () {
@@ -42,8 +51,13 @@ $(document).ready(function () {
     $('.qc_work_store_return_wrap').on('click', '.qc_confirm_get', function () {
         qc_work_store_return.confirm.getForm($(this).data('href'));
     });
+    // chon tra het
+    /*$('body').on('click', '.txtCheckAll', function () {
+        $('input:checkbox').not(this).prop('checked', this.checked);
+    });*/
+
     //xac nhan
-    $('body').on('click', '#frmWorkStoreReturn .qc_save', function () {
-        qc_work_store_return.confirm.save($(this).parents('#frmWorkStoreReturn'));
+    $('body').on('click', '#frmWorkStoreReturnConfirm .qc_save', function () {
+        qc_work_store_return.confirm.save($(this).parents('#frmWorkStoreReturnConfirm'));
     });
 });

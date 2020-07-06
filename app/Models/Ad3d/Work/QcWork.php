@@ -492,6 +492,13 @@ class QcWork extends Model
         return $modelTimekeeping->infoOfWork($this->checkIdNull($workId), $orderBy);
     }
 
+    # lay thong tin cham cong theo ngay
+    public function timekeepingProvisionalOfDate($workId, $date)
+    {
+        $modelTimekeepingProvisional = new QcTimekeepingProvisional();
+        return $modelTimekeepingProvisional->getInfoOfWorkAndDate($workId, $date);
+    }
+
     // kiem tra thong tin lam viec
     public function checkAutoTimekeepingOfActivityWork()
     {
@@ -530,6 +537,7 @@ class QcWork extends Model
         $modelOffWork = new QcLicenseOffWork();
         return $modelOffWork->infoOfWork($this->checkIdNull($workId), $orderBy);
     }
+
 
     //----------- di lam tre ------------
     public function timekeepingLateWork()

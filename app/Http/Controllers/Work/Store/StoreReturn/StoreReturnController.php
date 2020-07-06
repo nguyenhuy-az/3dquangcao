@@ -22,11 +22,13 @@ use Request;
 
 class StoreReturnController extends Controller
 {
-    public function index($cbConfirmStatusFilter = 100,$staffFilterId = 0)
+    public function index($cbConfirmStatusFilter = 100, $staffFilterId = 0)
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelToolAllocation = new QcToolAllocation();
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
         $modelToolReturn = new QcToolReturn();
         $dataAccess = [
             'object' => 'storeReturn',
@@ -42,50 +44,39 @@ class StoreReturnController extends Controller
         # danh sach thong tin lam viec
         $listWorkId = $modelCompanyStaffWork->listIdOfListStaffId($listStaffId);
         # thong tin bao tra dung cu
-        $dataToolReturn = $modelToolReturn->infoOfListWork($listWorkId, $cbConfirmStatusFilter);
+        //$dataToolReturn = $modelToolReturn->infoOfListWork($listWorkId, $cbConfirmStatusFilter);
+        # danh sach bo do nghe
+        $listAllocationId = $modelToolAllocation->listIdOfListWork($listWorkId);
+        # chi giao do nghe
+        $listDetailId = $modelToolAllocationDetail->listIdOfListAllocationId($listAllocationId);
+        $dataToolReturn = $modelToolReturn->infoOfListDetail($listDetailId, $cbConfirmStatusFilter);
         # danh sach NV
         $dataListStaff = $modelCompany->staffInfoActivityOfListCompanyId($searchCompanyFilterId);
-        return view('work.store.return.list', compact('dataAccess', 'modelStaff','dataListStaff', 'dataToolReturn','staffFilterId', 'cbConfirmStatusFilter'));
-    }
-
-    public function getView($returnId)
-    {
-        $modelStaff = new QcStaff();
-        $modelToolReturn = new QcToolReturn();
-        $dataToolReturn = $modelToolReturn->getInfo($returnId);
-        return view('work.store.return.view', compact('modelStaff', 'dataToolReturn'));
+        return view('work.store.return.list', compact('dataAccess', 'modelStaff', 'dataListStaff', 'dataToolReturn', 'staffFilterId', 'cbConfirmStatusFilter'));
     }
 
     #-------------- ------------- Xac nhan ban  giao ------------------ -------------
-    public function getConfirm($returnId)
+    public function getConfirm($allocationId)
     {
         $modelStaff = new QcStaff();
-        $modelToolReturn = new QcToolReturn();
-        $dataToolReturn = $modelToolReturn->getInfo($returnId);
-        return view('work.store.return.confirm', compact('modelStaff', 'dataToolReturn'));
+        $modelToolAllocation = new QcToolAllocation();
+        $dataToolAllocation = $modelToolAllocation->getInfo($allocationId);
+        return view('work.store.return.confirm', compact('modelStaff', 'dataToolAllocation'));
     }
 
-    public function postConfirm($returnId)
+    public function postConfirm($allocationId)
     {
         $hFunction = new \Hfunction();
-        $modelToolReturn = new QcToolReturn();
-        $modelToolReturnDetail = new QcToolReturnDetail();
-        $modelToolReturnConfirm = new QcToolReturnConfirm();
-        $dataToolReturnDetail = $modelToolReturnDetail->getInfoOfReturn($returnId);
-        if ($modelToolReturn->updateConfirm($returnId)) {
-            if ($hFunction->checkCount($dataToolReturnDetail)) {
-                foreach ($dataToolReturnDetail as $toolReturnDetail) {
-                    $detailId = $toolReturnDetail->detailId();
-                    $storeId = $toolReturnDetail->storeId();
-                    # so luong bao tra
-                    $returnAmount = $toolReturnDetail->amount();
-                    # so luong duoc xac nhan
-                    $confirmAmount = Request::input('txtReturnDetailAmount_' . $detailId);
-                    # quan ly nguoi duyet nhap SL lon hon SL bao tra
-                    $confirmAmount = ($confirmAmount > $returnAmount) ? $returnAmount : $confirmAmount;
-                    $modelToolReturnConfirm->insert($confirmAmount, $storeId, $returnId);
-                }
+        $modelStaff = new QcStaff();
+        $modelToolReturn = new QcToolReturn();//txtToolReturn
+        $confirmReturnId = Request::input('txtToolReturn');
+        $acceptReturnId = Request::input('txtToolReturnAccept');
+        foreach ($confirmReturnId as $returnId) {
+            $acceptStatus = 0;
+            if (!empty($acceptReturnId)) {
+                if ($hFunction->checkInArray($returnId, $acceptReturnId)) $acceptStatus = 1;
             }
+            $modelToolReturn->confirmReturn($returnId, $acceptStatus, $modelStaff->loginStaffId());
         }
     }
 }

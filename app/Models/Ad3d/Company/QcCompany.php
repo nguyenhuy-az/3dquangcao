@@ -20,6 +20,7 @@ use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\SystemDateOff\QcSystemDateOff;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
+use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
@@ -252,12 +253,20 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\CompanyStore\QcCompanyStore', 'company_id', 'company_id');
     }
 
+    # tong loai dung cu cua 1 cty
     public function totalTool($companyId, $toolId)
     {
         $modelCompanyStore = new QcCompanyStore();
         return $modelCompanyStore->totalToolOfCompany($companyId, $toolId);
     }
 
+    # tong so luong dung cu cua cty da dang giao
+    public function totalToolAllocationActivity($companyId, $toolId)
+    {
+        $hFunction = new \Hfunction();
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        return $hFunction->getCount($modelToolAllocationDetail->infoActivityOfToolAndCompany($toolId, $companyId));
+    }
     #============ =========== ============ GET INFO ============= =========== ==========
     # danh sach bang cham cong cua cty
     public function getWorkActivityInfo($companyId)

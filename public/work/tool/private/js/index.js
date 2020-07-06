@@ -10,10 +10,16 @@ var qc_work_tool_private = {
     return: {
         save: function (frm) {
             if (qc_work_tool_private.return.checkSelectTool()) {
-                if (confirm('Tôi đồng ý giao lại các đồ nghề này?')) {
-                    qc_master_submit.normalForm('#frmWorkToolPrivateReturn');
-                    qc_main.scrollTop();
+                if(qc_work_tool_private.return.checkSelectImage()){
+                    if (confirm('Tôi đồng ý giao lại các đồ nghề này?')) {
+                        qc_master_submit.normalForm('#frmWorkToolPrivateReturn');
+                        qc_main.scrollTop();
+                    }
+                }else{
+                    alert('Đồ nghề trả phải có hình ảnh');
+                    return false;
                 }
+
             } else {
                 alert('Phải chọn đồ nghề để bàn giao');
                 return false;
@@ -23,12 +29,23 @@ var qc_work_tool_private = {
         },
         checkSelectTool: function () {
             var checkStatus = false;
-            $('#frmWorkToolPrivateReturn .txtReturnStore').filter(function () {
+            $('#frmWorkToolPrivateReturn .txtAllocationDetail').filter(function () {
                 if ($(this).is(':checked')) {
                     checkStatus = true;
                 }
             });
             return checkStatus;
+        },
+        checkSelectImage: function () {
+            var checkImage = true;
+            $('#frmWorkToolPrivateReturn .txtAllocationDetail').filter(function () {
+                if ($(this).is(':checked')) {
+                    var detailId = $(this).val();
+                    //var imageName = $('#txtReturnImage_' + detailId).val();
+                    if ($('#txtReturnImage_' + detailId).val().length == 0 ) checkImage = false;
+                }
+            });
+            return checkImage;
         }
     }
 }

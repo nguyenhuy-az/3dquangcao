@@ -22,16 +22,22 @@ if (isset($dataAccess)) {
 <div class="row">
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
-            <li @if($viewLoginObject == 'storeTool') class="active" @endif>
-                <a class="qc-link-bold" href="{!! route('qc.work.store.tool.get') !!}"
-                   @if($viewLoginObject == 'storeTool') style="background-color: whitesmoke" @endif>
-                    Đồ nghề
+            <li @if($viewLoginObject == 'storeAllocation') class="active" @endif>
+                <a class="qc-link-bold" href="{!! route('qc.work.store.allocation.get') !!}"
+                   @if($viewLoginObject == 'storeAllocation') style="background-color: whitesmoke;" @endif>
+                    Đang giao
                 </a>
             </li>
             <li @if($viewLoginObject == 'storeReturn') class="active" @endif>
                 <a class="qc-link-bold" href="{!! route('qc.work.store.return.get') !!}"
                    @if($viewLoginObject == 'storeReturn') style="background-color: whitesmoke;" @endif>
                     Trả đồ nghề
+                </a>
+            </li>
+            <li @if($viewLoginObject == 'storeTool') class="active" @endif>
+                <a class="qc-link-bold" href="{!! route('qc.work.store.tool.get') !!}"
+                   @if($viewLoginObject == 'storeTool') style="background-color: whitesmoke" @endif>
+                    Đồ nghề
                 </a>
             </li>
         </ul>

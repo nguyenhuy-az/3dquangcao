@@ -100,6 +100,7 @@ class ImportController extends Controller
         $modelCompanyStore = new QcCompanyStore();
         $modelToolAllocation = new QcToolAllocation();
         $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $currentDate = $hFunction->carbonNow();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $loginStaffId = $dataStaffLogin->staffId();
         $importCompanyId = $modelImport->companyId($importId)[0];
@@ -186,23 +187,34 @@ class ImportController extends Controller
                                     $modelImportDetail->updateInfo($detailId, $importPrice, $importAmount, $importTotalMoney, $toolId, $importSuppliesId, $importNewName);
 
                                     // thêm dụng cụ mới vào kho
-                                    $dataCompanyStore = $modelCompanyStore->infoOfToolAndCompany($toolId, $importCompanyId);
-                                    if (!$hFunction->checkCount($dataCompanyStore)) {
-                                        if ($modelCompanyStore->insert($importAmount, $importCompanyId, $toolId, null)) {
+                                    for ($i = 1; $i <= $importAmount; $i++) {
+                                        $storeName = null;
+                                        if ($modelCompanyStore->insert($importNewName, $importCompanyId, $toolId, null, $importId)) {
                                             $newStoreId = $modelCompanyStore->insertGetId();
                                             // cap phat dụng cụ cho nhân viên mua
-                                            if ($allocationStatus[$key] == 1) { // phát luôn cho nhân viên
+                                            if ($allocationStatus[$key] == 1) {
+                                                // phát luôn cho nhân viên
                                                 if (!empty($importStaffWorkId)) {
-                                                    if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffWorkId, 1)) {  //phieu cap phat dung cu
-                                                        $newAllocationId = $modelToolAllocation->insertGetId();
-                                                        $newStatus = 1; # dụng cu moi
-                                                        $modelToolAllocationDetail->insert($importAmount, $newStatus, $newAllocationId, $newStoreId); // chi tiet cap phat
+                                                    # thong bo do nghe
+                                                    $dataToolAllocation = $modelToolAllocation->infoActivityOfWork($importStaffWorkId);
+                                                    # da co tao bo do nghe
+                                                    if ($hFunction->checkCount($dataToolAllocation)) {
+                                                        $allocationId = $dataToolAllocation->allocationId();
+                                                    } else {
+                                                        # tao moi
+                                                        if ($modelToolAllocation->insert($currentDate, $loginStaffId, $importStaffWorkId)) {
+                                                            $allocationId = $modelToolAllocation->insertGetId();
+                                                        } else {
+                                                            $allocationId = null;
+                                                        }
+                                                    }
+                                                    if (!empty($allocationId)) {  //phieu cap phat dung cu
+                                                        $modelToolAllocationDetail->insert(null, 1, $allocationId, $newStoreId); // chi tiet cap phat
                                                     }
                                                 }
                                             }
                                         }
                                     }
-
                                 }
                             }
                         } else {
@@ -215,21 +227,31 @@ class ImportController extends Controller
                                 }
                             }
                             if (!empty($importToolId)) { //dung cu
-                                $dataCompanyStore = $modelCompanyStore->infoOfToolAndCompany($importToolId, $importCompanyId);
-                                if ($hFunction->checkCount($dataCompanyStore)) { // da ton tai trong kho -> cap nhat so luong
-                                    $modelCompanyStore->updateInfoByToolOrSupplies($importCompanyId, $importAmount, $importToolId, null);
-                                    $storeId = $dataCompanyStore->storeId();
-                                } else { // then dung cu vao kho
-                                    $modelCompanyStore->insert($importAmount, $importCompanyId, $importToolId, null);
-                                    $storeId = $modelCompanyStore->insertGetId();
-                                }
-                                // cap phat dụng cu cho nhân viên mua
-                                if ($allocationStatus[$key] == 1) { // phát luôn cho nhân viên
-                                    if (!empty($importStaffWorkId)) {
-                                        if ($modelToolAllocation->insert($hFunction->carbonNow(), $loginStaffId, $importStaffWorkId, 1)) {  //phieu cap dung cu
-                                            $newAllocationId = $modelToolAllocation->insertGetId();
-                                            $newStatus = 1; # dụng cu moi
-                                            $modelToolAllocationDetail->insert($importAmount, $newStatus, $newAllocationId, $storeId); // chi tiet cap
+                                // thêm dụng cụ mới vào kho
+                                for ($i = 1; $i <= $importAmount; $i++) {
+                                    if ($modelCompanyStore->insert($modelTool->name($importToolId)[0], $importCompanyId, $importToolId, null, $importId)) {
+                                        $newStoreId = $modelCompanyStore->insertGetId();
+                                        // cap phat dụng cụ cho nhân viên mua
+                                        if ($allocationStatus[$key] == 1) {
+                                            // phát luôn cho nhân viên
+                                            if (!empty($importStaffWorkId)) {
+                                                # thong bo do nghe
+                                                $dataToolAllocation = $modelToolAllocation->infoActivityOfWork($importStaffWorkId);
+                                                # da co tao bo do nghe
+                                                if ($hFunction->checkCount($dataToolAllocation)) {
+                                                    $allocationId = $dataToolAllocation->allocationId();
+                                                } else {
+                                                    # tao moi
+                                                    if ($modelToolAllocation->insert($currentDate, $loginStaffId, $importStaffWorkId)) {
+                                                        $allocationId = $modelToolAllocation->insertGetId();
+                                                    } else {
+                                                        $allocationId = null;
+                                                    }
+                                                }
+                                                if (!empty($allocationId)) {  //phieu cap phat dung cu
+                                                    $modelToolAllocationDetail->insert(null, 1, $allocationId, $newStoreId); // chi tiet cap phat
+                                                }
+                                            }
                                         }
                                     }
                                 }

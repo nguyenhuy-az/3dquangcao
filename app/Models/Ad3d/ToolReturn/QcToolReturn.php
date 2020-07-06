@@ -2,14 +2,13 @@
 
 namespace App\Models\Ad3d\ToolReturn;
 
-use App\Models\Ad3d\ToolReturnConfirm\QcToolReturnConfirm;
-use App\Models\Ad3d\ToolReturnDetail\QcToolReturnDetail;
+use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 use Illuminate\Database\Eloquent\Model;
 
 class QcToolReturn extends Model
 {
     protected $table = 'qc_tool_return';
-    protected $fillable = ['return_id', 'returnDate', 'confirmStatus', 'confirmDate', 'created_at', 'work_id', 'confirmStaff_id'];
+    protected $fillable = ['return_id', 'returnDate', 'image', 'confirmStatus', 'confirmDate', 'acceptStatus', 'created_at', 'detail_id', 'confirmStaff_id'];
     protected $primaryKey = 'return_id';
     public $timestamps = false;
 
@@ -17,12 +16,13 @@ class QcToolReturn extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($workId)
+    public function insert($detailId, $image)
     {
         $hFunction = new \Hfunction();
         $modelToolReturn = new QcToolReturn();
         $modelToolReturn->returnDate = $hFunction->carbonNow();
-        $modelToolReturn->work_id = $workId;
+        $modelToolReturn->image = $image;
+        $modelToolReturn->detail_id = $detailId;
         $modelToolReturn->created_at = $hFunction->createdAt();
         if ($modelToolReturn->save()) {
             $this->lastId = $modelToolReturn->return_id;
@@ -44,46 +44,75 @@ class QcToolReturn extends Model
 
     public function deleteReturn($returnId = null)
     {
-        $returnId = (empty($returnId)) ? $this->returnId() : $returnId;
-        return QcToolReturn::where('return_id', $returnId)->delete();
+        return QcToolReturn::where('return_id', $this->checkNullId($returnId))->delete();
     }
 
-    # xac nhan
-    public function updateConfirm($returnId)
+    # xac nhan tra
+    public function confirmReturn($returnId, $acceptStatus, $confirmStaffId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        if ($this->updateConfirm($returnId, $acceptStatus, $confirmStaffId)) {
+            # chap nhan tra
+            if ($this->checkAcceptStatus($returnId)) $modelToolAllocationDetail->disableDetail($this->detailId($returnId));
+        }
+    }
+
+    public function updateConfirm($returnId, $acceptStatus, $confirmStaffId)
     {
         $hFunction = new \Hfunction();
-        return QcToolReturn::where('return_id', $returnId)->update(['confirmStatus' => 1, 'confirmDate' => $hFunction->carbonNow()]);
+        return QcToolReturn::where('return_id', $returnId)->update(['confirmStatus' => 1, 'confirmDate' => $hFunction->carbonNow(), 'confirmStaff_id' => $confirmStaffId, 'acceptStatus' => $acceptStatus]);
     }
+
+    # hinh anh
+    public function rootPathFullImage()
+    {
+        return 'public/images/tool-return/full';
+    }
+
+    public function rootPathSmallImage()
+    {
+        return 'public/images/tool-return/small';
+    }
+
+    # xóa 1 hình ảnh
+    public function deleteImage($returnId = null)
+    {
+        $imageName = $this->image($returnId)[0];
+        if (QcToolReturn::where('return_id', $returnId)->update(['image' => null])) {
+            $this->dropImage($imageName);
+        }
+    }
+
+    //upload image
+    public function uploadImage($source_img, $imageName, $resize = 500)
+    {
+        $hFunction = new \Hfunction();
+        $pathSmallImage = $this->rootPathSmallImage();
+        $pathFullImage = $this->rootPathFullImage();
+        if (!is_dir($pathFullImage)) mkdir($pathFullImage);
+        if (!is_dir($pathSmallImage)) mkdir($pathSmallImage);
+        return $hFunction->uploadSaveByFileName($source_img, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $resize);
+    }
+
+    //drop image
+    public function dropImage($imageName)
+    {
+        unlink($this->rootPathSmallImage() . '/' . $imageName);
+        unlink($this->rootPathFullImage() . '/' . $imageName);
+    }
+
     //========== ========= ========= RELATION ========== ========= ==========
     //---------- nhân viên tra -----------
     public function toolAllocationDetail()
     {
-        return $this->belongsTo('App\Models\Ad3d\ToolAllocationDetail\QcCompanyStaffWork', 'detail_id', 'detail_id');
+        return $this->belongsTo('App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail', 'detail_id', 'detail_id');
     }
 
-    /*# lay thong tin tra cua 1 NV
-    public function infoOfWork($workId)
+    # lay thong tin cuoi dung bao tra
+    public function lastInfoOfToolAllocationDetail($detailId)
     {
-        return QcToolReturn::where('work_id', $workId)->orderBy('returnDate', 'DESC')->get();
+        return QcToolReturn::where('detail_id', $detailId)->orderBy('return_id', 'DESC')->first();
     }
-
-    # lay thong tin tra cua nhieu NV
-    public function infoOfListWork($listWorkId, $confirmStatus = 100)
-    {
-        # 100 - lay tat ca thong
-        if ($confirmStatus == 100) {
-            return QcToolReturn::whereIn('work_id', $listWorkId)->orderBy('returnDate', 'DESC')->get();
-        } else {
-            return QcToolReturn::whereIn('work_id', $listWorkId)->where('confirmStatus', $confirmStatus)->orderBy('returnDate', 'DESC')->get();
-        }
-    }
-
-
-    # danh sach ma ban giao
-    public function listIdOfWork($workId)
-    {
-        return QcToolReturn::where('work_id', $workId)->orderBy('returnDate', 'DESC')->pluck('return_id');
-    }*/
 
     //---------- nhan vien xac nhan -----------
     public function confirmStaff()
@@ -92,6 +121,35 @@ class QcToolReturn extends Model
     }
 
     //========= ========== ========== lấy thông tin ========== ========== ==========
+    # lay thong tin tra do nghe cua 1/nhieu nv lam viec tai cty
+    public function infoOfListDetail($listDetailId, $confirmStatus = 100)
+    {
+        #$confirmStatus = 100 tat ca thong tin
+        if ($confirmStatus == 100) {
+            return QcToolReturn::whereIn('detail_id', $listDetailId)->get();
+        } else {
+            return QcToolReturn::whereIn('detail_id', $listDetailId)->where('confirmStatus', $confirmStatus)->get();
+        }
+    }
+
+    # lay thong tin tra do nghe cua 1/nhieu nv lam viec tai cty chua xac nhan
+    public function infoUnConfirmOfListDetail($listDetailId)
+    {
+        return $this->infoOfListDetail($listDetailId, 0);
+    }
+
+    # lay thong tin tra ve kho lan sau cung
+    public function infoLastOfCompanyStore($storeId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        return $this->lastInfoOfToolAllocationDetail($modelToolAllocationDetail->lastIdOfCompanyStore($storeId));
+    }
+
+    public function getAllocationDetailListId()
+    {
+        return QcToolReturn::select('*')->pluck('detail_id');
+    }
+
     public function getInfo($returnId = '', $field = '')
     {
         if (empty($returnId)) {
@@ -172,9 +230,39 @@ class QcToolReturn extends Model
         return (empty($result)) ? 0 : $result->return_id;
     }
 
+    // get path image
+    public function pathSmallImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathSmallImage() . '/' . $image);
+        }
+    }
+
+    public function pathFullImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathFullImage() . '/' . $image);
+        }
+    }
+
     # ========= ============ Kiem tra thong tin ============= ==============
+    # kiem tra duoc xac nhan nhay chua
     public function checkConfirm($returnId = null)
     {
-        return ($this->confirmStatus($returnId) == 0) ? false : true;
+        $result = $this->confirmStatus($returnId);
+        $result = (is_int($result)) ? $result : $result[0];
+        return ($result == 0) ? false : true;
+    }
+
+    # kiem tra co duoc dong y hay khong
+    public function checkAcceptStatus($returnId = null)
+    {
+        $result = $this->acceptStatus($returnId);
+        $result = (is_int($result)) ? $result : $result[0];
+        return ($result == 0) ? false : true;
     }
 }

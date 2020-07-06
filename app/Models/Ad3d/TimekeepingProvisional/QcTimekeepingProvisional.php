@@ -368,6 +368,11 @@ class QcTimekeepingProvisional extends Model
         return ($result > 0) ? true : false;
     }
 
+    public function getInfoOfWorkAndDate($workId, $dateYmd)
+    {
+        $dateYmd = date('Y-m-d', strtotime($dateYmd));
+        return QcTimekeepingProvisional::where('work_id', $workId)->where('timeBegin', 'like', "%$dateYmd%")->first();
+    }
     //----------- TIMEKEEPING-PROVISIONAL-IAMGE ------------
     public function timekeepingProvisionalImage()
     {

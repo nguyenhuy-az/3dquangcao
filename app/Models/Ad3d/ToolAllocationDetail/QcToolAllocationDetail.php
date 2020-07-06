@@ -4,12 +4,13 @@ namespace App\Models\Ad3d\ToolAllocationDetail;
 
 use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
+use App\Models\Ad3d\ToolReturn\QcToolReturn;
 use Illuminate\Database\Eloquent\Model;
 
 class QcToolAllocationDetail extends Model
 {
     protected $table = 'qc_tool_allocation_detail';
-    protected $fillable = ['detail_id', 'image', 'newStatus', 'created_at', 'store_id', 'allocation_id'];
+    protected $fillable = ['detail_id', 'image', 'newStatus', 'created_at', 'action', 'store_id', 'allocation_id'];
     protected $primaryKey = 'detail_id';
     public $timestamps = false;
 
@@ -39,14 +40,23 @@ class QcToolAllocationDetail extends Model
         return $this->lastId;
     }
 
+    public function checkNullId($id = null)
+    {
+        return (empty($id)) ? $this->detailId() : $id;
+    }
+
     public function deleteDetail($detailId = null)
     {
-        $detailId = (empty($detailId)) ? $this->detailId() : $detailId;
-        return QcToolAllocationDetail::where('detail_id', $detailId)->delete();
+        return QcToolAllocationDetail::where('detail_id', $this->checkNullId($detailId))->delete();
+    }
+
+    public function disableDetail($detailId = null)
+    {
+        return QcToolAllocationDetail::where('detail_id', $this->checkNullId($detailId))->update(['action' => 0]);
     }
     //========== ========= =========  CAC MOI QUAN HE ========== ========= ==========
     //Kho
-    public function companyStory()
+    public function companyStore()
     {
         return $this->belongsTo('App\Models\Ad3d\CompanyStore\QcCompanyStore', 'store_id', 'store_id');
     }
@@ -62,10 +72,51 @@ class QcToolAllocationDetail extends Model
         return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('store_id')->pluck('store_id');
     }
 
+    # lay thong tin giao sau cung cua dung cu trong kho
+    public function lastInfoOfCompanyStore($storeId)
+    {
+        return QcToolAllocationDetail::where('store_id', $storeId)->orderBy('detail_id', 'DESC')->first();
+    }
+
+    # lay ma ban giao sau cung cua dung cu trong kho
+    public function lastIdOfCompanyStore($storeId)
+    {
+        $lastInfo = $this->lastInfoOfCompanyStore($storeId);
+        return (!empty($lastInfo)) ? $lastInfo->detailId() : null;
+    }
+
+    # thong tin dung cu dang ban giao chua dươc tra cua cong cu
+    public function infoActivityOfToolAndCompany($toolId, $companyId)
+    {
+        $modelCompanyStore = new QcCompanyStore();
+        $listStoreId = $modelCompanyStore->listIdOfToolAndCompany($toolId, $companyId);
+        return QcToolAllocationDetail::whereIn('store_id', $listStoreId)->where('action', 1)->get();
+    }
+
+    //---------- tra do nghe -----------
+    public function toolReturn()
+    {
+        return $this->hasMany('App\Models\Ad3d\ToolReturn\QcToolReturn', 'detail_id', 'detail_id');
+    }
+
+    # ly thong tin bao tra cuoi sau cung
+    public function lastInfoOfToolReturn($detailId = null)
+    {
+        $modelToolReturn = new QcToolReturn();
+        return $modelToolReturn->lastInfoOfToolAllocationDetail($this->checkNullId($detailId));
+    }
+
     //---------- phiếu bàn giao -----------
     public function toolAllocation()
     {
         return $this->belongsTo('App\Models\Ad3d\ToolAllocation\QcToolAllocation', 'allocation_id', 'allocation_id');
+    }
+
+    # thong tin chua tra cua 1 bo do nghe
+    public function getInfoNotReturnOfAllocation($allocationId)
+    {
+        $modelToolReturn = new QcToolReturn();
+        return QcToolAllocationDetail::where('allocation_id', $allocationId)->whereNotIn('detail_id', $modelToolReturn->getAllocationDetailListId())->get();
     }
 
     # tong so luong tat ca cong cu cua 1 lan giao
@@ -141,6 +192,12 @@ class QcToolAllocationDetail extends Model
         return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('store_id')->pluck('store_id');
     }
 
+    # danh sanh ma chi tiet ban giao cua cac bo do nghe
+    public function listIdOfListAllocationId($listAllocationId)
+    {
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('detail_id')->pluck('detail_id');
+    }
+
     //========= ========== ========== lay thong tin cua nhan vien ========== ========== ==========
     # tong dung cu cua 1 NV khi lam viec o 1 cty
     public function totalToolOfWork($toolId, $workId)
@@ -196,6 +253,12 @@ class QcToolAllocationDetail extends Model
         return $this->pluck('newStatus', $detailId);
     }
 
+    public function action($detailId = null)
+    {
+        return $this->pluck('action', $detailId);
+    }
+
+
     public function createdAt($detailId = null)
     {
         return $this->pluck('created_at', $detailId);
@@ -204,6 +267,11 @@ class QcToolAllocationDetail extends Model
     public function toolId($detailId = null)
     {
         return $this->pluck('tool_id', $detailId);
+    }
+
+    public function storeId($detailId = null)
+    {
+        return $this->pluck('store_id', $detailId);
     }
 
     public function allocationId($detailId = null)

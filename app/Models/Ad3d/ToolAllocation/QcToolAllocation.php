@@ -3,6 +3,7 @@
 namespace App\Models\Ad3d\ToolAllocation;
 
 use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
+use App\Models\Ad3d\ToolReturn\QcToolReturn;
 use Illuminate\Database\Eloquent\Model;
 
 class QcToolAllocation extends Model
@@ -41,9 +42,10 @@ class QcToolAllocation extends Model
     {
         return (empty($allocationId)) ? $this->allocationId() : $allocationId;
     }
+
     public function disableAllocation($allocationId = null)
     {
-        return QcToolAllocation::where('allocation_id', $this->checkIdNull($allocationId))->update(['action'=> 0]);
+        return QcToolAllocation::where('allocation_id', $this->checkIdNull($allocationId))->update(['action' => 0]);
     }
 
     public function deleteAllocation($allocationId = null)
@@ -63,11 +65,25 @@ class QcToolAllocation extends Model
         return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
     }
 
-    # lay thong tin ban giao
+    # lay thong tin ban giao dang hoat dong
+    public function infoActivityOfWork($workId)
+    {
+
+        return QcToolAllocation::where('work_id', $workId)->where('action', 1)->first();
+    }
+
+    # lay thong tin ban giao cua 1 nv
     public function infoOfWork($workId)
     {
-        
+
         return QcToolAllocation::where('work_id', $workId)->orderBy('allocationDate', 'DESC')->get();
+    }
+
+    # lay thong tin ban giao cua 1/nhieu nv
+    public function infoActivityOfListWork($listWorkId)
+    {
+
+        return QcToolAllocation::whereIn('work_id', $listWorkId)->where('action',1)->orderBy('allocationDate', 'DESC')->get();
     }
 
     # danh sach ma ban giao
@@ -76,10 +92,23 @@ class QcToolAllocation extends Model
         return QcToolAllocation::where('work_id', $workId)->orderBy('allocationDate', 'DESC')->pluck('allocation_id');
     }
 
+    # danh sach ma ban giao cua nhieu NC
+    public function listIdOfListWork($listWorkId)
+    {
+        return QcToolAllocation::wherein('work_id', $listWorkId)->orderBy('allocationDate', 'DESC')->pluck('allocation_id');
+    }
+
     //---------- Chi tiết cấp -----------
     public function toolAllocationDetail()
     {
         return $this->belongsTo('App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail', 'allocation_id', 'allocation_id');
+    }
+
+    # lay thong tin giao chua tra cua 1 bo do nghe
+    public function toolAllocationDetailInfoNotReturn($allocationId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        return $modelToolAllocationDetail->getInfoNotReturnOfAllocation($allocationId);
     }
 
     public function totalAmountToolOfAllocation($allocationId = null)
@@ -98,6 +127,16 @@ class QcToolAllocation extends Model
     {
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         return $modelToolAllocationDetail->infoOfListToolAllocation($listAllocationId);
+    }
+
+    #--------- -------------- tra do nghe ------------- -----------
+    # lay thong tin tra cua 1 bo do nghe
+    public function toolReturnUnConfirmInfo($allocationId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolReturn = new QcToolReturn();
+        $listDetailId = $modelToolAllocationDetail->listIdOfListAllocationId([$this->checkIdNull($allocationId)]);
+        return $modelToolReturn->infoUnConfirmOfListDetail($listDetailId);
     }
 
     //========= ========== ========== lấy thông tin ========== ========== ==========

@@ -1308,7 +1308,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::get('view/{toolId?}', ['as' => 'qc.work.tool.private.view.get', 'uses' => 'Work\Tool\ToolController@viewTool']);
 
             # tra lai do nghe
-            Route::get('return/{storeId?}', ['as' => 'qc.work.tool.private.return.get', 'uses' => 'Work\Tool\ToolController@getReturn']);
+            Route::get('return/{allocationId?}/{storeId?}', ['as' => 'qc.work.tool.private.return.get', 'uses' => 'Work\Tool\ToolController@getReturn']);
             Route::post('return', ['as' => 'qc.work.tool.private.return.post', 'uses' => 'Work\Tool\ToolController@postReturn']);
 
             #xác nhận đồ nghề
@@ -1320,17 +1320,24 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     });
     //------ kho do nghe cua he thong -------
     Route::group(['prefix' => 'store'], function () {
+        # thong tin giao
+        # ban giao lai dung cuqư
+        Route::group(['prefix' => 'allocation'], function () {
+            # xac nhan tra
+            Route::get('check/{allocationId?}', ['as' => 'qc.work.store.allocation.check.get', 'uses' => 'Work\Store\allocation\AllocationController@checkInfo']);
+
+            Route::get('/', ['as' => 'qc.work.store.allocation.get', 'uses' => 'Work\Store\Allocation\AllocationController@index']);
+        });
+
         # thong tin kho
-        Route::group(['prefix' => 'tool'], function (){
+        Route::group(['prefix' => 'tool'], function () {
             Route::get('/{type?}', ['as' => 'qc.work.store.tool.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@index']);
         });
         # ban giao lai dung cu
-        Route::group(['prefix' => 'return'], function (){
-            #xem chi tiet
-            Route::get('view/{returnId?}', ['as' => 'qc.work.store.return.view.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@getView']);
+        Route::group(['prefix' => 'return'], function () {
             # xac nhan tra
-            Route::get('confirm/{returnId?}', ['as' => 'qc.work.store.return.confirm.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@getConfirm']);
-            Route::post('confirm/{returnId?}', ['as' => 'qc.work.store.return.confirm.post', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@postConfirm']);
+            Route::get('confirm/{allocationId?}', ['as' => 'qc.work.store.return.confirm.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@getConfirm']);
+            Route::post('confirm/{allocationId?}', ['as' => 'qc.work.store.return.confirm.post', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@postConfirm']);
 
             Route::get('/{confirmStatus?}/{staffFilterId?}', ['as' => 'qc.work.store.return.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@index']);
         });

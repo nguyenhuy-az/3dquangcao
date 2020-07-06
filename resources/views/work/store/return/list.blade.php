@@ -28,12 +28,16 @@ $currentMonth = $hFunction->currentMonth();
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
+                                <th>Đồ nghề</th>
                                 <th>Người trả</th>
                                 <th>
-                                    Ngày
+                                    Ngày trả
                                 </th>
-                                <th class="text-center">
-                                    Số lượng báo trả
+                                <th>
+                                    Ảnh bàn giao
+                                </th>
+                                <th>
+                                    Ảnh trả
                                 </th>
                                 <th class="text-center">
                                     Xác nhận
@@ -54,6 +58,8 @@ $currentMonth = $hFunction->currentMonth();
                                         @endif
                                     </select>
                                 </td>
+                                <td></td>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td style="padding: 0">
@@ -77,12 +83,15 @@ $currentMonth = $hFunction->currentMonth();
                                     <?php
                                     $returnId = $toolReturn->returnId();
                                     $returnDate = $toolReturn->returnDate();
-                                    # tong so luong tra
-                                    $totalAmount = $toolReturn->totalAmountStoreReturn();
-                                    # thong tin lam viec
-                                    $dataCompanyStaffWork = $toolReturn->companyStaffWork;
+                                    $returnImage = $toolReturn->image();
+                                    # thong tin duoc giao
+                                    $dataToolAllocationDetail = $toolReturn->toolAllocationDetail;
+                                    $allocationId = $dataToolAllocationDetail->allocationId();
+                                    $detailImage = $dataToolAllocationDetail->image();
+                                    # thong tin kho
+                                    $dataCompanyStore = $dataToolAllocationDetail->companyStore;
                                     # thong tin nha vien tra
-                                    $dataStaffReturn = $dataCompanyStaffWork->staff;
+                                    $dataStaffReturn = $toolReturn->toolAllocationDetail->toolAllocation->companyStaffWork->staff;
                                     $n_o = $n_o + 1;
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
@@ -90,24 +99,55 @@ $currentMonth = $hFunction->currentMonth();
                                             {!! $n_o !!}
                                         </td>
                                         <td>
+                                            {!!  $dataCompanyStore->name() !!}
+                                        </td>
+                                        <td>
                                             {!!  $dataStaffReturn->fullName() !!}
                                         </td>
                                         <td>
                                             {!! date('d/m/Y', strtotime($returnDate)) !!}
                                         </td>
-                                        <td class="text-center">
-                                            <b style="color: blue;">{!! $totalAmount !!}</b>
+                                        <td>
+                                            @if ($hFunction->checkEmpty($detailImage))
+                                                {{--giao lan dau--}}
+                                                {{--lay thong tin hinh anh nhap kho--}}
+                                                <?php
+                                                $dataImport = $dataToolAllocationDetail->companyStore->import;
+                                                $dataImportImage = $dataImport->importImageInfoOfImport();
+                                                ?>
+                                                @if($hFunction->checkCount($dataImportImage))
+                                                    @foreach($dataImportImage as $importImage)
+                                                        <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                            <a class="qc-link">
+                                                                <img style="max-width: 100%; max-height: 100%;"
+                                                                     src="{!! $importImage->pathFullImage($importImage->name()) !!}">
+                                                            </a>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                            @else
+                                                Ảnh bàn giao
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div style="width: 70px; max-height: 70px;">
+                                                <a class="qc-link">
+                                                    <img style="max-width: 100%; max-height: 100%;"
+                                                         src="{!! $toolReturn->pathFullImage($returnImage) !!}">
+                                                </a>
+                                            </div>
                                         </td>
                                         <td class="text-center">
                                             @if($toolReturn->checkConfirm())
-                                                <a class="qc_view_get qc-link"
-                                                   data-href="{!! route('qc.work.store.return.view.get', $returnId) !!}">
-                                                    Đã duyệt <br/>
-                                                    <i class="glyphicon glyphicon-eye-open"></i>
-                                                </a>
+
+                                                @if($toolReturn->checkAcceptStatus())
+                                                    <em>Đồng ý</em>
+                                                @else
+                                                    <em style="color: red;">Không đồng ý</em>
+                                                @endif
                                             @else
                                                 <a class="qc_confirm_get qc-link-green-bold"
-                                                   data-href="{!! route('qc.work.store.return.confirm.get', $returnId) !!}">
+                                                   data-href="{!! route('qc.work.store.return.confirm.get', $allocationId) !!}">
                                                     Duyệt
                                                 </a>
                                             @endif
