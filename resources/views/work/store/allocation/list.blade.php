@@ -47,8 +47,9 @@ $currentMonth = $hFunction->currentMonth();
                                         </td>
                                         <td class="text-center">
                                             <a class="qc-link-green"
-                                               href="{!! route('qc.work.store.allocation.check.get',$allocationId) !!}">Chi
-                                                tiết</a>
+                                               href="{!! route('qc.work.store.allocation.check.get',$allocationId) !!}">
+                                                Kiểm tra
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach

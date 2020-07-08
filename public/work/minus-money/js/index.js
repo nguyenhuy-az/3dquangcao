@@ -16,8 +16,8 @@ var qc_work_minus_money = {
 }
 // phan hoi
 $(document).ready(function () {
-    $('body').on('click', '.qc_work_minius_money_wrap', function () {
-        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_minus_money_year').val());
+    $('body').on('click', '.qc_work_minius_money_wrap .qc_minus_money_feedback', function () {
+        //qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_minus_money_year').val());
     });
 });
 // loc thong tin

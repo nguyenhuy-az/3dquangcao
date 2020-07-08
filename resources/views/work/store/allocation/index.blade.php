@@ -20,5 +20,5 @@ $hFunction = new Hfunction();
     </div>
 @endsection
 @section('qc_js_footer')
-    {{--<script src="{{ url('public/work/store/allocation/js/index.js')}}"></script>--}}
+    <script src="{{ url('public/work/store/allocation/js/index.js')}}"></script>
 @endsection

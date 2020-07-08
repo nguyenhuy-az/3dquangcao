@@ -697,6 +697,12 @@ class QcOrder extends Model
 
     }
 
+    # thong tin don hang chua ket thuc cua 1 cong ty
+    public function getInfoNotFinishOfCompany($companyId)
+    {
+        return QcOrder::where('company_id', $companyId)->where('finishStatus', 0)->orderBy('name', 'ASC')->get();
+    }
+
     //---------- thương trien khai thi cong -----------
     public function bonus()
     {
@@ -1432,7 +1438,7 @@ class QcOrder extends Model
         #ngay hen giao
         $receiveDeadline = $dataOrder->deliveryDate();
 
-        # danh muc phat quan ly thi cong tr
+        # danh muc phat quan ly thi cong tre
         $punishId = $modelPunishContent->getPunishIdOfOrderConstructionLate();
         if ($receiveDeadline < $checkDate) { # het han ban hen giao
             # lay thong tin thi cong da co xac nhan hoan thanh

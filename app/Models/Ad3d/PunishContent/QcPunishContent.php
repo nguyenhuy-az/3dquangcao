@@ -82,6 +82,11 @@ class QcPunishContent extends Model
         return QcPunishContent::where('type_id', $punishTypeId)->orderBy('name', 'ASC')->select('*');
     }
 
+    public function getInfoById($punishId)
+    {
+        return QcPunishContent::where('punish_id', $punishId)->first();
+    }
+
     public function getInfo($punishId = '', $field = '')
     {
         if (empty($punishId)) {
@@ -211,17 +216,28 @@ class QcPunishContent extends Model
     }
 
     #============= ======== lay id cua danh muc phat =========== ==========
+    # lay Id theo  ma phat
+    public function getPunishIdByCode($punishCode)
+    {
+        $result = QcPunishContent::where('punishCode', $punishCode)->pluck('punish_id');
+        return (count($result) > 0) ? $result : null;
+    }
+
     # ban giao don hang tre
     public function getPunishIdOfOrderAllocationLate()
     {
-        $result = QcPunishContent::where('punishCode', 'BGĐHT')->pluck('punish_id');
-        return (count($result) > 0) ? $result : null;
+        return $this->getPunishIdByCode('BGĐHT');
     }
 
     # quan ly đơn hàng thi cong tre
     public function getPunishIdOfOrderConstructionLate()
     {
-        $result = QcPunishContent::where('punishCode', 'QLĐHTCT')->pluck('punish_id');
-        return (count($result) > 0) ? $result : null;
+        return $this->getPunishIdByCode('QLĐHTCT');
+    }
+
+    # thi cong khong dem do nghe
+    public function getPunishIdNotBringTool()
+    {
+        return $this->getPunishIdByCode('TCKMDN');
     }
 }

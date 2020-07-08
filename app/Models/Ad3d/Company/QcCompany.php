@@ -235,6 +235,13 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\Order\QcOrder', 'company_id', 'company_id');
     }
 
+    # danh sach don hang chua ket thu
+    public function orderInfoNotFinish($companyId = null)
+    {
+        $modelOrder = new QcOrder();
+        return $modelOrder->getInfoNotFinishOfCompany($companyId);
+    }
+
     #----------- nhập kho ------------
     public function import()
     {

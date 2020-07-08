@@ -1325,6 +1325,10 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::group(['prefix' => 'allocation'], function () {
             # xac nhan tra
             Route::get('check/{allocationId?}', ['as' => 'qc.work.store.allocation.check.get', 'uses' => 'Work\Store\allocation\AllocationController@checkInfo']);
+            Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.store.allocation.check.import_image.get', 'uses' => 'Work\Store\allocation\AllocationController@viewImportImage']);
+            # ap dung phat
+            Route::get('minus-money/{detailId?}', ['as' => 'qc.work.store.allocation.check.minus_money.get', 'uses' => 'Work\Store\allocation\AllocationController@getMinusMoney']);
+            Route::post('minus-money/{detailId?}', ['as' => 'qc.work.store.allocation.check.minus_money.post', 'uses' => 'Work\Store\allocation\AllocationController@postMinusMoney']);
 
             Route::get('/', ['as' => 'qc.work.store.allocation.get', 'uses' => 'Work\Store\Allocation\AllocationController@index']);
         });

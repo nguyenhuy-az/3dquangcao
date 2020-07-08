@@ -54,6 +54,37 @@ class QcToolAllocationDetail extends Model
     {
         return QcToolAllocationDetail::where('detail_id', $this->checkNullId($detailId))->update(['action' => 0]);
     }
+
+    # hinh anh
+    public function rootPathFullImage()
+    {
+        return 'public/images/tool-allocation-detail/full';
+    }
+
+    public function rootPathSmallImage()
+    {
+        return 'public/images/tool-allocation-detail/small';
+    }
+
+    // get path image
+    public function pathSmallImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathSmallImage() . '/' . $image);
+        }
+    }
+
+    public function pathFullImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathFullImage() . '/' . $image);
+        }
+    }
+
     //========== ========= =========  CAC MOI QUAN HE ========== ========= ==========
     //Kho
     public function companyStore()
@@ -139,7 +170,7 @@ class QcToolAllocationDetail extends Model
 
     public function infoOfToolAllocation($allocationId)
     {
-        return QcToolAllocationDetail::where('allocation_id', $allocationId)->get();
+        return QcToolAllocationDetail::where('allocation_id', $allocationId)->orderBy('detail_id', 'DESC')->get();
     }
 
     #thong tin cua tat ca cty

@@ -57,7 +57,6 @@ $hrefIndex = route('qc.work.news.notify.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <span>/</span>
                                 <select class="qc_work_news_notify_filter_year" style="height: 25px;"
                                         data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
@@ -296,9 +295,8 @@ $hrefIndex = route('qc.work.news.notify.get');
                                             </span>
                                             </td>
                                         </tr>
-                                    @endif
                                     {{--Phat quan ly, triển khai thi cong--}}
-                                    @if(!empty($orderConstructionId))
+                                    @elseif(!empty($orderConstructionId))
                                         <tr class="@if($n_o%2) info @endif ">
                                             <td class="text-center">
                                                 {!! $n_o += 1 !!}
@@ -322,6 +320,36 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                 <a class="qc-link-green-bold"
                                                    href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderConstructionId) !!}">
                                                     {!! $dataMinusMoney->orderConstruction->name() !!}
+                                                </a>
+                                            <span style="background-color: red; padding: 3px; color: white;">
+                                                <i class="glyphicon glyphicon-minus"></i>
+                                                <i class="glyphicon glyphicon-usd"></i>
+                                            </span>
+                                            </td>
+                                        </tr>
+                                    @else
+                                        <tr class="@if($n_o%2) info @endif ">
+                                            <td class="text-center">
+                                                {!! $n_o += 1 !!}
+                                            </td>
+                                            <td>
+                                                {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!}
+                                            </td>
+                                            <td>
+                                                <a class="qc-link-green"
+                                                   href="{!! route('qc.work.minus_money.get') !!}">
+                                                    Xem
+                                                </a>
+                                                @if($staffNotify->checkNewInfo())
+                                                    <em style="color: red;"> - Chưa xem</em>
+                                                @else
+                                                    <em style="color: grey;">- Đã xem</em>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a class="qc-link-green-bold"
+                                                   href="{!! route('qc.work.minus_money.get') !!}">
+                                                    <span>Phạt {!! $staffNotify->note() !!}:</span>
                                                 </a>
                                             <span style="background-color: red; padding: 3px; color: white;">
                                                 <i class="glyphicon glyphicon-minus"></i>
