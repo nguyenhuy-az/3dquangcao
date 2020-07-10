@@ -98,20 +98,20 @@ class MinusMoneyController extends Controller
         return view('ad3d.finance.minus-money.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataPunishContent', 'dataMinusMoney', 'totalMinusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'punishContentFilterId', 'nameFiler'));
 
     }
+    # huy phat
     public function cancelMinusMoney($minusId)
     {
         $modelMinus = new QcMinusMoney();
         $modelMinus->cancelMinus($minusId);
     }
 
-   /* public function view($minusId)
+    # xem anh phan hoi
+    public function viewImage($minusId)
     {
         $modelMinusMoney = new QcMinusMoney();
         $dataMinusMoney = $modelMinusMoney->getInfo($minusId);
-        if (count($dataMinusMoney) > 0) {
-            return view('ad3d.finance.minus-money.view', compact('dataMinusMoney'));
-        }
-    }*/
+        return view('ad3d.finance.minus-money.view-image', compact('dataMinusMoney'));
+    }
 
     /*public function getAdd($companyLoginId = null, $workId = null, $punishId = null)
     {

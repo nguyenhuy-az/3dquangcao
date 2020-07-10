@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcMinusMoney extends Model
 {
     protected $table = 'qc_minus_money';
-    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id', 'orderConstruction_id'];
+    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'feedbackContent', 'feedbackImage', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id', 'orderConstruction_id'];
     protected $primaryKey = 'minus_id';
     public $timestamps = false;
 
@@ -70,6 +70,21 @@ class QcMinusMoney extends Model
         return (empty($minusId)) ? $this->minusId() : $minusId;
     }
 
+    # cap nhat phan hoi
+    public function updateFeedback($minusId, $feedbackContent, $feedbackImage)
+    {
+        return QcMinusMoney::where('minus_id', $minusId)->update(['feedbackContent' => $feedbackContent, 'feedbackImage' => $feedbackImage]);
+    }
+
+    public function cancelFeedback($minusId = null)
+    {
+        $feedbackImage = $this->feedbackImage($this->checkNullId($minusId))[0];
+        QcMinusMoney::where('minus_id', $minusId)->update(['feedbackContent' => null, 'feedbackImage' => null]);
+        if (!empty($feedbackImage)) {
+            $this->dropImage($feedbackImage);
+        }
+    }
+
     public function updateInfo($minusId, $money, $datePay, $reason, $punishId)
     {
         return QcMinusMoney::where('minus_id', $minusId)->update(['money' => $money, 'dateMinus' => $datePay, 'reason' => $reason, 'punish_id' => $punishId]);
@@ -86,6 +101,62 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->delete();
     }
 
+    # hinh anh
+    public function rootPathFullImage()
+    {
+        return 'public/images/minus-money/full';
+    }
+
+    public function rootPathSmallImage()
+    {
+        return 'public/images/minus-money/small';
+    }
+
+    # xóa 1 hình ảnh
+    public function deleteImage($minusId = null)
+    {
+        $imageName = $this->feedbackImage($minusId)[0];
+        if (QcMinusMoney::where('minus_id', $minusId)->update(['image' => null])) {
+            $this->dropImage($imageName);
+        }
+    }
+
+    //upload image
+    public function uploadImage($source_img, $imageName, $resize = 500)
+    {
+        $hFunction = new \Hfunction();
+        $pathSmallImage = $this->rootPathSmallImage();
+        $pathFullImage = $this->rootPathFullImage();
+        if (!is_dir($pathFullImage)) mkdir($pathFullImage);
+        if (!is_dir($pathSmallImage)) mkdir($pathSmallImage);
+        return $hFunction->uploadSaveByFileName($source_img, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $resize);
+    }
+
+    //drop image
+    public function dropImage($imageName)
+    {
+        if (file_exists($this->rootPathSmallImage() . '/' . $imageName)) unlink($this->rootPathSmallImage() . '/' . $imageName);
+        if (file_exists($this->rootPathFullImage() . '/' . $imageName)) unlink($this->rootPathFullImage() . '/' . $imageName);
+    }
+
+    // get path image
+    public function pathSmallImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathSmallImage() . '/' . $image);
+        }
+    }
+
+    public function pathFullImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathFullImage() . '/' . $image);
+        }
+    }
 
     //---------- nhân viên -----------
     public function staff()
@@ -237,6 +308,16 @@ class QcMinusMoney extends Model
     public function reason($minusId = null)
     {
         return $this->pluck('reason', $minusId);
+    }
+
+    public function feedbackContent($minusId = null)
+    {
+        return $this->pluck('feedbackContent', $minusId);
+    }
+
+    public function feedbackImage($minusId = null)
+    {
+        return $this->pluck('feedbackImage', $minusId);
     }
 
     public function applyStatus($minusId = null)

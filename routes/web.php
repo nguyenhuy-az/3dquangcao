@@ -313,7 +313,7 @@ Route::group(['prefix' => 'ad3d'], function () {
 
         #thong tin phat
         Route::group(['prefix' => 'minus-money'], function () {
-            //Route::get('view/{payId?}', ['as' => 'qc.ad3d.finance.minus-money.view.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@view']);
+            Route::get('view-image/{minusId?}', ['as' => 'qc.ad3d.finance.minus-money.view_image.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@viewImage']);
             //them
             Route::get('add/{companyLoginId?}/{workId?}/{punishId?}', ['as' => 'qc.ad3d.finance.minus-money.add.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getAdd']);
             Route::post('add', ['as' => 'qc.ad3d.finance.minus-money.add.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postAdd']);
@@ -1144,6 +1144,11 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
     //chấm công
     Route::group(['prefix' => 'timekeeping'], function () {
+        //thong ke trong thang hien tai
+        Route::group(['prefix' => 'work'], function () {
+            Route::get('/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.timekeeping.work.get', 'uses' => 'Work\Timekeeping\WorkController@index']);
+        });
+
         //báo giờ vào
         Route::get('timeBegin/{workId?}', ['as' => 'qc.work.timekeeping.timeBegin.get', 'uses' => 'Work\Timekeeping\TimekeepingController@getTimeBegin']);
         Route::post('timeBegin/', ['as' => 'qc.work.timekeeping.timeBegin.post', 'uses' => 'Work\Timekeeping\TimekeepingController@postTimeBegin']);
@@ -1357,6 +1362,15 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     });
     //phạt
     Route::group(['prefix' => 'minus-money'], function () {
+        # xem anh phan hoi
+        Route::get('view-image/{minusId?}', ['as' => 'qc.work.minus_money.feedback.view_image.get', 'uses' => 'Work\MinusMoney\MinusMoneyController@getViewImage']);
+        # pha hoi
+        Route::get('feedback/{minusId?}', ['as' => 'qc.work.minus_money.feedback.get', 'uses' => 'Work\MinusMoney\MinusMoneyController@getFeedback']);
+        Route::post('feedback', ['as' => 'qc.work.minus_money.feedback.post', 'uses' => 'Work\MinusMoney\MinusMoneyController@postFeedback']);
+
+        #huy phan hoi
+        Route::get('feedback-cancel/{minusId?}', ['as' => 'qc.work.minus_money.feedback.cancel', 'uses' => 'Work\MinusMoney\MinusMoneyController@cancelFeedback']);
+
         Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.minus_money.get', 'uses' => 'Work\MinusMoney\MinusMoneyController@index']);
     });
 
@@ -1370,9 +1384,6 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         #ngay nghi
         Route::get('date-off/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.news.date_off.get', 'uses' => 'Work\WorkController@dateOff']);
     });
-
-    //làm việc
-    Route::get('work/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.work.get', 'uses' => 'Work\WorkController@work']);
 
     Route::get('/{sysInfoObject?}', ['as' => 'qc.work.home', 'uses' => 'Work\WorkController@index']);
 });

@@ -116,7 +116,11 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                                                 @if($toolReturn->checkAcceptStatus())
                                                     <em style="background-color: red; color: yellow;">
                                                         Không được chấp nhận
-                                                    </em>
+                                                    </em> <br/>
+                                                    <a class="qc_minus_money_get qc-link-green-bold"
+                                                       data-href="{!! route('qc.work.store.allocation.check.minus_money.get',$detailId) !!}">
+                                                        Phạt
+                                                    </a>
                                                 @endif
                                             @else
                                                 <em style="background-color: blue; color: white;">Chờ Xác nhận</em>

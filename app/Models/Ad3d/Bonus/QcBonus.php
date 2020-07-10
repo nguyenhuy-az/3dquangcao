@@ -8,15 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class QcBonus extends Model
 {
     protected $table = 'qc_bonus';
-    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'orderAllocation_id', 'orderConstruction_id'];
+    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'orderAllocation_id', 'orderConstruction_id', 'orderPay_id'];
     protected $primaryKey = 'bonus_id';
     public $timestamps = false;
-
     private $lastId;
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($money, $bonusDate, $note, $applyStatus, $workId, $orderAllocationId = null, $orderConstructionId = null)
+    public function insert($money, $bonusDate, $note, $applyStatus, $workId, $orderAllocationId = null, $orderConstructionId = null, $orderPayId = null)
     {
         $hFunction = new \Hfunction();
         $modelBonus = new QcBonus();
@@ -27,6 +26,7 @@ class QcBonus extends Model
         $modelBonus->work_id = $workId;
         $modelBonus->orderAllocation_id = $orderAllocationId;
         $modelBonus->orderConstruction_id = $orderConstructionId;
+        $modelBonus->orderPay_id = $orderPayId;
         $modelBonus->created_at = $hFunction->createdAt();
         if ($modelBonus->save()) {
             $this->lastId = $modelBonus->bonus_id;
@@ -50,6 +50,19 @@ class QcBonus extends Model
     {
         return QcBonus::where('bonus_id', $bonusId)->update(['cancelStatus' => 1, 'action' => 0]);
     }
+
+    # ---------- Thanh toan dơn hNG -----------------
+    public function orderPay()
+    {
+        return $this->belongsTo('App\Models\Ad3d\OrderPay\QcOrderPay', 'orderPay_id', 'pay_id');
+    }
+
+    # kiem nv da duoc thuong khi thanh toan don hang hay chua
+    public function checkOrderPayBonus($workId, $orderPayId)
+    {
+        return QcBonus::where('work_id', $workId)->where('orderPay_id', $orderPayId)->exists();
+    }
+
 
     # ---------- trien khai don hang thi cong -----------------
     public function orderConstruction()
@@ -220,14 +233,14 @@ class QcBonus extends Model
     }
 
     #========= ============= ============= ============= =============
-    public function checkCancelStatus($minusId = null)
+    public function checkCancelStatus($bonusId = null)
     {
-        return ($this->cancelStatus($minusId) == 1) ? true : false;
+        return ($this->cancelStatus($bonusId) == 1) ? true : false;
     }
 
-    public function checkEnableApply($minusId = null)
+    public function checkEnableApply($bonusId = null)
     {
-        if ($this->applyStatus($minusId) == 1 && $this->cancelStatus() == 0) {
+        if ($this->applyStatus($bonusId) == 1 && $this->cancelStatus() == 0) {
             return true; # ap dung phat
         } else {
             return false; # khong ap dung phat

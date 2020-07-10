@@ -16,7 +16,7 @@ $hFunction = new Hfunction();
         <button type="button" class="qc_container_close btn btn-sm btn-default qc-color-red"
                 style="position: absolute; top: 0; right: 0;">Đóng
         </button>
-        <img class="qc-margin-top-10" style="max-width: 100%;" alt="..."
+        <img class="qc-cursor-pointer qc-margin-top-10" style="max-width: 100%;" alt="..." onclick="qc_main.rotateImage(this);"
              src="{!! $dataTimekeepingProvisionalImage->pathFullImage($dataTimekeepingProvisionalImage->name()) !!}">
     </div>
 @endsection

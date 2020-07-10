@@ -25,30 +25,12 @@ if ($hFunction->checkCount($dataWork)) {
 }
 
 ?>
-@extends('work.index')
-
-@section('qc_work_body')
+@extends('work.timekeeping.timekeeping.index')
+@section('qc_work_timekeeping_body')
     <div class="row">
         @if($hFunction->checkCount($dataWork))
-            <div class="qc_timekeeping_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12"
+            <div class="qc_timekeeping_container_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12"
                  data-work="{!! $workId !!}">
-                <div class="row">
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="active">
-                                <a href="{!! route('qc.work.timekeeping.get') !!}">
-                                    <label>Chấm công</label>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{!! route('qc.work.work.get') !!}">
-                                    <label>Thông tin làm việc</label>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
                 {{-- thông tin khách hàng --}}
                 <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">

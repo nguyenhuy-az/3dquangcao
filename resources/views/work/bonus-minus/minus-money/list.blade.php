@@ -9,6 +9,7 @@
  */
 $hFunction = new Hfunction();
 $hrefIndex = route('qc.work.minus_money.get');
+$checkTime = date('m-Y');
 ?>
 @extends('work.bonus-minus.minus-money.index')
 @section('qc_work_minus_money_body')
@@ -71,6 +72,10 @@ $hrefIndex = route('qc.work.minus_money.get');
                                 ?>
                                 @foreach($dataMinusMoney as $minusMoney)
                                     <?php
+                                    $minusId = $minusMoney->minusId();
+                                    $dateMinus = $minusMoney->dateMinus();
+                                    $feedbackContent = $minusMoney->feedbackContent();
+                                    $feedbackImage = $minusMoney->feedbackImage();
                                     $orderAllocationId = $minusMoney->orderAllocationId();
                                     $orderConstructionId = $minusMoney->orderConstructionId();
                                     $reason = $minusMoney->reason();
@@ -81,6 +86,8 @@ $hrefIndex = route('qc.work.minus_money.get');
                                         $money = $minusMoney->money();
                                     }
                                     $totalMoney = $totalMoney + $money;
+                                    # trang thai co hieu luc the / sua /xoa cua phan hoi
+                                    $actionStatus = ($checkTime == date('m-Y', strtotime($dateMinus))) ? true : false;
                                     ?>
                                     <tr @if($n_o%2) class="info" @endif>
                                         <td class="text-center">
@@ -112,9 +119,34 @@ $hrefIndex = route('qc.work.minus_money.get');
                                             @endif
                                         </td>
                                         <td>
-                                            <a class="qc_minus_money_feedback qc-link-green-bold">
-                                                Gửi phản hồi
-                                            </a>
+
+                                            @if($hFunction->checkEmpty($feedbackContent))
+                                                @if($actionStatus)
+                                                    <a class="qc_minus_money_feedback qc-link-green-bold"
+                                                       data-href="{!! route('qc.work.minus_money.feedback.get',$minusId) !!}">
+                                                        Gửi phản hồi
+                                                    </a>
+                                                @endif
+                                            @else
+                                                <span>{!! $feedbackContent !!}</span>
+                                                @if(!$hFunction->checkEmpty($feedbackImage))
+                                                    <br/>
+                                                    <a class="qc_view_image qc-link"
+                                                       data-href="{!! route('qc.work.minus_money.feedback.view_image.get',$minusId) !!}">
+                                                        <img style="height: 70px;" alt="..."
+                                                             src="{!! $minusMoney->pathSmallImage($feedbackImage) !!}">
+                                                    </a>
+                                                @endif
+                                                @if($actionStatus)
+                                                    <br/><br/>
+                                                    <a class="qc_minus_money_feedback_cancel qc-link-green-bold"
+                                                       title="Xóa phản hồi"
+                                                       data-href="{!! route('qc.work.minus_money.feedback.cancel',$minusId) !!}">
+                                                        <i class="qc-font-size-16 glyphicon glyphicon-trash"
+                                                           style="color: red;"></i>
+                                                    </a>
+                                                @endif
+                                            @endif
                                         </td>
                                         <td class="text-center">
                                             @if($cancelStatus)

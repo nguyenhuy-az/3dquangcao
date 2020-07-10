@@ -270,6 +270,7 @@ class QcStaff extends Model
     {
         return $this->hasMany('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'staff_id', 'staff_id');
     }
+
     # thong tin đang lam viec tai 1 cty
     public function companyStaffWorkInfoActivity($staffId = null)
     {
@@ -1092,6 +1093,16 @@ class QcStaff extends Model
                 }
             }
         }
+    }
+
+    # lay danh sanh NV bo phan kinh doanh cap quan ly cua 1 cong ty
+    public function infoStaffBusinessRankManage($companyId)
+    {
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->businessDepartmentId()], $modelRank->manageRankId());
+        return QcStaff::whereIn('staff_id', $listStaffId)->get();
     }
 
     # lay thong tin NV la  bo phan thi cong cap quan ly cua 1 cong ty

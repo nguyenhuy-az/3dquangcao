@@ -35,7 +35,7 @@ class TimekeepingController extends Controller
         $dataStaff = $modelStaff->loginStaffInfo();
         $modelWork->checkAutoTimekeepingOfActivityWork();
         $dateFilter = date('Y-m-d');
-        return view('work.timekeeping.index', compact('dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
+        return view('work.timekeeping.timekeeping.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
     }
 
     //xem anh bao cao
@@ -43,7 +43,7 @@ class TimekeepingController extends Controller
     {
         $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
         $dataTimekeepingProvisionalImage = $modelTimekeepingProvisionalImage->getInfo($imageId);
-        return view('work.timekeeping.view-provisional-image', compact('dataTimekeepingProvisionalImage'));
+        return view('work.timekeeping.timekeeping.view-provisional-image', compact('dataTimekeepingProvisionalImage'));
 
     }
 
@@ -55,7 +55,7 @@ class TimekeepingController extends Controller
         if ($modelStaff->checkLogin()) {
             $dataStaff = $modelStaff->loginStaffInfo();
             $dataWork = $modelWork->getInfo($workId);
-            return view('work.timekeeping.time-begin', compact('modelStaff', 'dataStaff', 'dataWork'));
+            return view('work.timekeeping.timekeeping.time-begin', compact('modelStaff', 'dataStaff', 'dataWork'));
         }
     }
 
@@ -134,7 +134,7 @@ class TimekeepingController extends Controller
         } else {
             $dataStaff = $modelStaff->loginStaffInfo();
             $dataTimekeepingProvisional = $modelTimekeeping->getInfo($timekeepingId);
-            return view('work.timekeeping.time-end', compact('modelStaff', 'dataStaff', 'dataTimekeepingProvisional'));
+            return view('work.timekeeping.timekeeping.time-end', compact('modelStaff', 'dataStaff', 'dataTimekeepingProvisional'));
         }
     }
 
@@ -256,7 +256,7 @@ class TimekeepingController extends Controller
         if ($modelStaff->checkLogin()) {
             $dataStaff = $modelStaff->loginStaffInfo();
             $dataTimekeepingProvisional = $modelTimekeeping->getInfo($timekeepingProvisionalId);
-            return view('work.timekeeping.edit-time-end', compact('modelStaff', 'dataStaff', 'dataTimekeepingProvisional'));
+            return view('work.timekeeping.timekeeping.edit-time-end', compact('modelStaff', 'dataStaff', 'dataTimekeepingProvisional'));
 
         }
     }
@@ -293,7 +293,7 @@ class TimekeepingController extends Controller
         if ($modelStaff->checkLogin()) {
             $dataStaff = $modelStaff->loginStaffInfo();
             $dataWork = $modelWork->getInfo($workId);
-            return view('work.timekeeping.off-work', compact('modelStaff', 'dataStaff', 'dataWork'));
+            return view('work.timekeeping.timekeeping.off-work', compact('modelStaff', 'dataStaff', 'dataWork'));
         }
     }
 
@@ -343,7 +343,7 @@ class TimekeepingController extends Controller
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         if ($modelStaff->checkLogin()) {
             $dataTimekeepingProvisional = $modelTimekeepingProvisional->getInfo($timekeepingProvisionalId);
-            return view('work.timekeeping.image-add', compact('modelStaff', 'dataTimekeepingProvisional'));
+            return view('work.timekeeping.timekeeping.image-add', compact('modelStaff', 'dataTimekeepingProvisional'));
         }
     }
 
@@ -391,7 +391,7 @@ class TimekeepingController extends Controller
         if ($modelStaff->checkLogin()) {
             $dataStaff = $modelStaff->loginStaffInfo();
             $dataWork = $modelWork->getInfo($workId);
-            return view('work.timekeeping.late-work', compact('modelStaff', 'dataStaff', 'dataWork'));
+            return view('work.timekeeping.timekeeping.late-work', compact('modelStaff', 'dataStaff', 'dataWork'));
         }
     }
 

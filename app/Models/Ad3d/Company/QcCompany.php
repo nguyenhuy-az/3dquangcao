@@ -375,7 +375,7 @@ class QcCompany extends Model
         }
     }
 
-    #----------- DEPARTMENT INFO -------------
+    #-----------  INFO -------------
     public function listIdActivity()
     {
         return QcCompany::where('action', 1)->pluck('company_id');

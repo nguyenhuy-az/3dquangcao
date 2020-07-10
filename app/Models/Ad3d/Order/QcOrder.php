@@ -1406,7 +1406,7 @@ class QcOrder extends Model
                     if (!$modelBonus->checkExistBonusWorkOfOrderConstruction($workId, $orderId)) { # chua ap dung thuong
                         #tien thuong hoan thanh thi cong
                         $orderBonusPrice = $this->getBonusAndMinusMoneyOfManageRank($orderId);
-                        if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý triển khai thi công', 0, $workId, null, $orderId)) {
+                        if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý triển khai thi công', 0, $workId, null, $orderId, null)) {
                             $bonusId = $modelBonus->insertGetId();
                             $allocationStaffId = $dataAllocationStaff->staffId();
                             $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];

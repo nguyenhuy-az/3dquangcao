@@ -14,9 +14,9 @@ if (isset($dataAccess)) {
     $subObject = null;
 }
 $href = null;
-if ($viewLoginObject == 'work') {
+if ($viewLoginObject == 'timekeepingWork') {
     $label = 'Làm Việc';
-    $href = route('qc.work.work.get');
+    $href = route('qc.work.timekeeping.work.get');
 } elseif ($viewLoginObject == 'orders') {
     $label = 'Đơn hàng';
     $href = route('qc.work.orders.get');

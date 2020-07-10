@@ -101,7 +101,7 @@ class OrdersController extends Controller
         }
         $dataOrders = $dataOrderSelect->paginate(50);
         $dataOrdersProvisional = $dataStaffLogin->orderProvisionNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, 0, null);
-        return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional','dataStaffFilter','staffFilterId', 'dateFilter', 'finishStatus', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
+        return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional', 'dataStaffFilter', 'staffFilterId', 'dateFilter', 'finishStatus', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
 
     }
 
@@ -469,7 +469,9 @@ class OrdersController extends Controller
                 # thanh toan
                 if ($txtBeforePay > 0) {
                     # thanh toan don hang
-                    $modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone);
+                    if ($modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone)) {
+                        $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
+                    }
                 }
 
                 # cap nhat thong tin thanh toan don hang
@@ -725,6 +727,8 @@ class OrdersController extends Controller
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($txtMoney) && $hFunction->checkCount($dataOrder)) {
             if ($modelOrderPay->insert($txtMoney, $txtNote, $hFunction->carbonNow(), $orderId, $modelStaff->loginStaffId(), $txtName, $txtPhone)) {
+                # xet thuong cho bo phan kinh doanh
+                $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
                 # cap nhat thong tin thanh toan don hang
                 $modelOrders->updateFinishPayment($orderId);
                 return redirect()->route('qc.work.orders.print.get', $orderId);
@@ -779,7 +783,7 @@ class OrdersController extends Controller
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($dataOrder)) {
             $pageBack = 1;
-            return view('work.orders.orders.order-info', compact('modelStaff','dataAccess', 'dataOrder', 'pageBack'));
+            return view('work.orders.orders.order-info', compact('modelStaff', 'dataAccess', 'dataOrder', 'pageBack'));
         }
     }
 
