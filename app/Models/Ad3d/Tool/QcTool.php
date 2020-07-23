@@ -47,12 +47,13 @@ class QcTool extends Model
     }
 
     #----------- cập nhật thông tin ----------
-    public function updateInfo($toolId, $name, $unit, $description)
+    public function updateInfo($toolId, $name, $unit, $description,$type)
     {
         return QcTool::where('tool_id', $toolId)->update([
             'unit' => $unit,
             'name' => $name,
-            'description' => $description
+            'description' => $description,
+            'type' => $type
         ]);
     }
 

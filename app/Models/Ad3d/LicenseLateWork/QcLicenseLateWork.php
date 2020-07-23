@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcLicenseLateWork extends Model
 {
     protected $table = 'qc_license_late_works';
-    protected $fillable = ['license_id', 'dateLate', 'note', 'agreeStatus', 'confirmStatus', 'confirmNote', 'confirmDate', 'created_at', 'staff_id', 'work_id', 'staffConfirm_id'];
+    protected $fillable = ['license_id', 'dateLate', 'note', 'agreeStatus', 'confirmStatus', 'confirmNote', 'confirmDate', 'created_at', 'staff_id', 'staffConfirm_id'];
     protected $primaryKey = 'license_id';
     public $timestamps = false;
 
@@ -80,34 +80,26 @@ class QcLicenseLateWork extends Model
         $result = QcLicenseLateWork::where('staff_id', $staffId)->where('dateLate', 'like', "%$dateYmd%")->count();
         return ($result > 0) ? true : false;
     }
+
+    public function infoOfStaffAndDate($staffId, $dateYmd)
+    {
+        $dateYmd = date('Y-m-d', strtotime($dateYmd));
+        return QcLicenseLateWork::where('staff_id', $staffId)->where('dateLate', 'like', "%$dateYmd%")->first();
+    }
+
+    public function infoOfStaff($staffId, $orderBy = null)
+    {
+        $orderBy = (empty($orderBy)) ? 'DESC' : $orderBy;
+        return QcLicenseLateWork::where(['staff_id' => $staffId])->orderBy('dateLate', "$orderBy")->get();
+    }
+    public function disableOfStaff($staffId)
+    {
+        return QcLicenseLateWork::where('staff_id', $staffId)->update(['action' => 0]);
+    }
     //----------- nhân viên xac nhan ------------
     public function staffConfirm()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staffConfirm_id', 'staff_id');
-    }
-    //----------- làm việc ------------
-    public function work()
-    {
-        return $this->belongsTo('App\Models\Ad3d\Work\QcWork', 'work_id', 'work_id');
-    }
-
-    // vô hiệu
-    public function disableOfWork($workId)
-    {
-        return QcLicenseLateWork::where('work_id', $workId)->update(['action' => 0]);
-    }
-
-    public function infoOfWork($workId, $orderBy = null)
-    {
-        $orderBy = (empty($orderBy)) ? 'DESC' : $orderBy;
-        return QcLicenseLateWork::where(['work_id' => $workId])->orderBy('dateLate', "$orderBy")->get();
-    }
-
-    public function existDateOfWork($workId, $dateYmd)
-    {
-        $dateYmd = date('Y-m-d', strtotime($dateYmd));
-        $result = QcLicenseLateWork::where('work_id', $workId)->where('dateLate', 'like', "%$dateYmd%")->count();
-        return ($result > 0) ? true : false;
     }
 
     //============ =========== ============ GET INFO ============= =========== ==========
@@ -170,9 +162,9 @@ class QcLicenseLateWork extends Model
         return $this->pluck('confirmDate', $licenseId);
     }
 
-    public function workId($licenseId = null)
+    public function staffId($licenseId = null)
     {
-        return $this->pluck('work_id', $licenseId);
+        return $this->pluck('staff_id', $licenseId);
     }
 
     public function staffConfirmId($licenseId = null)

@@ -186,7 +186,6 @@ class QcTimekeepingProvisional extends Model
         $modelMinusMoney = new QcMinusMoney();
         $modelTimekeeping = new QcTimekeeping();
         $modelTimekeepingImage = new QcTimekeepingImage();
-        $modelLicenseLateWork = new QcLicenseLateWork();
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
 

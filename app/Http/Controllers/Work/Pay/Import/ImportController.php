@@ -63,9 +63,10 @@ class ImportController extends Controller
         }
         $dataImportAll = $modelImport->getInfoHaveFilter($listStaffId, $searchCompanyFilterId, $dateFilter, $payStatusFilter, 'DESC');
         $dataImport = $dataImportAll->paginate(30);
+        $importTotalMoney = $modelImport->totalMoneyOfListImport($dataImportAll->get());
         //danh sach NV
         $dataListStaff = $modelCompany->staffInfoActivityOfListCompanyId($searchCompanyFilterId);
-        return view('work.pay.import.list', compact('dataAccess', 'modelStaff', 'dataListStaff', 'dataImport', 'dayFilter', 'monthFilter', 'yearFilter', 'payStatusFilter', 'staffFilterId'));
+        return view('work.pay.import.list', compact('dataAccess', 'modelStaff', 'dataListStaff', 'dataImport','importTotalMoney', 'dayFilter', 'monthFilter', 'yearFilter', 'payStatusFilter', 'staffFilterId'));
 
     }
 
@@ -146,6 +147,7 @@ class ImportController extends Controller
                     $importNewName = $importDetail->newName();
                     //$importNewUnit = $importDetail->newUnit();
                     if ($detailId == $confirmDetailId[$key]) {
+                        $toolType = $allocationStatus[$key];
                         if (!empty($importNewName)) { # vat lieu moi
                             if ($confirmNewSuppliesTool[$key] == 1) {
                                 // 1 - phan loai la vat tu
@@ -176,7 +178,7 @@ class ImportController extends Controller
                                     $toolId = $dataCheckTool->toolId();
                                 } else {
                                     //thêm dụng cụ mới vào hệ thống
-                                    if ($modelTool->insert($importNewName, $unit[$key], '')) {
+                                    if ($modelTool->insert($importNewName, $unit[$key], '', $toolType)) {
                                         $toolId = $modelTool->insertGetId();
                                     } else {
                                         $toolId = null;
@@ -192,7 +194,7 @@ class ImportController extends Controller
                                         if ($modelCompanyStore->insert($importNewName, $importCompanyId, $toolId, null, $importId)) {
                                             $newStoreId = $modelCompanyStore->insertGetId();
                                             // cap phat dụng cụ cho nhân viên mua
-                                            if ($allocationStatus[$key] == 1) {
+                                            if ($modelTool->checkPrivateType($toolId)) {
                                                 // phát luôn cho nhân viên
                                                 if (!empty($importStaffWorkId)) {
                                                     # thong bo do nghe
@@ -232,7 +234,7 @@ class ImportController extends Controller
                                     if ($modelCompanyStore->insert($modelTool->name($importToolId)[0], $importCompanyId, $importToolId, null, $importId)) {
                                         $newStoreId = $modelCompanyStore->insertGetId();
                                         // cap phat dụng cụ cho nhân viên mua
-                                        if ($allocationStatus[$key] == 1) {
+                                        if ($modelTool->checkPrivateType($importToolId)) {
                                             // phát luôn cho nhân viên
                                             if (!empty($importStaffWorkId)) {
                                                 # thong bo do nghe

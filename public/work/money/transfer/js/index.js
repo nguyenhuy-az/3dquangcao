@@ -1,9 +1,18 @@
 /**
  * Created by HUY on 12/29/2017.
  */
-var qc_work_money_transfer = {}
+var qc_work_money_transfer = {
+    info: {
+        delete: function (href) {
+            if (confirm('Sau khi hủy sẽ không phục hồi được')) {
+                qc_master_submit.ajaxHasReload(href, '', false);
+                return false;
+            }
+        }
+    }
+}
+//----------- chuyen tien - nhan tien chuyen ------------------------
 $(document).ready(function () {
-    //
     //theo tháng
     $('body').on('change', '.qc_work_money_transfer_filter_month', function () {
         qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_transfer_filter_year').val());
@@ -28,4 +37,9 @@ $(document).ready(function () {
 
     });
 });
-
+// huy 1 thong tin chuyen tien
+$(document).ready(function () {
+    $('.qc_work_money_transfer_transfer_info').on('click', '.qc_transfer_detail_del', function () {
+        qc_work_money_transfer.info.delete($(this).data('href'));
+    });
+});

@@ -181,7 +181,7 @@ if ($hFunction->checkCount($dataWork)) {
                                                         Ảnh tiến độ CV
                                                     </a>
                                                     <span class="qc-color-grey"> &nbsp; | &nbsp; </span>
-                                                    <a class="qc_time_end_action qc-link-bold">Báo giờ ra</a>
+                                                    <a class="qc_time_end_action qc-link-bold">BÁO GIỜ RA</a>
                                                     <span class="qc-color-grey"> &nbsp; | &nbsp; </span>
                                                     <a class="qc_time_end_cancel qc-link-red-bold">
                                                         <i class="glyphicon glyphicon-trash" title="Hủy"></i>

@@ -47,12 +47,12 @@ $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
                         </span>
                         Chấm công
                     </a>
-                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.store.import.get') !!}">
+                    {{--<a class="qc-link list-group-item" href="{!! route('qc.ad3d.store.import.get') !!}">
                         <span class="qc-color-red badge" style="background:none;">
                             [ {!! $totalImportNotConfirmOfCompany !!} ]
                         </span>
                         Duyệt chi vật tư
-                    </a>
+                    </a>--}}
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.finance.pay_activity.get') !!}">
                         <span class="qc-color-red badge" style="background:none;">
                             [ {!! $totalPayActivityNotConfirmOfCompany !!} ]
@@ -118,7 +118,7 @@ $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
                 </div>
                 <div class="ac-ad3d-panel col-xs-12 col-sm-6 col-md-4 col-lg-4">
                     <div class="ac-ad3d-panel-icon-wrap">
-                        <a class="ac-ad3d-panel-icon-link" href="{!! route("qc.ad3d.store.import.get") !!}">
+                        <a class="ac-ad3d-panel-icon-link" href="{!! route("qc.ad3d.store.supplies.supplies.get") !!}">
                             <i class="glyphicon glyphicon-hdd" style="font-size: 30px; color: grey;"></i><br>
                             Dụng cụ - Vật Tư
                         </a>

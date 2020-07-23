@@ -13,23 +13,14 @@ $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaffLogin->staffId();
 $totalReceiveMoney = 0;
-# tong chi
-//$totalPaidMoney = $dataStaffLogin->totalPaidMoney($loginStaffId, $dateFilter);
-
-# tong tien giao chua xac nhan
-//$totalMoneyTransferUnConfirm = $dataStaffLogin->totalMoneyTransferUnConfirmed($loginStaffId, $dateFilter);
-# tong tien giao da xac nhan dong y
-//$totalMoneyTransferConfirmedAndAccepted = $dataStaffLogin->totalMoneyTransferConfirmedAndAccepted($loginStaffId, $dateFilter);
 ?>
-@extends('work.index')
+@extends('work.money.receive.index')
 @section('titlePage')
-    Thu
+    Thu Và Giao tiền
 @endsection
-@section('qc_work_body')
+@section('qc_work_money_receive_body')
     <div class="row">
         <div class="qc_work_money_receive_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            @include('work.money.money-menu')
-
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
@@ -38,7 +29,7 @@ $totalReceiveMoney = 0;
                     </div>
                 </div>
                 <div class="qc_work_money_receive_list_content row">
-                    <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <form class="qc_work_frm_transfer_receive" enctype="multipart/form-data"
                               name="qc_work_frm_transfer_receive" role="form" method="post"
                               action="{!! route('qc.work.money.receive.transfer.post') !!}">
@@ -50,6 +41,7 @@ $totalReceiveMoney = 0;
                                         <th>Mã ĐH</th>
                                         <th>Tên ĐH</th>
                                         <th>Điện thoại</th>
+                                        <th></th>
                                         <th class="text-right">Số tiền</th>
                                     </tr>
                                     <tr>
@@ -80,6 +72,7 @@ $totalReceiveMoney = 0;
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        <td></td>
                                     </tr>
                                     @if($hFunction->checkCount($dataOrderPay))
                                         <?php
@@ -87,6 +80,7 @@ $totalReceiveMoney = 0;
                                         ?>
                                         @foreach($dataOrderPay as $orderPay)
                                             <?php
+                                            $payId = $orderPay->payId();
                                             $totalReceiveMoney = $totalReceiveMoney + $orderPay->money();
                                             $n_o = $n_o + 1;
                                             ?>
@@ -113,6 +107,13 @@ $totalReceiveMoney = 0;
                                                         <span>{!! $orderPay->order->customer->phone() !!}</span>
                                                     @endif
                                                 </td>
+                                                <td class="text-center">
+                                                    <a class="qc_pay_del qc-link-red" title="Hủy Thanh toán"
+                                                       data-href="{!! route('qc.work.money.receive.delete.get',$payId) !!}">
+                                                        <i class="glyphicon glyphicon-trash"
+                                                           style="font-size: 16px;"></i>
+                                                    </a>
+                                                </td>
                                                 <td class="text-right">
                                                     {!! $hFunction->currencyFormat($orderPay->money()) !!}
                                                 </td>
@@ -120,7 +121,7 @@ $totalReceiveMoney = 0;
                                         @endforeach
                                         <tr>
                                             <td class="text-right qc-color-red"
-                                                style="background-color: whitesmoke;" colspan="5">
+                                                style="background-color: whitesmoke;" colspan="6">
                                             </td>
                                             <td class="text-right qc-color-red">
                                                 {!! $hFunction->currencyFormat($totalReceiveMoney)  !!}
@@ -128,7 +129,7 @@ $totalReceiveMoney = 0;
                                         </tr>
                                     @else
                                         <tr>
-                                            <td colspan="7" style="padding: 10px !important;">
+                                            <td colspan="8" style="padding: 10px !important;">
                                                 <em class="qc-color-red">Không có thông tin thu chưa giao</em>
                                             </td>
                                         </tr>

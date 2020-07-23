@@ -40,11 +40,11 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <li @if($accessObject == 'import') class="active" @endif>
+                            {{--<li @if($accessObject == 'import') class="active" @endif>
                                 <a href="{!! route('qc.ad3d.store.import.get') !!}">
                                     Mua vật tư/ dụng cụ
                                 </a>
-                            </li>
+                            </li>--}}
                             <li @if($accessObject == 'supplies') class="active" @endif>
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                     Vật tư <span class="caret"></span>
@@ -67,14 +67,14 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                             Các loại Đồ nghề
                                         </a>
                                     </li>
-                                    <li>
+                                    {{--<li>
                                         <a class="qc-link" href="{!! route('qc.ad3d.store.tool.allocation.get') !!}">
                                             Bàn giao đồ nghề
                                         </a>
-                                    </li>
+                                    </li>--}}
                                 </ul>
                             </li>
-                            <li @if($accessObject == 'store') class="active" @endif>
+                            {{--<li @if($accessObject == 'store') class="active" @endif>
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                                     Kho <span class="caret"></span>
                                 </a>
@@ -90,7 +90,7 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li>--}}
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li>

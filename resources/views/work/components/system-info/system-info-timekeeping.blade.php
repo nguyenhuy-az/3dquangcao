@@ -29,20 +29,34 @@ $dataTimekeepingProvisional = $modelCompany->timekeepingProvisionalOfCompanyAndD
                 @foreach($dataWorkActivity as $workActivity)
                     <?php
                     $workActivityId = $workActivity->workId();
+                    # thong tin cham cong
                     $dataTimekeeping = $workActivity->timekeepingProvisionalOfDate($workActivityId, $currentDate);
                     $timeKeepingStatus = $hFunction->checkCount($dataTimekeeping);
+                    # kiem tra nghi co phep
+                    if (!$timeKeepingStatus) { # chi kiem tra khi khong co cham cong
+                        # thong tin tin vien
+                        $dataStaffWork = $workActivity->companyStaffWork->staff;
+                        $offWorkAcceptedStatus = $dataStaffWork->existAcceptedOffWork($dataStaffWork->staffId(), $currentDate);
+                    }else{
+                        $offWorkAcceptedStatus = false;
+                    }
+                    $n_o = (isset($n_o)) ? $n_o + 1 : 1;
+
                     ?>
-                    <tr>
+                    <tr class="@if($n_o%2) info @endif">
                         <td class="text-center" style="width: 20px;">
-                            {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
+                            {!! $n_o !!}
                         </td>
                         <td>
                             {!! $workActivity->companyStaffWork->staff->fullName() !!}
                         </td>
                         <td class="text-center">
                             @if($timeKeepingStatus)
-                                <span class="qc-font-bold"
-                                      style="color: red;">{!! date('H:i', strtotime($dataTimekeeping->timeBegin())) !!}</span>
+                                <span class="qc-font-bold" style="color: green;">
+                                    {!! date('H:i', strtotime($dataTimekeeping->timeBegin())) !!}
+                                </span>
+                            @elseif($offWorkAcceptedStatus)
+                                <span style="color: red;">Nghỉ có phép</span>
                             @endif
                         </td>
                         <td class="text-center">

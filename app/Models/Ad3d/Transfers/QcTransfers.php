@@ -66,6 +66,12 @@ class QcTransfers extends Model
         ]);
     }
 
+    # cap nhat so tien'
+    public function updateMoney($transferId, $money)
+    {
+        return QcTransfers::where('transfers_id', $transferId)->update(['money' => $money,]);
+    }
+
     public function updateConfirmReceive($transfersId, $confirmNote, $acceptStatus)
     {
         $hFunction = new \Hfunction();

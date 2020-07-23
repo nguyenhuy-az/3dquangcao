@@ -90,20 +90,16 @@ $currentMonth = $hFunction->currentMonth();
                                             {!! $tool->getLabelType() !!}
                                         </td>
                                         <td class="text-center">
-                                            <b style="color: blue;">{!! $totalAmountOfCompany !!}</b>
+                                            <b style="color: blue;">{!! ($totalAmountOfCompany == 0)?'-':$totalAmountOfCompany !!}</b>
                                         </td>
                                         {{--<td class="text-center">
                                             {!! $totalCancel !!}
                                         </td>--}}
                                         <td class="text-center">
-                                            <b style="color: brown;">{!! $totalAllocationActivity !!}</b>
+                                            <b style="color: brown;">{!! ($totalAllocationActivity == 0)?'-':$totalAllocationActivity !!}</b>
                                         </td>
                                         <td class="text-center">
-                                            @if($totalNoAllocation == 0)
-                                                <b style="color: red;">{!! $totalNoAllocation !!}</b>
-                                            @else
-                                                <b style="color: green;">{!! $totalNoAllocation !!}</b>
-                                            @endif
+                                            <b style="color: brown;">{!! ($totalNoAllocation == 0)?'-':$totalNoAllocation !!}</b>
                                         </td>
                                     </tr>
                                 @endforeach

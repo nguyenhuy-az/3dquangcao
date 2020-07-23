@@ -16,6 +16,6 @@ $dataLogin = $modelStaff->loginStaffInfo();
 @endsection
 
 @section('qc_js_footer')
-    <script src="{{ url('public/ad3d/store/tool/tool/js/tool.js')}}"></script>
+    <script src="{{ url('public/ad3d/store/tool/tool/js/index.js')}}"></script>
 @endsection
 

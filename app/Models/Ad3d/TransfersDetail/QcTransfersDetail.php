@@ -2,6 +2,8 @@
 
 namespace App\Models\Ad3d\TransfersDetail;
 
+use App\Models\Ad3d\OrderPay\QcOrderPay;
+use App\Models\Ad3d\Transfers\QcTransfers;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -28,6 +30,21 @@ class QcTransfersDetail extends Model
             return true;
         } else {
             return false;
+        }
+    }
+
+    public function deleteDetail($detailId)
+    {
+        $modelTransfer = new QcTransfers();
+        $modelOrderPay = new QcOrderPay();
+        $transferId = $this->transfersId($detailId);
+        $moneyPay = $modelOrderPay->money($this->payId($detailId));
+        if (QcTransfersDetail::where('detail_id', $detailId)->delete()) {
+            # cap nhat so tien chuyen
+            $moneyTransfer = $modelTransfer->money($transferId);
+            $moneyTransfer = (is_int($moneyTransfer)) ? $moneyTransfer : $moneyTransfer[0];
+            $moneyPay = (is_int($moneyPay)) ? $moneyPay : $moneyPay[0];
+            $modelTransfer->updateMoney($transferId, $moneyTransfer - $moneyPay);
         }
     }
 

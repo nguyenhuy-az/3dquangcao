@@ -15,7 +15,8 @@ $mobileStatus = $mobile->isMobile();
             <h3>THÊM MỚI</h3>
         </div>
         <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-8 col-lg-8" style="padding: 0;">
-            <form class="frmAdd" name="frmAdd" role="form" method="post" action="{!! route('qc.ad3d.Store.tool.tool.add.post') !!}">
+            <form class="frmAdd" name="frmAdd" role="form" method="post"
+                  action="{!! route('qc.ad3d.Store.tool.tool.add.post') !!}">
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
@@ -30,21 +31,41 @@ $mobileStatus = $mobile->isMobile();
                                 @endif
                             </div>
                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group" style="padding: 0;margin: 0;">
+                                <div class="form-group">
+                                    <label>
+                                        Loại dụng cụ
+                                        <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
+                                    </label>
+                                    <select class="cbToolType form-control" name="cbToolType">
+                                        <option value="">
+                                            Chọn lại dụng cụ
+                                        </option>
+                                        <option value="1">
+                                            Dùng chung
+                                        </option>
+                                        <option value="2">
+                                            Dùng cấp phát
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="form-group">
                                     <label>
                                         Tên dụng cụ:
                                         <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                     </label>
-                                    <input type="text" name="txtName" class="form-control" style="height: 25px;" placeholder="Nhập tên dụng cụ" value="">
+                                    <input type="text" name="txtName" class="form-control"
+                                           placeholder="Nhập tên dụng cụ" value="">
                                 </div>
                             </div>
                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="form-group" style="padding: 0;margin-bottom: 10px;">
+                                <div class="form-group">
                                     <label>
                                         Đơn vị tính:
                                         <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                     </label>
-                                    <input type="text" name="txtUnit" class="form-control" style="height: 25px;"
+                                    <input type="text" name="txtUnit" class="form-control"
                                            placeholder="Nhập đơn vị tính" value="">
                                 </div>
                             </div>

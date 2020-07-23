@@ -22,16 +22,16 @@ if (isset($dataAccess)) {
 <div class="row">
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
-            <li @if($viewLoginObject == 'toolPrivate') class="active" @endif>
-                <a class="qc-link-bold" href="{!! route('qc.work.tool.private.get') !!}"
-                   @if($viewLoginObject == 'toolPrivate') style="background-color: whitesmoke" @endif>
+            <li @if($viewLoginObject == 'toolAllocation') class="active" @endif>
+                <a class="qc-link-bold" href="{!! route('qc.work.tool.allocation.get') !!}"
+                   @if($viewLoginObject == 'toolAllocation') style="background-color: whitesmoke" @endif>
                     Đồ nghề được phát
                 </a>
             </li>
-            <li @if($viewLoginObject == 'toolPublic') class="active" @endif>
-                <a class="qc-link-bold" href="{!! route('qc.work.pay.keep_money.get') !!}"
-                   @if($viewLoginObject == 'toolPublic') style="background-color: whitesmoke;" @endif>
-                    Đồ nghề dùng chung
+            <li @if($viewLoginObject == 'toolCheckStore') class="active" @endif>
+                <a class="qc-link-bold" href="{!! route('qc.work.tool.check_store.get') !!}"
+                   @if($viewLoginObject == 'toolCheckStore') style="background-color: whitesmoke;" @endif>
+                    Quản lý dùng chung
                 </a>
             </li>
         </ul>

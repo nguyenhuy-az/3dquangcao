@@ -95,7 +95,6 @@ $totalMoneyPayment = $dataCompanyStatistic->statisticalTotalPaymentMoney($compan
                                 <th class="text-center">Tổng doanh thu</th>
                                 <th class="text-center">Tổng Chi</th>
                                 <th class="text-center">Lợi nhân</th>
-                                <th class="text-center">Lãi ròng</th>
                             </tr>
                             <tr>
                                 <td class="text-center" style="color: red;">
@@ -111,11 +110,6 @@ $totalMoneyPayment = $dataCompanyStatistic->statisticalTotalPaymentMoney($compan
                                 <td class="text-center" style="color: red;">
                                     <b style="color: green;">
                                         {!! $hFunction->currencyFormat($totalMoneyReceiveOfCompany-$totalMoneyPayment)  !!}
-                                    </b>
-                                </td>
-                                <td class="text-center" style="color: red;">
-                                    <b style="color: green;">
-                                        {!! $hFunction->currencyFormat(($totalMoneyReceiveOfCompany-$totalMoneyPayment)*0.8)  !!}
                                     </b>
                                 </td>
                             </tr>
@@ -138,10 +132,6 @@ $totalMoneyPayment = $dataCompanyStatistic->statisticalTotalPaymentMoney($compan
                                 <th class="text-right">
                                     Lợi nhuận <br/>
                                     <em>(Trước thuế)</em>
-                                </th>
-                                <th class="text-right">
-                                    Lãi ròng <br/>
-                                    <em>(sau thuế)</em>
                                 </th>
                             </tr>
                             @if($hFunction->checkCount($dataStaffOfCompany))
@@ -189,18 +179,11 @@ $totalMoneyPayment = $dataCompanyStatistic->statisticalTotalPaymentMoney($compan
                                         <td class="text-right">
                                             <b style="color: red;">{!! $hFunction->currencyFormat($totalReceive - $totalPaid)  !!}</b>
                                         </td>
-                                        <td class="text-right">
-                                            @if(($totalReceive - $totalPaid) > 0)
-                                                {!! $hFunction->currencyFormat(($totalReceive - $totalPaid)*0.8)  !!}
-                                            @else
-                                                {!! $hFunction->currencyFormat(($totalReceive - $totalPaid))  !!}
-                                            @endif
-                                        </td>
                                     </tr>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td class="text-right" colspan="8">
+                                    <td class="text-right" colspan="7">
                                         <em class="qc-color-red">Không có công ty hoạt động</em>
                                     </td>
                                 </tr>

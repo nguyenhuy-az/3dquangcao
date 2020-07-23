@@ -16,7 +16,7 @@ $mobileStatus = $mobile->isMobile();
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10" style="overflow: hidden;">
             <label>Chọn ảnh:</label>
-            <input class="txtImportImage" type="file" name="txtImportImage[]" >
+            <input class="txtImportImage"onclick="$(this).click();" type="file" name="txtImportImage[]" >
         </div>
         <div class="text-right col-xs-12 col-sm-12 col-md-2 col-lg-2">
             <a class="qc_delete qc-link-red" data-href="">

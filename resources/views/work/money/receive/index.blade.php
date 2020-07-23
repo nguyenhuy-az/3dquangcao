@@ -8,7 +8,7 @@
 ?>
 @extends('work.index')
 @section('titlePage')
-    Chuyển/Nhận tiền
+    Thu/Giao tiền
 @endsection
 @section('qc_work_body')
     <div class="row">
@@ -16,10 +16,10 @@
             @include('work.money.money-menu')
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="min-height: 1500px;">
-            @yield('qc_work_money_transfer_body')
+            @yield('qc_work_money_receive_body')
         </div>
     </div>
 @endsection
 @section('qc_js_footer')
-    <script src="{{ url('public/work/money/transfer/js/index.js')}}"></script>
+    <script src="{{ url('public/work/money/receive/js/index.js')}}"></script>
 @endsection

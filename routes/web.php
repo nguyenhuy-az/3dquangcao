@@ -51,7 +51,7 @@ Route::group(['prefix' => 'ad3d'], function () {
                 //Xóa
                 Route::get('del/{toolId?}', ['as' => 'qc.ad3d.store.tool.tool.del.get', 'uses' => 'Ad3d\Store\Tool\Tool\ToolController@deleteTool']);
 
-                Route::get('/', ['as' => 'qc.ad3d.store.tool.tool.get', 'uses' => 'Ad3d\Store\Tool\Tool\ToolController@index']);
+                Route::get('/{typeFilter?}', ['as' => 'qc.ad3d.store.tool.tool.get', 'uses' => 'Ad3d\Store\Tool\Tool\ToolController@index']);
             });
 
             //bàn giao dụng cụ
@@ -981,8 +981,9 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     Route::group(['prefix' => 'money'], function () {
         # tien thu chua ban giao
         Route::group(['prefix' => 'receive'], function () {
+            Route::get('delete/{payId?}', ['as' => 'qc.work.money.receive.delete.get', 'uses' => 'Work\Money\Receive\MoneyReceiveController@deleteOrderPay']);
+            # giao tien
             Route::post('transfer', ['as' => 'qc.work.money.receive.transfer.post', 'uses' => 'Work\Money\Receive\MoneyReceiveController@postTransfer']);
-
             Route::get('/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.receive.get', 'uses' => 'Work\Money\Receive\MoneyReceiveController@index']);
         });
 
@@ -998,13 +999,23 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
         # giao tien
         Route::group(['prefix' => 'transfer'], function () {
-            # thong tin giao tien
-            Route::get('transfer/{loginDay?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.transfer.transfer.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferIndex']);
-            Route::get('transfer-view/{transferId?}', ['as' => 'qc.work.money.transfer.transfer.view', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferView']);
+            Route::group(['prefix' => 'transfer'], function () {
+                # thong tin giao tien
+                Route::get('view/{transferId?}', ['as' => 'qc.work.money.transfer.transfer.view', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferView']);
+                # thong tin chuyen
+                Route::get('info/{transferId?}', ['as' => 'qc.work.money.transfer.transfer.info.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferInfo']);
+                # huy chuyen
+                Route::get('info-delete/{detailId?}', ['as'=>'qc.work.money.transfer.transfer.info.delete','uses'=>'Work\Money\Transfer\MoneyTransferController@transferDetailDelete']);
+
+                Route::get('/{loginDay?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.transfer.transfer.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferIndex']);
+            });
+
             # thong tin nhan tien
-            Route::get('receive-confirm/{transferId?}', ['as' => 'qc.work.money.transfer.receive.confirm.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveConfirm']);
-            Route::get('receive/{dateFilter?}/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.money.transfer.receive.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveIndex']);
-            Route::get('receive-view/{transferId?}', ['as' => 'qc.work.money.transfer.receive.view', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveView']);
+            Route::group(['prefix' => 'receive'], function () {
+                Route::get('confirm/{transferId?}', ['as' => 'qc.work.money.transfer.receive.confirm.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveConfirm']);
+                Route::get('view/{transferId?}', ['as' => 'qc.work.money.transfer.receive.view', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveView']);
+                Route::get('/{dateFilter?}/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.money.transfer.receive.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@receiveIndex']);
+            });
         });
 
         # thong ke
@@ -1308,18 +1319,24 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
     //do nghe duoc giao
     Route::group(['prefix' => 'tool'], function () {
-        Route::group(['prefix' => 'private'], function () {
+        # kiem tra do nghe dung chung
+        Route::group(['prefix' => 'check-store'], function () {
+            Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.tool.check_store.get', 'uses' => 'Work\Tool\CheckStore\CheckStoreController@index']);
+        });
+
+        # do nghe da phat
+        Route::group(['prefix' => 'allocation'], function () {
             #xem chi tiết
-            Route::get('view/{toolId?}', ['as' => 'qc.work.tool.private.view.get', 'uses' => 'Work\Tool\ToolController@viewTool']);
+            Route::get('view/{toolId?}', ['as' => 'qc.work.tool.allocation.view.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewTool']);
 
             # tra lai do nghe
-            Route::get('return/{allocationId?}/{storeId?}', ['as' => 'qc.work.tool.private.return.get', 'uses' => 'Work\Tool\ToolController@getReturn']);
-            Route::post('return', ['as' => 'qc.work.tool.private.return.post', 'uses' => 'Work\Tool\ToolController@postReturn']);
+            Route::get('return/{allocationId?}/{storeId?}', ['as' => 'qc.work.tool.allocation.return.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@getReturn']);
+            Route::post('return', ['as' => 'qc.work.tool.allocation.return.post', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@postReturn']);
 
             #xác nhận đồ nghề
-            Route::get('confirm-receive/{allocationId?}', ['as' => 'qc.work.tool.private.confirm_receive.get', 'uses' => 'Work\Tool\ToolController@getConfirmReceive']);
+            Route::get('confirm-receive/{allocationId?}', ['as' => 'qc.work.tool.allocation.confirm_receive.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@getConfirmReceive']);
 
-            Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.tool.private.get', 'uses' => 'Work\Tool\ToolController@index']);
+            Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.tool.allocation.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@index']);
         });
 
     });

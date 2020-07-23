@@ -133,12 +133,9 @@ $(document).ready(function () {
     });
 });
 $(document).ready(function () {
-    $('body').on('click', '#frm_work_import_add .qc_work_import_save', function () {
-        //qc_work_import.login($(this).parents('.frmWorkLogin'));
-    });
-
     //----- -------------- thêm hình ảnh
     $('body').on('click', '#frm_work_import_add .qc_work_import_add_image', function () {
+        var href = $(this).data('href');
         qc_work_import.add.addImage($(this).data('href'));
     });
     $('body').on('click', '#frm_work_import_add .qc_work_import_image_add .qc_delete', function () {

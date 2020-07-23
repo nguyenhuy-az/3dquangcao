@@ -14,7 +14,7 @@ $dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
 $companyId = $dataStaff->companyId();
 ?>
-@extends('work.tool.private.index')
+@extends('work.tool.allocation.index')
 @section('qc_work_tool_private_body')
     <div class="row qc_work_tool_private_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-8 col-lg-8">
@@ -27,7 +27,7 @@ $companyId = $dataStaff->companyId();
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <form id="frmWorkToolPrivateReturn" role="form" name="frmWorkToolPrivateReturn" method="post"
                       enctype="multipart/form-data"
-                      action="{!! route('qc.work.tool.private.return.post') !!}">
+                      action="{!! route('qc.work.tool.allocation.return.post') !!}">
                     <div class="row">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">

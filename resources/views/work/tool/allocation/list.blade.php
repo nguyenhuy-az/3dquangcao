@@ -13,10 +13,10 @@ $mobileStatus = $mobile->isMobile();
 $dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
 $companyId = $dataStaff->companyId();
-$hrefIndex = route('qc.work.tool.private.get');
+$hrefIndex = route('qc.work.tool.allocation.get');
 $currentMonth = $hFunction->currentMonth();
 ?>
-@extends('work.tool.private.index')
+@extends('work.tool.allocation.index')
 @section('qc_work_tool_private_body')
     <div class="row qc_work_tool_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-6 col-lg-6">
@@ -95,7 +95,7 @@ $currentMonth = $hFunction->currentMonth();
                                         <td class="text-center">
                                             @if(!$hFunction->checkCount($toolReturn))
                                                 <a class="qc-link-green-bold"
-                                                   href="{!! route('qc.work.tool.private.return.get',"$allocationId/$detailId") !!}">
+                                                   href="{!! route('qc.work.tool.allocation.return.get',"$allocationId/$detailId") !!}">
                                                     Giao lại
                                                 </a>
                                             @else

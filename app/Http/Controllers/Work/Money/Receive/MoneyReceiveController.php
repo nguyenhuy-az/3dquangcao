@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Work\Money\Receive;
 use App\Http\Controllers\Controller;
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\Department\QcDepartment;
+use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\TransfersDetail\QcTransfersDetail;
@@ -58,6 +59,13 @@ class MoneyReceiveController extends Controller
             return view('work.login');
         }
 
+    }
+
+    # huy thanh toán
+    public function deleteOrderPay($orderPayId)
+    {
+        $modelOrderPay = new QcOrderPay();
+        return $modelOrderPay->deleteOrderPay($orderPayId);
     }
 
     #chuyen tien

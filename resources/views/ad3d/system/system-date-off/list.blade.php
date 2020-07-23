@@ -47,7 +47,7 @@ $indexHref = route('qc.ad3d.system.system_date_off.get');
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <a class="qc-link-red" title="Sao chép ngày nghỉ từ công ty khác"
                        href="{!! route('qc.ad3d.system.system_date_off.copy.get') !!}">
                         <i class="qc-font-size-16 glyphicon glyphicon-download-alt"></i>
@@ -59,39 +59,45 @@ $indexHref = route('qc.ad3d.system.system_date_off.get');
                         Thêm
                     </a>
                 </div>
-                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                    <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;" data-href="{!! $indexHref !!}">
-                        <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
-                            Tất cả
-                        </option>
-                        @for($i =1;$i<= 12; $i++)
-                            <option value="{!! $i !!}"
-                                    @if((int)$monthFilter == $i) selected="selected" @endif>
-                                Tháng {!! $i !!}
-                            </option>
-                        @endfor
-                    </select>
-                    <span>/</span>
-                    <select class="cbYearFilter" style="margin-top: 5px; height: 25px;" data-href="{!! $indexHref !!}">
-                        <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
-                            Tất cả
-                        </option>
-                        @for($i =2017;$i<= 2050; $i++)
-                            <option value="{!! $i !!}"
-                                    @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                        @endfor
-                    </select>
-                </div>
             </div>
-            <div class="qc_ad3d_list_content qc-ad3d-table-container row">
+            <div class="qc_ad3d_list_content row">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Ngày</th>
                             <th>Mô tả</th>
                             <th>Hình thức nghỉ</th>
                             <th></th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="padding: 0px;">
+                                <select class="cbMonthFilter" style="height: 30px;" data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($m =1;$m<= 12; $m++)
+                                        <option value="{!! $m !!}"
+                                                @if((int)$monthFilter == $m) selected="selected" @endif>
+                                            Tháng {!! $m !!}
+                                        </option>
+                                    @endfor
+                                </select>
+                                <select class="cbYearFilter" style="height: 30px;" data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($y =2017;$y<= 2050; $y++)
+                                        <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                            {!! $y !!}
+                                        </option>
+                                    @endfor
+                                </select>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                         @if($hFunction->checkCount($dataSystemDateOff))
                             <?php

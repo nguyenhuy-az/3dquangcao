@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcLicenseOffWork extends Model
 {
     protected $table = 'qc_license_off_works';
-    protected $fillable = ['license_id', 'dateOff', 'note', 'agreeStatus', 'confirmStatus', 'confirmNote', 'confirmDate', 'created_at', 'staff_id', 'work_id', 'staffConfirm_id'];
+    protected $fillable = ['license_id', 'dateOff', 'note', 'agreeStatus', 'confirmStatus', 'confirmNote', 'confirmDate', 'created_at', 'staff_id', 'staffConfirm_id'];
     protected $primaryKey = 'license_id';
     public $timestamps = false;
 
@@ -76,10 +76,19 @@ class QcLicenseOffWork extends Model
         }
     }
 
+    # kien tra nhan vien co xin nghi theo ngay
     public function existDateOfStaff($staffId, $dateYmd)
     {
         $dateYmd = date('Y-m-d', strtotime($dateYmd));
         $result = QcLicenseOffWork::where('staff_id', $staffId)->where('dateOff', 'like', "%$dateYmd%")->count();
+        return ($result > 0) ? true : false;
+    }
+
+    # kiem tra nv xin nghi theo ngay va duoc duyet
+    public function existAcceptedDateOfStaff($staffId, $dateYmd)
+    {
+        $dateYmd = date('Y-m-d', strtotime($dateYmd));
+        $result = QcLicenseOffWork::where('staff_id', $staffId)->where('dateOff', 'like', "%$dateYmd%")->where('agreeStatus', 1)->count();
         return ($result > 0) ? true : false;
     }
 
@@ -89,6 +98,16 @@ class QcLicenseOffWork extends Model
         return QcLicenseOffWork::where('staff_id', $staffId)->where('dateOff', 'like', "%$dateYmd%")->first();
     }
 
+    public function infoOfStaff($staffId, $orderBy = null)
+    {
+        $orderBy = (empty($orderBy)) ? 'DESC' : $orderBy;
+        return QcLicenseOffWork::where(['staff_id' => $staffId])->orderBy('dateOff', "$orderBy")->get();
+    }
+    public function disableOfStaff($staffId)
+    {
+        return QcLicenseOffWork::where('staff_id', $staffId)->update(['action' => 0]);
+    }
+
     //----------- nhân viên xac nhan ------------
     public function staffConfirm()
     {
@@ -96,30 +115,6 @@ class QcLicenseOffWork extends Model
     }
 
     //----------- làm việc ------------
-    public function work()
-    {
-        return $this->belongsTo('App\Models\Ad3d\Work\QcWork', 'work_id', 'work_id');
-    }
-
-    // vo hiệu
-    public function disableOfWork($workId)
-    {
-        return QcLicenseOffWork::where('work_id', $workId)->update(['action' => 0]);
-    }
-
-    public function infoOfWork($workId, $orderBy = null)
-    {
-        $orderBy = (empty($orderBy)) ? 'DESC' : $orderBy;
-        return QcLicenseOffWork::where(['work_id' => $workId])->orderBy('dateOff', "$orderBy")->get();
-    }
-
-    public function existDateOfWork($workId, $dateYmd)
-    {
-        $dateYmd = date('Y-m-d', strtotime($dateYmd));
-        $result = QcLicenseOffWork::where('work_id', $workId)->where('dateOff', 'like', "%$dateYmd%")->count();
-        return ($result > 0) ? true : false;
-    }
-
     //============ =========== ============ lấy thông tin ============= =========== ==========
     public function getInfo($licenseId = '', $field = '')
     {
@@ -180,14 +175,9 @@ class QcLicenseOffWork extends Model
         return $this->pluck('confirmDate', $licenseId);
     }
 
-    public function workId($licenseId = null)
-    {
-        return $this->pluck('work_id', $licenseId);
-    }
-
     public function staffId($licenseId = null)
     {
-        return $this->pluck('work_id', $licenseId);
+        return $this->pluck('staff_id', $licenseId);
     }
 
     public function staffConfirmId($licenseId = null)

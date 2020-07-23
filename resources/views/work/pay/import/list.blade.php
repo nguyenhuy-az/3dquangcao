@@ -100,7 +100,9 @@ $currentMonth = $hFunction->currentMonth();
                             </select>
                         </td>
                         <td></td>
-                        <td></td>
+                        <td class="text-right">
+                            <b style="color: green;">{!! $hFunction->currencyFormat($importTotalMoney) !!}</b>
+                        </td>
                     </tr>
                     @if($hFunction->checkCount($dataImport))
                         <?php

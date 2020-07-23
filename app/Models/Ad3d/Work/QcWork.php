@@ -5,8 +5,6 @@ namespace App\Models\Ad3d\Work;
 use App\Models\Ad3d\Bonus\QcBonus;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\KeepMoney\QcKeepMoney;
-use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
-use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\Salary\QcSalary;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
@@ -524,31 +522,6 @@ class QcWork extends Model
                 }
             }
         }
-    }
-
-    //----------- license - off-work ------------
-    public function timekeepingOffWork()
-    {
-        return $this->hasMany('App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork', 'work_id', 'work_id');
-    }
-
-    public function infoOffWork($workId, $orderBy = null)
-    {
-        $modelOffWork = new QcLicenseOffWork();
-        return $modelOffWork->infoOfWork($this->checkIdNull($workId), $orderBy);
-    }
-
-
-    //----------- di lam tre ------------
-    public function timekeepingLateWork()
-    {
-        return $this->hasMany('App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork', 'work_id', 'work_id');
-    }
-
-    public function infoLateWork($workId, $orderBy = null)
-    {
-        $modelLateWork = new QcLicenseLateWork();
-        return $modelLateWork->infoOfWork($this->checkIdNull($workId), $orderBy);
     }
 
     //----------- cham cong ------------

@@ -15,14 +15,16 @@ use Request;
 
 class ToolController extends Controller
 {
-    public function index()
+    public function index($typeFilter = 0)
     {
         $modelStaff = new QcStaff();
+        $modelTool = new QcTool();
         $dataAccess = [
             'accessObject' => 'tool'
         ];
-        $dataTool = QcTool::orderBy('name', 'ASC')->select('*')->paginate(30);
-        return view('ad3d.store.tool.tool.list', compact('modelStaff', 'dataTool', 'dataAccess'));
+        # lay danh sach cong cu cua he thong
+        $dataTool = $modelTool->selectAllInfo($typeFilter)->paginate(30);
+        return view('ad3d.store.tool.tool.list', compact('modelStaff', 'dataTool', 'dataAccess', 'typeFilter'));
     }
 
     public function view($toolId)
@@ -42,19 +44,20 @@ class ToolController extends Controller
             'accessObject' => 'tool'
         ];
 
-        return view('ad3d.store.tool.tool.add', compact('dataAccess','modelStaff'));
+        return view('ad3d.store.tool.tool.add', compact('dataAccess', 'modelStaff'));
     }
 
     public function postAdd()
     {
         $modelTool = new QcTool();
+        $cbToolType = Request::input('cbToolType');
         $name = Request::input('txtName');
         $unit = Request::input('txtUnit');
         // kiểm tra tồn tại vật tư
         if ($modelTool->existName($name)) {
             Session::put('notifyAdd', "Thêm thất bại <b>'$name'</b> đã tồn tại.");
         } else {
-            if ($modelTool->insert($name, $unit, null)) {
+            if ($modelTool->insert($name, $unit, null,$cbToolType)) {
                 Session::put('notifyAdd', 'Thêm thành công, Nhập thông tin để tiếp tục');
             } else {
                 Session::put('notifyAdd', 'Thêm thất bại, Nhập thông tin để tiếp tục');
@@ -77,6 +80,7 @@ class ToolController extends Controller
         $modelTool = new QcTool();
         $name = Request::input('txtName');
         $unit = Request::input('txtUnit');
+        $cbToolType = Request::input('cbToolType');
         $notifyContent = null;
         if ($modelTool->existEditName($toolId, $name)) {
             $notifyContent = "Tên <b>'$name'</b> đã tồn tại.";
@@ -84,9 +88,10 @@ class ToolController extends Controller
         if (!empty($notifyContent)) {
             return $notifyContent;
         } else {
-            $modelTool->updateInfo($toolId, $name, $unit, null);
+            $modelTool->updateInfo($toolId, $name, $unit, null, $cbToolType);
         }
     }
+
     public function deleteTool($toolId)
     {
         if (!empty($toolId)) {

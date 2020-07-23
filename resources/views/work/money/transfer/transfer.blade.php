@@ -21,12 +21,11 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
 @section('qc_work_money_transfer_body')
     <div class="row">
         <div class="qc_work_money_transfer_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            @include('work.money.money-menu')
             {{-- chi tiêt --}}
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row" style="margin-top: 10px;">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <span style="color: deeppink;">Tiền đã bàn giao </span>
+                        <h4 style="color: deeppink;">Tiền đã bàn giao </h4>
                     </div>
                 </div>
                 <div class="qc_work_money_receive_list_content row">
@@ -75,17 +74,25 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                     <?php
                                     $transfersId = $transfer->transfersId();
                                     $totalMoney = $totalMoney + $transfer->money();
+                                    $confirmReceiveStatus = $transfer->checkConfirmReceive();
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
                                         <td class="text-center">
                                             {!! $n_o = $n_o + 1 !!}
                                         </td>
                                         <td>
-                                            <a class="qcMoneyTransferView qc-link-green"
-                                               data-href="{!! route('qc.work.money.transfer.transfer.view',$transfersId) !!}">
-                                                {!! date('d/m/Y',strtotime($transfer->transfersDate()))  !!}
-                                                &nbsp; <i class="glyphicon glyphicon-eye-open"></i>
-                                            </a>
+                                            <span>{!! date('d/m/Y',strtotime($transfer->transfersDate()))  !!}</span>
+                                            @if(!$confirmReceiveStatus)
+                                                &nbsp;
+                                                <a class="qc-link-red" href="{!! route('qc.work.money.transfer.transfer.info.get',$transfersId) !!}">
+                                                    <i class="glyphicon glyphicon-pencil" style="font-size: 16px;"></i>
+                                                </a>
+                                            @else
+                                                <a class="qcMoneyTransferView qc-link-green"
+                                                   data-href="{!! route('qc.work.money.transfer.transfer.view',$transfersId) !!}">
+                                                    <i class="glyphicon glyphicon-eye-open" style="font-size: 16px;"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                         <td>
                                             <span>{!! $transfer->receiveStaff->fullname() !!}</span>
@@ -94,7 +101,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                             {!! $transfer->reason() !!}
                                         </td>
                                         <td class="text-center qc-color-grey">
-                                            @if($transfer->checkConfirmReceive())
+                                            @if($confirmReceiveStatus)
                                                 <em>Đã xác nhận</em>
                                             @else
                                                 <span style="background-color: red; color: white; padding: 3px;">Chưa xác nhận</span>

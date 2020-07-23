@@ -670,19 +670,27 @@ class QcStaff extends Model
         return $this->hasMany('App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional', 'staffConfirm_id', 'staff_id');
     }
 
-    //----------- xin nghi ------------
+    //----------- ----------- xin nghi ------------ -----------
     public function timekeepingOffWork()
     {
         return $this->hasMany('App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork', 'staffConfirm_id', 'staff_id');
     }
 
+    # lay thong tin xin nghi cua 1 NV
     public function timekeepingOffWorkOfStaff($staffId, $dateFilter = null)
     {
         $modelOffWork = new QcLicenseOffWork();
         return $modelOffWork->selectInfoOfListStaffIdAndDate([$staffId], $dateFilter)->get();
     }
 
-    //----------- xin di lam tre ------------
+    # kiem tra NV xin nghi co duoc duyet hay khong
+    public function existAcceptedOffWork($staffId, $date)
+    {
+        $modelOffWork = new QcLicenseOffWork();
+        return $modelOffWork->existAcceptedDateOfStaff($staffId, $date);
+    }
+
+    //----------- ----------- xin di lam tre ------------ -----------
     public function timekeepingLateWork()
     {
         return $this->hasMany('App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork', 'staffConfirm_id', 'staff_id');

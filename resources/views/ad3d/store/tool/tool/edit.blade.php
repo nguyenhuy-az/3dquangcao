@@ -9,6 +9,9 @@
  */
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$type = $dataTool->type();
+$name = $dataTool->name();
+$unit = $dataTool->unit();
 ?>
 @extends('ad3d.components.container.container-6')
 @section('qc_ad3d_container_content')
@@ -18,7 +21,8 @@ $mobileStatus = $mobile->isMobile();
                 <h3>SỬA THÔNG TIN</h3>
             </div>
             <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <form class="frmEdit" name="frmEdit" role="form" method="post" action="{!! route('qc.ad3d.store.tool.tool.edit.post', $dataTool->toolId()) !!}">
+                <form class="frmEdit" name="frmEdit" role="form" method="post"
+                      action="{!! route('qc.ad3d.store.tool.tool.edit.post', $dataTool->toolId()) !!}">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -27,11 +31,31 @@ $mobileStatus = $mobile->isMobile();
                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group">
                                     <label>
+                                        Loại dụng cụ
+                                        <em style="color: red;">(Không được chỉnh sửa loại dụng cụ)</em>
+                                    </label>
+                                    <select class="cbToolType form-control" name="cbToolType">
+                                        @if($type == 1)
+                                            <option value="1">
+                                                Dùng chung
+                                            </option>
+                                        @else
+                                            <option value="2">
+                                                Dùng cấp phát
+                                            </option>
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="form-group">
+                                    <label>
                                         Tên:
                                         <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                     </label>
-                                    <input type="text" name="txtName" class="form-control" placeholder="Nhập tên dụng cụ"
-                                           value="{!! $dataTool->name() !!}">
+                                    <input type="text" name="txtName" class="form-control"
+                                           placeholder="Nhập tên dụng cụ"
+                                           value="{!! $name !!}">
                                 </div>
                             </div>
                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -41,7 +65,7 @@ $mobileStatus = $mobile->isMobile();
                                         <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                     </label>
                                     <input type="text" name="txtUnit" class="form-control"
-                                           placeholder="Nhập đơn vị" value="{!! $dataTool->unit() !!}">
+                                           placeholder="Nhập đơn vị" value="{!! $unit !!}">
                                 </div>
                             </div>
                         </div>

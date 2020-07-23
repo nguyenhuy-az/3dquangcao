@@ -21,8 +21,6 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
 @section('qc_work_money_transfer_body')
     <div class="row">
         <div class="qc_work_money_transfer_receive_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            @include('work.money.money-menu')
-
             {{-- chi tiêt --}}
             <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">

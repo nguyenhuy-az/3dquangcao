@@ -55,7 +55,7 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                                     <th >Tên VT/DC</th>
                                     <th>Làm sản phẩm</th>
                                     <th>Phân loại</th>
-                                    <th>Cấp phát</th>
+                                    <th>Cấp phát (Dụng cụ)</th>
                                     <th class="text-center">Số lượng</th>
                                     <th>Đơn vị tính</th>
                                     <th class="text-right">Thành tiền</th>
@@ -114,8 +114,8 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                                             </td>
                                             <td style="padding: 0;">
                                                 <select class="cbAllocationStatus form-control" name="cbAllocationStatus[]">
-                                                    <option value="1" selected="selected">Cấp phát</option>
-                                                    <option value="2">Không cấp</option>
+                                                    <option value="2" selected="selected">Dùng cấp phát</option>
+                                                    <option value="1">Dùng chung</option>
                                                 </select>
                                             </td>
                                             <td class="text-center qc-color-red">
@@ -175,6 +175,11 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                                     </tr>
                                 @endif
                             </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <span style="color: red;">Dụng cụ dùng chung sẽ không cấp phát cho người mua</span>
                         </div>
                     </div>
                     <div class="row">

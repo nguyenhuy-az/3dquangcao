@@ -16,8 +16,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 <style type="text/css">
     .qc-work-panel {
         text-align: center;
-        height: 50px;
-        line-height: 50px;
+        height: 60px;
+        padding-top: 10px;
+        /*line-height: 100px;*/
         border: 1px solid #d7d7d7;
     }
 
@@ -35,74 +36,90 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
         <div class="row">
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.timekeeping.get') !!}">
+                    <i class="glyphicon glyphicon-calendar" style="font-size: 20px; color: green;"></i> <br/>
                     CHẤM CÔNG
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.work_allocation.get') !!}">
+                    <i class="glyphicon glyphicon-wrench" style="font-size: 20px;color: grey;"></i> <br/>
                     THI CÔNG
                 </a>
             </div>
             @if($dataStaffLogin->checkBusinessDepartment() || $dataStaffLogin->checkDesignDepartment())
                 <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                     <a class="qc-work-panel-icon-link" href="{!! route('qc.work.orders.get') !!}">
+                        <i class="glyphicon glyphicon-shopping-cart" style="font-size: 20px;color: blue;"></i> <br/>
                         ĐƠN HÀNG
                     </a>
                 </div>
             @endif
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.import.get') !!}">
-                    MUA VẬT TƯ
+                    <i class="glyphicon glyphicon-save" style="font-size: 20px;color: grey;"></i> <br/>
+                    MUA VẬT TƯ - ĐỐ NGHỀ
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.pay.import.get') !!}">
+                    <i class="glyphicon glyphicon-credit-card" style="font-size: 20px;color: brown;"></i> <br/>
                     CHI
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.money.receive.get') !!}">
+                    <i class="glyphicon glyphicon-th-list" style="font-size: 20px;color: grey;"></i> <br/>
                     QUẢN LÝ THU -CHI
                 </a>
             </div>
 
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.salary.salary.get') !!}">
+                    <i class="glyphicon glyphicon-usd" style="font-size: 20px;color: red;"></i> <br/>
                     LƯƠNG
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.minus_money.get') !!}">
+                    <i class="glyphicon glyphicon-plus" style="color: grey;"></i>
+                    <i class="glyphicon glyphicon-usd" style="font-size: 20px;color: blue;"></i>
+                    <i class="glyphicon glyphicon-minus" style="color: grey;"></i> <br/>
                     THƯỞNG - PHẠT
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.tool.private.get') !!}">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.tool.allocation.get') !!}">
+                    <i class="glyphicon glyphicon-briefcase" style="font-size: 20px;color: green;"></i> <br/>
                     ĐỒ NGHỀ
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.store.allocation.get') !!}">
+                    <i class="glyphicon glyphicon-list-alt" style="font-size: 20px;color: grey;"></i> <br/>
                     QUẢN LÝ ĐỒ NGHỀ
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.product_type_price.get') !!}">
+                    <i class="glyphicon glyphicon-list" style="font-size: 20px;color: brown;"></i><br/>
                     BẢNG GIÁ
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.rules') !!}">
+                    <i class="glyphicon glyphicon-warning-sign" style="font-size: 20px;color: orangered;"></i> <br/>
                     NỘI QUY
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.change-account.get') !!}">
+                    <i class="glyphicon glyphicon-user" style="font-size: 20px;color: grey;"></i> <br/>
                     Đổi tài khoản
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.logout.get') !!}">
+                    <i class="glyphicon glyphicon-log-out" style="font-size: 20px;color: grey;"></i> <br/>
                     Thoát
                 </a>
             </div>

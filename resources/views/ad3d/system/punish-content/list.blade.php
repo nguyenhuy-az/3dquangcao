@@ -23,7 +23,6 @@ $dataPunishType = $modelPunishType->getInfo();
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     &nbsp;
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
                     <label class="qc-font-size-20">NỘI DUNG PHẠT</label>
                 </div>
             </div>
@@ -44,7 +43,7 @@ $dataPunishType = $modelPunishType->getInfo();
                     </form>
                 </div>
             </div>
-            <div class="qc_ad3d_list_content qc-ad3d-table-container row"
+            <div class="qc_ad3d_list_content row"
                  data-href-view="{!! route('qc.ad3d.system.punish-content.view.get') !!}"
                  data-href-edit="{!! route('qc.ad3d.system.punish-content.edit.get') !!}"
                  data-href-del="{!! route('qc.ad3d.system.punish-content.delete') !!}">
@@ -54,7 +53,7 @@ $dataPunishType = $modelPunishType->getInfo();
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Mã</th>
                             <th>Tên</th>
-                            <th>Mô tả</th>
+                            <th style="width: 500px;">Mô tả</th>
                             <th>Loại tiền phạt</th>
                             <th class="text-right">Số tiền</th>
                             <th></th>

@@ -66,6 +66,7 @@ $hrefIndex = route('qc.work.bonus.get');
                                 ?>
                                 @foreach($dataBonus as $bonus)
                                     <?php
+                                    $bonusId = $bonus->bonusId();
                                     $orderAllocationId = $bonus->orderAllocationId();
                                     $orderConstructionId = $bonus->orderConstructionId();
                                     $cancelStatus = $bonus->checkCancelStatus();

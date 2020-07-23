@@ -112,10 +112,6 @@ class QcTimekeeping extends Model
 
     public function existDateOfWork($workId, $dateYmd)
     {
-        //$dateYmd = date('Y-m-d', strtotime($dateYmd));
-        //$result = DB::select(DB::raw("SELECT * FROM qc_timekeeping WHERE work_id = $workId AND timeBegin LIKE '%$dateYmd%' OR dateOff LIKE '%$dateYmd%'"));
-        //$result = QcTimekeeping::where('work_id', $workId)->where(orWhere('timeBegin', 'like', "%$dateYmd%")->orWhere('dateOff', 'like', "%$dateYmd%"))->first();
-        //return (count($result) > 0) ? true : false;
         if ($this->existWorkOfDate($workId, $dateYmd) || $this->existOffOfDate($workId, $dateYmd)) {
             return true;
         } else {

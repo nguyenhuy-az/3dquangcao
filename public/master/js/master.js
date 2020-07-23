@@ -50,6 +50,7 @@ var qc_master_submit = {
                 qc_main.scrollTop();
             }
         });
+        return false;
     },
     ajaxNotReloadNoScrollTop: function (href, containResponse, empty) {
         $.ajax({
@@ -73,6 +74,7 @@ var qc_master_submit = {
                 qc_master.loadStatus();
             }
         });
+        return false;
     },
     ajaxNotReloadHasRemove: function (href, containResponse, empty, removeObject) {
         $.ajax({
@@ -97,6 +99,7 @@ var qc_master_submit = {
                 qc_master.loadStatus();
             }
         });
+        return false;
     },
     ajaxHasReload: function (href, containResponse, empty) {
         $.ajax({
@@ -123,6 +126,7 @@ var qc_master_submit = {
                 qc_master.loadStatus();
             }
         });
+        return false;
     },
     ajaxFormNotReload: function (form, containResponse, empty) {
         //var data = $(form).serialize();
@@ -148,6 +152,7 @@ var qc_master_submit = {
                 qc_master.loadStatus();
             }
         }).submit();
+        return false;
     },
     ajaxFormNotReloadHasContinue: function (form, containResponse, empty, successNotify) {
         $(form).ajaxForm({
@@ -169,6 +174,7 @@ var qc_master_submit = {
                 $(form).find("input[type= 'reset']").click();
             }
         }).submit();
+        return false;
     },
     ajaxFormNotReloadHasRemove: function (form, containResponse, empty, removeObject) {
         $(form).ajaxForm({
@@ -191,6 +197,7 @@ var qc_master_submit = {
                 qc_master.loadStatus();
             }
         }).submit();
+        return false;
     },
     ajaxFormHasReload: function (form, containResponse, empty) {
         $(form).ajaxForm({
@@ -213,9 +220,11 @@ var qc_master_submit = {
                 qc_master.loadStatus();
             }
         }).submit();
+        return false;
     },
     normalForm: function (form) {
         $(form).submit();
+        return false;
     }
 }
 $(document).ready(function () {

@@ -65,6 +65,7 @@ class TimekeepingController extends Controller
         $modelStaff = new QcStaff();
         $modelTimekeeping = new QcTimekeepingProvisional();
         $modelLicenseOff = new QcLicenseOffWork();
+        $loginStaffId = $modelStaff->loginStaffId();
         $workId = Request::input('txtWork');
 
         $dayBegin = Request::input('cbDayBegin');
@@ -80,18 +81,14 @@ class TimekeepingController extends Controller
             $monthBegin = ($monthBegin < 10) ? "0$monthBegin" : $monthBegin;
             $dayBegin = ($dayBegin < 10) ? "0$dayBegin" : $dayBegin;
             if ($hFunction->checkValidDate("$yearBegin-$monthBegin-$dayBegin")) {
-                if ($modelLicenseOff->existDateOfWork($workId, "$monthBegin/$dayBegin/$yearBegin")) {
-                    return 'Ngày này đã xin nghỉ, chon ngày khác';
+                if (date('Y-m-d', strtotime($timeBegin)) > date('Y-m-d')) {
+                    return 'Giờ vào làm phải nhỏ hơn giờ hiện tại';
                 } else {
-                    if (date('Y-m-d', strtotime($timeBegin)) > date('Y-m-d')) {
-                        return 'Giờ vào làm phải nhỏ hơn giờ hiện tại';
+                    if ($modelTimekeeping->existDateOfWork($workId, "$monthBegin/$dayBegin/$yearBegin")) {
+                        return 'Ngày này đã chấm công, chon ngày khác';
                     } else {
-                        if ($modelTimekeeping->existDateOfWork($workId, "$monthBegin/$dayBegin/$yearBegin")) {
-                            return 'Ngày này đã chấm công, chon ngày khác';
-                        } else {
-                            if (!$modelTimekeeping->insert($timeBegin, null, $note, 0, $workId, null)) {
-                                return "Hệ thống đang bảo trì";
-                            }
+                        if (!$modelTimekeeping->insert($timeBegin, null, $note, 0, $workId, null)) {
+                            return "Hệ thống đang bảo trì";
                         }
                     }
                 }
@@ -415,7 +412,7 @@ class TimekeepingController extends Controller
             $monthLate = ($monthLate < 10) ? "0$monthLate" : $monthLate;
             $dayLate = ($dayLate < 10) ? "0$dayLate" : $dayLate;
             if ($hFunction->checkValidDate("$yearLate-$monthLate-$dayLate")) {
-                if ($modelLicenseLateWork->existDateOfStaff($loginStaffId, "$monthLate/$dayLate/$yearLate") || $modelLicenseOffWork->existDateOfWork($workId, "$monthLate/$dayLate/$yearLate")) {
+                if ($modelLicenseLateWork->existDateOfStaff($loginStaffId, "$monthLate/$dayLate/$yearLate") || $modelLicenseOffWork->existDateOfStaff($loginStaffId, "$monthLate/$dayLate/$yearLate")) {
                     return 'Ngày này đã xin nghỉ / Đã chấm công, chon ngày khác';
                 } else {
                     $modelLicenseLateWork->insert($dateLate, $note, $loginStaffId, null);

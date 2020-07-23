@@ -81,7 +81,7 @@ class ImportController extends Controller
         $modelSupplies = new QcSupplies();
         $modelTool = new QcTool();
         $dataAccess = [
-            'object' => 'payImport',
+            'object' => 'Import',
             'subObjectLabel' => 'Thông tin mua vật tư'
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
@@ -93,7 +93,7 @@ class ImportController extends Controller
     # them anh hoa don
     public function getAddImage()
     {
-        return view('work.pay.import.add-image');
+        return view('work.import.add-image');
     }
 
     # ---------- ---------- kiem tra ten nhap --------- -----------

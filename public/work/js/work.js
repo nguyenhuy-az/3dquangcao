@@ -61,26 +61,8 @@ var qc_work = {
         }
     },
     money: {
-        receive: {
-            postTransfer: function (form) {
-                var staff = $(form).find("select[name='cbStaffReceive']");
-                if (qc_main.check.inputNull(staff, 'Chọn người nhận')) {
-                    $(staff).focus();
-                    return false;
-                } else {
-                    qc_master_submit.normalForm(form);
-                }
-                //qc_master_submit.ajaxFormHasReload(form, notifyContent, true);
-                //qc_main.scrollTop();
-            }
-        },
-        transfers: {
-            filter: function (href) {
-                qc_main.url_replace(href);
-            },
-        },
         history: {
-            reciveFilter: function (href) {
+            receiveFilter: function (href) {
                 qc_main.url_replace(href);
             }
         }
@@ -327,26 +309,6 @@ $(document).ready(function () {
     })
 });
 //========================= THU - CHI ===============================
-$(document).ready(function () {
-    // thu va giao tien
-    $('body').on('click', '.qc_work_money_receive_list_content', function () {
-        //qc_work.money.receive.getTransfer($(this).data('href'));
-    });
-
-    //theo tháng
-    $('body').on('change', '.qc_work_money_receive_filter_month', function () {
-        qc_work.money.transfers.filter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_receive_filter_year').val());
-    });
-
-    // năm
-    $('body').on('change', '.qc_work_money_receive_filter_year', function () {
-        qc_work.money.transfers.filter($(this).data('href') + '/' + $('.qc_work_money_receive_filter_month').val() + '/' + $(this).val());
-    });
-
-    $('.qc_work_frm_transfer_receive').on('click', '.qc_transfer_save', function () {
-        qc_work.money.receive.postTransfer($(this).parents('.qc_work_frm_transfer_receive'));
-    });
-});
 $(document).ready(function () {
     //------------- CHI -------------------
     //theo ngày

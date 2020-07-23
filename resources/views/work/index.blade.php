@@ -80,9 +80,12 @@ if ($viewLoginObject == 'timekeepingWork') {
 }elseif ($viewLoginObject == 'payKeepMoney') { # thanh toan tien giu
     $label = 'Thanh toán tiền giữ';
     $href = route('qc.work.pay.keep_money.get');
-} elseif ($viewLoginObject == 'toolPrivate') {
-    $label = 'Đồ nghề';
-    $href = route('qc.work.tool.private.get');
+} elseif ($viewLoginObject == 'toolAllocation') {
+    $label = 'Đồ nghề được giao';
+    $href = route('qc.work.tool.allocation.get');
+}elseif ($viewLoginObject == 'toolCheckStore') {
+    $label = 'Kiểm tra đồ nghề dùng chung';
+    $href = route('qc.work.tool.allocation.get');
 }elseif ($viewLoginObject == 'storeTool') {
     $label = 'Kho';
     $href = route('qc.work.store.tool.get');

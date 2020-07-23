@@ -15,7 +15,7 @@ use Request;
 
 class CompanyStoreController extends Controller
 {
-    public function index($typeFilter = 0)
+    public function index($typeFilter = 2)
     {
         $modelCompany = new QcCompany();
         $modelStaff = new QcStaff();

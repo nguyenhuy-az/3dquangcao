@@ -89,6 +89,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                 $orderAllocationFinishId = $staffNotify->orderAllocationFinishId();
                                 ?>
                                 {{--them don hang mơi--}}
+
                                 @if(!$hFunction->checkEmpty($orderId))
                                     <tr class="@if($n_o%2) info @endif ">
                                         <td class="text-center">
@@ -187,8 +188,12 @@ $hrefIndex = route('qc.work.news.notify.get');
                                 @elseif(!$hFunction->checkEmpty($bonusId))
                                     <?php
                                     $dataBonus = $staffNotify->bonus;
+                                    # quan ly thi cong 1 cong trinh - cap nv
                                     $orderAllocationId = $dataBonus->orderAllocationId();
+                                    # quan ly don hang thi cong - cap quan ly
                                     $orderConstructionId = $dataBonus->orderConstructionId();
+                                    # thuong thu tien dơn hang
+                                    $orderPayId = $dataBonus->orderPay();
                                     ?>
                                     {{--Thưởng quản lý thi công--}}
                                     @if(!empty($orderAllocationId))
@@ -230,7 +235,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                 {!! $n_o += 1 !!}
                                             </td>
                                             <td>
-                                                {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!} -- {!! $orderConstructionId !!}
+                                                {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!}
                                             </td>
                                             <td>
                                                 <a class="qc-link-green" href="{!! route('qc.work.bonus.get') !!}"
@@ -253,6 +258,41 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                 <i class="glyphicon glyphicon-plus"></i>
                                                 <i class="glyphicon glyphicon-usd"></i>
                                             </span>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                    {{--thuong thu tien don hang--}}
+                                    @if(!empty($orderPayId))
+                                        <?php //$dataOrder = $dataBonus->orderPay->order; ?>
+                                        <tr class="@if($n_o%2) info @endif ">
+                                            <td class="text-center">
+                                                {!! $n_o += 1 !!}
+                                            </td>
+                                            <td>
+                                                {!! $hFunction->convertDateDMYFromDatetime($notifyDate) !!}
+                                            </td>
+                                            <td>
+                                                <a class="qc-link-green" href="{!! route('qc.work.bonus.get') !!}"
+                                                   title="Xem thông tin thưởng">
+                                                    Xem
+                                                </a>
+                                                @if($staffNotify->checkNewInfo())
+                                                    <em style="color: red;"> - Chưa xem</em>
+                                                @else
+                                                    <em style="color: grey;">- Đã xem</em>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a style="color: red;" href="{!! route('qc.work.bonus.get') !!}">
+                                                    {!! $staffNotify->note() !!}
+                                                </a>
+                                                {{--@if($hFunction->checkCount($dataOrder))
+                                                    <span>{!! $dataOrder->name() !!}</span>
+                                                @endif--}}
+                                                <span style="background-color: red; padding: 3px; color: yellow;">
+                                                    <i class="glyphicon glyphicon-plus"></i>
+                                                    <i class="glyphicon glyphicon-usd"></i>
+                                                </span>
                                             </td>
                                         </tr>
                                     @endif
@@ -284,7 +324,8 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                 @endif
                                             </td>
                                             <td>
-                                                <span style="color: black;">Phạt {!! $staffNotify->note() !!}:</span>
+                                                    <span style="color: black;">Phạt {!! $staffNotify->note() !!}
+                                                        :</span>
                                                 <a class="qc-link-green-bold"
                                                    href="{!! route('qc.work.minus_money.get') !!}">
                                                     {!! $dataMinusMoney->orderAllocation->orders->name() !!}
@@ -295,7 +336,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                             </span>
                                             </td>
                                         </tr>
-                                    {{--Phat quan ly, triển khai thi cong--}}
+                                        {{--Phat quan ly, triển khai thi cong--}}
                                     @elseif(!empty($orderConstructionId))
                                         <tr class="@if($n_o%2) info @endif ">
                                             <td class="text-center">
@@ -316,7 +357,8 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                 @endif
                                             </td>
                                             <td>
-                                                <span style="color: black;">Phạt {!! $staffNotify->note() !!}:</span>
+                                                    <span style="color: black;">Phạt {!! $staffNotify->note() !!}
+                                                        :</span>
                                                 <a class="qc-link-green-bold"
                                                    href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderConstructionId) !!}">
                                                     {!! $dataMinusMoney->orderConstruction->name() !!}
