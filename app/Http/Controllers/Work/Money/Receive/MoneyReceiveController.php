@@ -67,7 +67,6 @@ class MoneyReceiveController extends Controller
         $modelOrderPay = new QcOrderPay();
         return $modelOrderPay->deleteOrderPay($orderPayId);
     }
-
     #chuyen tien
     public function postTransfer()
     {

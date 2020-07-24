@@ -5,9 +5,9 @@ var qc_work_money_receive = {
     filter: function (href) {
         qc_main.url_replace(href);
     },
-    deleteOrderPay: function () {
+    deleteOrderPay: function (href) {
         if (confirm('Bạn muốn hủy thanh toán đơn hàng này?')) {
-            qc_master_submit.ajaxHasReload();
+            qc_master_submit.ajaxHasReload(href, '', false);
         }
     },
     postTransfer: function (form) {

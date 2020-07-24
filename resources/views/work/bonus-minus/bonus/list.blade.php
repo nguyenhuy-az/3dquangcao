@@ -30,27 +30,25 @@ $hrefIndex = route('qc.work.bonus.get');
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_bonus_month" style="height: 25px;"
-                                            data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_bonus_month" style="height: 25px;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả tháng
                                         </option>--}}
-                                        @for($i =1;$i<= 12; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if((int)$monthFilter == $i) selected="selected" @endif>
-                                                Tháng {!! $i !!}
+                                        @for($m =1;$m<= 12; $m++)
+                                            <option value="{!! $m !!}" @if((int)$monthFilter == $m) selected="selected" @endif>
+                                                Tháng {!! $m !!}
                                             </option>
                                         @endfor
                                     </select>
                                     <span>/</span>
-                                    <select class="qc_work_bonus_year" style="height: 25px;"
-                                            data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_bonus_year" style="height: 25px;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả năm
                                         </option>--}}
-                                        @for($i =2017;$i<= 2050; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                        @for($y =2017;$y<= 2050; $y++)
+                                            <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                                {!! $y !!}
+                                            </option>
                                         @endfor
                                     </select>
                                 </td>
@@ -69,6 +67,7 @@ $hrefIndex = route('qc.work.bonus.get');
                                     $bonusId = $bonus->bonusId();
                                     $orderAllocationId = $bonus->orderAllocationId();
                                     $orderConstructionId = $bonus->orderConstructionId();
+                                    $orderPayId = $bonus->orderPayId();
                                     $cancelStatus = $bonus->checkCancelStatus();
                                     if ($cancelStatus) {
                                         $money = 0;
@@ -95,6 +94,10 @@ $hrefIndex = route('qc.work.bonus.get');
                                             @if(!$hFunction->checkEmpty($orderConstructionId))
                                                 <em>Đơn hàng:</em>
                                                 <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
+                                            @endif
+                                            @if(!$hFunction->checkEmpty($orderPayId))
+                                                <em>Đơn hàng:</em>
+                                                <b style="color: red;">{!! $bonus->orderPay->order->name() !!}</b>
                                             @endif
                                         </td>
                                         <td class="text-center">

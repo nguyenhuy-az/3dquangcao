@@ -31,7 +31,7 @@ if (isset($dataAccess)) {
             <li @if($viewLoginObject == 'toolCheckStore') class="active" @endif>
                 <a class="qc-link-bold" href="{!! route('qc.work.tool.check_store.get') !!}"
                    @if($viewLoginObject == 'toolCheckStore') style="background-color: whitesmoke;" @endif>
-                    Quản lý dùng chung
+                    Kiểm tra đồ nghề chung
                 </a>
             </li>
         </ul>

@@ -1321,6 +1321,9 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     Route::group(['prefix' => 'tool'], function () {
         # kiem tra do nghe dung chung
         Route::group(['prefix' => 'check-store'], function () {
+            # xac nhan
+            Route::post('confirm', ['as' => 'qc.work.tool.check_store.confirm.post', 'uses' => 'Work\Tool\CheckStore\CheckStoreController@postConfirm']);
+
             Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.tool.check_store.get', 'uses' => 'Work\Tool\CheckStore\CheckStoreController@index']);
         });
 

@@ -4,6 +4,7 @@ namespace App\Models\Ad3d\Staff;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
+use App\Models\Ad3d\CompanyStoreCheck\QcCompanyStoreCheck;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportPay\QcImportPay;
@@ -239,6 +240,50 @@ class QcStaff extends Model
         return QcStaff::where('staff_id', $staffId)->update(['identityCardBack' => $image]);
     }
     //========== ========= ========= mối quan hệ ========== ========= ==========
+    //---------- thong tin bao cao kiem tra do nghe dung chung -----------
+    public function companyStoreCheckReport()
+    {
+        return $this->hasMany('App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport', 'confirmStaff_id', 'staff_id');
+    }
+
+    # ban giao kiem tra thong tin do nghe trong hien tai
+    public function checkCompanyStoreOfCurrentDate()
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelCompanyStoreCheck = new QcCompanyStoreCheck();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        # chua duoc phan cong
+        $checkDate = date('Y-m-d');
+        if (!$modelCompanyStoreCheck->checkExistDate($checkDate)) {
+            # lay danh sach NV bo phan thi cong cap nhan vien
+            $dataStaffConstruction = $this->infoActivityConstructionOfCompany($dataStaffLogin->companyId());
+            if ($hFunction->checkCount($dataStaffConstruction)) {
+                $selectedStaffId = null;
+                foreach ($dataStaffConstruction as $staffConstruction) {
+                    $staffId = $staffConstruction->staffId();
+                    # co bao cham cong
+                    if($this->checkTimekeepingProvisionalOfCurrentDate($staffId)){
+                        # chưa duoc phan cong trong vong kiem tra
+                        if (!$modelCompanyStoreCheck->checkExistStaffReceived($staffId)) {
+                            $selectedStaffId = $staffId;
+                            break;
+                        }
+                    }
+
+                }
+                # co nhan vien dc chon
+                if (!empty($selectedStaffId)) {
+                    //echo "$selectedStaffId";
+                    # them vao phan cong kiem tra do nghe
+                    $modelCompanyStoreCheck->insert($selectedStaffId);
+                } else {
+
+                }
+            }
+            //dd($dataStaffConstruction);
+        }
+    }
 
     #----------- ngay nghi he thong ------------
     public function importPay()
@@ -668,6 +713,15 @@ class QcStaff extends Model
     public function timekeepingProvisional()
     {
         return $this->hasMany('App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional', 'staffConfirm_id', 'staff_id');
+    }
+
+    # kiem tra nv co cham cong hay khong
+    public function checkTimekeepingProvisionalOfCurrentDate($staffId)
+    {
+        $hFunction = new \Hfunction();
+        $dataWork = $this->firstInfoActivityToWork($staffId);
+        $dataTimekeeping = $dataWork->timekeepingProvisionalOfDate($dataWork->workId(), date('Y-m-d'));
+        return $hFunction->checkCount($dataTimekeeping);
     }
 
     //----------- ----------- xin nghi ------------ -----------
@@ -1735,7 +1789,7 @@ class QcStaff extends Model
         return ($hFunction->checkCount($this->workInfoActivityOfStaff($this->checkIdNull($staffId)))) ? true : false;
     }
 
-    # kiem tra tu tin cong cuoi thang
+    # kiem tra tu tinh cong cuoi thangc
     public function checkAutoInfo()
     {
         $modelWork = new QcWork();

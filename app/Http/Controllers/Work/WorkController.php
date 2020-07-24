@@ -33,6 +33,8 @@ class WorkController extends Controller
             $modelOrder->autoCheckMinusMoneyLateConstruction();
             # kiem tra thong tin ban giao don hang
             //$modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
+            # phan cong kiem tra do nghe
+            $modelStaff->checkCompanyStoreOfCurrentDate();
             return view('work.control-panel', compact('modelCompany', 'modelStaff', 'sysInfoObject'));
         } else {
             return view('work.login');

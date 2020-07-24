@@ -167,7 +167,7 @@ $checkTime = date('m-Y');
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-center" colspan="5" style="background-color: black;"></td>
+                                    <td class="text-center" colspan="6" style="background-color: black;"></td>
                                     <td class="text-right">
                                         <b style="color: red;">{!! $hFunction->currencyFormat($totalMoney) !!}</b>
                                     </td>

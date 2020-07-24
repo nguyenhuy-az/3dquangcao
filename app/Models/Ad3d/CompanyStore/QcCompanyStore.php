@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\CompanyStore;
 
+use App\Models\Ad3d\Tool\QcTool;
 use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 use Illuminate\Database\Eloquent\Model;
 
@@ -49,10 +50,23 @@ class QcCompanyStore extends Model
         return QcCompanyStore::where('store_id', $this->checkIdNull($storeId))->delete();
     }
     //========== ========= ========= CAC MON QUAN HE ========== ========= ==========
+    //---------- thong tin bao cao kiem tra do nghe dung chung -----------
+    public function companyStoreCheckReport()
+    {
+        return $this->hasMany('App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport', 'store_id', 'store_id');
+    }
+
     //---------- công ty -----------
     public function company()
     {
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
+    }
+
+    # cong cu dung chung de nv thi cong kiem tra trong ngay
+    public function getPublicToolToCheckOfCompany($companyId)
+    {
+        $modelTool = new QcTool();
+        return QcCompanyStore::where('company_id', $companyId)->whereIn('tool_id', $modelTool->publicListId())->get();
     }
 
     public function selectInfoToolOfListCompanyAndListToolAnd($listCompanyId, $listToolId, $orderBy = 'DESC')

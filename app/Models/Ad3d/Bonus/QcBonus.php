@@ -231,6 +231,10 @@ class QcBonus extends Model
     {
         return $this->pluck('orderConstruction_id', $bonusId);
     }
+    public function orderPayId($bonusId = null)
+    {
+        return $this->pluck('orderPay_id', $bonusId);
+    }
 
     #========= ============= ============= ============= =============
     public function checkCancelStatus($bonusId = null)
