@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcCompanyStore extends Model
 {
     protected $table = 'qc_company_store';
-    protected $fillable = ['store_id', 'name', 'created_at', 'company_id', 'tool_id', 'supplies_id', 'import_id'];
+    protected $fillable = ['store_id', 'name', 'importPrice', 'created_at', 'company_id', 'tool_id', 'supplies_id', 'import_id'];
     protected $primaryKey = 'store_id';
     public $timestamps = false;
 
@@ -17,11 +17,12 @@ class QcCompanyStore extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($name, $companyId, $toolId = null, $suppliesId = null, $importId = null)
+    public function insert($name, $companyId, $toolId = null, $suppliesId = null, $importId = null, $importPrice = 1000)
     {
         $hFunction = new \Hfunction();
         $modelCompanyStore = new QcCompanyStore();
         $modelCompanyStore->name = $name;
+        $modelCompanyStore->importPrice = $importPrice;
         $modelCompanyStore->company_id = $companyId;
         $modelCompanyStore->tool_id = $toolId;
         $modelCompanyStore->supplies_id = $suppliesId;
@@ -232,8 +233,12 @@ class QcCompanyStore extends Model
 
     public function name($storeId = null)
     {
-
         return $this->pluck('name', $storeId);
+    }
+
+    public function importPrice($storeId = null)
+    {
+        return $this->pluck('importPrice', $storeId);
     }
 
     public function createdAt($storeId = null)

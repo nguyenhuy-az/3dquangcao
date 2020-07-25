@@ -61,6 +61,12 @@ class QcCompanyStoreCheckReport extends Model
         return (!empty($lastInfo)) ? $lastInfo->reportId() : null;
     }
 
+    # lay thong tin bao cao sau cung cua dung cu trong kho da xac nhan su dung binh thuong
+    public function lastInfoNormalUseOfCompanyStore($storeId)
+    {
+        return QcCompanyStoreCheckReport::where('store_id', $storeId)->where('useStatus', 1)->orderBy('report_id', 'DESC')->first();
+    }
+
     //---------- kiem tra do nghe -----------
     public function companyStoreCheck()
     {

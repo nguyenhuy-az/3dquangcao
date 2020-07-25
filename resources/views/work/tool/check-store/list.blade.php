@@ -26,9 +26,8 @@ $currentMonth = $hFunction->currentMonth();
                 <span style="color:deeppink;">Nếu không xác nhận, cuối ngày HỆ THỐNG TỰ XÁC NHẬN ĐỦ và Sẽ bị phạt nếu hôm sau bị báo mất</span>
             </div>
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <form id="frmWorkToolCheckStore" role="form" name="frmWorkToolCheckStore" method="post"
-                      enctype="multipart/form-data"
-                      action="{!! route('qc.work.tool.check_store.confirm.post') !!}">
+                <form id="frmWorkToolCheckCompanyStore" role="form" name="frmWorkToolCheckCompanyStore" method="post"
+                      enctype="multipart/form-data" action="{!! route('qc.work.tool.check_store.confirm.post') !!}">
                     <div class="row">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
@@ -40,6 +39,7 @@ $currentMonth = $hFunction->currentMonth();
                                     </th>
                                 </tr>
                                 @if($hFunction->checkCount($dataCompanyStoreCheck))
+                                    <?php $checkId = $dataCompanyStoreCheck->checkId() ?>
                                     {{--xac nhan dã kiem tra--}}
                                     @if($dataCompanyStoreCheck->checkConfirmStatus())
                                         <?php
@@ -82,8 +82,11 @@ $currentMonth = $hFunction->currentMonth();
                                                     <td class="text-center" style="padding: 0;">
                                                         <div class="form-group" style="margin: 0;">
                                                             <input type="checkbox" class="form-control" disabled
-                                                                   name="txtCompanyStore[]" style="margin: 0;"
+                                                                   style="margin: 0;"
                                                                    checked="checked">
+                                                            <input type="hidden" class="form-control"
+                                                                   name="txtCompanyStore[]" style="margin: 0;"
+                                                                   value="{!! $storeId !!}">
                                                         </div>
                                                     </td>
                                                     <td>
@@ -92,9 +95,9 @@ $currentMonth = $hFunction->currentMonth();
                                                     <td style="padding: 0;">
                                                         <select name="cbUseStatus_{!! $storeId !!}"
                                                                 class="form-control">
-                                                            <option>Có - Dùng được</option>
-                                                            <option>Có - Không dùng được</option>
-                                                            <option>Không có</option>
+                                                            <option value="1">Có - Dùng được</option>
+                                                            <option value="2">Có - Không dùng được</option>
+                                                            <option value="3">Không có</option>
                                                         </select>
                                                     </td>
                                                 </tr>
@@ -102,14 +105,18 @@ $currentMonth = $hFunction->currentMonth();
                                             <tr>
                                                 <td colspan="2" style="background-color: whitesmoke;"></td>
                                                 <td class="text-center">
-                                                    <b style="color: red; font-size: 16px;">SAU KHI XÁC NHẬN SẼ KHÔNG
-                                                        ĐƯỢC THAY ĐỔI</b>
+                                                    <b style="color: red; font-size: 16px;">
+                                                        SAU KHI XÁC NHẬN SẼ KHÔNG ĐƯỢC THAY ĐỔI
+                                                    </b>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td colspan="2" style="background-color: whitesmoke;"></td>
                                                 <td style="padding: 0;">
-                                                    <button class="qc_save btn btn-primary" type="button" style="width: 100%;">
+                                                    <input type="hidden" name="_token" value="{!! csrf_token() !!}">
+                                                    <input type="hidden" name="txtCompanyCheck" value="{!! $checkId !!}">
+                                                    <button class="qc_save btn btn-primary" type="button"
+                                                            style="width: 100%;">
                                                         XÁC NHẬN ĐÚNG
                                                     </button>
                                                 </td>

@@ -274,11 +274,10 @@ class QcStaff extends Model
                 }
                 # co nhan vien dc chon
                 if (!empty($selectedStaffId)) {
-                    //echo "$selectedStaffId";
                     # them vao phan cong kiem tra do nghe
                     $modelCompanyStoreCheck->insert($selectedStaffId);
                 } else {
-
+                    # tao lai vong moi
                 }
             }
             //dd($dataStaffConstruction);

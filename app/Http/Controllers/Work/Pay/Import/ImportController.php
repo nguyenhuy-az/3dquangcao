@@ -66,7 +66,7 @@ class ImportController extends Controller
         $importTotalMoney = $modelImport->totalMoneyOfListImport($dataImportAll->get());
         //danh sach NV
         $dataListStaff = $modelCompany->staffInfoActivityOfListCompanyId($searchCompanyFilterId);
-        return view('work.pay.import.list', compact('dataAccess', 'modelStaff', 'dataListStaff', 'dataImport','importTotalMoney', 'dayFilter', 'monthFilter', 'yearFilter', 'payStatusFilter', 'staffFilterId'));
+        return view('work.pay.import.list', compact('dataAccess', 'modelStaff', 'dataListStaff', 'dataImport', 'importTotalMoney', 'dayFilter', 'monthFilter', 'yearFilter', 'payStatusFilter', 'staffFilterId'));
 
     }
 
@@ -139,12 +139,14 @@ class ImportController extends Controller
                 //cap nhat chi tiet
                 foreach ($dataImportDetail as $key => $importDetail) {
                     $detailId = $importDetail->detailId();
-                    $importPrice = $importDetail->price();
+                    $importPriceAmount = $importDetail->price();
                     $importAmount = $importDetail->amount();
                     $importTotalMoney = $importDetail->totalMoney();
                     $importToolId = $importDetail->toolId();
                     $importSuppliesId = $importDetail->suppliesId();
                     $importNewName = $importDetail->newName();
+                    # gia tren 1 don vi
+                    $importPrice = (int)($importPriceAmount);
                     //$importNewUnit = $importDetail->newUnit();
                     if ($detailId == $confirmDetailId[$key]) {
                         $toolType = $allocationStatus[$key];
@@ -166,9 +168,9 @@ class ImportController extends Controller
                                 #thêm vật tư mới vào hệ thống
                                 if (!empty($suppliesId)) {
                                     #cập nhật chi tiết nhập
-                                    $modelImportDetail->updateInfo($detailId, $importPrice, $importAmount, $importTotalMoney, $importToolId, $suppliesId, $importNewName);
+                                    $modelImportDetail->updateInfo($detailId, $importPriceAmount, $importAmount, $importTotalMoney, $importToolId, $suppliesId, $importNewName);
                                     #thêm vậy tư vào kho
-                                    $modelCompanyStore->insert($importAmount, $importCompanyId, null, $suppliesId);
+                                    $modelCompanyStore->insert($importAmount, $importCompanyId, null, $suppliesId, null, $importPrice);
                                 }
                             } elseif ($confirmNewSuppliesTool[$key] == 2) {
                                 // phan loai la dung cu
@@ -186,12 +188,12 @@ class ImportController extends Controller
                                 }
                                 if (!empty($toolId)) {
                                     // cập nhật lại chi tiết nhập
-                                    $modelImportDetail->updateInfo($detailId, $importPrice, $importAmount, $importTotalMoney, $toolId, $importSuppliesId, $importNewName);
+                                    $modelImportDetail->updateInfo($detailId, $importPriceAmount, $importAmount, $importTotalMoney, $toolId, $importSuppliesId, $importNewName);
 
                                     // thêm dụng cụ mới vào kho
                                     for ($i = 1; $i <= $importAmount; $i++) {
                                         $storeName = null;
-                                        if ($modelCompanyStore->insert($importNewName, $importCompanyId, $toolId, null, $importId)) {
+                                        if ($modelCompanyStore->insert($importNewName, $importCompanyId, $toolId, null, $importId, $importPrice)) {
                                             $newStoreId = $modelCompanyStore->insertGetId();
                                             // cap phat dụng cụ cho nhân viên mua
                                             if ($modelTool->checkPrivateType($toolId)) {
@@ -225,13 +227,13 @@ class ImportController extends Controller
                                 if ($modelCompanyStore->existOfSuppliesAndCompany($importSuppliesId, $importCompanyId)) { //da ton tai trong kho -> cap nhat so luong
                                     $modelCompanyStore->updateInfoByToolOrSupplies($importCompanyId, $importAmount, null, $importSuppliesId);
                                 } else { // thêm vat tu vào kho
-                                    $modelCompanyStore->insert($importAmount, $importCompanyId, null, $importSuppliesId);
+                                    $modelCompanyStore->insert($importAmount, $importCompanyId, null, $importSuppliesId, null, $importPrice);
                                 }
                             }
                             if (!empty($importToolId)) { //dung cu
                                 // thêm dụng cụ mới vào kho
                                 for ($i = 1; $i <= $importAmount; $i++) {
-                                    if ($modelCompanyStore->insert($modelTool->name($importToolId)[0], $importCompanyId, $importToolId, null, $importId)) {
+                                    if ($modelCompanyStore->insert($modelTool->name($importToolId)[0], $importCompanyId, $importToolId, null, $importId, $importPrice)) {
                                         $newStoreId = $modelCompanyStore->insertGetId();
                                         // cap phat dụng cụ cho nhân viên mua
                                         if ($modelTool->checkPrivateType($importToolId)) {

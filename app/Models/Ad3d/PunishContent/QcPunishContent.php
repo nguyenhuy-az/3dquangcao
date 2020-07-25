@@ -240,4 +240,10 @@ class QcPunishContent extends Model
     {
         return $this->getPunishIdByCode('TCKMDN');
     }
+
+    # lam mat đo nghe
+    public function getPunishIdLostTool()
+    {
+        return $this->getPunishIdByCode('LMĐN');
+    }
 }
