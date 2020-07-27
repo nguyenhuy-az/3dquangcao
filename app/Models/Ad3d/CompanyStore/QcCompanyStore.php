@@ -50,6 +50,14 @@ class QcCompanyStore extends Model
     {
         return QcCompanyStore::where('store_id', $this->checkIdNull($storeId))->delete();
     }
+
+    # cap nhat trang thai su dung
+    public function updateUseStatus($storeId, $useStatus)
+    {
+        return QcCompanyStore::where('store_id', $storeId)->update([
+            'useStatus' => $useStatus
+        ]);
+    }
     //========== ========= ========= CAC MON QUAN HE ========== ========= ==========
     //---------- thong tin bao cao kiem tra do nghe dung chung -----------
     public function companyStoreCheckReport()
@@ -67,7 +75,7 @@ class QcCompanyStore extends Model
     public function getPublicToolToCheckOfCompany($companyId)
     {
         $modelTool = new QcTool();
-        return QcCompanyStore::where('company_id', $companyId)->whereIn('tool_id', $modelTool->publicListId())->get();
+        return QcCompanyStore::where('company_id', $companyId)->where('useStatus', 1)->whereIn('tool_id', $modelTool->publicListId())->get();
     }
 
     public function selectInfoToolOfListCompanyAndListToolAnd($listCompanyId, $listToolId, $orderBy = 'DESC')

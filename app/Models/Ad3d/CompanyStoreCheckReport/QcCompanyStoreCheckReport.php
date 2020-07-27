@@ -15,12 +15,15 @@ class QcCompanyStoreCheckReport extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($useStatus, $storeId, $checkId)
+    public function insert($useStatus, $storeId, $checkId, $confirmStatus = 0, $confirmNote = null, $confirmDate = null)
     {
         $hFunction = new \Hfunction();
         $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
         $modelCompanyStoreCheckReport->useStatus = $useStatus;
         $modelCompanyStoreCheckReport->reportDate = $hFunction->carbonNow();
+        $modelCompanyStoreCheckReport->confirmStatus = $confirmStatus;
+        $modelCompanyStoreCheckReport->confirmNote = $confirmNote;
+        $modelCompanyStoreCheckReport->confirmDate = $confirmDate;
         $modelCompanyStoreCheckReport->store_id = $storeId;
         $modelCompanyStoreCheckReport->check_id = $checkId;
         $modelCompanyStoreCheckReport->created_at = $hFunction->createdAt();
@@ -79,10 +82,22 @@ class QcCompanyStoreCheckReport extends Model
         return QcCompanyStoreCheckReport::where('check_id', $checkId)->get();
     }
 
+    #kiem tra cong cu co ton tai bao cao chua
+    public function checkExistReportOfCompanyCheck($storeId, $checkId)
+    {
+        return QcCompanyStoreCheckReport::where('store_id', $storeId)->where('check_id', $checkId)->exists();
+    }
+
     //---------- nhan vien xac nhan -----------
     public function confirmStaff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'confirmStaff_id');
+    }
+
+    //---------- phat mat do nghe -----------
+    public function minusMoney()
+    {
+        return $this->hasOne('App\Models\Ad3d\MinusMoney\QcMinusMoney', 'companyStoreCheckReport_id', 'report_id');
     }
 
     //========= ========== ========== lấy thông tin ========== ========== ==========

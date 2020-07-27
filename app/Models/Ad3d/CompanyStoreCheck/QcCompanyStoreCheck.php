@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\CompanyStoreCheck;
 
+use App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport;
 use Illuminate\Database\Eloquent\Model;
 
 class QcCompanyStoreCheck extends Model
@@ -37,18 +38,34 @@ class QcCompanyStoreCheck extends Model
 
     public function checkIdNull($checkId)
     {
-        return (empty($checkId)) ? $this->allocationId() : $checkId;
+        return (empty($checkId)) ? $this->checkId(): $checkId;
     }
 
     /*public function deleteAllocation($checkId = null)
     {
         return QcCompanyStoreCheck::where('check_id', $this->checkIdNull($checkId))->delete();
     }*/
+    public function confirmCheck($checkId)
+    {
+        $hFunction = new \Hfunction();
+        return QcCompanyStoreCheck::where('check_id', $checkId)->update(
+            [
+                'confirmStatus' => 1,
+                'confirmDate' => $hFunction->carbonNow()
+            ]);
+    }
     //========== ========= ========= RELATION ========== ========= ==========
     //---------- thong tin bao cao kiem tra do nghe dung chung -----------
     public function companyStoreCheckReport()
     {
         return $this->hasMany('App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport', 'check_id', 'check_id');
+    }
+
+    # lay thong tin bao cao
+    public function infoCompanyStoreCheckReport($checkId=null)
+    {
+        $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
+        return $modelCompanyStoreCheckReport->infoOfCompanyStoreCheck($this->checkIdNull($checkId));
     }
 
     //---------- nhan vien tra -----------

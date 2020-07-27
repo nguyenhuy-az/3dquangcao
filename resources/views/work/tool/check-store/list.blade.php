@@ -21,11 +21,6 @@ $currentMonth = $hFunction->currentMonth();
     <div class="row qc_work_tool_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-6 col-lg-6">
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <b style="background-color: red; color: white; padding: 5px;">KIỂM TRA VÀ XÁC NHẬN KHÔNG ĐÚNG SẼ BỊ PHẠT
-                    THEO NỘI QUY</b> <br/><br/>
-                <span style="color:deeppink;">Nếu không xác nhận, cuối ngày HỆ THỐNG TỰ XÁC NHẬN ĐỦ và Sẽ bị phạt nếu hôm sau bị báo mất</span>
-            </div>
-            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <form id="frmWorkToolCheckCompanyStore" role="form" name="frmWorkToolCheckCompanyStore" method="post"
                       enctype="multipart/form-data" action="{!! route('qc.work.tool.check_store.confirm.post') !!}">
                     <div class="row">
@@ -44,8 +39,14 @@ $currentMonth = $hFunction->currentMonth();
                                     @if($dataCompanyStoreCheck->checkConfirmStatus())
                                         <?php
                                         # lay thong tin bao cao kiem tra
-                                        $dataCompanyStoreCheckReport = $dataCompanyStoreCheck->infoOfCompanyStoreCheck();
+                                        $dataCompanyStoreCheckReport = $dataCompanyStoreCheck->infoCompanyStoreCheckReport();
                                         ?>
+                                        <tr>
+                                            <td colspan="3">
+                                                Ngày xác nhận:
+                                                <span style="color: red;">{!! date('d-m-Y', strtotime($dataCompanyStoreCheck->confirmDate())) !!}</span>
+                                            </td>
+                                        </tr>
                                         @if($hFunction->checkCount($dataCompanyStoreCheckReport))
                                             @foreach($dataCompanyStoreCheckReport as $companyStoreCheckReport)
                                                 <?php
@@ -73,6 +74,14 @@ $currentMonth = $hFunction->currentMonth();
                                             </tr>
                                         @endif
                                     @else
+                                        <tr>
+                                            <td colspan="3">
+                                                <b style="background-color: red; color: white; padding: 5px;">KIỂM TRA
+                                                    VÀ XÁC NHẬN KHÔNG ĐÚNG SẼ BỊ PHẠT
+                                                    THEO NỘI QUY</b> <br/><br/>
+                                                <span style="color:deeppink;">Nếu không xác nhận, cuối ngày HỆ THỐNG TỰ XÁC NHẬN ĐỦ và Sẽ bị phạt nếu hôm sau bị báo mất</span>
+                                            </td>
+                                        </tr>
                                         @if($hFunction->checkCount($dataCompanyStore))
                                             @foreach($dataCompanyStore as $companyStore)
                                                 <?php
@@ -114,7 +123,8 @@ $currentMonth = $hFunction->currentMonth();
                                                 <td colspan="2" style="background-color: whitesmoke;"></td>
                                                 <td style="padding: 0;">
                                                     <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                                                    <input type="hidden" name="txtCompanyCheck" value="{!! $checkId !!}">
+                                                    <input type="hidden" name="txtCompanyCheck"
+                                                           value="{!! $checkId !!}">
                                                     <button class="qc_save btn btn-primary" type="button"
                                                             style="width: 100%;">
                                                         XÁC NHẬN ĐÚNG
