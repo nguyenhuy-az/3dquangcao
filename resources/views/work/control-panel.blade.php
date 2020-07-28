@@ -33,9 +33,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
         @include('work.components.system-info.system-info', compact('modelCompany','modelStaff','dataTimekeepingProvisional'))
 
         {{--canh bao kiem tra do nghe--}}
-        @if($dataStaffLogin->existUnConfirmInRoundCompanyStoreCheck())
+        {{--@if($dataStaffLogin->existUnConfirmInRoundCompanyStoreCheck())--}}
             @include('work.components.warning.confirm-company-store-check')
-        @endif
+        {{--@endif--}}
         {{--bang dieu khien--}}
         <div class="row">
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -92,7 +92,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.tool.allocation.get') !!}">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.tool.check_store.get') !!}">
                     <i class="glyphicon glyphicon-briefcase" style="font-size: 20px;color: green;"></i> <br/>
                     ĐỒ NGHỀ
                 </a>

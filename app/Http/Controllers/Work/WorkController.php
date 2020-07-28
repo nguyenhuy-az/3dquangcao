@@ -23,6 +23,7 @@ class WorkController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelCompany = new QcCompany();
         $modelOrder = new QcOrder();
         $modelOrderAllocation = new QcOrderAllocation();
@@ -34,7 +35,7 @@ class WorkController extends Controller
             # kiem tra thong tin ban giao don hang
             //$modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
             # phan cong kiem tra do nghe
-            $modelStaff->checkCompanyStoreOfCurrentDate();
+            $modelCompanyStaffWork->checkCompanyStoreOfCurrentDate();
             return view('work.control-panel', compact('modelCompany', 'modelStaff', 'sysInfoObject'));
         } else {
             return view('work.login');

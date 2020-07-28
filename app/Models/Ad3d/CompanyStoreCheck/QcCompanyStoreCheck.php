@@ -2,13 +2,14 @@
 
 namespace App\Models\Ad3d\CompanyStoreCheck;
 
+use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport;
 use Illuminate\Database\Eloquent\Model;
 
 class QcCompanyStoreCheck extends Model
 {
     protected $table = 'qc_company_store_check';
-    protected $fillable = ['check_id', 'confirmStatus', 'confirmDate', 'receiveStatus', 'receiveDate', 'created_at', 'staff_id'];
+    protected $fillable = ['check_id', 'confirmStatus', 'confirmDate', 'receiveStatus', 'receiveDate', 'created_at', 'work_id'];
     protected $primaryKey = 'check_id';
     public $timestamps = false;
 
@@ -16,12 +17,12 @@ class QcCompanyStoreCheck extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($staffId)
+    public function insert($workId)
     {
         $hFunction = new \Hfunction();
         $modelCompanyStoreCheck = new QcCompanyStoreCheck();
         $modelCompanyStoreCheck->receiveDate = $hFunction->carbonNow();
-        $modelCompanyStoreCheck->staff_id = $staffId;
+        $modelCompanyStoreCheck->work_id = $workId;
         $modelCompanyStoreCheck->created_at = $hFunction->createdAt();
         if ($modelCompanyStoreCheck->save()) {
             $this->lastId = $modelCompanyStoreCheck->check_id;
@@ -75,11 +76,41 @@ class QcCompanyStoreCheck extends Model
     }
 
     //---------- nhan vien tra -----------
-    public function staff()
+    public function companyStaffWork()
     {
-        return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
+        return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
+    }
+    # thong tin kiem tra trong vong dang nhan
+    public function infoReceiveStatusOfWork($workId)
+    {
+        return QcCompanyStoreCheck::where('work_id', $workId)->where('receiveStatus', 1)->first();
+    }
+    # thong tin kiem tra trong vong dang nhan
+    public function lastInfoOfWork($workId)
+    {
+        return QcCompanyStoreCheck::where('work_id', $workId)->orderBy('check_id', 'DESC')->first();
     }
 
+    # kiem tra da phan cong kiem tra trong ngay hay chưa
+    public function checkExistDateOfCompany($companyId, $checkDate)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        return QcCompanyStoreCheck::whereIn('work_id', $modelCompanyStaffWork->listStaffIdOfListCompanyId([$companyId]))->where('receiveDate', 'like', "%$checkDate%")->exists();
+    }
+
+    # kiem tra thong tin 1 nv co da duoc phan cong trong vong kiem tra chưa
+    public function checkExistWorkReceived($workId)
+    {
+        return QcCompanyStoreCheck::where('work_id', $workId)->where('receiveStatus', 1)->exists();
+    }
+
+    # kiem tra ton tai den lich ma chua xac nhan cua 1 NV - trong vong chon
+    public function checkExistUnConfirmInRoundOfWork($workId)
+    {
+        return QcCompanyStoreCheck::where('work_id', $workId)->where('confirmStatus', 0)->where('receiveStatus', 1)->exists();
+    }
+
+    #///////////////////////////////////////////////////////////////////////////////////////////////
     # thong tin kiem tra trong vong dang nhan
     public function infoReceiveStatusOfStaff($staffId)
     {
@@ -92,11 +123,6 @@ class QcCompanyStoreCheck extends Model
         return QcCompanyStoreCheck::where('staff_id', $staffId)->orderBy('check_id', 'DESC')->first();
     }
 
-    # kiem tra da phan cong kiem tra trong ngay hay chưa
-    public function checkExistDate($checkDate)
-    {
-        return QcCompanyStoreCheck::where('receiveDate', 'like', "%$checkDate%")->exists();
-    }
 
     # kiem tra thong tin 1 nv co da duoc phan cong trong vong kiem tra chưa
     public function checkExistStaffReceived($staffId)
@@ -177,9 +203,9 @@ class QcCompanyStoreCheck extends Model
     }
 
 
-    public function staffId($checkId = null)
+    public function workId($checkId = null)
     {
-        return $this->pluck('staff_id', $checkId);
+        return $this->pluck('work_id', $checkId);
     }
 
     // last id

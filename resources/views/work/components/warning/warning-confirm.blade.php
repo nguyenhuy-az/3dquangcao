@@ -9,6 +9,7 @@
  */
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
+$dataStaff = $modelStaff->loginStaffInfo();
 $mobileStatus = $mobile->isMobile();
 $currentYear = date('Y');
 ?>
@@ -23,6 +24,20 @@ $currentYear = date('Y');
             <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="table-responsive">
                     <table class="table table-hover table-condensed">
+                        {{--chua xac nha phan cong kiem tra do nghe cty--}}
+                        @if($dataStaff->existUnConfirmInRoundCompanyStoreCheck())
+                            <tr>
+                                <td>
+                                    <i class="glyphicon glyphicon-arrow-right"></i>
+                                    <a class="qc-link-red-bold" href="{!! route('qc.work.tool.check_store.get') !!}"
+                                       title="Click để xem thông tin">
+                                        CHƯA XÁC NHẬN ĐÃ KIỂM TRA ĐỒ NGHỀ CTY -
+                                        <i class="glyphicon glyphicon-eye-open" style="color: green;"></i>
+                                        <span style="color: green;">(Click đến xác nhận)</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endif
                         {{--ton tai chua xac nhan thanh toan luong--}}
                         @if($hFunction->checkCount($dataSalaryPay))
                             <tr>

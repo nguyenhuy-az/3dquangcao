@@ -14,7 +14,7 @@
         <div class="alert alert-danger" role="alert" style="margin: 0;">
             <a class="qc-link" href="{!! route('qc.work.tool.check_store.get') !!}">
                 <i class="glyphicon glyphicon-warning-sign" style="color: red; font-size: 16px;"></i>
-                <span>ĐÃ ĐẾN LỊCH KIỂM TRA ĐỒ NGHỀ DÙNG CHUNG - Kiểm tra</span>
+                <span>ĐẾN LỊCH KIỂM TRA ĐỒ NGHỀ DÙNG CHUNG - Kiểm tra</span>
             </a>
         </div>
 

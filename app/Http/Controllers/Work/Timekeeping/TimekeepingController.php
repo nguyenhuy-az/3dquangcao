@@ -123,11 +123,11 @@ class TimekeepingController extends Controller
         # lay danh sach nhap vat tu da thanh toan
         $listImportId = $modelImport->listImportIdPaidOfStaffImport($loginStaffId);
         # lay thong tin thanh toan nhap vat tu chua duoc xac nhan theo danh sach don nhap
-        $dataImportPay =  $modelImportPay->infoUnConfirmOfListImportId($listImportId);
+        $dataImportPay = $modelImportPay->infoUnConfirmOfListImportId($listImportId);
 
         # co thong tin chua xac nhan
-        if ($hFunction->checkCount($dataSalaryPay) || $hFunction->checkCount($dataImportPay)) {
-            return view('work.components.notify.warning-confirm', compact('modelStaff', 'dataSalaryPay', 'dataImportPay'));
+        if ($hFunction->checkCount($dataSalaryPay) || $hFunction->checkCount($dataImportPay) || $dataStaff->existUnConfirmInRoundCompanyStoreCheck()) {
+            return view('work.components.warning.warning-confirm', compact('modelStaff', 'dataSalaryPay', 'dataImportPay'));
         } else {
             $dataStaff = $modelStaff->loginStaffInfo();
             $dataTimekeepingProvisional = $modelTimekeeping->getInfo($timekeepingId);

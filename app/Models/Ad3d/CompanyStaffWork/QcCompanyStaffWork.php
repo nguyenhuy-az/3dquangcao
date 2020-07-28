@@ -2,7 +2,10 @@
 
 namespace App\Models\Ad3d\CompanyStaffWork;
 
+use App\Models\Ad3d\CompanyStoreCheck\QcCompanyStoreCheck;
 use App\Models\Ad3d\Department\QcDepartment;
+use App\Models\Ad3d\Rank\QcRank;
+use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
@@ -123,6 +126,64 @@ class QcCompanyStaffWork extends Model
         return $modelToolAllocationDetail->totalToolOfStaffAndCompany($staffId, $companyId, $toolId);
     }
 
+    //------------- -------- kiem tra do nghe cty ----------- -------
+    # ban giao kiem tra thong tin do nghe trong hien tai
+    public function checkCompanyStoreOfCurrentDate()
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelCompanyStoreCheck = new QcCompanyStoreCheck();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
+        $companyLoginId = $dataStaffLogin->companyId();
+        # chua duoc phan cong
+        $checkHourDefault = date('H:i', strtotime('08:10'));
+        $checkHourCurrent = date('H:i');
+        # phan cong kiem tra do nghe duoc duyet sau gio cham cong - (chi phan cho nguoi di lam)
+        //if ($checkHourDefault < $checkHourCurrent) {
+            $checkDate = date('Y-m-d');
+            # kiem tra ngay hien tai duoc phan chua cua 1 1 cong cty
+            if (!$modelCompanyStoreCheck->checkExistDateOfCompany($companyLoginId,$checkDate)) {
+                # lay danh sach lam viec cua bo phan thi cong cap nhan vien
+                $dataStaffWorkConstruction = $this->infoActivityConstructionStaffRankOfCompany($companyLoginId);
+                if ($hFunction->checkCount($dataStaffWorkConstruction)) {
+                    $selectedStaffWorkId = null;
+                    $workStatus = false; // trang thai nv thi cong co di lam - xet tranh refesh vong lap vo tan
+                    foreach ($dataStaffWorkConstruction as $staffWorkConstruction) {
+                        $workId = $staffWorkConstruction->workId();
+                        # co bao cham cong
+                        if ($this->checkTimekeepingProvisionalOfCurrentDate($workId)) {
+                            # chưa duoc phan cong trong vong kiem tra
+                            if (!$modelCompanyStoreCheck->checkExistWorkReceived($workId)) {
+                                $selectedStaffWorkId = $workId;
+                                break;
+                            }
+                            $workStatus = true;
+                        }
+
+                    }
+                    # co nhan vien dc chon
+                    if (!empty($selectedStaffWorkId)) {
+                        # them vao phan cong kiem tra do nghe
+                        $modelCompanyStoreCheck->insert($selectedStaffWorkId);
+                    } else {
+                        # van co nv thi cong di lam viec - tao lai vong moi
+                        if ($workStatus) {
+                            # lam moi lại vong kiem tra
+                            $modelCompanyStoreCheck->refreshCheckAround();
+                            # phan cong lai
+                            $this->checkCompanyStoreOfCurrentDate();
+                        }else{
+                            # khong ai cham cong - giu nguyen
+                        }
+                    }
+                }
+            }
+        //}else{
+            # kiem tra ton tai phan cong ngay truoc chua co bao cao
+        //}
+
+    }
     # ----------- thong tin lam viec trong thang--------------
     public function work()
     {
@@ -133,6 +194,20 @@ class QcCompanyStaffWork extends Model
     {
         $modelWork = new QcWork();
         return $modelWork->checkCompanyStaffWorkActivity($this->checkIdNull($workId));
+    }
+
+    # kiem tra nv co cham cong hay khong
+    public function checkTimekeepingProvisionalOfCurrentDate($staffWorkId=null)
+    {
+        $hFunction = new \Hfunction();
+        $modelWork = new QcWork();
+        $dataWork = $modelWork->infoActivityOfCompanyStaffWork($this->checkIdNull($staffWorkId));
+        if($hFunction->checkCount($dataWork)){ // con mo cham cong
+            $dataTimekeeping = $dataWork->timekeepingProvisionalOfDate($dataWork->workId(), date('Y-m-d'));
+            return $hFunction->checkCount($dataTimekeeping);
+        }else{
+            return false;
+        }
     }
 
     # ----------- nghi viec tai 1 cty --------------
@@ -211,7 +286,7 @@ class QcCompanyStaffWork extends Model
         }
     }
 
-# lay danh sach ma nv dang hoat dong theo ma cong ty va ma bo phan va cap bac lam viec
+    # lay danh sach ma nv dang hoat dong theo ma cong ty va ma bo phan va cap bac lam viec
     public function listStaffIdActivityHasFilter($companyId, $departmentId = null, $level = 1000)
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
@@ -633,6 +708,16 @@ class QcCompanyStaffWork extends Model
     public function company()
     {
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
+    }
+
+    # lay thong tin lam viec theo bo phan tai 1 cty - dang lam viec
+    public function infoActivityConstructionStaffRankOfCompany($companyId)
+    {
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $listWorkId = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment([$modelDepartment->constructionDepartmentId()],$modelRank->staffRankId());
+        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', 1)->get();
     }
 
     # lay danh sach tat ca ma lam viec tai 1 cty

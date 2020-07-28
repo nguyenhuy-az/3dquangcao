@@ -204,9 +204,13 @@ class QcWork extends Model
     }
 
     # lay 1 bang cham cong dang lam viec
-    public function infoActivityOfCompanyStaffWork($companyStaffWorkId)
+    public function infoActivityOfCompanyStaffWork($companyStaffWorkId, $date = null)
     {
-        return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->where('action', 1)->first();
+        if (!empty($date)) {
+            return QcWork::where(['companyStaffWork_id' => $companyStaffWorkId])->where('fromDate', 'like', "%$date%")->where('action', 1)->first();
+        } else {
+            return QcWork::where(['companyStaffWork_id' => $companyStaffWorkId, 'action' => 1])->first();
+        }
     }
 
     # lay nhieu bang cham cong dang lam viec
@@ -214,7 +218,6 @@ class QcWork extends Model
     {
         return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('action', 1)->get();
     }
-
     public function listIdOfListCompanyStaffWork($listCompanyStaffWorkId)
     {
         return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->pluck('work_id');
