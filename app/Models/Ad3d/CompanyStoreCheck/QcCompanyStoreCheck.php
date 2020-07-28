@@ -38,7 +38,7 @@ class QcCompanyStoreCheck extends Model
 
     public function checkIdNull($checkId)
     {
-        return (empty($checkId)) ? $this->checkId(): $checkId;
+        return (empty($checkId)) ? $this->checkId() : $checkId;
     }
 
     /*public function deleteAllocation($checkId = null)
@@ -54,6 +54,12 @@ class QcCompanyStoreCheck extends Model
                 'confirmDate' => $hFunction->carbonNow()
             ]);
     }
+
+    #  lam moi vong kiem tra
+    public function refreshCheckAround()
+    {
+        return QcCompanyStoreCheck::where('receiveStatus', 1)->update(['receiveStatus' => 0]);
+    }
     //========== ========= ========= RELATION ========== ========= ==========
     //---------- thong tin bao cao kiem tra do nghe dung chung -----------
     public function companyStoreCheckReport()
@@ -62,7 +68,7 @@ class QcCompanyStoreCheck extends Model
     }
 
     # lay thong tin bao cao
-    public function infoCompanyStoreCheckReport($checkId=null)
+    public function infoCompanyStoreCheckReport($checkId = null)
     {
         $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
         return $modelCompanyStoreCheckReport->infoOfCompanyStoreCheck($this->checkIdNull($checkId));
@@ -80,6 +86,12 @@ class QcCompanyStoreCheck extends Model
         return QcCompanyStoreCheck::where('staff_id', $staffId)->where('receiveStatus', 1)->first();
     }
 
+    # thong tin kiem tra trong vong dang nhan
+    public function lastInfoOfStaff($staffId)
+    {
+        return QcCompanyStoreCheck::where('staff_id', $staffId)->orderBy('check_id', 'DESC')->first();
+    }
+
     # kiem tra da phan cong kiem tra trong ngay hay chưa
     public function checkExistDate($checkDate)
     {
@@ -90,6 +102,12 @@ class QcCompanyStoreCheck extends Model
     public function checkExistStaffReceived($staffId)
     {
         return QcCompanyStoreCheck::where('staff_id', $staffId)->where('receiveStatus', 1)->exists();
+    }
+
+    # kiem tra ton tai den lich ma chua xac nhan cua 1 NV - trong vong chon
+    public function checkExistUnConfirmInRoundOfStaff($staffId)
+    {
+        return QcCompanyStoreCheck::where('staff_id', $staffId)->where('confirmStatus', 0)->where('receiveStatus', 1)->exists();
     }
     //========= ========== ========== lấy thông tin ========== ========== ==========
     /* public function selectInfoOfListWorkAndDate($listStaffId, $dateFilter = null)

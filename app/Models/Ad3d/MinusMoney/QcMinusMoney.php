@@ -46,7 +46,7 @@ class QcMinusMoney extends Model
             }
 
         }
-        $modelMinusMoney->money = $money;
+        $modelMinusMoney->money = (is_int($money))?$money:$money[0];
         $modelMinusMoney->dateMinus = $dateMinus;
         $modelMinusMoney->reason = $reason;
         $modelMinusMoney->applyStatus = $applyStatus;

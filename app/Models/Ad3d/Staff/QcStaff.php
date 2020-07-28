@@ -240,6 +240,19 @@ class QcStaff extends Model
         return QcStaff::where('staff_id', $staffId)->update(['identityCardBack' => $image]);
     }
     //========== ========= ========= mối quan hệ ========== ========= ==========
+    //---------- giao kiem tra do nghe dung chung -----------
+    public function companyStoreCheck()
+    {
+        return $this->hasMany('App\Models\Ad3d\CompanyStoreCheck\QcCompanyStoreCheck', 'staff_id', 'staff_id');
+    }
+
+    # kiem tra ton tai chua xac nhan trong vong chon
+    public function existUnConfirmInRoundCompanyStoreCheck($staffId = null)
+    {
+        $modelCompanyStoreCheck = new QcCompanyStoreCheck();
+        return $modelCompanyStoreCheck->checkExistUnConfirmInRoundOfStaff($this->checkIdNull($staffId));
+    }
+
     //---------- thong tin bao cao kiem tra do nghe dung chung -----------
     public function companyStoreCheckReport()
     {
@@ -254,34 +267,50 @@ class QcStaff extends Model
         $modelCompanyStoreCheck = new QcCompanyStoreCheck();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         # chua duoc phan cong
-        $checkDate = date('Y-m-d');
-        if (!$modelCompanyStoreCheck->checkExistDate($checkDate)) {
-            # lay danh sach NV bo phan thi cong cap nhan vien
-            $dataStaffConstruction = $this->infoActivityConstructionOfCompany($dataStaffLogin->companyId());
-            if ($hFunction->checkCount($dataStaffConstruction)) {
-                $selectedStaffId = null;
-                foreach ($dataStaffConstruction as $staffConstruction) {
-                    $staffId = $staffConstruction->staffId();
-                    # co bao cham cong
-                    if($this->checkTimekeepingProvisionalOfCurrentDate($staffId)){
-                        # chưa duoc phan cong trong vong kiem tra
-                        if (!$modelCompanyStoreCheck->checkExistStaffReceived($staffId)) {
-                            $selectedStaffId = $staffId;
-                            break;
+        $checkHourDefault = date('H:i', strtotime('08:10'));
+        $checkHourCurrent = date('H:i');
+        # phan cong kiem tra do nghe duoc duyet sau gio cham cong - (chi phan cho nguoi di lam)
+        if ($checkHourDefault < $checkHourCurrent) {
+            $checkDate = date('Y-m-d');
+            # kiem tra ngay hien tai duoc phan chua
+            if (!$modelCompanyStoreCheck->checkExistDate($checkDate)) {
+                # lay danh sach NV bo phan thi cong cap nhan vien
+                $dataStaffConstruction = $this->infoActivityConstructionOfCompany($dataStaffLogin->companyId());
+                if ($hFunction->checkCount($dataStaffConstruction)) {
+                    $selectedStaffId = null;
+                    $workStatus = false; // trang thai nv thi cong co di lam - xet tranh refesh vong lap vo tan
+                    foreach ($dataStaffConstruction as $staffConstruction) {
+                        $staffId = $staffConstruction->staffId();
+                        # co bao cham cong
+                        if ($this->checkTimekeepingProvisionalOfCurrentDate($staffId)) {
+                            # chưa duoc phan cong trong vong kiem tra
+                            if (!$modelCompanyStoreCheck->checkExistStaffReceived($staffId)) {
+                                $selectedStaffId = $staffId;
+                                break;
+                            }
+                            $workStatus = true;
+                        }
+
+                    }
+                    # co nhan vien dc chon
+                    if (!empty($selectedStaffId)) {
+                        # them vao phan cong kiem tra do nghe
+                        $modelCompanyStoreCheck->insert($selectedStaffId);
+                    } else {
+                        # van co nv thi cong di lam viec - tao lai vong moi
+                        if ($workStatus) {
+                            # lam moi lại vong kiem tra
+                            $modelCompanyStoreCheck->refreshCheckAround();
+                            # phan cong lai
+                            $this->checkCompanyStoreOfCurrentDate();
+                        }else{
+                            # khong ai cham cong - giu nguyen
                         }
                     }
-
-                }
-                # co nhan vien dc chon
-                if (!empty($selectedStaffId)) {
-                    # them vao phan cong kiem tra do nghe
-                    $modelCompanyStoreCheck->insert($selectedStaffId);
-                } else {
-                    # tao lai vong moi
                 }
             }
-            //dd($dataStaffConstruction);
         }
+
     }
 
     #----------- ngay nghi he thong ------------

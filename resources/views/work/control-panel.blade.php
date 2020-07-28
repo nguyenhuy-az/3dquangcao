@@ -29,10 +29,14 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 </style>
 @section('qc_work_body')
     @if($dataStaffLogin->checkActivityWork())
-        {{--system info--}}
+        {{--thong bao cua he thong--}}
         @include('work.components.system-info.system-info', compact('modelCompany','modelStaff','dataTimekeepingProvisional'))
 
-        {{--control panel--}}
+        {{--canh bao kiem tra do nghe--}}
+        @if($dataStaffLogin->existUnConfirmInRoundCompanyStoreCheck())
+            @include('work.components.warning.confirm-company-store-check')
+        @endif
+        {{--bang dieu khien--}}
         <div class="row">
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.timekeeping.get') !!}">

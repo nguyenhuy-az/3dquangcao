@@ -30,7 +30,8 @@ class CheckStoreController extends Controller
         $dataStaff = $modelStaff->loginStaffInfo();
         #thong tin lam viec tai 1 cty
         //$dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
-        $dataCompanyStoreCheck = $modelCompanyStoreCheck->infoReceiveStatusOfStaff($dataStaff->staffId());
+        # thong tin phan cong giao viec sau cung
+        $dataCompanyStoreCheck = $modelCompanyStoreCheck->lastInfoOfStaff($dataStaff->staffId());
         #do nghe dung chung cua he thong
         $dataCompanyStore = $modelCompanyStore->getPublicToolToCheckOfCompany($dataStaff->companyId());
         return view('work.tool.check-store.list', compact('dataAccess', 'modelStaff', 'dataCompanyStoreCheck', 'dataCompanyStore', 'monthFilter', 'yearFilter'));
@@ -76,9 +77,6 @@ class CheckStoreController extends Controller
                                 # neu ton tai
                                 if ($hFunction->checkCount($dataCompanyStoreCheckReport)) {
                                     $minusMoneyReportId = $dataCompanyStoreCheckReport->reportId();
-                                    # thong tin dung cu
-                                    ////$dataCompanyStore = $dataCompanyStoreCheckReport->companyStore;
-                                    ////$importPrice = $dataCompanyStore->importPrice();
                                     # lay thong tin nguoi bi phat
                                     $dataStaffMinusMoney = $dataCompanyStoreCheckReport->companyStoreCheck->staff;
                                     $dataWork = $dataStaffMinusMoney->workInfoActivityOfStaff();

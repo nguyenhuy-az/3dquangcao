@@ -43,8 +43,8 @@ $currentMonth = $hFunction->currentMonth();
                                         ?>
                                         <tr>
                                             <td colspan="3">
-                                                Ngày xác nhận:
-                                                <span style="color: red;">{!! date('d-m-Y', strtotime($dataCompanyStoreCheck->confirmDate())) !!}</span>
+                                                Ngày giao:
+                                                <span style="color: red;">{!! date('d-m-Y', strtotime($dataCompanyStoreCheck->receiveDate())) !!}</span>
                                             </td>
                                         </tr>
                                         @if($hFunction->checkCount($dataCompanyStoreCheckReport))
