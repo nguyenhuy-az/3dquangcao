@@ -148,6 +148,16 @@ class QcTool extends Model
         }
     }
 
+    # lay thong tin theo danh sach ID va loai cong cu
+    public function selectAllInfoByListIdAndType($listId, $type = null)
+    {
+        /*if (empty($type)) {
+            return QcTool::orderBy('name', 'ASC')->select('*');
+        } else {
+            return QcTool::where('type', $type)->orderBy('name', 'ASC')->select('*');
+        }*/
+    }
+
     # lay thong tin theo danh sach ma cong cu co san
     public function getInfoByListId($listId)
     {

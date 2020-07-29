@@ -12,100 +12,173 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
-$companyId = $dataCompany->companyId();
+//$companyId = $dataCompany->companyId();
 $hrefIndex = route('qc.work.store.tool.get');
 $currentMonth = $hFunction->currentMonth();
 ?>
 @extends('work.store.tool.index')
 @section('qc_work_store_tool_body')
     <div class="row qc_work_store_tool_wrap">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-8 col-lg-8">
             {{-- chi tiêt --}}
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
+                            <tr>
+                                <td style="padding: 0" colspan="5">
+                                    <select class="cbToolTypeFilter form-control" name="cbToolTypeFilter"
+                                            data-href="{!! $hrefIndex !!}">
+                                        </option>
+                                        <option value="1" @if($typeFilter == 1) selected="selected" @endif>
+                                            Dùng chung
+                                        </option>
+                                        <option value="2" @if($typeFilter == 2) selected="selected" @endif>
+                                            Dùng cấp phát
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Dụng cụ</th>
                                 <th>
-                                    Loại
+                                    Hình ảnh
                                 </th>
                                 <th class="text-center">
-                                    Số lượng
+                                    Trạng thái sử dụng
                                 </th>
                                 <th class="text-center">
-                                    Đang giao
-                                </th>
-                                {{--<th class="text-center">
-                                    Bị hư
-                                </th>--}}
-                                <th class="text-center">
-                                    Còn lại
+                                    Đã phát
                                 </th>
                             </tr>
                             <tr>
                                 <td></td>
-                                <td></td>
-                                <td style="padding: 0">
-                                    <select class="cbToolTypeFilter form-control" name="cbToolTypeFilter"
+                                <td style="padding: 0;">
+                                    <select class="cbToolFilter form-control" name="cbToolFilter"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="0" @if($typeFilter == 0) selected="selected" @endif>Tất cả
                                         </option>
-                                        <option value="1" @if($typeFilter == 1) selected="selected" @endif>Dùng chung
-                                        </option>
-                                        <option value="2" @if($typeFilter == 2) selected="selected" @endif>Dùng cấp
-                                            phát
-                                        </option>
+                                        @if($hFunction->checkCount($dataTool))
+                                            @foreach($dataTool as $tool)
+                                                <option value="{!! $tool->toolId() !!}"
+                                                        @if($toolFilter == $tool->toolId()) selected="selected" @endif>
+                                                    {!! $tool->name()  !!}
+                                                </option>
+                                            @endforeach
+                                        @endif
                                     </select>
                                 </td>
-                                {{--<td></td>--}}
                                 <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
-                            @if($hFunction->checkCount($dataTool))
+                            @if($hFunction->checkCount($dataCompanyStore))
                                 <?php $n_o = 0; ?>
-                                @foreach($dataTool as $tool)
+                                @foreach($dataCompanyStore as $companyStore)
                                     <?php
-                                    $toolId = $tool->toolId();
-                                    $totalAmountOfCompany = $tool->amountOfCompany($toolId, $companyId);
-                                    $toolName = $tool->name();
-                                    # so luong dang ban giao
-                                    $totalAllocationActivity = $dataCompany->totalToolAllocationActivity($companyId, $toolId);// $companyStore->totalAmountAllocation();
-                                    # so luong da huy
-                                    $totalCancel = 0;
-                                    # chua phat
-                                    $totalNoAllocation = $totalAmountOfCompany - $totalAllocationActivity;
+                                    $storeId = $companyStore->storeId();
+                                    $storeName = $companyStore->name();
+                                    $dataTool = $companyStore->tool;
                                     $n_o = $n_o + 1;
+                                    # thong tin nhap kho
+                                    $dataImport = $companyStore->import;
+                                    $dataImportImage = $dataImport->importImageInfoOfImport();
+                                    # lay thong tin giao sau cung
+                                    $dataToolAllocationDetail = $companyStore->toolAllocationDetailLastInfo();
                                     ?>
-                                    <tr class="@if($totalNoAllocation == 0) warning @elseif($n_o%2) info @endif">
+                                    <tr class="@if($n_o%2) info @endif">
                                         <td class="text-center">
                                             {!! $n_o !!}
                                         </td>
                                         <td>
-                                            {!!  $toolName !!}
+                                            {!!  $storeName !!}
                                         </td>
                                         <td>
-                                            {!! $tool->getLabelType() !!}
+                                            {{--dung cu cap phat nhan vien--}}
+                                            @if($dataTool->checkPrivateType())
+                                                {{--co cap phat--}}
+                                                @if($hFunction->checkCount($dataToolAllocationDetail))
+                                                    <?php
+                                                    $detailImage = $dataToolAllocationDetail->image();
+                                                    # lay thong tin tra sau cung cua lan giao
+                                                    $dataToolReturn = $dataToolAllocationDetail->lastInfoOfToolReturn();
+                                                    ?>
+                                                    @if($hFunction->checkCount($dataToolReturn))
+                                                        <div style="width: 70px; max-height: 70px;">
+                                                            <a class="qc_view_image_get qc-link"
+                                                               data-href="{!! route('qc.work.store.tool.return_image.get',$dataToolReturn->returnId()) !!}">
+                                                                <img style="max-width: 100%; max-height: 100%;"
+                                                                     src="{!! $dataToolReturn->pathFullImage($dataToolReturn->image()) !!}">
+                                                            </a>
+                                                        </div>
+                                                    @else
+
+                                                        @if (!$hFunction->checkEmpty($detailImage))
+                                                            {{--anh giao lan > 2--}}
+                                                        @else
+                                                            @if($hFunction->checkCount($dataImportImage))
+                                                                @foreach($dataImportImage as $importImage)
+                                                                    <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                                        <a class="qc_view_image_get qc-link"
+                                                                           data-href="{!! route('qc.work.store.tool.import_image.get',$importImage->imageId()) !!}">
+                                                                            <img style="max-width: 100%; max-height: 100%;"
+                                                                                 src="{!! $importImage->pathFullImage($importImage->name()) !!}">
+                                                                        </a>
+                                                                    </div>
+                                                                @endforeach
+                                                            @endif
+                                                        @endif
+                                                    @endif
+
+                                                @else
+                                                    @if($hFunction->checkCount($dataImportImage))
+                                                        @foreach($dataImportImage as $importImage)
+                                                            <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                                <a class="qc_view_image_get qc-link"
+                                                                   data-href="{!! route('qc.work.store.tool.import_image.get',$importImage->imageId()) !!}">
+                                                                    <img style="max-width: 100%; max-height: 100%;"
+                                                                         src="{!! $importImage->pathFullImage($importImage->name()) !!}">
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+                                                @endif
+                                            @else
+                                                {{--do nghe dung chung--}}
+                                                @if($hFunction->checkCount($dataImportImage))
+                                                    @foreach($dataImportImage as $importImage)
+                                                        <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                            <a class="qc_view_image_get qc-link"
+                                                               data-href="{!! route('qc.work.store.tool.import_image.get',$importImage->imageId()) !!}">
+                                                                <img style="max-width: 100%; max-height: 100%;"
+                                                                     src="{!! $importImage->pathFullImage($importImage->name()) !!}">
+                                                            </a>
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                            @endif
                                         </td>
                                         <td class="text-center">
-                                            <b style="color: blue;">{!! ($totalAmountOfCompany == 0)?'-':$totalAmountOfCompany !!}</b>
-                                        </td>
-                                        {{--<td class="text-center">
-                                            {!! $totalCancel !!}
-                                        </td>--}}
-                                        <td class="text-center">
-                                            <b style="color: brown;">{!! ($totalAllocationActivity == 0)?'-':$totalAllocationActivity !!}</b>
+                                            {!! $companyStore->labelUseStatus() !!}
                                         </td>
                                         <td class="text-center">
-                                            <b style="color: brown;">{!! ($totalNoAllocation == 0)?'-':$totalNoAllocation !!}</b>
+                                            @if($hFunction->checkCount($dataToolAllocationDetail))
+                                                {{--con dang giao--}}
+                                                @if($dataToolAllocationDetail->checkActivity())
+                                                    {!! $dataToolAllocationDetail->toolAllocation->companyStaffWork->staff->fullName() !!}
+                                                @else
+                                                    <span>---</span>
+                                                @endif
+                                            @else
+                                                <span>---</span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="6">
+                                    <td class="text-center" colspan="5">
                                         Hê thống chưa có đồ nghề
                                     </td>
                                 </tr>

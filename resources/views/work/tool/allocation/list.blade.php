@@ -74,7 +74,8 @@ $currentMonth = $hFunction->currentMonth();
                                                 @if($hFunction->checkCount($dataImportImage))
                                                     @foreach($dataImportImage as $importImage)
                                                         <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
-                                                            <a class="qc-link">
+                                                            <a class="qc_view_image_get qc-link"
+                                                               data-href="{!! route('qc.work.tool.allocation.import_image.get',$importImage->imageId()) !!}">
                                                                 <img style="max-width: 100%; max-height: 100%;"
                                                                      src="{!! $importImage->pathFullImage($importImage->name()) !!}">
                                                             </a>
@@ -102,9 +103,11 @@ $currentMonth = $hFunction->currentMonth();
                                                 <em class="qc-color-grey">Đã trả</em> <br/>
                                                 @if($toolReturn->checkConfirm())
                                                     @if($toolReturn->checkAcceptStatus())
-                                                        <em style="background-color: red; color: yellow;">
-                                                            Không được chấp nhận
+                                                        <em style="color: green;">
+                                                            Được chấp nhận
                                                         </em>
+                                                    @else
+                                                        <em style="background-color: red; color: yellow;">Không được chấp nhận</em>
                                                     @endif
                                                 @else
                                                     <em style="background-color: blue; color: white;">Chờ Xác nhận</em>

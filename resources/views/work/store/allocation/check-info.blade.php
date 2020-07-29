@@ -113,7 +113,7 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                                         @else
                                             <em class="qc-color-grey">Đã trả</em> <br/>
                                             @if($toolReturn->checkConfirm())
-                                                @if($toolReturn->checkAcceptStatus())
+                                                @if(!$toolReturn->checkAcceptStatus())
                                                     <em style="background-color: red; color: yellow;">
                                                         Không được chấp nhận
                                                     </em> <br/>

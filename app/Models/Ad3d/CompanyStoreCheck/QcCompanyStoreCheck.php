@@ -3,13 +3,14 @@
 namespace App\Models\Ad3d\CompanyStoreCheck;
 
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
+use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport;
 use Illuminate\Database\Eloquent\Model;
 
 class QcCompanyStoreCheck extends Model
 {
     protected $table = 'qc_company_store_check';
-    protected $fillable = ['check_id', 'confirmStatus', 'confirmDate', 'receiveStatus', 'receiveDate', 'created_at', 'work_id'];
+    protected $fillable = ['check_id', 'confirmStatus', 'confirmDate', 'confirmAutoStatus', 'receiveStatus', 'receiveDate', 'created_at', 'work_id'];
     protected $primaryKey = 'check_id';
     public $timestamps = false;
 
@@ -46,14 +47,45 @@ class QcCompanyStoreCheck extends Model
     {
         return QcCompanyStoreCheck::where('check_id', $this->checkIdNull($checkId))->delete();
     }*/
-    public function confirmCheck($checkId)
+    public function confirmCheck($checkId, $confirmAutoStatus = 0)
     {
         $hFunction = new \Hfunction();
         return QcCompanyStoreCheck::where('check_id', $checkId)->update(
             [
                 'confirmStatus' => 1,
-                'confirmDate' => $hFunction->carbonNow()
+                'confirmDate' => $hFunction->carbonNow(),
+                'confirmAutoStatus' => $confirmAutoStatus
             ]);
+    }
+
+    # he thong xac nhan tu dong khi NV khong xac nhan
+    public function autoConfirm($checkId)
+    {
+        $hFunction = new \Hfunction();
+        $modelCompanyStore = new QcCompanyStore();
+        $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
+        $dataCompanyStoreCheck = $this->getInfo($checkId);
+        $confirmAutoStatus = 1; // he thong tu xac nhan
+        if ($this->confirmCheck($checkId, $confirmAutoStatus)) {
+            $dataCompanyStaffWork = $dataCompanyStoreCheck->companyStaffWork;
+            #do nghe dung chung cua he thong can kiem tra
+            $dataCompanyStore = $modelCompanyStore->getPublicToolToCheckOfCompany($dataCompanyStaffWork->companyId());
+            if ($hFunction->checkCount($dataCompanyStore)) {
+                foreach ($dataCompanyStore as $companyStore) {
+                    $storeId = $companyStore->storeId();
+                    $useStatus = $companyStore->useStatus();
+                    # neu chua co bao cao
+                    if (!$modelCompanyStoreCheckReport->checkExistReportOfCompanyCheck($storeId, $checkId)) {
+                        $confirmStatus = 1;
+                        $confirmNote = 'Xác nhận tự động';
+                        $confirmDate = $hFunction->carbonNow();
+                        # them bao cao
+                        $modelCompanyStoreCheckReport->insert($useStatus, $storeId, $checkId, $confirmStatus, $confirmNote, $confirmDate);
+                    }
+                }
+            }
+        }
+
     }
 
     #  lam moi vong kiem tra
@@ -80,16 +112,26 @@ class QcCompanyStoreCheck extends Model
     {
         return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
     }
+
     # thong tin kiem tra trong vong dang nhan
     public function infoReceiveStatusOfWork($workId)
     {
         return QcCompanyStoreCheck::where('work_id', $workId)->where('receiveStatus', 1)->first();
     }
+
     # thong tin kiem tra trong vong dang nhan
     public function lastInfoOfWork($workId)
     {
         return QcCompanyStoreCheck::where('work_id', $workId)->orderBy('check_id', 'DESC')->first();
     }
+
+    # lay thong tin kiem tra chu co xac nhan kiem tra sau cung cua 1 cong ty
+    public function lastInfoUnConfirmOfWork($companyId)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        return QcCompanyStoreCheck::where('confirmStatus', 0)->whereIn('work_id', $modelCompanyStaffWork->listStaffIdOfListCompanyId([$companyId]))->orderBy('check_id', 'DESC')->first();
+    }
+
 
     # kiem tra da phan cong kiem tra trong ngay hay chưa
     public function checkExistDateOfCompany($companyId, $checkDate)
@@ -110,31 +152,6 @@ class QcCompanyStoreCheck extends Model
         return QcCompanyStoreCheck::where('work_id', $workId)->where('confirmStatus', 0)->where('receiveStatus', 1)->exists();
     }
 
-    #///////////////////////////////////////////////////////////////////////////////////////////////
-    # thong tin kiem tra trong vong dang nhan
-    public function infoReceiveStatusOfStaff($staffId)
-    {
-        return QcCompanyStoreCheck::where('staff_id', $staffId)->where('receiveStatus', 1)->first();
-    }
-
-    # thong tin kiem tra trong vong dang nhan
-    public function lastInfoOfStaff($staffId)
-    {
-        return QcCompanyStoreCheck::where('staff_id', $staffId)->orderBy('check_id', 'DESC')->first();
-    }
-
-
-    # kiem tra thong tin 1 nv co da duoc phan cong trong vong kiem tra chưa
-    public function checkExistStaffReceived($staffId)
-    {
-        return QcCompanyStoreCheck::where('staff_id', $staffId)->where('receiveStatus', 1)->exists();
-    }
-
-    # kiem tra ton tai den lich ma chua xac nhan cua 1 NV - trong vong chon
-    public function checkExistUnConfirmInRoundOfStaff($staffId)
-    {
-        return QcCompanyStoreCheck::where('staff_id', $staffId)->where('confirmStatus', 0)->where('receiveStatus', 1)->exists();
-    }
     //========= ========== ========== lấy thông tin ========== ========== ==========
     /* public function selectInfoOfListWorkAndDate($listStaffId, $dateFilter = null)
      {
@@ -175,25 +192,26 @@ class QcCompanyStoreCheck extends Model
 
     public function confirmStatus($checkId = null)
     {
-
         return $this->pluck('confirmStatus', $checkId);
     }
 
     public function confirmDate($checkId = null)
     {
-
         return $this->pluck('confirmDate', $checkId);
+    }
+
+    public function confirmAutoStatus($checkId)
+    {
+        return $this->pluck('confirmAutoStatus', $checkId);
     }
 
     public function receiveStatus($checkId = null)
     {
-
         return $this->pluck('receiveStatus', $checkId);
     }
 
     public function receiveDate($checkId = null)
     {
-
         return $this->pluck('receiveDate', $checkId);
     }
 

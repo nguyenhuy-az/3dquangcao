@@ -111,6 +111,7 @@ class TimekeepingController extends Controller
         $modelImportPay = new QcImportPay();
         $modelTimekeeping = new QcTimekeepingProvisional();
         $dataStaff = $modelStaff->loginStaffInfo();
+        $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
         $loginStaffId = $dataStaff->staffId();
         //-------- ---------- lay thong tin chua xac nhan thanh toan luong ---------- ---------
         # danh sach ma cham cong
@@ -126,7 +127,7 @@ class TimekeepingController extends Controller
         $dataImportPay = $modelImportPay->infoUnConfirmOfListImportId($listImportId);
 
         # co thong tin chua xac nhan
-        if ($hFunction->checkCount($dataSalaryPay) || $hFunction->checkCount($dataImportPay) || $dataStaff->existUnConfirmInRoundCompanyStoreCheck()) {
+        if ($hFunction->checkCount($dataSalaryPay) || $hFunction->checkCount($dataImportPay) || $dataCompanyStaffWorkLogin->existUnConfirmInRoundCompanyStoreCheck()) {
             return view('work.components.warning.warning-confirm', compact('modelStaff', 'dataSalaryPay', 'dataImportPay'));
         } else {
             $dataStaff = $modelStaff->loginStaffInfo();

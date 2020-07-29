@@ -2,6 +2,9 @@
  * Created by HUY on 12/29/2017.
  */
 var qc_work_tool_private = {
+    viewImage: function (href) {
+        qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+    },
     confirmReceive: function (href) {
         if (confirm('Tôi đã nhận đồ nghề này')) {
             qc_master_submit.ajaxHasReload(href, '#qc_master', false);
@@ -51,6 +54,12 @@ var qc_work_tool_private = {
 }
 
 $(document).ready(function () {
+    $('.qc_work_tool_wrap').on('click', '.qc_view_image_get', function () {
+        qc_work_tool_private.viewImage($(this).data('href'));
+    });
+});
+
+$(document).ready(function () {
     $('#frmWorkToolPrivateReturn').on('click', '.qc_save', function () {
         qc_work_tool_private.return.save('#frmWorkToolPrivateReturn');
     });
@@ -58,13 +67,4 @@ $(document).ready(function () {
     $(".txtCheckAll").click(function () {
         $('input:checkbox').not(this).prop('checked', this.checked);
     });
-
-    /*$('#frmWorkToolPrivateReturn').on('click', '.txtCheckAll', function () {
-     if ($(this).is(':checked')) {
-     //alert('co chon');
-     $('.txtReturnTool').attr('checked','checked');
-     }else{
-     //alert('khong chon');
-     }
-     });*/
 });

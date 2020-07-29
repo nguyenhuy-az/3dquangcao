@@ -127,6 +127,19 @@ class QcCompanyStaffWork extends Model
     }
 
     //------------- -------- kiem tra do nghe cty ----------- -------
+    //---------- giao kiem tra do nghe dung chung -----------
+    public function companyStoreCheck()
+    {
+        return $this->hasMany('App\Models\Ad3d\CompanyStoreCheck\QcCompanyStoreCheck', 'work_id', 'work_id');
+    }
+
+    # kiem tra ton tai chua xac nhan trong vong chon
+    public function existUnConfirmInRoundCompanyStoreCheck($staffWorkId = null)
+    {
+        $modelCompanyStoreCheck = new QcCompanyStoreCheck();
+        return $modelCompanyStoreCheck->checkExistUnConfirmInRoundOfWork($this->checkIdNull($staffWorkId));
+    }
+
     # ban giao kiem tra thong tin do nghe trong hien tai
     public function checkCompanyStoreOfCurrentDate()
     {
@@ -135,15 +148,15 @@ class QcCompanyStaffWork extends Model
         $modelCompanyStoreCheck = new QcCompanyStoreCheck();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
-        $companyLoginId = $dataStaffLogin->companyId();
+        $companyLoginId = $dataCompanyStaffWorkLogin->companyId();
         # chua duoc phan cong
-        $checkHourDefault = date('H:i', strtotime('08:10'));
-        $checkHourCurrent = date('H:i');
+        $checkHourDefault = date('Y-m-d H:i', strtotime('Y-m-d 08:10'));
+        $checkHourCurrent = date('Y-m-d H:i');
         # phan cong kiem tra do nghe duoc duyet sau gio cham cong - (chi phan cho nguoi di lam)
-        //if ($checkHourDefault < $checkHourCurrent) {
+        if ($checkHourDefault < $checkHourCurrent) {
             $checkDate = date('Y-m-d');
-            # kiem tra ngay hien tai duoc phan chua cua 1 1 cong cty
-            if (!$modelCompanyStoreCheck->checkExistDateOfCompany($companyLoginId,$checkDate)) {
+            # kiem tra ngay hien tai duoc phan kiem tra hay chua cua 1  cong cty
+            if (!$modelCompanyStoreCheck->checkExistDateOfCompany($companyLoginId, $checkDate)) {
                 # lay danh sach lam viec cua bo phan thi cong cap nhan vien
                 $dataStaffWorkConstruction = $this->infoActivityConstructionStaffRankOfCompany($companyLoginId);
                 if ($hFunction->checkCount($dataStaffWorkConstruction)) {
@@ -173,17 +186,23 @@ class QcCompanyStaffWork extends Model
                             $modelCompanyStoreCheck->refreshCheckAround();
                             # phan cong lai
                             $this->checkCompanyStoreOfCurrentDate();
-                        }else{
+                        } else {
                             # khong ai cham cong - giu nguyen
                         }
                     }
                 }
             }
-        //}else{
-            # kiem tra ton tai phan cong ngay truoc chua co bao cao
-        //}
+        } else {
+            # kiem tra ton tai phan cong chua xac nhan kiem tra
+            $dataCompanyStoreCheck = $modelCompanyStoreCheck->lastInfoUnConfirmOfWork($companyLoginId);
+            if ($hFunction->checkCount($dataCompanyStoreCheck)) {
+                # cap nhat tu dong
+                $modelCompanyStoreCheck->autoConfirm($dataCompanyStoreCheck->checkId());
+            }
+        }
 
     }
+
     # ----------- thong tin lam viec trong thang--------------
     public function work()
     {
@@ -196,16 +215,22 @@ class QcCompanyStaffWork extends Model
         return $modelWork->checkCompanyStaffWorkActivity($this->checkIdNull($workId));
     }
 
+    public function workInfoActivity($staffWorkId = null)
+    {
+        $modelWork = new QcWork();
+        return $modelWork->infoActivityOfCompanyStaffWork($this->checkIdNull($staffWorkId));
+    }
+
     # kiem tra nv co cham cong hay khong
-    public function checkTimekeepingProvisionalOfCurrentDate($staffWorkId=null)
+    public function checkTimekeepingProvisionalOfCurrentDate($staffWorkId = null)
     {
         $hFunction = new \Hfunction();
         $modelWork = new QcWork();
         $dataWork = $modelWork->infoActivityOfCompanyStaffWork($this->checkIdNull($staffWorkId));
-        if($hFunction->checkCount($dataWork)){ // con mo cham cong
+        if ($hFunction->checkCount($dataWork)) { // con mo cham cong
             $dataTimekeeping = $dataWork->timekeepingProvisionalOfDate($dataWork->workId(), date('Y-m-d'));
             return $hFunction->checkCount($dataTimekeeping);
-        }else{
+        } else {
             return false;
         }
     }
@@ -716,7 +741,7 @@ class QcCompanyStaffWork extends Model
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
-        $listWorkId = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment([$modelDepartment->constructionDepartmentId()],$modelRank->staffRankId());
+        $listWorkId = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment([$modelDepartment->constructionDepartmentId()], $modelRank->staffRankId());
         return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', 1)->get();
     }
 

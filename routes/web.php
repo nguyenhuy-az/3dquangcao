@@ -1330,7 +1330,9 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         # do nghe da phat
         Route::group(['prefix' => 'allocation'], function () {
             #xem chi tiết
-            Route::get('view/{toolId?}', ['as' => 'qc.work.tool.allocation.view.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewTool']);
+            # anh nhap do nghe
+            Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.tool.allocation.import_image.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewImportImage']);
+            //Route::get('view/{toolId?}', ['as' => 'qc.work.tool.allocation.view.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewTool']);
 
             # tra lai do nghe
             Route::get('return/{allocationId?}/{storeId?}', ['as' => 'qc.work.tool.allocation.return.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@getReturn']);
@@ -1360,10 +1362,20 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
         # thong tin kho
         Route::group(['prefix' => 'tool'], function () {
-            Route::get('/{type?}', ['as' => 'qc.work.store.tool.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@index']);
+            # xem anh nhap san pham
+            Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.store.tool.import_image.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@viewImportImage']);
+            # xem anh bao tra
+            Route::get('view-import-return/{returnId?}', ['as' => 'qc.work.store.tool.return_image.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@viewReturnImage']);
+
+            Route::get('/{type?}/{toolId?}', ['as' => 'qc.work.store.tool.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@index']);
         });
         # ban giao lai dung cu
         Route::group(['prefix' => 'return'], function () {
+            # xem anh nhap san pham
+            Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.store.return.import_image.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@viewImportImage']);
+            # xem anh bao tra
+            Route::get('view-import-return/{returnId?}', ['as' => 'qc.work.store.return.return_image.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@viewReturnImage']);
+
             # xac nhan tra
             Route::get('confirm/{allocationId?}', ['as' => 'qc.work.store.return.confirm.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@getConfirm']);
             Route::post('confirm/{allocationId?}', ['as' => 'qc.work.store.return.confirm.post', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@postConfirm']);

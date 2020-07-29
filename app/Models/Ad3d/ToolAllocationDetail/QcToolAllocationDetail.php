@@ -124,6 +124,12 @@ class QcToolAllocationDetail extends Model
         return QcToolAllocationDetail::whereIn('store_id', $listStoreId)->where('action', 1)->get();
     }
 
+    # thong tin dang phat cua do nghe
+    public function infoActivityOfStore($storeId)
+    {
+        return QcToolAllocationDetail::where('store_id', $storeId)->where('action', 1)->first();
+    }
+
     //---------- tra do nghe -----------
     public function toolReturn()
     {
@@ -315,6 +321,12 @@ class QcToolAllocationDetail extends Model
     {
         $result = QcToolAllocationDetail::orderBy('detail_id', 'DESC')->first();
         return (empty($result)) ? 0 : $result->detail_id;
+    }
+
+    # trang thai con hoat dong
+    public function checkActivity($detailId = null)
+    {
+        return ($this->action($detailId) == 1) ? true : false;
     }
 
     //kiểm tra thông tin

@@ -5,6 +5,9 @@ var qc_work_store_return = {
     view: function (href) {
         qc_master_submit.ajaxNotReload(href, '#qc_master', false);
     },
+    viewImage: function (href) {
+        qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+    },
     confirm: {
         getForm: function (href) {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
@@ -30,6 +33,10 @@ var qc_work_store_return = {
 $(document).ready(function () {
     $('.qc_work_store_return_wrap').on('click', '.qc_view_get', function () {
         qc_work_store_return.view($(this).data('href'));
+    });
+    // xem anh nhap kho
+    $('.qc_work_store_return_wrap').on('click', '.qc_view_image_get', function () {
+        qc_work_store_return.viewImage($(this).data('href'));
     });
 });
 

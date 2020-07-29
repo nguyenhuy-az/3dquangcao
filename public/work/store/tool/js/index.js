@@ -2,6 +2,9 @@
  * Created by HUY on 12/29/2017.
  */
 var qc_work_store_tool = {
+    viewImage: function (href) {
+        qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+    },
     /*return: {
         save: function (frm) {
             if (qc_work_store_tool.return.checkSelectTool()) {
@@ -29,20 +32,17 @@ var qc_work_store_tool = {
 }
 
 $(document).ready(function () {
+    // loc theo muc dich su dung
     $('.qc_work_store_tool_wrap').on('change', '.cbToolTypeFilter', function () {
         qc_main.url_replace($(this).data('href') + '/' + $(this).val());
     });
 
-    $(".txtCheckAll").click(function () {
-        $('input:checkbox').not(this).prop('checked', this.checked);
+    // loc theo loai do nghe
+    $('.qc_work_store_tool_wrap').on('change', '.cbToolFilter', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbToolTypeFilter').val() + '/' + $(this).val());
     });
-
-    /*$('#frmWorkToolPrivateReturn').on('click', '.txtCheckAll', function () {
-     if ($(this).is(':checked')) {
-     //alert('co chon');
-     $('.txtReturnTool').attr('checked','checked');
-     }else{
-     //alert('khong chon');
-     }
-     });*/
+    // xem anh do nghe
+    $('.qc_work_store_tool_wrap').on('click', '.qc_view_image_get', function () {
+        qc_work_store_tool.viewImage($(this).data('href'));
+    });
 });

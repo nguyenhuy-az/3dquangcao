@@ -240,18 +240,6 @@ class QcStaff extends Model
         return QcStaff::where('staff_id', $staffId)->update(['identityCardBack' => $image]);
     }
     //========== ========= ========= mối quan hệ ========== ========= ==========
-    //---------- giao kiem tra do nghe dung chung -----------
-    public function companyStoreCheck()
-    {
-        return $this->hasMany('App\Models\Ad3d\CompanyStoreCheck\QcCompanyStoreCheck', 'staff_id', 'staff_id');
-    }
-
-    # kiem tra ton tai chua xac nhan trong vong chon
-    public function existUnConfirmInRoundCompanyStoreCheck($staffId = null)
-    {
-        $modelCompanyStoreCheck = new QcCompanyStoreCheck();
-        return $modelCompanyStoreCheck->checkExistUnConfirmInRoundOfStaff($this->checkIdNull($staffId));
-    }
 
     //---------- thong tin bao cao kiem tra do nghe dung chung -----------
     public function companyStoreCheckReport()
@@ -1104,7 +1092,7 @@ class QcStaff extends Model
         $hFunction = new \Hfunction();
         $dataLoginInfo = $this->loginStaffInfo();
         if ($hFunction->checkCount($dataLoginInfo)) {
-            return $dataLoginInfo->workInfoActivityOfStaff();
+            return $dataLoginInfo->companyStaffWorkInfoActivity();
         } else {
             return null;
         }

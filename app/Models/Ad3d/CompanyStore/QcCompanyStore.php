@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcCompanyStore extends Model
 {
     protected $table = 'qc_company_store';
-    protected $fillable = ['store_id', 'name', 'importPrice', 'created_at', 'company_id', 'tool_id', 'supplies_id', 'import_id'];
+    protected $fillable = ['store_id', 'name', 'importPrice', 'useStatus', 'created_at', 'company_id', 'tool_id', 'supplies_id', 'import_id'];
     protected $primaryKey = 'store_id';
     public $timestamps = false;
 
@@ -115,6 +115,13 @@ class QcCompanyStore extends Model
     {
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         return $modelToolAllocationDetail->lastInfoOfCompanyStore($this->checkIdNull($storeId));
+    }
+
+    # lay thong tin chi tiet dang phat cua do nghe
+    public function toolAllocationDetailInfoActivity($storeId = null)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        return $modelToolAllocationDetail->infoActivityOfStore($this->checkIdNull($storeId));
     }
 
     //---------- công cụ -----------
@@ -247,6 +254,25 @@ class QcCompanyStore extends Model
     public function importPrice($storeId = null)
     {
         return $this->pluck('importPrice', $storeId);
+    }
+
+    public function useStatus($storeId = null)
+    {
+        return $this->pluck('useStatus', $storeId);
+    }
+
+    public function labelUseStatus($storeId = null)
+    {
+        $useStatus = $this->useStatus($storeId);
+        if ($useStatus == 1) {
+            return 'Bình thường';
+        } elseif ($useStatus == 2) {
+            return 'Hư';
+        } elseif ($useStatus == 3) {
+            return 'Mất';
+        } else {
+            return null;
+        }
     }
 
     public function createdAt($storeId = null)

@@ -118,7 +118,8 @@ $currentMonth = $hFunction->currentMonth();
                                                 @if($hFunction->checkCount($dataImportImage))
                                                     @foreach($dataImportImage as $importImage)
                                                         <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
-                                                            <a class="qc-link">
+                                                            <a class="qc_view_image_get qc-link"
+                                                               data-href="{!! route('qc.work.store.return.import_image.get',$importImage->imageId()) !!}">
                                                                 <img style="max-width: 100%; max-height: 100%;"
                                                                      src="{!! $importImage->pathFullImage($importImage->name()) !!}">
                                                             </a>
@@ -131,7 +132,7 @@ $currentMonth = $hFunction->currentMonth();
                                         </td>
                                         <td>
                                             <div style="width: 70px; max-height: 70px;">
-                                                <a class="qc-link">
+                                                <a class="qc_view_image_get qc-link" data-href="{!! route('qc.work.store.return.return_image.get',$returnId) !!}">
                                                     <img style="max-width: 100%; max-height: 100%;"
                                                          src="{!! $toolReturn->pathFullImage($returnImage) !!}">
                                                 </a>
@@ -139,7 +140,6 @@ $currentMonth = $hFunction->currentMonth();
                                         </td>
                                         <td class="text-center">
                                             @if($toolReturn->checkConfirm())
-
                                                 @if($toolReturn->checkAcceptStatus())
                                                     <em>Đồng ý</em>
                                                 @else

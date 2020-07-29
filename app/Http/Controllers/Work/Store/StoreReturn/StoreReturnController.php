@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Work\Store\StoreReturn;
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\CompanyStore\QcCompanyStore;
+use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Tool\QcTool;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
@@ -78,5 +79,19 @@ class StoreReturnController extends Controller
             }
             $modelToolReturn->confirmReturn($returnId, $acceptStatus, $modelStaff->loginStaffId());
         }
+    }
+    # xem anh nhap kho
+    public function viewImportImage($imageId)
+    {
+        $modelImportImage = new QcImportImage();
+        $dataImportImage = $modelImportImage->getInfo($imageId);
+        return view('work.store.return.view-import-image', compact('modelStaff', 'dataImportImage'));
+    }
+    # xem anh bao tra
+    public function viewReturnImage($returnId)
+    {
+        $modelToolReturn = new QcToolReturn();
+        $dataToolReturn = $modelToolReturn->getInfo($returnId);
+        return view('work.store.return.view-return-image', compact('modelStaff', 'dataToolReturn'));
     }
 }

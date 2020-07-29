@@ -10,6 +10,7 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $dataStaff = $modelStaff->loginStaffInfo();
+$dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
 $mobileStatus = $mobile->isMobile();
 $currentYear = date('Y');
 ?>
@@ -25,7 +26,7 @@ $currentYear = date('Y');
                 <div class="table-responsive">
                     <table class="table table-hover table-condensed">
                         {{--chua xac nha phan cong kiem tra do nghe cty--}}
-                        @if($dataStaff->existUnConfirmInRoundCompanyStoreCheck())
+                        @if($dataCompanyStaffWorkLogin->existUnConfirmInRoundCompanyStoreCheck())
                             <tr>
                                 <td>
                                     <i class="glyphicon glyphicon-arrow-right"></i>

@@ -28,10 +28,9 @@ class CheckStoreController extends Controller
             'object' => 'toolCheckStore'
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
-        #thong tin lam viec tai 1 cty
-        //$dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
+        $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
         # thong tin phan cong giao viec sau cung
-        $dataCompanyStoreCheck = $modelCompanyStoreCheck->lastInfoOfStaff($dataStaff->staffId());
+        $dataCompanyStoreCheck = $modelCompanyStoreCheck->lastInfoOfWork($dataCompanyStaffWorkLogin->workId());
         #do nghe dung chung cua he thong
         $dataCompanyStore = $modelCompanyStore->getPublicToolToCheckOfCompany($dataStaff->companyId());
         return view('work.tool.check-store.list', compact('dataAccess', 'modelStaff', 'dataCompanyStoreCheck', 'dataCompanyStore', 'monthFilter', 'yearFilter'));
@@ -78,13 +77,13 @@ class CheckStoreController extends Controller
                                 if ($hFunction->checkCount($dataCompanyStoreCheckReport)) {
                                     $minusMoneyReportId = $dataCompanyStoreCheckReport->reportId();
                                     # lay thong tin nguoi bi phat
-                                    $dataStaffMinusMoney = $dataCompanyStoreCheckReport->companyStoreCheck->staff;
-                                    $dataWork = $dataStaffMinusMoney->workInfoActivityOfStaff();
+                                    $dataCompanyStaffWork = $dataCompanyStoreCheckReport->companyStoreCheck->companyStaffWork;
+                                    $dataWork = $dataCompanyStaffWork->workInfoActivity();
                                     if ($hFunction->checkCount($dataWork)) {
                                         $workId = $dataWork->workId();
                                         if (!$modelMinusMoney->checkExistMinusMoneyLostPublicTool($minusMoneyReportId, $workId)) { # chua phat
                                             if ($modelMinusMoney->insert($hFunction->carbonNow(), 'Mất đồ nghề dùng chung', $workId, null, $punishId, 0, null, null, $minusMoneyReportId)) {
-                                                $modelStaffNotify->insert(null, $dataStaffMinusMoney->staffId(), 'Mất kiểm tra mất đồ nghề dùng chung', null, null, null, $modelMinusMoney->insertGetId());
+                                                $modelStaffNotify->insert(null, $dataCompanyStaffWork->staffId(), 'Mất kiểm tra mất đồ nghề dùng chung', null, null, null, $modelMinusMoney->insertGetId());
                                             }
                                         }
                                     }

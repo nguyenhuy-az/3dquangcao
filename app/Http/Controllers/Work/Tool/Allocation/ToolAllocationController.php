@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Work\Tool\Allocation;
 
 
+use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Tool\QcTool;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
@@ -80,5 +81,12 @@ class ToolAllocationController extends Controller
         }
         return redirect()->route('qc.work.tool.allocation.get');
 
+    }
+    # xem anh nhap kho
+    public function viewImportImage($imageId)
+    {
+        $modelImportImage = new QcImportImage();
+        $dataImportImage = $modelImportImage->getInfo($imageId);
+        return view('work.tool.allocation.view-import-image', compact('modelStaff', 'dataImportImage'));
     }
 }
