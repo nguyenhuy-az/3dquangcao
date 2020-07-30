@@ -113,6 +113,18 @@ class QcCompanyStoreCheck extends Model
         return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
     }
 
+    #lay tat ca thong tin ban giao cua 1
+    public function getAllInfoOfWork($workId, $orderBy = 'DESC')
+    {
+        return QcCompanyStoreCheck::where('work_id', $workId)->orderBy('receiveDate', $orderBy)->get();
+    }
+
+    #lay thong tin ban giao cua 1 nv theo ngay
+    public function getInfoOfWorkAndDate($workId, $date)
+    {
+        return QcCompanyStoreCheck::where('work_id', $workId)->where('receiveDate', 'like', "%$date%")->first();
+    }
+
     # thong tin kiem tra trong vong dang nhan
     public function infoReceiveStatusOfWork($workId)
     {

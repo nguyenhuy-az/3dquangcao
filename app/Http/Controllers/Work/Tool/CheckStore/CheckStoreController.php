@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Work\Tool\CheckStore;
 use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\CompanyStoreCheck\QcCompanyStoreCheck;
 use App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport;
+use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
 use App\Models\Ad3d\Staff\QcStaff;
@@ -19,7 +20,7 @@ use Request;
 
 class CheckStoreController extends Controller
 {
-    public function index($monthFilter = 0, $yearFilter = 0)
+    public function index($checkIdFilter = 0)
     {
         $modelStaff = new QcStaff();
         $modelCompanyStore = new QcCompanyStore();
@@ -29,11 +30,20 @@ class CheckStoreController extends Controller
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
         $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
-        # thong tin phan cong giao viec sau cung
-        $dataCompanyStoreCheck = $modelCompanyStoreCheck->lastInfoOfWork($dataCompanyStaffWorkLogin->workId());
+        $staffWorkId = $dataCompanyStaffWorkLogin->workId();
+        # lay tat ca thong tin ban giao kiem tra
+        $dataCompanyStoreCheck = $modelCompanyStoreCheck->getAllInfoOfWork($staffWorkId);
+        # thong tin hien thi
+        if ($checkIdFilter == 0) {
+            # thong tin phan cong giao viec sau cung
+            $dataCompanyStoreCheckSelected = $modelCompanyStoreCheck->lastInfoOfWork($staffWorkId);
+        } else {
+            $dataCompanyStoreCheckSelected = $modelCompanyStoreCheck->getInfo($checkIdFilter);
+        }
+
         #do nghe dung chung cua he thong
         $dataCompanyStore = $modelCompanyStore->getPublicToolToCheckOfCompany($dataStaff->companyId());
-        return view('work.tool.check-store.list', compact('dataAccess', 'modelStaff', 'dataCompanyStoreCheck', 'dataCompanyStore', 'monthFilter', 'yearFilter'));
+        return view('work.tool.check-store.list', compact('dataAccess', 'modelStaff', 'dataCompanyStoreCheck', 'dataCompanyStoreCheckSelected', 'dataCompanyStore', 'checkIdFilter'));
     }
 
     // xac nhan kiem tra
@@ -62,7 +72,22 @@ class CheckStoreController extends Controller
                         $confirmNote = null;
                         $confirmDate = null;
                     }
-                    if ($modelCompanyStoreCheckReport->insert($useStatus, $companyStoreId, $txtCompanyCheckId, $confirmStatus, $confirmNote, $confirmDate)) {
+                    # kiem tra them anh bao cao
+                    $reportImage = null;
+                    $txtReportImage = Request::file('txtReportImage_' . $companyStoreId);
+                    if (!empty($txtReportImage)) {
+                        $name_img = stripslashes($_FILES['txtReportImage_' . $companyStoreId]['name']);
+                        $name_img = $companyStoreId . "_rp_" . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+                        $source_img = $_FILES['txtReportImage_' . $companyStoreId]['tmp_name'];
+                        # up anh do nghe
+                        if ($modelCompanyStoreCheckReport->uploadImage($source_img, $name_img, 500)) {
+                            # chi tra khi co anh ban giao
+                            $reportImage = $name_img;
+                        }
+                    }
+                    //echo "$companyStoreId $reportImage <br/>";
+                    //die();
+                    if ($modelCompanyStoreCheckReport->insert($useStatus, $reportImage, $companyStoreId, $txtCompanyCheckId, $confirmStatus, $confirmNote, $confirmDate)) {
                         # cap nhat trang thai su dung neu thay doi
                         if ($useStatus == 2 || $useStatus == 3) $modelCompanyStore->updateUseStatus($companyStoreId, $useStatus);
                         # xac nhan bao cao bi mat
@@ -95,5 +120,21 @@ class CheckStoreController extends Controller
             }
         }
 
+    }
+
+    # xem anh nhap kho
+    public function viewImportImage($imageId)
+    {
+        $modelImportImage = new QcImportImage();
+        $dataImportImage = $modelImportImage->getInfo($imageId);
+        return view('work.tool.check-store.view-import-image', compact('modelStaff', 'dataImportImage'));
+    }
+
+    # xem anh bao cao do nghe
+    public function viewReportImage($reportId)
+    {
+        $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
+        $dataCompanyStoreCheckReport = $modelCompanyStoreCheckReport->getInfo($reportId);
+        return view('work.tool.check-store.view-report-image', compact('modelStaff', 'dataCompanyStoreCheckReport'));
     }
 }

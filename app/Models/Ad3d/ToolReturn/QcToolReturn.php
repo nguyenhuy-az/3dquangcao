@@ -101,6 +101,24 @@ class QcToolReturn extends Model
         unlink($this->rootPathFullImage() . '/' . $imageName);
     }
 
+    // get path image
+    public function pathSmallImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathSmallImage() . '/' . $image);
+        }
+    }
+
+    public function pathFullImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathFullImage() . '/' . $image);
+        }
+    }
     //========== ========= ========= RELATION ========== ========= ==========
     //---------- nhân viên tra -----------
     public function toolAllocationDetail()
@@ -228,25 +246,6 @@ class QcToolReturn extends Model
     {
         $result = QcToolReturn::orderBy('return_id', 'DESC')->first();
         return (empty($result)) ? 0 : $result->return_id;
-    }
-
-    // get path image
-    public function pathSmallImage($image)
-    {
-        if (empty($image)) {
-            return null;
-        } else {
-            return asset($this->rootPathSmallImage() . '/' . $image);
-        }
-    }
-
-    public function pathFullImage($image)
-    {
-        if (empty($image)) {
-            return null;
-        } else {
-            return asset($this->rootPathFullImage() . '/' . $image);
-        }
     }
 
     # ========= ============ Kiem tra thong tin ============= ==============

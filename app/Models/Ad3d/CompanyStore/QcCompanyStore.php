@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\CompanyStore;
 
+use App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport;
 use App\Models\Ad3d\Tool\QcTool;
 use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 use Illuminate\Database\Eloquent\Model;
@@ -63,6 +64,13 @@ class QcCompanyStore extends Model
     public function companyStoreCheckReport()
     {
         return $this->hasMany('App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport', 'store_id', 'store_id');
+    }
+
+    # lay thong tin lan phat sau cung co hinh anh
+    public function companyStoreCheckReportLastInfoHasImage($storeId = null)
+    {
+        $modelReport = new QcCompanyStoreCheckReport();
+        return $modelReport->lastInfoOfCompanyStoreHasImage($this->checkIdNull($storeId));
     }
 
     //---------- công ty -----------

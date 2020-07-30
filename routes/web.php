@@ -1321,10 +1321,15 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     Route::group(['prefix' => 'tool'], function () {
         # kiem tra do nghe dung chung
         Route::group(['prefix' => 'check-store'], function () {
+            # anh nhap do nghe
+            Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.tool.check_store.import_image.get', 'uses' => 'Work\Tool\CheckStore\CheckStoreController@viewImportImage']);
+            # anh bao cao do nghe
+            Route::get('view-report-image/{reportId?}', ['as' => 'qc.work.tool.check_store.report_image.get', 'uses' => 'Work\Tool\CheckStore\CheckStoreController@viewReportImage']);
+
             # xac nhan
             Route::post('confirm', ['as' => 'qc.work.tool.check_store.confirm.post', 'uses' => 'Work\Tool\CheckStore\CheckStoreController@postConfirm']);
 
-            Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.tool.check_store.get', 'uses' => 'Work\Tool\CheckStore\CheckStoreController@index']);
+            Route::get('/{checkFilter?}', ['as' => 'qc.work.tool.check_store.get', 'uses' => 'Work\Tool\CheckStore\CheckStoreController@index']);
         });
 
         # do nghe da phat

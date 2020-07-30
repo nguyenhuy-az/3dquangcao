@@ -27,9 +27,7 @@ $currentMonth = $hFunction->currentMonth();
                         <table class="table table-hover table-bordered">
                             <tr>
                                 <td style="padding: 0" colspan="5">
-                                    <select class="cbToolTypeFilter form-control" name="cbToolTypeFilter"
-                                            data-href="{!! $hrefIndex !!}">
-                                        </option>
+                                    <select class="cbToolTypeFilter form-control" name="cbToolTypeFilter" data-href="{!! $hrefIndex !!}">
                                         <option value="1" @if($typeFilter == 1) selected="selected" @endif>
                                             Dùng chung
                                         </option>

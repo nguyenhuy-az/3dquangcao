@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcCompanyStoreCheckReport extends Model
 {
     protected $table = 'qc_company_store_check_report';
-    protected $fillable = ['report_id', 'useStatus', 'reportDate', 'confirmDate', 'confirmStatus', 'confirmNote', 'created_at', 'store_id', 'check_id', 'confirmStaff_id'];
+    protected $fillable = ['report_id', 'useStatus', 'reportImage', 'reportNumber', 'reportDate', 'confirmDate', 'confirmStatus', 'confirmNote', 'created_at', 'store_id', 'check_id', 'confirmStaff_id'];
     protected $primaryKey = 'report_id';
     public $timestamps = false;
 
@@ -15,11 +15,22 @@ class QcCompanyStoreCheckReport extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($useStatus, $storeId, $checkId, $confirmStatus = 0, $confirmNote = null, $confirmDate = null)
+    public function insert($useStatus, $reportImage, $storeId, $checkId, $confirmStatus = 0, $confirmNote = null, $confirmDate = null)
     {
         $hFunction = new \Hfunction();
         $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
+        # lay lan bao sau cung cua do ngh
+        $dataReport = $this->lastInfoOfCompanyStore($storeId);
+        #ton tai thong tin bao cao
+        if ($hFunction->checkCount($dataReport)) {
+            $reportNumber = $dataReport->reportNumber();
+            $reportNumber = (is_int($reportNumber)) ? $reportNumber : $reportNumber[0];
+        } else {
+            $reportNumber = 0; // bao cao lan dau
+        }
         $modelCompanyStoreCheckReport->useStatus = $useStatus;
+        $modelCompanyStoreCheckReport->reportImage = $reportImage;
+        $modelCompanyStoreCheckReport->reportNumber = $reportNumber + 1;
         $modelCompanyStoreCheckReport->reportDate = $hFunction->carbonNow();
         $modelCompanyStoreCheckReport->confirmStatus = $confirmStatus;
         $modelCompanyStoreCheckReport->confirmNote = $confirmNote;
@@ -44,6 +55,63 @@ class QcCompanyStoreCheckReport extends Model
     {
         return (empty($id)) ? $this->detailId() : $id;
     }
+
+    # hinh anh
+    public function rootPathFullImage()
+    {
+        return 'public/images/company-store-check-report/full';
+    }
+
+    public function rootPathSmallImage()
+    {
+        return 'public/images/company-store-check-report/small';
+    }
+
+    # xóa 1 hình ảnh
+    public function deleteReportImage($reportId = null)
+    {
+        $imageName = $this->reportImage($reportId)[0];
+        if (QcCompanyStoreCheckReport::where('report_id', $reportId)->update(['reportImage' => null])) {
+            $this->dropReportImage($imageName);
+        }
+    }
+
+    //upload image
+    public function uploadImage($source_img, $imageName, $resize = 500)
+    {
+        $hFunction = new \Hfunction();
+        $pathSmallImage = $this->rootPathSmallImage();
+        $pathFullImage = $this->rootPathFullImage();
+        if (!is_dir($pathFullImage)) mkdir($pathFullImage);
+        if (!is_dir($pathSmallImage)) mkdir($pathSmallImage);
+        return $hFunction->uploadSaveByFileName($source_img, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $resize);
+    }
+
+    //drop image
+    public function dropReportImage($imageName)
+    {
+        unlink($this->rootPathSmallImage() . '/' . $imageName);
+        unlink($this->rootPathFullImage() . '/' . $imageName);
+    }
+
+    // get path image
+    public function pathSmallImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathSmallImage() . '/' . $image);
+        }
+    }
+
+    public function pathFullImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathFullImage() . '/' . $image);
+        }
+    }
     //========== ========= =========  CAC MOI QUAN HE ========== ========= ==========
     //Kho
     public function companyStore()
@@ -51,7 +119,19 @@ class QcCompanyStoreCheckReport extends Model
         return $this->belongsTo('App\Models\Ad3d\CompanyStore\QcCompanyStore', 'store_id', 'store_id');
     }
 
-    # lay thong tin bao cao sau cung cua dung cu trong kho
+    # lay thong tin bao cao sau cung co hinh anh trong sanh sach cua trươc 1 bao cao nhan vao cua 1 do nghe trong kho
+    public function lastInfoHasImageOfPreviousReportAndCompanyStore($reportId, $storeId)
+    {
+        return QcCompanyStoreCheckReport::where('report_id', '<', $reportId)->whereNotNull('reportImage')->where('store_id', $storeId)->orderBy('report_id', 'DESC')->first();
+    }
+
+    # lay thong tin bao cao sau cun co hinh anh cua 1 do nghe
+    public function lastInfoOfCompanyStoreHasImage($storeId)
+    {
+        return QcCompanyStoreCheckReport::where('store_id', $storeId)->whereNotNull('reportImage')->orderBy('report_id', 'DESC')->first();
+    }
+
+    # lay thong tin bao cao sau cung cua 1 do nghe trong kho trong kho
     public function lastInfoOfCompanyStore($storeId)
     {
         return QcCompanyStoreCheckReport::where('store_id', $storeId)->orderBy('report_id', 'DESC')->first();
@@ -140,12 +220,24 @@ class QcCompanyStoreCheckReport extends Model
         if ($useStatus == 1) {
             return 'Có - dùng được';
         } elseif ($useStatus == 2) {
-            return 'Có - không dùng được';
+            return 'Bị hư';
         } elseif ($useStatus == 3) {
-            return 'Không có';
+            return 'Mất';
         } else {
             return null;
         }
+    }
+
+
+    public function reportImage($reportId = null)
+    {
+        return $this->pluck('reportImage', $reportId);
+    }
+
+
+    public function reportNumber($reportId = null)
+    {
+        return $this->pluck('reportNumber', $reportId);
     }
 
     public function reportDate($reportId = null)

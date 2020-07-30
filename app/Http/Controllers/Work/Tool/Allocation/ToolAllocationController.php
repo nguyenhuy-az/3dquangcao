@@ -70,7 +70,7 @@ class ToolAllocationController extends Controller
             $txtReturnImage = Request::file('txtReturnImage_' . $detailId);
             if (!empty($txtReturnImage)) {
                 $name_img = stripslashes($_FILES['txtReturnImage_' . $detailId]['name']);
-                $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+                $name_img = $detailId."_".$hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
                 $source_img = $_FILES['txtReturnImage_' . $detailId]['tmp_name'];
                 # up anh do nghe
                 if ($modelToolReturn->uploadImage($source_img, $name_img, 500)) {
