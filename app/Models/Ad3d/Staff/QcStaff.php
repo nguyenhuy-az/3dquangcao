@@ -240,7 +240,11 @@ class QcStaff extends Model
         return QcStaff::where('staff_id', $staffId)->update(['identityCardBack' => $image]);
     }
     //========== ========= ========= mối quan hệ ========== ========= ==========
-
+    //---------- phan hoi phat -----------
+    public function minusMoneyFeedback()
+    {
+        return $this->hasMany('App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback', 'confirmStaff_id', 'staff_id');
+    }
     //---------- thong tin bao cao kiem tra do nghe dung chung -----------
     public function companyStoreCheckReport()
     {
@@ -1418,7 +1422,7 @@ class QcStaff extends Model
     public function checkManageDepartment($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        return $modelCompanyStaffWork->checkCurrentDepartmentManageOfStaff($staffId);
+        return $modelCompanyStaffWork->checkCurrentDepartmentManageOfStaff($this->checkIdNull($staffId));
     }
 
     // kiem tra nv quan ly cap quan ly

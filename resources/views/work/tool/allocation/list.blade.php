@@ -44,10 +44,13 @@ $currentMonth = $hFunction->currentMonth();
                                     $detailDate = $toolAllocationDetail->createdAt();
                                     $allocationId = $toolAllocationDetail->allocationId();
                                     $storeId = $toolAllocationDetail->storeId();
-                                    $storeName = $toolAllocationDetail->companyStore->name();
+                                    $dataCompanyStore = $toolAllocationDetail->companyStore;
+                                    $storeName = $dataCompanyStore->name();
                                     # lay thong tin tra la sau cung
                                     $toolReturn = $toolAllocationDetail->lastInfoOfToolReturn();
                                     $returnStatus = $hFunction->checkCount($toolReturn);
+                                    # lay thong tin giao sau cung
+                                    $dataToolAllocationDetail = $dataCompanyStore->toolAllocationDetailLastInfo();
                                     ?>
                                     <tr class="@if($returnStatus) info @endif">
                                         <td class="text-center" style="padding: 0;">

@@ -85,8 +85,6 @@ class CheckStoreController extends Controller
                             $reportImage = $name_img;
                         }
                     }
-                    //echo "$companyStoreId $reportImage <br/>";
-                    //die();
                     if ($modelCompanyStoreCheckReport->insert($useStatus, $reportImage, $companyStoreId, $txtCompanyCheckId, $confirmStatus, $confirmNote, $confirmDate)) {
                         # cap nhat trang thai su dung neu thay doi
                         if ($useStatus == 2 || $useStatus == 3) $modelCompanyStore->updateUseStatus($companyStoreId, $useStatus);

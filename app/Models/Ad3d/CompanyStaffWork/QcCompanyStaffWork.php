@@ -150,12 +150,12 @@ class QcCompanyStaffWork extends Model
         $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
         $companyLoginId = $dataCompanyStaffWorkLogin->companyId();
         # chua duoc phan cong
-        $checkHourDefault = date('Y-m-d H:i', strtotime('Y-m-d 08:10'));
+        $checkHourDefault = date('Y-m-d H:i', strtotime(date('Y-m-d 08:10')));
         $checkHourCurrent = date('Y-m-d H:i');
         # phan cong kiem tra do nghe duoc duyet sau gio cham cong - (chi phan cho nguoi di lam)
         if ($checkHourDefault < $checkHourCurrent) {
             $checkDate = date('Y-m-d');
-            # kiem tra ngay hien tai duoc phan kiem tra hay chua cua 1  cong cty
+            # kiem tra ngay hien tai duoc phan cong kiem tra hay chua cua 1  cong cty
             if (!$modelCompanyStoreCheck->checkExistDateOfCompany($companyLoginId, $checkDate)) {
                 # lay danh sach lam viec cua bo phan thi cong cap nhan vien
                 $dataStaffWorkConstruction = $this->infoActivityConstructionStaffRankOfCompany($companyLoginId);

@@ -99,12 +99,14 @@ $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
                     ĐỒ NGHỀ
                 </a>
             </div>
-            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.store.allocation.get') !!}">
-                    <i class="glyphicon glyphicon-list-alt" style="font-size: 20px;color: grey;"></i> <br/>
-                    QUẢN LÝ ĐỒ NGHỀ
-                </a>
-            </div>
+            @if($dataStaffLogin->checkManageDepartment())
+                <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <a class="qc-work-panel-icon-link" href="{!! route('qc.work.store.allocation.get') !!}">
+                        <i class="glyphicon glyphicon-list-alt" style="font-size: 20px;color: grey;"></i> <br/>
+                        QUẢN LÝ ĐỒ NGHỀ
+                    </a>
+                </div>
+            @endif
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.product_type_price.get') !!}">
                     <i class="glyphicon glyphicon-list" style="font-size: 20px;color: brown;"></i><br/>

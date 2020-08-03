@@ -11,7 +11,6 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $currentDateCheck = $hFunction->carbonNow();
-$feedbackContent = $dataMinusMoney->feedbackContent();
 ?>
 @extends('components.container.container-6')
 @section('qc_container_content')
@@ -41,7 +40,7 @@ $feedbackContent = $dataMinusMoney->feedbackContent();
                             <label>Nội dung:</label>
                             <i class="glyphicon glyphicon-star" style="color: red;"></i>
                             <input class="txtFeedbackContent form-control" type="text" name="txtFeedbackContent"
-                                   value="{!! $feedbackContent !!}">
+                                   value="">
                         </div>
                     </div>
                     <div class="row" style="padding-top: 5px; margin-bottom: 10px; border-top: 1px solid #d7d7d7;">

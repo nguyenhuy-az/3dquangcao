@@ -20,7 +20,7 @@ $companyId = $dataStaff->companyId();
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-8 col-lg-8">
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <h3>BÀN GIAO LẠI ĐỒ NGHỀ</h3>
+                    <h4 style="color: red;">BÀN GIAO LẠI ĐỒ NGHỀ</h4>
                 </div>
             </div>
             {{-- chi tiêt --}}
@@ -41,6 +41,7 @@ $companyId = $dataStaff->companyId();
                                     @foreach($dataToolAllocationDetail as $toolAllocationDetail)
                                         <?php
                                         $detailId = $toolAllocationDetail->detailId();
+                                        $detailImage = $toolAllocationDetail->image();
                                         $detailDate = $toolAllocationDetail->createdAt();
                                         $allocationId = $toolAllocationDetail->allocationId();
                                         $storeId = $toolAllocationDetail->storeId();
@@ -59,7 +60,27 @@ $companyId = $dataStaff->companyId();
                                                 {!!  $storeName !!}
                                             </td>
                                             <td>
-                                                Ảnh được giao
+                                                @if ($hFunction->checkEmpty($detailImage))
+                                                    {{--giao lan dau--}}
+                                                    {{--lay thong tin hinh anh nhap kho--}}
+                                                    <?php
+                                                    $dataImport = $toolAllocationDetail->companyStore->import;
+                                                    $dataImportImage = $dataImport->importImageInfoOfImport();
+                                                    ?>
+                                                    @if($hFunction->checkCount($dataImportImage))
+                                                        @foreach($dataImportImage as $importImage)
+                                                            <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                                <a class="qc_view_image_get qc-link"
+                                                                   data-href="{!! route('qc.work.tool.allocation.import_image.get',$importImage->imageId()) !!}">
+                                                                    <img style="max-width: 100%; max-height: 100%;"
+                                                                         src="{!! $importImage->pathFullImage($importImage->name()) !!}">
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+                                                @else
+                                                    Ảnh bàn giao
+                                                @endif
                                             </td>
                                             <td>
                                                 <div class="form-group" style="margin: 0;">

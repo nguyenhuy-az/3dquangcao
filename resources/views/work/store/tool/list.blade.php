@@ -15,6 +15,7 @@ $loginStaffId = $dataStaff->staffId();
 //$companyId = $dataCompany->companyId();
 $hrefIndex = route('qc.work.store.tool.get');
 $currentMonth = $hFunction->currentMonth();
+//$dataToolAllocationDetail = null;
 ?>
 @extends('work.store.tool.index')
 @section('qc_work_store_tool_body')
@@ -27,7 +28,8 @@ $currentMonth = $hFunction->currentMonth();
                         <table class="table table-hover table-bordered">
                             <tr>
                                 <td style="padding: 0" colspan="5">
-                                    <select class="cbToolTypeFilter form-control" name="cbToolTypeFilter" data-href="{!! $hrefIndex !!}">
+                                    <select class="cbToolTypeFilter form-control" name="cbToolTypeFilter"
+                                            data-href="{!! $hrefIndex !!}">
                                         <option value="1" @if($typeFilter == 1) selected="selected" @endif>
                                             Dùng chung
                                         </option>
@@ -82,8 +84,6 @@ $currentMonth = $hFunction->currentMonth();
                                     # thong tin nhap kho
                                     $dataImport = $companyStore->import;
                                     $dataImportImage = $dataImport->importImageInfoOfImport();
-                                    # lay thong tin giao sau cung
-                                    $dataToolAllocationDetail = $companyStore->toolAllocationDetailLastInfo();
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
                                         <td class="text-center">
@@ -96,6 +96,10 @@ $currentMonth = $hFunction->currentMonth();
                                             {{--dung cu cap phat nhan vien--}}
                                             @if($dataTool->checkPrivateType())
                                                 {{--co cap phat--}}
+                                                <?php
+                                                # lay thong tin giao sau cung
+                                                $dataToolAllocationDetail = $companyStore->toolAllocationDetailLastInfo();
+                                                ?>
                                                 @if($hFunction->checkCount($dataToolAllocationDetail))
                                                     <?php
                                                     $detailImage = $dataToolAllocationDetail->image();
@@ -111,21 +115,16 @@ $currentMonth = $hFunction->currentMonth();
                                                             </a>
                                                         </div>
                                                     @else
-
-                                                        @if (!$hFunction->checkEmpty($detailImage))
-                                                            {{--anh giao lan > 2--}}
-                                                        @else
-                                                            @if($hFunction->checkCount($dataImportImage))
-                                                                @foreach($dataImportImage as $importImage)
-                                                                    <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
-                                                                        <a class="qc_view_image_get qc-link"
-                                                                           data-href="{!! route('qc.work.store.tool.import_image.get',$importImage->imageId()) !!}">
-                                                                            <img style="max-width: 100%; max-height: 100%;"
-                                                                                 src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                                                        </a>
-                                                                    </div>
-                                                                @endforeach
-                                                            @endif
+                                                        @if($hFunction->checkCount($dataImportImage))
+                                                            @foreach($dataImportImage as $importImage)
+                                                                <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                                    <a class="qc_view_image_get qc-link"
+                                                                       data-href="{!! route('qc.work.store.tool.import_image.get',$importImage->imageId()) !!}">
+                                                                        <img style="max-width: 100%; max-height: 100%;"
+                                                                             src="{!! $importImage->pathFullImage($importImage->name()) !!}">
+                                                                    </a>
+                                                                </div>
+                                                            @endforeach
                                                         @endif
                                                     @endif
 
@@ -161,15 +160,17 @@ $currentMonth = $hFunction->currentMonth();
                                             {!! $companyStore->labelUseStatus() !!}
                                         </td>
                                         <td class="text-center">
-                                            @if($hFunction->checkCount($dataToolAllocationDetail))
-                                                {{--con dang giao--}}
-                                                @if($dataToolAllocationDetail->checkActivity())
-                                                    {!! $dataToolAllocationDetail->toolAllocation->companyStaffWork->staff->fullName() !!}
+                                            @if($dataTool->checkPrivateType())
+                                                @if($hFunction->checkCount($dataToolAllocationDetail))
+                                                    {{--con dang giao--}}
+                                                    @if($dataToolAllocationDetail->checkActivity())
+                                                        {!! $dataToolAllocationDetail->toolAllocation->companyStaffWork->staff->fullName() !!}
+                                                    @else
+                                                        <span>---</span>
+                                                    @endif
                                                 @else
                                                     <span>---</span>
                                                 @endif
-                                            @else
-                                                <span>---</span>
                                             @endif
                                         </td>
                                     </tr>

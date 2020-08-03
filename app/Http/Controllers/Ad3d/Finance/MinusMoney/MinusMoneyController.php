@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ad3d\Finance\MinusMoney;
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
+use App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\Staff\QcStaff;
@@ -106,11 +107,11 @@ class MinusMoneyController extends Controller
     }
 
     # xem anh phan hoi
-    public function viewImage($minusId)
+    public function viewImage($feedbackId)
     {
-        $modelMinusMoney = new QcMinusMoney();
-        $dataMinusMoney = $modelMinusMoney->getInfo($minusId);
-        return view('ad3d.finance.minus-money.view-image', compact('dataMinusMoney'));
+        $modelMinusMoneyFeedback = new QcMinusMoneyFeedback();
+        $dataMinusMoneyFeedback = $modelMinusMoneyFeedback->getInfo($feedbackId);
+        return view('ad3d.finance.minus-money.view-image', compact('dataMinusMoneyFeedback'));
     }
 
     /*public function getAdd($companyLoginId = null, $workId = null, $punishId = null)

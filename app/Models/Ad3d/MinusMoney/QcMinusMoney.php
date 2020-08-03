@@ -4,6 +4,7 @@ namespace App\Models\Ad3d\MinusMoney;
 
 use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport;
+use App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcMinusMoney extends Model
 {
     protected $table = 'qc_minus_money';
-    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'feedbackContent', 'feedbackImage', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id', 'orderConstruction_id', 'companyStoreCheckReport_id'];
+    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id', 'orderConstruction_id', 'companyStoreCheckReport_id'];
     protected $primaryKey = 'minus_id';
     public $timestamps = false;
     private $lastId;
@@ -46,7 +47,7 @@ class QcMinusMoney extends Model
             }
 
         }
-        $modelMinusMoney->money = (is_int($money))?$money:$money[0];
+        $modelMinusMoney->money = (is_int($money)) ? $money : $money[0];
         $modelMinusMoney->dateMinus = $dateMinus;
         $modelMinusMoney->reason = $reason;
         $modelMinusMoney->applyStatus = $applyStatus;
@@ -76,20 +77,6 @@ class QcMinusMoney extends Model
         return (empty($minusId)) ? $this->minusId() : $minusId;
     }
 
-    # cap nhat phan hoi
-    public function updateFeedback($minusId, $feedbackContent, $feedbackImage)
-    {
-        return QcMinusMoney::where('minus_id', $minusId)->update(['feedbackContent' => $feedbackContent, 'feedbackImage' => $feedbackImage]);
-    }
-
-    public function cancelFeedback($minusId = null)
-    {
-        $feedbackImage = $this->feedbackImage($this->checkNullId($minusId))[0];
-        QcMinusMoney::where('minus_id', $minusId)->update(['feedbackContent' => null, 'feedbackImage' => null]);
-        if (!empty($feedbackImage)) {
-            $this->dropImage($feedbackImage);
-        }
-    }
 
     public function updateInfo($minusId, $money, $datePay, $reason, $punishId)
     {
@@ -107,61 +94,16 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->delete();
     }
 
-    # hinh anh
-    public function rootPathFullImage()
+    //---------- phan hoi phat -----------
+    public function minusMoneyFeedback()
     {
-        return 'public/images/minus-money/full';
+        return $this->hasOne('App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback', 'minus_id', 'minus_id');
     }
 
-    public function rootPathSmallImage()
+    public function infoMinusMoneyFeedback($minusId = null)
     {
-        return 'public/images/minus-money/small';
-    }
-
-    # xóa 1 hình ảnh
-    public function deleteImage($minusId = null)
-    {
-        $imageName = $this->feedbackImage($minusId)[0];
-        if (QcMinusMoney::where('minus_id', $minusId)->update(['image' => null])) {
-            $this->dropImage($imageName);
-        }
-    }
-
-    //upload image
-    public function uploadImage($source_img, $imageName, $resize = 500)
-    {
-        $hFunction = new \Hfunction();
-        $pathSmallImage = $this->rootPathSmallImage();
-        $pathFullImage = $this->rootPathFullImage();
-        if (!is_dir($pathFullImage)) mkdir($pathFullImage);
-        if (!is_dir($pathSmallImage)) mkdir($pathSmallImage);
-        return $hFunction->uploadSaveByFileName($source_img, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $resize);
-    }
-
-    //drop image
-    public function dropImage($imageName)
-    {
-        if (file_exists($this->rootPathSmallImage() . '/' . $imageName)) unlink($this->rootPathSmallImage() . '/' . $imageName);
-        if (file_exists($this->rootPathFullImage() . '/' . $imageName)) unlink($this->rootPathFullImage() . '/' . $imageName);
-    }
-
-    // get path image
-    public function pathSmallImage($image)
-    {
-        if (empty($image)) {
-            return null;
-        } else {
-            return asset($this->rootPathSmallImage() . '/' . $image);
-        }
-    }
-
-    public function pathFullImage($image)
-    {
-        if (empty($image)) {
-            return null;
-        } else {
-            return asset($this->rootPathFullImage() . '/' . $image);
-        }
+        $modelMinusMoneyFeedback = new QcMinusMoneyFeedback();
+        return $modelMinusMoneyFeedback->infoOfMinusMoney($this->checkNullId($minusId));
     }
 
     //---------- nhân viên -----------
@@ -268,6 +210,18 @@ class QcMinusMoney extends Model
         return $this->belongsTo('App\Models\Ad3d\PunishContent\QcPunishContent', 'punish_id', 'punish_id');
     }
 
+    # kiem tra phat mat do nghe
+    public function checkMinusMoneyLostTool($minusId = null)
+    {
+        $modelPunishContent = new QcPunishContent();
+        # ma ap dung phat trong he thong - phat mat do nghe
+        $systemPunishId = $modelPunishContent->getPunishIdLostPublicTool();
+        $systemPunishId = (is_int($systemPunishId)) ? $systemPunishId : $systemPunishId[0];
+        $checkPunishId = $this->punishId($minusId);
+        $checkPunishId = (is_int($checkPunishId)) ? $checkPunishId : $checkPunishId[0];
+        return ($systemPunishId == $checkPunishId) ? true : false;
+    }
+
     #============ =========== ============ GET INFO ============= =========== ==========
     public function selectInfoHasFilter($listWorkId, $punishId, $dateFilter)
     {
@@ -328,16 +282,6 @@ class QcMinusMoney extends Model
     public function reason($minusId = null)
     {
         return $this->pluck('reason', $minusId);
-    }
-
-    public function feedbackContent($minusId = null)
-    {
-        return $this->pluck('feedbackContent', $minusId);
-    }
-
-    public function feedbackImage($minusId = null)
-    {
-        return $this->pluck('feedbackImage', $minusId);
     }
 
     public function applyStatus($minusId = null)

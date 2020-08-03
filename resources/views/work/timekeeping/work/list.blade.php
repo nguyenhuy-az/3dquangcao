@@ -349,7 +349,8 @@ if ($hFunction->checkCount($dataWork)) {
                                                     <b>h</b> {!! $sumPlusMinute%60 !!})
                                                 </td>
                                                 <td class="text-right">
-                                                    <b> + {!! $hFunction->currencyFormat($totalMoneyOvertimeHour) !!}</b>
+                                                    <b>
+                                                        + {!! $hFunction->currencyFormat($totalMoneyOvertimeHour) !!}</b>
                                                 </td>
                                             </tr>
                                             <tr style="color: brown;">
@@ -366,7 +367,8 @@ if ($hFunction->checkCount($dataWork)) {
                                                     <em class="qc-color-grey">Ứng:</em>
                                                 </td>
                                                 <td class="text-right">
-                                                    <a class="qc-link" href="{!! route('qc.work.salary.before_pay.get') !!}" >
+                                                    <a class="qc-link"
+                                                       href="{!! route('qc.work.salary.before_pay.get') !!}">
                                                         - {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}
                                                     </a>
                                                 </td>
@@ -459,9 +461,12 @@ if ($hFunction->checkCount($dataWork)) {
                                             </td>
                                             <td>
                                                 @if(!empty($timekeepingConfirmNote))
+                                                    DUYỆT:
                                                     <em class="qc-color-grey"> {!! $timekeepingConfirmNote !!}</em>
-                                                @else
-                                                    <em class="qc-color-grey"> {!! $timekeepingNote !!}</em>
+                                                @endif
+                                                @if(!empty($timekeepingNote))
+                                                    <br/>
+                                                    BÁO GIỜ: <em class="qc-color-grey"> {!! $timekeepingNote !!}</em>
                                                 @endif
 
                                             </td>

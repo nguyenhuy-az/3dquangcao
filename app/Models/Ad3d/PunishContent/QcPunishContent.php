@@ -238,7 +238,7 @@ class QcPunishContent extends Model
     # thi cong khong dem do nghe
     public function getPunishIdNotBringTool()
     {
-        return $this->getPunishIdByCode('TCKMDN');
+        return $this->getPunishIdByCode('TCKMĐN');
     }
 
     # lam mat đo nghe

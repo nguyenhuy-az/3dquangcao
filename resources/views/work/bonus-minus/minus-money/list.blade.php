@@ -74,8 +74,6 @@ $checkTime = date('m-Y');
                                     <?php
                                     $minusId = $minusMoney->minusId();
                                     $dateMinus = $minusMoney->dateMinus();
-                                    $feedbackContent = $minusMoney->feedbackContent();
-                                    $feedbackImage = $minusMoney->feedbackImage();
                                     $orderAllocationId = $minusMoney->orderAllocationId();
                                     $orderConstructionId = $minusMoney->orderConstructionId();
                                     $reason = $minusMoney->reason();
@@ -88,6 +86,8 @@ $checkTime = date('m-Y');
                                     $totalMoney = $totalMoney + $money;
                                     # trang thai co hieu luc the / sua /xoa cua phan hoi
                                     $actionStatus = ($checkTime == date('m-Y', strtotime($dateMinus))) ? true : false;
+                                    # thong tin phan
+                                    $dataMinusMoneyFeedback = $minusMoney->infoMinusMoneyFeedback();
                                     ?>
                                     <tr @if($n_o%2) class="info" @endif>
                                         <td class="text-center">
@@ -119,32 +119,39 @@ $checkTime = date('m-Y');
                                             @endif
                                         </td>
                                         <td>
-
-                                            @if($hFunction->checkEmpty($feedbackContent))
+                                            {{--co phan hoi--}}
+                                            @if($hFunction->checkCount($dataMinusMoneyFeedback))
+                                                <?php
+                                                $feedbackId = $dataMinusMoneyFeedback->feedbackId();
+                                                $feedbackContent = $dataMinusMoneyFeedback->content();
+                                                $feedbackImage = $dataMinusMoneyFeedback->image();
+                                                ?>
+                                                <span>{!! $feedbackContent !!}</span>
+                                                @if(!$hFunction->checkEmpty($feedbackImage))
+                                                    <br/>
+                                                    <a class="qc_view_image qc-link"
+                                                       data-href="{!! route('qc.work.minus_money.feedback.view_image.get',$feedbackId) !!}">
+                                                        <img style="height: 70px;" alt="..."
+                                                             src="{!! $dataMinusMoneyFeedback->pathSmallImage($feedbackImage) !!}">
+                                                    </a>
+                                                @endif
+                                                @if($actionStatus && !$dataMinusMoneyFeedback->checkConfirm())
+                                                    <br/><br/>
+                                                    <a class="qc_minus_money_feedback_cancel qc-link-green-bold"
+                                                       title="Xóa phản hồi"
+                                                       data-href="{!! route('qc.work.minus_money.feedback.cancel',$feedbackId) !!}">
+                                                        <i class="qc-font-size-16 glyphicon glyphicon-trash"
+                                                           style="color: red;"></i>
+                                                    </a>
+                                                @endif
+                                            @else
                                                 @if($actionStatus)
                                                     <a class="qc_minus_money_feedback qc-link-green-bold"
                                                        data-href="{!! route('qc.work.minus_money.feedback.get',$minusId) !!}">
                                                         Gửi phản hồi
                                                     </a>
-                                                @endif
-                                            @else
-                                                <span>{!! $feedbackContent !!}</span>
-                                                @if(!$hFunction->checkEmpty($feedbackImage))
-                                                    <br/>
-                                                    <a class="qc_view_image qc-link"
-                                                       data-href="{!! route('qc.work.minus_money.feedback.view_image.get',$minusId) !!}">
-                                                        <img style="height: 70px;" alt="..."
-                                                             src="{!! $minusMoney->pathSmallImage($feedbackImage) !!}">
-                                                    </a>
-                                                @endif
-                                                @if($actionStatus)
-                                                    <br/><br/>
-                                                    <a class="qc_minus_money_feedback_cancel qc-link-green-bold"
-                                                       title="Xóa phản hồi"
-                                                       data-href="{!! route('qc.work.minus_money.feedback.cancel',$minusId) !!}">
-                                                        <i class="qc-font-size-16 glyphicon glyphicon-trash"
-                                                           style="color: red;"></i>
-                                                    </a>
+                                                @else
+                                                    <em>Hêt hạn</em>
                                                 @endif
                                             @endif
                                         </td>

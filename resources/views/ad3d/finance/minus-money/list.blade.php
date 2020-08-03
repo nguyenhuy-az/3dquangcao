@@ -151,8 +151,6 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                 <?php
                                 $minusId = $minusMoney->minusId();
                                 $reason = $minusMoney->reason();
-                                $feedbackContent = $minusMoney->feedbackContent();
-                                $feedbackImage = $minusMoney->feedbackImage();
                                 $orderAllocationId = $minusMoney->orderAllocationId();
                                 $orderConstructionId = $minusMoney->orderConstructionId();
                                 $cancelStatus = $minusMoney->checkCancelStatus();
@@ -162,8 +160,10 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                     $money = $minusMoney->money();
                                 }
                                 $dataWork = $minusMoney->work;
+                                # thong tin phan
+                                $dataMinusMoneyFeedback = $minusMoney->infoMinusMoneyFeedback();
                                 ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"  data-object="{!! $minusId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $minusId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
@@ -174,7 +174,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                             {!! $dataWork->staff->fullName() !!}
                                         @endif
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         {!! date('d/m/Y', strtotime($minusMoney->dateMinus())) !!}
                                     </td>
                                     <td>
@@ -198,15 +198,32 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                         @endif
                                     </td>
                                     <td>
-                                        @if(!$hFunction->checkEmpty($feedbackContent))
+                                        {{--co phan hoi--}}
+                                        @if($hFunction->checkCount($dataMinusMoneyFeedback))
+                                            <?php
+                                            $feedbackId = $dataMinusMoneyFeedback->feedbackId();
+                                            $feedbackContent = $dataMinusMoneyFeedback->content();
+                                            $feedbackImage = $dataMinusMoneyFeedback->image();
+                                            ?>
                                             <span>{!! $feedbackContent !!}</span>
                                             @if(!$hFunction->checkEmpty($feedbackImage))
                                                 <br/>
                                                 <a class="qc_view_image qc-link"
-                                                   data-href="{!! route('qc.ad3d.finance.minus-money.view_image.get',$minusId) !!}">
+                                                   data-href="{!! route('qc.ad3d.finance.minus-money.view_image.get',$feedbackId) !!}">
                                                     <img style="height: 70px;" alt="..."
-                                                         src="{!! $minusMoney->pathSmallImage($feedbackImage) !!}">
+                                                         src="{!! $dataMinusMoneyFeedback->pathSmallImage($feedbackImage) !!}">
                                                 </a>
+                                            @endif
+                                            {{--chi duyet phan hoi bao mat do nghe--}}
+                                            @if($minusMoney->checkMinusMoneyLostTool())
+                                                @if(!$dataMinusMoneyFeedback->checkConfirm())
+                                                    <br/><br/>
+                                                    <a class="qc_minus_money_feedback_cancel qc-link-green-bold"
+                                                       title="Xác nhận phản hồi"
+                                                       data-href="{!! route('qc.work.minus_money.feedback.cancel',$feedbackId) !!}">
+                                                        Xác nhận
+                                                    </a>
+                                                @endif
                                             @endif
                                         @endif
                                     </td>

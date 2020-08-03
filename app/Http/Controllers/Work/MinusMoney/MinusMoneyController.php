@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Work\MinusMoney;
 
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
+use App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\Work\QcWork;
@@ -84,7 +85,7 @@ class MinusMoneyController extends Controller
     public function postFeedback()
     {
         $hFunction = new \Hfunction();
-        $modelMinusMoney = new QcMinusMoney();
+        $modelMinusMoneyFeedback = new QcMinusMoneyFeedback();
         $txtMinusId = Request::input('txtMinusId');
         $txtFeedbackContent = Request::input('txtFeedbackContent');
         $txtFeedbackImage = Request::file('txtFeedbackImage');
@@ -93,21 +94,22 @@ class MinusMoneyController extends Controller
             $name_img = stripslashes($_FILES['txtFeedbackImage']['name']);
             $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtFeedbackImage']['tmp_name'];
-            if (!$modelMinusMoney->uploadImage($source_img, $name_img, 500)) {
+            if (!$modelMinusMoneyFeedback->uploadImage($source_img, $name_img, 500)) {
                 $name_img = null;
             }
         } else {
             $name_img = null;
         }
-        $modelMinusMoney->updateFeedback($txtMinusId, $txtFeedbackContent, $name_img);
+        $modelMinusMoneyFeedback->insert($txtFeedbackContent, $name_img, $txtMinusId);
+        //$modelMinusMoney->updateFeedback($txtMinusId, $txtFeedbackContent, $name_img);
 
     }
 
     # huy phan hoi
-    public function cancelFeedback($minusMoneyId)
+    public function cancelFeedback($feedbackId)
     {
-        $modelMinusMoney = new QcMinusMoney();
-        $modelMinusMoney->cancelFeedback($minusMoneyId);
+        $modelMinusMoneyFeedback = new QcMinusMoneyFeedback();
+        $modelMinusMoneyFeedback->deleteFeedback($feedbackId);
     }
 
 }

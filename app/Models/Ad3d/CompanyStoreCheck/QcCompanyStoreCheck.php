@@ -80,7 +80,7 @@ class QcCompanyStoreCheck extends Model
                         $confirmNote = 'Xác nhận tự động';
                         $confirmDate = $hFunction->carbonNow();
                         # them bao cao
-                        $modelCompanyStoreCheckReport->insert($useStatus, $storeId, $checkId, $confirmStatus, $confirmNote, $confirmDate);
+                        $modelCompanyStoreCheckReport->insert($useStatus,null, $storeId, $checkId, $confirmStatus, $confirmNote, $confirmDate);
                     }
                 }
             }
