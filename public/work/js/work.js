@@ -68,27 +68,6 @@ var qc_work = {
         }
     },
     pay: {
-        activity: {
-            saveAdd: function (frm) {
-                var cbPayActivityList = $(frm).find("select[name='cbPayActivityList']");
-                var txtMoney = $(frm).find("input[name='txtMoney']");
-                if (qc_main.check.inputNull(cbPayActivityList, 'Chọn danh muc chi')) {
-                    $(cbPayActivityList).focus();
-                    return false;
-                }
-                if (qc_main.check.inputNull(txtMoney, 'Nhận số tiền')) {
-                    $(txtMoney).focus();
-                    return false;
-                } else {
-                    qc_master_submit.ajaxFormHasReload(frm, '', false);
-                }
-            },
-            delete: function (href) {
-                if (confirm('Bạn muốn ủy hóa đơn này?')) {
-                    qc_master_submit.ajaxHasReload(href, '', false);
-                }
-            }
-        },
         salary: {
             filter: function (href) {
                 qc_main.url_replace(href);
@@ -166,18 +145,6 @@ $(document).ready(function () {
 });
 
 //===================== CHI ===========================
-//chi hoat dong
-$(document).ready(function () {
-    // them thong tin chi
-    $('#frm_work_pay_activity_add').on('click', '.qc_save', function () {
-        qc_work.pay.activity.saveAdd($(this).parents('#frm_work_pay_activity_add'));
-    });
-
-    // xóa
-    $('.qc_work_pay_activity_wrap').on('click', '.qc_delete', function () {
-        qc_work.pay.activity.delete($(this).data('href'));
-    });
-});
 // thanh toan lương
 $(document).ready(function () {
     //theo tháng

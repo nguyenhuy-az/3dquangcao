@@ -412,7 +412,7 @@ class OrdersController extends Controller
             $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
         }
 
-        if (count($dataCustomer) > 0) {
+        if ($hFunction->checkCount($dataCustomer)) {
             # ton tai khach hang - khach hang cu
             $customerId = $dataCustomer->customerId();
             $customerName = $dataCustomer->name();
@@ -470,6 +470,7 @@ class OrdersController extends Controller
                 if ($txtBeforePay > 0) {
                     # thanh toan don hang
                     if ($modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone)) {
+                        # xet thuong
                         $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
                     }
                 }

@@ -39,6 +39,7 @@ $currentMonth = $hFunction->currentMonth();
                             @if($hFunction->checkCount($dataToolAllocationDetail))
                                 @foreach($dataToolAllocationDetail as $toolAllocationDetail)
                                     <?php
+                                    $n_o = (isset($n_o)) ? $n_o + 1 : 1;
                                     $detailId = $toolAllocationDetail->detailId();
                                     $detailImage = $toolAllocationDetail->image();
                                     $detailDate = $toolAllocationDetail->createdAt();
@@ -53,12 +54,8 @@ $currentMonth = $hFunction->currentMonth();
                                     $dataToolAllocationDetail = $dataCompanyStore->toolAllocationDetailLastInfo();
                                     ?>
                                     <tr class="@if($returnStatus) info @endif">
-                                        <td class="text-center" style="padding: 0;">
-                                            <div class="form-group" style="margin: 0;">
-                                                <input type="checkbox" class="form-control" disabled
-                                                       name="txtAllocationDetail[]" style="margin: 0;"
-                                                       checked="checked">
-                                            </div>
+                                        <td class="text-center">
+                                            {!! $n_o !!}
                                         </td>
                                         <td>
                                             {!!  $storeName !!}
@@ -67,27 +64,11 @@ $currentMonth = $hFunction->currentMonth();
                                             {!! $hFunction->convertDateDMYFromDatetime($detailDate) !!}
                                         </td>
                                         <td>
-                                            @if ($hFunction->checkEmpty($detailImage))
-                                                {{--giao lan dau--}}
-                                                {{--lay thong tin hinh anh nhap kho--}}
-                                                <?php
-                                                $dataImport = $toolAllocationDetail->companyStore->import;
-                                                $dataImportImage = $dataImport->importImageInfoOfImport();
-                                                ?>
-                                                @if($hFunction->checkCount($dataImportImage))
-                                                    @foreach($dataImportImage as $importImage)
-                                                        <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
-                                                            <a class="qc_view_image_get qc-link"
-                                                               data-href="{!! route('qc.work.tool.allocation.import_image.get',$importImage->imageId()) !!}">
-                                                                <img style="max-width: 100%; max-height: 100%;"
-                                                                     src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                                            </a>
-                                                        </div>
-                                                    @endforeach
-                                                @endif
-                                            @else
-                                                Ảnh bàn giao
-                                            @endif
+                                            <a class="qc_view_image_get qc-link"
+                                               data-href="{!! route('qc.work.tool.allocation.image.view',$detailId) !!}">
+                                                <img style="width: 70px; height: auto;"
+                                                     src="{!! $toolAllocationDetail->pathFullImage($detailImage) !!}">
+                                            </a>
                                         </td>
                                         <td class="text-center">
                                             @if($toolAllocationDetail->checkNewStatus())
@@ -110,7 +91,8 @@ $currentMonth = $hFunction->currentMonth();
                                                             Được chấp nhận
                                                         </em>
                                                     @else
-                                                        <em style="background-color: red; color: yellow;">Không được chấp nhận</em>
+                                                        <em style="background-color: red; color: yellow;">Không được
+                                                            chấp nhận</em>
                                                     @endif
                                                 @else
                                                     <em style="background-color: blue; color: white;">Chờ Xác nhận</em>

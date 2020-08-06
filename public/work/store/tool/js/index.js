@@ -5,30 +5,37 @@ var qc_work_store_tool = {
     viewImage: function (href) {
         qc_master_submit.ajaxNotReload(href, '#qc_master', false);
     },
-    /*return: {
+    allocationByList: {
         save: function (frm) {
-            if (qc_work_store_tool.return.checkSelectTool()) {
-                if (confirm('Tôi đồng ý giao lại các đồ nghề này?')) {
-                    qc_master_submit.normalForm('#frmWorkToolPrivateReturn');
-                    qc_main.scrollTop();
-                }
-            } else {
-                alert('Phải chọn đồ nghề để bàn giao');
-                return false;
+            if (confirm('Bạn đồng ý với thông tin phát đồ nghề này')) {
+                qc_master_submit.ajaxFormHasReload(frm, '', false);
             }
-
-            return false;
-        },
-        checkSelectTool: function () {
-            var checkStatus = false;
-            $('#frmWorkToolPrivateReturn .txtReturnStore').filter(function () {
-                if ($(this).is(':checked')) {
-                    checkStatus = true;
-                }
-            });
-            return checkStatus;
         }
-    }*/
+    }
+    /*return: {
+     save: function (frm) {
+     if (qc_work_store_tool.return.checkSelectTool()) {
+     if (confirm('Tôi đồng ý giao lại các đồ nghề này?')) {
+     qc_master_submit.normalForm('#frmWorkToolPrivateReturn');
+     qc_main.scrollTop();
+     }
+     } else {
+     alert('Phải chọn đồ nghề để bàn giao');
+     return false;
+     }
+
+     return false;
+     },
+     checkSelectTool: function () {
+     var checkStatus = false;
+     $('#frmWorkToolPrivateReturn .txtReturnStore').filter(function () {
+     if ($(this).is(':checked')) {
+     checkStatus = true;
+     }
+     });
+     return checkStatus;
+     }
+     }*/
 }
 
 $(document).ready(function () {
@@ -44,5 +51,14 @@ $(document).ready(function () {
     // xem anh do nghe
     $('.qc_work_store_tool_wrap').on('click', '.qc_view_image_get', function () {
         qc_work_store_tool.viewImage($(this).data('href'));
+    });
+});
+//----------- --------- BAN GIAO DO NGHE THEO DANH SACH ----------- ---------
+$(document).ready(function () {
+    $('#frmWorkToolAllocationAddList').on('change', '.cbCompanyStaffWork', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $(this).val());
+    });
+    $('#frmWorkToolAllocationAddList').on('click', '.qc_save', function () {
+        qc_work_store_tool.allocationByList.save($(this).parents('#frmWorkToolAllocationAddList'));
     });
 });

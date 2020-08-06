@@ -27,7 +27,9 @@ $currentMonth = $hFunction->currentMonth();
                                 <th style="width: 20px;"></th>
                                 <th>Hóa đơn</th>
                                 <th style="width: 190px;">Ngày chi</th>
-                                <th></th>
+                                <th style="width: 300px;">
+                                    Vật tư / Dụng cụ
+                                </th>
                                 <th class="text-center">Thanh toán</th>
                                 <th class="text-center">Duyệt</th>
                                 <th>Chi chú duyệt</th>

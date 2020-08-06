@@ -83,7 +83,7 @@ class QcToolAllocation extends Model
     public function infoActivityOfListWork($listWorkId)
     {
 
-        return QcToolAllocation::whereIn('work_id', $listWorkId)->where('action',1)->orderBy('allocationDate', 'DESC')->get();
+        return QcToolAllocation::whereIn('work_id', $listWorkId)->where('action', 1)->orderBy('allocationDate', 'DESC')->get();
     }
 
     # danh sach ma ban giao
@@ -127,6 +127,13 @@ class QcToolAllocation extends Model
     {
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         return $modelToolAllocationDetail->infoOfListToolAllocation($listAllocationId);
+    }
+
+    # thong tin ban giao cua loai do nghe  trong bo do nghe duoc giao, dang hoat hoat dong
+    public function infoActivityOfToolAllocationAndTool($allocationId, $toolId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        return $modelToolAllocationDetail->infoActivityOfToolAllocationAndTool($allocationId, $toolId);
     }
 
     #--------- -------------- tra do nghe ------------- -----------

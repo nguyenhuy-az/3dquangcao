@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcMinusMoneyFeedback extends Model
 {
     protected $table = 'qc_minus_money_feedback';
-    protected $fillable = ['feedback_id', 'content', 'image', 'confirmDate', 'confirmStatus', 'created_at', 'minus_id', 'confirmStaff_id'];
+    protected $fillable = ['feedback_id', 'content', 'image', 'confirmDate', 'confirmStatus', 'confirmAccept', 'created_at', 'minus_id', 'confirmStaff_id'];
     protected $primaryKey = 'feedback_id';
     public $timestamps = false;
 
@@ -42,13 +42,14 @@ class QcMinusMoneyFeedback extends Model
     }
 
     // xac nhan chay kpi
-    public function confirmFeedback($feedbackId, $confirmStaffId)
+    public function confirmFeedback($feedbackId, $confirmAccept, $confirmStaffId)
     {
         $hFunction = new \Hfunction();
         return QcMinusMoneyFeedback::where('feedback_id', $feedbackId)->update([
             'confirmStatus' => 1,
             'confirmStaff_id' => $confirmStaffId,
             'confirmDate' => $hFunction->carbonNow(),
+            'confirmAccept' => $confirmAccept,
         ]);
     }
 
@@ -180,6 +181,12 @@ class QcMinusMoneyFeedback extends Model
         return $this->pluck('confirmDate', $feedbackId);
     }
 
+    public function confirmAccept($feedbackId = null)
+    {
+
+        return $this->pluck('confirmAccept', $feedbackId);
+    }
+
     public function action($feedbackId = null)
     {
 
@@ -211,5 +218,10 @@ class QcMinusMoneyFeedback extends Model
     public function checkConfirm($feedbackId = null)
     {
         return ($this->confirmStatus($feedbackId) == 1) ? true : false;
+    }
+
+    public function checkConfirmAccept($feedbackId = null)
+    {
+        return ($this->confirmAccept($feedbackId) == 1) ? true : false;
     }
 }

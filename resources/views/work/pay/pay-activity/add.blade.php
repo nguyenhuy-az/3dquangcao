@@ -14,8 +14,8 @@ $currentDay = (int)date('d');
 $currentMonth = (int)date('m');
 $currentYear = (int)date('Y');
 ?>
-@extends('work.index')
-@section('qc_work_body')
+@extends('work.pay.pay-activity.index')
+@section('qc_work_pay_activity_body')
     <div class="row">
         <div class="qc_work_import_add qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">

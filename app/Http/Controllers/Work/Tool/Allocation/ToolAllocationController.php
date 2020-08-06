@@ -44,18 +44,11 @@ class ToolAllocationController extends Controller
     # ------- -------- tra lai do nghe  -------- --------
     public function getReturn($allocationId, $selectedDetailId = null)
     {
-        //$modelCompanyStore = new QcCompanyStore();
         $modelStaff = new QcStaff();
-        //$modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         $dataAccess = [
             'object' => 'toolAllocation'
         ];
-        //$dataStaffLogin = $modelStaff->loginStaffInfo();
-        # danh sach ma kho
-        //$listStoreId = $modelToolAllocationDetail->listStoreIdOfWork($modelCompanyStaffWork->workIdActivityOfStaff($dataStaffLogin->staffId()));
-        # chi danh sach cong cu da ban giao trong kho
-        //$dataCompanyStore = $modelCompanyStore->getInfoByListId($listStoreId);
         $dataToolAllocationDetail = $modelToolAllocationDetail->getInfoNotReturnOfAllocation($allocationId);
         return view('work.tool.allocation.return', compact('dataAccess', 'modelStaff', 'dataToolAllocationDetail', 'selectedDetailId'));
     }
@@ -83,10 +76,10 @@ class ToolAllocationController extends Controller
 
     }
     # xem anh nhap kho
-    public function viewImportImage($imageId)
+    public function viewImage($detailId)
     {
-        $modelImportImage = new QcImportImage();
-        $dataImportImage = $modelImportImage->getInfo($imageId);
-        return view('work.tool.allocation.view-import-image', compact('modelStaff', 'dataImportImage'));
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $dataToolAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
+        return view('work.tool.allocation.view-image', compact('modelStaff', 'dataToolAllocationDetail'));
     }
 }

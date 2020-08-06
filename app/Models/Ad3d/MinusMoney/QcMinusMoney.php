@@ -43,7 +43,15 @@ class QcMinusMoney extends Model
             } elseif (!empty($orderConstructionId)) { # phat quan ly thi cong
                 $money = (int)$modelOrder->getBonusAndMinusMoneyOfManageRank($orderConstructionId);
             } elseif (!empty($companyStoreCheckReportId)) {
-                $money = $modelCompanyStore->importPrice($modelCompanyStoreCheckReport->storeId($companyStoreCheckReportId));
+                $punishIdLostTool = $modelPunishContent->getPunishIdLostPublicTool();
+                $punishIdLostTool = (is_int($punishIdLostTool)) ? $punishIdLostTool : $punishIdLostTool[0];
+                # phat mat do nghe
+                if ($punishIdLostTool == $punishId) {
+                    $money = $modelCompanyStore->importPrice($modelCompanyStoreCheckReport->storeId($companyStoreCheckReportId));
+                } else {
+                    # tien phat
+                    $money = $modelPunishContent->money($punishId)[0];
+                }
             }
 
         }
@@ -193,7 +201,7 @@ class QcMinusMoney extends Model
     //---------- bao mat do nghe -----------
     public function companyStoreCheckReport()
     {
-        return $this->belongsTo('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'orderAllocation_id', 'allocation_id');
+        return $this->belongsTo('App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport', 'companyStoreCheckReport_id', 'report_id');
     }
 
     # kiem tra da phat mat do nghe dung chung
@@ -201,6 +209,14 @@ class QcMinusMoney extends Model
     {
         $modelPunishContent = new QcPunishContent();
         $punishId = $modelPunishContent->getPunishIdLostPublicTool();
+        return QcMinusMoney::where('companyStoreCheckReport_id', $reportId)->where('work_id', $workId)->where('punish_id', $punishId)->exists();
+    }
+
+    # kiem tra da phat bao cao lam mat do nghe dung chung
+    public function checkExistMinusMoneyReportWrongLostTool($reportId, $workId)
+    {
+        $modelPunishContent = new QcPunishContent();
+        $punishId = $modelPunishContent->getPunishIdWrongReportLostTool();
         return QcMinusMoney::where('companyStoreCheckReport_id', $reportId)->where('work_id', $workId)->where('punish_id', $punishId)->exists();
     }
 

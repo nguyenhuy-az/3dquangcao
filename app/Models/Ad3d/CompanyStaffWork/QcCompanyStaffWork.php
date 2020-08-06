@@ -10,8 +10,6 @@ use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
-use App\Models\Ad3d\ToolReturnConfirm\QcToolReturnConfirm;
-use App\Models\Ad3d\ToolReturnDetail\QcToolReturnDetail;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
 
@@ -111,6 +109,12 @@ class QcCompanyStaffWork extends Model
         return $modelToolAllocation->listIdOfWork($this->checkIdNull($workId));
     }
 
+    # bo do nghe dang giao
+    public function toolAllocationActivityOfWork($workId = null)
+    {
+        $modelToolAllocation = new QcToolAllocation();
+        return $modelToolAllocation->infoActivityOfWork($this->checkIdNull($workId));
+    }
     //---------- ----------- cong cu ----------- -----------
     # thong nhan dung cu tai tat ca cty
     public function totalToolReceive($toolId, $workId)
@@ -194,7 +198,7 @@ class QcCompanyStaffWork extends Model
             }
         } else {
             # kiem tra ton tai phan cong chua xac nhan kiem tra
-            $dataCompanyStoreCheck = $modelCompanyStoreCheck->lastInfoUnConfirmOfWork($companyLoginId);
+            $dataCompanyStoreCheck = $modelCompanyStoreCheck->lastInfoUnConfirmOfCompany($companyLoginId);
             if ($hFunction->checkCount($dataCompanyStoreCheck)) {
                 # cap nhat tu dong
                 $modelCompanyStoreCheck->autoConfirm($dataCompanyStoreCheck->checkId());
@@ -735,13 +739,22 @@ class QcCompanyStaffWork extends Model
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
     }
 
-    # lay thong tin lam viec theo bo phan tai 1 cty - dang lam viec
+    # lay thong tin lam viec theo bo phan thi cong cap nhan vien tai 1 cty - dang lam viec
     public function infoActivityConstructionStaffRankOfCompany($companyId)
     {
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $listWorkId = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment([$modelDepartment->constructionDepartmentId()], $modelRank->staffRankId());
+        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', 1)->get();
+    }
+
+    # lay tat ca thong tin lam viec theo bo phan thi cong tai 1 cty - dang lam viec
+    public function infoAllActivityConstructionOfCompany($companyId)
+    {
+        $modelDepartment = new QcDepartment();
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $listWorkId = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment([$modelDepartment->constructionDepartmentId()], null);
         return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', 1)->get();
     }
 

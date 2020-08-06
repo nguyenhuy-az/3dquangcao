@@ -64,7 +64,7 @@ Route::group(['prefix' => 'ad3d'], function () {
 
                 //thêm
                 Route::get('add/{selectCompanyId?}', ['as' => 'qc.ad3d.store.tool.allocation.add.get', 'uses' => 'Ad3d\Store\Tool\Allocation\AllocationController@getAdd']);
-                Route::post('add', ['as' => 'qc.ad3d.Store.tool.allocation.add.post', 'uses' => 'Ad3d\Store\Tool\Allocation\AllocationController@postAdd']);
+                Route::post('add', ['as' => 'qc.ad3d.store.tool.allocation.add.post', 'uses' => 'Ad3d\Store\Tool\Allocation\AllocationController@postAdd']);
 
                 //Xóa
                 //Route::get('del/{toolId?}', ['as' => 'qc.ad3d.store.tool.allocation.del.get', 'uses' => 'Ad3d\Store\Tool\Allocation\AllocationController@deleteTool']);
@@ -313,12 +313,17 @@ Route::group(['prefix' => 'ad3d'], function () {
 
         #thong tin phat
         Route::group(['prefix' => 'minus-money'], function () {
-            Route::get('view-image/{minusId?}', ['as' => 'qc.ad3d.finance.minus-money.view_image.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@viewImage']);
-            //them
-            Route::get('add/{companyLoginId?}/{workId?}/{punishId?}', ['as' => 'qc.ad3d.finance.minus-money.add.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getAdd']);
-            Route::post('add', ['as' => 'qc.ad3d.finance.minus-money.add.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postAdd']);
-
-            //sua
+            # xac nhan phan hoi
+            Route::group(['prefix' => 'feedback'], function () {
+                Route::get('confirm/{feedbackId?}', ['as' => 'qc.ad3d.finance.minus-money.feedback.confirm.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getConfirmFeedback']);
+                Route::post('confirm/{feedbackId?}', ['as' => 'qc.ad3d.finance.minus-money.feedback.confirm.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postConfirmFeedback']);
+                # xem anh phan hoi
+                Route::get('view-feed-image/{feedbackId?}', ['as' => 'qc.ad3d.finance.minus-money.view_image.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@viewImage']);
+            });
+            #them - cu
+            //Route::get('add/{companyLoginId?}/{workId?}/{punishId?}', ['as' => 'qc.ad3d.finance.minus-money.add.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getAdd']);
+            //Route::post('add', ['as' => 'qc.ad3d.finance.minus-money.add.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postAdd']);
+            #sua
             //Route::get('edit/{minusId?}', ['as' => 'qc.ad3d.finance.minus-money.edit.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getEdit']);
             //Route::post('edit/{minusId?}', ['as' => 'qc.ad3d.finance.minus-money.edit.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postEdit']);
 
@@ -1005,7 +1010,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
                 # thong tin chuyen
                 Route::get('info/{transferId?}', ['as' => 'qc.work.money.transfer.transfer.info.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferInfo']);
                 # huy chuyen
-                Route::get('info-delete/{detailId?}', ['as'=>'qc.work.money.transfer.transfer.info.delete','uses'=>'Work\Money\Transfer\MoneyTransferController@transferDetailDelete']);
+                Route::get('info-delete/{detailId?}', ['as' => 'qc.work.money.transfer.transfer.info.delete', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferDetailDelete']);
 
                 Route::get('/{loginDay?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.transfer.transfer.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferIndex']);
             });
@@ -1336,7 +1341,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::group(['prefix' => 'allocation'], function () {
             #xem chi tiết
             # anh nhap do nghe
-            Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.tool.allocation.import_image.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewImportImage']);
+            Route::get('view-image/{imageId?}', ['as' => 'qc.work.tool.allocation.image.view', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewImage']);
             //Route::get('view/{toolId?}', ['as' => 'qc.work.tool.allocation.view.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewTool']);
 
             # tra lai do nghe
@@ -1356,17 +1361,21 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         # ban giao lai dung cuqư
         Route::group(['prefix' => 'allocation'], function () {
             # xac nhan tra
-            Route::get('check/{allocationId?}', ['as' => 'qc.work.store.allocation.check.get', 'uses' => 'Work\Store\allocation\AllocationController@checkInfo']);
-            Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.store.allocation.check.import_image.get', 'uses' => 'Work\Store\allocation\AllocationController@viewImportImage']);
+            Route::get('check/{allocationId?}', ['as' => 'qc.work.store.allocation.check.get', 'uses' => 'Work\Store\Allocation\AllocationController@checkInfo']);
+            Route::get('view-image/{detailId?}', ['as' => 'qc.work.store.allocation.check.image.view', 'uses' => 'Work\Store\Allocation\AllocationController@viewImage']);
             # ap dung phat
-            Route::get('minus-money/{detailId?}', ['as' => 'qc.work.store.allocation.check.minus_money.get', 'uses' => 'Work\Store\allocation\AllocationController@getMinusMoney']);
-            Route::post('minus-money/{detailId?}', ['as' => 'qc.work.store.allocation.check.minus_money.post', 'uses' => 'Work\Store\allocation\AllocationController@postMinusMoney']);
+            Route::get('minus-money/{detailId?}', ['as' => 'qc.work.store.allocation.check.minus_money.get', 'uses' => 'Work\Store\Allocation\AllocationController@getMinusMoney']);
+            Route::post('minus-money/{detailId?}', ['as' => 'qc.work.store.allocation.check.minus_money.post', 'uses' => 'Work\Store\Allocation\AllocationController@postMinusMoney']);
 
             Route::get('/', ['as' => 'qc.work.store.allocation.get', 'uses' => 'Work\Store\Allocation\AllocationController@index']);
         });
 
         # thong tin kho
         Route::group(['prefix' => 'tool'], function () {
+            # ban giao do nghe
+            Route::get('allocation-add/{staffWorkId?}', ['as' => 'qc.work.store.tool.allocation_list.add.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@getAddAllocationList']);
+            Route::post('allocation-add', ['as' => 'qc.work.store.tool.allocation_list.add.post', 'uses' => 'Work\Store\Tool\CompanyStoreController@postAddAllocationList']);
+
             # xem anh nhap san pham
             Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.store.tool.import_image.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@viewImportImage']);
             # xem anh bao tra

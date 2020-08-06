@@ -15,7 +15,6 @@ $loginStaffId = $dataStaff->staffId();
 //$companyId = $dataCompany->companyId();
 $hrefIndex = route('qc.work.store.tool.get');
 $currentMonth = $hFunction->currentMonth();
-//$dataToolAllocationDetail = null;
 ?>
 @extends('work.store.tool.index')
 @section('qc_work_store_tool_body')
@@ -27,7 +26,7 @@ $currentMonth = $hFunction->currentMonth();
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr>
-                                <td style="padding: 0" colspan="5">
+                                <td style="padding: 0" colspan="4">
                                     <select class="cbToolTypeFilter form-control" name="cbToolTypeFilter"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="1" @if($typeFilter == 1) selected="selected" @endif>
@@ -37,6 +36,12 @@ $currentMonth = $hFunction->currentMonth();
                                             Dùng cấp phát
                                         </option>
                                     </select>
+                                </td>
+                                <td class="text-right">
+                                    <a class="qc-link-red"
+                                       href="{!! route('qc.work.store.tool.allocation_list.add.get') !!}">
+                                        PHÁT THEO BỘ
+                                    </a>
                                 </td>
                             </tr>
                             <tr style="background-color: black;color: yellow;">
@@ -79,11 +84,12 @@ $currentMonth = $hFunction->currentMonth();
                                     <?php
                                     $storeId = $companyStore->storeId();
                                     $storeName = $companyStore->name();
+                                    $useStatus = $companyStore->useStatus();
                                     $dataTool = $companyStore->tool;
                                     $n_o = $n_o + 1;
                                     # thong tin nhap kho
                                     $dataImport = $companyStore->import;
-                                    $dataImportImage = $dataImport->importImageInfoOfImport();
+                                    $dataImportImage = $dataImport->getOneImportImage();
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
                                         <td class="text-center">
@@ -107,57 +113,49 @@ $currentMonth = $hFunction->currentMonth();
                                                     $dataToolReturn = $dataToolAllocationDetail->lastInfoOfToolReturn();
                                                     ?>
                                                     @if($hFunction->checkCount($dataToolReturn))
-                                                        <div style="width: 70px; max-height: 70px;">
-                                                            <a class="qc_view_image_get qc-link"
-                                                               data-href="{!! route('qc.work.store.tool.return_image.get',$dataToolReturn->returnId()) !!}">
-                                                                <img style="max-width: 100%; max-height: 100%;"
-                                                                     src="{!! $dataToolReturn->pathFullImage($dataToolReturn->image()) !!}">
-                                                            </a>
-                                                        </div>
+                                                        <a class="qc_view_image_get qc-link"
+                                                           data-href="{!! route('qc.work.store.tool.return_image.get',$dataToolReturn->returnId()) !!}">
+                                                            <img style="width: 70px; height: auto;"
+                                                                 src="{!! $dataToolReturn->pathFullImage($dataToolReturn->image()) !!}">
+                                                        </a>
                                                     @else
                                                         @if($hFunction->checkCount($dataImportImage))
-                                                            @foreach($dataImportImage as $importImage)
-                                                                <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
-                                                                    <a class="qc_view_image_get qc-link"
-                                                                       data-href="{!! route('qc.work.store.tool.import_image.get',$importImage->imageId()) !!}">
-                                                                        <img style="max-width: 100%; max-height: 100%;"
-                                                                             src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                                                    </a>
-                                                                </div>
-                                                            @endforeach
+                                                            <a class="qc_view_image_get qc-link"
+                                                               data-href="{!! route('qc.work.store.tool.import_image.get',$dataImportImage->imageId()) !!}">
+                                                                <img style="width: 70px; height: auto;"
+                                                                     src="{!! $dataImportImage->pathFullImage($dataImportImage->name()) !!}">
+                                                            </a>
                                                         @endif
                                                     @endif
 
                                                 @else
                                                     @if($hFunction->checkCount($dataImportImage))
-                                                        @foreach($dataImportImage as $importImage)
-                                                            <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
-                                                                <a class="qc_view_image_get qc-link"
-                                                                   data-href="{!! route('qc.work.store.tool.import_image.get',$importImage->imageId()) !!}">
-                                                                    <img style="max-width: 100%; max-height: 100%;"
-                                                                         src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                                                </a>
-                                                            </div>
-                                                        @endforeach
+                                                        <a class="qc_view_image_get qc-link"
+                                                           data-href="{!! route('qc.work.store.tool.import_image.get',$dataImportImage->imageId()) !!}">
+                                                            <img style="width: 70px; height: auto;"
+                                                                 src="{!! $dataImportImage->pathFullImage($dataImportImage->name()) !!}">
+                                                        </a>
                                                     @endif
                                                 @endif
                                             @else
                                                 {{--do nghe dung chung--}}
                                                 @if($hFunction->checkCount($dataImportImage))
-                                                    @foreach($dataImportImage as $importImage)
-                                                        <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
-                                                            <a class="qc_view_image_get qc-link"
-                                                               data-href="{!! route('qc.work.store.tool.import_image.get',$importImage->imageId()) !!}">
-                                                                <img style="max-width: 100%; max-height: 100%;"
-                                                                     src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                                            </a>
-                                                        </div>
-                                                    @endforeach
+                                                    <a class="qc_view_image_get qc-link"
+                                                       data-href="{!! route('qc.work.store.tool.import_image.get',$dataImportImage->imageId()) !!}">
+                                                        <img style="width: 70px; height: auto;"
+                                                             src="{!! $dataImportImage->pathFullImage($dataImportImage->name()) !!}">
+                                                    </a>
                                                 @endif
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            {!! $companyStore->labelUseStatus() !!}
+                                            @if($companyStore->checkLostUseByStatus($useStatus))
+                                                <b style="color: red;">{!! $companyStore->labelUseStatus() !!}</b>
+                                            @elseif($companyStore->checkBrokenUseByStatus($useStatus))
+                                                <b style="color: blue;">{!! $companyStore->labelUseStatus() !!}</b>
+                                            @else
+                                                <span>{!! $companyStore->labelUseStatus() !!}</span>
+                                            @endif
                                         </td>
                                         <td class="text-center">
                                             @if($dataTool->checkPrivateType())
@@ -166,11 +164,13 @@ $currentMonth = $hFunction->currentMonth();
                                                     @if($dataToolAllocationDetail->checkActivity())
                                                         {!! $dataToolAllocationDetail->toolAllocation->companyStaffWork->staff->fullName() !!}
                                                     @else
-                                                        <span>---</span>
+                                                        <span>X</span>
                                                     @endif
                                                 @else
-                                                    <span>---</span>
+                                                    <span>X</span>
                                                 @endif
+                                            @else
+                                                <span>X</span>
                                             @endif
                                         </td>
                                     </tr>

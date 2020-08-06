@@ -3,6 +3,7 @@
 namespace App\Models\Ad3d\ToolAllocationDetail;
 
 use App\Models\Ad3d\CompanyStore\QcCompanyStore;
+use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 use App\Models\Ad3d\ToolReturn\QcToolReturn;
 use Illuminate\Database\Eloquent\Model;
@@ -18,11 +19,43 @@ class QcToolAllocationDetail extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($image, $newStatus, $allocationId, $storeId)
+    public function insert($allocationId, $storeId)
     {
         $hFunction = new \Hfunction();
+        //$modelToolRe
+        $modelImport = new QcImport();
+        $modelCompanyStore = new QcCompanyStore();
         $modelToolAllocationDetail = new QcToolAllocationDetail();
-        $modelToolAllocationDetail->image = $image;
+        $dataCompanyStore = $modelCompanyStore->getInfo($storeId);
+        # lay thong tin giao sau cung cua do nghe
+        $dataLastToolAllocationDetail = $dataCompanyStore->toolAllocationDetailLastInfo();
+        $allocationImage = null;
+        # de nghe da tung duoc giao
+        if ($hFunction->checkCount($dataLastToolAllocationDetail)) {
+            $newStatus = 0;
+            # lay thong tin tra sau cung cua lan giao
+            $dataToolReturn = $dataLastToolAllocationDetail->lastInfoOfToolReturn();
+            $returnImage = $dataToolReturn->image();
+            # copy anh tra cua do nghe
+            if (copy($dataToolReturn->pathSmallImage($returnImage), $this->rootPathSmallImage() . '/' . $returnImage)) {
+                if (copy($dataToolReturn->pathFullImage($returnImage), $this->rootPathFullImage() . '/' . $returnImage)) {
+                    $allocationImage = $returnImage;
+                }
+            }
+        } else {
+            $newStatus = 1;
+            $dataImport = $dataCompanyStore->import;
+            $dataImportImage = $dataImport->getOneImportImage();
+            $importImageName = $dataImportImage->name();
+            # copy anh nhap kho cua do nghe
+            if (copy($dataImportImage->pathSmallImage($importImageName), $this->rootPathSmallImage() . '/' . $importImageName)) {
+                if (copy($dataImportImage->pathFullImage($importImageName), $this->rootPathFullImage() . '/' . $importImageName)) {
+                    $allocationImage = $importImageName;
+                }
+            }
+        }
+
+        $modelToolAllocationDetail->image = $allocationImage;
         $modelToolAllocationDetail->newStatus = $newStatus;
         $modelToolAllocationDetail->store_id = $storeId;
         $modelToolAllocationDetail->allocation_id = $allocationId;
@@ -124,6 +157,12 @@ class QcToolAllocationDetail extends Model
         return QcToolAllocationDetail::whereIn('store_id', $listStoreId)->where('action', 1)->get();
     }
 
+    # danh sach ma do nghe trong kho dang duoc cap phat
+    public function listStoreIdIsActivity()
+    {
+        return QcToolAllocationDetail::where('action', 1)->pluck('store_id');
+    }
+
     # thong tin dang phat cua do nghe
     public function infoActivityOfStore($storeId)
     {
@@ -191,34 +230,12 @@ class QcToolAllocationDetail extends Model
         return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('company_id', $companyId)->orderBy('created_at', 'DESC')->get();
     }
 
-
-    # tong so luong 1 cong cu cua 1 lan giao
-    public function totalToolOfAllocation($allocationId, $toolId)
-    {
-        return 1000;// QcToolAllocationDetail::where('allocation_id', $allocationId)->where('tool_id', $toolId)->sum('amount');
-    }
-
     # tong so luong 1 cong cu cua 1 lan hoac nhieu lan giao tai cac cty
     public function totalToolOfListAllocationId($listAllocationId, $toolId)
     {
         $modelCompanyStore = new QcCompanyStore();
         $listStoreId = $modelCompanyStore->listIdOfTool($toolId);
         return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->whereIn('store_id', $listStoreId)->count();
-    }
-
-    # tong so luong 1 cong cu cua 1 lan hoac nhieu lan giao tai 1 cty
-    public function totalToolOfListAllocationAndCompany($listAllocationId, $companyId, $toolId)
-    {
-        return 3000;//QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('company_id',$companyId)->where('tool_id', $toolId)->sum('amount');
-    }
-
-
-    # danh sanh ma dung cu da ban giao cho nhan vien
-    public function listToolIdOfWork($workId)
-    {
-        $modelToolAllocation = new QcToolAllocation();
-        $listAllocationId = $modelToolAllocation->listIdOfWork($workId);
-        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('tool_id')->pluck('tool_id');
     }
 
     # danh sanh ma kho da ban giao cho nhan vien
@@ -234,6 +251,41 @@ class QcToolAllocationDetail extends Model
     {
         return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('detail_id')->pluck('detail_id');
     }
+
+    # danh sach ma dung cu trong kho cua 1 bo do nghe duoc cap phat
+    public function storeIdOfToolAllocation($allocationId)
+    {
+        return QcToolAllocationDetail::where('allocation_id', $allocationId)->groupBy('store_id')->pluck('store_id');
+    }
+
+    # thong tin ban giao cua loai do nghe  trong bo do nghe duoc giao, dang hoat hoat dong
+    public function infoActivityOfToolAllocationAndTool($allocationId, $toolId)
+    {
+        $modelCompanyStore = new QcCompanyStore();
+        $listStoreId = $modelCompanyStore->listIdOfTool($toolId);
+        return QcToolAllocationDetail::where('allocation_id', $allocationId)->whereIn('store_id', $listStoreId)->where('action', 1)->get();
+    }
+
+    # tong so luong 1 cong cu cua 1 lan hoac nhieu lan giao tai 1 cty
+    /* public function totalToolOfListAllocationAndCompany($listAllocationId, $companyId, $toolId)
+     {
+         return 3000;//QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->where('company_id',$companyId)->where('tool_id', $toolId)->sum('amount');
+     }*/
+
+
+    # danh sanh ma dung cu da ban giao cho nhan vien
+    /*public function listToolIdOfWork($workId)
+    {
+        $modelToolAllocation = new QcToolAllocation();
+        $listAllocationId = $modelToolAllocation->listIdOfWork($workId);
+        return QcToolAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('tool_id')->pluck('tool_id');
+    }*/
+    # tong so luong 1 cong cu cua 1 lan giao
+    /*public function totalToolOfAllocation($allocationId, $toolId)
+    {
+        return 1000;// QcToolAllocationDetail::where('allocation_id', $allocationId)->where('tool_id', $toolId)->sum('amount');
+    }*/
+
 
     //========= ========== ========== lay thong tin cua nhan vien ========== ========== ==========
     # tong dung cu cua 1 NV khi lam viec o 1 cty

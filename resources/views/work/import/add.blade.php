@@ -53,7 +53,8 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="color: red;">
-                                <i class="glyphicon glyphicon-warning-sign" style="color: orangered; font-size: 16px;"></i>
+                                <i class="glyphicon glyphicon-warning-sign"
+                                   style="color: orangered; font-size: 16px;"></i>
                                 <span style="background-color: red; padding: 5px; color: yellow;">
                                     Không tách Vật tư / Đồ nghề ra riêng sẽ không được duyệt
                                 </span>
@@ -62,12 +63,12 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                     </div>
                     {{-- Vật tư / dụng cu --}}
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
-                        <div class="row">
+                        {{--<div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="color: red;">
                                 <i class="glyphicon glyphicon-pencil qc-color-green"></i>
                                 <span class="qc-font-size-16">Vật Tư / Dụng cụ</span>
                             </div>
-                        </div>
+                        </div>--}}
                         <div class="row">
                             <div id="qc_work_import_add_object_wrap" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 @include('work.import.add-object')
@@ -84,19 +85,31 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                         </div>
                     </div>
                     {{-- Ảnh hóa đơn nhập --}}
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                         <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="color: red;">
+                                <i class="glyphicon glyphicon-warning-sign"
+                                   style="color: orangered; font-size: 16px;"></i>
+                                <span style="background-color: red; padding: 5px; color: yellow;">
+                                    KHÔNG CÓ ẢNH HÓA ĐƠN sẽ không được duyệt
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                        {{--<div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <i class="glyphicon glyphicon-pencil qc-color-green"></i>
                                 <span class="qc-color-red qc-font-size-16">Ảnh hóa đơn</span>
                             </div>
-                        </div>
+                        </div>--}}
                         <div class="row">
                             <div id="qc_work_import_add_image_wrap" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 @include('work.import.add-image')
                             </div>
                         </div>
-                        <div class="row">
+                        {{--tat tinh nang them nhieu anh hoa don--}}
+                        {{--<div class="row">
                             <div class="qc-padding-top-5 qc-border-none text-left col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <a class="qc_work_import_add_image qc-link-green qc-font-size-12"
                                    data-href="{!! route('qc.work.import.add.image.get') !!}">
@@ -104,7 +117,7 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                                     THÊM ẢNH HOÁ ĐƠN
                                 </a>
                             </div>
-                        </div>
+                        </div>--}}
                     </div>
                 </div>
                 <div class="row">

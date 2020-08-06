@@ -153,6 +153,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                 $reason = $minusMoney->reason();
                                 $orderAllocationId = $minusMoney->orderAllocationId();
                                 $orderConstructionId = $minusMoney->orderConstructionId();
+                                $companyStoreCheckReportId = $minusMoney->companyStoreCheckReportId();
                                 $cancelStatus = $minusMoney->checkCancelStatus();
                                 if ($cancelStatus) {
                                     $money = 0;
@@ -162,6 +163,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                 $dataWork = $minusMoney->work;
                                 # thong tin phan
                                 $dataMinusMoneyFeedback = $minusMoney->infoMinusMoneyFeedback();
+                                $checkMinusMoneyLostToolStatus = false;
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $minusId !!}">
                                     <td class="text-center">
@@ -185,16 +187,22 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                         @if(!$hFunction->checkEmpty($orderAllocationId))
                                             <br/>
                                             <em>Đơn hàng:</em>
-                                            <a style="color: red;">
+                                            <b style="color: red;">
                                                 {!! $minusMoney->orderAllocation->orders->name() !!}
-                                            </a>
+                                            </b>
                                         @endif
                                         @if(!$hFunction->checkEmpty($orderConstructionId))
                                             <br/>
                                             <em>Đơn hàng:</em>
-                                            <a style="color: red;">
+                                            <b style="color: red;">
                                                 {!! $minusMoney->orderConstruction->name() !!}
-                                            </a>
+                                            </b>
+                                        @endif
+                                        @if(!$hFunction->checkEmpty($companyStoreCheckReportId))
+                                            <br/>
+                                            <b style="color: red;">
+                                                {!! $minusMoney->companyStoreCheckReport->companyStore->name() !!}
+                                            </b>
                                         @endif
                                     </td>
                                     <td>
@@ -216,12 +224,15 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                             @endif
                                             {{--chi duyet phan hoi bao mat do nghe--}}
                                             @if($minusMoney->checkMinusMoneyLostTool())
+                                                <?php
+                                                $checkMinusMoneyLostToolStatus = true;
+                                                ?>
                                                 @if(!$dataMinusMoneyFeedback->checkConfirm())
                                                     <br/><br/>
-                                                    <a class="qc_minus_money_feedback_cancel qc-link-green-bold"
+                                                    <a class="qc_minus_money_feedback_confirm_get qc-link-green-bold"
                                                        title="Xác nhận phản hồi"
-                                                       data-href="{!! route('qc.work.minus_money.feedback.cancel',$feedbackId) !!}">
-                                                        Xác nhận
+                                                       data-href="{!! route('qc.ad3d.finance.minus-money.feedback.confirm.get',$feedbackId) !!}">
+                                                        XÁC NHẬN
                                                     </a>
                                                 @endif
                                             @endif
@@ -236,8 +247,11 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                             @else
                                                 <span>Tạm thời</span>
                                             @endif
-                                            <br/>
-                                            <a class="qc_cancel_act qc-link-red">Hủy</a>
+                                            {{--chi hien khi khong co phan hoi--}}
+                                            @if(!$checkMinusMoneyLostToolStatus)
+                                                <br/>
+                                                <a class="qc_cancel_act qc-link-red">Hủy</a>
+                                            @endif
                                         @endif
                                     </td>
                                     <td class="text-right" style="color: red;">

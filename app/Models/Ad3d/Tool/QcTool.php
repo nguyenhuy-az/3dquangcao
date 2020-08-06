@@ -47,7 +47,7 @@ class QcTool extends Model
     }
 
     #----------- cập nhật thông tin ----------
-    public function updateInfo($toolId, $name, $unit, $description,$type)
+    public function updateInfo($toolId, $name, $unit, $description, $type)
     {
         return QcTool::where('tool_id', $toolId)->update([
             'unit' => $unit,
@@ -94,9 +94,15 @@ class QcTool extends Model
     public function amountOfCompany($toolId, $companyId)
     {
         $modelCompanyStore = new QcCompanyStore();
-        return $modelCompanyStore->totalToolOfCompany($companyId,$toolId);
+        return $modelCompanyStore->totalToolOfCompany($companyId, $toolId);
     }
 
+    # lay 1 loai do nghe trong kho cua 1 cong ty de phat cho nhan vien
+    public function getOneInfoCompanyStoreToAllocationOfCompany($toolId, $companyId)
+    {
+        $modelCompanyStore = new QcCompanyStore();
+        return $modelCompanyStore->getOneInfoToAllocationOfTool($toolId, $companyId);
+    }
 
     #============ =========== ============ Lấy thông tin ============= =========== ==========
     # lay danh sach id theo type

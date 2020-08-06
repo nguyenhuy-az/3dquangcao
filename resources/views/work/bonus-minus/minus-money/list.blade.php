@@ -143,6 +143,16 @@ $checkTime = date('m-Y');
                                                         <i class="qc-font-size-16 glyphicon glyphicon-trash"
                                                            style="color: red;"></i>
                                                     </a>
+                                                @else
+                                                    @if($dataMinusMoneyFeedback->checkConfirm())
+                                                        <br/>
+                                                        <b style="color: grey;">Đã xác nhận:</b>
+                                                        @if($dataMinusMoneyFeedback->checkConfirmAccept())
+                                                            <b style="color: grey;">Đồng ý</b>
+                                                        @else
+                                                                <b style="color: grey;">Không đồng ý</b>
+                                                        @endif
+                                                    @endif
                                                 @endif
                                             @else
                                                 @if($actionStatus)

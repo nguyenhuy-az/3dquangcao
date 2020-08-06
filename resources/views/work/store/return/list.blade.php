@@ -90,7 +90,7 @@ $currentMonth = $hFunction->currentMonth();
                                     $detailImage = $dataToolAllocationDetail->image();
                                     # thong tin kho
                                     $dataCompanyStore = $dataToolAllocationDetail->companyStore;
-                                    # thong tin nha vien tra
+                                    # thong tin nhan vien tra
                                     $dataStaffReturn = $toolReturn->toolAllocationDetail->toolAllocation->companyStaffWork->staff;
                                     $n_o = $n_o + 1;
                                     ?>
@@ -113,18 +113,14 @@ $currentMonth = $hFunction->currentMonth();
                                                 {{--lay thong tin hinh anh nhap kho--}}
                                                 <?php
                                                 $dataImport = $dataToolAllocationDetail->companyStore->import;
-                                                $dataImportImage = $dataImport->importImageInfoOfImport();
+                                                $dataImportImage = $dataImport->getOneImportImage();
                                                 ?>
                                                 @if($hFunction->checkCount($dataImportImage))
-                                                    @foreach($dataImportImage as $importImage)
-                                                        <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
-                                                            <a class="qc_view_image_get qc-link"
-                                                               data-href="{!! route('qc.work.store.return.import_image.get',$importImage->imageId()) !!}">
-                                                                <img style="max-width: 100%; max-height: 100%;"
-                                                                     src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                                            </a>
-                                                        </div>
-                                                    @endforeach
+                                                    <a class="qc_view_image_get qc-link"
+                                                       data-href="{!! route('qc.work.store.return.import_image.get',$dataImportImage->imageId()) !!}">
+                                                        <img style="width: 70px; height: auto;"
+                                                             src="{!! $dataImportImage->pathFullImage($dataImportImage->name()) !!}">
+                                                    </a>
                                                 @endif
                                             @else
                                                 Ảnh bàn giao
@@ -132,7 +128,8 @@ $currentMonth = $hFunction->currentMonth();
                                         </td>
                                         <td>
                                             <div style="width: 70px; max-height: 70px;">
-                                                <a class="qc_view_image_get qc-link" data-href="{!! route('qc.work.store.return.return_image.get',$returnId) !!}">
+                                                <a class="qc_view_image_get qc-link"
+                                                   data-href="{!! route('qc.work.store.return.return_image.get',$returnId) !!}">
                                                     <img style="max-width: 100%; max-height: 100%;"
                                                          src="{!! $toolReturn->pathFullImage($returnImage) !!}">
                                                 </a>

@@ -119,6 +119,17 @@ class QcCompanyStoreCheckReport extends Model
         return $this->belongsTo('App\Models\Ad3d\CompanyStore\QcCompanyStore', 'store_id', 'store_id');
     }
 
+    # lay thong tin bao cao mat dung cu cua bao cao bi phat
+    public function infoReportLostOfReport($reportId)
+    {
+        $dataReport = $this->getInfo($reportId);
+        $storeId = $dataReport->storeId();
+        $reportNumber = $dataReport->reportNumber();
+        $reportNumber = (is_int($reportNumber)) ? $reportNumber : $reportNumber[0];
+        $getReportNumber = (int)$reportNumber + 1;
+        return QcCompanyStoreCheckReport::where('store_id', $storeId)->where('reportNumber', $getReportNumber)->first();
+    }
+
     # lay thong tin bao cao sau cung co hinh anh trong sanh sach cua trươc 1 bao cao nhan vao cua 1 do nghe trong kho
     public function lastInfoHasImageOfPreviousReportAndCompanyStore($reportId, $storeId)
     {

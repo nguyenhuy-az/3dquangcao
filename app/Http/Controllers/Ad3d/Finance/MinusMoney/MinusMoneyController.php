@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Ad3d\Finance\MinusMoney;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
+use App\Models\Ad3d\CompanyStore\QcCompanyStore;
+use App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
-use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\Staff\QcStaff;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\Work\QcWork;
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -69,9 +71,9 @@ class MinusMoneyController extends Controller
                 $searchCompanyFilterId = $modelCompany->listIdActivity();
             }
         } else {
-            if($companyFilterId == 1000){
+            if ($companyFilterId == 1000) {
                 $searchCompanyFilterId = $modelCompany->listIdActivity();
-            }else{
+            } else {
                 $searchCompanyFilterId = [$companyFilterId];
             }
         }
@@ -99,6 +101,7 @@ class MinusMoneyController extends Controller
         return view('ad3d.finance.minus-money.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataPunishContent', 'dataMinusMoney', 'totalMinusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'punishContentFilterId', 'nameFiler'));
 
     }
+
     # huy phat
     public function cancelMinusMoney($minusId)
     {
@@ -114,6 +117,61 @@ class MinusMoneyController extends Controller
         return view('ad3d.finance.minus-money.view-image', compact('dataMinusMoneyFeedback'));
     }
 
+    # Xac nhan phan hoi
+    public function getConfirmFeedback($feedbackId)
+    {
+        $modelMinusMoneyFeedback = new QcMinusMoneyFeedback();
+        $dataMinusMoneyFeedback = $modelMinusMoneyFeedback->getInfo($feedbackId);
+        return view('ad3d.finance.minus-money.confirm-feedback', compact('dataMinusMoneyFeedback'));
+    }
+
+    public function postConfirmFeedback($feedbackId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
+        $modelPunishContent = new QcPunishContent();
+        $modelMinusMoney = new QcMinusMoney();
+        $modelCompanyStore = new QcCompanyStore();
+        $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
+        $modelMinusMoneyFeedback = new QcMinusMoneyFeedback();
+        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $confirmAccept = Request::input('cbConfirmAccept');
+        if ($modelMinusMoneyFeedback->confirmFeedback($feedbackId, $confirmAccept, $dataStaffLogin->staffId())) {
+            if ($confirmAccept == 1) { # dong y
+                $dataMinusMoneyFeedback = $modelMinusMoneyFeedback->getInfo($feedbackId);
+                # lay thong tin phat bao cao mat do nghe
+                $dataMinusMoney = $dataMinusMoneyFeedback->minusMoney;
+                $minusId = $dataMinusMoney->minusId();
+                $minusReportId = $dataMinusMoney->companyStoreCheckReportId();
+                # huy thong tin phat
+                $modelMinusMoney->cancelMinus($minusId);
+                # cap nhat lai trang thai su dung do nghe trong kho
+                $modelCompanyStore->updateNormalUseStatus($modelCompanyStoreCheckReport->storeId($minusReportId));
+                # ma ap dung phat trong he thong - phat bao lam mat do nghe khong dung
+                $punishId = $modelPunishContent->getPunishIdWrongReportLostTool();
+                $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
+                # da co ap dung phat
+                if ($punishId > 0) {
+                    # lay thong tin bao mat do nghe
+                    $dataCompanyStoreCheckReport = $modelCompanyStoreCheckReport->infoReportLostOfReport($minusReportId);
+                    if ($hFunction->checkCount($dataCompanyStoreCheckReport)) {
+                        $punishReportId = $dataCompanyStoreCheckReport->reportId();
+                        $dataCompanyStaffWork = $dataCompanyStoreCheckReport->companyStoreCheck->companyStaffWork;
+                        $dataWork = $dataCompanyStaffWork->workInfoActivity();
+                        $workId = $dataWork->workId();
+                        if (!$modelMinusMoney->checkExistMinusMoneyReportWrongLostTool($punishReportId, $workId)) { # chua phat
+                            if ($modelMinusMoney->insert($hFunction->carbonNow(), 'Báo cáo mất đồ nghề không đúng', $workId, null, $punishId, 0, null, null, $punishReportId)) {
+                                $modelStaffNotify->insert(null, $dataCompanyStaffWork->staffId(), 'Báo cáo mất đồ nghề không đúng', null, null, null, $modelMinusMoney->insertGetId());
+                            }
+                        }
+
+                    }
+                }
+
+            }
+        }
+    }
     /*public function getAdd($companyLoginId = null, $workId = null, $punishId = null)
     {
         $modelStaff = new QcStaff();
@@ -184,7 +242,6 @@ class MinusMoneyController extends Controller
             return "Cập nhật thất bại";
         }
     }*/
-
 
 
 }

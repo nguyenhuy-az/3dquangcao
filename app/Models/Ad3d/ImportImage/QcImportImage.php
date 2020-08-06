@@ -90,6 +90,12 @@ class QcImportImage extends Model
         return QcImportImage::where('import_id', $importId)->get();
     }
 
+    # chi lay 1 anh
+    public function oneInfoOfImport($importId)
+    {
+        return QcImportImage::where('import_id', $importId)->first();
+    }
+
     #============ =========== ============ GET INFO ============= =========== ==========
     public function getInfo($imageId = '', $field = '')
     {
@@ -131,7 +137,7 @@ class QcImportImage extends Model
     }
 
     // get path image
-    public function pathSmallImage($image=null)
+    public function pathSmallImage($image = null)
     {
         if (empty($image)) {
             return null;

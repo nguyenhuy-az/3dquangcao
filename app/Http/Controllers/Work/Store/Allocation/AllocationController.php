@@ -52,11 +52,11 @@ class AllocationController extends Controller
     }
 
     # xem anh nhap kho
-    public function viewImportImage($imageId)
+    public function viewImage($detailId)
     {
-        $modelImportImage = new QcImportImage();
-        $dataImportImage = $modelImportImage->getInfo($imageId);
-        return view('work.store.allocation.view-import-image', compact('modelStaff', 'dataImportImage'));
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $dataToolAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
+        return view('work.store.allocation.view-image', compact('modelStaff', 'dataToolAllocationDetail'));
     }
 
     # ap dung phat theo noi qui

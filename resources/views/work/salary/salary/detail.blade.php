@@ -253,7 +253,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header" style="background-color: black;">
-                                                <button type="button" class="close" data-dismiss="modal" >
+                                                <button type="button" class="close" data-dismiss="modal">
                                                     <span aria-hidden="true">&times;</span>
                                                     <span class="sr-only" style="color: yellow;">Close</span>
                                                 </button>
@@ -347,7 +347,8 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                                     Mua vật tư (Đã duyệt chưa TT):
                                                 </td>
                                                 <td class="text-right">
-                                                    <b> + {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}</b>
+                                                    <b>
+                                                        + {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}</b>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -483,6 +484,8 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                     @foreach($dataTimekeeping as $timekeeping)
                                         <?php
                                         $timekeepingId = $timekeeping->timekeepingId();
+                                        $timekeepingConfirmNote = $timekeeping->confirmNote();
+                                        $timekeepingNote = $timekeeping->note();
                                         ?>
                                         <tr class="@if($n_o_timekeeping%2) info @endif">
                                             <td class="text-center ">
@@ -512,6 +515,11 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                             </td>
                                             <td>
                                                 <em class="qc-color-grey"> {!! $timekeeping->note() !!}</em>
+                                                @if(!empty($timekeepingConfirmNote))
+                                                    @if(!empty($timekeepingNote)) <br/> @endif
+                                                    <span>Ghi chú duyệt:</span>
+                                                    <em style="color: brown;">{!! $timekeepingConfirmNote !!}</em>
+                                                @endif
                                             </td>
                                             <td class="text-center">
                                                 @if($timekeeping->checkOff() && $timekeeping->checkPermissionStatus())

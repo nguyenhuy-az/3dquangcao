@@ -59,6 +59,14 @@ class QcCompanyStore extends Model
             'useStatus' => $useStatus
         ]);
     }
+
+    # cap nhat trang thai su dung binh thuong cho dung cu
+    public function updateNormalUseStatus($storeId)
+    {
+        return QcCompanyStore::where('store_id', $storeId)->update([
+            'useStatus' => 1
+        ]);
+    }
     //========== ========= ========= CAC MON QUAN HE ========== ========= ==========
     //---------- thong tin bao cao kiem tra do nghe dung chung -----------
     public function companyStoreCheckReport()
@@ -179,6 +187,15 @@ class QcCompanyStore extends Model
         return QcCompanyStore::where('tool_id', $toolId)->where('company_id', $companyId)->pluck('store_id');
     }
 
+    # lay 1 loai do nghe trong kho cua 1 cong ty de phat cho nhan vien
+    public function getOneInfoToAllocationOfTool($toolId, $companyId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        # lay ma do nghe dang cap phat
+        $listStoreId = $modelToolAllocationDetail->listStoreIdIsActivity();
+        return QcCompanyStore::whereNotIn('store_id', $listStoreId)->where('useStatus', 1)->where('tool_id', $toolId)->where('company_id', $companyId)->first();
+    }
+
     #danh sach ma dung cu theo kho
     public function listToolIdOfListStore($listStoreId)
     {
@@ -283,6 +300,24 @@ class QcCompanyStore extends Model
         }
     }
 
+    # kiem tra trang thai do nghe binh thương
+    public function checkNormalUseByStatus($useStatus)
+    {
+        return ($useStatus == 1) ? true : false;
+    }
+
+    # kiem tra trang thai do nghe bị hu
+    public function checkBrokenUseByStatus($useStatus)
+    {
+        return ($useStatus == 2) ? true : false;
+    }
+
+    # kiem tra trang thai do nghe binh thương
+    public function checkLostUseByStatus($useStatus)
+    {
+        return ($useStatus == 3) ? true : false;
+    }
+
     public function createdAt($storeId = null)
     {
         return $this->pluck('created_at', $storeId);
@@ -315,4 +350,10 @@ class QcCompanyStore extends Model
         return (empty($result)) ? 0 : $result->store_id;
     }
 
+    # lay src hinh anh cuoi cung cua do nghe
+    public function lastPathSmallImage($storeId)
+    {
+        //$companyStore = $this->getInfo($storeId);
+        //$dataToolAllocationDetail = $companyStore->toolAllocationDetailLastInfo();
+    }
 }

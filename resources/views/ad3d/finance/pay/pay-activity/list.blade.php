@@ -70,7 +70,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                             <td style="padding: 0 !important;">
                                 <select class="cbDayFilter" style="height: 30px;"
                                         data-href="{!! $hrefIndex !!}">
-                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
+                                    <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($d =1;$d<= 31; $d++)

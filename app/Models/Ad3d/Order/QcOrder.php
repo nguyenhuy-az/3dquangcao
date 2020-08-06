@@ -1458,7 +1458,7 @@ class QcOrder extends Model
                                     $workId = $dataWork->workId();
                                     if (!$modelMinusMoney->checkExistMinusMoneyOrderConstructionLate($orderId, $workId)) { # chua phat
                                         $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
-                                        if ($modelMinusMoney->insert($checkDate, 'Quản lý thi công trễ đơn hàng', $workId, null, $punishId, 0, null, $orderId)) {
+                                        if ($modelMinusMoney->insert($checkDate, 'Quản lý thi công trễ đơn hàng', $workId, null, $punishId, 0, null, $orderId, null)) {
                                             $modelStaffNotify->insert(null, $staffMinusMoneyId, 'Quản lý thi công trễ đơn hàng', null, null, null, $modelMinusMoney->insertGetId());
                                         }
                                     }

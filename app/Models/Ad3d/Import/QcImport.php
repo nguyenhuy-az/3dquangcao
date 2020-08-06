@@ -253,10 +253,17 @@ class QcImport extends Model
         return $this->hasMany('App\Models\Ad3d\ImportImage\QcImportImage', 'import_id', 'import_id');
     }
 
+    # lay tat ca anh
     public function importImageInfoOfImport($importId = null)
     {
         $modelImportImage = new QcImportImage();
         return $modelImportImage->infoOfImport($this->checkIdNull($importId));
+    }
+
+    # lay 1 hinh anh - tat tinh nang cho up nhieu anh hoa don
+    public function getOneImportImage($importId=null){
+        $modelImportImage = new QcImportImage();
+        return $modelImportImage->oneInfoOfImport($this->checkIdNull($importId));
     }
 
     //---------- chi tiết nhập -----------

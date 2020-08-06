@@ -138,10 +138,10 @@ class QcCompanyStoreCheck extends Model
     }
 
     # lay thong tin kiem tra chu co xac nhan kiem tra sau cung cua 1 cong ty
-    public function lastInfoUnConfirmOfWork($companyId)
+    public function lastInfoUnConfirmOfCompany($companyId)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        return QcCompanyStoreCheck::where('confirmStatus', 0)->whereIn('work_id', $modelCompanyStaffWork->listStaffIdOfListCompanyId([$companyId]))->orderBy('check_id', 'DESC')->first();
+        return QcCompanyStoreCheck::where('confirmStatus', 0)->whereIn('work_id', $modelCompanyStaffWork->listIdOfCompany($companyId))->orderBy('check_id', 'DESC')->first();
     }
 
 
@@ -149,7 +149,8 @@ class QcCompanyStoreCheck extends Model
     public function checkExistDateOfCompany($companyId, $checkDate)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        return QcCompanyStoreCheck::whereIn('work_id', $modelCompanyStaffWork->listStaffIdOfListCompanyId([$companyId]))->where('receiveDate', 'like', "%$checkDate%")->exists();
+        $listWorkId = $modelCompanyStaffWork->listIdOfCompany($companyId);
+        return QcCompanyStoreCheck::whereIn('work_id',$listWorkId )->where('receiveDate', 'like', "%$checkDate%")->exists();
     }
 
     # kiem tra thong tin 1 nv co da duoc phan cong trong vong kiem tra chưa

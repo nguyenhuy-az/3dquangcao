@@ -22,27 +22,44 @@ use Request;
 
 class PayActivityController extends Controller
 {
-    public function index($dayFilter = null, $monthFilter = null, $yearFilter = null, $confirmStatus = 3)
+    public function index($dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $confirmStatus = 3)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'payActivity',
-                'subObjectLabel' => 'Hoạt động cty'
-            ];
-            $dataStaff = $modelStaff->loginStaffInfo();
-            $monthFilter = (empty($monthFilter)) ? date('m') : $monthFilter;
-            $yearFilter = (empty($yearFilter)) ? date('Y') : $yearFilter;
-            if (empty($dayFilter)) {
-                $loginDate = date('Y-m', strtotime("$yearFilter-$monthFilter"));
-            } else {
-                $loginDate = date('Y-m-d', strtotime("$yearFilter-$monthFilter-$dayFilter"));
-            }
-            $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($dataStaff->staffId(), $confirmStatus, $loginDate);
-            return view('work.pay.pay-activity.index', compact('dataAccess', 'modelStaff', 'dataStaff','dataPayActivityDetail', 'dayFilter', 'monthFilter', 'yearFilter', 'confirmStatus'));
-        } else {
-            return view('work.login');
+        $currentMonth = $hFunction->currentMonth();
+        $currentYear = $hFunction->currentYear();
+        $dataAccess = [
+            'object' => 'payActivity',
+            'subObjectLabel' => 'Hoạt động cty'
+        ];
+        $dataStaff = $modelStaff->loginStaffInfo();
+        if($dayFilter == 0 && $monthFilter== 0 && $yearFilter == 0){
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
+        elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($dayFilter == 0 && $monthFilter > 0 && $yearFilter > 0) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter > 0 && $monthFilter > 0 && $yearFilter > 0) {
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
+        } elseif ($dayFilter > 0 && $monthFilter == 0 && $yearFilter == 0) { //xem tất cả các ngày trong tháng
+            $monthFilter = $currentMonth;
+            $yearFilter = $currentYear;
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
+        } elseif ($dayFilter == 0 && $monthFilter > 0 && $yearFilter == 0) { //xem tất cả các ngày trong tháng
+            $yearFilter = $currentYear;
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$currentYear"));
+        } else {
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+        }
+        $dataPayActivityDetail = $dataStaff->payActivityDetailInfoOfStaff($dataStaff->staffId(), $confirmStatus, $dateFilter);
+        return view('work.pay.pay-activity.list', compact('dataAccess', 'modelStaff', 'dataStaff','dataPayActivityDetail', 'dayFilter', 'monthFilter', 'yearFilter', 'confirmStatus'));
 
     }
 

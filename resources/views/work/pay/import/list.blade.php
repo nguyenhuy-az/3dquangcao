@@ -36,7 +36,7 @@ $currentMonth = $hFunction->currentMonth();
                         <th class="text-center" style="width:20px;">STT</th>
                         <th>Hóa đơn</th>
                         <th class="text-center" style="width: 180px;">Ngày</th>
-                        <th> Dụng cụ / Vật tư</th>
+                        <th style="width: 300px;"> Dụng cụ / Vật tư</th>
                         <th>Nhân viên</th>
                         <th>Chi chú duyệt</th>
                         <th>Thanh toán</th>
@@ -129,8 +129,10 @@ $currentMonth = $hFunction->currentMonth();
                                 </td>
                                 <td style="padding: 0;">
                                     @foreach($dataImportImage as $importImage)
-                                        <img class="qc-link" alt="..." style="width: 150px;"
-                                             src="{!! $importImage->pathFullImage($importImage->name()) !!}">
+                                        <a class="qc-link" href="{!! route('qc.work.pay.import.get.view.get',$importId) !!}">
+                                            <img class="qc-link" alt="..." style="width: 150px;"
+                                                 src="{!! $importImage->pathFullImage($importImage->name()) !!}">
+                                        </a>
                                     @endforeach
                                 </td>
                                 <td>

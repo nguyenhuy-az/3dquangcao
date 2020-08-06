@@ -17,6 +17,6 @@ $hFunction = new Hfunction();
                 style="position: absolute; top: 0; right: 0;">Đóng
         </button>
         <img class="qc-link qc-margin-top-10" onclick="qc_main.rotateImage(this);"  style="max-width: 100%;" alt="..."
-             src="{!! $dataImportImage->pathFullImage($dataImportImage->name())  !!}">
+             src="{!! $dataToolAllocationDetail->pathFullImage($dataToolAllocationDetail->image())  !!}">
     </div>
 @endsection

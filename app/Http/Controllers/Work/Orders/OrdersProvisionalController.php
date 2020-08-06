@@ -182,7 +182,10 @@ class OrdersProvisionalController extends Controller
                     # thanh toan
                     if ($txtPayMoney > 0) {
                         # thanh toan don hang
-                        $modelOrderPay->insert($txtPayMoney, null, $txtDateReceive, $orderId, $staffLoginId, $dataCustomer->name(), $dataCustomer->phone());
+                        if($modelOrderPay->insert($txtPayMoney, null, $txtDateReceive, $orderId, $staffLoginId, $dataCustomer->name(), $dataCustomer->phone())){
+                            # xet thuong
+                            $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
+                        }
                         # cap nhat thong tin thanh toan don hang
                         $modelOrder->updateFinishPayment($orderId);
                         # bàn giao don hang = cong trinh

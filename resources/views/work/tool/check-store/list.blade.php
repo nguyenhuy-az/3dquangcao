@@ -89,7 +89,7 @@ $currentMonth = $hFunction->currentMonth();
                                                     <td>
                                                         @if($hFunction->checkCount($dataCompanyStoreCheckReportHasImage))
                                                             {{--lay anh sau cung cua bao cao truoc --}}
-                                                            <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                            <div style="position: relative; float: left; width: 70px;">
                                                                 <a class="qc_view_image_get qc-link"
                                                                    data-href="{!! route('qc.work.tool.check_store.report_image.get',$dataCompanyStoreCheckReportHasImage->reportId()) !!}">
                                                                     <img style="max-width: 100%; max-height: 100%;"
@@ -104,7 +104,7 @@ $currentMonth = $hFunction->currentMonth();
                                                             ?>
                                                             @if($hFunction->checkCount($dataImportImage))
                                                                 @foreach($dataImportImage as $importImage)
-                                                                    <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                                    <div style="position: relative; float: left; width: 70px;">
                                                                         <a class="qc_view_image_get qc-link"
                                                                            data-href="{!! route('qc.work.tool.check_store.import_image.get',$importImage->imageId()) !!}">
                                                                             <img style="max-width: 100%; max-height: 100%;"
@@ -118,7 +118,7 @@ $currentMonth = $hFunction->currentMonth();
                                                     </td>
                                                     <td>
                                                         @if(!$hFunction->checkEmpty($reportImage))
-                                                            <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                            <div style="position: relative; float: left; width: 70px;">
                                                                 <a class="qc_view_image_get qc-link"
                                                                    data-href="{!! route('qc.work.tool.check_store.report_image.get',$reportId) !!}">
                                                                     <img style="max-width: 100%; max-height: 100%;"
@@ -153,12 +153,12 @@ $currentMonth = $hFunction->currentMonth();
                                                 <?php
                                                 $storeId = $companyStore->storeId();
                                                 $dataCompanyStoreCheckReportLastHasImage = $companyStore->companyStoreCheckReportLastInfoHasImage();
+                                                $n_o = (isset($n_o)) ? $n_o + 1 : 1;
                                                 ?>
-                                                <tr>
-                                                    <td class="text-center" style="padding: 0;">
+                                                <tr @if($n_o%2) class="info" @endif>
+                                                    <td class="text-center">
+                                                        {!! $n_o !!}
                                                         <div class="form-group" style="margin: 0;">
-                                                            <input type="checkbox" class="form-control" disabled
-                                                                   style="margin: 0;" checked="checked">
                                                             <input type="hidden" class="form-control"
                                                                    name="txtCompanyStore[]" style="margin: 0;"
                                                                    value="{!! $storeId !!}">
@@ -170,7 +170,7 @@ $currentMonth = $hFunction->currentMonth();
                                                     <td>
                                                         @if($hFunction->checkCount($dataCompanyStoreCheckReportLastHasImage))
                                                             {{--lay anh sau cung cua bao cao--}}
-                                                            <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                            <div style="position: relative; float: left; width: 70px;">
                                                                 <a class="qc_view_image_get qc-link"
                                                                    data-href="{!! route('qc.work.tool.check_store.report_image.get',$dataCompanyStoreCheckReportLastHasImage->reportId()) !!}">
                                                                     <img style="max-width: 100%; max-height: 100%;"
@@ -185,7 +185,7 @@ $currentMonth = $hFunction->currentMonth();
                                                             ?>
                                                             @if($hFunction->checkCount($dataImportImage))
                                                                 @foreach($dataImportImage as $importImage)
-                                                                    <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
+                                                                    <div style="position: relative; float: left; width: 70px;">
                                                                         <a class="qc_view_image_get qc-link"
                                                                            data-href="{!! route('qc.work.tool.check_store.import_image.get',$importImage->imageId()) !!}">
                                                                             <img style="max-width: 100%; max-height: 100%;"

@@ -246,4 +246,10 @@ class QcPunishContent extends Model
     {
         return $this->getPunishIdByCode('LMĐNDC');
     }
+
+    # bao cao lma mat do nghe khong dung
+    public function getPunishIdWrongReportLostTool()
+    {
+        return $this->getPunishIdByCode('BCLMĐNKĐ');
+    }
 }

@@ -172,10 +172,10 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                         <a class="qc_view qc-link-green" href="#">
                                             Chi tiết
                                         </a>
-                                        @if($orderPay->checkStaffInput($dataStaffLogin->staffId()))
+                                        {{--@if($orderPay->checkStaffInput($dataStaffLogin->staffId()))
                                             <span>|</span>
                                             <a class="qc_delete qc-link-green" href="#">Hủy</a>
-                                        @endif
+                                        @endif--}}
                                     </td>
                                     <td class="text-center qc-color-grey">
                                         @if($orderPay->checkExistTransfersDetail())
