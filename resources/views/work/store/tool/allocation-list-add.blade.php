@@ -42,7 +42,8 @@ $saveStatus = false;
                             <table class="table table-hover table-bordered">
                                 <tr>
                                     <td colspan="4" style="padding:0;">
-                                        <select class="cbCompanyStaffWork form-control" style="color: blue;" name="cbCompanyStaffWork"
+                                        <select class="cbCompanyStaffWork form-control" style="color: blue;"
+                                                name="cbCompanyStaffWork"
                                                 data-href="{!! route('qc.work.store.tool.allocation_list.add.get') !!}">
                                             @if($hFunction->checkCount($dataCompanyStaffWork))
                                                 <option value="0"
@@ -83,6 +84,7 @@ $saveStatus = false;
                                                 <?php
                                                 $n_o = (isset($n_o)) ? $n_o + 1 : 1;
                                                 $toolId = $dataTool->toolId();
+                                                # danh sach do nghe dang duoc giao
                                                 $dataToolAllocationDetail = $dataToolAllocation->infoActivityOfToolAllocationAndTool($toolAllocationId, $toolId);
                                                 # trang thai duoc giao
                                                 $existAllocationStatus = false;
@@ -131,14 +133,13 @@ $saveStatus = false;
                                                                 <div class="media">
                                                                     @if($hFunction->checkCount($dataLastToolAllocationDetail))
                                                                         <?php
-                                                                        $detailImage = $dataLastToolAllocationDetail->image();
-                                                                        $dataCompanyStore = $dataLastToolAllocationDetail->companyStore;
+                                                                        # lay thong tin tra sau cung cua lan giao
+                                                                        $dataToolReturn = $dataLastToolAllocationDetail->lastInfoOfToolReturn();
                                                                         ?>
-                                                                        @if (!$hFunction->checkEmpty($detailImage))
+                                                                        @if($hFunction->checkCount($dataToolReturn))
                                                                             <a class="pull-left">
-                                                                                <img class="media-object"
-                                                                                     style="width: 70px; height: auto;"
-                                                                                     src="{!! $dataLastToolAllocationDetail->pathSmallImage($detailImage) !!}">
+                                                                                <img style="width: 70px; height: auto;"
+                                                                                     src="{!! $dataToolReturn->pathFullImage($dataToolReturn->image()) !!}">
                                                                             </a>
                                                                         @endif
                                                                     @else
@@ -214,14 +215,13 @@ $saveStatus = false;
                                                             <div class="media">
                                                                 @if($hFunction->checkCount($dataLastToolAllocationDetail))
                                                                     <?php
-                                                                    $detailImage = $dataLastToolAllocationDetail->image();
-                                                                    $dataCompanyStore = $dataLastToolAllocationDetail->companyStore;
+                                                                    # lay thong tin tra sau cung cua lan giao
+                                                                    $dataToolReturn = $dataLastToolAllocationDetail->lastInfoOfToolReturn();
                                                                     ?>
-                                                                    @if (!$hFunction->checkEmpty($detailImage))
+                                                                    @if($hFunction->checkCount($dataToolReturn))
                                                                         <a class="pull-left">
-                                                                            <img class="media-object"
-                                                                                 style="width: 70px; height: auto;"
-                                                                                 src="{!! $dataLastToolAllocationDetail->pathSmallImage($detailImage) !!}">
+                                                                            <img style="width: 70px; height: auto;"
+                                                                                 src="{!! $dataToolReturn->pathFullImage($dataToolReturn->image()) !!}">
                                                                         </a>
                                                                     @endif
                                                                 @else

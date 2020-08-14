@@ -122,10 +122,11 @@ class TimeKeepingProvisionalController extends Controller
 
     public function getConfirm($timekeepingId = null)
     {
+        $hFunction = new \Hfunction();
         $modelTimekeeping = new QcTimekeepingProvisional();
         $modelLicenseLateWork = new QcLicenseLateWork();
         $dataTimekeepingProvisional = $modelTimekeeping->getInfo($timekeepingId);
-        if (count($dataTimekeepingProvisional) > 0) {
+        if ($hFunction->checkCount($dataTimekeepingProvisional)) {
             return view('ad3d.work.time-keeping-provisional.confirm', compact('modelLicenseLateWork', 'dataTimekeepingProvisional'));
         }
     }

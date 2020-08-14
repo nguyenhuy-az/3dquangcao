@@ -49,7 +49,6 @@ class TransfersController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-
         if ($dataStaffLogin->checkRootManage()) {
             if (empty($companyFilterId)) {
                 $searchCompanyFilterId = $modelCompany->listIdActivity();

@@ -108,23 +108,11 @@ $currentMonth = $hFunction->currentMonth();
                                             {!! date('d/m/Y', strtotime($returnDate)) !!}
                                         </td>
                                         <td>
-                                            @if ($hFunction->checkEmpty($detailImage))
-                                                {{--giao lan dau--}}
-                                                {{--lay thong tin hinh anh nhap kho--}}
-                                                <?php
-                                                $dataImport = $dataToolAllocationDetail->companyStore->import;
-                                                $dataImportImage = $dataImport->getOneImportImage();
-                                                ?>
-                                                @if($hFunction->checkCount($dataImportImage))
-                                                    <a class="qc_view_image_get qc-link"
-                                                       data-href="{!! route('qc.work.store.return.import_image.get',$dataImportImage->imageId()) !!}">
-                                                        <img style="width: 70px; height: auto;"
-                                                             src="{!! $dataImportImage->pathFullImage($dataImportImage->name()) !!}">
-                                                    </a>
-                                                @endif
-                                            @else
-                                                Ảnh bàn giao
-                                            @endif
+                                            <a class="qc_view_image_get qc-link"
+                                               data-href="{!! route('qc.work.store.return.detail_image.get',$dataToolAllocationDetail->detailId()) !!}">
+                                                <img style="width: 70px; height: auto;"
+                                                     src="{!! $dataToolAllocationDetail->pathFullImage($dataToolAllocationDetail->image()) !!}">
+                                            </a>
                                         </td>
                                         <td>
                                             <div style="width: 70px; max-height: 70px;">

@@ -19,7 +19,7 @@ $currentMonth = $hFunction->currentMonth();
 @extends('work.tool.check-store.index')
 @section('qc_work_tool_check_store_body')
     <div class="row qc_work_tool_wrap">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-10 col-lg-10">
+        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <form id="frmWorkToolCheckCompanyStore" role="form" name="frmWorkToolCheckCompanyStore" method="post"
                       enctype="multipart/form-data" action="{!! route('qc.work.tool.check_store.confirm.post') !!}">

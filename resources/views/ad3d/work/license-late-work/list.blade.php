@@ -21,18 +21,16 @@ $indexHref = route('qc.ad3d.work.late-work.get');
 @extends('ad3d.work.license-late-work.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed brown;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px; padding-top : 10px;">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $indexHref !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
                     <label class="qc-font-size-20">XIN VÔ TRỄ</label>
                 </div>
-                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="height: 25px;"
+                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                             data-href-filter="{!! $indexHref !!}">
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
@@ -54,46 +52,11 @@ $indexHref = route('qc.ad3d.work.late-work.get');
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
-                    <form name="" action="">
-                        <div class="row">
-                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <select class="cbDayFilter" style="margin-top: 5px; height: 25px;" name="cbDayFilter" data-href="{!! $indexHref !!}">
-                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >Tất cả
-                                    </option>
-                                    @for($i =1;$i<= 31; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$dayFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;" data-href="{!! $indexHref !!}">
-                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >Tất cả
-                                    </option>
-                                    @for($i =1;$i<= 12; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbYearFilter" style="margin-top: 5px; height: 25px;" data-href="{!! $indexHref !!}">
-                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >Tất cả
-                                    @for($i =2017;$i<= 2050; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
             <div class="qc_ad3d_list_content row"
                  data-href-confirm="{!! route('qc.ad3d.work.late-work.confirm.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black; color: yellow;">
                             <th class="text-center">STT</th>
                             <th>Nhân viên</th>
                             <th class="text-center">Thời gian xin</th>
@@ -101,6 +64,38 @@ $indexHref = route('qc.ad3d.work.late-work.get');
                             <th class="text-left">Chi chú xin</th>
                             <th class="text-left">Chi chú duyệt</th>
                             <th></th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td style="padding: 0;">
+                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4" style="height: 30px;" name="cbDayFilter"
+                                        data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >Tất cả
+                                    </option>
+                                    @for($i =1;$i<= 31; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if((int)$dayFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4" style="height: 30px;"
+                                        data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >Tất cả
+                                    </option>
+                                    @for($i =1;$i<= 12; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4" style="height: 30px;"
+                                        data-href="{!! $indexHref !!}">
+                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >Tất cả
+                                    @for($i =2017;$i<= 2050; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                            </td>
                         </tr>
                         @if($hFunction->checkCount($dataLicenseLateWork ))
                             <?php
@@ -116,7 +111,8 @@ $indexHref = route('qc.ad3d.work.late-work.get');
                                 $confirmNote = $licenseLateWork->confirmNote();
                                 $createdAd = $licenseLateWork->createdAt();
                                 ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $licenseId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
+                                    data-object="{!! $licenseId !!}">
                                     <td class="text-center" style="width: 20px;">
                                         {!! $n_o += 1 !!}
                                     </td>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Work\Store\Allocation;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
-use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
@@ -14,6 +13,7 @@ use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 //use Illuminate\Http\Request;
 use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
+use App\Models\Ad3d\ToolReturn\QcToolReturn;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use File;
@@ -51,12 +51,19 @@ class AllocationController extends Controller
         return view('work.store.allocation.check-info', compact('modelStaff', 'dataToolAllocation', 'dataToolAllocationDetail'));
     }
 
-    # xem anh nhap kho
+    # xem anh ban giao
     public function viewImage($detailId)
     {
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         $dataToolAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
         return view('work.store.allocation.view-image', compact('modelStaff', 'dataToolAllocationDetail'));
+    }
+
+    #xem anh tra
+    public function viewReturnImage($returnId){
+        $modelToolReturn = new QcToolReturn();
+        $dataToolReturn = $modelToolReturn->getInfo($returnId);
+        return view('work.store.allocation.view-return-image', compact('modelStaff', 'dataToolReturn'));
     }
 
     # ap dung phat theo noi qui

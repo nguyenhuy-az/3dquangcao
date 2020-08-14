@@ -41,10 +41,11 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                             <th>
                                 Ngày giao
                             </th>
-                            <th>Ảnh giao</th>
+                            <th class="text-center">Ảnh giao</th>
                             <th class="text-center">
                                 Hiện trạng
                             </th>
+                            <th class="text-center">Ảnh trả</th>
                             <th class="text-center">Trạng thái</th>
                         </tr>
                         @if($hFunction->checkCount($dataToolAllocationDetail))
@@ -74,7 +75,7 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                                     <td>
                                         {!! $hFunction->convertDateDMYFromDatetime($detailDate) !!}
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <a class="qc_view_image_get qc-link"
                                            data-href="{!! route('qc.work.store.allocation.check.image.view',$detailId) !!}">
                                             <img style="width: 70px; height: auto;"
@@ -89,7 +90,18 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        @if(!$hFunction->checkCount($toolReturn))
+                                        {{--da bao tra--}}
+                                        @if($returnStatus)
+                                            <a class="qc_view_image_get qc-link" data-href="{!! route('qc.work.store.allocation.check.return_image.view',$toolReturn->returnId()) !!}">
+                                                <img style="width: 70px; height: auto;"
+                                                     src="{!! $toolReturn->pathFullImage($toolReturn->image()) !!}">
+                                            </a>
+                                        @else
+                                            <span style="color: red;">X</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if(!$returnStatus)
                                             <a class="qc_minus_money_get qc-link-green-bold"
                                                data-href="{!! route('qc.work.store.allocation.check.minus_money.get',$detailId) !!}">
                                                 Phạt
@@ -115,7 +127,7 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                             @endforeach
                         @else
                             <tr>
-                                <td class="text-center" colspan="6">
+                                <td class="text-center" colspan="7">
                                     Chưa có đồ nghề
                                 </td>
                             </tr>

@@ -19,7 +19,7 @@ $currentMonth = $hFunction->currentMonth();
 @extends('work.tool.allocation.index')
 @section('qc_work_tool_private_body')
     <div class="row qc_work_tool_wrap">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="table-responsive">
@@ -27,12 +27,15 @@ $currentMonth = $hFunction->currentMonth();
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Dụng cụ</th>
-                                <th class="text-center">
+                                <th>
                                     Ngày giao
                                 </th>
-                                <th>Ảnh</th>
+                                <th class="text-center">Ảnh được giao</th>
                                 <th class="text-center">
-                                    Hiện trạng
+                                    Hiện trạng <giao></giao>
+                                </th>
+                                <th class="text-center">
+                                    Ảnh trả
                                 </th>
                                 <th class="text-center">Trạng thái</th>
                             </tr>
@@ -60,10 +63,10 @@ $currentMonth = $hFunction->currentMonth();
                                         <td>
                                             {!!  $storeName !!}
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             {!! $hFunction->convertDateDMYFromDatetime($detailDate) !!}
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                             <a class="qc_view_image_get qc-link"
                                                data-href="{!! route('qc.work.tool.allocation.image.view',$detailId) !!}">
                                                 <img style="width: 70px; height: auto;"
@@ -78,6 +81,17 @@ $currentMonth = $hFunction->currentMonth();
                                             @endif
                                         </td>
                                         <td class="text-center">
+                                            {{--da bao tra--}}
+                                            @if($returnStatus)
+                                                <a class="qc_view_image_get qc-link" data-href="{!! route('qc.work.tool.allocation.return_image.view',$toolReturn->returnId()) !!}">
+                                                    <img style="width: 70px; height: auto;"
+                                                         src="{!! $toolReturn->pathFullImage($toolReturn->image()) !!}">
+                                                </a>
+                                            @else
+                                                <span style="color: red;">X</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
                                             @if(!$hFunction->checkCount($toolReturn))
                                                 <a class="qc-link-green-bold"
                                                    href="{!! route('qc.work.tool.allocation.return.get',"$allocationId/$detailId") !!}">
@@ -87,7 +101,7 @@ $currentMonth = $hFunction->currentMonth();
                                                 <em class="qc-color-grey">Đã trả</em> <br/>
                                                 @if($toolReturn->checkConfirm())
                                                     @if($toolReturn->checkAcceptStatus())
-                                                        <em style="color: green;">
+                                                        <em>
                                                             Được chấp nhận
                                                         </em>
                                                     @else

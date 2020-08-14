@@ -15,19 +15,16 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
 @extends('ad3d.finance.pay.pay-activity.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed black;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
                     <label class="qc-font-size-20">CHI HOẠT ĐỘNG</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-
-                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
+                    <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                             data-href-filter="{!! $hrefIndex !!}">
                         {{--@if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
@@ -49,13 +46,13 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="qc_ad3d_list_content qc-ad3d-table-container row"
+            <div class="qc_ad3d_list_content row"
                  data-href-view="{!! route('qc.ad3d.finance.pay_activity.view.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color:yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th style="width: 170px;">Ngày</th>
+                            <th style="width: 150px;">Ngày</th>
                             <th>Danh mục chi</th>
                             <th style="width: 400px;">Ghi chú chi</th>
                             <th>Loại chi phí</th>
@@ -68,10 +65,10 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                         <tr>
                             <td class="text-center"></td>
                             <td style="padding: 0 !important;">
-                                <select class="cbDayFilter" style="height: 30px;"
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
-                                        Tất cả
+                                        All
                                     </option>
                                     @for($d =1;$d<= 31; $d++)
                                         <option value="{!! $d !!}"
@@ -80,10 +77,10 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter" style="height: 30px;"
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($monthFilter == 0) selected="selected" @endif>
-                                        Tất cả
+                                        All
                                     </option>
                                     @for($m =1;$m<= 12; $m++)
                                         <option value="{!! $m !!}"
@@ -92,7 +89,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter" style="height: 30px;"
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"

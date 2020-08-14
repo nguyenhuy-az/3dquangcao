@@ -54,6 +54,14 @@ class CompanyStoreController extends Controller
         return view('work.store.tool.view-import-image', compact('modelStaff', 'dataImportImage'));
     }
 
+    # xem anh ban giap
+    public function viewDetailImage($detailId)
+    {
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $dataToolAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
+        return view('work.store.tool.view-detail-image', compact('modelStaff', 'dataToolAllocationDetail'));
+    }
+
     # xem anh bao tra
     public function viewReturnImage($returnId)
     {

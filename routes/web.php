@@ -1340,9 +1340,10 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         # do nghe da phat
         Route::group(['prefix' => 'allocation'], function () {
             #xem chi tiết
-            # anh nhap do nghe
+            # anh ban giao do nghe
             Route::get('view-image/{imageId?}', ['as' => 'qc.work.tool.allocation.image.view', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewImage']);
-            //Route::get('view/{toolId?}', ['as' => 'qc.work.tool.allocation.view.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewTool']);
+            # anh tra do nghe
+            Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.tool.allocation.return_image.view', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewReturnImage']);
 
             # tra lai do nghe
             Route::get('return/{allocationId?}/{storeId?}', ['as' => 'qc.work.tool.allocation.return.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@getReturn']);
@@ -1362,7 +1363,10 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::group(['prefix' => 'allocation'], function () {
             # xac nhan tra
             Route::get('check/{allocationId?}', ['as' => 'qc.work.store.allocation.check.get', 'uses' => 'Work\Store\Allocation\AllocationController@checkInfo']);
+            # xem anh ban giao
             Route::get('view-image/{detailId?}', ['as' => 'qc.work.store.allocation.check.image.view', 'uses' => 'Work\Store\Allocation\AllocationController@viewImage']);
+            # xem anh tra
+            Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.store.allocation.check.return_image.view', 'uses' => 'Work\Store\Allocation\AllocationController@viewReturnImage']);
             # ap dung phat
             Route::get('minus-money/{detailId?}', ['as' => 'qc.work.store.allocation.check.minus_money.get', 'uses' => 'Work\Store\Allocation\AllocationController@getMinusMoney']);
             Route::post('minus-money/{detailId?}', ['as' => 'qc.work.store.allocation.check.minus_money.post', 'uses' => 'Work\Store\Allocation\AllocationController@postMinusMoney']);
@@ -1378,15 +1382,17 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
             # xem anh nhap san pham
             Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.store.tool.import_image.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@viewImportImage']);
+            # xem anh ban giao
+            Route::get('view-detail-image/{detailId?}', ['as' => 'qc.work.store.tool.detail_image.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@viewDetailImage']);
             # xem anh bao tra
-            Route::get('view-import-return/{returnId?}', ['as' => 'qc.work.store.tool.return_image.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@viewReturnImage']);
+            Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.store.tool.return_image.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@viewReturnImage']);
 
             Route::get('/{type?}/{toolId?}', ['as' => 'qc.work.store.tool.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@index']);
         });
         # ban giao lai dung cu
         Route::group(['prefix' => 'return'], function () {
             # xem anh nhap san pham
-            Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.store.return.import_image.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@viewImportImage']);
+            Route::get('view-detail-image/{detailId?}', ['as' => 'qc.work.store.return.detail_image.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@viewDetailImage']);
             # xem anh bao tra
             Route::get('view-import-return/{returnId?}', ['as' => 'qc.work.store.return.return_image.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@viewReturnImage']);
 

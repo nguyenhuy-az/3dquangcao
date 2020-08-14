@@ -81,7 +81,7 @@ class QcTimekeepingProvisional extends Model
         if ($hFunction->checkCount($dataTimeKeepingProvisional)) { # co bao gio vao
             $timeBegin = $dataTimeKeepingProvisional->timeBegin();
             $timeEnd = $dataTimeKeepingProvisional->timeEnd();
-            if (empty($timeEnd)) {
+            if (empty($timeEnd)) { # co bao gio ra
                 if (QcTimekeepingProvisional::where(['timekeeping_provisional_id' => $dataTimeKeepingProvisional->timekeepingProvisionalId()])->update(
                     [
                         'accuracyStatus' => 0,
@@ -92,7 +92,7 @@ class QcTimekeepingProvisional extends Model
                     ])
                 ) {
                     if (!$modelTimekeeping->existDateOfWork($workId, $checkDate)) {
-                        $modelTimekeeping->insert($timeBegin, null, null, 0, 0, 0,0,null,'Duyệt tự động - không báo giờ ra', 0, 1, 0, null, $workId);
+                        $modelTimekeeping->insert($timeBegin, null, null, 0, 0, 0, 0, null, 'Duyệt tự động - không báo giờ ra', 0, 1, 0, null, $workId);
                     }
                 }
             }
@@ -101,15 +101,17 @@ class QcTimekeepingProvisional extends Model
                 $companyId = $modelWork->companyIdOfWork($workId);
                 if (!$modelSystemDateOff->checkExistsDateOfCompany($companyId, $checkDate)) { # khong phai ngay nghi cua he thong ==> nghi khong phép
                     $dataLicenseOffWork = $modelLicenseOffWork->infoOfStaffAndDate($staffId, $checkDate);
-                    if (count($dataLicenseOffWork) > 0) { # co xin nghi
-                        if ($dataLicenseOffWork->checkAgreeStatus()) { # duoc duyet nghi
+                    # co xin nghi
+                    if ($hFunction->checkCount($dataLicenseOffWork)) {
+                        # duoc duyet nghi
+                        if ($dataLicenseOffWork->checkAgreeStatus()) {
                             # them thong tin vao ngay cham cong
                             if (!$modelTimekeeping->existDateOfWork($workId, $checkDate)) {
-                                $modelTimekeeping->insert(null, null, $checkDate, 0, 0, 0, 0,null, 'Duyệt tự động - không chấm công', 0, 1, 0, null, $workId);
+                                $modelTimekeeping->insert(null, null, $checkDate, 0, 0, 0, 0, null, 'Duyệt tự động - không chấm công', 0, 1, 0, null, $workId);
                             }
                         } else { # khong duoc duyet
                             if (!$modelTimekeeping->existDateOfWork($workId, $checkDate)) {
-                                if ($modelTimekeeping->insert(null, null, $checkDate, 0, 0, 0, 0,null, 'Duyệt tự động - không chấm công', 0, 0, 0, null, $workId)) {
+                                if ($modelTimekeeping->insert(null, null, $checkDate, 0, 0, 0, 0, null, 'Duyệt tự động - không chấm công', 0, 0, 0, null, $workId)) {
                                     if ($modelStaff->checkApplyRule($staffId)) { # ap dung noi quy
                                         # phat nghi khong phep
                                         $punishIdOfOffWork = $modelPunishContent->punishIdOfOffWork();
@@ -126,7 +128,7 @@ class QcTimekeepingProvisional extends Model
                     } else { # khong xin nghi
                         # them thong tin vao ngay cham cong
                         if (!$modelTimekeeping->existDateOfWork($workId, $checkDate)) {
-                            if ($modelTimekeeping->insert(null, null, $checkDate, 0, 0, 0, 0,'', 'Duyệt tự động - không chấm công', 0, 0, 0, null, $workId)) {
+                            if ($modelTimekeeping->insert(null, null, $checkDate, 0, 0, 0, 0, '', 'Duyệt tự động - không chấm công', 0, 0, 0, null, $workId)) {
                                 if ($modelStaff->checkApplyRule($staffId)) { # ap dung noi quy
                                     # phat nghi khong phep
                                     $punishIdOfOffWork = $modelPunishContent->punishIdOfOffWork();
@@ -188,10 +190,9 @@ class QcTimekeepingProvisional extends Model
         $modelTimekeepingImage = new QcTimekeepingImage();
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
-
-        if($accuracyStatus == 0) $confirmNote = $confirmNote." - Báo giờ không chính xác";
-        if($applyTimekeepingStatus == 0) $confirmNote = $confirmNote." - Không tính công ngày này";
-        if($applyRuleStatus == 0) $confirmNote = $confirmNote." - Không áp dụng nội quy phạt";
+        if ($accuracyStatus == 0) $confirmNote = $confirmNote . " - Báo giờ không chính xác";
+        if ($applyTimekeepingStatus == 0) $confirmNote = $confirmNote . " - Không tính công ngày này";
+        if ($applyRuleStatus == 0) $confirmNote = $confirmNote . " - Không áp dụng nội quy phạt";
         if (QcTimekeepingProvisional::where(['timekeeping_provisional_id' => $timekeepingProvisionalId])->update(
             [
                 'accuracyStatus' => $accuracyStatus,
@@ -207,19 +208,20 @@ class QcTimekeepingProvisional extends Model
             $dateEnd = $dataTimekeepingProvisional->timeEnd();
             $note = $dataTimekeepingProvisional->note();
             $afternoonStatus = $dataTimekeepingProvisional->afternoonStatus();
-            $dayBegin = date('d', strtotime($dateBegin));
-            $monthBegin = date('m', strtotime($dateBegin));
-            $yearBegin = date('Y', strtotime($dateBegin));
-            if ($modelTimekeeping->existDateOfWork($workId, "$monthBegin/$dayBegin/$yearBegin")) { # da ton tai cham cong
+            //$dayBegin = date('d', strtotime($dateBegin));
+            //$monthBegin = date('m', strtotime($dateBegin));
+            //$yearBegin = date('Y', strtotime($dateBegin));
+            $checkDate = date('Y-m-d', strtotime($dateBegin));// "$monthBegin/$dayBegin/$yearBegin";
+            if ($modelTimekeeping->existDateOfWork($workId, $checkDate)) { # da ton tai cham cong
                 return false;
             } else {
-                $defaultBegin = $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 08:00:00");
-                $defaultEnd = $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 17:30:00");
+                $defaultBegin = date('Y-m-d 08:00', strtotime($dateBegin));// $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 08:00:00");
+                $defaultEnd = date('Y-m-d 17:30', strtotime($dateBegin));//$hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 17:30:00");
                 $mainMinute = 0;
                 $plusMinute = 0;
                 $minusMinute = 0;
                 $lateStatus = 1;
-                # ap dung noi quy phat
+                # ----- ap dung noi quy phat  --------
                 if ($applyRuleStatus == 1) {
                     //khong phai ngay chu nhat
                     if (!$hFunction->checkDateIsSunday(date('Y-m-d', strtotime($dateBegin)))) {
@@ -247,44 +249,46 @@ class QcTimekeepingProvisional extends Model
                         }
                     }
                 }
-
-                # co tinh cong ngay lam
-                if($applyTimekeepingStatus == 1){
-                    $diffLate = abs(strtotime($dateEnd) - strtotime($dateBegin));
-                    $totalWorkMinute = $diffLate / 60; //số phút làm việc
-                    //lam luon buoi trua
-                    if ($modelTimekeepingProvisional->checkAfternoonWork($timekeepingProvisionalId)) $plusMinute = 60;// cộng 1h buổi trưa
-                    # ngay chu nhat
-                    if ($hFunction->checkDateIsSunday(date('Y-m-d', strtotime($dateBegin)))) {
-                        # gio lam ngay chu nhat tinh tang ca
-                        if (360 < $totalWorkMinute) { // làm hơn 6 tiếng từ sáng
-                            if ($dataTimekeepingProvisional->checkAfternoonWork($timekeepingProvisionalId)) {
-                                $plusMinute = $totalWorkMinute - 30; //(trừ 1h30 nghĩ trưa)
+                # ------ co tinh cong ngay lam --------
+                if ($applyTimekeepingStatus == 1) {
+                    # co bao gio ra
+                    if (!$hFunction->checkEmpty($dateEnd)) {
+                        $diffLate = abs(strtotime($dateEnd) - strtotime($dateBegin));
+                        $totalWorkMinute = $diffLate / 60; //số phút làm việc
+                        //lam luon buoi trua
+                        if ($modelTimekeepingProvisional->checkAfternoonWork($timekeepingProvisionalId)) $plusMinute = 60;// cộng 1h buổi trưa
+                        # ngay chu nhat
+                        if ($hFunction->checkDateIsSunday(date('Y-m-d', strtotime($dateBegin)))) {
+                            # gio lam ngay chu nhat tinh tang ca
+                            if (360 < $totalWorkMinute) { // làm hơn 6 tiếng từ sáng
+                                if ($dataTimekeepingProvisional->checkAfternoonWork($timekeepingProvisionalId)) {
+                                    $plusMinute = $totalWorkMinute - 30; //(trừ 1h30 nghĩ trưa)
+                                } else {
+                                    $plusMinute = $totalWorkMinute - 90; //(trừ 1h30 nghĩ trưa)
+                                }
                             } else {
-                                $plusMinute = $totalWorkMinute - 90; //(trừ 1h30 nghĩ trưa)
+                                $plusMinute = $totalWorkMinute;
                             }
                         } else {
-                            $plusMinute = $totalWorkMinute;
-                        }
-                    } else {
-                        if ($defaultEnd < $dateEnd) { // tăng ca
-                            $diffMain = abs(strtotime($defaultEnd) - strtotime($dateBegin));
-                            $diffPlus = abs(strtotime($dateEnd) - strtotime($defaultEnd));
-                            $plusMinute = $plusMinute + ($diffPlus / 60); //số phút tăng ca
-                        } else {
-                            $diffMain = abs(strtotime($dateEnd) - strtotime($dateBegin));
-                        }
-                        $totalMainWorkMinute = $diffMain / 60; //giờ làm chính
-                        if ($totalMainWorkMinute > 330) {
-                            $mainMinute = $totalMainWorkMinute - 90; // làm giờ hành chính trừ 1h3 nghĩ trưa
-                        } else {
-                            $mainMinute = $totalMainWorkMinute;
-                        }
+                            if ($defaultEnd < $dateEnd) { // tăng ca
+                                $diffMain = abs(strtotime($defaultEnd) - strtotime($dateBegin));
+                                $diffPlus = abs(strtotime($dateEnd) - strtotime($defaultEnd));
+                                $plusMinute = $plusMinute + ($diffPlus / 60); //số phút tăng ca
+                            } else {
+                                $diffMain = abs(strtotime($dateEnd) - strtotime($dateBegin));
+                            }
+                            $totalMainWorkMinute = $diffMain / 60; //giờ làm chính
+                            if ($totalMainWorkMinute > 330) {
+                                $mainMinute = $totalMainWorkMinute - 90; // làm giờ hành chính trừ 1h3 nghĩ trưa
+                            } else {
+                                $mainMinute = $totalMainWorkMinute;
+                            }
 
+                        }
                     }
                 }
-                # them thong tin cham cong
-                if ($modelTimekeeping->insert($dateBegin, $dateEnd, null, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note,$confirmNote, $lateStatus, $permissionLateStatus, 0, $staffLoginId, $workId)) {
+                #------- them thong tin cham cong chinh thuc --------
+                if ($modelTimekeeping->insert($dateBegin, $dateEnd, null, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $confirmNote, $lateStatus, $permissionLateStatus, 0, $staffLoginId, $workId)) {
                     $newTimekeepingId = $modelTimekeeping->insertGetId();
                     $dataTimekeepingProvisionalImage = $modelTimekeepingProvisional->imageOfTimekeepingProvisional($timekeepingProvisionalId);
                     //thêm hình ảnh vào bảng chấm công chính
@@ -372,6 +376,7 @@ class QcTimekeepingProvisional extends Model
         $dateYmd = date('Y-m-d', strtotime($dateYmd));
         return QcTimekeepingProvisional::where('work_id', $workId)->where('timeBegin', 'like', "%$dateYmd%")->first();
     }
+
     //----------- TIMEKEEPING-PROVISIONAL-IAMGE ------------
     public function timekeepingProvisionalImage()
     {

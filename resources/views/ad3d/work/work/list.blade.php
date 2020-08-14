@@ -14,8 +14,7 @@ $indexHref = route('qc.ad3d.work.work.get');
 @extends('ad3d.work.work.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed brown;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px; padding-top : 10px;">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $indexHref !!}">
@@ -24,7 +23,7 @@ $indexHref = route('qc.ad3d.work.work.get');
                     <label class="qc-font-size-20">THÔNG TIN LÀM VIỆC</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
+                    <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                             data-href-filter="{!! $indexHref !!}">
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
@@ -43,52 +42,15 @@ $indexHref = route('qc.ad3d.work.work.get');
                         @endif
                     </select>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="active">
-                            <a href="{!! $indexHref !!}">Mới (Sau tháng 7/2019)</a>
-                        </li>
-                        <li>
-                            <a href="{!! route('qc.ad3d.work.work.old.get') !!}">Cũ (Trước tháng 8/2019)</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0;">
-                    <form name="" action="">
-                        <div class="row">
-                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <select class="cbMonthFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! $indexHref !!}">
-                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >Tất cả
-                                    </option>
-                                    @for($i =1;$i<= 12; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select class="cbYearFilter" style="margin-top: 5px; height: 25px;"
-                                        data-href="{!! $indexHref !!}">
-                                    @for($i =2017;$i<= 2050; $i++)
-                                        <option value="{!! $i !!}"
-                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
             <div class="qc_ad3d_list_content row"
                  data-href-view="{!! route('qc.ad3d.work.work.view.get') !!}"
                  data-href-end="{!! route('qc.ad3d.work.work.make_salary.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Nhân viên</th>
                             <th class="text-center">Từ ngày</th>
@@ -111,7 +73,27 @@ $indexHref = route('qc.ad3d.work.work.get');
                                       </span>
                                 </div>
                             </td>
-                            <td class="text-center"></td>
+                            <td class="text-center" style="padding: 0;">
+                                <select class="cbMonthFilter" style="height: 30px;" data-href="{!! $indexHref !!}">
+                                    <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($m =1;$m<= 12; $m++)
+                                        <option value="{!! $m !!}"
+                                                @if((int)$monthFilter == $m) selected="selected" @endif>
+                                            {!! $m !!}
+                                        </option>
+                                    @endfor
+                                </select>
+                                <select class="cbYearFilter" style="height: 30px;" data-href="{!! $indexHref !!}">
+                                    @for($y =2017;$y<= 2050; $y++)
+                                        <option value="{!! $y !!}"
+                                                @if($yearFilter == $y) selected="selected" @endif>
+                                            {!! $y !!}
+                                        </option>
+                                    @endfor
+                                </select>
+                            </td>
                             <td class="text-center"></td>
                             <td class="text-center"></td>
                             <td class="text-center"></td>
@@ -179,7 +161,8 @@ $indexHref = route('qc.ad3d.work.work.get');
                             @endforeach
                         @else
                             <tr>
-                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12" colspan="7">
+                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                                    colspan="7">
                                     <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                 </td>
                             </tr>

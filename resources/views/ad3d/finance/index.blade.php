@@ -113,7 +113,7 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                             </li>
                             <li @if($accessObject == 'keepMoney') class="active" @endif>
                                 <a href="{!! route('qc.ad3d.finance.keep_money.get') !!}">
-                                    Giữ tiền tiền
+                                    Giữ tiền
                                 </a>
                             </li>
                         </ul>

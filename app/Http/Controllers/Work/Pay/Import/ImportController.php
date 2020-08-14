@@ -213,7 +213,7 @@ class ImportController extends Controller
                                                         }
                                                     }
                                                     if (!empty($allocationId)) {  //phieu cap phat dung cu
-                                                        $modelToolAllocationDetail->insert(null, 1, $allocationId, $newStoreId); // chi tiet cap phat
+                                                        $modelToolAllocationDetail->insert($allocationId, $newStoreId); // chi tiet cap phat
                                                     }
                                                 }
                                             }
@@ -253,7 +253,7 @@ class ImportController extends Controller
                                                     }
                                                 }
                                                 if (!empty($allocationId)) {  //phieu cap phat dung cu
-                                                    $modelToolAllocationDetail->insert(null, 1, $allocationId, $newStoreId); // chi tiet cap phat
+                                                    $modelToolAllocationDetail->insert($allocationId, $newStoreId); // chi tiet cap phat
                                                 }
                                             }
                                         }

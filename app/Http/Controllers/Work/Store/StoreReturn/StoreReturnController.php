@@ -5,16 +5,11 @@ namespace App\Http\Controllers\Work\Store\StoreReturn;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
-use App\Models\Ad3d\CompanyStore\QcCompanyStore;
-use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\Staff\QcStaff;
-use App\Models\Ad3d\Tool\QcTool;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 //use Illuminate\Http\Request;
 use App\Models\Ad3d\ToolReturn\QcToolReturn;
-use App\Models\Ad3d\ToolReturnConfirm\QcToolReturnConfirm;
-use App\Models\Ad3d\ToolReturnDetail\QcToolReturnDetail;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use File;
@@ -81,11 +76,11 @@ class StoreReturnController extends Controller
         }
     }
     # xem anh nhap kho
-    public function viewImportImage($imageId)
+    public function viewDetailImage($detailId)
     {
-        $modelImportImage = new QcImportImage();
-        $dataImportImage = $modelImportImage->getInfo($imageId);
-        return view('work.store.return.view-import-image', compact('modelStaff', 'dataImportImage'));
+        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $dataToolAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
+        return view('work.store.return.view-detail-image', compact('modelStaff', 'dataToolAllocationDetail'));
     }
     # xem anh bao tra
     public function viewReturnImage($returnId)

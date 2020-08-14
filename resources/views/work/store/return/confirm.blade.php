@@ -69,26 +69,11 @@ $dataToolReturn = $dataToolAllocation->toolReturnUnConfirmInfo($allocationId);
                                     {!! date('d/m/Y', strtotime($returnDate)) !!}
                                 </td>
                                 <td>
-                                    @if ($hFunction->checkEmpty($detailImage))
-                                        {{--giao lan dau--}}
-                                        {{--lay thong tin hinh anh nhap kho--}}
-                                        <?php
-                                        $dataImport = $dataToolAllocationDetail->companyStore->import;
-                                        $dataImportImage = $dataImport->importImageInfoOfImport();
-                                        ?>
-                                        @if($hFunction->checkCount($dataImportImage))
-                                            @foreach($dataImportImage as $importImage)
-                                                <div style="position: relative; float: left; width: 70px; max-height: 70px; background-color: grey;">
-                                                    <a class="qc-link">
-                                                        <img style="max-width: 100%; max-height: 100%;"
-                                                             src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                                    </a>
-                                                </div>
-                                            @endforeach
-                                        @endif
-                                    @else
-                                        Ảnh bàn giao
-                                    @endif
+                                    <a class="qc_view_image_get qc-link"
+                                       data-href="{!! route('qc.work.store.return.detail_image.get',$dataToolAllocationDetail->detailId()) !!}">
+                                        <img style="width: 70px; height: auto;"
+                                             src="{!! $dataToolAllocationDetail->pathFullImage($dataToolAllocationDetail->image()) !!}">
+                                    </a>
                                 </td>
                                 <td>
                                     <div style="width: 70px; max-height: 70px;">

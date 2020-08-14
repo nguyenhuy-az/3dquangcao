@@ -14,8 +14,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
 @extends('ad3d.finance.keep-money.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed black;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
@@ -24,7 +23,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                     <label class="qc-font-size-20">GIỮ TIỀN NHÂN VIÊN</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
+                    <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                             data-href-filter="{!! $hrefIndex !!}">
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
@@ -51,7 +50,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
                             <th style="width:20px;">STT</th>
-                            <th>Ngày giữ</th>
+                            <th style="width: 150px;">Ngày giữ</th>
                             <th>Nhân viên</th>
                             <th>Ghi chú</th>
                             <th>Tháng lương giữ</th>
@@ -61,7 +60,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                         <tr>
                             <td></td>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter" style="height: 30px;"
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -73,7 +72,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -84,7 +83,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
                                                 @if($yearFilter == $y) selected="selected" @endif>
@@ -110,7 +109,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                             </td>
                             <td></td>
                             <td style="padding: 0;">
-                                <select class="cbPayStatus" name="cbPayStatus" style="height: 30px; width: 100%;"
+                                <select class="cbPayStatus form-control" name="cbPayStatus"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($payStatus == 0) selected="selected" @endif>
                                         Tất cả

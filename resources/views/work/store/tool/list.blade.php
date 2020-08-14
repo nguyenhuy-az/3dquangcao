@@ -87,9 +87,6 @@ $currentMonth = $hFunction->currentMonth();
                                     $useStatus = $companyStore->useStatus();
                                     $dataTool = $companyStore->tool;
                                     $n_o = $n_o + 1;
-                                    # thong tin nhap kho
-                                    $dataImport = $companyStore->import;
-                                    $dataImportImage = $dataImport->getOneImportImage();
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
                                         <td class="text-center">
@@ -119,16 +116,20 @@ $currentMonth = $hFunction->currentMonth();
                                                                  src="{!! $dataToolReturn->pathFullImage($dataToolReturn->image()) !!}">
                                                         </a>
                                                     @else
-                                                        @if($hFunction->checkCount($dataImportImage))
-                                                            <a class="qc_view_image_get qc-link"
-                                                               data-href="{!! route('qc.work.store.tool.import_image.get',$dataImportImage->imageId()) !!}">
-                                                                <img style="width: 70px; height: auto;"
-                                                                     src="{!! $dataImportImage->pathFullImage($dataImportImage->name()) !!}">
-                                                            </a>
-                                                        @endif
+                                                        {{--lay ban giao--}}
+                                                        <a class="qc_view_image_get qc-link"
+                                                           data-href="{!! route('qc.work.store.tool.detail_image.get',$dataToolAllocationDetail->detailId()) !!}">
+                                                            <img style="width: 70px; height: auto;"
+                                                                 src="{!! $dataToolAllocationDetail->pathFullImage($detailImage) !!}">
+                                                        </a>
                                                     @endif
 
                                                 @else
+                                                    <?php
+                                                    # thong tin nhap kho
+                                                    $dataImport = $companyStore->import;
+                                                    $dataImportImage = $dataImport->getOneImportImage();
+                                                    ?>
                                                     @if($hFunction->checkCount($dataImportImage))
                                                         <a class="qc_view_image_get qc-link"
                                                            data-href="{!! route('qc.work.store.tool.import_image.get',$dataImportImage->imageId()) !!}">
@@ -138,6 +139,11 @@ $currentMonth = $hFunction->currentMonth();
                                                     @endif
                                                 @endif
                                             @else
+                                                <?php
+                                                # thong tin nhap kho
+                                                $dataImport = $companyStore->import;
+                                                $dataImportImage = $dataImport->getOneImportImage();
+                                                ?>
                                                 {{--do nghe dung chung--}}
                                                 @if($hFunction->checkCount($dataImportImage))
                                                     <a class="qc_view_image_get qc-link"

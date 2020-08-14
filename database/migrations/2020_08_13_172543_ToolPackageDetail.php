@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ToolReturnDetail extends Migration
+class ToolPackageDetail extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,16 @@ class ToolReturnDetail extends Migration
      */
     public function up()
     {
-        Schema::create('qc_tool_return_detail', function(Blueprint $table)
+        Schema::create('qc_tool_allocation_detail', function(Blueprint $table)
         {
             $table->increments('detail_id');
             $table->integer('amount');
-            $table->tinyInteger('useStatus')->default(1);
+            $table->tinyInteger('newStatus')->default(1);
             $table->dateTime('created_at');
             $table->integer('tool_id')->unsigned();
             $table->foreign('tool_id')->references('tool_id')->on('qc_tools');
-            $table->integer('return_id')->unsigned();
-            $table->foreign('return_id')->references('return_id')->on('qc_tool_return');
+            $table->integer('allocation_id')->unsigned();
+            $table->foreign('allocation_id')->references('allocation_id')->on('qc_tool_allocation');
             //$table->rememberToken();
             //$table->timestamps();
         });

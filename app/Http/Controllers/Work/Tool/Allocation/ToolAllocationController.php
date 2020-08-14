@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Work\Tool\Allocation;
 
 
-use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Tool\QcTool;
 use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
@@ -63,7 +62,7 @@ class ToolAllocationController extends Controller
             $txtReturnImage = Request::file('txtReturnImage_' . $detailId);
             if (!empty($txtReturnImage)) {
                 $name_img = stripslashes($_FILES['txtReturnImage_' . $detailId]['name']);
-                $name_img = $detailId."_".$hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+                $name_img = $detailId . "_" . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
                 $source_img = $_FILES['txtReturnImage_' . $detailId]['tmp_name'];
                 # up anh do nghe
                 if ($modelToolReturn->uploadImage($source_img, $name_img, 500)) {
@@ -75,11 +74,20 @@ class ToolAllocationController extends Controller
         return redirect()->route('qc.work.tool.allocation.get');
 
     }
-    # xem anh nhap kho
+
+    # xem anh ban giao
     public function viewImage($detailId)
     {
         $modelToolAllocationDetail = new QcToolAllocationDetail();
         $dataToolAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
         return view('work.tool.allocation.view-image', compact('modelStaff', 'dataToolAllocationDetail'));
+    }
+
+    # xem anh tra
+    public function viewReturnImage($returnId)
+    {
+        $modelToolReturn = new QcToolReturn();
+        $dataToolReturn = $modelToolReturn->getInfo($returnId);
+        return view('work.tool.allocation.view-return-image', compact('modelStaff', 'dataToolReturn'));
     }
 }

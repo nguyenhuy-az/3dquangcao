@@ -14,18 +14,16 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
 @extends('ad3d.finance.bonus.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed black;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
-                    <label class="qc-font-size-20">THÔNG TINTHUONGWR</label>
+                    <label class="qc-font-size-20">THÔNG TIN THƯỞNG</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
+                    <select class="cbCompanyFilter form-control" name="cbCompanyFilter" style="height: 34px;"
                             data-href-filter="{!! $hrefIndex !!}">
                         @if($dataStaffLogin->checkRootManage())
                             <option value="1000">Tất cả</option>
@@ -56,7 +54,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                         <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Tên</th>
-                            <th class="text-center">Ngày</th>
+                            <th style="width: 150px;">Ngày</th>
                             <th>Nguyên nhân</th>
                             <th>Ghi chú</th>
                             <th class="text-center">Áp dụng</th>
@@ -76,8 +74,8 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                       </span>
                                 </div>
                             </td>
-                            <td class="text-center" style="padding:0 ;">
-                                <select class="cbDayFilter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                            <td style="padding:0 ;">
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0; height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -88,8 +86,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <span>/</span>
-                                <select class="cbMonthFilter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -100,8 +97,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <span>/</span>
-                                <select class="cbYearFilter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -152,7 +148,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                             {!! $dataWork->staff->fullName() !!}
                                         @endif
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         {!! date('d/m/Y', strtotime($bonus->bonusDate())) !!}
                                     </td>
                                     <td>
