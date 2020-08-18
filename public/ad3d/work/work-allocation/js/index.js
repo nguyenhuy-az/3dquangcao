@@ -6,6 +6,36 @@ var qc_ad3d_work_allocation = {
         qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-view') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
         qc_main.scrollTop();
     },
+    minusMoney: {
+        getMinus: function (href) {
+            qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
+            qc_main.scrollTop();
+        },
+        save: function (frm) {
+            var txtMoney = $(frm).find("input[name='txtMoney']");
+            var txtNote = $(frm).find("input[name='txtNote']");
+            var frm_notify = $(frm).find("input[name='frm_notify']");
+            if (qc_main.check.inputNull(txtMoney, 'Nhập số tiền phạt')) {
+                txtMoney.focus();
+                return false;
+            } else {
+                //alert(txtMoney);
+                var money = qc_main.getNumberInput(txtMoney.val());
+                if (money < 50000) {
+                    alert('Tiền phạt phải lớn hơn 0');
+                    txtMoney.focus();
+                    return false;
+                }
+            }
+            if (qc_main.check.inputNull(txtNote, 'Phải nhập lý do phạt')) {
+                return false;
+            }
+            if (confirm('Thông tin phạt sẽ không được thay đổi, Đồng ý thông tin phạt này?')) {
+                qc_ad3d_submit.ajaxFormHasReload(frm, frm_notify, false);
+                qc_main.scrollTop();
+            }
+        }
+    },
     cancel: function (href) {
         if (confirm('Bạn muốn hủy phân việc này')) {
             qc_ad3d_submit.ajaxHasReload(href, '', false);
@@ -60,6 +90,15 @@ $(document).ready(function () {
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_cancel', function () {
         qc_ad3d_work_allocation.cancel($(this).data('href'));
-    })
+    });
+});
+//---------- ----------- ap dung  phat ---------- ------------
+$(document).ready(function () {
+    $('.qc_ad3d_list_object').on('click', '.qc_minus_money_get', function () {
+        qc_ad3d_work_allocation.minusMoney.getMinus($(this).data('href'));
+    });
+    $('body').on('click', '#qcFrmMinusMoneyForSupplies .qc_save', function () {
+        qc_ad3d_work_allocation.minusMoney.save($(this).parents('#qcFrmMinusMoneyForSupplies'));
+    });
 });
 

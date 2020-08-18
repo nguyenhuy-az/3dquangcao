@@ -13,7 +13,7 @@ class ToolPackageDetail extends Migration
      */
     public function up()
     {
-        Schema::create('qc_tool_allocation_detail', function(Blueprint $table)
+        Schema::create('qc_tool_package_detail', function(Blueprint $table)
         {
             $table->increments('detail_id');
             $table->integer('amount');

@@ -223,6 +223,12 @@ class QcPunishContent extends Model
         return (count($result) > 0) ? $result : null;
     }
 
+    # ma phat boi thuong vat tu thi cong
+    public function getPunishIdForMinusMoneySupplies()
+    {
+        return $this->getPunishIdByCode('BTVTTC');
+    }
+
     # ban giao don hang tre
     public function getPunishIdOfOrderAllocationLate()
     {

@@ -169,10 +169,14 @@ Route::group(['prefix' => 'ad3d'], function () {
     Route::group(['prefix' => 'work', 'middleware' => 'Ad3dMiddleware'], function () {
         //phân viêc cho nhân viên
         Route::group(['prefix' => 'work-allocation'], function () {
-
+            # phat boi thuong vat tu
+            Route::group(['prefix' => 'minus-money'], function () {
+                Route::get('add/{workAllocationId?}', ['as' => 'qc.ad3d.work.work_allocation.minus_money.add.get', 'uses' => 'Ad3d\Work\WorkAllocation\WorkAllocationController@getMinusMoney']);
+                Route::post('add/{workAllocationId?}', ['as' => 'qc.ad3d.work.work_allocation.minus_money.add.post', 'uses' => 'Ad3d\Work\WorkAllocation\WorkAllocationController@postMinusMoney']);
+            });
             Route::get('view/{allocationId?}', ['as' => 'qc.ad3d.work.work_allocation.view.get', 'uses' => 'Ad3d\Work\WorkAllocation\WorkAllocationController@view']);
-
-            Route::get('cancel/{allocationId?}', ['as' => 'qc.ad3d.work.work_allocation.delete', 'uses' => 'Ad3d\Work\WorkAllocation\WorkAllocationController@cancelWorkAllocation']);
+            # huy phan viec
+            //Route::get('cancel/{allocationId?}', ['as' => 'qc.ad3d.work.work_allocation.delete', 'uses' => 'Ad3d\Work\WorkAllocation\WorkAllocationController@cancelWorkAllocation']);
 
             Route::get('/{day?}/{month?}/{year?}/{finishStatus?}/{name?}', ['as' => 'qc.ad3d.work.work_allocation.get', 'uses' => 'Ad3d\Work\WorkAllocation\WorkAllocationController@index']);
         });

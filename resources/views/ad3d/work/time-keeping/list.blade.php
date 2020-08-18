@@ -21,7 +21,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
 @extends('ad3d.work.time-keeping.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px; padding-top : 10px;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $indexHref !!}">
@@ -29,7 +29,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                     </a>
                     <label class="qc-font-size-20">CHẤM CÔNG</label>
                 </div>
-                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-right: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter" data-href-filter="{!! $indexHref !!}">
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
@@ -83,7 +83,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                 </div>
                             </td>
                             <td class="text-center" style="padding: 0;">
-                                <select class="cbDayFilter" style="height: 30px;"
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px; padding: 0;"
                                         data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -95,7 +95,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter" style="height: 30px;"
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px; padding: 0;"
                                         data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -107,7 +107,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter" style="height: 30px;"
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;"
                                         data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả

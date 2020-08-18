@@ -208,15 +208,15 @@ class QcTimekeepingProvisional extends Model
             $dateEnd = $dataTimekeepingProvisional->timeEnd();
             $note = $dataTimekeepingProvisional->note();
             $afternoonStatus = $dataTimekeepingProvisional->afternoonStatus();
-            //$dayBegin = date('d', strtotime($dateBegin));
-            //$monthBegin = date('m', strtotime($dateBegin));
-            //$yearBegin = date('Y', strtotime($dateBegin));
+            $dayBegin = date('d', strtotime($dateBegin));
+            $monthBegin = date('m', strtotime($dateBegin));
+            $yearBegin = date('Y', strtotime($dateBegin));
             $checkDate = date('Y-m-d', strtotime($dateBegin));// "$monthBegin/$dayBegin/$yearBegin";
             if ($modelTimekeeping->existDateOfWork($workId, $checkDate)) { # da ton tai cham cong
                 return false;
             } else {
-                $defaultBegin = date('Y-m-d 08:00', strtotime($dateBegin));// $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 08:00:00");
-                $defaultEnd = date('Y-m-d 17:30', strtotime($dateBegin));//$hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 17:30:00");
+                $defaultBegin =  $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 08:00:00");
+                $defaultEnd = $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 17:30:00");//date('Y-m-d 17:30', strtotime($dateBegin));//
                 $mainMinute = 0;
                 $plusMinute = 0;
                 $minusMinute = 0;

@@ -14,14 +14,14 @@ use Illuminate\Database\Eloquent\Model;
 class QcMinusMoney extends Model
 {
     protected $table = 'qc_minus_money';
-    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id', 'orderConstruction_id', 'companyStoreCheckReport_id'];
+    protected $fillable = ['minus_id', 'money', 'dateMinus', 'reason', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'staff_id', 'punish_id', 'orderAllocation_id', 'orderConstruction_id', 'companyStoreCheckReport_id', 'workAllocation_id'];
     protected $primaryKey = 'minus_id';
     public $timestamps = false;
     private $lastId;
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($dateMinus, $reason, $workId, $staffId = null, $punishId, $applyStatus = 1, $orderAllocationId = null, $orderConstructionId = null, $companyStoreCheckReportId = null)
+    public function insert($dateMinus, $reason, $workId, $staffId = null, $punishId, $applyStatus = 1, $orderAllocationId = null, $orderConstructionId = null, $companyStoreCheckReportId = null, $workAllocationId = null, $money = 0)
     {
         $hFunction = new \Hfunction();
         $modelOrder = new QcOrder();
@@ -30,30 +30,31 @@ class QcMinusMoney extends Model
         $modelMinusMoney = new QcMinusMoney();
         $modelCompanyStore = new QcCompanyStore();
         $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
-        $money = 0;
-        if (empty($orderAllocationId) && empty($orderConstructionId) && empty($companyStoreCheckReportId)) {  # phat theo noi quy
-            # tien phat
-            $money = $modelPunishContent->money($punishId)[0];
-        } else {
-            # phat theo gia tri don han
-            if (!empty($orderAllocationId)) {# phat truong thi cong
-                $dataOrderAllocation = $modelOrderAllocation->getInfo($orderAllocationId);
-                $dataOrder = $dataOrderAllocation->orders;
-                $money = (int)$dataOrder->getMinusMoneyOrderAllocationLate();
-            } elseif (!empty($orderConstructionId)) { # phat quan ly thi cong
-                $money = (int)$modelOrder->getBonusAndMinusMoneyOfManageRank($orderConstructionId);
-            } elseif (!empty($companyStoreCheckReportId)) {
-                $punishIdLostTool = $modelPunishContent->getPunishIdLostPublicTool();
-                $punishIdLostTool = (is_int($punishIdLostTool)) ? $punishIdLostTool : $punishIdLostTool[0];
-                # phat mat do nghe
-                if ($punishIdLostTool == $punishId) {
-                    $money = $modelCompanyStore->importPrice($modelCompanyStoreCheckReport->storeId($companyStoreCheckReportId));
-                } else {
-                    # tien phat
-                    $money = $modelPunishContent->money($punishId)[0];
+        if ($money == 0) {
+            if (empty($orderAllocationId) && empty($orderConstructionId) && empty($companyStoreCheckReportId)) {  # phat theo noi quy
+                # tien phat
+                $money = $modelPunishContent->money($punishId)[0];
+            } else {
+                # phat theo gia tri don han
+                if (!empty($orderAllocationId)) {# phat truong thi cong
+                    $dataOrderAllocation = $modelOrderAllocation->getInfo($orderAllocationId);
+                    $dataOrder = $dataOrderAllocation->orders;
+                    $money = (int)$dataOrder->getMinusMoneyOrderAllocationLate();
+                } elseif (!empty($orderConstructionId)) { # phat quan ly thi cong
+                    $money = (int)$modelOrder->getBonusAndMinusMoneyOfManageRank($orderConstructionId);
+                } elseif (!empty($companyStoreCheckReportId)) {
+                    $punishIdLostTool = $modelPunishContent->getPunishIdLostPublicTool();
+                    $punishIdLostTool = (is_int($punishIdLostTool)) ? $punishIdLostTool : $punishIdLostTool[0];
+                    # phat mat do nghe
+                    if ($punishIdLostTool == $punishId) {
+                        $money = $modelCompanyStore->importPrice($modelCompanyStoreCheckReport->storeId($companyStoreCheckReportId));
+                    } else {
+                        # tien phat
+                        $money = $modelPunishContent->money($punishId)[0];
+                    }
                 }
-            }
 
+            }
         }
         $modelMinusMoney->money = (is_int($money)) ? $money : $money[0];
         $modelMinusMoney->dateMinus = $dateMinus;
@@ -65,6 +66,7 @@ class QcMinusMoney extends Model
         $modelMinusMoney->orderAllocation_id = $orderAllocationId;
         $modelMinusMoney->orderConstruction_id = $orderConstructionId;
         $modelMinusMoney->companyStoreCheckReport_id = $companyStoreCheckReportId;
+        $modelMinusMoney->workAllocation_id = $workAllocationId;
         $modelMinusMoney->created_at = $hFunction->createdAt();
         if ($modelMinusMoney->save()) {
             $this->lastId = $modelMinusMoney->minus_id;
@@ -74,7 +76,7 @@ class QcMinusMoney extends Model
         }
     }
 
-    //lay id moi them
+//lay id moi them
     public function insertGetId()
     {
         return $this->lastId;
@@ -102,7 +104,7 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->delete();
     }
 
-    //---------- phan hoi phat -----------
+//---------- phan hoi phat -----------
     public function minusMoneyFeedback()
     {
         return $this->hasOne('App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback', 'minus_id', 'minus_id');
@@ -114,19 +116,19 @@ class QcMinusMoney extends Model
         return $modelMinusMoneyFeedback->infoOfMinusMoney($this->checkNullId($minusId));
     }
 
-    //---------- nhân viên -----------
+//---------- nhân viên -----------
     public function staff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
     }
 
-    //kiển tra người nhập
+//kiển tra người nhập
     public function checkStaffInput($staffId, $minusId = null)
     {
         return (QcMinusMoney::where('staff_id', $staffId)->where('minus_id', $this->checkNullId($minusId))->count() > 0) ? true : false;
     }
 
-    //---------- thong bao ban giao don hang moi -----------
+//---------- thong bao ban giao don hang moi -----------
     public function staffNotify()
     {
         return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'minusMoney_id', 'minusMoney_id');
@@ -138,7 +140,7 @@ class QcMinusMoney extends Model
         return $modelStaffAllocation->checkViewedMinusMoneyOfStaff($staffId, $minusMoneyId);
     }
 
-    //----------- làm việc ------------
+//----------- làm việc ------------
     public function work()
     {
         return $this->belongsTo('App\Models\Ad3d\Work\QcWork', 'work_id', 'work_id');
@@ -154,7 +156,7 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('work_id', $workId)->orderBy('dateMinus', 'DESC')->get();
     }*/
 
-    # tong tien phat khong huy trong thang lam viec - tam
+# tong tien phat khong huy trong thang lam viec - tam
     public function totalMoneyOfWork($workId)
     {
         return QcMinusMoney::where('work_id', $workId)->where('cancelStatus', 0)->sum('money');
@@ -170,13 +172,13 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('work_id', $workId)->where('cancelStatus', 0)->where('action', 1)->update(['applyStatus' => 1, 'action' => 0]);
     }
 
-    //---------- quan ly don hang thi cong -----------
+//---------- quan ly don hang thi cong -----------
     public function orderConstruction()
     {
         return $this->belongsTo('App\Models\Ad3d\Order\QcOrder', 'orderConstruction_id', 'order_id');
     }
 
-    # kiem tra da phat quan ly thi cong tre
+# kiem tra da phat quan ly thi cong tre
     public function checkExistMinusMoneyOrderConstructionLate($orderConstructionId, $workId)
     {
         $modelPunishContent = new QcPunishContent();
@@ -185,12 +187,23 @@ class QcMinusMoney extends Model
     }
 
     //---------- ban giao don hang -----------
+    public function workAllocation()
+    {
+        return $this->belongsTo('App\Models\Ad3d\WorkAllocation\QcWorkAllocation', 'workAllocation_id', 'allocation_id');
+    }
+
+    public function getInfoOfWorkAllocation($allocationId)
+    {
+        return QcMinusMoney::where('workAllocation_id', $allocationId)->get();
+    }
+
+    //---------- ban giao don hang -----------
     public function orderAllocation()
     {
         return $this->belongsTo('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'orderAllocation_id', 'allocation_id');
     }
 
-    # kiem tra da phat thi cong tre
+# kiem tra da phat thi cong tre
     public function checkExistMinusMoneyAllocationLate($orderAllocationId)
     {
         $modelPunishContent = new QcPunishContent();
@@ -198,13 +211,13 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('orderAllocation_id', $orderAllocationId)->where('punish_id', $punishId)->exists();
     }
 
-    //---------- bao mat do nghe -----------
+//---------- bao mat do nghe -----------
     public function companyStoreCheckReport()
     {
         return $this->belongsTo('App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport', 'companyStoreCheckReport_id', 'report_id');
     }
 
-    # kiem tra da phat mat do nghe dung chung
+# kiem tra da phat mat do nghe dung chung
     public function checkExistMinusMoneyLostPublicTool($reportId, $workId)
     {
         $modelPunishContent = new QcPunishContent();
@@ -212,22 +225,24 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('companyStoreCheckReport_id', $reportId)->where('work_id', $workId)->where('punish_id', $punishId)->exists();
     }
 
-    # kiem tra da phat bao cao lam mat do nghe dung chung
-    public function checkExistMinusMoneyReportWrongLostTool($reportId, $workId)
+# kiem tra da phat bao cao lam mat do nghe dung chung
+    public
+    function checkExistMinusMoneyReportWrongLostTool($reportId, $workId)
     {
         $modelPunishContent = new QcPunishContent();
         $punishId = $modelPunishContent->getPunishIdWrongReportLostTool();
         return QcMinusMoney::where('companyStoreCheckReport_id', $reportId)->where('work_id', $workId)->where('punish_id', $punishId)->exists();
     }
 
-    //----------- lý do phạt ------------
+//----------- lý do phạt ------------
     public function punishContent()
     {
         return $this->belongsTo('App\Models\Ad3d\PunishContent\QcPunishContent', 'punish_id', 'punish_id');
     }
 
-    # kiem tra phat mat do nghe
-    public function checkMinusMoneyLostTool($minusId = null)
+# kiem tra phat mat do nghe
+    public
+    function checkMinusMoneyLostTool($minusId = null)
     {
         $modelPunishContent = new QcPunishContent();
         # ma ap dung phat trong he thong - phat mat do nghe
@@ -238,8 +253,9 @@ class QcMinusMoney extends Model
         return ($systemPunishId == $checkPunishId) ? true : false;
     }
 
-    #============ =========== ============ GET INFO ============= =========== ==========
-    public function selectInfoHasFilter($listWorkId, $punishId, $dateFilter)
+#============ =========== ============ GET INFO ============= =========== ==========
+    public
+    function selectInfoHasFilter($listWorkId, $punishId, $dateFilter)
     {
         if (empty($punishId)) {
             return QcMinusMoney::where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->orderBy('dateMinus', 'DESC')->select('*');
@@ -248,7 +264,8 @@ class QcMinusMoney extends Model
         }
     }
 
-    public function totalMoneyHasFilter($listWorkId, $punishId, $dateFilter)
+    public
+    function totalMoneyHasFilter($listWorkId, $punishId, $dateFilter)
     {
         if (empty($punishId)) {
             return QcMinusMoney::where('cancelStatus', 0)->where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->sum('money');
@@ -257,7 +274,8 @@ class QcMinusMoney extends Model
         }
     }
 
-    public function getInfo($minusId = '', $field = '')
+    public
+    function getInfo($minusId = '', $field = '')
     {
         if (empty($minusId)) {
             return QcMinusMoney::get();
@@ -271,7 +289,8 @@ class QcMinusMoney extends Model
         }
     }
 
-    public function pluck($column, $objectId = null)
+    public
+    function pluck($column, $objectId = null)
     {
         if (empty($objectId)) {
             return $this->$column;
@@ -352,13 +371,20 @@ class QcMinusMoney extends Model
         return $this->pluck('companyStoreCheckReport_id', $minusId);
     }
 
-    #========= ======
-    public function checkCancelStatus($minusId = null)
+    public function workAllocationId($minusId = null)
+    {
+        return $this->pluck('workAllocation_id', $minusId);
+    }
+
+#========= ======
+    public
+    function checkCancelStatus($minusId = null)
     {
         return ($this->cancelStatus($minusId) == 1) ? true : false;
     }
 
-    public function checkEnableApply($minusId = null)
+    public
+    function checkEnableApply($minusId = null)
     {
         if ($this->applyStatus($minusId) == 1 && $this->cancelStatus() == 0) {
             return true; # ap dung phat

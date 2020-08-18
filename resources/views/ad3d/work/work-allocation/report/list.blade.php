@@ -16,17 +16,28 @@ $subObject = isset($dataAccess['subObject']) ? $dataAccess['subObject'] : 'workA
 ?>
 @extends('ad3d.work.work-allocation.report.index')
 @section('qc_ad3d_index_content')
-    <div class="row qc-margin-bot-10">
+    <div class="row">
         @include('ad3d.work.work-allocation.menu',compact('subObject'))
     </div>
     <div id="qc_work_work_allocation_report" class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0;">
-                    <form name="" action="">
-                        <div class="row">
-                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <select class="cbDayFilter" style="height: 25px;" data-href="{!! $indexHref !!}">
+            <div class="qc_ad3d_list_content qc-order-order-object row">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <tr style=" background-color: black; color: yellow;">
+                            <th class="text-center" style="width: 20px;">STT</th>
+                            <th style="width: 170px;">Thời gian</th>
+                            <th>Nhân viên</th>
+                            <th>Công việc</th>
+                            <th>Sản phẩm</th>
+                            <th class="text-center">Hình ảnh</th>
+                            <th class="text-center">Nội dung</th>
+                        </tr>
+                        <tr>
+                            <td class="text-center"></td>
+                            <td style="padding: 0;">
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -35,8 +46,8 @@ $subObject = isset($dataAccess['subObject']) ? $dataAccess['subObject'] : 'workA
                                                 @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
                                     @endfor
                                 </select>
-                                <span>/</span>
-                                <select class="cbMonthFilter" style="height: 25px;" data-href="{!! $indexHref !!}">
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -45,8 +56,8 @@ $subObject = isset($dataAccess['subObject']) ? $dataAccess['subObject'] : 'workA
                                                 @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
                                     @endfor
                                 </select>
-                                <span>/</span>
-                                <select class="cbYearFilter" style="height: 25px;" data-href="{!! $indexHref !!}">
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -56,25 +67,7 @@ $subObject = isset($dataAccess['subObject']) ? $dataAccess['subObject'] : 'workA
                                         </option>
                                     @endfor
                                 </select>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="qc_ad3d_list_content qc-order-order-object row">
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <tr style=" background-color: whitesmoke;">
-                            <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Nhân viên</th>
-                            <th>Công việc</th>
-                            <th>Sản phẩm</th>
-                            <th class="text-center">Thời gian</th>
-                            <th class="text-center">Hình ảnh</th>
-                            <th class="text-center">Nội dung</th>
-                        </tr>
-                        <tr>
-                            <td class="text-center">STT</td>
+                            </td>
                             <td style="padding: 0;">
                                 <div class="input-group">
                                     <input type="text" class="textFilterName form-control" name="textFilterName"
@@ -91,7 +84,6 @@ $subObject = isset($dataAccess['subObject']) ? $dataAccess['subObject'] : 'workA
                             <td></td>
                             <td class="text-center"></td>
                             <td class="text-center"></td>
-                            <td class="text-center"></td>
                         </tr>
                         @if($hFunction->checkCount($dataWorkAllocationReport))
                             <?php
@@ -103,14 +95,19 @@ $subObject = isset($dataAccess['subObject']) ? $dataAccess['subObject'] : 'workA
                                 <?php
                                 $reportId = $workAllocationReport->reportId();
                                 $reportDate = $workAllocationReport->reportDate();
+                                $reportDay = (int)date('d', strtotime($reportDate));
                                 $content = $workAllocationReport->content();
                                 $workAllocation = $workAllocationReport->workAllocation;
                                 $workAllocationNote = $workAllocation->noted();
                                 $dataWorkAllocationReportImage = $workAllocationReport->workAllocationReportImageInfo();
                                 ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"  data-object="{!! $reportId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $reportId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
+                                    </td>
+                                    <td>
+                                        <span>{!! $hFunction->convertDateDMYFromDatetime($reportDate) !!}</span> &nbsp;
+                                        <span>{!! $hFunction->getTimeFromDate($reportDate) !!}</span>
                                     </td>
                                     <td>
                                         {!! $workAllocation->receiveStaff->fullName() !!}
@@ -126,15 +123,11 @@ $subObject = isset($dataAccess['subObject']) ? $dataAccess['subObject'] : 'workA
                                         {!! $workAllocation->product->productType->name() !!} <br/>
                                         <em class="qc-color-grey">{!! $workAllocation->product->order->name() !!}</em>
                                     </td>
-                                    <td class="text-center">
-                                        {!! $hFunction->convertDateDMYFromDatetime($reportDate) !!} &nbsp;
-                                        {!! $hFunction->getTimeFromDate($reportDate) !!}
-                                    </td>
-                                    <td class="text-center">
+                                    <td class="text-center" >
                                         @if($hFunction->checkCount($dataWorkAllocationReportImage))
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
-                                                    <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                    <div style="position: relative; float: left; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                         <a class="qc_view_image qc-link"
                                                            data-href="{!! route('qc.ad3d.work.work_allocation_report.image.view',$workAllocationReportImage->imageId()) !!}">
                                                             <img style="max-width: 100%; max-height: 100%;"

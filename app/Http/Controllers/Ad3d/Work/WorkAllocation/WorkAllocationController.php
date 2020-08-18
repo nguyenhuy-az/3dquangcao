@@ -3,11 +3,6 @@
 namespace App\Http\Controllers\Ad3d\Work\WorkAllocation;
 
 use App\Models\Ad3d\Company\QcCompany;
-use App\Models\Ad3d\Customer\QcCustomer;
-use App\Models\Ad3d\Order\QcOrder;
-use App\Models\Ad3d\OrderPay\QcOrderPay;
-use App\Models\Ad3d\Product\QcProduct;
-use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -79,12 +74,13 @@ class WorkAllocationController extends Controller
 
     public function view($allocationId)
     {
+        $hFunction = new \Hfunction();
         $modelWorkAllocation = new QcWorkAllocation();
         $dataAccess = [
             'accessObject' => 'workAllocation'
         ];
         $dataWorkAllocation = $modelWorkAllocation->getInfo($allocationId);
-        if (count($dataWorkAllocation) > 0) {
+        if ($hFunction->checkCount($dataWorkAllocation)) {
             return view('ad3d.work.work-allocation.allocation.view', compact('dataAccess', 'dataWorkAllocation'));
         }
 
@@ -100,4 +96,22 @@ class WorkAllocationController extends Controller
         }
     }
 
+    #========= ========== phat boi thuong vat tu ========== ========
+    public function getMinusMoney($workAllocationId)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+        $dataWorkAllocation = $modelWorkAllocation->getInfo($workAllocationId);
+        return view('ad3d.work.work-allocation.allocation.minus-money', compact('dataWorkAllocation'));
+    }
+
+    public function postMinusMoney()
+    {
+        $hFunction = new \Hfunction();
+        $modelWorkAllocation = new QcWorkAllocation();
+        $txtMoney = Request::input('txtMoney');
+        $txtMoney = $hFunction->convertCurrencyToInt($txtMoney); # chuyen sang kieu so
+        $txtNote = Request::input('txtNote');
+        $txtAllocationId = Request::input('txtAllocationId');
+        $modelWorkAllocation->applyMinusMoneyForSupplies($txtAllocationId, $txtMoney, $txtNote);
+    }
 }

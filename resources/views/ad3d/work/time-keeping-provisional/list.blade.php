@@ -20,8 +20,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 @extends('ad3d.work.time-keeping-provisional.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top : 10px;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}">
@@ -29,7 +28,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     </a>
                     <label class="qc-font-size-20">DUYỆT CHẤM CÔNG</label>
                 </div>
-                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                             data-href-filter="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}">
                         @if($dataStaffLogin->checkRootManage())

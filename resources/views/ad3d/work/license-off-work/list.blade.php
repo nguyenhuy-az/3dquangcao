@@ -58,7 +58,7 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                         <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Nhân viên</th>
-                            <th class="text-center">Thời gian xin</th>
+                            <th style="width: 170px;">Thời gian xin</th>
                             <th class="text-center">Ngày nghỉ</th>
                             <th class="text-left">Chi chú xin</th>
                             <th class="text-left">Chi chú duyệt</th>
@@ -68,7 +68,7 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                             <td></td>
                             <td></td>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4" style="height: 30px;" name="cbDayFilter" data-href="{!! $indexHref !!}">
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px; padding: 0;" name="cbDayFilter" data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -77,7 +77,7 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                                                 @if((int)$dayFilter == $i) selected="selected" @endif>{!! $i !!}</option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4" style="height: 30px;" data-href="{!! $indexHref !!}">
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -86,7 +86,7 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                                                 @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4" style="height: 30px;" data-href="{!! $indexHref !!}">
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>

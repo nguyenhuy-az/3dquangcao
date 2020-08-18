@@ -53,8 +53,8 @@ $indexHref = route('qc.ad3d.work.work.get');
                         <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Nhân viên</th>
-                            <th class="text-center">Từ ngày</th>
-                            <th class="text-center">Đến ngày</th>
+                            <th style="width: 120px;">Từ ngày</th>
+                            <th style="width: 120px;">Đến ngày</th>
                             <th class="text-center">Giờ chính(h)</th>
                             <th class="text-center">Tăng ca (h)</th>
                             <th></th>
@@ -74,7 +74,7 @@ $indexHref = route('qc.ad3d.work.work.get');
                                 </div>
                             </td>
                             <td class="text-center" style="padding: 0;">
-                                <select class="cbMonthFilter" style="height: 30px;" data-href="{!! $indexHref !!}">
+                                <select class="cbMonthFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
                                     <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -85,8 +85,8 @@ $indexHref = route('qc.ad3d.work.work.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter" style="height: 30px;" data-href="{!! $indexHref !!}">
-                                    @for($y =2017;$y<= 2050; $y++)
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
+                                    @for($y =2019;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
                                                 @if($yearFilter == $y) selected="selected" @endif>
                                             {!! $y !!}
@@ -123,10 +123,10 @@ $indexHref = route('qc.ad3d.work.work.get');
                                         @endif
 
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         {!! $hFunction->convertDateDMYFromDatetime($work->fromDate()) !!}
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         {!! $hFunction->convertDateDMYFromDatetime($work->toDate()) !!}
                                     </td>
                                     <td class="text-center">
