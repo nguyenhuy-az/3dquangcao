@@ -53,6 +53,20 @@ $currentYear = date('Y');
                                 </td>
                             </tr>
                         @endif
+                        {{--ton tai chua xac nhan ung luong--}}
+                        @if($hFunction->checkCount($dataSalaryBeforePay))
+                            <tr>
+                                <td>
+                                    <i class="glyphicon glyphicon-arrow-right"></i>
+                                    <a class="qc-link-red-bold" href="{!! route('qc.work.salary.before_pay.get') !!}"
+                                       title="Click để xem thông tin">
+                                        CHƯA XÁC NHẬN TIỀN ỨNG LƯƠNG -
+                                        <i class="glyphicon glyphicon-eye-open" style="color: green;"></i>
+                                        <span style="color: green;">(Click xem chi tiết)</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        @endif
                         {{--ton tai chua xac nhan thanh toan mua vat tu--}}
                         @if($hFunction->checkCount($dataImportPay))
                             <tr>

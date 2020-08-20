@@ -8,8 +8,9 @@ use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
-use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
-use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
+use App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation;
+use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
+use App\Models\Ad3d\ToolPackageAllocationReturn\QcToolPackageAllocationReturn;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
 
@@ -79,56 +80,48 @@ class QcCompanyStaffWork extends Model
     # thong tin bao tra cua 1 NV
     public function totalToolReturn($toolId, $workId)
     {
-        $modelToolReturnDetail = new QcToolReturnDetail();
+        $modelToolReturnDetail = new QcToolPackageAllocationDetail();
         return $modelToolReturnDetail->totalToolOfWork($toolId, $workId);
     }
-
-    # thong tin bao tra cua 1 NV duoc xac nhan
-    public function totalToolReturnConfirm($toolId, $workId)
-    {
-        $modelToolReturnConfirm = new QcToolReturnConfirm();
-        return $modelToolReturnConfirm->totalToolOfWork($toolId, $workId);
-    }
-
     # ---------- ---------- giao do nghe ---------- ----------
-    public function toolAllocation()
+    public function toolPackageAllocation()
     {
-        return $this->hasMany('App\Models\Ad3d\ToolAllocation\QcToolAllocation', 'work_id ', 'work_id');
+        return $this->hasMany('App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation', 'work_id ', 'work_id');
     }
 
     #thong tin nhan do nghe
     public function toolAllocationOfWork($workId = null)
     {
-        $modelToolAllocation = new QcToolAllocation();
+        $modelToolAllocation = new QcToolPackageAllocation();
         return $modelToolAllocation->infoOfWork($this->checkIdNull($workId));
     }
 
     public function toolAllocationListIdOfWork($workId = null)
     {
-        $modelToolAllocation = new QcToolAllocation();
+        $modelToolAllocation = new QcToolPackageAllocation();
         return $modelToolAllocation->listIdOfWork($this->checkIdNull($workId));
     }
 
     # bo do nghe dang giao
     public function toolAllocationActivityOfWork($workId = null)
     {
-        $modelToolAllocation = new QcToolAllocation();
+        $modelToolAllocation = new QcToolPackageAllocation();
         return $modelToolAllocation->infoActivityOfWork($this->checkIdNull($workId));
     }
     //---------- ----------- cong cu ----------- -----------
     # thong nhan dung cu tai tat ca cty
     public function totalToolReceive($toolId, $workId)
     {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         return $modelToolAllocationDetail->totalToolOfWork($toolId, $workId);
     }
 
     # tai 1 cty
-    public function totalToolReceiveOfCompany($toolId, $staffId, $companyId)
+    /*public function totalToolReceiveOfCompany($toolId, $staffId, $companyId)
     {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         return $modelToolAllocationDetail->totalToolOfStaffAndCompany($staffId, $companyId, $toolId);
-    }
+    }*/
 
     //------------- -------- kiem tra do nghe cty ----------- -------
     //---------- giao kiem tra do nghe dung chung -----------

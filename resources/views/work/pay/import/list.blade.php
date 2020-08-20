@@ -35,7 +35,7 @@ $currentMonth = $hFunction->currentMonth();
                     <tr style="background-color: black; color: yellow;">
                         <th class="text-center" style="width:20px;">STT</th>
                         <th>Hóa đơn</th>
-                        <th class="text-center" style="width: 180px;">Ngày</th>
+                        <th style="width: 120px;">Tháng/Năm</th>
                         <th style="width: 300px;"> Dụng cụ / Vật tư</th>
                         <th>Nhân viên</th>
                         <th>Chi chú duyệt</th>
@@ -47,7 +47,7 @@ $currentMonth = $hFunction->currentMonth();
                         <td class="text-center qc-color-red"></td>
                         <td></td>
                         <td style="padding: 0;">
-                            <select class="cbMonthFilter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                            <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                 <option value="100" @if($monthFilter == 100) selected="selected" @endif>Tất cả</option>
                                 @for($m =1;$m<= 12; $m++)
                                     <option value="{!! $m !!}"
@@ -56,7 +56,7 @@ $currentMonth = $hFunction->currentMonth();
                                     </option>
                                 @endfor
                             </select>
-                            <select class="cbYearFilter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                            <select class="cbYearFilter col-sx-8 col-sm-8 col-md-8 col-lg-8" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                 <option value="100" @if($yearFilter == 100) selected="selected" @endif>Tất cả</option>
                                 @for($y =2017;$y<= 2050; $y++)
                                     <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>

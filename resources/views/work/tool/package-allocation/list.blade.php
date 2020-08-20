@@ -13,10 +13,10 @@ $mobileStatus = $mobile->isMobile();
 $dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
 $companyId = $dataStaff->companyId();
-$hrefIndex = route('qc.work.tool.allocation.get');
+$hrefIndex = route('qc.work.tool.package_allocation.get');
 $currentMonth = $hFunction->currentMonth();
 ?>
-@extends('work.tool.allocation.index')
+@extends('work.tool.package-allocation.index')
 @section('qc_work_tool_private_body')
     <div class="row qc_work_tool_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -39,19 +39,19 @@ $currentMonth = $hFunction->currentMonth();
                                 </th>
                                 <th class="text-center">Trạng thái</th>
                             </tr>
-                            @if($hFunction->checkCount($dataToolAllocationDetail))
-                                @foreach($dataToolAllocationDetail as $toolAllocationDetail)
+                            @if($hFunction->checkCount($dataToolPackageAllocationDetail))
+                                @foreach($dataToolPackageAllocationDetail as $toolPackageAllocationDetail)
                                     <?php
                                     $n_o = (isset($n_o)) ? $n_o + 1 : 1;
-                                    $detailId = $toolAllocationDetail->detailId();
-                                    $detailImage = $toolAllocationDetail->image();
-                                    $detailDate = $toolAllocationDetail->createdAt();
-                                    $allocationId = $toolAllocationDetail->allocationId();
-                                    $storeId = $toolAllocationDetail->storeId();
-                                    $dataCompanyStore = $toolAllocationDetail->companyStore;
+                                    $detailId = $toolPackageAllocationDetail->detailId();
+                                    $detailImage = $toolPackageAllocationDetail->image();
+                                    $detailDate = $toolPackageAllocationDetail->createdAt();
+                                    $allocationId = $toolPackageAllocationDetail->allocationId();
+                                    $storeId = $toolPackageAllocationDetail->storeId();
+                                    $dataCompanyStore = $toolPackageAllocationDetail->companyStore;
                                     $storeName = $dataCompanyStore->name();
                                     # lay thong tin tra la sau cung
-                                    $toolReturn = $toolAllocationDetail->lastInfoOfToolReturn();
+                                    $toolReturn = $toolPackageAllocationDetail->lastInfoOfToolReturn();
                                     $returnStatus = $hFunction->checkCount($toolReturn);
                                     # lay thong tin giao sau cung
                                     $dataToolAllocationDetail = $dataCompanyStore->toolAllocationDetailLastInfo();
@@ -68,13 +68,13 @@ $currentMonth = $hFunction->currentMonth();
                                         </td>
                                         <td class="text-center">
                                             <a class="qc_view_image_get qc-link"
-                                               data-href="{!! route('qc.work.tool.allocation.image.view',$detailId) !!}">
+                                               data-href="{!! route('qc.work.tool.package_allocation.image.view',$detailId) !!}">
                                                 <img style="width: 70px; height: auto;"
-                                                     src="{!! $toolAllocationDetail->pathFullImage($detailImage) !!}">
+                                                     src="{!! $toolPackageAllocationDetail->pathFullImage($detailImage) !!}">
                                             </a>
                                         </td>
                                         <td class="text-center">
-                                            @if($toolAllocationDetail->checkNewStatus())
+                                            @if($toolPackageAllocationDetail->checkNewStatus())
                                                 <span>Mới</span>
                                             @else
                                                 <span>Đã qua sử dụng</span>
@@ -83,7 +83,7 @@ $currentMonth = $hFunction->currentMonth();
                                         <td class="text-center">
                                             {{--da bao tra--}}
                                             @if($returnStatus)
-                                                <a class="qc_view_image_get qc-link" data-href="{!! route('qc.work.tool.allocation.return_image.view',$toolReturn->returnId()) !!}">
+                                                <a class="qc_view_image_get qc-link" data-href="{!! route('qc.work.tool.package_allocation.return_image.view',$toolReturn->returnId()) !!}">
                                                     <img style="width: 70px; height: auto;"
                                                          src="{!! $toolReturn->pathFullImage($toolReturn->image()) !!}">
                                                 </a>
@@ -94,7 +94,7 @@ $currentMonth = $hFunction->currentMonth();
                                         <td class="text-center">
                                             @if(!$hFunction->checkCount($toolReturn))
                                                 <a class="qc-link-green-bold"
-                                                   href="{!! route('qc.work.tool.allocation.return.get',"$allocationId/$detailId") !!}">
+                                                   href="{!! route('qc.work.tool.package_allocation.return.get',"$allocationId/$detailId") !!}">
                                                     Giao lại
                                                 </a>
                                             @else
@@ -117,7 +117,7 @@ $currentMonth = $hFunction->currentMonth();
                                 @endforeach
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="6">
+                                    <td class="text-center" colspan="7">
                                         Chưa có đồ nghề
                                     </td>
                                 </tr>

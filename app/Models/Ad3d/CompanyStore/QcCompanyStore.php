@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcCompanyStore extends Model
 {
     protected $table = 'qc_company_store';
-    protected $fillable = ['store_id', 'name', 'importPrice', 'useStatus', 'created_at', 'company_id', 'tool_id', 'supplies_id', 'import_id'];
+    protected $fillable = ['store_id', 'name', 'importPrice', 'useStatus', 'created_at', 'company_id', 'tool_id', 'supplies_id', 'import_id','package_id'];
     protected $primaryKey = 'store_id';
     public $timestamps = false;
 
@@ -18,13 +18,14 @@ class QcCompanyStore extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($name, $companyId, $toolId = null, $suppliesId = null, $importId = null, $importPrice = 1000)
+    public function insert($name, $companyId, $toolId = null, $suppliesId = null, $importId = null, $importPrice = 1000, $packageId)
     {
         $hFunction = new \Hfunction();
         $modelCompanyStore = new QcCompanyStore();
         $modelCompanyStore->name = $name;
         $modelCompanyStore->importPrice = $importPrice;
         $modelCompanyStore->company_id = $companyId;
+        $modelCompanyStore->package_id = $packageId;
         $modelCompanyStore->tool_id = $toolId;
         $modelCompanyStore->supplies_id = $suppliesId;
         $modelCompanyStore->import_id = $importId;
@@ -113,10 +114,15 @@ class QcCompanyStore extends Model
         return QcCompanyStore::where('company_id', $companyId)->whereIn('tool_id', $listToolId)->get();
     }
 
-    //---------- phat dung cu -----------
-    public function toolAllocationDetail()
+    //---------- bo bo nghe -----------
+    public function toolPackage()
     {
-        return $this->belongsTo('App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail', 'store_id', 'store_id');
+        return $this->belongsTo('App\Models\Ad3d\ToolPackage\QcToolPackage', 'package_id', 'package_id');
+    }
+    //---------- phat dung cu -----------
+    public function toolPackageAllocationDetail()
+    {
+        return $this->hasMany('App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail', 'store_id', 'store_id');
     }
 
     # tong so luong da phat

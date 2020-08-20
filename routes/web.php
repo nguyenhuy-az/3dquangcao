@@ -1248,67 +1248,65 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     });
 
 
-    //--------------------- CHI ---------------------
-    #thanh toan mua vat tu
-    Route::group(['prefix' => 'pay-import'], function () {
-        //xem chi tiết
-        Route::get('view/{importId?}', ['as' => 'qc.work.pay.import.get.view.get', 'uses' => 'Work\Pay\Import\ImportController@viewImport']);
-
-        //thêm mới
-        //Route::get('add', ['as' => 'qc.ad3d.store.import.add.get', 'uses' => 'Ad3d\Store\Import\ImportController@getAdd']);
-        //Route::post('add', ['as' => 'qc.ad3d.Store.import.add.post', 'uses' => 'Ad3d\Store\Import\ImportController@postAdd']);
-
-        //Xóa
-        //Route::get('del/{importId?}', ['as' => 'qc.ad3d.store.import.del.get', 'uses' => 'Ad3d\Store\Import\ImportController@deleteSupplies']);
-
-        //tanh toan hoa don
-        Route::get('pay/{importId?}', ['as' => 'qc.work.pay.import.pay.get', 'uses' => 'Work\Pay\Import\ImportController@getPay']);
-        Route::post('pay/{importId?}', ['as' => 'qc.work.pay.import.pay.post', 'uses' => 'Work\Pay\Import\ImportController@postPay']);
-
-        //Duyệt
-        Route::get('confirm/{importId?}', ['as' => 'qc.work.pay.import.confirm.get', 'uses' => 'Work\Pay\Import\ImportController@getConfirm']);
-        Route::post('confirm/{importId?}', ['as' => 'qc.work.pay.import.confirm.post', 'uses' => 'Work\Pay\Import\ImportController@postConfirm']);
-
-        Route::get('/{monthFilter?}/{yearFilter?}/{payStatusFilter?}/{staffFilterId?}', ['as' => 'qc.work.pay.import.get', 'uses' => 'Work\Pay\Import\ImportController@index']);
-    });
-
-    #chi hoat dong
-    Route::group(['prefix' => 'pay-activity'], function () {
-        Route::get('add', ['as' => 'qc.work.pay.pay_activity.add.get', 'uses' => 'Work\Pay\PayActivity\PayActivityController@getAdd']);
-        Route::post('add', ['as' => 'qc.work.pay.pay_activity.add.post', 'uses' => 'Work\Pay\PayActivity\PayActivityController@postAdd']);
-        // xóa
-        Route::get('delete/{payId?}', ['as' => 'qc.work.pay.pay_activity.delete.get', 'uses' => 'Work\Pay\PayActivity\PayActivityController@deletePayActivity']);
-
-        Route::get('/{loginDay?}/{loginMonth?}/{loginYear?}/{loginPayStatus?}', ['as' => 'qc.work.pay.pay_activity.get', 'uses' => 'Work\Pay\PayActivity\PayActivityController@index']);
-    });
-
-    # thanh toan luong
-    Route::group(['prefix' => 'pay-salary'], function () {
-        Route::get('detail/{payId?}', ['as' => 'qc.work.pay.pay_salary.detail.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@detailPay']);
-
-        Route::get('add/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.add.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getAdd']);
-        Route::post('add/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.add.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postAdd']);
-
-        Route::get('pay/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.pay.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getPay']);
-        Route::post('pay/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.pay.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postPay']);
-        // xóa
-        //Route::get('delete/{payId?}', ['as' => 'qc.work.pay.pay_salary.delete.get', 'uses' => 'Work\Payment\PaySalary\PaySalaryController@deletePayActivity']);
-
-        Route::get('/{loginMonth?}/{loginYear?}/{payStatus?}', ['as' => 'qc.work.pay.pay_salary.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@index']);
-    });
-
-    # thanh toan tien giu
-    # giu tien NV
-    Route::group(['prefix' => 'keep-money'], function () {
-        # thanh toan
-        # them ung luong
-        Route::get('pay/{staffId?}', ['as' => 'qc.work.pay.keep_money.add.get', 'uses' => 'Work\Pay\PayKeepMoney\KeepMoneyController@getAddPay']);
-        Route::post('pay/{staffId?}', ['as' => 'qc.work.pay.keep_money.add.post', 'uses' => 'Work\Pay\PayKeepMoney\KeepMoneyController@postAddPay']);
-        # trang chinh
-        Route::get('/{month?}/{year?}/{staffId?}/{payStatus?}', ['as' => 'qc.work.pay.keep_money.get', 'uses' => 'Work\Pay\PayKeepMoney\KeepMoneyController@index']);
-    });
+    //--------------------- CHI --------------------
     # chi
     Route::group(['prefix' => 'pay'], function () {
+        #thanh toan mua vat tu
+        Route::group(['prefix' => 'pay-import'], function () {
+            //xem chi tiết
+            Route::get('view/{importId?}', ['as' => 'qc.work.pay.import.get.view.get', 'uses' => 'Work\Pay\Import\ImportController@viewImport']);
+
+            //thêm mới
+            //Route::get('add', ['as' => 'qc.ad3d.store.import.add.get', 'uses' => 'Ad3d\Store\Import\ImportController@getAdd']);
+            //Route::post('add', ['as' => 'qc.ad3d.Store.import.add.post', 'uses' => 'Ad3d\Store\Import\ImportController@postAdd']);
+
+            //Xóa
+            //Route::get('del/{importId?}', ['as' => 'qc.ad3d.store.import.del.get', 'uses' => 'Ad3d\Store\Import\ImportController@deleteSupplies']);
+
+            //tanh toan hoa don
+            Route::get('pay/{importId?}', ['as' => 'qc.work.pay.import.pay.get', 'uses' => 'Work\Pay\Import\ImportController@getPay']);
+            Route::post('pay/{importId?}', ['as' => 'qc.work.pay.import.pay.post', 'uses' => 'Work\Pay\Import\ImportController@postPay']);
+
+            //Duyệt
+            Route::get('confirm/{importId?}', ['as' => 'qc.work.pay.import.confirm.get', 'uses' => 'Work\Pay\Import\ImportController@getConfirm']);
+            Route::post('confirm/{importId?}', ['as' => 'qc.work.pay.import.confirm.post', 'uses' => 'Work\Pay\Import\ImportController@postConfirm']);
+
+            Route::get('/{monthFilter?}/{yearFilter?}/{payStatusFilter?}/{staffFilterId?}', ['as' => 'qc.work.pay.import.get', 'uses' => 'Work\Pay\Import\ImportController@index']);
+        });
+        #chi hoat dong
+        Route::group(['prefix' => 'pay-activity'], function () {
+            Route::get('add', ['as' => 'qc.work.pay.pay_activity.add.get', 'uses' => 'Work\Pay\PayActivity\PayActivityController@getAdd']);
+            Route::post('add', ['as' => 'qc.work.pay.pay_activity.add.post', 'uses' => 'Work\Pay\PayActivity\PayActivityController@postAdd']);
+            // xóa
+            Route::get('delete/{payId?}', ['as' => 'qc.work.pay.pay_activity.delete.get', 'uses' => 'Work\Pay\PayActivity\PayActivityController@deletePayActivity']);
+
+            Route::get('/{loginDay?}/{loginMonth?}/{loginYear?}/{loginPayStatus?}', ['as' => 'qc.work.pay.pay_activity.get', 'uses' => 'Work\Pay\PayActivity\PayActivityController@index']);
+        });
+        # thanh toan luong
+        Route::group(['prefix' => 'pay-salary'], function () {
+            Route::get('detail/{payId?}', ['as' => 'qc.work.pay.pay_salary.detail.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@detailPay']);
+
+            Route::get('add/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.add.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getAdd']);
+            Route::post('add/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.add.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postAdd']);
+
+            Route::get('pay/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.pay.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getPay']);
+            Route::post('pay/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.pay.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postPay']);
+            // xóa
+            //Route::get('delete/{payId?}', ['as' => 'qc.work.pay.pay_salary.delete.get', 'uses' => 'Work\Payment\PaySalary\PaySalaryController@deletePayActivity']);
+
+            Route::get('/{loginMonth?}/{loginYear?}/{payStatus?}', ['as' => 'qc.work.pay.pay_salary.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@index']);
+        });
+
+        # thanh toan tien giu
+        # giu tien NV
+        Route::group(['prefix' => 'keep-money'], function () {
+            # thanh toan
+            # them ung luong
+            Route::get('pay/{staffId?}', ['as' => 'qc.work.pay.keep_money.add.get', 'uses' => 'Work\Pay\PayKeepMoney\KeepMoneyController@getAddPay']);
+            Route::post('pay/{staffId?}', ['as' => 'qc.work.pay.keep_money.add.post', 'uses' => 'Work\Pay\PayKeepMoney\KeepMoneyController@postAddPay']);
+            # trang chinh
+            Route::get('/{month?}/{year?}/{staffId?}/{payStatus?}', ['as' => 'qc.work.pay.keep_money.get', 'uses' => 'Work\Pay\PayKeepMoney\KeepMoneyController@index']);
+        });
         # chi ung luong
         Route::group(['prefix' => 'salary-before-pay'], function () {
             # them ung luong
@@ -1342,21 +1340,21 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         });
 
         # do nghe da phat
-        Route::group(['prefix' => 'allocation'], function () {
+        Route::group(['prefix' => 'package-allocation'], function () {
             #xem chi tiết
             # anh ban giao do nghe
-            Route::get('view-image/{imageId?}', ['as' => 'qc.work.tool.allocation.image.view', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewImage']);
+            Route::get('view-image/{imageId?}', ['as' => 'qc.work.tool.package_allocation.image.view', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@viewImage']);
             # anh tra do nghe
-            Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.tool.allocation.return_image.view', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@viewReturnImage']);
+            Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.tool.package_allocation.return_image.view', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@viewReturnImage']);
 
             # tra lai do nghe
-            Route::get('return/{allocationId?}/{storeId?}', ['as' => 'qc.work.tool.allocation.return.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@getReturn']);
-            Route::post('return', ['as' => 'qc.work.tool.allocation.return.post', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@postReturn']);
+            Route::get('return/{allocationId?}/{storeId?}', ['as' => 'qc.work.tool.package_allocation.return.get', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@getReturn']);
+            Route::post('return', ['as' => 'qc.work.tool.package_allocation.return.post', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@postReturn']);
 
             #xác nhận đồ nghề
-            Route::get('confirm-receive/{allocationId?}', ['as' => 'qc.work.tool.allocation.confirm_receive.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@getConfirmReceive']);
+            //Route::get('confirm-receive/{allocationId?}', ['as' => 'qc.work.tool.allocation.confirm_receive.get', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@getConfirmReceive']);
 
-            Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.tool.allocation.get', 'uses' => 'Work\Tool\Allocation\ToolAllocationController@index']);
+            Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.tool.package_allocation.get', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@index']);
         });
 
     });
@@ -1394,17 +1392,17 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::get('/{type?}/{toolId?}', ['as' => 'qc.work.store.tool.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@index']);
         });
         # ban giao lai dung cu
-        Route::group(['prefix' => 'return'], function () {
+        Route::group(['prefix' => 'too-package-return'], function () {
             # xem anh nhap san pham
-            Route::get('view-detail-image/{detailId?}', ['as' => 'qc.work.store.return.detail_image.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@viewDetailImage']);
+            //Route::get('view-detail-image/{detailId?}', ['as' => 'qc.work.store.return.detail_image.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@viewDetailImage']);
             # xem anh bao tra
-            Route::get('view-import-return/{returnId?}', ['as' => 'qc.work.store.return.return_image.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@viewReturnImage']);
+            //Route::get('view-import-return/{returnId?}', ['as' => 'qc.work.store.return.return_image.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@viewReturnImage']);
 
             # xac nhan tra
-            Route::get('confirm/{allocationId?}', ['as' => 'qc.work.store.return.confirm.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@getConfirm']);
-            Route::post('confirm/{allocationId?}', ['as' => 'qc.work.store.return.confirm.post', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@postConfirm']);
+            //Route::get('confirm/{allocationId?}', ['as' => 'qc.work.store.return.confirm.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@getConfirm']);
+            //Route::post('confirm/{allocationId?}', ['as' => 'qc.work.store.return.confirm.post', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@postConfirm']);
 
-            Route::get('/{confirmStatus?}/{staffFilterId?}', ['as' => 'qc.work.store.return.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@index']);
+            Route::get('/{confirmStatus?}/{staffFilterId?}', ['as' => 'qc.work.store.tool_package_allocation_return.get', 'uses' => 'Work\Store\StoreReturn\StoreReturnController@index']);
         });
     });
     //nhận đồ nghề

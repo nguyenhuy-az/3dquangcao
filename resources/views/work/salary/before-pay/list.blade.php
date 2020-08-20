@@ -8,7 +8,6 @@
  * dataStaff
  */
 $hFunction = new Hfunction();
-//$currentMonth = $hFunction = f
 if ($hFunction->checkCount($dataWork)) {
     $workId = $dataWork->workId();
     $dataBeforePay = $dataWork->infoBeforePayOfWork();
@@ -32,7 +31,7 @@ if ($hFunction->checkCount($dataWork)) {
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <select class="qc_work_salary_before_pay_month" style="height: 25px;"
+                    <select class="qc_work_salary_before_pay_month" style="height: 34px;"
                             data-href="{!! route('qc.work.salary.before_pay.get') !!}">
                         @for($i = 1; $i <=12; $i++)
                             <option @if($monthFilter == $i) selected="selected" @endif>
@@ -41,7 +40,7 @@ if ($hFunction->checkCount($dataWork)) {
                         @endfor
                     </select>
                     <span>/</span>
-                    <select class="qc_work_salary_before_pay_year" style="height: 25px;"
+                    <select class="qc_work_salary_before_pay_year" style="height: 34px;"
                             data-href="{!! route('qc.work.salary.before_pay.get') !!}">
                         @for($i = 2017; $i <=2050; $i++)
                             <option @if($yearFilter == $i) selected="selected" @endif>
@@ -49,18 +48,99 @@ if ($hFunction->checkCount($dataWork)) {
                             </option>
                         @endfor
                     </select>
-                    <a class="qc_work_before_pay_request_action qc-link-red-bold"
-                       data-href="{!! route('qc.work.salary.before_pay.request.get') !!}">
-                        <b style="font-size: 1.5em;">+Đề suất Ứng</b>
-                    </a>
+                    @if($hFunction->checkCount($dataWork))
+                        <a class="qc_work_before_pay_request_action qc-link-white-bold btn btn-primary"
+                           data-href="{!! route('qc.work.salary.before_pay.request.get') !!}">
+                            + YÊU CẦU ỨNG</b>
+                        </a>
+                    @endif
                 </div>
             </div>
             @if($hFunction->checkCount($dataWork))
+                {{-- LICH SU UNG LUONG --}}
+                <div class="row">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <i class="qc-font-size-14 glyphicon glyphicon-th-list"></i>
+                        <label class="qc-color-red" style="font-size: 1.2em;">LỊCH SỬ ỨNG LƯƠNG</label>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <tr style="background-color: black;color: yellow;">
+                                    <th class="text-center" style="width: 20px;">STT</th>
+                                    <th>Ngày</th>
+                                    <th class="text-center">Xác nhận</th>
+                                    <th>Thủ quỹ</th>
+                                    <th>Ghú</th>
+                                    <th class="text-right">Số tiền</th>
+                                </tr>
+                                @if($hFunction->checkCount($dataBeforePay))
+                                    <?php
+                                    $totalMoney = 0;
+                                    ?>
+                                    @foreach($dataBeforePay as $beforePay)
+                                        <?php
+                                        $payId = $beforePay->payId();
+                                        $money = $beforePay->money();
+                                        $totalMoney = $totalMoney + $money;
+                                        ?>
+                                        <tr>
+                                            <td class="text-center">
+                                                {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
+                                            </td>
+                                            <td>
+                                                {!! $hFunction->convertDateDMYFromDatetime($beforePay->datePay()) !!}
+                                            </td>
+                                            <td class="text-center">
+                                                @if(!$beforePay->checkConfirm())
+                                                    <a class="qc_confirm_receive_money qc-link-red"
+                                                       data-money="{!! $money !!}"
+                                                       data-href="{!! route('qc.work.salary.before_pay.confirm.get',$payId) !!}">
+                                                        <span style="padding: 5px; background-color: red; color: yellow;">XÁC NHẬN</span>
+                                                    </a>
+                                                @else
+                                                    <em class="qc-color-grey">Đã xác nhận</em>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                {!! $beforePay->staff->fullName() !!}
+                                            </td>
+                                            <td>
+                                                <em class="qc-color-grey">{!! $beforePay->description() !!}</em>
+                                            </td>
+                                            <td class="text-right">
+                                                {!! $hFunction->currencyFormat($money) !!}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    <tr>
+                                        <td colspan="5"></td>
+                                        <td class="text-right">
+                                            <b class="qc-color-red">
+                                                {!! $hFunction->currencyFormat($totalMoney) !!}
+                                            </b>
+                                        </td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td class="text-center" colspan="6">
+                                            Không có thông tin ứng
+                                        </td>
+                                    </tr>
+                                @endif
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
                 @if($infoSalaryBasic)
                     {{-- HAN MUC UNG LUONG   --}}
                     <div class="row">
                         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                            <label class="qc-color-red" style="font-size: 1.2em;">HẠN MỨC ỨNG TRONG THÁNG {!! date('m/Y', strtotime($dataWork->fromDate())) !!}</label>
+                            <label class="qc-color-red" style="font-size: 1.2em;">HẠN MỨC ỨNG TRONG
+                                THÁNG {!! date('m/Y', strtotime($dataWork->fromDate())) !!}</label>
                         </div>
                     </div>
                     <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -68,7 +148,7 @@ if ($hFunction->checkCount($dataWork)) {
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered" style="table-layout: fixed;">
                                     <tr style="background-color: black; color: yellow;">
-                                        <th class="text-center">Hạn mức ứng</th>
+                                        <th class="text-center">Hạn mức được ứng</th>
                                         <th class="text-center">Số lần ứng</th>
                                         <th class="text-center">Tổng ứng đã ứng</th>
                                     </tr>
@@ -178,98 +258,10 @@ if ($hFunction->checkCount($dataWork)) {
             @else
                 <div class="row">
                     <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                        <b class="qc-color-red">Không có thông tin ứng</b>
+                        <b class="qc-color-red">KHÔNG CÓ THÔNG TIN LÀM VIỆC</b>
                     </div>
                 </div>
             @endif
-            {{-- LICH SU UNG LUONG --}}
-            <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <i class="qc-font-size-14 glyphicon glyphicon-th-list"></i>
-                    <label class="qc-color-red" style="font-size: 1.2em;">LỊCH SỬ ỨNG LƯƠNG</label>
-                </div>
-            </div>
-            <div class="row ">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered">
-                            <tr style="background-color: black;color: yellow;">
-                                <th class="text-center" style="width: 20px;">STT</th>
-                                <th>Ngày</th>
-                                <th>Thủ quỹ</th>
-                                <th>Ghú</th>
-                                <th class="text-center">Xác nhận</th>
-                                <th class="text-right">Số tiền</th>
-                            </tr>
-                            @if($hFunction->checkCount($dataBeforePay))
-                                <?php
-                                $totalMoney = 0;
-                                ?>
-                                @foreach($dataBeforePay as $beforePay)
-                                    <?php
-                                    $payId = $beforePay->payId();
-                                    $money = $beforePay->money();
-                                    $totalMoney = $totalMoney + $money;
-                                    ?>
-                                    <tr>
-                                        <td class="text-center">
-                                            {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
-                                        </td>
-                                        <td>
-                                            {!! $hFunction->convertDateDMYFromDatetime($beforePay->datePay()) !!}
-                                        </td>
-                                        <td>
-                                            {!! $beforePay->staff->fullName() !!}
-                                        </td>
-                                        <td>
-                                            <em class="qc-color-grey">{!! $beforePay->description() !!}</em>
-                                        </td>
-                                        <td class="text-center">
-                                            @if(!$beforePay->checkConfirm())
-                                                <a class="qc_confirm_receive_money qc-link-red" data-money="{!! $money !!}"
-                                                   data-href="{!! route('qc.work.salary.before_pay.confirm.get',$payId) !!}">
-                                                    Xác nhận
-                                                </a>
-                                            @else
-                                                <em class="qc-color-grey">Đã xác nhận</em>
-                                            @endif
-                                        </td>
-                                        <td class="text-right">
-                                            {!! $hFunction->currencyFormat($money) !!}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                <tr>
-                                    <td colspan="5"></td>
-                                    <td class="text-right">
-                                        <b class="qc-color-red">
-                                            {!! $hFunction->currencyFormat($totalMoney) !!}
-                                        </b>
-                                    </td>
-                                </tr>
-                            @else
-                                <tr>
-                                    <td class="text-center" colspan="6">
-                                        Không có thông tin ứng
-                                    </td>
-                                </tr>
-                            @endif
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                        Về trang trước
-                    </a>
-                    <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
-                        Về trang chủ
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
 @endsection

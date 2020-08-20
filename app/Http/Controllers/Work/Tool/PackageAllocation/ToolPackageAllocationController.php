@@ -1,42 +1,40 @@
 <?php
 
-namespace App\Http\Controllers\Work\Tool\Allocation;
+namespace App\Http\Controllers\Work\Tool\PackageAllocation;
 
 
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Tool\QcTool;
-use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
-use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 //use Illuminate\Http\Request;
-use App\Models\Ad3d\ToolReturn\QcToolReturn;
+use App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation;
+use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use File;
 use Input;
 use Request;
 
-class ToolAllocationController extends Controller
+class ToolPackageAllocationController extends Controller
 {
     public function index($monthFilter = 0, $yearFilter = 0)
     {
         $modelStaff = new QcStaff();
-        $modelTool = new QcTool();
-        $modelToolAllocation = new QcToolAllocation();
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocation = new QcToolPackageAllocation();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         $dataAccess = [
-            'object' => 'toolAllocation'
+            'object' => 'toolPackageAllocation'
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
         #thong tin lam viec tai 1 cty
         $dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
-        $dataToolAllocationDetail = $modelToolAllocationDetail->infoOfListToolAllocation($modelToolAllocation->listIdOfWork($dataCompanyStaffWork->workId()));
-        return view('work.tool.allocation.list', compact('dataAccess', 'modelStaff', 'dataToolAllocationDetail', 'monthFilter', 'yearFilter'));
+        $dataToolPackageAllocationDetail = $modelToolAllocationDetail->infoOfListToolAllocation($modelToolAllocation->listIdOfWork($dataCompanyStaffWork->workId()));
+        return view('work.tool.package-allocation.list', compact('dataAccess', 'modelStaff', 'dataToolPackageAllocationDetail', 'monthFilter', 'yearFilter'));
     }
 
     #xac nhan da nhan do nghe
     public function getConfirmReceive($allocationId)
     {
-        $modelToolAllocation = new QcToolAllocation();
+        $modelToolAllocation = new QcToolPackageAllocation();
         $modelToolAllocation->receiveConfirm($allocationId);
     }
 

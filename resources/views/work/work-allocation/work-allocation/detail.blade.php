@@ -40,10 +40,10 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                         <table class="table table-bordered qc-margin-bot-none" style="border: none;">
                             <tr>
                                 <th colspan="6" style="border-top: none;">
-                                    <em style="color: deeppink;">Công việc được bàn giao</em>
+                                    <label style="color: deeppink;">CÔNG VIỆC ĐƯỢC BÀN GIAO</label>
                                 </th>
                             </tr>
-                            <tr style="background-color: whitesmoke;">
+                            <tr style="background-color: black; color: yellow;">
                                 <th>Thi công sản phẩm</th>
                                 <th class="text-center">Thiết Kế</th>
                                 <th class="text-center">
@@ -54,7 +54,7 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                 <th class="text-center">
                                     Ngày hoàn thành
                                 </th>
-                                <th class="text-center">Báo cáo</th>
+                                {{--<th class="text-center">Báo cáo</th>--}}
                                 <th class="text-center">Người giao</th>
                             </tr>
                             <tr>
@@ -121,18 +121,18 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                         @endif
                                     @endif
                                 </td>
-                                <td class="text-center">
+                                {{--<td class="text-center">
                                     <a class="qc_work_allocation_report_act qc-link-green-bold">
                                         Báo cáo công việc
                                     </a>
-                                </td>
+                                </td>--}}
                                 <td class="text-center">
                                     {!! $dataWorkAllocation->allocationStaff->lastName() !!}
                                 </td>
                             </tr>
                             <tr>
                                 <th colspan="6" style="border-bottom: none;">
-                                    <em style="color: deeppink;">Báo cáo công việc</em>
+                                    <label style="color: deeppink;">CHI TIẾT BÁO CÁO</label>
                                 </th>
                             </tr>
                             @if($hFunction->checkCount($dataWorkAllocationReport))
@@ -140,7 +140,7 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                     <td colspan="6" style="border-top: none;">
                                         <div class="table-responsive">
                                             <table class="table table-condensed">
-                                                <tr style="background-color: whitesmoke;">
+                                                <tr style="background-color: black; color: white;">
                                                     <th>
                                                         Ngày
                                                     </th>

@@ -30,15 +30,15 @@ $currentDateCheck = $hFunction->carbonNow();
 @section('qc_container_content')
     <div class="qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
-            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-                <h3>GIỜ RA</h3>
+            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <h3 style="color: red;">BÁO GIỜ RA</h3>
             </div>
             @if($endCheck < $currentDateCheck )
                 <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding: 30px 0 30px 0;">
                     <span class="qc-color-red">Hết hạn báo giờ ra</span>
                 </div>
             @else
-                <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <form class="qc_frm_time_end_add form-horizontal" name="qc_frm_time_end_add" role="form"
                           method="post"
                           enctype="multipart/form-data"
@@ -51,7 +51,7 @@ $currentDateCheck = $hFunction->carbonNow();
                         <div class="row" style="margin-bottom: 10px;">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <label>Giờ vào:</label>
-                                <input type="text" disabled="disabled" value="{!! date('d-m-Y H:i', strtotime($timeBegin)) !!}" >
+                                <input class="form-control" type="text" disabled="disabled" value="{!! date('d-m-Y H:i', strtotime($timeBegin)) !!}" >
                             </div>
                         </div>
                         <div class="row" style="margin-bottom: 10px;">
@@ -88,7 +88,7 @@ $currentDateCheck = $hFunction->carbonNow();
                                     </option>
                                 </select>
                                 &emsp;
-                                <select name="cbHoursEnd" style="height: 30px;">
+                                <select name="cbHoursEnd" style="height: 30px; color: red;">
                                     <option value="">Giờ</option>
                                     @for($i =1;$i<= 24; $i++)
                                         <option value="{!! $i !!}"
@@ -96,12 +96,17 @@ $currentDateCheck = $hFunction->carbonNow();
                                     @endfor
                                 </select>
                                 <span>:</span>
-                                <select name="cbMinuteEnd" style="height: 30px;">
+                                <select name="cbMinuteEnd" style="height: 30px; color: red;">
                                     @for($i =0;$i<= 55; $i = $i+5)
                                         <option value="{!! $i !!}"
                                                 @if($i == 30) selected="selected" @endif >{!! $i !!}</option>
                                     @endfor
                                 </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <span style="padding: 5px; background-color: red; color: yellow;">PHẢI CÓ ẢNH BÁO CÁO</span>
                             </div>
                         </div>
                         <div class="row" style="padding-top: 5px; margin-bottom: 10px; border-top: 1px solid #d7d7d7;">
@@ -111,7 +116,7 @@ $currentDateCheck = $hFunction->carbonNow();
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label>Sản phẩm: </label><br/>
-                                <select class="cbWorkAllocation_1" name="cbWorkAllocation_1">
+                                <select class="cbWorkAllocation_1" name="cbWorkAllocation_1" style="height: 34px;">
                                     @if(count($dataWorkAllocation) > 0)
                                         <option value="0">Chọn sản phẩm</option>
                                         @foreach($dataWorkAllocation as $workAllocation)
@@ -133,7 +138,7 @@ $currentDateCheck = $hFunction->carbonNow();
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label>Sản phẩm: </label><br/>
-                                <select class="cbWorkAllocation_2" name="cbWorkAllocation_2">
+                                <select class="cbWorkAllocation_2" name="cbWorkAllocation_2" style="height: 34px;">
                                     @if(count($dataWorkAllocation) > 0)
                                         <option value="0">Chọn sản phẩm</option>
                                         @foreach($dataWorkAllocation as $workAllocation)
@@ -155,7 +160,7 @@ $currentDateCheck = $hFunction->carbonNow();
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label>Sản phẩm: </label><br/>
-                                <select class="cbWorkAllocation_3" name="cbWorkAllocation_3">
+                                <select class="cbWorkAllocation_3" name="cbWorkAllocation_3" style="height: 34px;">
                                     @if(count($dataWorkAllocation) > 0)
                                         <option value="0">Chọn sản phẩm</option>
                                         @foreach($dataWorkAllocation as $workAllocation)
@@ -191,7 +196,7 @@ $currentDateCheck = $hFunction->carbonNow();
                                     <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                                     <input type="hidden" name="txtTimekeepingProvisional"
                                            value="{!! $timekeepingProvisionalId !!}">
-                                    <button type="button" class="qc_save btn btn-sm btn-primary">Lưu</button>
+                                    <button type="button" class="qc_save btn btn-sm btn-primary">XÁC NHẬN</button>
                                     <button type="reset" class="btn btn-sm btn-default">Nhập lại</button>
                                     <button type="button" class="qc_container_close btn btn-sm btn-default">Đóng
                                     </button>

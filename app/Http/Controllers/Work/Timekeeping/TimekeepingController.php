@@ -9,6 +9,7 @@ use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
 use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
 use App\Models\Ad3d\Rule\QcRules;
 use App\Models\Ad3d\Salary\QcSalary;
+use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
@@ -64,8 +65,6 @@ class TimekeepingController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelTimekeeping = new QcTimekeepingProvisional();
-        $modelLicenseOff = new QcLicenseOffWork();
-        $loginStaffId = $modelStaff->loginStaffId();
         $workId = Request::input('txtWork');
 
         $dayBegin = Request::input('cbDayBegin');
@@ -107,12 +106,14 @@ class TimekeepingController extends Controller
         $modelStaff = new QcStaff();
         $modelSalary = new QcSalary();
         $modelSalaryPay = new QcSalaryPay();
+        $modelSalaryBeforePay = new QcSalaryBeforePay();
         $modelImport = new QcImport();
         $modelImportPay = new QcImportPay();
         $modelTimekeeping = new QcTimekeepingProvisional();
         $dataStaff = $modelStaff->loginStaffInfo();
         $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
         $loginStaffId = $dataStaff->staffId();
+        $dataActivityWork = $dataCompanyStaffWorkLogin->workInfoActivity();
         //-------- ---------- lay thong tin chua xac nhan thanh toan luong ---------- ---------
         # danh sach ma cham cong
         $listWorkId = $modelStaff->allListWorkId($loginStaffId);
@@ -120,6 +121,8 @@ class TimekeepingController extends Controller
         $listSalaryId = $modelSalary->listIdOfListWorkId($listWorkId);
         # thong tin thanh toan chua xac nhan
         $dataSalaryPay = $modelSalaryPay->getInfoUnConfirmOfListSalaryId($listSalaryId);
+        //-------- ---------- lay thong tin chua xac nhan ưng toan luong ---------- ---------
+        $dataSalaryBeforePay = $modelSalaryBeforePay->infoUnConfirmOfWork($dataActivityWork->workId());
         //-------- ---------- lay thong tin chua xac nhan thanh toan mua vat tu ---------- ---------
         # lay danh sach nhap vat tu da thanh toan
         $listImportId = $modelImport->listImportIdPaidOfStaffImport($loginStaffId);
@@ -127,8 +130,8 @@ class TimekeepingController extends Controller
         $dataImportPay = $modelImportPay->infoUnConfirmOfListImportId($listImportId);
 
         # co thong tin chua xac nhan
-        if ($hFunction->checkCount($dataSalaryPay) || $hFunction->checkCount($dataImportPay) || $dataCompanyStaffWorkLogin->existUnConfirmInRoundCompanyStoreCheck()) {
-            return view('work.components.warning.warning-confirm', compact('modelStaff', 'dataSalaryPay', 'dataImportPay'));
+        if ($hFunction->checkCount($dataSalaryPay) || $hFunction->checkCount($dataSalaryBeforePay) || $hFunction->checkCount($dataImportPay) || $dataCompanyStaffWorkLogin->existUnConfirmInRoundCompanyStoreCheck()) {
+            return view('work.components.warning.warning-confirm', compact('modelStaff', 'dataSalaryPay', 'dataSalaryBeforePay', 'dataImportPay'));
         } else {
             $dataStaff = $modelStaff->loginStaffInfo();
             $dataTimekeepingProvisional = $modelTimekeeping->getInfo($timekeepingId);

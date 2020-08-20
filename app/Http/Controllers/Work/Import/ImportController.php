@@ -26,7 +26,7 @@ class ImportController extends Controller
         $modelStaff = new QcStaff();
         $dataStaff = $modelStaff->loginStaffInfo();
         $dataAccess = [
-            'object' => 'payImport',
+            'object' => 'import',
             'subObjectLabel' => 'Mua vật tư'
         ];
         $loginStaffId = $dataStaff->staffId();

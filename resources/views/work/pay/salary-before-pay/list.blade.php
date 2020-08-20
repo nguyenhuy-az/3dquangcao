@@ -20,34 +20,6 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
         <div class="qc_work_pay_salary_before_pay_wrap qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <select class="cbDayFilter" style="margin-top: 5px; height: 25px;"
-                            data-href="{!! $hrefIndex !!}">
-                        <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >Tất cả
-                        </option>
-                        @for($i =1;$i<= 31; $i++)
-                            <option value="{!! $i !!}"
-                                    @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
-                        @endfor
-                    </select>
-                    <span>|</span>
-                    <select class="qc_work_pay_salary_login_month" style="height: 25px;"
-                            data-href="{!! $hrefIndex !!}">
-                        <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >Tất cả
-                        @for($i = 1; $i <=12; $i++)
-                            <option @if($monthFilter == $i) selected="selected" @endif>
-                                {!! $i !!}
-                            </option>
-                        @endfor
-                    </select>
-                    <span>/</span>
-                    <select class="qc_work_pay_salary_login_year" style="height: 25px;"
-                            data-href="{!! $hrefIndex !!}">
-                        @for($i = 2017; $i <=2050; $i++)
-                            <option @if($yearFilter == $i) selected="selected" @endif>
-                                {!! $i !!}
-                            </option>
-                        @endfor
-                    </select>
                     <a class="qc-link-red-bold btn btn-sm" href="{!! route('qc.work.pay.salary_before_pay.add.get') !!}">
                         + Ứng lương
                     </a>
@@ -59,12 +31,48 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
-                                <th>Ngày</th>
+                                <th style="width: 170px;">Ngày</th>
                                 <th>Tên</th>
                                 <th>Ghi chú</th>
-                                <th class="text-right"></th>
+                                <th class="text-center">Xác nhận</th>
                                 <th class="text-right">Tiền ứng</th>
 
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="padding: 0;">
+                                    <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px;padding: 0;"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >Tất cả
+                                        </option>
+                                        @for($d =1;$d<= 31; $d++)
+                                            <option value="{!! $d !!}"
+                                                    @if((int)$dayFilter == $d) selected="selected" @endif >
+                                                {!! $d !!}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px;padding: 0;"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >Tất cả
+                                        @for($m = 1; $m <=12; $m++)
+                                            <option @if($monthFilter == $m) selected="selected" @endif>
+                                                {!! $m !!}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px;padding: 0;" data-href="{!! $hrefIndex !!}">
+                                        @for($y = 2017; $y <=2050; $y++)
+                                            <option @if($yearFilter == $y) selected="selected" @endif>
+                                                {!! $y !!}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                             @if($hFunction->checkCount($dataSalaryBeforePay))
                                 <?php
@@ -95,7 +103,7 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                                         <td>
                                             {!! $salaryBeforePay->description() !!}
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-center">
                                             @if(!$salaryBeforePay->checkConfirm())
                                                 <em style="color: brown;">Chưa xác nhận</em>
                                                 <span>|</span>

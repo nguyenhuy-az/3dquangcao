@@ -17,6 +17,9 @@ $href = null;
 if ($viewLoginObject == 'timekeepingWork') {
     $label = 'Làm Việc';
     $href = route('qc.work.timekeeping.work.get');
+}elseif ($viewLoginObject == 'import') {
+    $label = 'Mua vật tư - dụng cụ';
+    $href = route('qc.work.import.get');
 } elseif ($viewLoginObject == 'orders') {
     $label = 'Đơn hàng';
     $href = route('qc.work.orders.get');
@@ -69,23 +72,23 @@ if ($viewLoginObject == 'timekeepingWork') {
     $label = 'Ứng lương';
     $href = route('qc.work.salary.before_pay.get');
 } elseif ($viewLoginObject == 'payImport') { # thong tin chi
-    $label = 'Chi';
+    $label = 'Thanh toán mua vật tư';
     $href = route('qc.work.pay.import.get');
 } elseif ($viewLoginObject == 'payActivity') { # thong tin chi
-    $label = 'Chi';
+    $label = 'Chi hoạt động';
     $href = route('qc.work.pay.pay_activity.get');
 } elseif ($viewLoginObject == 'paySalary') { # thong tin chi
-    $label = 'Chi';
+    $label = 'Thanh toán lương';
     $href = route('qc.work.pay.pay_salary.get');
 }elseif ($viewLoginObject == 'payKeepMoney') { # thanh toan tien giu
     $label = 'Thanh toán tiền giữ';
     $href = route('qc.work.pay.keep_money.get');
 } elseif ($viewLoginObject == 'toolAllocation') {
     $label = 'Đồ nghề được giao';
-    $href = route('qc.work.tool.allocation.get');
+    $href = route('qc.work.tool.package_allocation.get');
 }elseif ($viewLoginObject == 'toolCheckStore') {
     $label = 'Kiểm tra đồ nghề dùng chung';
-    $href = route('qc.work.tool.allocation.get');
+    $href = route('qc.work.tool.package_allocation.get');
 }elseif ($viewLoginObject == 'storeTool') {
     $label = 'Kho';
     $href = route('qc.work.store.tool.get');

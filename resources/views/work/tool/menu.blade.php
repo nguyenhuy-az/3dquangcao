@@ -22,9 +22,9 @@ if (isset($dataAccess)) {
 <div class="row">
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
-            <li @if($viewLoginObject == 'toolAllocation') class="active" @endif>
-                <a class="qc-link-bold" href="{!! route('qc.work.tool.allocation.get') !!}"
-                   @if($viewLoginObject == 'toolAllocation') style="background-color: whitesmoke" @endif>
+            <li @if($viewLoginObject == 'toolPackageAllocation') class="active" @endif>
+                <a class="qc-link-bold" href="{!! route('qc.work.tool.package_allocation.get') !!}"
+                   @if($viewLoginObject == 'toolPackageAllocation') style="background-color: whitesmoke" @endif>
                     Đồ nghề được phát
                 </a>
             </li>

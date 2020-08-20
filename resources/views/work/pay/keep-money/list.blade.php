@@ -29,7 +29,7 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
                                 <th style="width:20px;">STT</th>
-                                <th>Ngày giữ</th>
+                                <th style="width: 120px;">Ngày giữ</th>
                                 <th>Nhân viên</th>
                                 <th>Ghi chú</th>
                                 <th>Tháng lương giữ</th>
@@ -39,7 +39,7 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                             <tr>
                                 <td></td>
                                 <td style="padding: 0;">
-                                    <select class="cbMonthFilter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                    <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả
                                         </option>
@@ -50,7 +50,7 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="cbYearFilter" style="height: 30px;" data-href="{!! $hrefIndex !!}">
+                                    <select class="cbYearFilter col-sx-8 col-sm-8 col-md-8 col-lg-8" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         @for($y =2017;$y<= 2050; $y++)
                                             <option value="{!! $y !!}"
                                                     @if($yearFilter == $y) selected="selected" @endif>
@@ -76,7 +76,7 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                 </td>
                                 <td></td>
                                 <td style="padding: 0;">
-                                    <select class="cbPayStatus" name="cbPayStatus" style="height: 30px; width: 100%;"
+                                    <select class="cbPayStatus form-control" name="cbPayStatus"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="0" @if($payStatus == 0) selected="selected" @endif>
                                             Tất cả

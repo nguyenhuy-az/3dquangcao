@@ -58,7 +58,7 @@ class QcSalaryBeforePay extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staffPay_id', 'staff_id');
     }
 
-    public function infoOfStaffAndDate($staffId, $date=null)
+    public function infoOfStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
             return QcSalaryBeforePay::where('staffPay_id', $staffId)->orderBy('pay_id', 'DESC')->where('datePay', 'like', "%$date%")->get();
@@ -131,12 +131,18 @@ class QcSalaryBeforePay extends Model
     # tong tien ung da xac nhan
     public function totalMoneyConfirmedOfWork($workId)
     {
-        return QcSalaryBeforePay::where('work_id', $workId)->where('confirmStatus',1)->sum('money');
+        return QcSalaryBeforePay::where('work_id', $workId)->where('confirmStatus', 1)->sum('money');
     }
 
     public function infoOfWork($workId)
     {
         return QcSalaryBeforePay::where('work_id', $workId)->orderBy('pay_id', 'DESC')->get();
+    }
+
+    # thong tin ung chua xac nhan
+    public function infoUnConfirmOfWork($workId)
+    {
+        return QcSalaryBeforePay::where('work_id', $workId)->where('confirmStatus', 0)->orderBy('pay_id', 'DESC')->get();
     }
 
     #============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========

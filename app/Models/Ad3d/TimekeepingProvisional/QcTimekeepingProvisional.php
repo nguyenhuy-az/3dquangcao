@@ -117,7 +117,7 @@ class QcTimekeepingProvisional extends Model
                                         $punishIdOfOffWork = $modelPunishContent->punishIdOfOffWork();
                                         if (!empty($punishIdOfOffWork)) {
                                             $reason = $modelPunishContent->note($punishIdOfOffWork);
-                                            $modelMinusMoney->insert(date('Y-m-d 00:00:00', strtotime($checkDate)), $reason[0], $workId, $staffId, $punishIdOfOffWork[0]);
+                                            $modelMinusMoney->insert(date('Y-m-d 00:00:00', strtotime($checkDate)), $reason[0], $workId, $staffId, $punishIdOfOffWork[0], 0, null, null, null, null, 0);
                                         }
                                     }
 
@@ -134,7 +134,7 @@ class QcTimekeepingProvisional extends Model
                                     $punishIdOfOffWork = $modelPunishContent->punishIdOfOffWork();
                                     if (!empty($punishIdOfOffWork)) {
                                         $reason = $modelPunishContent->note($punishIdOfOffWork);
-                                        $modelMinusMoney->insert(date('Y-m-d 00:00:00', strtotime($checkDate)), $reason[0], $workId, $staffId, $punishIdOfOffWork[0]);
+                                        $modelMinusMoney->insert(date('Y-m-d 00:00:00', strtotime($checkDate)), $reason[0], $workId, $staffId, $punishIdOfOffWork[0], 0, null, null, null, null, 0);
                                     }
                                 }
                             }
@@ -215,7 +215,7 @@ class QcTimekeepingProvisional extends Model
             if ($modelTimekeeping->existDateOfWork($workId, $checkDate)) { # da ton tai cham cong
                 return false;
             } else {
-                $defaultBegin =  $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 08:00:00");
+                $defaultBegin = $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 08:00:00");
                 $defaultEnd = $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 17:30:00");//date('Y-m-d 17:30', strtotime($dateBegin));//
                 $mainMinute = 0;
                 $plusMinute = 0;
@@ -233,7 +233,7 @@ class QcTimekeepingProvisional extends Model
                                     $punishIdOfLateWork = $modelPunishContent->punishIdOfLateWork();
                                     if (!empty($punishIdOfLateWork)) {
                                         $reason = $modelPunishContent->note($punishIdOfLateWork);
-                                        $modelMinusMoney->insert($dateBegin, $reason[0], $workId, $staffLoginId, $punishIdOfLateWork[0]);
+                                        $modelMinusMoney->insert($dateBegin, $reason[0], $workId, $staffLoginId, $punishIdOfLateWork[0], 0, null, null, null, null, 0);
                                     }
                                     $lateStatus = 0;
                                 }
@@ -242,7 +242,7 @@ class QcTimekeepingProvisional extends Model
                                     $punishIdOfTimekeepingAccuracy = $modelPunishContent->punishIdOfTimekeepingAccuracy();
                                     if (!empty($punishIdOfTimekeepingAccuracy)) {
                                         $reason = $modelPunishContent->note($punishIdOfTimekeepingAccuracy);
-                                        $modelMinusMoney->insert($dateBegin, $reason[0], $workId, $staffLoginId, $punishIdOfTimekeepingAccuracy[0]);
+                                        $modelMinusMoney->insert($dateBegin, $reason[0], $workId, $staffLoginId, $punishIdOfTimekeepingAccuracy[0], 0, null, null, null, null, 0);
                                     }
                                 }
                             }

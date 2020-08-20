@@ -33,14 +33,16 @@ class QcMinusMoney extends Model
         if ($money == 0) {
             if (empty($orderAllocationId) && empty($orderConstructionId) && empty($companyStoreCheckReportId)) {  # phat theo noi quy
                 # tien phat
-                $money = $modelPunishContent->money($punishId)[0];
+                $money = $modelPunishContent->money($punishId);
             } else {
                 # phat theo gia tri don han
-                if (!empty($orderAllocationId)) {# phat truong thi cong
+                if (!empty($orderAllocationId)) {
+                    # phat truong thi cong
                     $dataOrderAllocation = $modelOrderAllocation->getInfo($orderAllocationId);
                     $dataOrder = $dataOrderAllocation->orders;
                     $money = (int)$dataOrder->getMinusMoneyOrderAllocationLate();
-                } elseif (!empty($orderConstructionId)) { # phat quan ly thi cong
+                } elseif (!empty($orderConstructionId)) {
+                    # phat quan ly thi cong
                     $money = (int)$modelOrder->getBonusAndMinusMoneyOfManageRank($orderConstructionId);
                 } elseif (!empty($companyStoreCheckReportId)) {
                     $punishIdLostTool = $modelPunishContent->getPunishIdLostPublicTool();
@@ -50,7 +52,7 @@ class QcMinusMoney extends Model
                         $money = $modelCompanyStore->importPrice($modelCompanyStoreCheckReport->storeId($companyStoreCheckReportId));
                     } else {
                         # tien phat
-                        $money = $modelPunishContent->money($punishId)[0];
+                        $money = $modelPunishContent->money($punishId);
                     }
                 }
 

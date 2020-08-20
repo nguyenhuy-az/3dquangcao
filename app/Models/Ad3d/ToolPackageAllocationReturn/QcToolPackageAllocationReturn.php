@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\Ad3d\ToolReturn;
+namespace App\Models\Ad3d\ToolPackageAllocationReturn;
 
-use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
+use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
 use Illuminate\Database\Eloquent\Model;
 
-class QcToolReturn extends Model
+class QcToolPackageAllocationReturn extends Model
 {
     protected $table = 'qc_tool_return';
     protected $fillable = ['return_id', 'returnDate', 'image', 'confirmStatus', 'confirmDate', 'acceptStatus', 'created_at', 'detail_id', 'confirmStaff_id'];
@@ -19,7 +19,7 @@ class QcToolReturn extends Model
     public function insert($detailId, $image)
     {
         $hFunction = new \Hfunction();
-        $modelToolReturn = new QcToolReturn();
+        $modelToolReturn = new QcToolPackageAllocationReturn();
         $modelToolReturn->returnDate = $hFunction->carbonNow();
         $modelToolReturn->image = $image;
         $modelToolReturn->detail_id = $detailId;
@@ -44,13 +44,13 @@ class QcToolReturn extends Model
 
     public function deleteReturn($returnId = null)
     {
-        return QcToolReturn::where('return_id', $this->checkNullId($returnId))->delete();
+        return QcToolPackageAllocationReturn::where('return_id', $this->checkNullId($returnId))->delete();
     }
 
     # xac nhan tra
     public function confirmReturn($returnId, $acceptStatus, $confirmStaffId)
     {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         if ($this->updateConfirm($returnId, $acceptStatus, $confirmStaffId)) {
             # chap nhan tra
             if ($this->checkAcceptStatus($returnId)) $modelToolAllocationDetail->disableDetail($this->detailId($returnId));
@@ -60,7 +60,7 @@ class QcToolReturn extends Model
     public function updateConfirm($returnId, $acceptStatus, $confirmStaffId)
     {
         $hFunction = new \Hfunction();
-        return QcToolReturn::where('return_id', $returnId)->update(['confirmStatus' => 1, 'confirmDate' => $hFunction->carbonNow(), 'confirmStaff_id' => $confirmStaffId, 'acceptStatus' => $acceptStatus]);
+        return QcToolPackageAllocationReturn::where('return_id', $returnId)->update(['confirmStatus' => 1, 'confirmDate' => $hFunction->carbonNow(), 'confirmStaff_id' => $confirmStaffId, 'acceptStatus' => $acceptStatus]);
     }
 
     # hinh anh
@@ -78,7 +78,7 @@ class QcToolReturn extends Model
     public function deleteImage($returnId = null)
     {
         $imageName = $this->image($returnId)[0];
-        if (QcToolReturn::where('return_id', $returnId)->update(['image' => null])) {
+        if (QcToolPackageAllocationReturn::where('return_id', $returnId)->update(['image' => null])) {
             $this->dropImage($imageName);
         }
     }
@@ -121,15 +121,15 @@ class QcToolReturn extends Model
     }
     //========== ========= ========= RELATION ========== ========= ==========
     //---------- nhân viên tra -----------
-    public function toolAllocationDetail()
+    public function toolPackageAllocationDetail()
     {
-        return $this->belongsTo('App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail', 'detail_id', 'detail_id');
+        return $this->belongsTo('App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail', 'detail_id', 'detail_id');
     }
 
     # lay thong tin cuoi dung bao tra
     public function lastInfoOfToolAllocationDetail($detailId)
     {
-        return QcToolReturn::where('detail_id', $detailId)->orderBy('return_id', 'DESC')->first();
+        return QcToolPackageAllocationReturn::where('detail_id', $detailId)->orderBy('return_id', 'DESC')->first();
     }
 
     //---------- nhan vien xac nhan -----------
@@ -144,9 +144,9 @@ class QcToolReturn extends Model
     {
         #$confirmStatus = 100 tat ca thong tin
         if ($confirmStatus == 100) {
-            return QcToolReturn::whereIn('detail_id', $listDetailId)->get();
+            return QcToolPackageAllocationReturn::whereIn('detail_id', $listDetailId)->get();
         } else {
-            return QcToolReturn::whereIn('detail_id', $listDetailId)->where('confirmStatus', $confirmStatus)->get();
+            return QcToolPackageAllocationReturn::whereIn('detail_id', $listDetailId)->where('confirmStatus', $confirmStatus)->get();
         }
     }
 
@@ -159,21 +159,21 @@ class QcToolReturn extends Model
     # lay thong tin tra ve kho lan sau cung
     public function infoLastOfCompanyStore($storeId)
     {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         return $this->lastInfoOfToolAllocationDetail($modelToolAllocationDetail->lastIdOfCompanyStore($storeId));
     }
 
     public function getAllocationDetailListId()
     {
-        return QcToolReturn::select('*')->pluck('detail_id');
+        return QcToolPackageAllocationReturn::select('*')->pluck('detail_id');
     }
 
     public function getInfo($returnId = '', $field = '')
     {
         if (empty($returnId)) {
-            return QcToolReturn::get();
+            return QcToolPackageAllocationReturn::get();
         } else {
-            $result = QcToolReturn::where('return_id', $returnId)->first();
+            $result = QcToolPackageAllocationReturn::where('return_id', $returnId)->first();
             if (empty($field)) {
                 return $result;
             } else {
@@ -187,7 +187,7 @@ class QcToolReturn extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcToolReturn::where('return_id', $objectId)->pluck($column);
+            return QcToolPackageAllocationReturn::where('return_id', $objectId)->pluck($column);
         }
     }
 
@@ -244,7 +244,7 @@ class QcToolReturn extends Model
     // last id
     public function lastId()
     {
-        $result = QcToolReturn::orderBy('return_id', 'DESC')->first();
+        $result = QcToolPackageAllocationReturn::orderBy('return_id', 'DESC')->first();
         return (empty($result)) ? 0 : $result->return_id;
     }
 

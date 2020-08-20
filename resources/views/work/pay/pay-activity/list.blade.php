@@ -35,7 +35,7 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
-                                <th>Ngày</th>
+                                <th style="width: 150px;">Ngày</th>
                                 <th>Danh mục chi</th>
                                 <th style="width: 400px !important;">Ghi chú</th>
                                 <th class="text-right"></th>
@@ -47,7 +47,7 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="cbDayFilter" style="height: 30px;"
+                                    <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="0" @if($dayFilter == null) selected="selected" @endif>
                                             Tất cả
@@ -58,7 +58,7 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="cbMonthFilter" style="height: 30px;"
+                                    <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
                                         @for($m = 1; $m <=12; $m++)
                                             <option @if($monthFilter == $m) selected="selected" @endif>
@@ -66,7 +66,7 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="cbYearFilter" style="height: 30px;"
+                                    <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px;padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
                                         @for($y = 2017; $y <=2050; $y++)
                                             <option @if($yearFilter == $y) selected="selected" @endif>
@@ -200,7 +200,7 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                 </div>
             </div>
 
-            <div class="row">
+            {{--<div class="row">
                 <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
                         Về trang trước
@@ -209,7 +209,7 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                         Về trang chủ
                     </a>
                 </div>
-            </div>
+            </div>--}}
         </div>
     </div>
 @endsection

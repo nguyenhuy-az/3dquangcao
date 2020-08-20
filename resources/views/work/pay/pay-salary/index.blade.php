@@ -22,29 +22,26 @@ $currentMonth = $hFunction->currentMonth();
             @include('work.pay.pay-menu')
             {{-- chi tiêt --}}
             <div class="row">
-                <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <select class="qc_work_pay_salary_login_month" style="height: 25px;"
-                            data-href="{!! route('qc.work.pay.pay_salary.get') !!}">
-                        @for($i = 1; $i <=12; $i++)
-                            <option @if($filterMonth == $i) selected="selected" @endif>
-                                {!! $i !!}
-                            </option>
-                        @endfor
-                    </select>
-                    <span>/</span>
-                    <select class="qc_work_pay_salary_login_year" style="height: 25px;"
-                            data-href="{!! route('qc.work.pay.pay_salary.get') !!}">
-                        @for($i = 2017; $i <=2050; $i++)
-                            <option @if($filterYear == $i) selected="selected" @endif>
-                                {!! $i !!}
-                            </option>
-                        @endfor
-                    </select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                     <label style="color: deeppink;">*** Bảng lương </label>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                    <select class="qc_work_pay_salary_login_month text-right col-xs-4 col-sm-4 col-md-4 col-lg-4" style="height: 34px;"
+                            data-href="{!! route('qc.work.pay.pay_salary.get') !!}">
+                        @for($m = 1; $m <=12; $m++)
+                            <option @if($filterMonth == $m) selected="selected" @endif value="{!! $m !!}">
+                                Tháng {!! $m !!}
+                            </option>
+                        @endfor
+                    </select>
+                    <select class="qc_work_pay_salary_login_year text-right col-xs-8 col-sm-8 col-md-8 col-lg-8 " style="height: 34px;"
+                            data-href="{!! route('qc.work.pay.pay_salary.get') !!}">
+                        @for($y = 2017; $y <=2050; $y++)
+                            <option @if($filterYear == $y) selected="selected" @endif value="{!! $y !!}">
+                                Năm {!! $y !!}
+                            </option>
+                        @endfor
+                    </select>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">

@@ -78,6 +78,19 @@ var qc_work_pay_salary_before_pay = {
         }
     }
 }
+//-------------------- LOC THONG TIN ------------
+$(document).ready(function () {
+    $('body').on('change', '.cbDayFilter', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val());
+    });
+
+    $('body').on('change', '.cbMonthFilter', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbDayFilter').val() + '/' + $(this).val() + '/' + $('.cbYearFilter').val());
+    });
+    $('body').on('change', '.cbYearFilter', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $(this).val());
+    });
+});
 //===================== XOA - SỬA ===========================
 $(document).ready(function () {
     // sua thong tin ung

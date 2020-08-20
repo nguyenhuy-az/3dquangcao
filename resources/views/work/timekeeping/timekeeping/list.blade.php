@@ -52,13 +52,13 @@ if ($hFunction->checkCount($dataWork)) {
                                 SẼ BỊ PHẠT
                             </span>
                         </div>
-                        <div class="text-right col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                            <a class="qc_time_begin_action qc-link-green-bold"
+                        <div class="text-right col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-top: 5px;">
+                            <a class="qc_time_begin_action qc-link-white-bold btn btn-primary"
                                data-href="{!! route('qc.work.timekeeping.timeBegin.get') !!}">
                                 BÁO GIỜ VÀO
                             </a>
                             <span>&nbsp;||&nbsp;</span>
-                            <a class="ac_off_work_action qc-link-green-bold"
+                            <a class="ac_off_work_action qc-link-green-bold btn btn-default"
                                data-href="{!! route('qc.work.timekeeping.offWork.get') !!}">
                                 Xin nghỉ
                             </a>
@@ -111,12 +111,22 @@ if ($hFunction->checkCount($dataWork)) {
                                             {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
                                         </td>
                                         <td>
-                                        <span>
-                                            {!! date('d-m-Y ', strtotime($timeBegin)) !!}
-                                        </span>
-                                        <span class="qc-font-bold" style="color: blue;">
-                                            {!! date('H:i', strtotime($timeBegin)) !!}
-                                        </span>
+                                            <span>
+                                                {!! date('d-m-Y ', strtotime($timeBegin)) !!}
+                                            </span>
+                                            <span class="qc-font-bold" style="color: blue;">
+                                                {!! date('H:i', strtotime($timeBegin)) !!}
+                                            </span>
+                                            @if($hFunction->checkEmpty($timeEnd))
+                                                @if($endCheckStatus)
+                                                    <br/>
+                                                    <a class="qc_time_end_action qc-link-green-bold"
+                                                       style="font-size: 1.5em;">BÁO GIỜ RA</a>
+                                                @else
+                                                    <br/>
+                                                    <em class="qc-color-red">Hết hạn báo</em>
+                                                @endif
+                                            @endif
                                         </td>
                                         <td>
                                             @if(!$hFunction->checkEmpty($timeEnd))
@@ -180,8 +190,9 @@ if ($hFunction->checkCount($dataWork)) {
                                                     <a class="qc_timekeeping_provisional_image_action qc-link-bold">
                                                         Ảnh tiến độ CV
                                                     </a>
-                                                    <span class="qc-color-grey"> &nbsp; | &nbsp; </span>
-                                                    <a class="qc_time_end_action qc-link-bold">BÁO GIỜ RA</a>
+                                                    {{--<span class="qc-color-grey"> &nbsp; | &nbsp; </span>
+                                                    <a class="qc_time_end_action qc-link-bold"
+                                                       style="font-size: 1.5em;">BÁO GIỜ RA</a>--}}
                                                     <span class="qc-color-grey"> &nbsp; | &nbsp; </span>
                                                     <a class="qc_time_end_cancel qc-link-red-bold">
                                                         <i class="glyphicon glyphicon-trash" title="Hủy"></i>
