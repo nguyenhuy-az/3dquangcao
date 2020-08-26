@@ -21,7 +21,8 @@ class QcMinusMoney extends Model
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($dateMinus, $reason, $workId, $staffId = null, $punishId, $applyStatus = 1, $orderAllocationId = null, $orderConstructionId = null, $companyStoreCheckReportId = null, $workAllocationId = null, $money = 0)
+    public function insert($dateMinus, $reason, $workId, $staffId = null, $punishId, $applyStatus = 1, $orderAllocationId = null,
+                           $orderConstructionId = null, $companyStoreCheckReportId = null, $workAllocationId = null, $money = 0)
     {
         $hFunction = new \Hfunction();
         $modelOrder = new QcOrder();

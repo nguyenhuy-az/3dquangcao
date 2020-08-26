@@ -13,11 +13,10 @@ $mobileStatus = $mobile->isMobile();
 $dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
 $companyId = $dataStaff->companyId();
-$hrefIndex = route('qc.work.store.return.get');
 $currentMonth = $hFunction->currentMonth();
 
 ?>
-@extends('work.store.allocation.index')
+@extends('work.store.tool-package-allocation.index')
 @section('qc_work_store_allocation_body')
     <div class="row qc_work_store_allocation_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-6 col-lg-6">
@@ -31,11 +30,11 @@ $currentMonth = $hFunction->currentMonth();
                                 <th>Nhân viên</th>
                                 <th></th>
                             </tr>
-                            @if($hFunction->checkCount($dataToolAllocation))
+                            @if($hFunction->checkCount($dataToolPackageAllocation))
                                 <?php $n_o = 0; ?>
-                                @foreach($dataToolAllocation as $toolAllocation)
+                                @foreach($dataToolPackageAllocation as $toolPackageAllocation)
                                     <?php
-                                    $allocationId = $toolAllocation->allocationId();
+                                    $allocationId = $toolPackageAllocation->allocationId();
                                     $n_o = $n_o + 1;
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
@@ -43,11 +42,11 @@ $currentMonth = $hFunction->currentMonth();
                                             {!! $n_o !!}
                                         </td>
                                         <td>
-                                            {!!  $toolAllocation->companyStaffWork->staff->fullName() !!}
+                                            {!!  $toolPackageAllocation->companyStaffWork->staff->fullName() !!}
                                         </td>
                                         <td class="text-center">
                                             <a class="qc-link-green"
-                                               href="{!! route('qc.work.store.allocation.check.get',$allocationId) !!}">
+                                               href="{!! route('qc.work.store.tool_package_allocation.check.get',$allocationId) !!}">
                                                 Kiểm tra
                                             </a>
                                         </td>
@@ -56,7 +55,7 @@ $currentMonth = $hFunction->currentMonth();
                             @else
                                 <tr>
                                     <td class="text-center" colspan="3">
-                                        Không có thông tin trả
+                                        Không có thông tin bàn giao
                                     </td>
                                 </tr>
                             @endif

@@ -10,7 +10,6 @@ use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
 use App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation;
 use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
-use App\Models\Ad3d\ToolPackageAllocationReturn\QcToolPackageAllocationReturn;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
 
@@ -83,6 +82,7 @@ class QcCompanyStaffWork extends Model
         $modelToolReturnDetail = new QcToolPackageAllocationDetail();
         return $modelToolReturnDetail->totalToolOfWork($toolId, $workId);
     }
+
     # ---------- ---------- giao do nghe ---------- ----------
     public function toolPackageAllocation()
     {
@@ -730,6 +730,20 @@ class QcCompanyStaffWork extends Model
     public function company()
     {
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
+    }
+
+    # lay danh sach thong tin chua ban giao tui do nghe
+    public function getInfoForToolPackageAllocationOfCompany($companyId)
+    {
+        # chi lay thong tin do nghe chua duoc ban giao
+        $modelDepartment = new QcDepartment();
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $modelToolPackageAllocation = new QcToolPackageAllocation();
+        # danh sach lam viec cua bo phan thi cong
+        $listWorkIdOfDepartment = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment([$modelDepartment->constructionDepartmentId()], null);
+        # danh sach lam viec da phat do nghe
+        $listWorkId = $modelToolPackageAllocation->listWorkIdIsActive();
+        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkIdOfDepartment)->whereNotIn('work_id',$listWorkId)->where('action', 1)->get();
     }
 
     # lay thong tin lam viec theo bo phan thi cong cap nhan vien tai 1 cty - dang lam viec

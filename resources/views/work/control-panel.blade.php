@@ -101,7 +101,7 @@ $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
             </div>
             @if($dataStaffLogin->checkManageDepartment())
                 <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                    <a class="qc-work-panel-icon-link" href="{!! route('qc.work.store.allocation.get') !!}">
+                    <a class="qc-work-panel-icon-link" href="{!! route('qc.work.store.tool_package_allocation.get') !!}">
                         <i class="glyphicon glyphicon-list-alt" style="font-size: 20px;color: grey;"></i> <br/>
                         QUẢN LÝ ĐỒ NGHỀ
                     </a>

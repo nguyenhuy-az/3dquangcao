@@ -4,13 +4,13 @@ namespace App\Models\Ad3d\CompanyStore;
 
 use App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport;
 use App\Models\Ad3d\Tool\QcTool;
-use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
+use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
 use Illuminate\Database\Eloquent\Model;
 
 class QcCompanyStore extends Model
 {
     protected $table = 'qc_company_store';
-    protected $fillable = ['store_id', 'name', 'importPrice', 'useStatus', 'created_at', 'company_id', 'tool_id', 'supplies_id', 'import_id','package_id'];
+    protected $fillable = ['store_id', 'name', 'importPrice', 'useStatus', 'created_at', 'company_id', 'tool_id', 'supplies_id', 'import_id', 'package_id'];
     protected $primaryKey = 'store_id';
     public $timestamps = false;
 
@@ -18,7 +18,7 @@ class QcCompanyStore extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($name, $companyId, $toolId = null, $suppliesId = null, $importId = null, $importPrice = 1000, $packageId)
+    public function insert($name, $companyId, $toolId = null, $suppliesId = null, $importId = null, $importPrice = 1000, $packageId = null)
     {
         $hFunction = new \Hfunction();
         $modelCompanyStore = new QcCompanyStore();
@@ -119,6 +119,12 @@ class QcCompanyStore extends Model
     {
         return $this->belongsTo('App\Models\Ad3d\ToolPackage\QcToolPackage', 'package_id', 'package_id');
     }
+
+    public function infoIsActiveOfToolPackage($packageId)
+    {
+        return QcCompanyStore::where('package_id', $packageId)->where('useStatus', 1)->get();
+    }
+
     //---------- phat dung cu -----------
     public function toolPackageAllocationDetail()
     {
@@ -128,21 +134,21 @@ class QcCompanyStore extends Model
     # tong so luong da phat
     public function totalAmountAllocation($storeId = null)
     {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         return $modelToolAllocationDetail->totalAmountOfStore($this->checkIdNull($storeId));
     }
 
     # lay thong tin lan phat sau cung
     public function toolAllocationDetailLastInfo($storeId = null)
     {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         return $modelToolAllocationDetail->lastInfoOfCompanyStore($this->checkIdNull($storeId));
     }
 
     # lay thong tin chi tiet dang phat cua do nghe
     public function toolAllocationDetailInfoActivity($storeId = null)
     {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         return $modelToolAllocationDetail->infoActivityOfStore($this->checkIdNull($storeId));
     }
 
@@ -196,7 +202,7 @@ class QcCompanyStore extends Model
     # lay 1 loai do nghe trong kho cua 1 cong ty de phat cho nhan vien
     public function getOneInfoToAllocationOfTool($toolId, $companyId)
     {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         # lay ma do nghe dang cap phat
         $listStoreId = $modelToolAllocationDetail->listStoreIdIsActivity();
         return QcCompanyStore::whereNotIn('store_id', $listStoreId)->where('useStatus', 1)->where('tool_id', $toolId)->where('company_id', $companyId)->first();

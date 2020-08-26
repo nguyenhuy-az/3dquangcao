@@ -75,7 +75,6 @@ class QcTimekeepingProvisional extends Model
         $modelSystemDateOff = new QcSystemDateOff();
         $modelWork = new QcWork();
         $modelLicenseOffWork = new QcLicenseOffWork();
-
         $staffId = $modelWork->staffId($workId);
         $dataTimeKeepingProvisional = QcTimekeepingProvisional::where('work_id', $workId)->where('timeBegin', 'like', "%$checkDate%")->first();
         if ($hFunction->checkCount($dataTimeKeepingProvisional)) { # co bao gio vao
@@ -143,6 +142,7 @@ class QcTimekeepingProvisional extends Model
                 }
             }
         }
+
     }
 
     /*public function expiredTimeOut($timekeepingProvisionalId, $staffLoginId) # bao gio vo ko bao gio ra

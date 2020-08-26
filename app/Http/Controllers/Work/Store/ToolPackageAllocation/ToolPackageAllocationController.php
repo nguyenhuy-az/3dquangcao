@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Work\Store\Allocation;
+namespace App\Http\Controllers\Work\Store\ToolPackageAllocation;
 
 
 use App\Models\Ad3d\Company\QcCompany;
@@ -10,23 +10,21 @@ use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
-use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
 //use Illuminate\Http\Request;
-use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
-use App\Models\Ad3d\ToolReturn\QcToolReturn;
+use App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use File;
 use Input;
 use Request;
 
-class AllocationController extends Controller
+class ToolPackageAllocationController extends Controller
 {
     public function index()
     {
         $modelStaff = new QcStaff();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelToolAllocation = new QcToolAllocation();
+        $modelToolPackageAllocation = new QcToolPackageAllocation();
         $dataAccess = [
             'object' => 'storeAllocation',
             'subObjectLabel' => 'Trả đồ nghề'
@@ -37,25 +35,25 @@ class AllocationController extends Controller
         # danh sach thong tin lam viec
         $listWorkId = $modelCompanyStaffWork->listIdOfListStaffId($listStaffId);
         # danh sach bo do nghe
-        $dataToolAllocation = $modelToolAllocation->infoActivityOfListWork($listWorkId);
-        return view('work.store.allocation.list', compact('dataAccess', 'modelStaff', 'dataToolAllocation'));
+        $dataToolPackageAllocation = $modelToolPackageAllocation->infoActivityOfListWork($listWorkId);
+        return view('work.store.tool-package-allocation.list', compact('dataAccess', 'modelStaff', 'dataToolPackageAllocation'));
     }
 
     #-------------- ------------- Xac nhan ban  giao ------------------ -------------
     public function checkInfo($allocationId)
     {
         $modelStaff = new QcStaff();
-        $modelToolAllocation = new QcToolAllocation();
-        $dataToolAllocation = $modelToolAllocation->getInfo($allocationId);
-        $dataToolAllocationDetail = $modelToolAllocation->toolAllocationDetailOfAllocation($allocationId);
-        return view('work.store.allocation.check-info', compact('modelStaff', 'dataToolAllocation', 'dataToolAllocationDetail'));
+        $modelToolPackageAllocation = new QcToolPackageAllocation();
+        $dataToolPackageAllocation = $modelToolPackageAllocation->getInfo($allocationId);
+        $dataToolPackageAllocationDetail = $modelToolPackageAllocation->toolAllocationDetailOfAllocation($allocationId);
+        return view('work.store.tool-package-allocation.check-info', compact('modelStaff', 'dataToolPackageAllocation', 'dataToolPackageAllocationDetail'));
     }
 
     # xem anh ban giao
     public function viewImage($detailId)
     {
         $modelToolAllocationDetail = new QcToolAllocationDetail();
-        $dataToolAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
+        $dataToolPackageAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
         return view('work.store.allocation.view-image', compact('modelStaff', 'dataToolAllocationDetail'));
     }
 
@@ -78,7 +76,7 @@ class AllocationController extends Controller
 
         $dataPunishContent = $modelPunishContent->getInfoById($modelPunishContent->getPunishIdNotBringTool());
         # dung cu khong mang theo
-        $dataToolAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
+        $dataToolPackageAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
         # cong trinh dang thi cong
         $dataOrder = $modelCompany->orderInfoNotFinish($dataStaffLogin->companyId());
         return view('work.store.allocation.minus-money', compact('modelStaff', 'dataPunishContent', 'dataToolAllocationDetail', 'dataOrder'));
@@ -96,9 +94,9 @@ class AllocationController extends Controller
         $punishId = Request::input('cbPunishContent');
         $cbOrderId = Request::input('cbOrder');
         $txtMinusMoneyNote = Request::input('txtMinusMoneyNote');
-        $dataToolAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
-        $companyStoreName = $dataToolAllocationDetail->companyStore->name();
-        $dataStaffApply = $dataToolAllocationDetail->toolAllocation->companyStaffWork->staff;
+        $dataToolPackageAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
+        $companyStoreName = $dataToolPackageAllocationDetail->companyStore->name();
+        $dataStaffApply = $dataToolPackageAllocationDetail->toolAllocation->companyStaffWork->staff;
         $dataWork = $dataStaffApply->workInfoActivityOfStaff();
         if ($hFunction->checkCount($dataWork)) {
             $workId = $dataWork->workId();

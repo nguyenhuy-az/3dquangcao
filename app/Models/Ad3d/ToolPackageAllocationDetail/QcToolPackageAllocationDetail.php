@@ -88,12 +88,12 @@ class QcToolPackageAllocationDetail extends Model
     # hinh anh
     public function rootPathFullImage()
     {
-        return 'public/images/tool-allocation-detail/full';
+        return 'public/images/tool-package-allocation-detail/full';
     }
 
     public function rootPathSmallImage()
     {
-        return 'public/images/tool-allocation-detail/small';
+        return 'public/images/tool-package-allocation-detail/small';
     }
 
     // get path image

@@ -11,6 +11,7 @@ use App\Models\Ad3d\Rule\QcRules;
 use App\Models\Ad3d\Staff\QcStaff;
 
 //use Illuminate\Http\Request;
+use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use File;
@@ -23,6 +24,7 @@ class WorkController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        //$modelWork = new QcWork();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelCompany = new QcCompany();
         $modelOrder = new QcOrder();
@@ -36,6 +38,8 @@ class WorkController extends Controller
             //$modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
             # phan cong kiem tra do nghe
             $modelCompanyStaffWork->checkCompanyStoreOfCurrentDate();
+
+            //$modelWork->checkAutoTimekeepingOfActivityWork();
             return view('work.control-panel', compact('modelCompany', 'modelStaff', 'sysInfoObject'));
         } else {
             return view('work.login');

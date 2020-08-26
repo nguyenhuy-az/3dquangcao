@@ -17,11 +17,11 @@ class QcToolPackageAllocation extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($allocationDate, $allocationStaffId, $workId, $packageId)
+    public function insert($allocationStaffId, $workId, $packageId)
     {
         $hFunction = new \Hfunction();
         $modelToolPackageAllocation = new QcToolPackageAllocation();
-        $modelToolPackageAllocation->allocationDate = $allocationDate;
+        $modelToolPackageAllocation->allocationDate = $hFunction->carbonNow();
         $modelToolPackageAllocation->allocationStaff_id = $allocationStaffId;
         $modelToolPackageAllocation->work_id = $workId;
         $modelToolPackageAllocation->package_id = $packageId;
@@ -66,6 +66,12 @@ class QcToolPackageAllocation extends Model
         return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
     }
 
+    # danh sach ma lam viec da duoc ban giao do nghe
+    public function listWorkIdIsActive()
+    {
+        return QcToolPackageAllocation::where('action', 1)->pluck('work_id');
+    }
+
     # lay thong tin ban giao dang hoat dong
     public function infoActivityOfWork($workId)
     {
@@ -105,10 +111,16 @@ class QcToolPackageAllocation extends Model
         return $this->belongsTo('App\Models\Ad3d\ToolPackage\QcToolPackage', 'package_id', 'package_id');
     }
 
-    # lat danh sach ma bo do nghe dang duoc cap phat
+    # lay danh sach ma bo do nghe dang duoc cap phat
     public function listPackageIdIsActive()
     {
-        return QcToolPackageAllocation::wherein('action', 1)->pluck('package_id');
+        return QcToolPackageAllocation::where('action', 1)->pluck('package_id');
+    }
+
+    #thong tin ban giao cua 1 tui do nghe
+    public function infoIsActiveOfPackage($packageId)
+    {
+        return QcToolPackageAllocation::where('action', 1)->where('package_id',$packageId)->first();
     }
 
     //---------- Chi tiết cấp -----------
@@ -213,9 +225,14 @@ class QcToolPackageAllocation extends Model
         return $this->pluck('allocationStaff_id', $allocationId);
     }
 
-    public function WorkId($allocationId = null)
+    public function workId($allocationId = null)
     {
         return $this->pluck('work_id', $allocationId);
+    }
+
+    public function packageId($allocationId = null)
+    {
+        return $this->pluck('package_id', $allocationId);
     }
 
     // last id

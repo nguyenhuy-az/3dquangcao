@@ -11,9 +11,9 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaff = $modelStaff->loginStaffInfo();
-$dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
+$dataStaffReceive = $dataToolPackageAllocation->companyStaffWork->staff;
 ?>
-@extends('work.store.allocation.index')
+@extends('work.store.tool-package-allocation.index')
 @section('qc_work_store_allocation_body')
     <div class="qc_work_store_allocation_check_info qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
@@ -48,17 +48,17 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                             <th class="text-center">Ảnh trả</th>
                             <th class="text-center">Trạng thái</th>
                         </tr>
-                        @if($hFunction->checkCount($dataToolAllocationDetail))
-                            @foreach($dataToolAllocationDetail as $toolAllocationDetail)
+                        @if($hFunction->checkCount($dataToolPackageAllocationDetail))
+                            @foreach($dataToolPackageAllocationDetail as $toolPackageAllocationDetail)
                                 <?php
-                                $detailId = $toolAllocationDetail->detailId();
-                                $detailImage = $toolAllocationDetail->image();
-                                $detailDate = $toolAllocationDetail->createdAt();
-                                $allocationId = $toolAllocationDetail->allocationId();
-                                $storeId = $toolAllocationDetail->storeId();
-                                $storeName = $toolAllocationDetail->companyStore->name();
+                                $detailId = $toolPackageAllocationDetail->detailId();
+                                $detailImage = $toolPackageAllocationDetail->image();
+                                $detailDate = $toolPackageAllocationDetail->createdAt();
+                                $allocationId = $toolPackageAllocationDetail->allocationId();
+                                $storeId = $toolPackageAllocationDetail->storeId();
+                                $storeName = $toolPackageAllocationDetail->companyStore->name();
                                 # lay thong tin tra la sau cung
-                                $toolReturn = $toolAllocationDetail->lastInfoOfToolReturn();
+                                $toolReturn = null;// $toolAllocationDetail->lastInfoOfToolReturn();
                                 $returnStatus = $hFunction->checkCount($toolReturn);
                                 ?>
                                 <tr class="@if($returnStatus) info @endif">
@@ -77,13 +77,13 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                                     </td>
                                     <td class="text-center">
                                         <a class="qc_view_image_get qc-link"
-                                           data-href="{!! route('qc.work.store.allocation.check.image.view',$detailId) !!}">
+                                           data-href="{!! route('qc.work.store.tool_package_allocation.check.image.view',$detailId) !!}">
                                             <img style="width: 70px; height: auto;"
-                                                 src="{!! $toolAllocationDetail->pathFullImage($detailImage) !!}">
+                                                 src="{!! $toolPackageAllocationDetail->pathFullImage($detailImage) !!}">
                                         </a>
                                     </td>
                                     <td class="text-center">
-                                        @if($toolAllocationDetail->checkNewStatus())
+                                        @if($toolPackageAllocationDetail->checkNewStatus())
                                             <span>Mới</span>
                                         @else
                                             <span>Đã qua sử dụng</span>
@@ -92,7 +92,7 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                                     <td class="text-center">
                                         {{--da bao tra--}}
                                         @if($returnStatus)
-                                            <a class="qc_view_image_get qc-link" data-href="{!! route('qc.work.store.allocation.check.return_image.view',$toolReturn->returnId()) !!}">
+                                            <a class="qc_view_image_get qc-link" data-href="{!! route('qc.work.store.tool_package_allocation.check.return_image.view',$toolReturn->returnId()) !!}">
                                                 <img style="width: 70px; height: auto;"
                                                      src="{!! $toolReturn->pathFullImage($toolReturn->image()) !!}">
                                             </a>
@@ -103,7 +103,7 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                                     <td class="text-center">
                                         @if(!$returnStatus)
                                             <a class="qc_minus_money_get qc-link-green-bold"
-                                               data-href="{!! route('qc.work.store.allocation.check.minus_money.get',$detailId) !!}">
+                                               data-href="{!! route('qc.work.store.tool_package_allocation.check.minus_money.get',$detailId) !!}">
                                                 Phạt
                                             </a>
                                         @else
@@ -114,7 +114,7 @@ $dataStaffReceive = $dataToolAllocation->companyStaffWork->staff;
                                                         Không được chấp nhận
                                                     </em> <br/>
                                                     <a class="qc_minus_money_get qc-link-green-bold"
-                                                       data-href="{!! route('qc.work.store.allocation.check.minus_money.get',$detailId) !!}">
+                                                       data-href="{!! route('qc.work.store.tool_package_allocation.check.minus_money.get',$detailId) !!}">
                                                         Phạt
                                                     </a>
                                                 @endif

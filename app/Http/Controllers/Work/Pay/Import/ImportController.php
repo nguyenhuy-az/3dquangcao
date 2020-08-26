@@ -96,14 +96,16 @@ class ImportController extends Controller
         $modelImportPay = new QcImportPay();
         $modelCompanyStore = new QcCompanyStore();
         $modelToolAllocation = new QcToolPackageAllocation();
-        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
+        $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
         $currentDate = $hFunction->carbonNow();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $loginStaffId = $dataStaffLogin->staffId();
         $importCompanyId = $modelImport->companyId($importId)[0];
         $importStaffId = $modelImport->importStaffId($importId)[0];
+        # lay thong tin dang lam viec tai cong ty cua 1 nhan vien
+        $dataCompanyStaffWork = $modelCompanyStaffWork->infoActivityOfStaff($importStaffId);
         # lay ma lam viec tai cty NV nhap hoa don
-        $importStaffWorkId = $modelCompanyStaffWork->workIdActivityOfStaff($importStaffId);
+        $importStaffWorkId = $dataCompanyStaffWork->workId();//$modelCompanyStaffWork->workIdActivityOfStaff($importStaffId);
         $importStaffWorkId = (is_int($importStaffWorkId)) ? $importStaffWorkId : $importStaffWorkId[0];
 
         $confirmDetailId = Request::input('txtDetail');
@@ -166,7 +168,7 @@ class ImportController extends Controller
                                     #cập nhật chi tiết nhập
                                     $modelImportDetail->updateInfo($detailId, $importPriceAmount, $importAmount, $importTotalMoney, $importToolId, $suppliesId, $importNewName);
                                     #thêm vậy tư vào kho
-                                    $modelCompanyStore->insert($importAmount, $importCompanyId, null, $suppliesId, null, $importPrice);
+                                    $modelCompanyStore->insert($importAmount, $importCompanyId, null, $suppliesId, null, $importPrice, null);
                                 }
                             } elseif ($confirmNewSuppliesTool[$key] == 2) {
                                 // phan loai la dung cu
@@ -187,31 +189,28 @@ class ImportController extends Controller
                                     $modelImportDetail->updateInfo($detailId, $importPriceAmount, $importAmount, $importTotalMoney, $toolId, $importSuppliesId, $importNewName);
 
                                     // thêm dụng cụ mới vào kho
+                                    # la dung cu dung phat cho nv
+                                    if ($modelTool->checkPrivateType($toolId)) {
+                                        # thong tin tui do nghe dc giao
+                                        $dataToolPackageAllocation = $dataCompanyStaffWork->toolAllocationActivityOfWork();
+                                        if ($hFunction->checkCount($dataToolPackageAllocation)) { # da co tui do nghe
+                                            $allocationId = $dataToolPackageAllocation->allocationId();
+                                            $packageId = $dataToolPackageAllocation->packageId();
+                                        } else {
+                                            $allocationId = null;
+                                            $packageId = null;
+                                        }
+                                    } else {
+                                        $allocationId = null;
+                                        $packageId = null;
+                                    }
                                     for ($i = 1; $i <= $importAmount; $i++) {
                                         $storeName = null;
-                                        if ($modelCompanyStore->insert($importNewName, $importCompanyId, $toolId, null, $importId, $importPrice)) {
+                                        if ($modelCompanyStore->insert($importNewName, $importCompanyId, $toolId, null, $importId, $importPrice, $packageId)) {
                                             $newStoreId = $modelCompanyStore->insertGetId();
                                             // cap phat dụng cụ cho nhân viên mua
-                                            if ($modelTool->checkPrivateType($toolId)) {
-                                                // phát luôn cho nhân viên
-                                                if (!empty($importStaffWorkId)) {
-                                                    # thong bo do nghe
-                                                    $dataToolAllocation = $modelToolAllocation->infoActivityOfWork($importStaffWorkId);
-                                                    # da co tao bo do nghe
-                                                    if ($hFunction->checkCount($dataToolAllocation)) {
-                                                        $allocationId = $dataToolAllocation->allocationId();
-                                                    } else {
-                                                        # tao moi
-                                                        if ($modelToolAllocation->insert($currentDate, $loginStaffId, $importStaffWorkId)) {
-                                                            $allocationId = $modelToolAllocation->insertGetId();
-                                                        } else {
-                                                            $allocationId = null;
-                                                        }
-                                                    }
-                                                    if (!empty($allocationId)) {  //phieu cap phat dung cu
-                                                        $modelToolAllocationDetail->insert($allocationId, $newStoreId); // chi tiet cap phat
-                                                    }
-                                                }
+                                            if (!empty($allocationId)) {  //phieu cap phat dung cu
+                                                $modelToolPackageAllocationDetail->insert($allocationId, $newStoreId); // chi tiet cap phat
                                             }
                                         }
                                     }
@@ -220,38 +219,33 @@ class ImportController extends Controller
                         } else {
                             // cap nhat kho
                             if (!empty($importSuppliesId)) { // vat tu
-                                if ($modelCompanyStore->existOfSuppliesAndCompany($importSuppliesId, $importCompanyId)) { //da ton tai trong kho -> cap nhat so luong
-                                    $modelCompanyStore->updateInfoByToolOrSupplies($importCompanyId, $importAmount, null, $importSuppliesId);
-                                } else { // thêm vat tu vào kho
-                                    $modelCompanyStore->insert($importAmount, $importCompanyId, null, $importSuppliesId, null, $importPrice);
-                                }
+                                $modelCompanyStore->insert($importAmount, $importCompanyId, null, $importSuppliesId, null, $importPrice, null);
                             }
                             if (!empty($importToolId)) { //dung cu
+                                // cap phat dụng cụ cho nhân viên mua - dung cu ca nha
+                                if ($modelTool->checkPrivateType($importToolId)) {
+                                    # thong tin tui do nghe dc giao
+                                    $dataToolPackageAllocation = $dataCompanyStaffWork->toolAllocationActivityOfWork();
+                                    if ($hFunction->checkCount($dataToolPackageAllocation)) { # da co tui do nghe
+                                        $allocationId = $dataToolPackageAllocation->allocationId();
+                                        $packageId = $dataToolPackageAllocation->packageId();
+                                    } else {
+                                        $allocationId = null;
+                                        $packageId = null;
+                                    }
+                                } else {
+                                    $allocationId = null;
+                                    $packageId = null;
+                                }
+
                                 // thêm dụng cụ mới vào kho
+
                                 for ($i = 1; $i <= $importAmount; $i++) {
-                                    if ($modelCompanyStore->insert($modelTool->name($importToolId)[0], $importCompanyId, $importToolId, null, $importId, $importPrice)) {
+                                    if ($modelCompanyStore->insert($modelTool->name($importToolId)[0], $importCompanyId, $importToolId, null, $importId, $importPrice, $packageId)) {
                                         $newStoreId = $modelCompanyStore->insertGetId();
                                         // cap phat dụng cụ cho nhân viên mua
-                                        if ($modelTool->checkPrivateType($importToolId)) {
-                                            // phát luôn cho nhân viên
-                                            if (!empty($importStaffWorkId)) {
-                                                # thong bo do nghe
-                                                $dataToolAllocation = $modelToolAllocation->infoActivityOfWork($importStaffWorkId);
-                                                # da co tao bo do nghe
-                                                if ($hFunction->checkCount($dataToolAllocation)) {
-                                                    $allocationId = $dataToolAllocation->allocationId();
-                                                } else {
-                                                    # tao moi
-                                                    if ($modelToolAllocation->insert($currentDate, $loginStaffId, $importStaffWorkId)) {
-                                                        $allocationId = $modelToolAllocation->insertGetId();
-                                                    } else {
-                                                        $allocationId = null;
-                                                    }
-                                                }
-                                                if (!empty($allocationId)) {  //phieu cap phat dung cu
-                                                    $modelToolAllocationDetail->insert($allocationId, $newStoreId); // chi tiet cap phat
-                                                }
-                                            }
+                                        if (!empty($allocationId)) {  //phieu cap phat dung cu
+                                            $modelToolPackageAllocationDetail->insert($allocationId, $newStoreId); // chi tiet cap phat
                                         }
                                     }
                                 }

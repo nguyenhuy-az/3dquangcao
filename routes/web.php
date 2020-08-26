@@ -1360,20 +1360,26 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     });
     //------ kho do nghe cua he thong -------
     Route::group(['prefix' => 'store'], function () {
-        # thong tin giao
-        # ban giao lai dung cuqư
-        Route::group(['prefix' => 'allocation'], function () {
+        # tui do nghe
+        Route::group(['prefix' => 'tool-package'], function () {
+            # giao  do nghe tu dong
+            Route::get('auto-allocation', ['as' => 'qc.work.store.tool_package.auto_allocation.add', 'uses' => 'Work\Store\ToolPackage\ToolPackageController@addAutoAllocationPackage']);
+            # tui do nghe
+            Route::get('/', ['as' => 'qc.work.store.tool_package.get', 'uses' => 'Work\Store\ToolPackage\ToolPackageController@index']);
+        });
+        # tui do nghe da duoc ban giao
+        Route::group(['prefix' => 'tool-package-allocation'], function () {
             # xac nhan tra
-            Route::get('check/{allocationId?}', ['as' => 'qc.work.store.allocation.check.get', 'uses' => 'Work\Store\Allocation\AllocationController@checkInfo']);
+            Route::get('check/{allocationId?}', ['as' => 'qc.work.store.tool_package_allocation.check.get', 'uses' => 'Work\Store\ToolPackageAllocation\ToolPackageAllocationController@checkInfo']);
             # xem anh ban giao
-            Route::get('view-image/{detailId?}', ['as' => 'qc.work.store.allocation.check.image.view', 'uses' => 'Work\Store\Allocation\AllocationController@viewImage']);
+            Route::get('view-image/{detailId?}', ['as' => 'qc.work.store.tool_package_allocation.check.image.view', 'uses' => 'Work\Store\ToolPackageAllocation\ToolPackageAllocationController@viewImage']);
             # xem anh tra
-            Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.store.allocation.check.return_image.view', 'uses' => 'Work\Store\Allocation\AllocationController@viewReturnImage']);
+            Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.store.tool_package_allocation.check.return_image.view', 'uses' => 'Work\Store\ToolPackageAllocation\ToolPackageAllocationController@viewReturnImage']);
             # ap dung phat
-            Route::get('minus-money/{detailId?}', ['as' => 'qc.work.store.allocation.check.minus_money.get', 'uses' => 'Work\Store\Allocation\AllocationController@getMinusMoney']);
-            Route::post('minus-money/{detailId?}', ['as' => 'qc.work.store.allocation.check.minus_money.post', 'uses' => 'Work\Store\Allocation\AllocationController@postMinusMoney']);
+            Route::get('minus-money/{detailId?}', ['as' => 'qc.work.store.tool_package_allocation.check.minus_money.get', 'uses' => 'Work\Store\ToolPackageAllocation\ToolPackageAllocationController@getMinusMoney']);
+            Route::post('minus-money/{detailId?}', ['as' => 'qc.work.store.tool_package_allocation.check.minus_money.post', 'uses' => 'Work\Store\ToolPackageAllocation\ToolPackageAllocationController@postMinusMoney']);
 
-            Route::get('/', ['as' => 'qc.work.store.allocation.get', 'uses' => 'Work\Store\Allocation\AllocationController@index']);
+            Route::get('/', ['as' => 'qc.work.store.tool_package_allocation.get', 'uses' => 'Work\Store\ToolPackageAllocation\ToolPackageAllocationController@index']);
         });
 
         # thong tin kho

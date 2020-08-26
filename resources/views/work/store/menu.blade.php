@@ -23,23 +23,29 @@ if (isset($dataAccess)) {
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
             <li @if($viewLoginObject == 'storeAllocation') class="active" @endif>
-                <a class="qc-link-bold" href="{!! route('qc.work.store.allocation.get') !!}"
+                <a class="qc-link-bold" href="{!! route('qc.work.store.tool_package_allocation.get') !!}"
                    @if($viewLoginObject == 'storeAllocation') style="background-color: whitesmoke;" @endif>
                     Đang giao
                 </a>
             </li>
-            <li @if($viewLoginObject == 'storeReturn') class="active" @endif>
-                <a class="qc-link-bold" href="{!! route('qc.work.store.return.get') !!}"
+            {{--<li @if($viewLoginObject == 'storeReturn') class="active" @endif>
+                <a class="qc-link-bold" href="#"
                    @if($viewLoginObject == 'storeReturn') style="background-color: whitesmoke;" @endif>
                     Trả đồ nghề
                 </a>
+            </li>--}}
+            <li @if($viewLoginObject == 'storeToolPackage') class="active" @endif>
+                <a class="qc-link-bold" href="{!! route('qc.work.store.tool_package.get') !!}"
+                   @if($viewLoginObject == 'storeToolPackage') style="background-color: whitesmoke;" @endif>
+                    Túi đồ nghề
+                </a>
             </li>
-            <li @if($viewLoginObject == 'storeTool') class="active" @endif>
+            {{--<li @if($viewLoginObject == 'storeTool') class="active" @endif>
                 <a class="qc-link-bold" href="{!! route('qc.work.store.tool.get') !!}"
                    @if($viewLoginObject == 'storeTool') style="background-color: whitesmoke" @endif>
                     Đồ nghề
                 </a>
-            </li>
+            </li>--}}
         </ul>
     </div>
 </div>

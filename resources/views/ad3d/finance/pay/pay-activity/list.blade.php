@@ -65,7 +65,8 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                         <tr>
                             <td class="text-center"></td>
                             <td style="padding: 0 !important;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;"
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
                                         All
@@ -77,7 +78,8 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;"
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($monthFilter == 0) selected="selected" @endif>
                                         All
@@ -89,7 +91,8 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0;height: 34px;"
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
@@ -142,6 +145,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 $payId = $payActivityDetail->payId();
                                 $money = $payActivityDetail->money();
                                 $payDate = $payActivityDetail->payDate();
+                                $payImage = $payActivityDetail->payImage();
                                 $confirmStatus = $payActivityDetail->checkConfirm();
                                 $payCompanyId = $payActivityDetail->companyId();
                                 ?>
@@ -157,6 +161,12 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         {!! $payActivityDetail->payActivityList->name()  !!}
                                     </td>
                                     <td>
+                                        @if(!empty($payImage))
+                                            <img class="qc-link" onclick="qc_main.rotateImage(this);"
+                                                 style="width: 150px;"
+                                                 src="{!! $payActivityDetail->pathSmallImage($payImage) !!}">
+                                            <br/>
+                                        @endif
                                         @if(!empty($payActivityDetail->note()))
                                             {!! $payActivityDetail->note()  !!}
                                         @else

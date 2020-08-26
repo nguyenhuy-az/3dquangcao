@@ -508,8 +508,9 @@ class QcWork extends Model
         $currentDate = $hFunction->currentDate();// lay ngay hien tai
         $currentDay = (int)$hFunction->currentDay();
         $currentHour = (int)$hFunction->currentHour();// gio hien ta
+        # danh sach bang cham cong
         $dataWork = QcWork::where('action', 1)->get();
-        if (count($dataWork) > 0) {
+        if ($hFunction->checkCount($dataWork)) {
             foreach ($dataWork as $work) {
                 $workId = $work->workId();
                 $dateBegin = $work->fromDate();
