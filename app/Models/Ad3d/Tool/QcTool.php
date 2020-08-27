@@ -154,6 +154,12 @@ class QcTool extends Model
         }
     }
 
+    # lay danh sach loai do nghe dung de phat cho NV
+    public function getInfoPrivate()
+    {
+        return $this->selectAllInfo($this->privateType())->get();
+    }
+
     # lay thong tin theo danh sach ID va loai cong cu
     public function selectAllInfoByListIdAndType($listId, $type = null)
     {

@@ -19,7 +19,7 @@ $currentMonth = $hFunction->currentMonth();
 @extends('work.store.tool-package-allocation.index')
 @section('qc_work_store_allocation_body')
     <div class="row qc_work_store_allocation_wrap">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
@@ -28,6 +28,8 @@ $currentMonth = $hFunction->currentMonth();
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Nhân viên</th>
+                                <th>Túi đồ nghề</th>
+                                <th class="text-center">Đã trang bị</th>
                                 <th></th>
                             </tr>
                             @if($hFunction->checkCount($dataToolPackageAllocation))
@@ -44,6 +46,12 @@ $currentMonth = $hFunction->currentMonth();
                                         <td>
                                             {!!  $toolPackageAllocation->companyStaffWork->staff->fullName() !!}
                                         </td>
+                                        <td>
+                                            {!! $toolPackageAllocation->toolPackage->name() !!}
+                                        </td>
+                                        <td class="text-center">
+                                            {!! count($toolPackageAllocation->toolPackageAllocationDetailInfoIsActive()) !!}
+                                        </td>
                                         <td class="text-center">
                                             <a class="qc-link-green"
                                                href="{!! route('qc.work.store.tool_package_allocation.check.get',$allocationId) !!}">
@@ -54,7 +62,7 @@ $currentMonth = $hFunction->currentMonth();
                                 @endforeach
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="3">
+                                    <td class="text-center" colspan="5">
                                         Không có thông tin bàn giao
                                     </td>
                                 </tr>

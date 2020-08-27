@@ -1354,7 +1354,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             #xác nhận đồ nghề
             //Route::get('confirm-receive/{allocationId?}', ['as' => 'qc.work.tool.allocation.confirm_receive.get', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@getConfirmReceive']);
 
-            Route::get('/{monthFilter?}/{yearFilter?}', ['as' => 'qc.work.tool.package_allocation.get', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@index']);
+            Route::get('/', ['as' => 'qc.work.tool.package_allocation.get', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@index']);
         });
 
     });
@@ -1362,6 +1362,8 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     Route::group(['prefix' => 'store'], function () {
         # tui do nghe
         Route::group(['prefix' => 'tool-package'], function () {
+            # xem chi tiet
+            Route::get('view/{packageId?}', ['as' => 'qc.work.store.tool_package.view', 'uses' => 'Work\Store\ToolPackage\ToolPackageController@viewPackage']);
             # giao  do nghe tu dong
             Route::get('auto-allocation', ['as' => 'qc.work.store.tool_package.auto_allocation.add', 'uses' => 'Work\Store\ToolPackage\ToolPackageController@addAutoAllocationPackage']);
             # tui do nghe

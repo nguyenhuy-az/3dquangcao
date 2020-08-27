@@ -51,7 +51,7 @@ $currentMonth = $hFunction->currentMonth();
                                     $dataCompanyStore = $toolPackageAllocationDetail->companyStore;
                                     $storeName = $dataCompanyStore->name();
                                     # lay thong tin tra la sau cung
-                                    $toolReturn = $toolPackageAllocationDetail->lastInfoOfToolReturn();
+                                    $toolReturn = null;// $toolPackageAllocationDetail->lastInfoOfToolReturn();
                                     $returnStatus = $hFunction->checkCount($toolReturn);
                                     # lay thong tin giao sau cung
                                     $dataToolAllocationDetail = $dataCompanyStore->toolAllocationDetailLastInfo();

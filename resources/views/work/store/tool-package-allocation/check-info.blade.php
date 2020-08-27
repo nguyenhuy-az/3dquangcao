@@ -25,7 +25,8 @@ $dataStaffReceive = $dataToolPackageAllocation->companyStaffWork->staff;
         </div>
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
-                <label style="color: red; font-size: 1.5em;">DANH SÁCH ĐỒ NGHỀ</label>
+                <label style="color: red; font-size: 1.5em;">DANH SÁCH ĐỒ NGHỀ TRONG TÚI</label>
+                <label style="color: blue; font-size: 1.5em;">{!! $dataToolPackageAllocation->toolPackage->name() !!}</label>
             </div>
             <div class="text-right col-sx-12 col-sm-12 col-md-6 col-lg-6">
                 <span style="background-color: blue;color: yellow; padding: 5px 10px;">{!! $dataStaffReceive->fullName() !!}</span>
@@ -63,11 +64,7 @@ $dataStaffReceive = $dataToolPackageAllocation->companyStaffWork->staff;
                                 ?>
                                 <tr class="@if($returnStatus) info @endif">
                                     <td class="text-center" style="padding: 0;">
-                                        <div class="form-group" style="margin: 0;">
-                                            <input type="checkbox" class="form-control" disabled
-                                                   name="txtAllocationDetail[]" style="margin: 0;"
-                                                   checked="checked">
-                                        </div>
+                                        {!! $n_o = (isset($n_o))?$n_o + 1:1 !!}
                                     </td>
                                     <td>
                                         {!!  $storeName !!}
@@ -92,7 +89,8 @@ $dataStaffReceive = $dataToolPackageAllocation->companyStaffWork->staff;
                                     <td class="text-center">
                                         {{--da bao tra--}}
                                         @if($returnStatus)
-                                            <a class="qc_view_image_get qc-link" data-href="{!! route('qc.work.store.tool_package_allocation.check.return_image.view',$toolReturn->returnId()) !!}">
+                                            <a class="qc_view_image_get qc-link"
+                                               data-href="{!! route('qc.work.store.tool_package_allocation.check.return_image.view',$toolReturn->returnId()) !!}">
                                                 <img style="width: 70px; height: auto;"
                                                      src="{!! $toolReturn->pathFullImage($toolReturn->image()) !!}">
                                             </a>

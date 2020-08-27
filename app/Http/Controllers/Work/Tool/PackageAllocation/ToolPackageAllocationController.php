@@ -16,19 +16,21 @@ use Request;
 
 class ToolPackageAllocationController extends Controller
 {
-    public function index($monthFilter = 0, $yearFilter = 0)
+    public function index()
     {
         $modelStaff = new QcStaff();
-        $modelToolAllocation = new QcToolPackageAllocation();
-        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
+        $modelTool = new QcTool();
         $dataAccess = [
             'object' => 'toolPackageAllocation'
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
         #thong tin lam viec tai 1 cty
         $dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
-        $dataToolPackageAllocationDetail = $modelToolAllocationDetail->infoOfListToolAllocation($modelToolAllocation->listIdOfWork($dataCompanyStaffWork->workId()));
-        return view('work.tool.package-allocation.list', compact('dataAccess', 'modelStaff', 'dataToolPackageAllocationDetail', 'monthFilter', 'yearFilter'));
+        # thong tin ban giao tui do nghe
+        $dataToolPackageAllocation = $dataCompanyStaffWork->toolAllocationActivityOfWork();
+        # lay danh sach cong cu dung de cap phat cho nv
+        $dataTool = $modelTool->getInfoPrivate();
+        return view('work.tool.tool-package-allocation.list', compact('dataAccess', 'modelStaff', 'dataTool', 'dataToolPackageAllocation'));
     }
 
     #xac nhan da nhan do nghe
@@ -42,11 +44,11 @@ class ToolPackageAllocationController extends Controller
     public function getReturn($allocationId, $selectedDetailId = null)
     {
         $modelStaff = new QcStaff();
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolPackageAllocationDetail = new QcToolAllocationDetail();
         $dataAccess = [
             'object' => 'toolAllocation'
         ];
-        $dataToolAllocationDetail = $modelToolAllocationDetail->getInfoNotReturnOfAllocation($allocationId);
+        $dataToolAllocationDetail = $modelToolPackageAllocationDetail->getInfoNotReturnOfAllocation($allocationId);
         return view('work.tool.allocation.return', compact('dataAccess', 'modelStaff', 'dataToolAllocationDetail', 'selectedDetailId'));
     }
 
@@ -76,8 +78,8 @@ class ToolPackageAllocationController extends Controller
     # xem anh ban giao
     public function viewImage($detailId)
     {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
-        $dataToolAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
+        $modelToolPackageAllocationDetail = new QcToolAllocationDetail();
+        $dataToolAllocationDetail = $modelToolPackageAllocationDetail->getInfo($detailId);
         return view('work.tool.allocation.view-image', compact('modelStaff', 'dataToolAllocationDetail'));
     }
 

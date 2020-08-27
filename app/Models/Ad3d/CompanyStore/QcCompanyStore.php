@@ -120,10 +120,18 @@ class QcCompanyStore extends Model
         return $this->belongsTo('App\Models\Ad3d\ToolPackage\QcToolPackage', 'package_id', 'package_id');
     }
 
+    # thong tin tat ca dung cu cua 1 tui do nghe
     public function infoIsActiveOfToolPackage($packageId)
     {
         return QcCompanyStore::where('package_id', $packageId)->where('useStatus', 1)->get();
     }
+
+    # thong tin dung cu cua 1 tui do nghe theo 1 loai do nghe dang hoat dong
+    public function infoIsActiveOfPackageAndTool($packageId, $toolId)
+    {
+        return QcCompanyStore::where('package_id', $packageId)->where('tool_id', $toolId)->where('useStatus', 1)->get();
+    }
+
 
     //---------- phat dung cu -----------
     public function toolPackageAllocationDetail()

@@ -146,7 +146,7 @@ class QcToolPackageAllocationDetail extends Model
         return (!empty($lastInfo)) ? $lastInfo->detailId() : null;
     }
 
-    # thong tin dung cu dang ban giao chua dươc tra cua cong cu
+    # thong tin do nghe dang ban giao chua dươc tra cua 1 loai do nghe
     public function infoActivityOfToolAndCompany($toolId, $companyId)
     {
         $modelCompanyStore = new QcCompanyStore();
@@ -185,20 +185,20 @@ class QcToolPackageAllocationDetail extends Model
         return $this->belongsTo('App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation', 'allocation_id', 'allocation_id');
     }
 
-    # thong tin chua tra cua 1 bo do nghe
+    # thong tin chua tra cua 1 tui do nghe da ban giao
     public function getInfoNotReturnOfAllocation($allocationId)
     {
         $modelToolPackageAllocationReturn = new QcToolPackageAllocationReturn();
         return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->whereNotIn('detail_id', $modelToolPackageAllocationReturn->getAllocationDetailListId())->get();
     }
 
-    # tong so luong tat ca cong cu cua 1 lan giao
+    # tong so luong tat ca do nghe cua 1 lan giao
     public function totalAmountOfAllocation($allocationId)
     {
         return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->count();
     }
 
-    # tong so luong tat ca cong cu cua 1 lan hoac nhieu lan giao
+    # tong so luong tat ca do nghe cua 1 lan hoac nhieu lan giao
     public function totalAmountOfListAllocationId($listAllocationId)
     {
         return QcToolPackageAllocationDetail::whereIn('allocation_id', $listAllocationId)->count();
@@ -210,6 +210,7 @@ class QcToolPackageAllocationDetail extends Model
         return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->get();
     }
 
+    # thong tin do nghe cua 1 lan giao
     public function infoOfToolAllocation($allocationId)
     {
         return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->orderBy('detail_id', 'DESC')->get();
@@ -243,7 +244,7 @@ class QcToolPackageAllocationDetail extends Model
         return QcToolPackageAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('store_id')->pluck('store_id');
     }
 
-    # danh sanh ma chi tiet ban giao cua cac bo do nghe
+    # danh sanh ma chi tiet ban giao cua cac do nghe
     public function listIdOfListAllocationId($listAllocationId)
     {
         return QcToolPackageAllocationDetail::whereIn('allocation_id', $listAllocationId)->groupBy('detail_id')->pluck('detail_id');
@@ -253,6 +254,12 @@ class QcToolPackageAllocationDetail extends Model
     public function storeIdOfToolAllocation($allocationId)
     {
         return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->groupBy('store_id')->pluck('store_id');
+    }
+
+    # thong tin chi tiet dang hoat dong cua 1 lan ban giao
+    public function infoActivityOfToolAllocation($allocationId)
+    {
+        return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->where('action', 1)->get();
     }
 
     # thong tin ban giao cua loai do nghe  trong bo do nghe duoc giao, dang hoat hoat dong

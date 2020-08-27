@@ -11,6 +11,7 @@ use App\Models\Ad3d\PunishContent\QcPunishContent;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 //use Illuminate\Http\Request;
+use App\Models\Ad3d\Tool\QcTool;
 use App\Models\Ad3d\ToolPackage\QcToolPackage;
 use App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation;
 use Illuminate\Support\Facades\Session;
@@ -30,10 +31,13 @@ class ToolPackageController extends Controller
             'object' => 'storeToolPackage',
             'subObjectLabel' => 'Túi đồ nghề'
         ];
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
+        $companyId = $dataCompanyStaffWorkLogin->companyId();
         // danh sach tui do nghe
-        $dataToolPackage = $modelToolPackage->getInfoOfCompany($dataStaffLogin->companyId());
-        return view('work.store.tool-package.list', compact('dataAccess', 'modelStaff', 'dataToolPackage'));
+        $dataToolPackage = $modelToolPackage->getInfoOfCompany($companyId);
+        # lay dang sach lam viec cua nhan vien thi cong chua duoc giao do nghe cua 1 cty
+        $dataCompanyStaffWork = $modelCompanyStaffWork->getInfoForToolPackageAllocationOfCompany($companyId);
+        return view('work.store.tool-package.list', compact('dataAccess', 'modelStaff', 'dataToolPackage', 'dataCompanyStaffWork'));
     }
 
     # giao do nghe tu dong
@@ -46,15 +50,29 @@ class ToolPackageController extends Controller
         $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
         # lay dang sach lam viec cua nhan vien thi cong chua duoc giao do nghe cua 1 cty
         $dataCompanyStaffWork = $modelCompanyStaffWork->getInfoForToolPackageAllocationOfCompany($dataCompanyStaffWorkLogin->companyId());
-        //dd($dataCompanyStaffWork);
         if ($hFunction->checkCount($dataCompanyStaffWork)) {
-            foreach($dataCompanyStaffWork as $companyStaffWork){
-                //$workId = $companyStaffWork->workId();
-                //echo "$workId<br/>";
+            foreach ($dataCompanyStaffWork as $companyStaffWork) {
                 # giao do nghe
                 $modelToolPackage->allocationForCompanyStaffWork($companyStaffWork->workId());
             }
 
         }
+    }
+
+    #chi tiet tui do nghe
+    public function viewPackage($packageId)
+    {
+        $modelStaff = new QcStaff();
+        $modelTool = new QcTool();
+        $modelToolPackage = new QcToolPackage();
+        $dataAccess = [
+            'object' => 'storeToolPackage',
+            'subObjectLabel' => 'Túi đồ nghề'
+        ];
+        # lay danh sach cong cu dung de cap phat cho nv
+        $dataTool = $modelTool->getInfoPrivate();
+        # thong tin tui do nghe
+        $dataToolPackage = $modelToolPackage->getInfo($packageId);
+        return view('work.store.tool-package.view', compact('dataAccess', 'modelStaff', 'dataToolPackage', 'dataTool'));
     }
 }

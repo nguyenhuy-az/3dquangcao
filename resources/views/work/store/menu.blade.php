@@ -24,7 +24,7 @@ if (isset($dataAccess)) {
         <ul class="nav nav-tabs" role="tablist">
             <li @if($viewLoginObject == 'storeAllocation') class="active" @endif>
                 <a class="qc-link-bold" href="{!! route('qc.work.store.tool_package_allocation.get') !!}"
-                   @if($viewLoginObject == 'storeAllocation') style="background-color: whitesmoke;" @endif>
+                   @if($viewLoginObject == 'storeToolPackageAllocation') style="background-color: whitesmoke;" @endif>
                     Đang giao
                 </a>
             </li>

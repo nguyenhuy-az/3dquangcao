@@ -26,16 +26,21 @@ $currentMonth = $hFunction->currentMonth();
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr>
-                                <td class="text-center" colspan="4" style="border: none;">
+                                <td class="text-center" colspan="5" style="border: none;">
                                     <span style="background-color: red; color: yellow;">
                                         Hệ thống sẽ giao ngẫu nhiện  CHO NHỮNG NGƯỜI THI CÔNG CHƯA CÓ.
                                         <br/>
                                         Nếu không có túi đồ nghề hệ thống sẽ tự tạo túi đồ nghề</span>
                                 </td>
-                                <td style="padding: 0; border: none;">
-                                    <a class="qc_auto_allocation_get btn btn-primary" style="width: 100%;"
-                                       data-href="{!! route('qc.work.store.tool_package.auto_allocation.add') !!}">GIAO
-                                        TỰ ĐỘNG</a>
+                                <td class="text-center" style="padding: 0; border: none;">
+                                    @if($hFunction->checkCount($dataCompanyStaffWork))
+                                        <a class="qc_auto_allocation_get btn btn-primary" style="width: 100%;"
+                                           data-href="{!! route('qc.work.store.tool_package.auto_allocation.add') !!}">
+                                            GIAO TỰ ĐỘNG
+                                        </a>
+                                    @else
+                                        <span style="font-size: 1.5em; color: red;">KHÔNG CÓ NHÂN CHƯA ĐƯỢC PHÁT</span>
+                                    @endif
                                 </td>
                             </tr>
                             <tr style="background-color: black;color: yellow;">
@@ -50,33 +55,15 @@ $currentMonth = $hFunction->currentMonth();
                                 <th class="text-center">
                                     Đã phát
                                 </th>
+                                <th class="text-center">
+                                    Người quản lý
+                                </th>
                             </tr>
-                            {{--<tr>
-                                <td></td>
-                                <td style="padding: 0;">
-                                    <select class="cbToolFilter form-control" name="cbToolFilter"
-                                            data-href="{!! $hrefIndex !!}">
-                                        <option value="0" @if($typeFilter == 0) selected="selected" @endif>Tất cả
-                                        </option>
-                                        @if($hFunction->checkCount($dataTool))
-                                            @foreach($dataTool as $tool)
-                                                <option value="{!! $tool->toolId() !!}"
-                                                        @if($toolFilter == $tool->toolId()) selected="selected" @endif>
-                                                    {!! $tool->name()  !!}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>--}}
                             @if($hFunction->checkCount($dataToolPackage))
                                 <?php $n_o = 0; ?>
                                 @foreach($dataToolPackage as $toolPackage)
                                     <?php
-                                    $package = $toolPackage->packageId();
+                                    $packageId = $toolPackage->packageId();
                                     $packageName = $toolPackage->name();
                                     $n_o = $n_o + 1;
                                     # thong tin dang ban giao
@@ -89,7 +76,11 @@ $currentMonth = $hFunction->currentMonth();
                                             {!! $n_o !!}
                                         </td>
                                         <td>
-                                            {!!  $packageName !!}
+                                            <a class="qc-link-green"
+                                               href="{!! route('qc.work.store.tool_package.view', $packageId) !!}">
+                                                {!!  $packageName !!} &nbsp;-
+                                                <i class="glyphicon glyphicon-eye-open"></i>
+                                            </a>
                                         </td>
                                         <td>
 
@@ -104,11 +95,12 @@ $currentMonth = $hFunction->currentMonth();
                                                 <span>X</span>
                                             @endif
                                         </td>
+                                        <td></td>
                                     </tr>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td style="color: red;" colspan="5">
+                                    <td style="color: red;" colspan="6">
                                         Hê thống chưa có túi nghề
                                     </td>
                                 </tr>

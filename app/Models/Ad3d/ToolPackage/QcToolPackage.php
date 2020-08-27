@@ -79,6 +79,13 @@ class QcToolPackage extends Model
         return $modelCompanyStore->infoIsActiveOfToolPackage($this->checkIdNull($packageId));
     }
 
+    # lay danh sach do nghe trong tui dang dung binh thuong theo 1 loai cong cu
+    public function companyStoreGetInfoIsActiveOfTool($packageId, $toolId)
+    {
+        $modelCompanyStore = new QcCompanyStore();
+        return $modelCompanyStore->infoIsActiveOfPackageAndTool($packageId, $toolId);
+    }
+
     #----------- cong ty ------------
     public function company()
     {

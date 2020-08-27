@@ -89,12 +89,12 @@ if ($viewLoginObject == 'timekeepingWork') {
 }elseif ($viewLoginObject == 'toolCheckStore') {
     $label = 'Kiểm tra đồ nghề dùng chung';
     $href = route('qc.work.tool.package_allocation.get');
-}elseif ($viewLoginObject == 'storeTool') {
-    $label = 'Kho';
-    $href = route('qc.work.store.tool.get');
-}elseif ($viewLoginObject == 'storeReturn') {
-    $label = 'Trả đồ nghề';
-    $href = route('qc.work.store.tool.get');
+}elseif ($viewLoginObject == 'storeToolPackage') {
+    $label = 'Danh sách Túi đồ nghề cty';
+    $href = route('qc.work.store.tool_package.get');
+}elseif ($viewLoginObject == 'storeToolPackageAllocation') {
+    $label = 'Giao túi đồ nghề';
+    $href = route('qc.work.store.tool_package_allocation.get');
 } elseif ($viewLoginObject == 'productTypePrice') {
     $label = 'Bảng giá';
     $href = route('qc.work.product_type_price.get');

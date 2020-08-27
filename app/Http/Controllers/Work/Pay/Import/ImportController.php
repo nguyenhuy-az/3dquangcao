@@ -168,7 +168,7 @@ class ImportController extends Controller
                                     #cập nhật chi tiết nhập
                                     $modelImportDetail->updateInfo($detailId, $importPriceAmount, $importAmount, $importTotalMoney, $importToolId, $suppliesId, $importNewName);
                                     #thêm vậy tư vào kho
-                                    $modelCompanyStore->insert($importAmount, $importCompanyId, null, $suppliesId, null, $importPrice, null);
+                                    $modelCompanyStore->insert($importNewName, $importCompanyId, null, $suppliesId, null, $importPrice, null);
                                 }
                             } elseif ($confirmNewSuppliesTool[$key] == 2) {
                                 // phan loai la dung cu
@@ -205,8 +205,8 @@ class ImportController extends Controller
                                         $packageId = null;
                                     }
                                     for ($i = 1; $i <= $importAmount; $i++) {
-                                        $storeName = null;
-                                        if ($modelCompanyStore->insert($importNewName, $importCompanyId, $toolId, null, $importId, $importPrice, $packageId)) {
+                                        $storeName = "$importNewName - " . $hFunction->getTimeCode() . " - $i";
+                                        if ($modelCompanyStore->insert($storeName, $importCompanyId, $toolId, null, $importId, $importPrice, $packageId)) {
                                             $newStoreId = $modelCompanyStore->insertGetId();
                                             // cap phat dụng cụ cho nhân viên mua
                                             if (!empty($allocationId)) {  //phieu cap phat dung cu
@@ -219,7 +219,7 @@ class ImportController extends Controller
                         } else {
                             // cap nhat kho
                             if (!empty($importSuppliesId)) { // vat tu
-                                $modelCompanyStore->insert($importAmount, $importCompanyId, null, $importSuppliesId, null, $importPrice, null);
+                                $modelCompanyStore->insert($importNewName, $importCompanyId, null, $importSuppliesId, $importId, $importPrice, null);
                             }
                             if (!empty($importToolId)) { //dung cu
                                 // cap phat dụng cụ cho nhân viên mua - dung cu ca nha
@@ -241,7 +241,8 @@ class ImportController extends Controller
                                 // thêm dụng cụ mới vào kho
 
                                 for ($i = 1; $i <= $importAmount; $i++) {
-                                    if ($modelCompanyStore->insert($modelTool->name($importToolId)[0], $importCompanyId, $importToolId, null, $importId, $importPrice, $packageId)) {
+                                    $storeName = $modelTool->name($importToolId)[0] . " - " . $hFunction->getTimeCode() . " - $i";
+                                    if ($modelCompanyStore->insert($storeName, $importCompanyId, $importToolId, null, $importId, $importPrice, $packageId)) {
                                         $newStoreId = $modelCompanyStore->insertGetId();
                                         // cap phat dụng cụ cho nhân viên mua
                                         if (!empty($allocationId)) {  //phieu cap phat dung cu

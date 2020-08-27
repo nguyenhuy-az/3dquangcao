@@ -12,6 +12,8 @@ use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 //use Illuminate\Http\Request;
 use App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation;
+use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
+use App\Models\Ad3d\ToolPackageAllocationReturn\QcToolPackageAllocationReturn;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use File;
@@ -26,8 +28,8 @@ class ToolPackageAllocationController extends Controller
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelToolPackageAllocation = new QcToolPackageAllocation();
         $dataAccess = [
-            'object' => 'storeAllocation',
-            'subObjectLabel' => 'Trả đồ nghề'
+            'object' => 'storeToolPackageAllocation',
+            'subObjectLabel' => 'Danh sách túi đồ nghề đang giao'
         ];
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $searchCompanyFilterId = [$dataStaffLogin->companyId()];
@@ -52,16 +54,17 @@ class ToolPackageAllocationController extends Controller
     # xem anh ban giao
     public function viewImage($detailId)
     {
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         $dataToolPackageAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
-        return view('work.store.allocation.view-image', compact('modelStaff', 'dataToolAllocationDetail'));
+        return view('work.store.tool-package-allocation.view-image', compact('modelStaff', 'dataToolAllocationDetail'));
     }
 
     #xem anh tra
-    public function viewReturnImage($returnId){
-        $modelToolReturn = new QcToolReturn();
+    public function viewReturnImage($returnId)
+    {
+        $modelToolReturn = new QcToolPackageAllocationReturn();
         $dataToolReturn = $modelToolReturn->getInfo($returnId);
-        return view('work.store.allocation.view-return-image', compact('modelStaff', 'dataToolReturn'));
+        return view('work.store.tool-package-allocation.view-return-image', compact('modelStaff', 'dataToolReturn'));
     }
 
     # ap dung phat theo noi qui
@@ -70,7 +73,7 @@ class ToolPackageAllocationController extends Controller
         $modelCompany = new QcCompany();
         $modelPunishContent = new QcPunishContent();
         $modelStaff = new QcStaff();
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         # thong tin phat
 
@@ -79,7 +82,7 @@ class ToolPackageAllocationController extends Controller
         $dataToolPackageAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
         # cong trinh dang thi cong
         $dataOrder = $modelCompany->orderInfoNotFinish($dataStaffLogin->companyId());
-        return view('work.store.allocation.minus-money', compact('modelStaff', 'dataPunishContent', 'dataToolAllocationDetail', 'dataOrder'));
+        return view('work.store.tool-package-allocation.minus-money', compact('modelStaff', 'dataPunishContent', 'dataToolPackageAllocationDetail', 'dataOrder'));
     }
 
     public function postMinusMoney($detailId)
@@ -89,19 +92,20 @@ class ToolPackageAllocationController extends Controller
         $modelOrder = new QcOrder();
         $modelMinusMoney = new QcMinusMoney();
         $modelStaffNotify = new QcStaffNotify();
-        $modelToolAllocationDetail = new QcToolAllocationDetail();
+        $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         $currentDate = $hFunction->carbonNow();
         $punishId = Request::input('cbPunishContent');
         $cbOrderId = Request::input('cbOrder');
         $txtMinusMoneyNote = Request::input('txtMinusMoneyNote');
         $dataToolPackageAllocationDetail = $modelToolAllocationDetail->getInfo($detailId);
         $companyStoreName = $dataToolPackageAllocationDetail->companyStore->name();
-        $dataStaffApply = $dataToolPackageAllocationDetail->toolAllocation->companyStaffWork->staff;
+        $dataStaffApply = $dataToolPackageAllocationDetail->toolPackageAllocation->companyStaffWork->staff;
         $dataWork = $dataStaffApply->workInfoActivityOfStaff();
         if ($hFunction->checkCount($dataWork)) {
             $workId = $dataWork->workId();
-            $reason = "Không đem đồ nghề '$companyStoreName' thi công đơn hàng " . $modelOrder->name($cbOrderId)[0] . ". $txtMinusMoneyNote";
-            if ($modelMinusMoney->insert($currentDate, $reason, $workId, $modelStaff->loginStaffId(), $punishId, 0, null, null)) {
+            $orderName = $modelOrder->name($cbOrderId)[0];
+            $reason = "Không đem đồ nghề '$companyStoreName' thi công đơn hàng '$orderName' $txtMinusMoneyNote";
+            if ($modelMinusMoney->insert($currentDate, $reason, $workId, $modelStaff->loginStaffId(), $punishId, 0, null, null, null, null, 0)) {
                 $modelStaffNotify->insert(null, $dataStaffApply->staffId(), 'Không đem đồ nghề thi công', null, null, null, $modelMinusMoney->insertGetId());
             }
         }

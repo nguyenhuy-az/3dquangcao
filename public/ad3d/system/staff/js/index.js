@@ -626,8 +626,8 @@ var qc_ad3d_staff_staff = {
                 if (qc_main.check.inputNull(txtDateWork, 'Nhập Ngày vào')) {
                     return false;
                 } else {
-                    //qc_ad3d_submit.ajaxFormHasReload(frm, containNotify, true);
-                    qc_ad3d_submit.ajaxFormNotReload(frm, containNotify, true);
+                    qc_ad3d_submit.ajaxFormHasReload(frm, containNotify, true);
+                    //qc_ad3d_submit.ajaxFormNotReload(frm, containNotify, true);
                 }
             },
             // kiem tra co chon bo phan cap quan ly

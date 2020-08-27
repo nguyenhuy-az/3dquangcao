@@ -11,8 +11,8 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
-$detailId = $dataToolAllocationDetail->detailId();
-$dataStaffApply = $dataToolAllocationDetail->toolAllocation->companyStaffWork->staff;
+$detailId = $dataToolPackageAllocationDetail->detailId();
+$dataStaffApply = $dataToolPackageAllocationDetail->toolPackageAllocation->companyStaffWork->staff;
 ?>
 @extends('components.container.container-6')
 @section('qc_container_content')
@@ -26,7 +26,7 @@ $dataStaffApply = $dataToolAllocationDetail->toolAllocation->companyStaffWork->s
         <div class="row">
             <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <form id="frmWorkStoreAllocationMinusMoney" role="form" method="post"
-                      action="{!! route('qc.work.store.allocation.check.minus_money.post',$detailId) !!}">
+                      action="{!! route('qc.work.store.tool_package_allocation.check.minus_money.post',$detailId) !!}">
                     @if($hFunction->checkCount($dataPunishContent))
                         <div class="row">
                             <div class="notifyConfirm qc-color-red text-center col-xs-12 col-sm-12 col-md-6 col-lg-6"></div>

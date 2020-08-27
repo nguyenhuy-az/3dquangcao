@@ -120,13 +120,20 @@ class QcToolPackageAllocation extends Model
     #thong tin ban giao cua 1 tui do nghe
     public function infoIsActiveOfPackage($packageId)
     {
-        return QcToolPackageAllocation::where('action', 1)->where('package_id',$packageId)->first();
+        return QcToolPackageAllocation::where('action', 1)->where('package_id', $packageId)->first();
     }
 
     //---------- Chi tiết cấp -----------
     public function toolPackageAllocationDetail()
     {
         return $this->belongsTo('App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail', 'allocation_id', 'allocation_id');
+    }
+
+    # chi tiet ban giao dang hoat dong
+    public function toolPackageAllocationDetailInfoIsActive($allocationId = null)
+    {
+        $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
+        return $modelToolPackageAllocationDetail->infoActivityOfToolAllocation($this->checkIdNull($allocationId));
     }
 
     # lay thong tin giao chua tra cua 1 bo do nghe
