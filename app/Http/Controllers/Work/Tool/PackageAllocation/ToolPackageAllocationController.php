@@ -8,6 +8,7 @@ use App\Models\Ad3d\Tool\QcTool;
 //use Illuminate\Http\Request;
 use App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation;
 use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
+use App\Models\Ad3d\ToolPackageAllocationReturn\QcToolPackageAllocationReturn;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use File;
@@ -21,7 +22,8 @@ class ToolPackageAllocationController extends Controller
         $modelStaff = new QcStaff();
         $modelTool = new QcTool();
         $dataAccess = [
-            'object' => 'toolPackageAllocation'
+            'object' => 'toolPackageAllocation',
+            'subObjectLabel' => 'Danh sách đồ nghề được giao'
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
         #thong tin lam viec tai 1 cty
@@ -33,30 +35,41 @@ class ToolPackageAllocationController extends Controller
         return view('work.tool.tool-package-allocation.list', compact('dataAccess', 'modelStaff', 'dataTool', 'dataToolPackageAllocation'));
     }
 
+    # bao cao do nghe bi hu hoac mat
+    public function getReport($detailId)
+    {
+
+    }
+
+    public function postReport($detailId)
+    {
+
+    }
+
     #xac nhan da nhan do nghe
-    public function getConfirmReceive($allocationId)
+    /*public function getConfirmReceive($allocationId)
     {
         $modelToolAllocation = new QcToolPackageAllocation();
         $modelToolAllocation->receiveConfirm($allocationId);
-    }
+    }*/
 
     # ------- -------- tra lai do nghe  -------- --------
     public function getReturn($allocationId, $selectedDetailId = null)
     {
         $modelStaff = new QcStaff();
-        $modelToolPackageAllocationDetail = new QcToolAllocationDetail();
+        $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
         $dataAccess = [
-            'object' => 'toolAllocation'
+            'object' => 'toolPackageAllocation'
         ];
         $dataToolAllocationDetail = $modelToolPackageAllocationDetail->getInfoNotReturnOfAllocation($allocationId);
-        return view('work.tool.allocation.return', compact('dataAccess', 'modelStaff', 'dataToolAllocationDetail', 'selectedDetailId'));
+        return view('work.tool.tool-package-allocation.return', compact('dataAccess', 'modelStaff', 'dataToolAllocationDetail', 'selectedDetailId'));
     }
 
     public function postReturn()
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        $modelToolReturn = new QcToolReturn();
+        $modelToolReturn = new QcToolPackageAllocationReturn();
         $allocationDetail = Request::input('txtAllocationDetail');
         foreach ($allocationDetail as $detailId) {
             $txtReturnImage = Request::file('txtReturnImage_' . $detailId);
@@ -71,23 +84,23 @@ class ToolPackageAllocationController extends Controller
                 }
             }
         }
-        return redirect()->route('qc.work.tool.allocation.get');
+        return redirect()->route('qc.work.tool.package_allocation.get');
 
     }
 
     # xem anh ban giao
     public function viewImage($detailId)
     {
-        $modelToolPackageAllocationDetail = new QcToolAllocationDetail();
-        $dataToolAllocationDetail = $modelToolPackageAllocationDetail->getInfo($detailId);
-        return view('work.tool.allocation.view-image', compact('modelStaff', 'dataToolAllocationDetail'));
+        $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
+        $dataToolPackageAllocationDetail = $modelToolPackageAllocationDetail->getInfo($detailId);
+        return view('work.tool.tool-package-allocation.view-image', compact('modelStaff', 'dataToolPackageAllocationDetail'));
     }
 
     # xem anh tra
     public function viewReturnImage($returnId)
     {
-        $modelToolReturn = new QcToolReturn();
-        $dataToolReturn = $modelToolReturn->getInfo($returnId);
-        return view('work.tool.allocation.view-return-image', compact('modelStaff', 'dataToolReturn'));
+        $modelToolPackageAllocationReturn = new QcToolPackageAllocationReturn();
+        $dataToolPackageAllocationReturn = $modelToolPackageAllocationReturn->getInfo($returnId);
+        return view('work.tool.tool-package-allocation.view-return-image', compact('modelStaff', 'dataToolPackageAllocationReturn'));
     }
 }

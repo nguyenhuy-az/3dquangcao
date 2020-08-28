@@ -1343,10 +1343,12 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::group(['prefix' => 'package-allocation'], function () {
             #xem chi tiết
             # anh ban giao do nghe
-            Route::get('view-image/{imageId?}', ['as' => 'qc.work.tool.package_allocation.image.view', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@viewImage']);
+            Route::get('view-image/{detailId?}', ['as' => 'qc.work.tool.package_allocation.image.view', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@viewImage']);
             # anh tra do nghe
-            Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.tool.package_allocation.return_image.view', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@viewReturnImage']);
-
+            //Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.tool.package_allocation.return_image.view', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@viewReturnImage']);
+            # bao cao do nghe
+            Route::get('report/{detailId?}', ['as' => 'qc.work.tool.package_allocation.report.get', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@getReport']);
+            Route::post('report/{detailId?}', ['as' => 'qc.work.tool.package_allocation.report.get', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@postReport']);
             # tra lai do nghe
             Route::get('return/{allocationId?}/{storeId?}', ['as' => 'qc.work.tool.package_allocation.return.get', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@getReturn']);
             Route::post('return', ['as' => 'qc.work.tool.package_allocation.return.post', 'uses' => 'Work\Tool\PackageAllocation\ToolPackageAllocationController@postReturn']);
@@ -1363,7 +1365,13 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         # tui do nghe
         Route::group(['prefix' => 'tool-package'], function () {
             # xem chi tiet
-            Route::get('view/{packageId?}', ['as' => 'qc.work.store.tool_package.view', 'uses' => 'Work\Store\ToolPackage\ToolPackageController@viewPackage']);
+            Route::get('detail/{packageId?}', ['as' => 'qc.work.store.tool_package.detail', 'uses' => 'Work\Store\ToolPackage\ToolPackageController@detailPackage']);
+            # xem anh nhap san pham
+            Route::get('view-import-image/{imageId?}', ['as' => 'qc.work.store.tool_package.import_image.get', 'uses' => 'Work\Store\ToolPackage\ToolPackageController@viewImportImage']);
+            # xem anh ban giao
+            Route::get('view-detail-image/{detailId?}', ['as' => 'qc.work.store.tool_package.detail_image.get', 'uses' => 'Work\Store\ToolPackage\ToolPackageController@viewDetailImage']);
+            # xem anh bao tra
+            Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.store.tool_package.return_image.get', 'uses' => 'Work\Store\ToolPackage\ToolPackageController@viewReturnImage']);
             # giao  do nghe tu dong
             Route::get('auto-allocation', ['as' => 'qc.work.store.tool_package.auto_allocation.add', 'uses' => 'Work\Store\ToolPackage\ToolPackageController@addAutoAllocationPackage']);
             # tui do nghe
@@ -1395,7 +1403,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             # xem anh ban giao
             Route::get('view-detail-image/{detailId?}', ['as' => 'qc.work.store.tool.detail_image.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@viewDetailImage']);
             # xem anh bao tra
-            Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.store.tool.return_image.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@viewReturnImage']);
+            ////Route::get('view-return-image/{returnId?}', ['as' => 'qc.work.store.tool.return_image.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@viewReturnImage']);
 
             Route::get('/{type?}/{toolId?}', ['as' => 'qc.work.store.tool.get', 'uses' => 'Work\Store\Tool\CompanyStoreController@index']);
         });

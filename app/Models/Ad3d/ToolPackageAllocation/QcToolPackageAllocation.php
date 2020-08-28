@@ -143,12 +143,14 @@ class QcToolPackageAllocation extends Model
         return $modelToolPackageAllocationDetail->getInfoNotReturnOfAllocation($allocationId);
     }
 
+    # so luong do nghe cua 1 lan giao
     public function totalAmountToolOfAllocation($allocationId = null)
     {
         $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
         return $modelToolPackageAllocationDetail->totalAmountOfAllocation($this->checkIdNull($allocationId));
     }
 
+    # thong tin chi tiet cua 1 lan ban giao
     public function toolAllocationDetailOfAllocation($allocationId = null)
     {
         $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
@@ -161,6 +163,12 @@ class QcToolPackageAllocation extends Model
         return $modelToolPackageAllocationDetail->infoOfListToolAllocation($listAllocationId);
     }
 
+    # thong tin ban giao cua loai do nghe  trong bo do nghe duoc giao
+    public function infoDetailOfToolAllocationAndTool($allocationId, $toolId)
+    {
+        $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
+        return $modelToolPackageAllocationDetail->infoOfToolAllocationAndTool($allocationId, $toolId);
+    }
     # thong tin ban giao cua loai do nghe  trong bo do nghe duoc giao, dang hoat hoat dong
     public function infoActivityOfToolAllocationAndTool($allocationId, $toolId)
     {

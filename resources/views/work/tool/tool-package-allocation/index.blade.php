@@ -15,10 +15,10 @@ $hFunction = new Hfunction();
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.tool.menu')
             {{-- Noi dung --}}
-            @yield('qc_work_tool_private_body')
+            @yield('qc_work_tool_package_allocation_body')
         </div>
     </div>
 @endsection
 @section('qc_js_footer')
-    <script src="{{ url('public/work/tool/private/js/index.js')}}"></script>
+    <script src="{{ url('public/work/tool/tool-package-allocation/js/index.js')}}"></script>
 @endsection

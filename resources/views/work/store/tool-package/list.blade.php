@@ -77,7 +77,7 @@ $currentMonth = $hFunction->currentMonth();
                                         </td>
                                         <td>
                                             <a class="qc-link-green"
-                                               href="{!! route('qc.work.store.tool_package.view', $packageId) !!}">
+                                               href="{!! route('qc.work.store.tool_package.detail', $packageId) !!}">
                                                 {!!  $packageName !!} &nbsp;-
                                                 <i class="glyphicon glyphicon-eye-open"></i>
                                             </a>

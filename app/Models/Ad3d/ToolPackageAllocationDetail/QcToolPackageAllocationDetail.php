@@ -262,6 +262,13 @@ class QcToolPackageAllocationDetail extends Model
         return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->where('action', 1)->get();
     }
 
+    # thong tin ban giao cua loai do nghe  trong bo do nghe duoc giao
+    public function infoOfToolAllocationAndTool($allocationId, $toolId)
+    {
+        $modelCompanyStore = new QcCompanyStore();
+        $listStoreId = $modelCompanyStore->listIdOfTool($toolId);
+        return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->whereIn('store_id', $listStoreId)->get();
+    }
     # thong tin ban giao cua loai do nghe  trong bo do nghe duoc giao, dang hoat hoat dong
     public function infoActivityOfToolAllocationAndTool($allocationId, $toolId)
     {

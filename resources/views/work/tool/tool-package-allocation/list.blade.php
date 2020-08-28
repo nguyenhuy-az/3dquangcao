@@ -15,18 +15,26 @@ $loginStaffId = $dataStaff->staffId();
 $companyId = $dataStaff->companyId();
 $hrefIndex = route('qc.work.tool.package_allocation.get');
 $currentMonth = $hFunction->currentMonth();
-# thong tin ban giaotui do nghe
+# thong tin ban giao tui do nghe
 $allocationId = $dataToolPackageAllocation->allocationId();
-
+# tui do nghe
+$dataPackage = $dataToolPackageAllocation->toolPackage;
 ?>
 @extends('work.tool.tool-package-allocation.index')
-@section('qc_work_tool_private_body')
+@section('qc_work_tool_package_allocation_body')
     <div class="row qc_work_tool_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
+                            <tr>
+                                <td colspan="3">
+                                    <span style="color: red; font-size: 1.5em;">
+                                        Túi đồ {!! $dataPackage->name !!}
+                                    </span>
+                                </td>
+                            </tr>
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Loại Dụng cụ</th>
@@ -34,30 +42,12 @@ $allocationId = $dataToolPackageAllocation->allocationId();
                                     Số lượng
                                 </th>
                             </tr>
-                            {{--<tr style="background-color: black;color: yellow;">
-                                <th class="text-center" style="width: 20px;">STT</th>
-                                <th>Dụng cụ</th>
-                                <th>
-                                    Ngày giao
-                                </th>
-                                <th class="text-center">
-                                    Ảnh được giao
-                                </th>
-                                <th class="text-center">
-                                    Hiện trạng
-                                    <giao></giao>
-                                </th>
-                                <th class="text-center">
-                                    Ảnh trả
-                                </th>
-                                <th class="text-center">Trạng thái</th>
-                            </tr>--}}
                             @if($hFunction->checkCount($dataTool))
                                 @foreach($dataTool as $tool)
                                     <?php
                                     $n_o = (isset($n_o)) ? $n_o + 1 : 1;
                                     $toolId = $tool->toolId();
-                                    $dataToolPackageAllocationDetail = $dataToolPackageAllocation->infoActivityOfToolAllocationAndTool($allocationId, $toolId);
+                                    $dataToolPackageAllocationDetail = $dataToolPackageAllocation->infoDetailOfToolAllocationAndTool($allocationId, $toolId);
                                     $amountDetail = count($dataToolPackageAllocationDetail);
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
@@ -76,19 +66,26 @@ $allocationId = $dataToolPackageAllocation->allocationId();
                                         </td>
                                     </tr>
                                     @if($amountDetail > 0)
-                                        <tr class="@if($n_o%2) info @endif">
-                                            <td class="text-center" style="background-color: brown;">
-
-                                            </td>
-                                            <td>
-                                                {!! $tool->name() !!}
-                                            </td>
-                                            <td class="text-center">
-                                                <a class="qc-link-green-bold">
-                                                    Báo cáo
-                                                </a>
-                                            </td>
-                                        </tr>
+                                        @foreach($dataToolPackageAllocationDetail as $toolPackageAllocationDetail)
+                                            <tr class="@if($n_o%2) info @endif">
+                                                <td class="text-center"></td>
+                                                <td>
+                                                    <i class="glyphicon glyphicon-play"></i>
+                                                    <a class="qc_view_image_get qc-link"
+                                                       data-href="{!! route('qc.work.tool.package_allocation.image.view',$toolPackageAllocationDetail->detailId()) !!}">
+                                                        <img style="width: 70px; height: auto;"
+                                                             src="{!! $toolPackageAllocationDetail->pathSmallImage($toolPackageAllocationDetail->image()) !!}">
+                                                    </a>
+                                                    {!! $toolPackageAllocationDetail->companyStore->name() !!}
+                                                </td>
+                                                <td class="text-center">
+                                                    <a class="qc-link-green-bold"
+                                                       data-href="{!! route('qc.work.tool.package_allocation.report.get') !!}">
+                                                        Báo cáo
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     @endif
                                 @endforeach
                             @else

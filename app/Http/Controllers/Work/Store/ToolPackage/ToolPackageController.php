@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Work\Store\ToolPackage;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
+use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
@@ -14,6 +15,8 @@ use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\Tool\QcTool;
 use App\Models\Ad3d\ToolPackage\QcToolPackage;
 use App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation;
+use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
+use App\Models\Ad3d\ToolPackageAllocationReturn\QcToolPackageAllocationReturn;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use File;
@@ -60,7 +63,7 @@ class ToolPackageController extends Controller
     }
 
     #chi tiet tui do nghe
-    public function viewPackage($packageId)
+    public function detailPackage($packageId)
     {
         $modelStaff = new QcStaff();
         $modelTool = new QcTool();
@@ -73,6 +76,29 @@ class ToolPackageController extends Controller
         $dataTool = $modelTool->getInfoPrivate();
         # thong tin tui do nghe
         $dataToolPackage = $modelToolPackage->getInfo($packageId);
-        return view('work.store.tool-package.view', compact('dataAccess', 'modelStaff', 'dataToolPackage', 'dataTool'));
+        return view('work.store.tool-package.detail', compact('dataAccess', 'modelStaff', 'dataToolPackage', 'dataTool'));
+    }
+    # xem anh nhap kho
+    public function viewImportImage($imageId)
+    {
+        $modelImportImage = new QcImportImage();
+        $dataImportImage = $modelImportImage->getInfo($imageId);
+        return view('work.store.tool-package.view-import-image', compact('modelStaff', 'dataImportImage'));
+    }
+
+    # xem anh ban giap
+    public function viewDetailImage($detailId)
+    {
+        $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
+        $dataToolPackageAllocationDetail = $modelToolPackageAllocationDetail->getInfo($detailId);
+        return view('work.store.tool-package.view-detail-image', compact('modelStaff', 'dataToolPackageAllocationDetail'));
+    }
+
+    # xem anh bao tra
+    public function viewReturnImage($returnId)
+    {
+        $modelToolPackageAllocationReturn = new QcToolPackageAllocationReturn();
+        $dataToolPackageAllocationReturn = $modelToolPackageAllocationReturn->getInfo($returnId);
+        return view('work.store.tool-package.view-return-image', compact('modelStaff', 'dataToolPackageAllocationReturn'));
     }
 }
