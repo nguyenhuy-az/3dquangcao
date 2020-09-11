@@ -38,12 +38,30 @@ class ToolPackageAllocationController extends Controller
     # bao cao do nghe bi hu hoac mat
     public function getReport($detailId)
     {
-
+        $modelStaff = new QcStaff();
+        $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
+        $dataToolPackageAllocationDetail = $modelToolPackageAllocationDetail->getInfo($detailId);
+        return view('work.tool.tool-package-allocation.report', compact('modelStaff', 'dataToolPackageAllocationDetail'));
     }
 
     public function postReport($detailId)
     {
-
+        $hFunction = new \Hfunction();
+        $modelToolPackageAllocationReturn = new QcToolPackageAllocationReturn();
+        $useStatus = Request::input('cbReportUseStatus');
+        $note = Request::input('txtReportNote');
+        $txtReportImage = Request::file('txtReportImage');
+        $name_img = null;
+        # anh bao cao
+        if (!empty($txtReportImage)) {
+            $name_img = stripslashes($_FILES['txtReportImage']['name']);
+            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $source_img = $_FILES['txtReportImage']['tmp_name'];
+            if (!$modelToolPackageAllocationReturn->uploadImage($source_img, $name_img, 500)) {
+                $name_img = null;
+            }
+        }
+        $modelToolPackageAllocationReturn->insert($detailId, $useStatus, $name_img, $note);
     }
 
     #xac nhan da nhan do nghe

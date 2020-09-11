@@ -74,7 +74,8 @@ $indexHref = route('qc.ad3d.work.work.get');
                                 </div>
                             </td>
                             <td class="text-center" style="padding: 0;">
-                                <select class="cbMonthFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
+                                <select class="cbMonthFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
                                     <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -85,7 +86,8 @@ $indexHref = route('qc.ad3d.work.work.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
                                     @for($y =2019;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
                                                 @if($yearFilter == $y) selected="selected" @endif>
@@ -110,17 +112,27 @@ $indexHref = route('qc.ad3d.work.work.get');
                                 $workId = $work->workId();
                                 $companyStaffWorkId = $work->companyStaffWorkId();
                                 $dataCompanyStaffWork = $work->companyStaffWork;
+                                if (!empty($companyStaffWorkId)) {
+                                    $dataStaffWork = $work->companyStaffWork->staff;
+                                } else {
+                                    $dataStaffWork = $work->staff;
+                                }
+                                # anh dai dien
+                                $image = $dataStaffWork->image();
+                                if ($hFunction->checkEmpty($image)) {
+                                    $src = $dataStaffWork->pathDefaultImage();
+                                } else {
+                                    $src = $dataStaffWork->pathFullImage($image);
+                                }
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $workId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        @if(!$hFunction->checkEmpty($companyStaffWorkId))
-                                            {!! $work->companyStaffWork->staff->fullName() !!}
-                                        @else
-                                            {!! $work->staff->fullName() !!}
-                                        @endif
+                                        <img style="width: 40px; height: 40px; border: 1px solid #d7d7d7;"
+                                             src="{!! $src !!}">
+                                        {!! $dataStaffWork->fullName() !!}
 
                                     </td>
                                     <td>

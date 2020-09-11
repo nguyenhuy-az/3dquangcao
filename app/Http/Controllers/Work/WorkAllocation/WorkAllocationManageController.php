@@ -302,6 +302,58 @@ class WorkAllocationManageController extends Controller
         $modelWorkAllocation = new QcWorkAllocation();
 
         $loginStaffId = $modelStaff->loginStaffId();
+        $errorContent = "Thông tin nhập bị lỗi: <br/> ";
+        # thong tin nhan vien nhan
+        $staffReceive = $request->input('staffReceive');
+        if ($hFunction->checkCount($staffReceive)) { # co chon nguoi phan viec
+            foreach ($staffReceive as $key => $receiveStaffId) {
+                $dayAllocation = $request->input('cbDayAllocation_' . $receiveStaffId);
+                $monthAllocation = $request->input('cbMonthAllocation_' . $receiveStaffId);
+                $yearAllocation = $request->input('cbYearAllocation_' . $receiveStaffId);
+                $hoursAllocation = $request->input('cbHoursAllocation_' . $receiveStaffId);
+                $minuteAllocation = $request->input('cbMinuteAllocation_' . $receiveStaffId);
+                $dayDeadline = $request->input('cbDayDeadline_' . $receiveStaffId);
+                $monthDeadline = $request->input('cbMonthDeadline_' . $receiveStaffId);
+                $yearDeadline = $request->input('cbYearDeadline_' . $receiveStaffId);
+                $hoursDeadline = $request->input('cbHoursDeadline_' . $receiveStaffId);
+                $minuteDeadline = $request->input('cbMinuteDeadline_' . $receiveStaffId);
+                $role = $request->input('cbRole_' . $receiveStaffId);
+                $txtDescription = $request->input('txtDescription_' . $receiveStaffId);
+                $dateAllocation = $hFunction->convertStringToDatetime("$monthAllocation/$dayAllocation/$yearAllocation $hoursAllocation:$minuteAllocation:00");
+                $dateDeadline = $hFunction->convertStringToDatetime("$monthDeadline/$dayDeadline/$yearDeadline $hoursDeadline:$minuteDeadline:00");
+                if ($dateDeadline < $dateAllocation) {
+                    $errorContent = $errorContent . "- Thời gian kết thúc phải lớn hơn thời gian nhận <br/>";
+                    $errorStatus = false;
+                } else {
+                    # chua duoc phan cong
+                    if (!$modelProduct->checkStaffReceiveProduct($receiveStaffId, $productId)) {
+                        #them giao viec
+                        if ($modelWorkAllocation->insert($dateAllocation, 0, $dateDeadline, 1, $hFunction->carbonNow(), $txtDescription, $productId, $loginStaffId, $receiveStaffId, $role)) {
+                            $newWorkAllocationId = $modelWorkAllocation->insertGetId();
+                            $modelStaffNotify->insert(null, $receiveStaffId, 'Giao thi công sản phẩm', null, $newWorkAllocationId);
+                        }
+                    }
+                }
+            }
+        } else {
+            $errorContent = $errorContent . "- Không có thông tin người nhận việc <br/>";
+            $errorStatus = false;
+        }
+        if (!$errorStatus) {
+            Session::put('notifyAddAllocation', $errorContent);
+        }
+        return redirect()->back();
+    }
+
+    public function postAddWorkAllocation_v1(Request $request, $productId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelStaffNotify = new QcStaffNotify();
+        $modelProduct = new QcProduct();
+        $modelWorkAllocation = new QcWorkAllocation();
+
+        $loginStaffId = $modelStaff->loginStaffId();
         # thong tin nhan vien nhan
         $cbReceiveStaff = $request->input('cbReceiveStaff');
 

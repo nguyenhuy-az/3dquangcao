@@ -239,12 +239,24 @@ class QcStaff extends Model
     {
         return QcStaff::where('staff_id', $staffId)->update(['identityCardBack' => $image]);
     }
+
+    # lay duong dan anh avatar
+    public function pathAvatar($image)
+    {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $this->pathDefaultImage();
+        } else {
+            return $this->pathFullImage($image);
+        }
+    }
     //========== ========= ========= mối quan hệ ========== ========= ==========
     //---------- phan hoi phat -----------
     public function minusMoneyFeedback()
     {
         return $this->hasMany('App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback', 'confirmStaff_id', 'staff_id');
     }
+
     //---------- thong tin bao cao kiem tra do nghe dung chung -----------
     public function companyStoreCheckReport()
     {

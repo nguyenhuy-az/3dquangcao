@@ -156,15 +156,21 @@ $companyLoginId = $dataStaffLogin->companyId();
                                     <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                 </label>
                                 <select class="form-control" name="cbCompany">
-                                    <option value="">
-                                        Chọn công ty
-                                    </option>
-                                    @if($hFunction->checkCount($dataCompany))
-                                        @foreach($dataCompany as $company)
-                                            <option value="{!! $company->companyId() !!}">
-                                                {!! $company->name() !!}
-                                            </option>
-                                        @endforeach
+                                    @if($dataStaffLogin->checkRootManage())
+                                        <option value="">
+                                            Chọn công ty
+                                        </option>
+                                        @if($hFunction->checkCount($dataCompany))
+                                            @foreach($dataCompany as $company)
+                                                <option value="{!! $company->companyId() !!}">
+                                                    {!! $company->name() !!}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    @else
+                                        <option value="{!! $companyLoginId !!}">
+                                            {!! $modelCompany->name($companyLoginId)[0] !!}
+                                        </option>
                                     @endif
                                 </select>
                             </div>

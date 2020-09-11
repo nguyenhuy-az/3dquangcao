@@ -2,13 +2,14 @@
 
 namespace App\Models\Ad3d\ToolPackageAllocationReturn;
 
+use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
 use Illuminate\Database\Eloquent\Model;
 
 class QcToolPackageAllocationReturn extends Model
 {
-    protected $table = 'qc_tool_return';
-    protected $fillable = ['return_id', 'returnDate', 'image', 'confirmStatus', 'confirmDate', 'acceptStatus', 'created_at', 'detail_id', 'confirmStaff_id'];
+    protected $table = 'qc_tool_package_allocation_return';
+    protected $fillable = ['return_id', 'returnDate', 'image', 'returnNote', 'useStatus', 'confirmStatus', 'confirmDate', 'acceptStatus', 'created_at', 'detail_id', 'confirmStaff_id'];
     protected $primaryKey = 'return_id';
     public $timestamps = false;
 
@@ -16,12 +17,14 @@ class QcToolPackageAllocationReturn extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
-    public function insert($detailId, $image)
+    public function insert($detailId, $useStatus = 1, $image, $note = null)
     {
         $hFunction = new \Hfunction();
         $modelToolReturn = new QcToolPackageAllocationReturn();
         $modelToolReturn->returnDate = $hFunction->carbonNow();
+        $modelToolReturn->useStatus = $useStatus;
         $modelToolReturn->image = $image;
+        $modelToolReturn->returnNote = $note;
         $modelToolReturn->detail_id = $detailId;
         $modelToolReturn->created_at = $hFunction->createdAt();
         if ($modelToolReturn->save()) {
@@ -50,10 +53,17 @@ class QcToolPackageAllocationReturn extends Model
     # xac nhan tra
     public function confirmReturn($returnId, $acceptStatus, $confirmStaffId)
     {
+        $modelCompanyStore = new QcCompanyStore();
         $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         if ($this->updateConfirm($returnId, $acceptStatus, $confirmStaffId)) {
+            $detailId = $this->detailId($returnId);
             # chap nhan tra
-            if ($this->checkAcceptStatus($returnId)) $modelToolAllocationDetail->disableDetail($this->detailId($returnId));
+            if ($this->checkAcceptByInfo($acceptStatus)) {
+                # vo hieu chi tiet ban giao
+                $modelToolAllocationDetail->disableDetail($detailId);
+                # cap nhat trang thai do nghe theo bao cao
+                $modelCompanyStore->updateUseStatus($modelToolAllocationDetail->storeId($detailId),$this->useStatus($returnId)[0]);
+            }
         }
     }
 
@@ -66,12 +76,12 @@ class QcToolPackageAllocationReturn extends Model
     # hinh anh
     public function rootPathFullImage()
     {
-        return 'public/images/tool-return/full';
+        return 'public/images/tool-package-allocation-return/full';
     }
 
     public function rootPathSmallImage()
     {
-        return 'public/images/tool-return/small';
+        return 'public/images/tool-package-allocation-return/small';
     }
 
     # xóa 1 hình ảnh
@@ -202,10 +212,38 @@ class QcToolPackageAllocationReturn extends Model
         return $this->pluck('returnDate', $returnId);
     }
 
+    public function useStatus($returnId = null)
+    {
+
+        return $this->pluck('useStatus', $returnId);
+    }
+
+
+    public function labelUseStatus($returnId = null)
+    {
+        $useStatus = $this->useStatus($returnId);
+        $useStatus = (is_int($useStatus)) ? $useStatus : $useStatus[0];
+        if ($useStatus == 1) {
+            return 'Bình thường';
+        } elseif ($useStatus == 2) {
+            return 'Hư';
+        } elseif ($useStatus == 3) {
+            return 'Mất';
+        } else {
+            return null;
+        }
+    }
+
     public function image($returnId = null)
     {
 
         return $this->pluck('image', $returnId);
+    }
+
+    public function returnNote($returnId = null)
+    {
+
+        return $this->pluck('returnNote', $returnId);
     }
 
     public function acceptStatus($returnId = null)
@@ -249,6 +287,12 @@ class QcToolPackageAllocationReturn extends Model
     }
 
     # ========= ============ Kiem tra thong tin ============= ==============
+    # kiem tra dong y
+    public function checkAcceptByInfo($acceptStatus)
+    {
+        return ($acceptStatus == 0) ? false : true;
+    }
+
     # kiem tra duoc xac nhan nhay chua
     public function checkConfirm($returnId = null)
     {

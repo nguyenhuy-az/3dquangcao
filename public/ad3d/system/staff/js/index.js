@@ -713,15 +713,15 @@ $(document).ready(function () {
 $(document).ready(function () {
     //loc theo cty
     $('body').on('change', '.cbCompanyFilter', function () {
-        var href = $(this).data('href') + '/' + $(this).val() + '/' + $('.cbWorkStatus').val();
+        var href = $(this).data('href') + '/' + $(this).val();
         qc_ad3d_staff_staff.filter(href);
     });
 
     // loc theo trang thai lam viec
-    $('body').on('change', '.cbWorkStatus', function () {
-        var href = $(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $(this).val();
-        qc_ad3d_staff_staff.filter(href);
-    })
+    /*$('body').on('change', '.cbWorkStatus', function () {
+     var href = $(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $(this).val();
+     qc_ad3d_staff_staff.filter(href);
+     })*/
 });
 
 //-------------------- edit ------------

@@ -122,6 +122,9 @@ class QcWork extends Model
 
                             }
 
+                        } else {
+                            # tat thong tin lam viec tai cty
+                            $modelCompanyStaffWork->updateEndWork($companyStaffWorkId);
                         }
                     }
 
@@ -218,6 +221,7 @@ class QcWork extends Model
     {
         return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('action', 1)->get();
     }
+
     public function listIdOfListCompanyStaffWork($listCompanyStaffWorkId)
     {
         return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->pluck('work_id');

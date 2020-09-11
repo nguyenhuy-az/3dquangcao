@@ -59,7 +59,7 @@ $dataStaffReceive = $dataToolPackageAllocation->companyStaffWork->staff;
                                 $storeId = $toolPackageAllocationDetail->storeId();
                                 $storeName = $toolPackageAllocationDetail->companyStore->name();
                                 # lay thong tin tra la sau cung
-                                $toolReturn = null;// $toolAllocationDetail->lastInfoOfToolReturn();
+                                $toolReturn = $toolPackageAllocationDetail->lastInfoOfToolReturn();
                                 $returnStatus = $hFunction->checkCount($toolReturn);
                                 ?>
                                 <tr class="@if($returnStatus) info @endif">

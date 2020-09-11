@@ -51,7 +51,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
         {{-- BÀN GIAO CÔNG TRÌNH --}}
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <h3 style="color: red;">TRIỂN KHAI THI CÔNG</h3>
+                <h3 style="color: red;">TRIỂN KHAI THI CÔNG ĐƠN HÀNG</h3>
             </div>
         </div>
         <div class="row">
@@ -107,11 +107,11 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                     {{-- nguoi phu trach đơn hàng --}}
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-7">
                         <div class="table-responsive">
-                            <table class="table table-hover qc-margin-bot-none">
+                            <table class="table table-hover">
                                 <tr style="background-color: whitesmoke;">
                                     <th colspan="6">
                                         <i class="qc-font-size-16 glyphicon glyphicon-user"></i>
-                                        <b class="qc-color-red">PHỤ TRÁCH ĐƠN HÀNG</b>
+                                        <b style="color: blue; font-size: 1.5em;">PHỤ TRÁCH ĐƠN HÀNG</b>
                                     </th>
                                 </tr>
                                 <tr style="background-color: black; color: yellow;">
@@ -144,13 +144,22 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         $orderId = $ordersAllocation->orderId();
                                         $allocationActivityStatus = $ordersAllocation->checkActivity();
                                         if ($allocationActivityStatus || $ordersAllocation->checkWaitConfirmFinishOfOrder($orderId)) $addAllocationStatus = false;
+                                        $dataStaffReceiveManage = $ordersAllocation->receiveStaff;
+                                        # anh dai dien
+                                        $image = $dataStaffReceiveManage->image();
+                                        if ($hFunction->checkEmpty($image)) {
+                                            $src = $dataStaffReceiveManage->pathDefaultImage();
+                                        } else {
+                                            $src = $dataStaffReceiveManage->pathFullImage($image);
+                                        }
                                         ?>
                                         <tr>
                                             <td class="text-center">
                                                 {!! $n_o = (isset($n_o))?$n_o+1:1 !!}
                                             </td>
                                             <td>
-                                                {!! $ordersAllocation->receiveStaff->fullname() !!}
+                                                <img style="width: 40px; height: 40px; border: 1px solid #d7d7d7;" src="{!! $src !!}">
+                                                {!! $dataStaffReceiveManage->fullname() !!}
                                             </td>
                                             <td>
                                                 {!! date('d/m/Y H:i', strtotime($allocationDate)) !!}
@@ -404,7 +413,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                         </b>
                     </div>
                     @if($dataOrder->existOrderAllocationFinishOfOrder())
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 5px; padding-bottom: 10px;">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                             style="padding-top: 5px; padding-bottom: 10px;">
                             <span style="padding: 5px; background-color: blue; color: white;">Chờ bàn giao khách hàng</span>
                         </div>
                     @endif
@@ -487,13 +497,21 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                         @foreach($dataWorkAllocation as $workAllocation)
                                                             <?php
                                                             $allocationId = $workAllocation->allocationId();
+                                                            $dataStaffReceive = $workAllocation->receiveStaff;
+                                                            # anh dai dien
+                                                            $image = $dataStaffReceive->image();
+                                                            if ($hFunction->checkEmpty($image)) {
+                                                                $src = $dataStaffReceive->pathDefaultImage();
+                                                            } else {
+                                                                $src = $dataStaffReceive->pathFullImage($image);
+                                                            }
                                                             # bao cao tien do
                                                             $dataWorkAllocationReport = $workAllocation->workAllocationReportInfo($allocationId, 1);
                                                             ?>
                                                             <tr>
                                                                 <td>
-                                                                    <i class="qc-color-grey qc-font-size-14 glyphicon glyphicon-user"></i>&nbsp;
-                                                                    {!! ucwords($workAllocation->receiveStaff->lastName()) !!}
+                                                                    <img style="max-width: 50px;height: 50px; border: 1px solid #d7d7d7;" src="{!! $src !!}">
+                                                                    {!! ucwords($dataStaffReceive->lastName()) !!}
                                                                 </td>
                                                                 <td>
                                                                     <em>{!! $workAllocation->noted() !!}</em>
@@ -521,7 +539,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                         <a class="qc_cancel_allocation_product qc-link-red-bold"
                                                                            title="Hủy giao việc"
                                                                            data-href="{!! route('qc.work.work_allocation.manage.order.product.work-allocation.cancel.get', $allocationId) !!}">
-                                                                            Xóa
+                                                                            Hủy
                                                                         </a>
                                                                     @else
                                                                         @if($workAllocation->checkCancel())

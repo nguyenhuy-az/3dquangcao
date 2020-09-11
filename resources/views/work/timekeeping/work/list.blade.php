@@ -40,38 +40,6 @@ if (!empty($companyStaffWorkId)) {
     } else {
         $infoSalaryBasic = false;
     }
-} else {
-    $dataStaffWorkSalary = $modelCompanyStaffWork->staffWorkSalaryActivityOfStaff($staffId);
-    if (count($dataStaffWorkSalary) > 0) {
-        $totalSalaryBasic = $dataStaffWorkSalary->totalSalary();
-        $salaryBasic = $dataStaffWorkSalary->salary();
-        $responsibility = $dataStaffWorkSalary->responsibility();# phu cap trach nhiem /26 ngay
-        $usePhone = $dataStaffWorkSalary->usePhone();# phu cap su dung dien thoai
-        $fuel = $dataStaffWorkSalary->fuel();# phu cap xang di lai
-        $overtimeHour = $dataStaffWorkSalary->overtimeHour();# phu cap tang ca
-        //$sumPlusMinute = $dataWork->sumPlusMinute($workId);
-        $totalMoneyOvertimeHour = ($sumPlusMinute / 60) * $overtimeHour; # tien phu cap an uong tang ca
-        $totalMoneyInsurance = $dataStaffWorkSalary->totalMoneyInsurance();# phu cap bao hiem %
-        $salaryOneHour = $dataStaffWorkSalary->salaryOnHour(); #luong theo gio
-        $totalCurrentSalary = $dataWork->totalSalaryBasicOfWorkInMonth();
-    } else {
-        # truong hop phien ban cu chua cap nhat
-        $salaryBasic = $dataWork->staff->salaryBasicOfStaff($staffId);
-        if (count($salaryBasic) > 0) { # da co ban luong co ban cua he thong
-            $totalSalaryBasic = $salaryBasic;
-            $responsibility = 0;# phu cap trach nhiem /26 ngay
-            $usePhone = 0;# phu cap su dung dien thoai
-            $totalMoneyInsurance = 0;# phu cap bao hiem %
-            $fuel = 0;# phu cap xang di lai
-            $overtimeHour = 10;
-            $totalMoneyOvertimeHour = 0;
-            $totalMoneyInsurance = 0;
-            $salaryOneHour = floor($salaryBasic / 208);
-            $totalCurrentSalary = $dataWork->totalSalaryBasicOfWorkInMonth();//$dataWork->totalCurrentSalary();
-        } else {
-            $infoSalaryBasic = false;
-        }
-    }
 }
 #cham cong
 $dataTimekeeping = $dataWork->infoTimekeeping();
@@ -85,17 +53,14 @@ if ($hFunction->checkCount($dataWork)) {
 @section('qc_work_timekeeping_work_body')
     <div class="row">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            @if (!empty($companyStaffWorkId))
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="qc-border-none col-sx-12 col-sm-12 col-md-6 col-lg-6">
                         <em>Nhân Viên: </em>
                         <span class="qc-font-bold">
-                            @if(!$hFunction->checkEmpty($companyStaffWorkId))
-                                {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                            @else
-                                {!! $dataWork->staff->fullName() !!}
-                            @endif
+                            {!! $dataWork->companyStaffWork->staff->fullName() !!}
                         </span>
                     </div>
                     <div class="qc-border-none col-sx-12 col-sm-12 col-md-3 col-lg-3">
@@ -518,6 +483,13 @@ if ($hFunction->checkCount($dataWork)) {
                 </div>
 
             </div>
+            @else
+                <div class="row">
+                    <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <span>Không có thông tin làm việc</span>
+                    </div>
+                </div>
+            @endif
             <div class="row">
                 <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <a href="{!! route('qc.work.home') !!}">

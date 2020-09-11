@@ -18,14 +18,13 @@ $dataTimekeepingProvisional = $modelCompany->timekeepingProvisionalOfCompanyAndD
     <div class="table-responsive">
         <table class="table table-hover">
             <tr style="background-color: black; color: yellow;">
-                <th style="width: 20px;">STT</th>
                 <th>
-                    Tên
+                    Tên ({!! count($dataWorkActivity) !!})
                 </th>
                 <th class="text-center">Giờ vào</th>
                 <th class="text-center">Giờ chấm</th>
             </tr>
-            @if($hFunction->getCount($dataWorkActivity))
+            @if($hFunction->checkCount($dataWorkActivity))
                 @foreach($dataWorkActivity as $workActivity)
                     <?php
                     $workActivityId = $workActivity->workId();
@@ -41,14 +40,14 @@ $dataTimekeepingProvisional = $modelCompany->timekeepingProvisionalOfCompanyAndD
                         $offWorkAcceptedStatus = false;
                     }
                     $n_o = (isset($n_o)) ? $n_o + 1 : 1;
-
+                    # thong tin nhan vien
+                    $dataStaffTimekeepingProvisional = $workActivity->companyStaffWork->staff;
                     ?>
                     <tr class="@if($n_o%2) info @endif">
-                        <td class="text-center" style="width: 20px;">
-                            {!! $n_o !!}
-                        </td>
-                        <td>
-                            {!! $workActivity->companyStaffWork->staff->fullName() !!}
+                        <td  style="padding-left: 0;">
+                            <img style="width: 40px; height: 40px; border: 1px solid #d7d7d7;"
+                                 src="{!! $dataStaffTimekeepingProvisional->pathAvatar($dataStaffTimekeepingProvisional->image()) !!}">
+                            {!! $dataStaffTimekeepingProvisional->fullName() !!}
                         </td>
                         <td class="text-center">
                             @if($timeKeepingStatus)
@@ -68,7 +67,7 @@ $dataTimekeepingProvisional = $modelCompany->timekeepingProvisionalOfCompanyAndD
                 @endforeach
             @else
                 <tr>
-                    <td colspan="4">
+                    <td colspan="3">
                         <em>Không có thông tin làm việc</em>
                     </td>
                 </tr>

@@ -151,16 +151,9 @@ class WorkController extends Controller
     //nội qui
     public function rules($loginCode = null)
     {
-        $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
         $modelRules = new QcRules();
-        $dataStaff = $modelStaff->loginStaffInfo();
-        if ($hFunction->checkCount($dataStaff)) {
-            $dataRule = $modelRules->getInfo();
-            return view('work.rules.rules', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataRule'));
-        }{
-
-        }
+        $dataRule = $modelRules->getInfo();
+        return view('work.rules.rules', compact('dataRule'));
     }
 
     //change account

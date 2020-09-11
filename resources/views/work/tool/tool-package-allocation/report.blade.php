@@ -9,16 +9,19 @@
  */
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
-$mobileStatus = $mobile->isMobile();
-$dataStaff = $modelStaff->loginStaffInfo();
+$detailId = $dataToolPackageAllocationDetail->detailId();
 ?>
-@extends('components.container.container-8')
+@extends('components.container.container-6')
 @section('qc_container_content')
     <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-        <h3 style="color: red;">BÁO CÁO ĐỒ NGHỀ</h3>
-        <form id ="qc_frm_work_orders_payment" class="qc_frm_work_orders_payment form-horizontal" name="qc_frm_work_orders_payment" role="form"
-              method="post" enctype="multipart/form-data"
-              action="{!! route('qc.work.orders.payment.post', $orderId) !!}">
+        <form id="qcFrmToolPackageAllocationReport" class="form" name="qcFrmToolPackageAllocationReport"
+              role="form" method="post" enctype="multipart/form-data"
+              action="{!! route('qc.work.tool.package_allocation.report.post', $detailId) !!}">
+            <div class="row">
+                <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <h3 style="color: red;">BÁO CÁO ĐỒ NGHỀ</h3>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     @if (Session::has('notifyAdd'))
@@ -32,10 +35,27 @@ $dataStaff = $modelStaff->loginStaffInfo();
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="form-group form-group-sm">
-                        <label class="col-sm-2 control-label">TRẠNG THÁI:</label>
-                        <div class="col-sm-10">
-                            <input class="form-control" type="text" name="txtNote" value="">
-                        </div>
+                        <label>Trạng thái sử dụng:</label>
+                        <select class="form-control cbReportUseStatus" name="cbReportUseStatus">
+                            <option value="2">
+                                Bị Hư
+                            </option>
+                            <option value="3">
+                                Bị Mất
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="form-group form-group-sm">
+                        <label>Lý do:</label>
+                        <textarea class="form-control txtReportNote" name="txtReportNote"></textarea>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="form-group form-group-sm">
+                        <label>Hình ảnh:</label>
+                        <input type="file" class="txtReportImage" name="txtReportImage">
                     </div>
                 </div>
             </div>
@@ -46,8 +66,7 @@ $dataStaff = $modelStaff->loginStaffInfo();
                         <button type="button" class="qc_save btn btn-sm btn-primary">
                             BÁO CÁO
                         </button>
-                        <a class="btn btn-sm btn-default"
-                           onclick="qc_main.page_back();">
+                        <a class="qc_container_close btn btn-sm btn-default">
                             Đóng
                         </a>
                     </div>

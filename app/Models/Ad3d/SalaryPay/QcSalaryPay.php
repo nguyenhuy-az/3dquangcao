@@ -35,6 +35,11 @@ class QcSalaryPay extends Model
         }
     }
 
+    public function deleteSalaryPay($payId)
+    {
+        return QcSalaryPay::where('pay_id', $payId)->delete();
+    }
+
     //---------- nhan vien xac nhan -----------
     public function staff()
     {

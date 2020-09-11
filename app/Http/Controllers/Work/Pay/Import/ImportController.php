@@ -219,7 +219,8 @@ class ImportController extends Controller
                         } else {
                             // cap nhat kho
                             if (!empty($importSuppliesId)) { // vat tu
-                                $modelCompanyStore->insert($importNewName, $importCompanyId, null, $importSuppliesId, $importId, $importPrice, null);
+                                $storeName = $modelSupplies->name($importSuppliesId);
+                                $modelCompanyStore->insert($storeName, $importCompanyId, null, $importSuppliesId, $importId, $importPrice, null);
                             }
                             if (!empty($importToolId)) { //dung cu
                                 // cap phat dụng cụ cho nhân viên mua - dung cu ca nha
@@ -263,7 +264,7 @@ class ImportController extends Controller
     {
         $modelImport = new QcImport();
         $dataImport = $modelImport->getInfo($importId);
-        //return view('ad3d.store.import.import.pay', compact('modelStaff', 'dataImport'));
+        return view('work.pay.import.pay', compact('modelStaff', 'dataImport'));
     }
 
     public function postPay($importId)

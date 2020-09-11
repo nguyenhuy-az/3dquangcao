@@ -66,19 +66,22 @@ $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
                     MUA VẬT TƯ - ĐỐ NGHỀ
                 </a>
             </div>
-            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.pay.import.get') !!}">
-                    <i class="glyphicon glyphicon-credit-card" style="font-size: 20px;color: brown;"></i> <br/>
-                    CHI
-                </a>
-            </div>
-            <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.money.receive.get') !!}">
-                    <i class="glyphicon glyphicon-th-list" style="font-size: 20px;color: grey;"></i> <br/>
-                    QUẢN LÝ THU -CHI
-                </a>
-            </div>
-
+            @if($dataStaffLogin->checkTreasureDepartment())
+                <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <a class="qc-work-panel-icon-link" href="{!! route('qc.work.pay.import.get') !!}">
+                        <i class="glyphicon glyphicon-credit-card" style="font-size: 20px;color: brown;"></i> <br/>
+                        CHI
+                    </a>
+                </div>
+            @endif
+            @if($dataStaffLogin->checkBusinessDepartment() || $dataStaffLogin->checkTreasureDepartment())
+                <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <a class="qc-work-panel-icon-link" href="{!! route('qc.work.money.receive.get') !!}">
+                        <i class="glyphicon glyphicon-th-list" style="font-size: 20px;color: grey;"></i> <br/>
+                        QUẢN LÝ THU -CHI
+                    </a>
+                </div>
+            @endif
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.salary.salary.get') !!}">
                     <i class="glyphicon glyphicon-usd" style="font-size: 20px;color: red;"></i> <br/>
@@ -101,7 +104,8 @@ $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
             </div>
             @if($dataStaffLogin->checkManageDepartment())
                 <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                    <a class="qc-work-panel-icon-link" href="{!! route('qc.work.store.tool_package_allocation.get') !!}">
+                    <a class="qc-work-panel-icon-link"
+                       href="{!! route('qc.work.store.tool_package_allocation.get') !!}">
                         <i class="glyphicon glyphicon-list-alt" style="font-size: 20px;color: grey;"></i> <br/>
                         QUẢN LÝ ĐỒ NGHỀ
                     </a>

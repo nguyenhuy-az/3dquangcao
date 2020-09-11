@@ -14,6 +14,7 @@ use App\Models\Ad3d\StaffSalaryBasic\QcStaffSalaryBasic;
 use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod;
 use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
+use App\Models\Ad3d\ToolPackage\QcToolPackage;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
@@ -24,7 +25,7 @@ use Request;
 
 class StaffController extends Controller
 {
-    public function index($companyFilterId = null, $workStatus = 1)
+    public function index($companyFilterId = null, $actionStatus = 100)
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
@@ -37,20 +38,17 @@ class StaffController extends Controller
         ];
 
         if ($companyFilterId == null || $companyFilterId == 0) {
-            if (!$dataStaffLogin->checkRootManage()) {
-                $companyFilterId = $dataStaffLogin->companyId();
-            }
+            $companyFilterId = $dataStaffLogin->companyId();
         }
         $dataCompany = $modelCompany->getInfo();
 
-        if (empty($companyFilterId)) {
-            $listStaffId = null;
-        } else {
-            $listStaffId = $modelCompanyStaffWork->staffIdOfCompany($companyFilterId);
-        }
-        $selectStaff = $modelStaff->selectInfoAll($listStaffId, $workStatus);
+        /*if (empty($companyFilterId)) {
+            $companyFilterId = $dataStaffLogin->companyId();;
+        } */
+        $listStaffId = $modelCompanyStaffWork->staffIdOfCompanyAndActionStatus($companyFilterId, 1); // 1 - chi lay thong tin dang hoat dong
+        $selectStaff = $modelStaff->selectInfoAll($listStaffId, 100);
         $dataStaff = $selectStaff->paginate(30);
-        return view('ad3d.system.staff.list', compact('modelStaff', 'modelCompanyStaffWork', 'modelDepartment', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'workStatus'));
+        return view('ad3d.system.staff.list', compact('modelStaff', 'modelCompanyStaffWork', 'modelDepartment', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
 
     }
 
@@ -68,13 +66,13 @@ class StaffController extends Controller
         $modelCompany = new QcCompany();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
-        $dataCompany = $modelCompany->getInfo();
         $dataDepartment = $modelDepartment->getInfo();
         $dataRank = $modelRank->getInfo();
         $dataAccess = [
             'accessObject' => 'staff'
         ];
-        return view('ad3d.system.staff.add', compact('modelStaff', 'dataCompany', 'dataDepartment', 'dataRank', 'dataAccess'));
+        $dataCompany = $modelCompany->getInfo();
+        return view('ad3d.system.staff.add', compact('modelStaff', 'modelCompany', 'dataCompany', 'dataDepartment', 'dataRank', 'dataAccess'));
     }
 
     public function getAddDepartment()
@@ -92,6 +90,7 @@ class StaffController extends Controller
         $modelRank = new QcRank();
         $modelStaff = new QcStaff();
         $modelDepartment = new QcDepartment();
+        $modelToolPackage = new QcToolPackage();
         $modelStaffWorkMethod = new QcStaffWorkMethod();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
@@ -144,7 +143,6 @@ class StaffController extends Controller
 
         #tai khoan dang nhap mac dinh
         $account = $txtIdentityCard;
-        //$staffAddId = $modelStaff->loginStaffID();
         if ($modelStaff->existAccount($account)) { # exists account
             return Session::put('notifyAdd', "Thêm thất bại, tài khỏan '$account' tồn tại.");
         }
@@ -193,6 +191,11 @@ class StaffController extends Controller
                         }
                         // co chon vi tri lam viẹc
                         if (!empty($rankId)) $modelStaffWorkDepartment->insert($newWorkId, $departmentId, $rankId, $fromDateWork);
+                        // neu la bo phan thi cong thi phat tui do nghe
+                        if ($modelDepartment->checkConstruction($departmentId)) {
+                            # giao do nghe
+                            $modelToolPackage->allocationForCompanyStaffWork($newWorkId);
+                        }
                     }
                 }
 
@@ -203,7 +206,7 @@ class StaffController extends Controller
             # them phương thuc lam viec
             $modelStaffWorkMethod->insert($cbWorkMethod, $cbApplyRule, $newStaffId, $staffLoginId);
 
-            // thêm thông tin làm việc
+            # thêm thông tin làm việc
             $toDateWork = $hFunction->lastDateOfMonthFromDate($fromDateWork);
             $modelWork->insert($fromDateWork, $toDateWork, $newWorkId);
 
@@ -525,7 +528,7 @@ class StaffController extends Controller
     }
 
 
-    //thay đổi mật khẩu
+    //=========== ========== thay đổi mật khẩu =========== ================
     public function getChangePass()
     {
         $modelStaff = new QcStaff();
@@ -601,7 +604,7 @@ class StaffController extends Controller
         $modelStaff->resetPass($staffId);
     }
 
-    // mo cham cong
+    //=========== ================ mo cham cong =========== ================
     public function openWork($companyStaffWorkId)
     {
         $hFunction = new \Hfunction();

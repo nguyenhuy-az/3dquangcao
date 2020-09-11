@@ -22,7 +22,7 @@ $dataPackage = $dataToolPackageAllocation->toolPackage;
 ?>
 @extends('work.tool.tool-package-allocation.index')
 @section('qc_work_tool_package_allocation_body')
-    <div class="row qc_work_tool_wrap">
+    <div class="row qc_work_tool_package_allocation">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
@@ -37,7 +37,7 @@ $dataPackage = $dataToolPackageAllocation->toolPackage;
                             </tr>
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
-                                <th>Loại Dụng cụ</th>
+                                <th colspan="2">Loại Dụng cụ</th>
                                 <th class="text-center">
                                     Số lượng
                                 </th>
@@ -54,7 +54,7 @@ $dataPackage = $dataToolPackageAllocation->toolPackage;
                                         <td class="text-center">
                                             {!! $n_o !!}
                                         </td>
-                                        <td>
+                                        <td colspan="2">
                                             {!! $tool->name() !!}
                                         </td>
                                         <td class="text-center">
@@ -67,30 +67,87 @@ $dataPackage = $dataToolPackageAllocation->toolPackage;
                                     </tr>
                                     @if($amountDetail > 0)
                                         @foreach($dataToolPackageAllocationDetail as $toolPackageAllocationDetail)
-                                            <tr class="@if($n_o%2) info @endif">
-                                                <td class="text-center"></td>
-                                                <td>
-                                                    <i class="glyphicon glyphicon-play"></i>
-                                                    <a class="qc_view_image_get qc-link"
-                                                       data-href="{!! route('qc.work.tool.package_allocation.image.view',$toolPackageAllocationDetail->detailId()) !!}">
-                                                        <img style="width: 70px; height: auto;"
-                                                             src="{!! $toolPackageAllocationDetail->pathSmallImage($toolPackageAllocationDetail->image()) !!}">
-                                                    </a>
-                                                    {!! $toolPackageAllocationDetail->companyStore->name() !!}
-                                                </td>
-                                                <td class="text-center">
-                                                    <a class="qc-link-green-bold"
-                                                       data-href="{!! route('qc.work.tool.package_allocation.report.get') !!}">
-                                                        Báo cáo
-                                                    </a>
-                                                </td>
-                                            </tr>
+                                            <?php
+                                            $detailId = $toolPackageAllocationDetail->detailId();
+                                            # lay thong tin bao tra sau cung
+                                            $dataToolPackageAllocationReturn = $toolPackageAllocationDetail->lastInfoOfToolReturn();
+                                            ?>
+                                            @if($hFunction->checkCount($dataToolPackageAllocationReturn))
+                                                <?php
+                                                $returnId = $dataToolPackageAllocationReturn->returnId();
+                                                $returnNote = $dataToolPackageAllocationReturn->returnNote();
+                                                $returnImage = $dataToolPackageAllocationReturn->image();
+                                                ?>
+                                                <tr class="@if($n_o%2) info @endif">
+                                                    <td class="text-center"></td>
+                                                    <td>
+                                                        <i class="glyphicon glyphicon-play"></i>
+                                                        <a class="qc_view_image_get qc-link"
+                                                           data-href="{!! route('qc.work.tool.package_allocation.image.view',$detailId) !!}">
+                                                            <img style="width: 70px; height: auto;"
+                                                                 src="{!! $toolPackageAllocationDetail->pathSmallImage($toolPackageAllocationDetail->image()) !!}">
+                                                        </a>
+                                                        {!! $toolPackageAllocationDetail->companyStore->name() !!}
+                                                    </td>
+                                                    <td>
+                                                        Hiện trang:
+                                                        <span style="color: brown;">
+                                                            {!! $dataToolPackageAllocationReturn->labelUseStatus() !!}
+                                                        </span>
+                                                        @if(!empty($returnImage))
+                                                            <br/>
+                                                            <a class="qc_view_image_get qc-link"
+                                                               data-href="{!! route('qc.work.tool.package_allocation.return_image.view',$returnId) !!}">
+                                                                <img style="width: 70px; height: auto;"
+                                                                     src="{!! $dataToolPackageAllocationReturn->pathSmallImage($dataToolPackageAllocationReturn->image()) !!}">
+                                                            </a>
+                                                        @endif
+                                                        @if(!empty($returnNote))
+                                                            <br/>
+                                                            <span>
+                                                                {!! $returnNote !!}
+                                                            </span>
+                                                        @endif
+
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if($dataToolPackageAllocationReturn->checkConfirm())
+                                                            <em>Đã xác nhận</em>
+                                                        @else
+                                                            <span style="background-color: red; color: yellow;">Chưa xác nhận</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @else
+                                                <tr class="@if($n_o%2) info @endif">
+                                                    <td class="text-center"></td>
+                                                    <td colspan="2">
+                                                        <i class="glyphicon glyphicon-play"></i>
+                                                        <a class="qc_view_image_get qc-link"
+                                                           data-href="{!! route('qc.work.tool.package_allocation.image.view',$detailId) !!}">
+                                                            <img style="width: 70px; height: auto;"
+                                                                 src="{!! $toolPackageAllocationDetail->pathSmallImage($toolPackageAllocationDetail->image()) !!}">
+                                                        </a>
+                                                        {!! $toolPackageAllocationDetail->companyStore->name() !!}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if($hFunction->checkCount($dataToolPackageAllocationReturn))
+
+                                                        @else
+                                                            <a class="qc_allocation_report_get qc-link-green-bold"
+                                                               data-href="{!! route('qc.work.tool.package_allocation.report.get',$detailId) !!}">
+                                                                Báo cáo
+                                                            </a>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     @endif
                                 @endforeach
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="3">
+                                    <td class="text-center" colspan="4">
                                         Hệ thống chưa có danh sách loại đồ nghề
                                     </td>
                                 </tr>

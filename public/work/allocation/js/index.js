@@ -66,7 +66,12 @@ var qc_work_allocation = {
             addStaff: function (href) {
                 qc_master_submit.ajaxNotReload(href, '#qc_product_work_allocation_staff_wrap', false);
             },
-            save: function (form) {
+            save: function (frm) {
+                if (confirm('Bạn đồng ý với thông tin phân việc này?')) {
+                    qc_master_submit.normalForm(form);
+                }
+            },
+            save_v1: function (form) {
                 if ($(form).find('.qc_work_allocation_product_work_allocation_staff_add').length > 0) {
                     //qc_ad3d_submit.ajaxFormHasReload(form, '', false);
                     //qc_main.scrollTop();
@@ -207,14 +212,14 @@ $(document).ready(function () {
 $(document).ready(function () {
     //Theo trạng thái hoàn thành
     $('body').on('change', '.cbWorkAllocationFinishStatus', function () {
-        qc_main.url_replace($(this).data('href')+ '/' + $(this).val() + '/' + $('.cbWorkAllocationMonthFilter').val() + '/' + $('.cbWorkAllocationYearFilter').val());
+        qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.cbWorkAllocationMonthFilter').val() + '/' + $('.cbWorkAllocationYearFilter').val());
     });
     // lọc theo ngay thang
     $('body').on('change', '.cbWorkAllocationMonthFilter', function () {
-        qc_main.url_replace($(this).data('href')+ '/' + $('.cbWorkAllocationFinishStatus').val() + '/' + $(this).val() + '/' + $('.cbWorkAllocationYearFilter').val());
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbWorkAllocationFinishStatus').val() + '/' + $(this).val() + '/' + $('.cbWorkAllocationYearFilter').val());
     });
     $('body').on('change', '.cbWorkAllocationYearFilter', function () {
-        qc_main.url_replace($(this).data('href')+ '/' + $('.cbWorkAllocationFinishStatus').val() + '/' + $('.cbWorkAllocationMonthFilter').val() + '/' + $(this).val());
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbWorkAllocationFinishStatus').val() + '/' + $('.cbWorkAllocationMonthFilter').val() + '/' + $(this).val());
     });
     //form bao cao
     $('body').on('click', '.qc_work_allocation_report_act', function () {
@@ -469,16 +474,15 @@ $(document).ready(function () {
         }
     });
 
-    /* ---------- --------  trien khai thi cong san pham ------- ---------*/
+    /* ---------- --------  trien khai thi cong san pham - v1 ------- ---------*/
     $(document).ready(function () {
-        $('#frmWorkAllocationManageProductConstruction').on('click', '.qc_product_work_allocation_staff_add', function () {
-            qc_work_allocation.manage.productWorkAllocation.addStaff($(this).data('href'));
-            //qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_product_work_allocation_staff_wrap', false);
-        });
+        /*$('#frmWorkAllocationManageProductConstruction').on('click', '.qc_product_work_allocation_staff_add', function () {
+         qc_work_allocation.manage.productWorkAllocation.addStaff($(this).data('href'));
+         });*/
         //xoa nhan vien
-        $('body').on('click', '.qc_work_allocation_product_work_allocation_staff_add .qc_delete', function () {
-            $(this).parents('.qc_work_allocation_product_work_allocation_staff_add').remove();
-        });
+        /*$('body').on('click', '.qc_work_allocation_product_work_allocation_staff_add .qc_delete', function () {
+         $(this).parents('.qc_work_allocation_product_work_allocation_staff_add').remove();
+         });*/
         //giao viec
         $('#frmWorkAllocationManageProductConstruction').on('click', '.qc_save', function () {
             qc_work_allocation.manage.productWorkAllocation.save($(this).parents('#frmWorkAllocationManageProductConstruction'));

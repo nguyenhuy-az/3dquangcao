@@ -30,7 +30,8 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                     <label class="qc-font-size-20">CHẤM CÔNG</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-right: 0;">
-                    <select class="cbCompanyFilter form-control" name="cbCompanyFilter" data-href-filter="{!! $indexHref !!}">
+                    <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
+                            data-href-filter="{!! $indexHref !!}">
                         @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
                         @endif
@@ -83,7 +84,8 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                 </div>
                             </td>
                             <td class="text-center" style="padding: 0;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px; padding: 0;"
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="height: 34px; padding: 0;"
                                         data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -95,7 +97,8 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px; padding: 0;"
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="height: 34px; padding: 0;"
                                         data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -107,7 +110,8 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;"
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="height: 34px; padding: 0;"
                                         data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -145,6 +149,18 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                 $companyStaffWorkId = $dataWork->companyStaffWorkId();
                                 # hinh anh bao cao
                                 $dataTimekeepingImage = $timekeeping->imageOfTimekeeping($timekeepingId);
+                                if (!empty($companyStaffWorkId)) {
+                                    $dataStaffTimekeeping = $dataWork->companyStaffWork->staff;
+                                } else {
+                                    $dataStaffTimekeeping = $dataWork->staff;
+                                }
+                                # anh dai dien
+                                $image = $dataStaffTimekeeping->image();
+                                if ($hFunction->checkEmpty($image)) {
+                                    $src = $dataStaffTimekeeping->pathDefaultImage();
+                                } else {
+                                    $src = $dataStaffTimekeeping->pathFullImage($image);
+                                }
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
                                     data-object="{!! $timekeepingId !!}">
@@ -152,11 +168,9 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        @if(!empty($companyStaffWorkId))
-                                            {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                                        @else
-                                            {!! $dataWork->staff->fullName() !!}
-                                        @endif
+                                        <img style="width: 40px; height: 40px; border: 1px solid black;"
+                                             src="{!! $src !!}">
+                                        {!! $dataStaffTimekeeping->fullName() !!}
 
                                     </td>
                                     <td class="text-center">

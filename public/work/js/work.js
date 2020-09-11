@@ -53,7 +53,6 @@ var qc_work = {
                 }
             }
         }
-
     },
     work: {
         filter: function (href) {
@@ -64,56 +63,6 @@ var qc_work = {
         history: {
             receiveFilter: function (href) {
                 qc_main.url_replace(href);
-            }
-        }
-    },
-    pay: {
-        salary: {
-            filter: function (href) {
-                qc_main.url_replace(href);
-            },
-            getAdd: function (href) {
-                qc_master_submit.ajaxNotReload(href, '#qc_master', false);
-            },
-            saveAdd: function (frm) {
-                var txtMoney = $(frm).find("input[name='txtMoney']");
-                var valCheck = txtMoney.data('pay-limit');
-                var txtMoneyPayVal = qc_main.getNumberInput(txtMoney.val());
-                if (qc_main.check.inputNull(txtMoney, 'Nhập số tiền thanh toán')) {
-                    return false;
-                } else {
-                    if (txtMoneyPayVal > valCheck) {
-                        alert('Số tiền thanh toán không quá số tiền còn lại');
-                        txtMoney.focus();
-                        return false;
-                    } else {
-                        if (confirm('Bạn muốn thanh toán lương này?')) {
-                            var containNotify = $(frm).find('.frm_notify');
-                            qc_master_submit.ajaxFormHasReload(frm, containNotify, true);
-                            $('#qc_container_content').animate({
-                                scrollTop: 0
-                            })
-                        }
-                    }
-                }
-            },
-            showPay: function (frm) {
-                var txtSalaryVal = parseInt($(frm).find("input[name='txtSalary']").val());
-                var txtImportVal = parseInt($(frm).find("input[name='txtImport']").val());
-                var txtKPIVal = parseInt($(frm).find("input[name='txtKPI']").val());
-                var txtBenefitMoney = $(frm).find("input[name='txtBenefitMoney']");
-                var txtKeepMoney = $(frm).find("input[name='txtKeepMoney']");
-                var txtBenefitMoneyVal = txtBenefitMoney.val();
-                if (txtBenefitMoneyVal == '') txtBenefitMoneyVal = '0';
-                var numberBenefitMoneyVal = parseInt(qc_main.getNumberInput(txtBenefitMoneyVal)); //chuyen sang kieu so
-                var txtKeepMoneyVal = txtKeepMoney.val();
-                if (txtKeepMoneyVal == '') txtKeepMoneyVal = '0';
-                var numberKeepMoneyVal = parseInt(qc_main.getNumberInput(txtKeepMoneyVal)); //chuyen sang kieu so
-                var showTotalMoneyPay = txtSalaryVal + txtImportVal + txtKPIVal + numberBenefitMoneyVal - numberKeepMoneyVal;
-                //alert(showTotalMoneyPay);
-                //$(frm).find('.qc_salary_showTotalMoneyPay').val(showTotalMoneyPay);
-                $(frm).find('.qc_salary_showTotalMoneyPay').val(qc_main.formatCurrency(String(showTotalMoneyPay)));
-
             }
         }
     },
@@ -141,40 +90,6 @@ $(document).ready(function () {
     // loc loai SP theo ten
     $('.qc_work_product_type_wrap').on('click', '.btFilterName', function () {
         qc_main.url_replace($(this).data('href') + '/' + $('.qc_work_textNameFilter').val());
-    });
-});
-
-//===================== CHI ===========================
-// thanh toan lương
-$(document).ready(function () {
-    //theo tháng
-    $('body').on('change', '.qc_work_pay_salary_login_month', function () {
-        qc_work.pay.salary.filter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_pay_salary_login_year').val() + '/' + $('.qc_work_pay_salary_login_pay_status').val());
-    });
-    // năm
-    $('body').on('change', '.qc_work_pay_salary_login_year', function () {
-        qc_work.pay.salary.filter($(this).data('href') + '/' + $('.qc_work_pay_salary_login_month').val() + '/' + $(this).val() + '/' + $('.qc_work_pay_salary_login_pay_status').val());
-    })
-    //theo trang thai thanh toan
-    $('body').on('change', '.qc_work_pay_salary_login_pay_status', function () {
-        qc_work.pay.salary.filter($(this).data('href') + '/' + $('.qc_work_pay_salary_login_month').val() + '/' + $('.qc_work_pay_salary_login_year').val() + '/' + $(this).val());
-    });
-
-    //--------------- THANH TOAN LUONG ----------------
-    /*$('.qc_work_pay_salary_wrap').on('click', '.qc_pay_add_get', function () {
-     qc_work.pay.salary.getAdd($(this).data('href'));
-     });*/
-    $('body').on('keyup', '#frm_work_pay_salary_pay .txtBenefitMoney', function () {
-        qc_work.pay.salary.showPay($(this).parents('#frm_work_pay_salary_pay'));
-    });
-    $('body').on('keyup', '#frm_work_pay_salary_pay .txtKeepMoney', function () {
-        qc_work.pay.salary.showPay($(this).parents('#frm_work_pay_salary_pay'));
-    });
-
-    $('body').on('click', '#frm_work_pay_salary_pay .qc_save', function () {
-        if (confirm('Khi thanh toán sẽ không được thay đổi, Bạn đồng ý thanh toán?')) {
-            qc_master_submit.ajaxFormHasReload('#frm_work_pay_salary_pay', '', false);
-        }
     });
 });
 
@@ -280,35 +195,35 @@ $(document).ready(function () {
     //------------- CHI -------------------
     //theo ngày
     $('body').on('change', '.qc_work_money_pay_import_login_day', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_pay_import_login_month').val() + '/' + $('.qc_work_money_pay_import_login_year').val() + '/' + $('.qc_work_money_pay_import_status').val());
+        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_pay_import_login_month').val() + '/' + $('.qc_work_money_pay_import_login_year').val() + '/' + $('.qc_work_money_pay_import_status').val());
     });
     //theo tháng
     $('body').on('change', '.qc_work_money_pay_import_login_month', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $('.qc_work_money_pay_import_login_day').val() + '/' + $(this).val() + '/' + $('.qc_work_money_pay_import_login_year').val() + '/' + $('.qc_work_money_pay_import_status').val());
+        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $('.qc_work_money_pay_import_login_day').val() + '/' + $(this).val() + '/' + $('.qc_work_money_pay_import_login_year').val() + '/' + $('.qc_work_money_pay_import_status').val());
     });
 
     // năm
     $('body').on('change', '.qc_work_money_pay_import_login_year', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $('.qc_work_money_pay_import_login_day').val() + '/' + $('.qc_work_money_pay_import_login_month').val() + '/' + $(this).val() + '/' + $('.qc_work_money_pay_import_status').val());
+        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $('.qc_work_money_pay_import_login_day').val() + '/' + $('.qc_work_money_pay_import_login_month').val() + '/' + $(this).val() + '/' + $('.qc_work_money_pay_import_status').val());
     });
     // trang thai thanh toan
     $('body').on('change', '.qc_work_money_pay_import_status', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $('.qc_work_money_pay_import_login_day').val() + '/' + $('.qc_work_money_pay_import_login_month').val() + '/' + $('.qc_work_money_pay_import_login_year').val() + '/' + $(this).val());
+        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $('.qc_work_money_pay_import_login_day').val() + '/' + $('.qc_work_money_pay_import_login_month').val() + '/' + $('.qc_work_money_pay_import_login_year').val() + '/' + $(this).val());
     });
 
     //-------------lịch sử thu chi -------------------
     //theo ngày
     $('body').on('change', '.qc_work_money_history_receive_login_day', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_history_receive_login_month').val() + '/' + $('.qc_work_money_history_receive_login_year').val());
+        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_history_receive_login_month').val() + '/' + $('.qc_work_money_history_receive_login_year').val());
     });
     //theo tháng
     $('body').on('change', '.qc_work_money_history_receive_login_month', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $('.qc_work_money_history_receive_login_day').val() + '/' + $(this).val() + '/' + $('.qc_work_money_history_receive_login_year').val());
+        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $('.qc_work_money_history_receive_login_day').val() + '/' + $(this).val() + '/' + $('.qc_work_money_history_receive_login_year').val());
     });
 
     // năm
     $('body').on('change', '.qc_work_money_history_receive_login_year', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $('.qc_work_money_history_receive_login_day').val() + '/' + $('.qc_work_money_history_receive_login_month').val() + '/' + $(this).val());
+        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $('.qc_work_money_history_receive_login_day').val() + '/' + $('.qc_work_money_history_receive_login_month').val() + '/' + $(this).val());
     });
 
 
@@ -316,12 +231,12 @@ $(document).ready(function () {
 
     //theo tháng
     $('body').on('change', '.qc_work_money_statistical_login_month', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_statistical_login_year').val());
+        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_statistical_login_year').val());
     });
 
     // năm
     $('body').on('change', '.qc_work_money_statistical_login_year', function () {
-        qc_work.money.history.reciveFilter($(this).data('href') + '/' + $('.qc_work_money_statistical_login_month').val() + '/' + $(this).val());
+        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $('.qc_work_money_statistical_login_month').val() + '/' + $(this).val());
     });
 
 

@@ -28,12 +28,12 @@ if (isset($dataAccess)) {
                     Đang giao
                 </a>
             </li>
-            {{--<li @if($viewLoginObject == 'storeReturn') class="active" @endif>
-                <a class="qc-link-bold" href="#"
-                   @if($viewLoginObject == 'storeReturn') style="background-color: whitesmoke;" @endif>
-                    Trả đồ nghề
+            <li @if($viewLoginObject == 'storeToolPackageAllocationReturn') class="active" @endif>
+                <a class="qc-link-bold" href="{!! route('qc.work.store.tool_package_allocation_return.get') !!}"
+                   @if($viewLoginObject == 'storeToolPackageAllocationReturn') style="background-color: whitesmoke;" @endif>
+                    Báo cáo/Trả đồ nghề
                 </a>
-            </li>--}}
+            </li>
             <li @if($viewLoginObject == 'storeToolPackage') class="active" @endif>
                 <a class="qc-link-bold" href="{!! route('qc.work.store.tool_package.get') !!}"
                    @if($viewLoginObject == 'storeToolPackage') style="background-color: whitesmoke;" @endif>

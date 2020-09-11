@@ -38,13 +38,23 @@ $currentMonth = $hFunction->currentMonth();
                                     <?php
                                     $allocationId = $toolPackageAllocation->allocationId();
                                     $n_o = $n_o + 1;
+                                    $dataStaffAllocation = $toolPackageAllocation->companyStaffWork->staff;
+                                    # anh dai dien
+                                    $image = $dataStaffAllocation->image();
+                                    if ($hFunction->checkEmpty($image)) {
+                                        $src = $dataStaffAllocation->pathDefaultImage();
+                                    } else {
+                                        $src = $dataStaffAllocation->pathFullImage($image);
+                                    }
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
                                         <td class="text-center">
                                             {!! $n_o !!}
                                         </td>
-                                        <td>
-                                            {!!  $toolPackageAllocation->companyStaffWork->staff->fullName() !!}
+                                        <td style="padding: 0;">
+                                            <img style="width: 40px; height: 40px; border: 1px solid #d7d7d7;"
+                                                 src="{!! $src !!}">
+                                            {!!  $dataStaffAllocation->fullName() !!}
                                         </td>
                                         <td>
                                             {!! $toolPackageAllocation->toolPackage->name() !!}

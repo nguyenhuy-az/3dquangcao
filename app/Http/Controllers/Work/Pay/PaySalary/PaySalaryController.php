@@ -6,7 +6,6 @@ use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\KeepMoney\QcKeepMoney;
-use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
 
 use App\Models\Ad3d\Salary\QcSalary;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
@@ -56,7 +55,7 @@ class PaySalaryController extends Controller
         $dataSalary = $modelSalary->selectInfoByListWork($listWorkId)->get();
         # thong tin thanh toan trong tháng
         $dataSalaryPay = $modelSalaryPay->infoOfStaffAndDate($loginStaffId, $dateFilter);
-        return view('work.pay.pay-salary.index', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSalary', 'dataSalaryPay', 'dateFilter', 'filterMonth', 'filterYear', 'payStatus'));
+        return view('work.pay.pay-salary.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSalary', 'dataSalaryPay', 'dateFilter', 'filterMonth', 'filterYear', 'payStatus'));
 
     }
 
@@ -126,7 +125,7 @@ class PaySalaryController extends Controller
             $totalMoneyImportUnpaid = 0;
         }
         $totalKPIMoney = 0;
-        return view('work.pay.pay-salary.pay', compact('dataAccess', 'dataSalary', 'totalMoneyImportUnpaid', 'totalKPIMoney'));
+        return view('work.pay.pay-salary.pay', compact('modelStaff', 'dataAccess', 'dataSalary', 'totalMoneyImportUnpaid', 'totalKPIMoney'));
     }
 
     public function postPay($salaryId)
@@ -189,10 +188,14 @@ class PaySalaryController extends Controller
         $modelImport->updateConfirmPayOfImport($importId);
     }*/
 
-    //xóa
-    public function deletePayActivity($payId)
+    //huy thong tin thanh toan
+    public function deletePay($payId)
     {
-        $modelPayActivityDetail = new QcPayActivityDetail();
-        $modelPayActivityDetail->deletePay($payId);
+        $modelSalary = new QcSalary();
+        $modelSalaryPay = new QcSalaryPay();
+        $salaryId = $modelSalaryPay->salaryId($payId);
+        if ($modelSalaryPay->deleteSalaryPay($payId)) {
+            $modelSalary->updateUnFinishPay($salaryId);
+        }
     }
 }

@@ -96,6 +96,14 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 } else {
                                     $endCheckStatus = true;
                                 }
+                                $dataStaffTimekeepingProvisional = $dataWork->companyStaffWork->staff;
+                                # anh dai dien
+                                $image = $dataStaffTimekeepingProvisional->image();
+                                if ($hFunction->checkEmpty($image)) {
+                                    $src = $dataStaffTimekeepingProvisional->pathDefaultImage();
+                                } else {
+                                    $src = $dataStaffTimekeepingProvisional->pathFullImage($image);
+                                }
                                 ?>
                                 {{--chi lay thong tin chua tinh luong--}}
                                 @if(!$timekeepingProvisional->work->checkSalaryStatus())
@@ -105,7 +113,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             {!! $n_o += 1 !!}
                                         </td>
                                         <td>
-                                            {!! $dataWork->companyStaffWork->staff->fullName() !!}
+                                            <img style="width: 40px; height: 40px; border: 1px solid black;" src="{!! $src !!}">
+                                            {!! $dataStaffTimekeepingProvisional->fullName() !!}
                                         </td>
                                         <td class="text-center">
                                             <span class="qc-color-grey">Vào: {!! $hFunction->getTimeFromDate($createdAt) !!}</span>

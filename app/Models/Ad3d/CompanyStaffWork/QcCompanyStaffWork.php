@@ -743,7 +743,7 @@ class QcCompanyStaffWork extends Model
         $listWorkIdOfDepartment = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment([$modelDepartment->constructionDepartmentId()], null);
         # danh sach lam viec da phat do nghe
         $listWorkId = $modelToolPackageAllocation->listWorkIdIsActive();
-        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkIdOfDepartment)->whereNotIn('work_id',$listWorkId)->where('action', 1)->get();
+        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkIdOfDepartment)->whereNotIn('work_id', $listWorkId)->where('action', 1)->get();
     }
 
     # lay thong tin lam viec theo bo phan thi cong cap nhan vien tai 1 cty - dang lam viec
@@ -786,6 +786,16 @@ class QcCompanyStaffWork extends Model
     public function staffIdOfCompany($companyId)
     {
         return QcCompanyStaffWork::where('company_id', $companyId)->pluck('staff_id');
+    }
+
+    # lay danh sach ma nv theo 1 cty va trang thai lam viẹc
+    public function staffIdOfCompanyAndActionStatus($companyId, $actionStatus = 100) // mac dinh chon tat ca = 100
+    {
+        if ($actionStatus == 100) {
+            return QcCompanyStaffWork::where('company_id', $companyId)->pluck('staff_id');
+        } else {
+            return QcCompanyStaffWork::where('company_id', $companyId)->where('action', $actionStatus)->pluck('staff_id');
+        }
     }
 
     # lay danh sach ma nv đang hoat dong theo 1 cty
