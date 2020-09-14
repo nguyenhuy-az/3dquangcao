@@ -305,7 +305,7 @@ var qc_ad3d_staff_staff = {
                             qc_ad3d_submit.ajaxFormHasReload(frm, '.frm_staff_salary_notify', true);
                             $('#qc_container_content').animate({
                                 scrollTop: 0
-                            })
+                            });
                         }
                     }
                 }

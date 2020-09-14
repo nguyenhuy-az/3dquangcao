@@ -432,7 +432,7 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('/', ['as' => 'qc.ad3d.system.rank.get', 'uses' => 'Ad3d\System\Rank\RankController@index']);
         });
 
-        //bộ phận
+        //bo phan
         Route::group(['prefix' => 'department'], function () {
             Route::get('view/{departmentId?}', ['as' => 'qc.ad3d.system.department.view.get', 'uses' => 'Ad3d\System\Department\DepartmentController@view']);
 
@@ -449,6 +449,18 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('/', ['as' => 'qc.ad3d.system.department.get', 'uses' => 'Ad3d\System\Department\DepartmentController@index']);
         });
 
+        # cong viec cua bo phan
+        Route::group(['prefix' => 'department-work'], function () {
+            #sua thong tin
+            Route::get('edit/{workId?}', ['as' => 'qc.ad3d.system.department_work.edit.get', 'uses' => 'Ad3d\System\DepartmentWork\DepartmentWorkController@getEdit']);
+            Route::post('edit/{workId?}', ['as' => 'qc.ad3d.system.department_work.post.get', 'uses' => 'Ad3d\System\DepartmentWork\DepartmentWorkController@postEdit']);
+            //them moi
+            Route::post('add', ['as' => 'qc.ad3d.system.department_work.add.post', 'uses' => 'Ad3d\System\DepartmentWork\DepartmentWorkController@postAdd']);
+            # xoa
+            Route::get('delete/{workId?}', ['as' => 'qc.ad3d.system.department_work.delete', 'uses' => 'Ad3d\System\DepartmentWork\DepartmentWorkController@deleteInfo']);
+            # danh sach CV
+            Route::get('/{departmentId?}', ['as' => 'qc.ad3d.system.department_work.get', 'uses' => 'Ad3d\System\DepartmentWork\DepartmentWorkController@index']);
+        });
         //danh muc chi hoat dong
         Route::group(['prefix' => 'pay-activity-list'], function () {
             Route::get('view/{payListId?}', ['as' => 'qc.ad3d.system.pay_activity_list.view.get', 'uses' => 'Ad3d\System\PayActivityList\PayActivityListController@view']);
@@ -581,7 +593,7 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('list/{companyId?}/{workStatus?}', ['as' => 'qc.ad3d.system.staff.get', 'uses' => 'Ad3d\System\Staff\StaffController@index']);
 
         });
-        //lương cơ bản NV
+        # lương cơ bản NV
         Route::group(['prefix' => 'salary'], function () {
             Route::get('view/{staffId?}', ['as' => 'qc.ad3d.system.salary.view.get', 'uses' => 'Ad3d\System\Salary\StaffSalaryController@view']);
 
@@ -593,7 +605,11 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('list/{companyId?}', ['as' => 'qc.ad3d.system.salary.get', 'uses' => 'Ad3d\System\Salary\StaffSalaryController@index']);
 
         });
-        // thuong theo bo phan
+        # ho so tuyen dung
+        Route::group(['prefix' => 'salary'], function () {
+            Route::get('/', ['as' => 'qc.ad3d.system.recruitment.list', 'uses' => 'Ad3d\System\Recruitment\RecruitmentController@index']);
+        });
+        # thuong theo bo phan
         Route::group(['prefix' => 'bonus-department'], function () {
             //Route::get('view/{typeId?}', ['as' => 'qc.ad3d.system.bonus_department.view.get', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@view']);
 
@@ -789,12 +805,14 @@ Route::group(['prefix' => 'ad3d'], function () {
 
 //========== ======== Front-end =========== ========
 # đang ky thanh vien
-Route::group(['prefix'=>'tuyendung'], function(){ //work-recruitment
-    Route::group(['prefix'=>'dang-ky'], function(){ // register
-        Route::get('add/', ['as' => 'qc.work.recruitment.register.add.get', 'uses' => 'Work\Recruitment\Register\RegisterController@getAdd']);
+Route::group(['prefix' => 'tuyendung'], function () { //recruitment
+    Route::group(['prefix' => 'dang-ky'], function () { // register
+        Route::get('add/{phone?}/{departmentSelectedId?}', ['as' => 'qc.work.recruitment.register.add.get', 'uses' => 'Work\Recruitment\Register\RegisterController@getAdd']);
         Route::post('add/', ['as' => 'qc.work.recruitment.register.add.post', 'uses' => 'Work\Recruitment\Register\RegisterController@postAdd']);
-        Route::get('/', ['as' => 'qc.work.recruitment.register.get', 'uses' => 'Work\Recruitment\Register\RegisterController@index']);
+        //Route::get('/', ['as' => 'qc.work.recruitment.register.get', 'uses' => 'Work\Recruitment\Register\RegisterController@index']);
     });
+    Route::get('dang-nhap/', ['as' => 'qc.work.recruitment.login.get', 'uses' => 'Work\Recruitment\Recruitment\RecruitmentController@getLogin']);
+    Route::post('dang-nhap/', ['as' => 'qc.work.recruitment.login.post', 'uses' => 'Work\Recruitment\Recruitment\RecruitmentController@postLogin']);
     //Route::get('/', ['as' => 'qc.work.recruitment.register.get', 'uses' => 'Work\Recruitment\Register\RegisterController@index']);
 });
 

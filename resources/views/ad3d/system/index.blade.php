@@ -51,11 +51,11 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                             Nhân viên
                                         </a>
                                     </li>
-                                    {{--<li @if($accessObject == 'salary') class="active" @endif>
+                                    <li @if($accessObject == 'salary') class="active" @endif>
                                         <a href="{!! route('qc.ad3d.system.salary.get') !!}">
-                                            Lương cơ bản
+                                            Hồ sơ tuyển dụng
                                         </a>
-                                    </li>--}}
+                                    </li>
                                 </ul>
                             </li>
 
@@ -72,6 +72,11 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                     <li @if($accessObject == 'department') class="active" @endif>
                                         <a class="qc-link-bold" href="{!! route('qc.ad3d.system.department.get') !!}">
                                             Bộ phận
+                                        </a>
+                                    </li>
+                                    <li @if($accessObject == 'departmentWork') class="active" @endif style="border-bottom: 1px solid grey;">
+                                        <a class="qc-link-bold" href="{!! route('qc.ad3d.system.department_work.get') !!}">
+                                            Công việc của bộ phận
                                         </a>
                                     </li>
                                     <li @if($accessObject == 'rank') class="active" @endif>
@@ -111,11 +116,13 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li @if($accessObject == 'bonusDepartment') class="active" @endif>
-                                        <a class="qc-link-bold" href="{!! route('qc.ad3d.system.bonus_department.get') !!}">
+                                        <a class="qc-link-bold"
+                                           href="{!! route('qc.ad3d.system.bonus_department.get') !!}">
                                             Thưởng theo bộ phận
                                         </a>
                                     </li>
-                                    <li style="border-top: 1px solid grey;" @if($accessObject == 'punishType') class="active" @endif>
+                                    <li style="border-top: 1px solid grey;"
+                                        @if($accessObject == 'punishType') class="active" @endif>
                                         <a class="qc-link-bold" href="{!! route('qc.ad3d.system.punish-type.get') !!}">
                                             Lĩnh vực tiền phạt
                                         </a>
@@ -144,7 +151,8 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="qc-link-bold" href="{!! route('qc.ad3d.system.construction_work.get') !!}">
+                                        <a class="qc-link-bold"
+                                           href="{!! route('qc.ad3d.system.construction_work.get') !!}">
                                             Danh mục Thi công
                                         </a>
                                     </li>

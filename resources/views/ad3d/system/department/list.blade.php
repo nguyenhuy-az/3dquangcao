@@ -14,11 +14,13 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 @extends('ad3d.system.department.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top: 10px; padding-bottom: 10px; border-bottom: 2px dashed brown;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
+                    <a class="qc-link-green"
+                       href="{!! route('qc.ad3d.system.department.get') !!}">
+                        <i class="glyphicon glyphicon-refresh qc-font-size-20"></i>
+                    </a>
                     <label class="qc-font-size-20">BỘ PHẬN</label>
                 </div>
             </div>

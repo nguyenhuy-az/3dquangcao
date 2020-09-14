@@ -3,6 +3,7 @@
 namespace App\Models\Ad3d\Department;
 
 use App\Models\Ad3d\BonusDepartment\QcBonusDepartment;
+use App\Models\Ad3d\DepartmentWork\QcDepartmentWork;
 use Illuminate\Database\Eloquent\Model;
 
 class QcDepartment extends Model
@@ -64,6 +65,19 @@ class QcDepartment extends Model
         return QcDepartment::where('department_id', $departmentId)->delete();
     }
 
+    # ----------- thong tin cong viec cua bo phan --------------
+    public function departmentWork()
+    {
+        return $this->hasMany('App\Models\Ad3d\DepartmentWork\QcDepartmentWork', 'department_id', 'department_id');
+    }
+
+    # thong tin cong viec cua bo phan
+    public function departmentWorkGetInfo($departmentId = null)
+    {
+        $modelDepartmentWork = new QcDepartmentWork();
+        return $modelDepartmentWork->getInfoOfDepartment($this->checkNullId($departmentId));
+    }
+
     # ----------- thong tin NV lam viec --------------
     public function staffWorkDepartment()
     {
@@ -110,7 +124,7 @@ class QcDepartment extends Model
 
     public function selectInfoAll()
     {
-        return QcDepartment::select('*');
+        return QcDepartment::orderBy('name', 'ASC')->select('*');
     }
 
 

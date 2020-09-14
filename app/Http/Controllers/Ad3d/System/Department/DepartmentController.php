@@ -21,7 +21,7 @@ class DepartmentController extends Controller
         $dataAccess = [
             'accessObject' => 'department'
         ];
-        $dataDepartment = QcDepartment::orderBy('name', 'ASC')->select('*')->paginate(30);
+        $dataDepartment = $modelDepartment->selectInfoAll()->paginate(30);
         return view('ad3d.system.department.list', compact('modelStaff', 'modelDepartment', 'dataDepartment', 'dataAccess'));
     }
 
@@ -31,7 +31,7 @@ class DepartmentController extends Controller
         $modelDepartment = new QcDepartment();
         if (!empty($departmentId)) {
             $dataDepartment = $modelDepartment->getInfo($departmentId);
-            return view('ad3d.system.department.view', compact('modelStaff','dataDepartment'));
+            return view('ad3d.system.department.view', compact('modelStaff', 'dataDepartment'));
         }
     }
 
@@ -42,7 +42,7 @@ class DepartmentController extends Controller
         $dataAccess = [
             'accessObject' => 'department'
         ];
-        return view('ad3d.system.department.add', compact('modelStaff','dataAccess'));
+        return view('ad3d.system.department.add', compact('modelStaff', 'dataAccess'));
     }
 
     public function postAdd()
@@ -70,7 +70,7 @@ class DepartmentController extends Controller
         $modelDepartment = new QcDepartment();
         $dataDepartment = $modelDepartment->getInfo($departmentId);
         if (count($dataDepartment) > 0) {
-            return view('ad3d.system.department.edit', compact('modelStaff','dataDepartment'));
+            return view('ad3d.system.department.edit', compact('modelStaff', 'dataDepartment'));
         }
     }
 
@@ -109,8 +109,8 @@ class DepartmentController extends Controller
     public function deleteDepartment($departmentId)
     {
         if (!empty($departmentId)) {
-            $modeldepartment = new QcDepartment();
-            $modeldepartment->actionDelete($departmentId);
+            $modelDepartment = new QcDepartment();
+            $modelDepartment->actionDelete($departmentId);
         }
     }
 }

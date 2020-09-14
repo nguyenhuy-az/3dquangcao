@@ -8,11 +8,12 @@ class Hfunction
         $this->dateDefaultHCM();
     }
 
+    # lay gio mac dinh HCM
     public function dateDefaultHCM()
     {
         return date_default_timezone_set('Asia/Ho_Chi_Minh');
     }
-
+    # lay gio mac dinh
     public function defaultTimezone($city = null)
     {
         if (empty($city) || $city == 'HCM') {
@@ -20,6 +21,7 @@ class Hfunction
         }
     }
 
+    # chuyen so sang chu
     public function convertNumberToWord($num = false)
     {
         $num = str_replace(array(',', ' '), '', trim($num));
@@ -64,6 +66,7 @@ class Hfunction
         return implode(' ', $words);
     }
 
+    # kiem tra gia tri null
     public function checkNull($dataCheck)
     {
         return ($dataCheck == null) ? true : false;
@@ -77,24 +80,26 @@ class Hfunction
         return array_unique($array);
     }
 
-
+    # gan gia tri null
     public function setNull()
     {
         return null;
     }
 
+    # kiem tra rong
     public function checkEmpty($dataCheck)
     {
         return (empty($dataCheck)) ? true : false;
     }
 
+    # kiem tra co du lieu
     public function checkCount($dataCheck = null)
     {
         return ($this->getCountFromData($dataCheck) > 0) ? true : false;
     }
 
 
-    // alias
+    // tao alias tu 1 chuoi nhap vao
     public function stripUnicode($str)
     {
         if (!$str) return false;
@@ -133,7 +138,7 @@ class Hfunction
         return $str;
     }
 
-    //create random
+    //lay 1 chuoi ngau nhien
     public function random($length = 1, $type = 'all')
     {
         $result = '';
@@ -158,7 +163,11 @@ class Hfunction
         return $result;
     }
 
-    //string
+    # chuyen toa chuoi sang chu hoa
+    public function strtoupper($str){
+        return strtoupper($str);
+    }
+    //cat chuoi
     public function cutString($string, $length, $more = '')
     {
         if (strlen($string) > $length) {
