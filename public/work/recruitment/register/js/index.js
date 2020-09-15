@@ -81,6 +81,8 @@ var qc_work_recruitment_register = {
             if (qc_main.check.inputNull(txtIdentityCardBack, 'Bạn phải chọn ảnh CMND mặt sau')) {
                 $(txtIdentityCardBack).focus();
                 return false;
+            } else {
+                qc_master_submit.normalForm(frm);
             }
         },
         // kiem tra co chon cong viec

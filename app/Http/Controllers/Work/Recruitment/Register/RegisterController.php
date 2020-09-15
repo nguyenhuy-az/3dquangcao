@@ -23,11 +23,11 @@ class RegisterController extends Controller
     }
 
     # lay form dang ky
-    public function getAdd($phoneNumber, $departmentSelectedId=null)
+    public function getAdd($phoneNumber, $departmentSelectedId = null)
     {
         $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
-        $dataDepartmentWork =null;
+        $dataDepartmentWork = null;
         if (empty($departmentSelectedId)) {
             # lay mac dinh la bo phan thi cong
             $dataDepartmentSelected = null;// $modelDepartment->getInfo($modelDepartment->constructionDepartmentId());
@@ -37,14 +37,29 @@ class RegisterController extends Controller
         # danh sach bo phan cua he thong
         $dataDepartment = $modelDepartment->selectInfoAllActivity()->get();
         if ($hFunction->checkCount($dataDepartmentSelected)) $dataDepartmentWork = $dataDepartmentSelected->departmentWorkGetInfo();
-        return view('work.recruitment.register.add', compact('dataDepartment','dataDepartmentSelected', 'dataDepartmentWork', 'phoneNumber'));
+        return view('work.recruitment.register.add', compact('dataDepartment', 'dataDepartmentSelected', 'dataDepartmentWork', 'phoneNumber'));
     }
 
     public function postAdd()
     {
-        $dataAccess = [
-            'object' => null
-        ];
-
+        $hFunction = new \Hfunction();
+        $txtDepartmentWork = Request::input('txtDepartmentWork');
+        $firstName = Request::input('txtFirstName');
+        $lastName = Request::input('txtLastName');
+        $txtIdentityCard = Request::input('txtIdentityCard');
+        $birthDay = Request::input('txtBirthday');
+        $gender = Request::input('cbGender');
+        $phone = Request::input('txtPhone');
+        $address = Request::input('txtAddress');
+        $email = Request::input('txtEmail');
+        $txtIntroduce = Request::input('txtIntroduce');
+        $txtTotalSalary = Request::input('txtTotalSalary');
+        $txtImage = Request::file('txtImage');
+        $txtIdentityCardFront = Request::file('txtIdentityCardFront');
+        $txtIdentityCardBack = Request::file('txtIdentityCardBack');
+        foreach ($txtDepartmentWork as $departmentWorkId) {
+            $skillValue = Request::input('chkSkill_' . $departmentWorkId);
+            echo "$departmentWorkId ---> $skillValue  <br/>";
+        }
     }
 }

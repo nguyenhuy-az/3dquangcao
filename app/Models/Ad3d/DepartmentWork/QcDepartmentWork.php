@@ -129,13 +129,11 @@ class QcDepartmentWork extends Model
     # exist name (add new)
     public function existName($name)
     {
-        $result = QcDepartmentWork::where('name', $name)->count();
-        return ($result > 0) ? true : false;
+        return QcDepartmentWork::where('name', $name)->exists();
     }
 
     public function existEditName($workId, $name)
     {
-        $result = QcDepartmentWork::where('name', $name)->where('work_id', '<>', $workId)->count();
-        return ($result > 0) ? true : false;
+        return QcDepartmentWork::where('name', $name)->where('work_id', '<>', $workId)->exists();
     }
 }

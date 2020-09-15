@@ -135,6 +135,12 @@ class QcCompany extends Model
         return $this->hasManyThrough('App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment', 'App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'company_id','work_id','detail_id');
     }*/
 
+    #----------- ho so xin viec------------
+    public function jobApplication()
+    {
+        return $this->hasMany('App\Models\Ad3d\JobApplication\QcJobApplication', 'company_id', 'company_id');
+    }
+
     #----------- bo do nghe ------------
     public function toolPackage()
     {

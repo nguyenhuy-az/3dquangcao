@@ -29,6 +29,11 @@ if ($hFunction->checkCount($dataDepartmentSelected)) {
         <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <h3 style="color:red;">TẠO HỒ SƠ ỨNG TUYỂN</h3>
         </div>
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom: 0; margin: 0;">
+            <em>Mọi thắc mắc về Hồ sơ liên hệ</em>
+            <span style="color: red; font-size: 1.5em;">0939.88.99.07</span>
+            <em>Mr.Huy</em>
+        </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <form class="frmWorRecruitmentRegisterAdd" name="frmWorRecruitmentRegisterAdd" role="form" method="post"
                   enctype="multipart/form-data"
@@ -104,6 +109,7 @@ if ($hFunction->checkCount($dataDepartmentSelected)) {
                                                 <td>
                                                     <i class="glyphicon glyphicon-arrow-right"></i>
                                                     {!! $departmentWork->name() !!}
+                                                    <input type="hidden" name="txtDepartmentWork[]" value="{!! $workId !!}" >
                                                 </td>
                                                 <td class="text-center">
                                                     <input class="qcDepartmentWork" type="radio" value="1"
@@ -248,18 +254,29 @@ if ($hFunction->checkCount($dataDepartmentSelected)) {
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="form-group form-group-sm">
+                                    <label>Mô tả công việc từng làm (Nếu có):</label>
+                                    <input type="text" class="form-control" name="txtIntroduce"
+                                           placeholder="Nhập nội dung tự giới thiệu" value="">
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row">
                         <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm" style="padding: 10px;">
                                 <span style="padding: 5px;font-size: 1.5em; background-color: red; color: yellow;">HỒ SƠ SAU KHI GỬI SẼ KHÔNG ĐƯỢC SỬA ĐỔI</span>
+                                <br/><br/>
+                                <span style="color: blue;">Hồ sơ sẽ được duyệt trong vòng 3 ngày</span>
                             </div>
                         </div>
                     </div>
                     <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
-                            <div class="text-center qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12 ">
+                            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12 ">
                                 <div class="form-group form-group-sm" style="margin: 0;">
                                     <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                                     <button type="button" class="qc_save btn btn-sm btn-primary">NỘP HỒ SƠ</button>

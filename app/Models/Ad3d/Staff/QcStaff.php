@@ -1410,8 +1410,7 @@ class QcStaff extends Model
     // exist of account
     public function existAccount($account)
     {
-        $staff = QcStaff::where('account', $account)->count();
-        return ($staff > 0) ? true : false;
+        return QcStaff::where('account', $account)->exists();
     }
 
     public function checkRootStatus($staffId = null)
