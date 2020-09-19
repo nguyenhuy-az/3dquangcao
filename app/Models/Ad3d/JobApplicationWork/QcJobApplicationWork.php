@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcJobApplicationWork extends Model
 {
     protected $table = 'qc_job_application_work';
-    protected $fillable = ['detail_id', 'skillStatus', 'created_at', 'detail_id', 'jobApplication_id'];
+    protected $fillable = ['detail_id', 'skillStatus', 'created_at', 'work_id', 'jobApplication_id'];
     protected $primaryKey = 'detail_id';
     public $timestamps = false;
 
@@ -15,12 +15,12 @@ class QcJobApplicationWork extends Model
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($skillStatus, $detailId, $jobApplicationId)
+    public function insert($skillStatus, $workId, $jobApplicationId)
     {
         $hFunction = new \Hfunction();
         $modelJobApplicationWork = new QcJobApplicationWork();
         $modelJobApplicationWork->skillStatus = $skillStatus;
-        $modelJobApplicationWork->detail_id = $detailId;
+        $modelJobApplicationWork->work_id = $workId;
         $modelJobApplicationWork->jobApplication_id = $jobApplicationId;
         $modelJobApplicationWork->created_at = $hFunction->createdAt();
         if ($modelJobApplicationWork->save()) {
@@ -54,6 +54,12 @@ class QcJobApplicationWork extends Model
     public function jobApplication()
     {
         return $this->belongsTo('App\Models\Ad3d\JobApplication\QcJobApplication', 'jobApplication_id', 'jobApplication_id');
+    }
+
+    # lay thong tin theo 1 ho so
+    public function getInfoOfJobApplication($jobApplicationId)
+    {
+        return QcJobApplicationWork::where('jobApplication_id', $jobApplicationId)->get();
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
@@ -93,6 +99,19 @@ class QcJobApplicationWork extends Model
     public function skillStatus($detailId = null)
     {
         return $this->pluck('skillStatus', $detailId);
+    }
+
+    public function skillStatusLabel($skillStatus)
+    {
+        if($skillStatus == 1){
+            return 'Không biết';
+        }elseif($skillStatus == 2){
+            return 'Biêt';
+        }elseif($skillStatus == 3){
+            return 'Giỏi';
+        }else{
+            return 'Chưa xác định';
+        }
     }
 
     public function workId($detailId = null)

@@ -2,19 +2,20 @@
 
 namespace App\Models\Ad3d\JobApplication;
 
+use App\Models\Ad3d\JobApplicationWork\QcJobApplicationWork;
 use Illuminate\Database\Eloquent\Model;
 
 class QcJobApplication extends Model
 {
     protected $table = 'qc_job_application';
     protected $fillable = ['jobApplication_id', 'nameCode', 'firstName', 'lastName', 'identityCard', 'birthday', 'gender', 'image', 'identityFront', 'identityBack', 'email', 'address'
-        , 'phone', 'introduce', 'salaryOffer', 'confirmStatus', 'confirmNote', 'confirmDate', 'agreeStatus', 'action', 'created_at', 'confirmStaff_id', 'company_id'];
+        , 'phone', 'introduce', 'salaryOffer', 'confirmStatus', 'confirmNote', 'confirmDate', 'agreeStatus', 'action', 'created_at', 'confirmStaff_id', 'company_id', 'department'];
     protected $primaryKey = 'jobApplication_id';
     public $timestamps = false;
 
     private $lastId;
 
-    public function insert($firstName, $lastName, $identityCard, $birthday, $gender, $image, $identityFront, $identityBack, $email, $address, $phone, $introduce, $salaryOffer, $companyId)
+    public function insert($firstName, $lastName, $identityCard, $birthday, $gender, $image, $identityFront, $identityBack, $email, $address, $phone, $introduce, $salaryOffer, $companyId, $departmentId)
     {
         $hFunction = new \Hfunction();
         $modelJobApplication = new QcJobApplication();
@@ -29,12 +30,13 @@ class QcJobApplication extends Model
         $modelJobApplication->birthday = $birthday;
         $modelJobApplication->gender = $gender;
         $modelJobApplication->image = $image;
-        $modelJobApplication->identityCardFront = $identityFront;
-        $modelJobApplication->identityCardBack = $identityBack;
+        $modelJobApplication->identityFront = $identityFront;
+        $modelJobApplication->identityBack = $identityBack;
         $modelJobApplication->email = $email;
         $modelJobApplication->address = $hFunction->convertValidHTML($address);
         $modelJobApplication->phone = $phone;
         $modelJobApplication->company_id = $companyId;
+        $modelJobApplication->department_id = $departmentId;
         $modelJobApplication->action = 1;
         $modelJobApplication->created_at = $hFunction->createdAt();
         if ($modelJobApplication->save()) {
@@ -122,10 +124,33 @@ class QcJobApplication extends Model
     # ======= ======= cong ty ========= =======
     public function company()
     {
-        return $this->hasMany('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
+        return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
     }
 
+    # --------- ------------- bo phan ------------ --------
+    public function department()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Department\QcDepartment', 'department_id', 'department_id');
+    }
+
+    # --------- ------------- ky nang lam viec ------------ --------
+    public function jobApplicationWork()
+    {
+        return $this->belongsTo('App\Models\Ad3d\JobApplicationWork\QcJobApplicationWork', 'jobApplication_id', 'jobApplication_id');
+    }
+
+    public function jobApplicationWorkGetInfo($jobApplicationId = null)
+    {
+        $modelJobApplicationWork = new QcJobApplicationWork();
+        return $modelJobApplicationWork->getInfoOfJobApplication($this->checkIdNull($jobApplicationId));
+    }
     # ======== ======= lay thong tin ======== =========
+    # lay thong tin theo so dien thoai cua cong
+    public function infoByPhoneAndCompany($phone, $companyId)
+    {
+        return QcJobApplication::where('phone', $phone)->where('company_id', $companyId)->first();
+    }
+
     public function getInfo($id = '', $field = '')
     {
         if (empty($id)) {
@@ -258,6 +283,12 @@ class QcJobApplication extends Model
         return $this->pluck('confirmNote', $jobApplicationId);
     }
 
+    public function agreeStatus($jobApplicationId = null)
+    {
+        return $this->pluck('agreeStatus', $jobApplicationId);
+    }
+
+
     public function confirmDate($jobApplicationId = null)
     {
         return $this->pluck('confirmDate', $jobApplicationId);
@@ -269,6 +300,11 @@ class QcJobApplication extends Model
         return $this->pluck('gender', $jobApplicationId);
     }
 
+    public function salaryOffer($jobApplicationId = null)
+    {
+        return $this->pluck('salaryOffer', $jobApplicationId);
+    }
+
     public function confirmStaffId($jobApplicationId = null)
     {
         return $this->pluck('confirmStaff_id', $jobApplicationId);
@@ -277,6 +313,11 @@ class QcJobApplication extends Model
     public function companyId($jobApplicationId = null)
     {
         return $this->pluck('company_id', $jobApplicationId);
+    }
+
+    public function departmentId($jobApplicationId = null)
+    {
+        return $this->pluck('department_id', $jobApplicationId);
     }
 
     // total records
@@ -294,15 +335,15 @@ class QcJobApplication extends Model
 
     # ======== ======== kiem tra thong tin ========= ==========
     # kiem tra hs da xac nhan hay chua
-    public function checkConfirmStatus($staffId = null)
+    public function checkConfirmStatus($jobApplicationId = null)
     {
-        return ($this->confirmStatus($staffId) == 1) ? true : false;
+        return ($this->confirmStatus($jobApplicationId) == 1) ? true : false;
     }
 
     # hs con hoat dong hay khong
-    public function checkActivity($staffId = null)
+    public function checkActivity($jobApplicationId = null)
     {
-        return ($this->confirmStatus($staffId) == 1) ? true : false;
+        return ($this->confirmStatus($jobApplicationId) == 1) ? true : false;
     }
 
     # kiem tra so dien thoai da dang ky o cty
@@ -311,4 +352,9 @@ class QcJobApplication extends Model
         return QcJobApplication::where('phone', $phone)->where('company_id', $companyId)->exists();
     }
 
+    # kiem tra co duoc dong y chap nhan hay khong
+    public function checkAgreeStatus($jobApplicationId = null)
+    {
+        return ($this->agreeStatus($jobApplicationId) == 1) ? true : false;
+    }
 }

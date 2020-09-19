@@ -807,12 +807,15 @@ Route::group(['prefix' => 'ad3d'], function () {
 # đang ky thanh vien
 Route::group(['prefix' => 'tuyendung'], function () { //recruitment
     Route::group(['prefix' => 'dang-ky'], function () { // register
-        Route::get('add/{phone?}/{departmentSelectedId?}', ['as' => 'qc.work.recruitment.register.add.get', 'uses' => 'Work\Recruitment\Register\RegisterController@getAdd']);
-        Route::post('add/', ['as' => 'qc.work.recruitment.register.add.post', 'uses' => 'Work\Recruitment\Register\RegisterController@postAdd']);
+        Route::get('add/{companyId?}/{phone?}/{departmentSelectedId?}', ['as' => 'qc.work.recruitment.register.add.get', 'uses' => 'Work\Recruitment\Register\RegisterController@getAdd']);
+        Route::post('add/{companyId?}', ['as' => 'qc.work.recruitment.register.add.post', 'uses' => 'Work\Recruitment\Register\RegisterController@postAdd']);
         //Route::get('/', ['as' => 'qc.work.recruitment.register.get', 'uses' => 'Work\Recruitment\Register\RegisterController@index']);
     });
-    Route::get('dang-nhap/', ['as' => 'qc.work.recruitment.login.get', 'uses' => 'Work\Recruitment\Recruitment\RecruitmentController@getLogin']);
-    Route::post('dang-nhap/', ['as' => 'qc.work.recruitment.login.post', 'uses' => 'Work\Recruitment\Recruitment\RecruitmentController@postLogin']);
+    # dang nhap / dang ky
+    Route::get('dang-nhap/{companyId?}', ['as' => 'qc.work.recruitment.login.get', 'uses' => 'Work\Recruitment\Recruitment\RecruitmentController@getLogin']);
+    Route::post('dang-nhap/{companyId?}', ['as' => 'qc.work.recruitment.login.post', 'uses' => 'Work\Recruitment\Recruitment\RecruitmentController@postLogin']);
+    # chi tiet ho so
+    Route::get('/{jobApplicationId?}', ['as' => 'qc.work.recruitment.info.get', 'uses' => 'Work\Recruitment\Recruitment\RecruitmentController@index']);
     //Route::get('/', ['as' => 'qc.work.recruitment.register.get', 'uses' => 'Work\Recruitment\Register\RegisterController@index']);
 });
 

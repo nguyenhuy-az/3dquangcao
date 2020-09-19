@@ -2,7 +2,6 @@
  * Created by HUY on 12/29/2017.
  */
 var qc_ad3d_staff_company = {
-
     view: function (listObject) {
         qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-view') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
     },
@@ -41,7 +40,7 @@ var qc_ad3d_staff_company = {
                     alert('Email không hợp lệ');
                     txtEmail.focus();
                     return false;
-                }else{
+                } else {
 
                 }
             }
@@ -88,7 +87,7 @@ var qc_ad3d_staff_company = {
                     alert('Email không hợp lệ');
                     txtEmail.focus();
                     return false;
-                }else{
+                } else {
 
                 }
             }
@@ -117,6 +116,17 @@ $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_delete', function () {
         qc_ad3d_staff_company.delete($(this).parents('.qc_ad3d_list_object'));
     })
+});
+// lay link tuyen dung
+$(document).ready(function () {
+    //$(this).find('.qc_link').select();
+    $('.qc_ad3d_list_object').on('click', '.qc_get_link', function () {
+        var companyId = $(this).date('company');
+        $('#qc_recruitment_link_' + companyId).select();
+        document.execCommand('copy');
+        //alert('LINK ĐÃ ĐƯỢC COPY');
+        //qc_ad3d_staff_company.edit.get($(this).parents('.qc_ad3d_list_object'));
+    });
 });
 //-------------------- edit ------------
 $(document).ready(function () {

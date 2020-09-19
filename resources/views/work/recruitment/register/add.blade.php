@@ -10,7 +10,8 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
-$hrefIndex = route('qc.work.recruitment.register.add.get', $phoneNumber);
+$companyId = $dataCompany->companyId();
+$hrefIndex = route('qc.work.recruitment.register.add.get', "$companyId/$phoneNumber");
 if ($hFunction->checkCount($dataDepartmentSelected)) {
     $departmentSelectedId = $dataDepartmentSelected->departmentId();
 } else {
@@ -37,14 +38,14 @@ if ($hFunction->checkCount($dataDepartmentSelected)) {
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <form class="frmWorRecruitmentRegisterAdd" name="frmWorRecruitmentRegisterAdd" role="form" method="post"
                   enctype="multipart/form-data"
-                  action="{!! route('qc.work.recruitment.register.add.post') !!}">
+                  action="{!! route('qc.work.recruitment.register.add.post',$companyId) !!}">
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                        @if (Session::has('notifyAdd'))
+                        @if (Session::has('notifyRecruitmentAdd'))
                             <div class="form-group form-group-sm text-center qc-color-red">
-                                {!! Session::get('notifyAdd') !!}
+                                {!! Session::get('notifyRecruitmentAdd') !!}
                                 <?php
-                                Session::forget('notifyAdd');
+                                Session::forget('notifyRecruitmentAdd');
                                 ?>
                             </div>
                         @endif
@@ -66,8 +67,7 @@ if ($hFunction->checkCount($dataDepartmentSelected)) {
                                     <tr>
                                         <th colspan="4" style="padding: 0;">
                                             <select class="cbDepartment form-control" name="cbDepartment"
-                                                    style="color: red;"
-                                                    data-href="{!! $hrefIndex !!}">
+                                                    style="color: red;" data-href="{!! $hrefIndex !!}">
                                                 @if($hFunction->checkCount($dataDepartment))
                                                     <option value="0">
                                                         CHỌN BỘ PHẬN ỨNG TUYỂN
@@ -109,7 +109,8 @@ if ($hFunction->checkCount($dataDepartmentSelected)) {
                                                 <td>
                                                     <i class="glyphicon glyphicon-arrow-right"></i>
                                                     {!! $departmentWork->name() !!}
-                                                    <input type="hidden" name="txtDepartmentWork[]" value="{!! $workId !!}" >
+                                                    <input type="hidden" name="txtDepartmentWork[]"
+                                                           value="{!! $workId !!}">
                                                 </td>
                                                 <td class="text-center">
                                                     <input class="qcDepartmentWork" type="radio" value="1"
@@ -178,7 +179,7 @@ if ($hFunction->checkCount($dataDepartmentSelected)) {
                             <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
                                 <div class="form-group form-group-sm">
                                     <label>Chứng minh thư </label>
-                                        <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
+                                    <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                     <input type="text" class="form-control" name="txtIdentityCard"
                                            placeholder="Số chứng minh nhân dân" value="">
                                 </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Work\Recruitment\Recruitment;
 
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Ad3d\JobApplication\QcJobApplication;
 use Illuminate\Support\Facades\Session;
 use Input;
 use File;
@@ -13,39 +14,36 @@ use Request;
 
 class RecruitmentController extends Controller
 {
-    public function index($phoneNumber = null)
+    public function index($jobApplication = null)
     {
         $hFunction = new \Hfunction();
-        $dataAccess = [
-            'object' => null
-        ];
-        if (!empty($phoneNumber)) {
-
-        } else {
-
-        }
-        return view('work.recruitment.info.index', compact('dataAccess'));
+        $modelJobApplication = new QcJobApplication();
+        $dataJobApplication = $modelJobApplication->getInfo($jobApplication);
+        return view('work.recruitment.info.index', compact('dataJobApplication'));
     }
 
     # dang
-    public function getLogin()
+    public function getLogin($companyId = null)
     {
-        return view('work.recruitment.index', compact('dataAccess'));
+        return view('work.recruitment.index', compact('companyId'));
     }
 
     # dang nhap
-    public function postLogin()
+    public function postLogin($companyId)
     {
+        $hFunction = new \Hfunction();
+        $modelJobApplication = new QcJobApplication();
         $phoneNumber = Request::input('txtPhoneNumber');
+        # lay thong tin ho so theo cong ty va so dien thoai
+        $dataJobApplication = $modelJobApplication->infoByPhoneAndCompany($phoneNumber, $companyId);
         if (empty($phoneNumber)) {
             Session::put('notifyRecruitmentLogin', "Bạn phải nhập số điện thoại");
             return redirect()->back();
         } else {
-            $exist = false;
-            if ($exist) {
-                return view('work.recruitment.info.index', compact('dataAccess'));
+            if ($hFunction->checkCount($dataJobApplication)) { // da ton tai ho so
+                return view('work.recruitment.info.index', compact('dataJobApplication'));
             } else {
-                return redirect()->route('qc.work.recruitment.register.add.get', $phoneNumber);
+                return redirect()->route('qc.work.recruitment.register.add.get', "$companyId/$phoneNumber");
             }
         }
     }

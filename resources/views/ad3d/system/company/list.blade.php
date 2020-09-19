@@ -14,46 +14,36 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 @extends('ad3d.system.company.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top: 10px; padding-bottom: 10px; border-bottom: 2px dashed brown;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
                     <label class="qc-font-size-20">CÔNG TY</label>
                 </div>
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
-                    <form name="" action="">
-                        <div class="row">
-                            {{--<div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                <input class="col-xs-12" type="text" value="" placeholder="Tên công ty"
-                                       style="height: 30px;">
-                            </div>--}}
-                            <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="qc_ad3d_list_content row"
+                 data-href-view="{!! route('qc.ad3d.system.company.view.get') !!}"
+                 data-href-edit="{!! route('qc.ad3d.system.company.edit.get') !!}">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <tr>
+                            <td colspan="6"></td>
+                            <td class="text-right">
                                 <a class="qc-font-size-16 qc-link-green-bold" title="Thêm"
                                    href="{!! route('qc.ad3d.system.company.add.get') !!}">
                                     <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
                                     Thêm
                                 </a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="qc_ad3d_list_content qc-ad3d-table-container row"
-                 data-href-view="{!! route('qc.ad3d.system.company.view.get') !!}"
-                 data-href-edit="{!! route('qc.ad3d.system.company.edit.get') !!}">
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                            </td>
+                        </tr>
+                        <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th class="text-center">Logo</th>
+                            <th>Logo</th>
                             <th>Tên</th>
                             <th>Thông tin liên lạc</th>
                             <th>Hình thức hoạt động</th>
+                            <th class="text-center">Link tuyển dụng</th>
                             <th></th>
                         </tr>
                         @if($hFunction->checkCount($dataCompany))
@@ -66,13 +56,14 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 <?php
                                 $companyId = $company->companyId();
                                 $logo = $company->logo();
+                                $recruitmentLink = route('qc.work.recruitment.login.get',$companyId );
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
                                     data-object="{!! $companyId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         @if(!$hFunction->checkEmpty($logo))
                                             <img alt="..." src="{!! $company->pathSmallImage($logo) !!}" style="max-width: 70px;">
                                             @else
@@ -102,6 +93,12 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             <b>Trụ sở chính</b>
                                         @endif
                                     </td>
+                                    <td class="text-center">
+                                        <input id="qc_recruitment_link_{!! $companyId !!}" type="hidden" value="{!! $recruitmentLink !!}">
+                                        <a class="qc_get_link qc-link-green" data-company="{!! $companyId !!}">
+                                            LẤY LINK
+                                        </a>
+                                    </td>
                                     <td class="text-right">
                                         <a class="qc_view qc-link" href="#" title="Xem chi tiết">
                                             <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
@@ -118,7 +115,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="6">
+                                <td class="text-center" colspan="7">
                                     {!! $hFunction->page($dataCompany) !!}
                                 </td>
                             </tr>
