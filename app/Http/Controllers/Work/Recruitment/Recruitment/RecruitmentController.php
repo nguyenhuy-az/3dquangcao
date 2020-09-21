@@ -14,12 +14,21 @@ use Request;
 
 class RecruitmentController extends Controller
 {
-    public function index($jobApplication = null)
+    public function index($jobApplicationId = null)
     {
         $hFunction = new \Hfunction();
         $modelJobApplication = new QcJobApplication();
-        $dataJobApplication = $modelJobApplication->getInfo($jobApplication);
-        return view('work.recruitment.info.index', compact('dataJobApplication'));
+        $loginJobApplication = $modelJobApplication->loginJobApplicationInfo();
+        if (!$hFunction->checkCount($loginJobApplication)) {
+            $dataJobApplication = $modelJobApplication->getInfo($jobApplicationId);
+        }
+        #co thong tin ho so
+        if ($hFunction->checkCount($loginJobApplication)) {
+            return view('work.recruitment.info.index', compact('dataJobApplication'));
+        }else{
+            return redirect()->route('qc.work.recruitment.login.get');
+        }
+
     }
 
     # dang

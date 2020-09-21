@@ -4,7 +4,6 @@ namespace App\Models\Ad3d\Staff;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
-use App\Models\Ad3d\CompanyStoreCheck\QcCompanyStoreCheck;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportPay\QcImportPay;
@@ -19,18 +18,14 @@ use App\Models\Ad3d\Payment\QcPayment;
 use App\Models\Ad3d\PaymentType\QcPaymentType;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\Rank\QcRank;
-use App\Models\Ad3d\Salary\QcSalary;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\SalaryBeforePayRequest\QcSalaryBeforePayRequest;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\StaffKpi\QcStaffKpi;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\StaffSalaryBasic\QcStaffSalaryBasic;
-use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
-use App\Models\Ad3d\ToolAllocation\QcToolAllocation;
-use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Work\QcWork;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
@@ -1078,7 +1073,6 @@ class QcStaff extends Model
         } else {
             return false;
         }
-
     }
 
     // kiem tra dang nhap

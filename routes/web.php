@@ -544,7 +544,7 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('/{companyFilterId?}/{monthFilter?}/{yearFilter?}', ['as' => 'qc.ad3d.system.system_date_off.get', 'uses' => 'Ad3d\System\SystemDateOff\SystemDateOffController@index']);
         });
 
-        //nhân viên
+        //nhan vien
         Route::group(['prefix' => 'staff'], function () {
             Route::get('view/{staffId?}', ['as' => 'qc.ad3d.system.staff.view.get', 'uses' => 'Ad3d\System\Staff\StaffController@view']);
 
@@ -593,7 +593,11 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('list/{companyId?}/{workStatus?}', ['as' => 'qc.ad3d.system.staff.get', 'uses' => 'Ad3d\System\Staff\StaffController@index']);
 
         });
-        # lương cơ bản NV
+        # ho so tuyen dung
+        Route::group(['prefix' => 'job-application'], function () {
+            Route::get('list/{companyId?}/{confirmStatus?}', ['as' => 'qc.ad3d.system.job-application.get', 'uses' => 'Ad3d\System\JobApplication\JobApplicationController@index']);
+        });
+        # luong co ban
         Route::group(['prefix' => 'salary'], function () {
             Route::get('view/{staffId?}', ['as' => 'qc.ad3d.system.salary.view.get', 'uses' => 'Ad3d\System\Salary\StaffSalaryController@view']);
 

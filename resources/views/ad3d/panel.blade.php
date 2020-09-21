@@ -27,6 +27,8 @@ $totalNewLicenseLateWork = $modelStaff->totalNewLicenseLateWork($companyLoginId)
 $totalNewSalaryBeforePayRequest = $modelStaff->totalNewSalaryBeforePayRequest($companyLoginId);
 $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
 
+# so luong ho so tuyen dung chua duyet
+$totalUnconfirmed =  $modelStatistical->totalUnconfirmed();
 
 ?>
 @extends('ad3d.index')
@@ -43,7 +45,7 @@ $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}" >
                         <span class="qc-color-red badge" style="background:none;">
-                            [ {!! $totalNewTimekeepingProvisional !!} ]
+                             {!! $totalNewTimekeepingProvisional !!}
                         </span>
                         Chấm công
                     </a>
@@ -55,27 +57,39 @@ $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
                     </a>--}}
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.finance.pay_activity.get') !!}">
                         <span class="qc-color-red badge" style="background:none;">
-                            [ {!! $totalPayActivityNotConfirmOfCompany !!} ]
+                            {!! $totalPayActivityNotConfirmOfCompany !!}
                         </span>
                         Duyệt chi hoạt động
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.off-work.get') !!}" >
                         <span class="qc-color-red badge" style="background:none;">
-                            [ {!! $totalNewLicenseOffWork !!} ]
+                            {!! $totalNewLicenseOffWork !!}
                         </span>
                         Xin nghỉ
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.late-work.get') !!}" >
                         <span class="qc-color-red badge" style="background:none;">
-                            [ {!! $totalNewLicenseLateWork !!} ]
+                            {!! $totalNewLicenseLateWork !!}
                         </span>
                         Xin trễ
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.salary.before_pay_request.get') !!}">
                         <span class="qc-color-red badge" style="background:none;">
-                            [ {!! $totalNewSalaryBeforePayRequest !!} ]
+                            {!! $totalNewSalaryBeforePayRequest !!}
                         </span>
                         Xin ứng lương
+                    </a>
+                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.system.job-application.get') !!}">
+                        <span class="qc-color-red badge" style="background:none;">
+                            {!! $totalUnconfirmed !!}
+                        </span>
+                        Hồ sơ tuyển dụng
+                    </a>
+                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.salary.before_pay_request.get') !!}">
+                        <span class="qc-color-red badge" style="background:none;">
+                             {!! 8 !!}
+                        </span>
+                        Hồ sơ phỏng vấn
                     </a>
 
                 </div>

@@ -4,6 +4,7 @@ namespace App\Models\Ad3d\JobApplication;
 
 use App\Models\Ad3d\JobApplicationWork\QcJobApplicationWork;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Session;
 
 class QcJobApplication extends Model
 {
@@ -145,6 +146,12 @@ class QcJobApplication extends Model
         return $modelJobApplicationWork->getInfoOfJobApplication($this->checkIdNull($jobApplicationId));
     }
     # ======== ======= lay thong tin ======== =========
+    # lay tong so luong ho so tuyen dung chua duyet
+    public function totalUnconfirmed()
+    {
+        return QcJobApplication::where('confirmStatus', 0)->count();
+    }
+
     # lay thong tin theo so dien thoai cua cong
     public function infoByPhoneAndCompany($phone, $companyId)
     {
@@ -334,6 +341,42 @@ class QcJobApplication extends Model
     }
 
     # ======== ======== kiem tra thong tin ========= ==========
+    public function selectInfoByCompany($companyId, $confirmStatus = 100)
+    {
+        if ($confirmStatus == 100) { # tat ca thong tin
+            return QcJobApplication::where('company_id', $companyId)->orderBy('jobApplication_id', 'DESC')->select();
+        } else {
+            return QcJobApplication::where('company_id', $companyId)->where('confirmStatus', $confirmStatus)->orderBy('jobApplication_id', 'DESC')->select();
+        }
+    }
+
+    public function loginJobApplication($companyId, $phone)
+    {
+        $getInfo = QcJobApplication::where('company_id', $companyId)->where('phone', $phone)->first();
+        if (count($getInfo) > 0) { // login success
+            Session::put('loginJobApplication', $getInfo);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // thong tin ho so dang nhap
+    public function loginJobApplicationInfo()
+    {
+        if (Session::has('loginJobApplication')) {//da dang nhap
+            return Session::get('loginJobApplication');
+        } else {
+            return null;
+        }
+    }
+
+    // kiem tra dang nhap ho so
+    public function checkLoginJobApplication()
+    {
+        if (Session::has('loginJobApplication')) return true; else return false;
+    }
+
     # kiem tra hs da xac nhan hay chua
     public function checkConfirmStatus($jobApplicationId = null)
     {
