@@ -67,15 +67,15 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
         </div>
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="background-color: red; padding: 10px;">
-                @if($dataJobApplication->checkConfirmStatus())
+                @if(!$dataJobApplication->checkConfirmStatus())
                     <h4 style="color: yellow;">ĐANG CHỜ DUYỆT</h4>
                 @else
-                    @if(!$dataJobApplication->checkConfirmStatus())
+                    @if($dataJobApplication->checkConfirmStatus())
                         <em style="color: yellow;font-size: 1.5em;">Cảm ơn Anh/Chị đã nộp hồ sơ ứng tuyển.</em> <br>
                         <span style="color: yellow; font-size: 1.5em;">HIỆN TẠI SỐ LƯỢNG ỨNG TUYỂN ĐÃ ĐỦ</span><br>
                         <em style="color: white; font-size: 1.5em;">Bộ phận nhân sự sẽ liên hệ với Anh/Chị khi có nhu cầu tuyển dụng mới.</em>
                     @else
-
+                        THÔNG TIN PHỎNG VẤN
                     @endif
                 @endif
             </div>

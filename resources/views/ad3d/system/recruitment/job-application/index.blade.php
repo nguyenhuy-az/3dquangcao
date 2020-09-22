@@ -11,6 +11,9 @@
     Hồ sơ tuyển dụng
 @endsection
 @section('qc_ad3d_system_body')
+    {{--menu--}}
+    @include('ad3d.system.recruitment.menu', compact('dataAccess'))
+
     <div class="qc_ad3d_index_content col-xs-12 col-md-12 col-md-12 col-lg-12">
         @yield('qc_ad3d_index_content')
     </div>

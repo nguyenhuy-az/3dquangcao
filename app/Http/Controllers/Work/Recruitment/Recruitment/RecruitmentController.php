@@ -18,14 +18,16 @@ class RecruitmentController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelJobApplication = new QcJobApplication();
-        $loginJobApplication = $modelJobApplication->loginJobApplicationInfo();
-        if (!$hFunction->checkCount($loginJobApplication)) {
+        if (empty($jobApplicationId)) {
+            $dataJobApplication = $modelJobApplication->loginJobApplicationInfo();
+        } else {
             $dataJobApplication = $modelJobApplication->getInfo($jobApplicationId);
         }
+
         #co thong tin ho so
-        if ($hFunction->checkCount($loginJobApplication)) {
+        if ($hFunction->checkCount($dataJobApplication)) {
             return view('work.recruitment.info.index', compact('dataJobApplication'));
-        }else{
+        } else {
             return redirect()->route('qc.work.recruitment.login.get');
         }
 

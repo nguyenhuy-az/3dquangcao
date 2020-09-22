@@ -53,22 +53,10 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                     </li>
                                 </ul>
                             </li>
-                            <li @if($accessObject == 'staff') class="active" @endif>
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                    Tuyển dụng <span class="caret"></span>
+                            <li @if($accessObject == 'recruitment') class="active" @endif>
+                                <a href="{!! route('qc.ad3d.system.job-application.get') !!}">
+                                    Tuyển dụng
                                 </a>
-                                <ul class="dropdown-menu">
-                                    <li @if($accessObject == 'jobApplication') class="active" @endif>
-                                        <a href="{!! route('qc.ad3d.system.job-application.get') !!}">
-                                            Hồ sơ tuyển dụng
-                                        </a>
-                                    </li>
-                                    <li @if($accessObject == 'jobApplicationInterview') class="active" @endif>
-                                        <a class="qc-link-bold" href="{!! route('qc.ad3d.system.staff.get') !!}">
-                                            Hồ sơ phỏng vấn
-                                        </a>
-                                    </li>
-                                </ul>
                             </li>
 
                             <li @if($accessObject == 'company') class="active" @endif>

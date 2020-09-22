@@ -14,21 +14,9 @@ $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $indexHref = route('qc.ad3d.system.job-application.get');
 ?>
-@extends('ad3d.system.job-application.index')
+@extends('ad3d.system.recruitment.job-application.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px;">
-            <div class="row">
-                <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green"
-                       href="{!! $indexHref !!}">
-                        <i class="glyphicon glyphicon-refresh qc-font-size-20"></i>
-                    </a>
-                    <label class="qc-font-size-20">HỒ SƠ XIN VIỆC</label>
-                </div>
-            </div>
-        </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row">
                 <div class="table-responsive">
@@ -117,6 +105,10 @@ $indexHref = route('qc.ad3d.system.job-application.get');
                                             <b>{!! $jobApplication->firstName().' '.$jobApplication->lastName() !!}</b>
                                             <br/>
                                             <em style="color: grey;">Mã HS: {!! $jobApplication->nameCode() !!}</em>
+                                            <br/>
+                                            <a class="qc-link-green-bold" href="{!! route('qc.ad3d.system.job-application.info.get', $jobApplicationId) !!}">
+                                                <i class="glyphicon glyphicon-info-sign qc-font-size-16"></i> Chi tiết
+                                            </a>
                                         </td>
                                         <td>
                                             {!! $jobApplication->company->name() !!}
@@ -138,7 +130,7 @@ $indexHref = route('qc.ad3d.system.job-application.get');
                                         </td>
                                         <td class="text-center">
                                             @if(!$checkConfirmStatus)
-                                                <a class="qc_confirm_get qc-link-green" href="#">
+                                                <a class="qc_confirm_get qc-link-green" href="{!! route('qc.ad3d.system.job-application.info.get', $jobApplicationId) !!}">
                                                     Duyệt
                                                 </a>
                                             @else

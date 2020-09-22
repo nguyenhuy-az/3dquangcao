@@ -19,8 +19,7 @@ $mobileStatus = $mobile->isMobile();
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 @if($mobileStatus) style="padding: 0 0;" @endif>
+                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 @if (Session::has('notifyAdd'))
                                     <div class="form-group form-group-sm text-center qc-color-red">
                                         {!! Session::get('notifyAdd') !!}

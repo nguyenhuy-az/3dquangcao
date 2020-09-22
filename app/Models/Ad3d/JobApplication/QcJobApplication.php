@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\JobApplication;
 
+use App\Models\Ad3d\JobApplicationInterview\QcJobApplicationInterview;
 use App\Models\Ad3d\JobApplicationWork\QcJobApplicationWork;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Session;
@@ -128,6 +129,12 @@ class QcJobApplication extends Model
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
     }
 
+    #----------- nguoi duyet ho so------------
+    public function staff()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
+    }
+
     # --------- ------------- bo phan ------------ --------
     public function department()
     {
@@ -144,6 +151,19 @@ class QcJobApplication extends Model
     {
         $modelJobApplicationWork = new QcJobApplicationWork();
         return $modelJobApplicationWork->getInfoOfJobApplication($this->checkIdNull($jobApplicationId));
+    }
+
+    # --------- ------------- Thong tin phong van ------------ --------
+    public function jobApplicationInterview()
+    {
+        return $this->hasMany('App\Models\Ad3d\JobApplicationInterview\QcJobApplicationInterview', 'jobApplication_id', 'jobApplication_id');
+    }
+
+    # lay thong tin hen phong van sau cung
+    public function jobApplicationInterviewLastInfo($jobApplicationId = null)
+    {
+        $modelJobApplicationInterview = new QcJobApplicationInterview();
+        return $modelJobApplicationInterview->lastInfoOfJobApplication($this->checkIdNull($jobApplicationId));
     }
     # ======== ======= lay thong tin ======== =========
     # lay tong so luong ho so tuyen dung chua duyet
@@ -399,5 +419,36 @@ class QcJobApplication extends Model
     public function checkAgreeStatus($jobApplicationId = null)
     {
         return ($this->agreeStatus($jobApplicationId) == 1) ? true : false;
+    }
+
+    # xac nhan khong dong y ho so
+    public function confirmDisagree($jobApplicationId, $confirmStaffId)
+    {
+        $hFunction = new \Hfunction();
+        return QcJobApplication::where('jobApplication_id', $jobApplicationId)->update(
+            [
+                'confirmStatus' => 1,
+                'confirmStaff_id' => $confirmStaffId,
+                'confirmDate' => $hFunction->carbonNow()
+            ]);
+    }
+
+    # xac nhan dong y va hen phong van
+    public function confirmAgreeInterview($jobApplicationId, $confirmStaffId, $interviewDate)
+    {
+        $hFunction = new \Hfunction();
+        $modelJobApplicationInterview = new QcJobApplicationInterview();
+        if (QcJobApplication::where('jobApplication_id', $jobApplicationId)->update(
+            [
+                'confirmStatus' => 1,
+                'agreeStatus' => 1,
+                'confirmStaff_id' => $confirmStaffId,
+                'confirmDate' => $hFunction->carbonNow()
+            ])
+        ) {
+            return $modelJobApplicationInterview->insert($interviewDate, $jobApplicationId);
+        } else {
+            return false;
+        }
     }
 }

@@ -595,7 +595,16 @@ Route::group(['prefix' => 'ad3d'], function () {
         });
         # ho so tuyen dung
         Route::group(['prefix' => 'job-application'], function () {
+            # chi tiet ho so
+            Route::get('info/{jobApplicationId?}', ['as' => 'qc.ad3d.system.job-application.info.get', 'uses' => 'Ad3d\System\JobApplication\JobApplicationController@getInfo']);
+            #xac nhan ho so
+            Route::post('confirm/{jobApplicationId?}', ['as' => 'qc.ad3d.system.job-application.confirm.post', 'uses' => 'Ad3d\System\JobApplication\JobApplicationController@postConfirm']);
+            # trang chinh
             Route::get('list/{companyId?}/{confirmStatus?}', ['as' => 'qc.ad3d.system.job-application.get', 'uses' => 'Ad3d\System\JobApplication\JobApplicationController@index']);
+        });
+        # ho so phong van
+        Route::group(['prefix' => 'job-application-interview'], function () {
+            Route::get('list/{companyId?}/{interviewStatus?}', ['as' => 'qc.ad3d.system.job-application-interview.get', 'uses' => 'Ad3d\System\JobApplicationInterview\JobApplicationInterviewController@index']);
         });
         # luong co ban
         Route::group(['prefix' => 'salary'], function () {
