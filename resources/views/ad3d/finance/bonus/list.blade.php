@@ -75,7 +75,8 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                 </div>
                             </td>
                             <td style="padding:0 ;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0; height: 34px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0; height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -86,7 +87,8 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -97,7 +99,8 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -136,17 +139,22 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                     $money = $bonus->money();
                                 }
                                 $dataWork = $bonus->work;
+                                # thong tin nhan vien
+                                if (!empty($dataWork->companyStaffWorkId())) {
+                                    $dataStaffBonus = $dataWork->companyStaffWork->staff;
+                                } else {
+                                    $dataStaffBonus = $dataWork->staff; // phien ban cu
+                                }
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $bonusId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
-                                    <td>
-                                        @if(!empty($dataWork->companyStaffWorkId()))
-                                            {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                                        @else
-                                            {!! $dataWork->staff->fullName() !!}
-                                        @endif
+                                    <td style="padding: 0;">
+                                        <img style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                             src="{!! $dataStaffBonus->pathAvatar($dataStaffBonus->image()) !!}">
+                                        {!! $dataStaffBonus->fullName() !!}
+
                                     </td>
                                     <td>
                                         {!! date('d/m/Y', strtotime($bonus->bonusDate())) !!}

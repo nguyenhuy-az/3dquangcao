@@ -295,7 +295,7 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->pluck('staff_id');
     }
 
-    # lay danh sach ma nv theo ma cong ty va danh sach ma bo phan va cap bac lam viec
+    # lay danh sach ma nv theo ma cong ty va danh sach ma bo phan va cap bac lam viec - dang hoat dong
     public function listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, $listDepartmentId, $rankId = null)
     {
         $hFunction = new \Hfunction();
@@ -303,6 +303,18 @@ class QcCompanyStaffWork extends Model
         $listWorkId = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment($listDepartmentId, $rankId);
         if ($hFunction->checkCount($listWorkId)) {
             return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', 1)->pluck('staff_id');
+        } else {
+            return null;
+        }
+    }
+    # lay danh sach ma nv theo ma cong ty va danh sach ma bo phan va cap bac lam viec - tat ca
+    public function listStaffIdOfCompanyIdAndListDepartmentId($companyId, $listDepartmentId, $rankId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $listWorkId = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment($listDepartmentId, $rankId);
+        if ($hFunction->checkCount($listWorkId)) {
+            return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->pluck('staff_id');
         } else {
             return null;
         }

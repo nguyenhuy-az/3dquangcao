@@ -3,20 +3,11 @@
 namespace App\Http\Controllers\Ad3d\System\JobApplicationInterview;
 
 use App\Models\Ad3d\Company\QcCompany;
-use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
-use App\Models\Ad3d\CompanyStaffWorkEnd\QcCompanyStaffWorkEnd;
-use App\Models\Ad3d\Department\QcDepartment;
-use App\Models\Ad3d\DepartmentStaff\QcDepartmentStaff;
 use App\Models\Ad3d\JobApplication\QcJobApplication;
+use App\Models\Ad3d\JobApplicationInterview\QcJobApplicationInterview;
 use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
-use App\Models\Ad3d\StaffSalaryBasic\QcStaffSalaryBasic;
-use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
-use App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod;
-use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
-use App\Models\Ad3d\ToolPackage\QcToolPackage;
-use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
 use Input;
@@ -29,10 +20,8 @@ class JobApplicationInterviewController extends Controller
     public function index($companyFilterId = null, $confirmStatusFilter = 100)
     {
         $modelStaff = new QcStaff();
-        $modelJobApplication = new QcJobApplication();
+        $modelJobApplicationInterview = new QcJobApplicationInterview();
         $modelCompany = new QcCompany();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelDepartment = new QcDepartment();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
         $dataAccess = [
@@ -45,12 +34,74 @@ class JobApplicationInterviewController extends Controller
         }
         $dataCompany = $modelCompany->getInfo();
         # danh sach ho so
-        $selectJobApplication = $modelJobApplication->selectInfoByCompany($companyFilterId, $confirmStatusFilter);
-        $dataJobApplication = $selectJobApplication->paginate(30);
-        //return view('ad3d.system.recruitment.job-application.list', compact('modelStaff', 'dataJobApplication', 'dataCompany', 'dataAccess', 'companyFilterId', 'confirmStatusFilter'));
-
+        $selectJobApplicationInterview = $modelJobApplicationInterview->selectInfoByCompany($companyFilterId, $confirmStatusFilter);
+        $dataJobApplicationInterview = $selectJobApplicationInterview->paginate(30);
+        return view('ad3d.system.recruitment.job-application-interview.list', compact('modelStaff', 'dataJobApplicationInterview', 'dataCompany', 'dataAccess', 'companyFilterId', 'confirmStatusFilter'));
     }
 
+    # thong tin ho so
+    public function getInfo($interviewId)
+    {
+        $modelStaff = new QcStaff();
+        $modelRank = new QcRank();
+        $modelJobApplicationInterview = new QcJobApplicationInterview();
+        $dataAccess = [
+            'accessObject' => 'recruitment',
+            'subObject' => 'jobApplicationInterview'
+        ];
+        $dataJobApplicationInterview = $modelJobApplicationInterview->getInfo($interviewId);
+        return view('ad3d.system.recruitment.job-application-interview.info', compact('modelRank', 'modelStaff', 'dataJobApplicationInterview', 'dataAccess'));
+    }
+
+    # xac nhan ho so
+    public function postConfirm($interviewId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelJobApplicationInterview = new QcJobApplicationInterview();
+        $agreeStatus = Request::input('cbAgreeStatus');
+        $dataJobApplicationInterview = $modelJobApplicationInterview->getInfo($interviewId);
+        if ($hFunction->checkCount($dataJobApplicationInterview)) {
+            if ($agreeStatus == 1) { # dong y tuyen dung
+                $totalSalary = Request::input('txtSalary');
+                $salary = $hFunction->convertCurrencyToInt($totalSalary);
+                $departmentRank = Request::input('cbDepartmentRank');
+                $cbDay = Request::input('cbDay');
+                $cbMonth = Request::input('cbMonth');
+                $cbYear = Request::input('cbYear');
+                $cbHours = Request::input('cbHours');
+                $cbMinute = Request::input('cbMinute');
+                $currentDate = date('Y-m-d H:j');
+                # ngay bat dau lam viec
+                $workBeginDate = $hFunction->convertStringToDatetime("$cbMonth/$cbDay/$cbYear $cbHours:$cbMinute");
+                if ($workBeginDate < $currentDate) {
+                    Session::put('confirmJobApplicationInterviewNotify', 'NGÀY BẮT ĐẦU LÀM PHẢI LỚN HƠN NGÀY HIỆN TẠI');
+                } else {
+                    # xac nhan dong y
+                    if ($modelJobApplicationInterview->confirmInterviewAgree($interviewId, $modelStaff->loginStaffId(), $salary, $workBeginDate, $departmentRank)) {
+                        Session::put('confirmJobApplicationInterviewNotify', 'TÍNH NĂNG ĐANG BẢO TRÌ, HÃY THỬ LẠI SAU');
+                    }
+                }
+
+            } else { # khong dong y
+                $modelJobApplicationInterview->confirmInterviewDisagree($interviewId, $modelStaff->loginStaffId());
+            }
+        } else {
+            Session::put('confirmJobApplicationInterviewNotify', 'KHÔNG CÓ THÔNG TIN PHỎNG VẤN, HÃY THỬ LẠI SAU');
+        }
+        /*if ($agreeStatus == 1) { # dong y
+            # lay ngay hen phong van
+
+
+
+        } else {
+            # xac nhan khong dong y
+            if (!$modelJobApplication->confirmDisagree($jobApplicationId, $modelStaff->loginStaffId())) {
+                Session::put('confirmJobApplicationNotify', 'Tính năng đang bảo trì, Hãy quay lại sau');
+            }
+        }*/
+
+    }
     //xóa
     /*public function deleteStaff($staffId = null)
     {

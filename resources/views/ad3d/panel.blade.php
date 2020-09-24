@@ -28,7 +28,9 @@ $totalNewSalaryBeforePayRequest = $modelStaff->totalNewSalaryBeforePayRequest($c
 $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
 
 # so luong ho so tuyen dung chua duyet
-$totalUnconfirmed =  $modelStatistical->totalUnconfirmed();
+$totalJobApplicationUnconfirmed =  $modelStatistical->totalJobApplicationUnconfirmed();
+# ho si phong van chua xac nhan
+$totalJobApplicationInterviewUnconfirmed = $modelStatistical->totalJobApplicationInterviewUnconfirmed();
 
 ?>
 @extends('ad3d.index')
@@ -44,7 +46,7 @@ $totalUnconfirmed =  $modelStatistical->totalUnconfirmed();
                         Thông tin mới
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}" >
-                        <span class="qc-color-red badge" style="background:none;">
+                        <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                              {!! $totalNewTimekeepingProvisional !!}
                         </span>
                         Chấm công
@@ -56,38 +58,38 @@ $totalUnconfirmed =  $modelStatistical->totalUnconfirmed();
                         Duyệt chi vật tư
                     </a>--}}
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.finance.pay_activity.get') !!}">
-                        <span class="qc-color-red badge" style="background:none;">
+                        <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                             {!! $totalPayActivityNotConfirmOfCompany !!}
                         </span>
                         Duyệt chi hoạt động
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.off-work.get') !!}" >
-                        <span class="qc-color-red badge" style="background:none;">
+                        <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                             {!! $totalNewLicenseOffWork !!}
                         </span>
                         Xin nghỉ
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.late-work.get') !!}" >
-                        <span class="qc-color-red badge" style="background:none;">
+                        <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                             {!! $totalNewLicenseLateWork !!}
                         </span>
                         Xin trễ
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.salary.before_pay_request.get') !!}">
-                        <span class="qc-color-red badge" style="background:none;">
+                        <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                             {!! $totalNewSalaryBeforePayRequest !!}
                         </span>
                         Xin ứng lương
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.system.job-application.get') !!}">
-                        <span class="qc-color-red badge" style="background:none;">
-                            {!! $totalUnconfirmed !!}
+                        <span class="qc-color-red badge qc-font-size-16" style="background:none;">
+                            {!! $totalJobApplicationUnconfirmed !!}
                         </span>
                         Hồ sơ tuyển dụng
                     </a>
-                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.salary.before_pay_request.get') !!}">
-                        <span class="qc-color-red badge" style="background:none;">
-                             {!! 8 !!}
+                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.system.job-application-interview.get') !!}">
+                        <span class="qc-color-red badge qc-font-size-16" style="background:none;">
+                             {!! $totalJobApplicationInterviewUnconfirmed !!}
                         </span>
                         Hồ sơ phỏng vấn
                     </a>

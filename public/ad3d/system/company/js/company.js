@@ -117,31 +117,32 @@ $(document).ready(function () {
         qc_ad3d_staff_company.delete($(this).parents('.qc_ad3d_list_object'));
     })
 });
-// lay link tuyen dung
+//-------- ------------ lay link tuyen dung ---------  -------------
 $(document).ready(function () {
-    //$(this).find('.qc_link').select();
-    $('.qc_ad3d_list_object').on('click', '.qc_get_link', function () {
-        var companyId = $(this).date('company');
-        $('#qc_recruitment_link_' + companyId).select();
-        document.execCommand('copy');
-        //alert('LINK ĐÃ ĐƯỢC COPY');
-        //qc_ad3d_staff_company.edit.get($(this).parents('.qc_ad3d_list_object'));
+    $('.qc_ad3d_list_object').on('click', '.qc_recruitment_get_link', function () {
+        qc_ad3d_submit.ajaxNotReload($(this).data('href'), $('#' + qc_ad3d.bodyIdName()), false);
+    });
+    $('body').on('click', '.frmAd3dGetLink .qc_copy', function () {
+        $('#txtRecruitmentLink').select();
+        document.execCommand("copy");
+        alert('Link đã được copy');
+        $('.qc_ad3d_container_close').click();
     });
 });
-//-------------------- edit ------------
+//-------------------- sua thong tin ------------
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_edit', function () {
         qc_ad3d_staff_company.edit.get($(this).parents('.qc_ad3d_list_object'));
-    })
+    });
 
     $('body').on('click', '.frmEdit .qc_save', function () {
         qc_ad3d_staff_company.edit.save($(this).parents('.frmEdit'));
-    })
+    });
 });
 
-//-------------------- add ------------
+//-------------------- them moi ------------
 $(document).ready(function () {
     $('.qc_ad3d_index_content').on('click', '.frmAdd .qc_save', function () {
         qc_ad3d_staff_company.add.save($(this).parents('.frmAdd'));
-    })
+    });
 });

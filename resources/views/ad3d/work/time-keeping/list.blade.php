@@ -156,11 +156,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                 }
                                 # anh dai dien
                                 $image = $dataStaffTimekeeping->image();
-                                if ($hFunction->checkEmpty($image)) {
-                                    $src = $dataStaffTimekeeping->pathDefaultImage();
-                                } else {
-                                    $src = $dataStaffTimekeeping->pathFullImage($image);
-                                }
+                                $src = $dataStaffTimekeeping->pathAvatar($image);
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
                                     data-object="{!! $timekeepingId !!}">

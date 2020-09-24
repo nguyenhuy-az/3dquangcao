@@ -83,7 +83,7 @@ class QcBonus extends Model
 
     public function infoOfWork($workId)
     {
-        return QcBonus::where('work_id', $workId)->orderBy('bonus_id', 'DESC')->get();
+        return QcBonus::where('work_id', $workId)->orderBy('bonusDate', 'DESC')->get();
     }
 
     public function totalMoneyOfWork($workId)

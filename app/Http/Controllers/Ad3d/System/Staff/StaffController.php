@@ -201,14 +201,13 @@ class StaffController extends Controller
 
                 # them luong cho nv
                 $modelStaffWorkSalary->insert($txtTotalSalary, $txtSalary, $txtResponsibility, $txtUsePhone, $txtInsurance, $txtFuel, $txtDateOff, $txtOvertimeHour, $newWorkId);
+                # thêm thông tin làm việc
+                $toDateWork = $hFunction->lastDateOfMonthFromDate($fromDateWork);
+                $modelWork->insert($fromDateWork, $toDateWork, $newWorkId);
             }
 
             # them phương thuc lam viec
             $modelStaffWorkMethod->insert($cbWorkMethod, $cbApplyRule, $newStaffId, $staffLoginId);
-
-            # thêm thông tin làm việc
-            $toDateWork = $hFunction->lastDateOfMonthFromDate($fromDateWork);
-            $modelWork->insert($fromDateWork, $toDateWork, $newWorkId);
 
             return Session::put('notifyAdd', 'Thêm thành công');
         } else {

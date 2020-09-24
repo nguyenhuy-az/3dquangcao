@@ -129,6 +129,12 @@ class QcJobApplication extends Model
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
     }
 
+    # lay danh sach ma ho cua cong ty
+    public function listIdByCompany($companyId)
+    {
+        return QcJobApplication::where('company_id', $companyId)->pluck('jobApplication_id');
+    }
+
     #----------- nguoi duyet ho so------------
     public function staff()
     {
@@ -361,6 +367,8 @@ class QcJobApplication extends Model
     }
 
     # ======== ======== kiem tra thong tin ========= ==========
+
+    #lay ho so tuyen dung theo cty va trang thai duyet
     public function selectInfoByCompany($companyId, $confirmStatus = 100)
     {
         if ($confirmStatus == 100) { # tat ca thong tin
@@ -370,6 +378,7 @@ class QcJobApplication extends Model
         }
     }
 
+    # dang nhap ho so
     public function loginJobApplication($companyId, $phone)
     {
         $getInfo = QcJobApplication::where('company_id', $companyId)->where('phone', $phone)->first();

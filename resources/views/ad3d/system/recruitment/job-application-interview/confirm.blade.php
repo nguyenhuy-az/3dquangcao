@@ -34,8 +34,7 @@ $currentYear = (int)date('Y');
                     <div class="row" style="margin-bottom: 10px;">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <label>Giờ vào:</label>
-                            <input class="form-control" type="text" disabled="disabled"
-                                   value="{!! date('d-m-Y H:i', strtotime($timeBegin)) !!}">
+                            <input class="form-control" type="text" disabled="disabled" value="{!! date('d-m-Y H:i', strtotime($timeBegin)) !!}" >
                         </div>
                     </div>
                     <div class="row" style="margin-bottom: 10px;">
@@ -84,9 +83,10 @@ $currentYear = (int)date('Y');
                         <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="text-center form-group form-group-sm">
                                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
+                                <input type="hidden" name="txtTimekeepingProvisional"
+                                       value="{!! $jobApplicationId !!}">
                                 <button type="button" class="qc_save btn btn-sm btn-primary">XÁC NHẬN</button>
-                                <button type="button" class="qc_ad3d_container_close btn btn-sm btn-default">
-                                    Đóng
+                                <button type="button" class="qc_ad3d_container_close btn btn-sm btn-default">Đóng
                                 </button>
                             </div>
                         </div>

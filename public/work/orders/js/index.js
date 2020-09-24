@@ -612,6 +612,12 @@ var qc_work_orders = {
                         if (qc_main.check.inputNull(txtProductType, 'Chọn loại sản phẩm')) {
                             txtProductType.focus();
                             return false;
+                        }else {
+                            if (txtProductType.val().length > 50) {
+                                alert('Tên loại sản phẩm không dài quá 50 ký tự');
+                                txtProductType.focus();
+                                return false;
+                            }
                         }
                         if (txtWidth.val() == 0 || txtWidth.val() == '') {
                             alert('Nhập chiều rộng');

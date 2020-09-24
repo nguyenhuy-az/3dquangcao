@@ -129,11 +129,6 @@ $indexHref = route('qc.ad3d.system.staff.get');
                                 $dataCompanyStaffWork = $staff->companyStaffWorkInfoActivity($staffId);
                                 # anh dai dien
                                 $image = $staff->image();
-                                if ($hFunction->checkEmpty($image)) {
-                                    $src = $staff->pathDefaultImage();
-                                } else {
-                                    $src = $staff->pathFullImage($image);
-                                }
                                 # trạng thái làm
                                 $checkWorkStatus = $staff->checkWorkStatus();
                                 ?>
@@ -147,7 +142,7 @@ $indexHref = route('qc.ad3d.system.staff.get');
                                             <a class="qc-link-green"
                                                href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
                                                 <img style="max-width: 50px;height: 50px;"
-                                                     src="{!! $src !!}">
+                                                     src="{!! $staff->pathAvatar($image) !!}">
                                             </a>
                                         </td>
                                         <td>

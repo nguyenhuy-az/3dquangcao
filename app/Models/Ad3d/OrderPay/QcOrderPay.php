@@ -218,9 +218,8 @@ class QcOrderPay extends Model
             $dataOrder = $dataOrderPay->order;
             # thong tin nhan vien tao don hang
             $dataStaffCreated = $dataOrder->staff;
-            # thuong cho cap NV
-            // cap quan ly lay danh sach NV kinh doanh cap quan ly
-            $dataStaffBusiness = $modelStaff->infoStaffConstructionRankManage($dataOrder->companyId());
+            // CAP QUAN LY - lay danh sach NV kinh doanh cap quan ly
+            $dataStaffBusiness = $modelStaff->infoActivityStaffBusinessRankManage($dataOrder->companyId());
             if ($hFunction->checkCount($dataStaffBusiness)) {
                 $bonusMoney = $this->getBonusMoneyOfManageRank($payId);
                 if ($bonusMoney > 0) {
@@ -230,12 +229,12 @@ class QcOrderPay extends Model
                             $workId = $dataWork->workId();
                             # kiem tra da duoc thuong chua - neu chua thi thuong
                             if (!$modelBonus->checkOrderPayBonus($workId, $payId)) {
-                                if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), 'Thưởng Quản lý nhận tiền từ đơn hàng', 1, $workId, null, null, $payId)) {
+                                if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), 'Thưởng Quản lý kinh doanh nhận tiền từ đơn hàng', 1, $workId, null, null, $payId)) {
                                     $bonusId = $modelBonus->insertGetId();
                                     $notifyStaffId = $staffBusiness->staffId();
                                     $notifyStaffId = (is_int($notifyStaffId)) ? $notifyStaffId : $notifyStaffId[0];
                                     # thong bao cho nguoi nhan thuong
-                                    $modelStaffNotify->insert(null, $notifyStaffId, 'Thưởng Quản lý nhận tiền từ đơn hàng', null, null, $bonusId, null, null);
+                                    $modelStaffNotify->insert(null, $notifyStaffId, 'Thưởng Quản lý kinh doanh nhận tiền từ đơn hàng', null, null, $bonusId, null, null);
                                 }
                             }
                         }
@@ -243,21 +242,21 @@ class QcOrderPay extends Model
                 }
 
             }
-            // thuong cho nguoi nhan don hang
+            //NGUOI NHAN DON HANG - thuong cho nguoi nhan don hang
             if ($hFunction->checkCount($dataStaffCreated)) {
-                $bonusMoney = $this->getBonusOfStaffRank($payId);
-                if ($bonusMoney > 0) {
+                $bonusMoney_created = $this->getBonusOfStaffRank($payId);
+                if ($bonusMoney_created > 0) {
                     $dataWork = $dataStaffCreated->workInfoActivityOfStaff();
                     if ($hFunction->checkCount($dataWork)) {
                         $workId = $dataWork->workId();
                         # kiem tra da duoc thuong chua - neu chua thi thuong
                         if (!$modelBonus->checkOrderPayBonus($workId, $payId)) {
-                            if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), 'Thưởng nhận tiền đơn hàng', 1, $workId, null, null, $payId)) {
+                            if ($modelBonus->insert($bonusMoney_created, $hFunction->carbonNow(), 'Thưởng Nhân viên kinh doanh nhận tiền đơn hàng', 1, $workId, null, null, $payId)) {
                                 $bonusId = $modelBonus->insertGetId();
                                 $notifyStaffId = $dataStaffCreated->staffId();
                                 $notifyStaffId = (is_int($notifyStaffId)) ? $notifyStaffId : $notifyStaffId[0];
                                 # thong bao cho nguoi nhan thuong
-                                $modelStaffNotify->insert(null, $notifyStaffId, 'Thưởng nhận tiền đơn hàng', null, null, $bonusId, null, null);
+                                $modelStaffNotify->insert(null, $notifyStaffId, 'Thưởng Nhân viên kinh doanh nhận tiền đơn hàng', null, null, $bonusId, null, null);
                             }
                         }
                     }

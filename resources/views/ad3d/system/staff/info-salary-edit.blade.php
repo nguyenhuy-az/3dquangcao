@@ -75,8 +75,9 @@ if (count($dataStaffWorkSalary) > 0) {
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="form-group form-group-sm" style="margin: 0;">
-                <label class="qc-color-red">Tổng lương <i
-                            class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
+                <label class="qc-color-red">
+                    Tổng lương <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
+                </label>
                 <input type="text" class="form-control" name="txtTotalSalary"
                        placeholder="Tổng lương nhân viên"
                        onkeyup="qc_ad3d_staff_staff.edit.infoSalary.checkInputTotalSalary();"

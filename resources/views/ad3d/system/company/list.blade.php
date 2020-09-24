@@ -56,7 +56,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 <?php
                                 $companyId = $company->companyId();
                                 $logo = $company->logo();
-                                $recruitmentLink = route('qc.work.recruitment.login.get',$companyId );
+                                //  $recruitmentLink = route('qc.work.recruitment.login.get',$companyId );
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
                                     data-object="{!! $companyId !!}">
@@ -65,8 +65,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </td>
                                     <td>
                                         @if(!$hFunction->checkEmpty($logo))
-                                            <img alt="..." src="{!! $company->pathSmallImage($logo) !!}" style="max-width: 70px;">
-                                            @else
+                                            <img alt="..." src="{!! $company->pathSmallImage($logo) !!}"
+                                                 style="max-width: 70px;">
+                                        @else
                                             <em class="qc-color-grey">Chưa có</em>
                                         @endif
                                     </td>
@@ -94,8 +95,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <input id="qc_recruitment_link_{!! $companyId !!}" type="hidden" value="{!! $recruitmentLink !!}">
-                                        <a class="qc_get_link qc-link-green" data-company="{!! $companyId !!}">
+                                        <a class="qc_recruitment_get_link qc-link-green"
+                                           data-href="{!! route('qc.ad3d.system.company.recruitment_link.get',$companyId) !!}">
                                             LẤY LINK
                                         </a>
                                     </td>

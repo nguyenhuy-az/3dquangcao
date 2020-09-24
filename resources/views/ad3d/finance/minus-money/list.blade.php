@@ -154,17 +154,21 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                 # thong tin phan
                                 $dataMinusMoneyFeedback = $minusMoney->infoMinusMoneyFeedback();
                                 $checkMinusMoneyLostToolStatus = false;
+                                # thong tin nhan vien
+                                if (!empty($dataWork->companyStaffWorkId())) {
+                                    $dataStaffMinus = $dataWork->companyStaffWork->staff;
+                                } else {
+                                    $dataStaffMinus = $dataWork->staff; // phien ban cu
+                                }
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $minusId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        @if(!empty($dataWork->companyStaffWorkId()))
-                                            {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                                        @else
-                                            {!! $dataWork->staff->fullName() !!}
-                                        @endif
+                                        <img style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                             src="{!! $dataStaffMinus->pathAvatar($dataStaffMinus->image()) !!}">
+                                        {!! $dataStaffMinus->fullName() !!}
                                     </td>
                                     <td>
                                         {!! date('d/m/Y', strtotime($minusMoney->dateMinus())) !!}

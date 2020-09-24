@@ -404,17 +404,20 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('/', ['as' => 'qc.ad3d.system.rules.get', 'uses' => 'Ad3d\System\Rules\RulesController@index']);
         });
 
-        //company
+        //cong ty
         Route::group(['prefix' => 'company'], function () {
+            # xem chi tiet
             Route::get('view/{companyId?}', ['as' => 'qc.ad3d.system.company.view.get', 'uses' => 'Ad3d\System\Company\CompanyController@view']);
-
-            //edit
+            # lay link tuyen dung
+            Route::get('link/{companyId?}', ['as' => 'qc.ad3d.system.company.recruitment_link.get', 'uses' => 'Ad3d\System\Company\CompanyController@getRecruitmentLink']);
+            //sua thong tin
             Route::get('edit/{companyId?}', ['as' => 'qc.ad3d.system.company.edit.get', 'uses' => 'Ad3d\System\Company\CompanyController@getEdit']);
             Route::post('edit/{companyId?}', ['as' => 'qc.ad3d.system.company.post.get', 'uses' => 'Ad3d\System\Company\CompanyController@postEdit']);
 
-            //off work
+            //them cty
             Route::get('add', ['as' => 'qc.ad3d.system.company.add.get', 'uses' => 'Ad3d\System\Company\CompanyController@getAdd']);
             Route::post('add', ['as' => 'qc.ad3d.system.company.add.post', 'uses' => 'Ad3d\System\Company\CompanyController@postAdd']);
+            // trang chinh
             Route::get('/', ['as' => 'qc.ad3d.system.company.get', 'uses' => 'Ad3d\System\Company\CompanyController@index']);
         });
 
@@ -604,6 +607,11 @@ Route::group(['prefix' => 'ad3d'], function () {
         });
         # ho so phong van
         Route::group(['prefix' => 'job-application-interview'], function () {
+            # chi tiet ho so
+            Route::get('info/{interviewId?}', ['as' => 'qc.ad3d.system.job-application-interview.info.get', 'uses' => 'Ad3d\System\JobApplicationInterview\JobApplicationInterviewController@getInfo']);
+            #xac nhan ho so
+            Route::post('confirm/{interviewId?}', ['as' => 'qc.ad3d.system.job-application-interview.confirm.post', 'uses' => 'Ad3d\System\JobApplicationInterview\JobApplicationInterviewController@postConfirm']);
+            # trang chinh
             Route::get('list/{companyId?}/{interviewStatus?}', ['as' => 'qc.ad3d.system.job-application-interview.get', 'uses' => 'Ad3d\System\JobApplicationInterview\JobApplicationInterviewController@index']);
         });
         # luong co ban

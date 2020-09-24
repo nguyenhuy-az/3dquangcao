@@ -126,6 +126,12 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 <?php
                                 $payId = $salaryBeforePay->payId();
                                 $dataWork = $salaryBeforePay->work;
+                                # thong tin nhan vien
+                                if (!empty($dataWork->companyStaffWorkId())) {
+                                    $dataStaffWork = $dataWork->companyStaffWork->staff;
+                                } else {
+                                    $dataStaffWork = $dataWork->staff; // phien ban cu
+                                }
                                 ?>
                                 <tr class="qc_ad3d_list_object" data-object="{!! $payId !!}">
                                     <td class="text-center">
@@ -136,11 +142,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </td>
 
                                     <td>
-                                        @if(!empty($dataWork->companyStaffWorkId()))
-                                            {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                                        @else
-                                            {!! $dataWork->staff->fullName() !!}
-                                        @endif
+                                        <img style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                             src="{!! $dataStaffWork->pathAvatar($dataStaffWork->image()) !!}">
+                                        {!! $dataStaffWork->fullName() !!}
                                     </td>
                                     <td class="text-right">
                                         {!! $salaryBeforePay->description() !!}

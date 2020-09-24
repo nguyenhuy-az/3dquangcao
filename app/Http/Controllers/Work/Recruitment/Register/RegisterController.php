@@ -26,24 +26,28 @@ class RegisterController extends Controller
     }
 
     # lay form dang ky
-    public function getAdd($companyId, $phoneNumber, $departmentSelectedId = null)
+    public function getAdd($companyId, $phoneNumber = null, $departmentSelectedId = null)
     {
         $hFunction = new \Hfunction();
         $modelCompany = new QcCompany();
         $modelDepartment = new QcDepartment();
         $dataDepartmentWork = null;
-        if (empty($departmentSelectedId)) {
-            # lay mac dinh la bo phan thi cong
-            $dataDepartmentSelected = null;// $modelDepartment->getInfo($modelDepartment->constructionDepartmentId());
+        if (empty($phoneNumber)) {
+            return redirect()->route('qc.work.recruitment.login.get', $companyId);
         } else {
-            $dataDepartmentSelected = $modelDepartment->getInfo($departmentSelectedId);
+            if (empty($departmentSelectedId)) {
+                # lay mac dinh la bo phan thi cong
+                $dataDepartmentSelected = null;// $modelDepartment->getInfo($modelDepartment->constructionDepartmentId());
+            } else {
+                $dataDepartmentSelected = $modelDepartment->getInfo($departmentSelectedId);
+            }
+            # danh sach bo phan cua he thong
+            $dataDepartment = $modelDepartment->selectInfoAllActivity()->get();
+            if ($hFunction->checkCount($dataDepartmentSelected)) $dataDepartmentWork = $dataDepartmentSelected->departmentWorkGetInfo();
+            # thong tin cong ty
+            $dataCompany = $modelCompany->getInfo($companyId);
+            return view('work.recruitment.register.add', compact('dataDepartment', 'dataCompany', 'dataDepartmentSelected', 'dataDepartmentWork', 'phoneNumber'));
         }
-        # danh sach bo phan cua he thong
-        $dataDepartment = $modelDepartment->selectInfoAllActivity()->get();
-        if ($hFunction->checkCount($dataDepartmentSelected)) $dataDepartmentWork = $dataDepartmentSelected->departmentWorkGetInfo();
-        # thong tin cong ty
-        $dataCompany = $modelCompany->getInfo($companyId);
-        return view('work.recruitment.register.add', compact('dataDepartment', 'dataCompany', 'dataDepartmentSelected', 'dataDepartmentWork', 'phoneNumber'));
     }
 
     public function postAdd($companyId)

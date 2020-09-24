@@ -26,6 +26,7 @@ class CompanyController extends Controller
 
     }
 
+    # xem chi tiet
     public function view($companyId)
     {
         $modelCompany = new QcCompany();
@@ -35,14 +36,22 @@ class CompanyController extends Controller
         }
     }
 
-    //add
+    # lay link tuyen dung
+    public function getRecruitmentLink($companyId)
+    {
+        $modelCompany = new QcCompany();
+        $dataCompany = $modelCompany->getInfo($companyId);
+        return view('ad3d.system.company.get-link', compact('dataCompany'));
+    }
+
+    //them cong cty
     public function getAdd()
     {
         $modelStaff = new QcStaff();
         $dataAccess = [
             'accessObject' => 'company'
         ];
-        return view('ad3d.system.company.add', compact('modelStaff','dataAccess'));
+        return view('ad3d.system.company.add', compact('modelStaff', 'dataAccess'));
     }
 
     public function postAdd()
@@ -70,7 +79,7 @@ class CompanyController extends Controller
                     $imageName = null;
                 }
             }
-            if ($modelCompany->insert($companyCode, $name, $txtNameCode, $address, $phone, $email, $website,$companyType, $imageName)) {
+            if ($modelCompany->insert($companyCode, $name, $txtNameCode, $address, $phone, $email, $website, $companyType, $imageName)) {
                 Session::put('notifyAdd', 'Thêm thành công, Nhập thông tin để tiếp tục');
             } else {
                 Session::put('notifyAdd', 'Thêm thất bại, Nhập thông tin để tiếp tục');
@@ -85,7 +94,7 @@ class CompanyController extends Controller
         $modelCompany = new QcCompany();
         $dataCompany = $modelCompany->getInfo($companyId);
         if (count($dataCompany) > 0) {
-            return view('ad3d.system.company.edit', compact('modelStaff','dataCompany'));
+            return view('ad3d.system.company.edit', compact('modelStaff', 'dataCompany'));
         }
     }
 
@@ -133,10 +142,10 @@ class CompanyController extends Controller
                 if (!$modelCompany->uploadImage($source_img, $imageName, 500)) {
                     $imageName = $oldLogo;
                 }
-            }else{
+            } else {
                 $imageName = $oldLogo;
             }
-            $modelCompany->updateInfo($companyId, $companyCode, $name, $txtNameCode, $address, $phone, $email, $website,$companyType, $imageName);
+            $modelCompany->updateInfo($companyId, $companyCode, $name, $txtNameCode, $address, $phone, $email, $website, $companyType, $imageName);
         }
     }
 

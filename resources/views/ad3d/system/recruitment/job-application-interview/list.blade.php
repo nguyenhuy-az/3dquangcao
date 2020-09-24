@@ -12,9 +12,9 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$indexHref = route('qc.ad3d.system.job-application.get');
+$indexHref = route('qc.ad3d.system.job-application-interview.get');
 ?>
-@extends('ad3d.system.recruitment.job-application.index')
+@extends('ad3d.system.recruitment.job-application-interview.index')
 @section('qc_ad3d_index_content')
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -25,6 +25,12 @@ $indexHref = route('qc.ad3d.system.job-application.get');
                             <th class="text-center" style="width: 20px;">STT</th>
                             <th>Ảnh</th>
                             <th>Tên</th>
+                            <th class="text-center">
+                                Ngày phỏng vấn
+                            </th>
+                            <th class="text-center">
+                                Xác nhận PV
+                            </th>
                             <th>
                                 Công ty
                             </th>
@@ -32,17 +38,26 @@ $indexHref = route('qc.ad3d.system.job-application.get');
                             <th>
                                 Kỹ năng
                             </th>
-                            <th class="text-center">
-                                Ngày nộp
-                            </th>
-                            <th class="text-center">
-                                Duyệt
-                            </th>
                         </tr>
                         <tr>
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td></td>
+                            <td style="padding: 0;">
+                                <select class="text-center cbConfirmStatusFilter form-control" name="cbConfirmStatusFilter"
+                                        data-href="{!! $indexHref !!}">
+                                    <option value="100" @if($confirmStatusFilter == 100) selected="selected" @endif>
+                                        TẤT CẢ
+                                    </option>
+                                    <option value="0" @if($confirmStatusFilter == 0) selected="selected" @endif>
+                                        CHƯA PHỎNG VẤN
+                                    </option>
+                                    <option value="1" @if($confirmStatusFilter == 1) selected="selected" @endif>Đã
+                                        ĐÃ PHỎNG VẤN
+                                    </option>
+                                </select>
+                            </td>
                             <td style="padding: 0 !important;">
                                 <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                                         data-href="{!! $indexHref !!}">
@@ -62,45 +77,32 @@ $indexHref = route('qc.ad3d.system.job-application.get');
                             </td>
                             <td></td>
                             <td></td>
-                            <td></td>
-                            <td style="padding: 0;">
-                                <select class="cbConfirmStatusFilter form-control text-center" name="cbConfirmStatusFilter"
-                                        data-href="{!! $indexHref !!}">
-                                    <option value="100" @if($confirmStatusFilter == 100) selected="selected" @endif>
-                                        TẤT CẢ
-                                    </option>
-                                    <option value="0" @if($confirmStatusFilter == 0) selected="selected" @endif>
-                                        CHƯA DUYỆT
-                                    </option>
-                                    <option value="1" @if($confirmStatusFilter == 1) selected="selected" @endif>
-                                        ĐÃ DUYỆT
-                                    </option>
-                                </select>
-                            </td>
                         </tr>
-                        @if($hFunction->checkCount($dataJobApplication))
+                        @if($hFunction->checkCount($dataJobApplicationInterview))
                             <?php
-                            $perPage = $dataJobApplication->perPage();
-                            $currentPage = $dataJobApplication->currentPage();
+                            $perPage = $dataJobApplicationInterview->perPage();
+                            $currentPage = $dataJobApplicationInterview->currentPage();
                             $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
                             ?>
-                            @foreach($dataJobApplication as $jobApplication)
+                            @foreach($dataJobApplicationInterview as $jobApplicationInterview)
                                 <?php
-                                $jobApplicationId = $jobApplication->jobApplicationId();
+                                $interviewId = $jobApplicationInterview->interviewId();
+                                # trang thai xac nhan phong van
+                                $checkConfirmStatus = $jobApplicationInterview->checkInterviewConfirm();
+                                # thong tin ho so
+                                $dataJobApplication = $jobApplicationInterview->jobApplication;
                                 # anh dai dien
-                                $image = $jobApplication->image();
+                                $image = $dataJobApplication->image();
                                 if ($hFunction->checkEmpty($image)) {
-                                    $src = $jobApplication->pathDefaultImage();
+                                    $src = $dataJobApplication->pathDefaultImage();
                                 } else {
-                                    $src = $jobApplication->pathFullImage($image);
+                                    $src = $dataJobApplication->pathFullImage($image);
                                 }
-                                # trang thai xac nhan
-                                $checkConfirmStatus = $jobApplication->checkConfirmStatus();
                                 # thong tin tay nghe
-                                $dataJobApplicationWork = $jobApplication->jobApplicationWorkGetInfo();
+                                $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
-                                    data-object="{!! $jobApplicationId !!}">
+                                    data-object="{!! $interviewId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
@@ -108,20 +110,39 @@ $indexHref = route('qc.ad3d.system.job-application.get');
                                         <img style="max-width: 50px;height: 50px;" src="{!! $src !!}">
                                     </td>
                                     <td>
-                                        <b>{!! $jobApplication->firstName().' '.$jobApplication->lastName() !!}</b>
+                                        <b>{!! $dataJobApplication->firstName().' '.$dataJobApplication->lastName() !!}</b>
                                         <br/>
-                                        <em style="color: grey;">Mã HS: {!! $jobApplication->nameCode() !!}</em>
+                                        <em style="color: grey;">Mã HS: {!! $dataJobApplication->nameCode() !!}</em>
                                         <br/>
                                         <a class="qc-link-green-bold"
-                                           href="{!! route('qc.ad3d.system.job-application.info.get', $jobApplicationId) !!}">
+                                           href="{!! route('qc.ad3d.system.job-application-interview.info.get', $interviewId) !!}">
                                             <i class="glyphicon glyphicon-info-sign qc-font-size-16"></i> Chi tiết
                                         </a>
                                     </td>
-                                    <td>
-                                        {!! $jobApplication->company->name() !!}
+                                    <td class="text-center">
+                                        {!! date('d/m/Y', strtotime($jobApplicationInterview->interviewDate())) !!}
+                                    </td>
+                                    <td class="text-center">
+                                        @if(!$checkConfirmStatus)
+                                            <a class="qc-link-green"
+                                               href="{!! route('qc.ad3d.system.job-application-interview.info.get', $interviewId) !!}">
+                                                PHỎNG VẤN
+                                            </a>
+                                        @else
+                                            <em style="color: grey;">Đã phỏng vấn</em>
+                                            <br/>
+                                            @if($jobApplicationInterview->checkAgreeStatus())
+                                                <span>ĐẠT</span>
+                                            @else
+                                                <span>KHÔNG ĐẠT</span>
+                                            @endif
+                                        @endif
                                     </td>
                                     <td>
-                                        {!! $jobApplication->department->name() !!}
+                                        {!! $dataJobApplication->company->name() !!}
+                                    </td>
+                                    <td>
+                                        {!! $dataJobApplication->department->name() !!}
                                     </td>
                                     <td>
                                         @if($hFunction->checkCount($dataJobApplicationWork))
@@ -132,30 +153,11 @@ $indexHref = route('qc.ad3d.system.job-application.get');
                                             <em style="color: grey;">Chưa xác định</em>
                                         @endif
                                     </td>
-                                    <td class="text-center">
-                                        {!! date('d/m/Y', strtotime($jobApplication->createdAt())) !!}
-                                    </td>
-                                    <td class="text-center">
-                                        @if(!$checkConfirmStatus)
-                                            <a class="qc_confirm_get qc-link-green"
-                                               href="{!! route('qc.ad3d.system.job-application.info.get', $jobApplicationId) !!}">
-                                                DUYỆT
-                                            </a>
-                                        @else
-                                            <em style="color: grey;">Đã duyệt</em>
-                                            <br/>
-                                            @if($jobApplication->checkAgreeStatus())
-                                                <span>ĐẠT</span>
-                                            @else
-                                                <span>KHÔNG ĐẠT</span>
-                                            @endif
-                                        @endif
-                                    </td>
                                 </tr>
                             @endforeach
                             <tr>
                                 <td class="text-center" colspan="8">
-                                    {!! $hFunction->page($dataJobApplication) !!}
+                                    {!! $hFunction->page($dataJobApplicationInterview) !!}
                                 </td>
                             </tr>
                         @endif

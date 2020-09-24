@@ -22,13 +22,14 @@ if (isset($dataAccess)) {
                 <a href="{!! route('qc.ad3d.system.job-application.get') !!}"
                    @if($subMenuObject == 'jobApplication') style="background-color: whitesmoke;" @endif>
                     <i class="glyphicon glyphicon-refresh qc-font-size-16"></i>
-                    <label>Hồ sơ tuyển dụng</label>
+                    <label>HỒ SƠ ỨNG TUYỂN</label>
                 </a>
             </li>
             <li @if($subMenuObject == 'jobApplicationInterview') class="active" @endif>
                 <a href="{!! route('qc.ad3d.system.job-application-interview.get') !!}"
                    @if($subMenuObject == 'jobApplicationInterview') style="background-color: whitesmoke;" @endif>
-                    <label>Hồ sơ phỏng vấn</label>
+                    <i class="glyphicon glyphicon-refresh qc-font-size-16"></i>
+                    <label>HỒ SƠ PHỎNG VẤN</label>
                 </a>
             </li>
         </ul>

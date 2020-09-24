@@ -470,7 +470,7 @@ class OrdersController extends Controller
                 if ($txtBeforePay > 0) {
                     # thanh toan don hang
                     if ($modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone)) {
-                        # xet thuong
+                        # xet thuong cho bo phan kinh doanh
                         $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
                     }
                 }

@@ -130,17 +130,22 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 //2 tong tien mua vat tu xac nhan chưa thanh toan
                                 $fromDate = $dataWork->fromDate();
                                 $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataWork->companyStaffWork->staff->staffId(), date('Y-m', strtotime($fromDate)), 2);
+
+                                # thong tin nhan vien
+                                if (!empty($dataWork->companyStaffWorkId())) {
+                                    $dataStaffSalary = $dataWork->companyStaffWork->staff;
+                                } else {
+                                    $dataStaffSalary = $dataWork->staff; // phien ban cu
+                                }
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $salaryId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
-                                    <td>
-                                        @if(!empty($dataWork->companyStaffWorkId()))
-                                            {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                                        @else
-                                            {!! $dataWork->staff->fullName() !!}
-                                        @endif
+                                    <td style="padding: 0;">
+                                        <img style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                             src="{!! $dataStaffSalary->pathAvatar($dataStaffSalary->image()) !!}">
+                                        {!! $dataStaffSalary->fullName() !!}
                                     </td>
                                     <td>
                                         <a class="qc_view qc-link-green">

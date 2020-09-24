@@ -82,7 +82,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
+                    <table class="table table-bordered"  style="border: none;">
                         {{--THONG TIN CO BAN--}}
                         <tr>
                             <td style="background-color: black; color: red;padding-bottom: 0;">

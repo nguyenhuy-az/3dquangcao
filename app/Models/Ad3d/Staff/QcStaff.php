@@ -1120,6 +1120,47 @@ class QcStaff extends Model
         return Session::flush();
     }
 
+    // ======== ====== ====== =========== BO PHAN KINH DOANH =========== =========== ===========
+    # lay danh sanh NV bo phan kinh doanh cap quan ly cua 1 cong ty - ta ca
+    public function infoStaffBusinessRankManage($companyId)
+    {
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->businessDepartmentId()], $modelRank->manageRankId());
+        return QcStaff::whereIn('staff_id', $listStaffId)->get();
+    }
+
+    # lay danh sanh NV bo phan kinh doanh cap quan ly cua 1 cong ty - dang hoat dong
+    public function infoActivityStaffBusinessRankManage($companyId)
+    {
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->businessDepartmentId()], $modelRank->manageRankId());
+        return QcStaff::whereIn('staff_id', $listStaffId)->get();
+    }
+    // ======== ====== ====== =========== BO PHAN THI CONG =========== =========== ===========
+    # lay thong tin NV la  bo phan thi cong cap quan ly cua 1 cong ty
+    public function infoStaffConstructionRankManage($companyId)
+    {
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()], $modelRank->manageRankId());
+        return QcStaff::whereIn('staff_id', $listStaffId)->get();
+    }
+
+    # lay thong tin NV la  bo phan thi cong cap quan ly cua 1 cong ty dang hoat dong
+    public function infoActivityStaffConstructionRankManage($companyId)
+    {
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()], $modelRank->manageRankId());
+        return QcStaff::whereIn('staff_id', $listStaffId)->get();
+    }
+
     //========= ========== ========== lay thong tin ========== ========== ==========
     public function selectInfoAll($listStaffId = null, $workStatus = 100)
     {
@@ -1141,25 +1182,6 @@ class QcStaff extends Model
         }
     }
 
-    # lay danh sanh NV bo phan kinh doanh cap quan ly cua 1 cong ty
-    public function infoStaffBusinessRankManage($companyId)
-    {
-        $modelDepartment = new QcDepartment();
-        $modelRank = new QcRank();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->businessDepartmentId()], $modelRank->manageRankId());
-        return QcStaff::whereIn('staff_id', $listStaffId)->get();
-    }
-
-    # lay thong tin NV la  bo phan thi cong cap quan ly cua 1 cong ty
-    public function infoStaffConstructionRankManage($companyId)
-    {
-        $modelDepartment = new QcDepartment();
-        $modelRank = new QcRank();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()], $modelRank->manageRankId());
-        return QcStaff::whereIn('staff_id', $listStaffId)->get();
-    }
 
     # lay thong tin NV  nhan thong bao khi them don hang moi cua 1 cty (chi bo phan cap quan ly)
     public function infoStaffReceiveNotifyNewOrder($companyId)
