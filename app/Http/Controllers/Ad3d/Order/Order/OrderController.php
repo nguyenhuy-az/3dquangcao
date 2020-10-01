@@ -28,13 +28,15 @@ class OrderController extends Controller
         $modelCustomer = new QcCustomer();
         $modelCompany = new QcCompany();
         $modelOrder = new QcOrder();
-
         $currentMonth = $hFunction->currentMonth();
         $currentYear = $hFunction->currentYear();
         $orderFilterName = ($orderFilterName == 'null') ? null : $orderFilterName;
         $orderCustomerFilterName = ($orderCustomerFilterName == 'null') ? null : $orderCustomerFilterName;
-        //$staffFilterName = ($staffFilterId == 'null') ? null : $staffFilterName;
+
         $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        //dd($dataCompanyLogin);
 
         $dataAccess = [
             'accessObject' => 'order'
@@ -61,12 +63,12 @@ class OrderController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        //dd($dateFilter);
-        $dataCompany = $modelCompany->getInfo();
-        if ($dataStaffLogin->checkRootManage()) {
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
+       /* if ($dataStaffLogin->checkRootManage()) {
             if (empty($companyFilterId) || $companyFilterId == 1000) {
                 $searchCompanyFilterId = $modelCompany->listIdActivity();
-                $companyFilterId = 1000;// $dataStaffLogin->companyId();
+                $companyFilterId = 1000;
             } else {
                 $searchCompanyFilterId = [$companyFilterId];
             }
@@ -74,14 +76,13 @@ class OrderController extends Controller
         } else {
             $searchCompanyFilterId = [$dataStaffLogin->companyId()];
             $companyFilterId = $dataStaffLogin->companyId();
-        }
+        }*/
+        if (empty($companyFilterId) || $companyFilterId == 1000)  $companyFilterId = $companyLoginId;
         if ($staffFilterId > 0) {
             $listStaffId = [$staffFilterId];
         } else {
-            $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
+            $listStaffId = $modelStaff->listIdOfCompany($companyFilterId);
         }
-
-        //$listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
 
         if (!empty($orderCustomerFilterName)) {
             $dataOrderSelect = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus);
@@ -101,7 +102,7 @@ class OrderController extends Controller
         $totalOrders = count($dataMoneyOrder);
 
         //danh sach NV
-        $dataStaff = $modelCompany->staffInfoActivityOfListCompanyId([$searchCompanyFilterId]);
+        $dataStaff = $modelCompany->staffInfoActivityOfCompanyId([$companyFilterId]);
         return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany', 'dataStaff', 'dataAccess', 'dataOrder', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId'));
 
     }
@@ -526,6 +527,8 @@ class OrderController extends Controller
         $dataOrder = $modelOrders->getInfo($orderId);
         if (count($txtMoney) > 0 && count($dataOrder) > 0) {
             if ($modelOrderPay->insert($txtMoney, $txtNote, $hFunction->carbonNow(), $orderId, $modelStaff->loginStaffId(), $txtName, $txtPhone)) {
+                # xet thuong cho bo phan kinh doanh
+                $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
                 # cap nhat thong tin thanh toan don hang
                 $modelOrders->updateFinishPayment($orderId);
                 return redirect()->route('qc.ad3d.order.order.get');

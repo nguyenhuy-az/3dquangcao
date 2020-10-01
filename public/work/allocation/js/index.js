@@ -5,7 +5,7 @@ var qc_work_allocation = {
     filter: function (href) {
         qc_main.url_replace(href);
     },
-    workAllocation: {
+    /*workAllocation: {
         getReport: function (href) {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
         },
@@ -25,7 +25,7 @@ var qc_work_allocation = {
         viewProductDesign: function (href) {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
         },
-    },
+    },*/
     activity: {
         viewProductDesign: function (href) {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
@@ -209,7 +209,7 @@ $(document).ready(function () {
     });
 });
 //------------ ---------- quan ly phan viec ----------- ---------
-$(document).ready(function () {
+/*$(document).ready(function () {
     //Theo trạng thái hoàn thành
     $('body').on('change', '.cbWorkAllocationFinishStatus', function () {
         qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.cbWorkAllocationMonthFilter').val() + '/' + $('.cbWorkAllocationYearFilter').val());
@@ -243,7 +243,7 @@ $(document).ready(function () {
         qc_work_allocation.workAllocation.viewProductDesign($(this).data('href'));
     });
 
-});
+});*/
 //----------- ----------- viec dang làm --------- -----------
 $(document).ready(function () {
     //form nao cao

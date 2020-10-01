@@ -17,8 +17,8 @@ $companyLoginId = $dataStaffLogin->companyId();
 @section('qc_ad3d_index_content')
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 0;padding-bottom: 0;">
-            <a class="qc-link-red" href="{!! route('qc.ad3d.system.staff.get') !!}">
-                <i class="glyphicon glyphicon-backward"></i> Trởlại
+            <a class="btn btn-primary qc-link-white-bold" onclick="qc_main.page_back_go();">
+                Về trang trước
             </a>
         </div>
         <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">

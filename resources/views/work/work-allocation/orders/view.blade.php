@@ -10,7 +10,7 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $orderId = $dataOrder->orderId();
 ?>
-@extends('work.work-allocation.index')
+@extends('work.work-allocation.orders.index')
 @section('titlePage')
     Chi tiết đơn hàng
 @endsection
@@ -20,9 +20,6 @@ $orderId = $dataOrder->orderId();
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
                 Về trang trước
-            </a>
-            <a class="btn btn-sm btn-default" href="{!! route('qc.work.work_allocation.manage.get') !!}">
-                Về Danh mục ĐH
             </a>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -172,7 +169,7 @@ $orderId = $dataOrder->orderId();
                                         <td>
                                             @if(!empty($designImage))
                                                 <a title="Click xem chi tiết hình ảnh"
-                                                   data-href="{!! route('qc.ad3d.order.order.product.design.view', $productId) !!}">
+                                                   data-href="#">
                                                     <img style="margin-right: 10px; max-width: 70px; max-height: 70px; padding: 5px 5px;"
                                                          src="{!! $product->pathSmallDesignImage($designImage) !!}">
                                                 </a>

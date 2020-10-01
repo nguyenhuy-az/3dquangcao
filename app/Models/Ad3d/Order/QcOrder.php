@@ -280,7 +280,7 @@ class QcOrder extends Model
     {
         return $this->selectInfoOfListCustomer($listCustomerId, $date, $paymentStatus, $orderBy)->get();
     }
-
+    # lay don hang theo thong tin khach hang cua TAT CA CONG
     public function selectInfoOfListCustomer($listCustomerId, $date = null, $paymentStatus = 3, $orderBy = 'DESC')
     {
         #$paymentStatus = 3 - tat ca /
@@ -292,6 +292,20 @@ class QcOrder extends Model
             return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('paymentStatus', $paymentStatus)->orderBy('receiveDate', $orderBy)->select('*');
         } else {
             return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->orderBy('receiveDate', $orderBy)->select('*');
+        }
+    }
+    # lay don hang theo thong tin khach hang cua 1 CONG TY
+    public function selectInfoOfListCustomerOfCompany($companyId,$listCustomerId, $date = null, $paymentStatus = 3, $orderBy = 'DESC')
+    {
+        #$paymentStatus = 3 - tat ca /
+        if (!empty($date) && $paymentStatus < 2) {
+            return QcOrder::where('company_id', $companyId)->whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('receiveDate', 'like', "%$date%")->where('paymentStatus', $paymentStatus)->orderBy('receiveDate', $orderBy)->select('*');
+        } else if (!empty($date) && $paymentStatus > 1) {
+            return QcOrder::where('company_id', $companyId)->whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('receiveDate', 'like', "%$date%")->orderBy('receiveDate', $orderBy)->select('*');
+        } else if (empty($date) && $paymentStatus < 2) {
+            return QcOrder::where('company_id', $companyId)->whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->where('paymentStatus', $paymentStatus)->orderBy('receiveDate', $orderBy)->select('*');
+        } else {
+            return QcOrder::where('company_id', $companyId)->whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->orderBy('receiveDate', $orderBy)->select('*');
         }
     }
 
@@ -573,7 +587,37 @@ class QcOrder extends Model
         return $dataOrder;
     }
 
-    # lay thong tin don hang quan ly thi cong
+    # lay thong tin don hang quan ly thi cong CUA 1 CONG TY
+    public function selectInfoManageConstructionOfCompany($companyId, $nameFiler = null, $dateFilter = null, $finishStatus = 100)
+    {
+        $dataOrder = null;
+        if ($finishStatus == 100) { // 100 = tat ca don hang
+            if (empty($nameFiler)) {
+                if (empty($dateFilter)) {
+                    $dataOrder = QcOrder::where('company_id', $companyId)->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+
+                } else {
+                    $dataOrder = QcOrder::where('company_id', $companyId)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+                }
+
+            } else {
+                if (empty($dateFilter)) {
+                    $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->where('company_id', $companyId)->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+                } else {
+                    $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->where('company_id', $companyId)->where('created_at', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+                }
+            }
+
+        } else {
+            if (empty($nameFiler)) {
+                $dataOrder = QcOrder::where('finishStatus', $finishStatus)->where('company_id', $companyId)->where('created_at', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+            } else {
+                $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->where('finishStatus', $finishStatus)->where('company_id', $companyId)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+            }
+        }
+        return $dataOrder;
+    }
+    # lay thong tin don hang quan ly thi cong theo danh sach nhan vien
     public function selectInfoManageConstruction($listStaffId, $nameFiler = null, $dateFilter = null, $finishStatus = 100)
     {
         $dataOrder = null;

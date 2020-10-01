@@ -107,12 +107,13 @@ class QcOrderAllocation extends Model
             ])
         ) {
             $dataOrder = $modelOrder->getInfo($this->orderId($allocationId));
-            if ($confirmFinish == 1) { # xac nhan dong y  hoan thanh
+            if ($confirmFinish == 1) {
+                # xac nhan dong y  hoan thanh
                 # thong bao hoan thanh thi cong cho kinh doanh
                 $modelStaffNotify->insert(null, $dataOrder->staffId(), 'Hoàn thành thi công', null, null, null, null, $allocationId);
 
-                # ----  xet thuong nguoi thi cong ----------
-                # khong tre ngay phan cong
+                # ----  XET THUONG NGUOI THI CONG SAN PHAM   ----------
+                /*# khong tre ngay phan cong
                 if (!$this->checkLate($allocationId)) {
                     $receiveStaffId = $this->receiveStaffId($allocationId);
                     $dataWork = $modelStaff->firstInfoActivityToWork($receiveStaffId); # bang cham cong cua NV
@@ -129,7 +130,7 @@ class QcOrderAllocation extends Model
                             }
                         }
                     }
-                }
+                }*/
 
             } else {
                 # xac nhan khong hoan thanh thi cong

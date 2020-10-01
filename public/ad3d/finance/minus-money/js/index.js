@@ -128,29 +128,23 @@ $(document).ready(function () {
 });
 
 //-------------------- add ------------
-/*
- $(document).ready(function () {
- //chọn công ty
- $('.qc_ad3d_index_content').on('change', '.frmAdd .cbCompany', function () {
- qc_main.url_replace($(this).data('href') + '/' + $(this).val());
- })
+$(document).ready(function () {
+    //chọn nhân viên
+    $('.qc_ad3d_index_content').on('change', '.frmAdd .cbWork', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompany').val() + '/' + $(this).val());
+    })
 
- //chọn nhân viên
- $('.qc_ad3d_index_content').on('change', '.frmAdd .cbWork', function () {
- qc_main.url_replace($(this).data('href') + '/' + $('.cbCompany').val() + '/' + $(this).val());
- })
+    //chọn lý do phạt
+    $('.qc_ad3d_index_content').on('change', '.frmAdd .cbPunishContent', function () {
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompany').val() + '/' + $('.cbWork').val() + '/' + $(this).val());
+    })
 
- //chọn lý do phạt
- $('.qc_ad3d_index_content').on('change', '.frmAdd .cbPunishContent', function () {
- qc_main.url_replace($(this).data('href') + '/' + $('.cbCompany').val() + '/' + $('.cbWork').val() + '/' + $(this).val());
- })
+    //lưu
+    $('.qc_ad3d_index_content').on('click', '.frmAdd .qc_save', function () {
+        qc_ad3d_finance_minus_money.add.save($(this).parents('.frmAdd'));
+    })
+});
 
- //lưu
- $('.qc_ad3d_index_content').on('click', '.frmAdd .qc_save', function () {
- qc_ad3d_finance_minus_money.add.save($(this).parents('.frmAdd'));
- })
- });
- */
 
 //-------------------- edit ------------
 /*$(document).ready(function () {

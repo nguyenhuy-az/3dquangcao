@@ -61,7 +61,7 @@ class QcDepartmentWork extends Model
 
     public function getInfoOfDepartment($departmentId)
     {
-        return QcDepartmentWork::where('department_id', $departmentId)->get();
+        return QcDepartmentWork::where('department_id', $departmentId)->orderBy('name', 'ASC')->get();
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========

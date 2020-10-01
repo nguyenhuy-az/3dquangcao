@@ -57,6 +57,7 @@ class CompanyController extends Controller
     public function postAdd()
     {
         $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $name = Request::input('txtName');
         $companyCode = Request::input('txtCompanyCode');
@@ -67,7 +68,7 @@ class CompanyController extends Controller
         $website = Request::input('txtWebsite');
         $logo = Request::file('txtLogo');;
         $companyType = Request::input('cbCompanyType');;// chi nhanh
-        // check exist of name
+        // kiem tra ten cty da ton tai
         if ($modelCompany->existName($name)) {
             Session::put('notifyAdd', "Thêm thất bại <b>'$name'</b> đã tồn tại.");
         } else {
@@ -79,7 +80,13 @@ class CompanyController extends Controller
                     $imageName = null;
                 }
             }
-            if ($modelCompany->insert($companyCode, $name, $txtNameCode, $address, $phone, $email, $website, $companyType, $imageName)) {
+            $dataCompanyLogin = $modelStaff->companyLogin();
+            if ($hFunction->checkCount($dataCompanyLogin)) {
+                $parentId = $dataCompanyLogin->companyId();
+            } else {
+                $parentId = null;
+            }
+            if ($modelCompany->insert($companyCode, $name, $txtNameCode, $address, $phone, $email, $website, $companyType, $imageName, $parentId)) {
                 Session::put('notifyAdd', 'Thêm thành công, Nhập thông tin để tiếp tục');
             } else {
                 Session::put('notifyAdd', 'Thêm thất bại, Nhập thông tin để tiếp tục');

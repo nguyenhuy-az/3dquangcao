@@ -28,7 +28,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr>
-                            <td colspan="6"></td>
+                            <td colspan="5"></td>
                             <td class="text-right">
                                 <a class="qc-font-size-16 qc-link-green-bold" title="Thêm"
                                    href="{!! route('qc.ad3d.system.company.add.get') !!}">
@@ -44,7 +44,6 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             <th>Thông tin liên lạc</th>
                             <th>Hình thức hoạt động</th>
                             <th class="text-center">Link tuyển dụng</th>
-                            <th></th>
                         </tr>
                         @if($hFunction->checkCount($dataCompany))
                             <?php
@@ -73,6 +72,18 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </td>
                                     <td>
                                         {!! $company->name() !!}
+                                        <br/>
+                                        <a class="qc_view qc-link" href="#" title="Xem chi tiết">
+                                            <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
+                                        </a>
+                                        &nbsp;|&nbsp;
+                                        <a class="qc_edit qc-link-green" href="#" title="Sửa">
+                                            <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                        </a>
+                                        &nbsp;|&nbsp;
+                                        <a class="qc_delete qc-link-red" href="#" title="Xóa">
+                                            <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
+                                        </a>
                                     </td>
                                     <td>
                                         <em class="qc-text-under">- Địa chỉ:</em>
@@ -100,23 +111,10 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             LẤY LINK
                                         </a>
                                     </td>
-                                    <td class="text-right">
-                                        <a class="qc_view qc-link" href="#" title="Xem chi tiết">
-                                            <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
-                                        </a>
-                                        &nbsp;|&nbsp;
-                                        <a class="qc_edit qc-link-green" href="#" title="Sửa">
-                                            <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
-                                        </a>
-                                        &nbsp;|&nbsp;
-                                        <a class="qc_delete qc-link-red" href="#" title="Xóa">
-                                            <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
-                                        </a>
-                                    </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="7">
+                                <td class="text-center" colspan="6">
                                     {!! $hFunction->page($dataCompany) !!}
                                 </td>
                             </tr>

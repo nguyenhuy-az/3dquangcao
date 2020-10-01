@@ -28,7 +28,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcCompany extends Model
 {
     protected $table = 'qc_companies';
-    protected $fillable = ['company_id', 'root_id', 'companyCode', 'name', 'nameCode', 'address', 'phone', 'email', 'website', 'logo', 'companyType', 'action', 'created_at'];
+    protected $fillable = ['company_id', 'root_id', 'companyCode', 'name', 'nameCode', 'address', 'phone', 'email', 'website', 'logo', 'companyType', 'action', 'created_at', 'parent_id'];
     protected $primaryKey = 'company_id';
     public $timestamps = false;
 
@@ -36,7 +36,7 @@ class QcCompany extends Model
 
     #========== ========== ========== THEM && CAP NHAT ========== ========== ==========
     #---------- thêm ----------
-    public function insert($companyCode, $name, $nameCode, $address, $phone, $email, $website, $companyType = 1, $logo = null)
+    public function insert($companyCode, $name, $nameCode, $address, $phone, $email, $website, $companyType = 1, $logo = null, $parentId = null)
     {
         $hFunction = new \Hfunction();
         $modelCompany = new QcCompany();
@@ -49,6 +49,7 @@ class QcCompany extends Model
         $modelCompany->website = $website;
         $modelCompany->logo = $logo;
         $modelCompany->companyType = $companyType;
+        $modelCompany->parent_id = $parentId;
         $modelCompany->created_at = $hFunction->createdAt();
         if ($modelCompany->save()) {
             $this->lastId = $modelCompany->company_id;
@@ -135,6 +136,12 @@ class QcCompany extends Model
         return $this->hasManyThrough('App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment', 'App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'company_id','work_id','detail_id');
     }*/
 
+    #----------- cong ty me------------
+    public function parent()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
+    }
+
     #----------- ho so xin viec------------
     public function jobApplication()
     {
@@ -198,12 +205,20 @@ class QcCompany extends Model
         return $modelStaff->infoOfCompany((empty($companyId) ? $this->companyId() : $companyId));
     }
 
+    # lay TAT CA danh sach ma nv theo danh sach cty
     public function staffIdOfListCompanyId($listCompanyId)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->listStaffIdOfListCompanyId($listCompanyId);
     }
 
+    # lay danh sach nv DANG HOAT DONG cua MOT cty
+    public function staffInfoActivityOfCompanyId($companyId)
+    {
+        $modelStaff = new QcStaff();
+        return $modelStaff->getInfoActivityByListStaffId($this->staffIdOfListCompanyId([$companyId]));
+    }
+    # lay danh sach nv DANG HOAT DONG theo danh sach cong ty
     public function staffInfoActivityOfListCompanyId($listCompanyId)
     {
         $modelStaff = new QcStaff();
@@ -349,6 +364,13 @@ class QcCompany extends Model
         return QcCompany::whereIn('company_id', $listId)->get();
     }
 
+    # lay he thong cty lien quan cua 1 cty dang nhap
+    public function getInfoSameSystemOfCompany($companyId)
+    {
+        return QcCompany::where('parent_id', $companyId)->orWhere('company_id', $companyId)->get();
+    }
+
+    # thong tin cua 1 cong ty hoac tat ca cong ty
     public function getInfo($companyId = '', $field = '')
     {
         $hFunction = new \Hfunction();

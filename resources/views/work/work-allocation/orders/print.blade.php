@@ -21,7 +21,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
 #anh thiet ke tong quat
 $dataOrderImage = $dataOrder->orderImageInfoActivity();
 ?>
-@extends('work.work-allocation.index')
+@extends('work.work-allocation.orders.index')
 @section('titlePage')
     In đơn hàng
 @endsection

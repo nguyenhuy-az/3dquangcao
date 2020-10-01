@@ -25,7 +25,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
     $dataProductDesign = $dataProduct->productDesignInfoLast();
 }
 ?>
-@extends('work.work-allocation.index')
+@extends('work.work-allocation.orders.index')
 @section('titlePage')
     Sản phẩm - phân việc
 @endsection
@@ -155,9 +155,9 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                     </div>
                 @endif
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <form id="frmWorkAllocationManageProductConstruction" role="form" method="post"
+                    <form id="frmWorkAllocationOrderProductConstruction" role="form" method="post"
                           enctype="multipart/form-data"
-                          action="{!! route('qc.work.work_allocation.manage.product.work-allocation.add.post', $dataProduct->productId()) !!}">
+                          action="{!! route('qc.work.work_allocation.order.product.work-allocation.add.post', $dataProduct->productId()) !!}">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <tr>

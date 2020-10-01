@@ -16,13 +16,13 @@ $totalOrdersProvisional = (isset($dataOrdersProvisional)) ? $hFunction->getCount
                     <a class="qc-link" href="{!! route('qc.work.orders.get') !!}"
                        @if($viewLoginObject == 'orders') style="background-color: whitesmoke;" @endif>
                         <i class="glyphicon glyphicon-refresh" style="color: red;"></i>
-                        Đơn hàng và thanh toán
+                        ĐƠN HÀNG
                     </a>
                 </li>
                 <li @if($viewLoginObject == 'ordersProvisional') class="active" @endif>
                     <a class="qc-link" href="{!! route('qc.work.orders.provisional.get') !!}"
                        @if($viewLoginObject == 'ordersProvisional') style="background-color: whitesmoke;" @endif>
-                        Báo giá
+                        BÁO GIÁ
                         <em class="qc-font-size-14" style="color: red;">({!! $totalOrdersProvisional !!})</em>
                     </a>
                 </li>
@@ -36,13 +36,13 @@ $totalOrdersProvisional = (isset($dataOrdersProvisional)) ? $hFunction->getCount
                 @endif--}}
             </ul>
         </div>
-        <div class="text-right col-sx-12 col-sm-12 col-md-4 col-lg-4">
+        <div class="text-right col-sx-12 col-sm-12 col-md-4 col-lg-4" >
             <a class="qc_work_before_pay_request_action qc-link-green-bold"
-               href="{!! route('qc.work.orders.add.get') !!}">
+               href="{!! route('qc.work.orders.add.get') !!}" style="font-size: 1.5em;">
                 THÊM ĐƠN HÀNG
             </a>
             &nbsp; | &nbsp;
-            <a class="qc-link-red-bold" title="Báo giá" href="{!! route('qc.work.orders.add.get',0) !!}">
+            <a class="qc-link-red-bold" style="font-size: 1.5em;" title="Báo giá" href="{!! route('qc.work.orders.add.get',0) !!}">
                 BÁO GIÁ
             </a>
         </div>

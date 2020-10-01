@@ -16,8 +16,8 @@ $totalNotifyNewWorkAllocation = $dataStaffLogin->totalNotifyNewWorkAllocation();
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
             <li @if($objectAccess == 'workAllocation') class="active " @endif>
-                <a class="qc-link" href="{!! route('qc.work.work_allocation.get') !!}" @if($objectAccess == 'workAllocation') style="background-color: whitesmoke;" @endif>
-                    <label>Thi công sản phẩm</label>
+                <a class="qc-link" href="{!! route('qc.work.work_allocation.work_allocation.index') !!}" @if($objectAccess == 'workAllocation') style="background-color: whitesmoke;" @endif>
+                    <label>THI CÔNG SẢN PHẨM</label>
                     @if($totalNotifyNewWorkAllocation > 0)
                         &nbsp;
                         <i class="qc-font-size-14 glyphicon glyphicon-bullhorn" style="color: red;"></i>
@@ -34,22 +34,22 @@ $totalNotifyNewWorkAllocation = $dataStaffLogin->totalNotifyNewWorkAllocation();
                     Việc đã làm
                 </a>
             </li>--}}
-            <li @if($objectAccess == 'workAllocationConstruction') class="active" @endif>
-                <a href="{!! route('qc.work.work_allocation.construction.get') !!}" @if($objectAccess == 'workAllocationConstruction') style="background-color: whitesmoke;" @endif>
-                    <label>Phụ trách đơn hàng</label>
-                    @if($totalNotifyNewOrderAllocation > 0)
-                        &nbsp;
-                        <i class="qc-font-size-14 glyphicon glyphicon-bullhorn" style="color: red;"></i>
-                    @endif
-                </a>
-            </li>
+            {{--<li @if($objectAccess == 'orderAllocationConstruction') class="active" @endif>--}}
+                {{--<a href="{!! route('qc.work.work_allocation.order_allocation.index') !!}" @if($objectAccess == 'orderAllocationConstruction') style="background-color: whitesmoke;" @endif>--}}
+                    {{--<label>PHỤ TRÁCH ĐƠN HÀNG</label>--}}
+                    {{--@if($totalNotifyNewOrderAllocation > 0)--}}
+                        {{--&nbsp;--}}
+                        {{--<i class="qc-font-size-14 glyphicon glyphicon-bullhorn" style="color: red;"></i>--}}
+                    {{--@endif--}}
+                {{--</a>--}}
+            {{--</li>--}}
             @if($dataStaffLogin->checkConstructionDepartmentAndManageRank())
                 <?php
                 $totalNotifyNewOrder = $dataStaffLogin->totalNotifyNewOrder();
                 ?>
-                <li @if($objectAccess == 'workAllocationManage') class="active" @endif>
-                    <a href="{!! route('qc.work.work_allocation.manage.get') !!}" @if($objectAccess == 'workAllocationManage') style="background-color: whitesmoke;" @endif title="Đang cập nhật">
-                        <label>Danh sách đơn hàng</label>
+                <li @if($objectAccess == 'workAllocationOrder') class="active" @endif>
+                    <a href="{!! route('qc.work.work_allocation.orders.index') !!}" @if($objectAccess == 'workAllocationOrder') style="background-color: whitesmoke;" @endif title="Đang cập nhật">
+                        <label>DANH SÁCH ĐƠN <HÀNG></HÀNG></label>
                         @if($totalNotifyNewOrder > 0)
                             &nbsp;
                             <i class="qc-font-size-14 glyphicon glyphicon-bullhorn" style="color: red;"></i>

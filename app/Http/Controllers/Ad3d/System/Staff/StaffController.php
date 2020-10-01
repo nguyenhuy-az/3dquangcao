@@ -25,29 +25,38 @@ use Request;
 
 class StaffController extends Controller
 {
-    public function index($companyFilterId = null, $actionStatus = 100)
+    public function index($companyFilterId = 0, $workStatus = 1)
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelDepartment = new QcDepartment();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
         $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
-        $dataAccess = [
-            'accessObject' => 'staff'
-        ];
-
         if ($companyFilterId == null || $companyFilterId == 0) {
-            $companyFilterId = $dataStaffLogin->companyId();
+            $companyFilterId = $companyLoginId;
         }
-        $dataCompany = $modelCompany->getInfo();
-
-        /*if (empty($companyFilterId)) {
-            $companyFilterId = $dataStaffLogin->companyId();;
-        } */
-        $listStaffId = $modelCompanyStaffWork->staffIdOfCompanyAndActionStatus($companyFilterId, 1); // 1 - chi lay thong tin dang hoat dong
-        $selectStaff = $modelStaff->selectInfoAll($listStaffId, 100);
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
+        if($workStatus == 1){
+            $dataAccess = [
+                'accessObject' => 'staff',
+                'subObject' => 'staffOn'
+            ];
+            $listStaffId = $modelCompanyStaffWork->staffIdOfCompanyAndActionStatus($companyFilterId, $workStatus); // 1 - chi lay thong tin dang hoat dong
+        }else{
+            $dataAccess = [
+                'accessObject' => 'staff',
+                'subObject' => 'staffOff'
+            ];
+            $listStaffId = $modelCompanyStaffWork->staffIdOfCompanyAndActionStatus($companyFilterId, 100); // 1 - tat ca thong tin cua cty
+            //dd($listStaffId);
+        }
+        $selectStaff = $modelStaff->selectInfoAll($listStaffId, $workStatus);
         $dataStaff = $selectStaff->paginate(30);
+        //dd($dataStaff);
         return view('ad3d.system.staff.list', compact('modelStaff', 'modelCompanyStaffWork', 'modelDepartment', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
 
     }
@@ -69,7 +78,8 @@ class StaffController extends Controller
         $dataDepartment = $modelDepartment->getInfo();
         $dataRank = $modelRank->getInfo();
         $dataAccess = [
-            'accessObject' => 'staff'
+            'accessObject' => 'staff',
+            'subObject' => 'staffOn'
         ];
         $dataCompany = $modelCompany->getInfo();
         return view('ad3d.system.staff.add', compact('modelStaff', 'modelCompany', 'dataCompany', 'dataDepartment', 'dataRank', 'dataAccess'));
@@ -697,4 +707,6 @@ class StaffController extends Controller
             return $modelStaff->actionDelete($staffId);
         }
     }
+
+    #======= ==========
 }

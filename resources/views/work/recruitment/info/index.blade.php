@@ -83,7 +83,7 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
+                    <table class="table table-bordered">
                         {{--THONG TIN CO BAN--}}
                         <tr>
                             <td style="border: none;">
@@ -101,12 +101,10 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                                                     <tr>
                                                         <td class="text-center" style="border: none;" colspan="2">
                                                             @if(!empty($image))
-                                                                <div style="position: relative; margin: 5px 10px 5px 10px; width: 100%; height: 100%;">
-                                                                    <a class="qc-link" data-href="#">
-                                                                        <img style="max-width: 100%;height: 190px;"
-                                                                             src="{!! $dataJobApplication->pathFullImage($image) !!}">
-                                                                    </a>
-                                                                </div>
+                                                                <a class="qc-link" data-href="#">
+                                                                    <img style="max-width: 100%;height: 190px;"
+                                                                         src="{!! $dataJobApplication->pathFullImage($image) !!}">
+                                                                </a>
                                                             @else
                                                                 <span>Ảnh</span>
                                                             @endif

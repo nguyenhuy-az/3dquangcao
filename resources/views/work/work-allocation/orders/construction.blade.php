@@ -19,6 +19,7 @@ $deliveryDay = $hFunction->getDayFromDate($deliveryDate);
 $deliveryMonth = $hFunction->getMonthFromDate($deliveryDate);
 $deliveryYear = $hFunction->getYearFromDate($deliveryDate);
 $deliveryHour = $hFunction->getHourFromDate($deliveryDate);
+$orderFinishStatus = $dataOrder->checkFinishStatus();
 # thong tin ban giao
 $dataOrderAllocation = $dataOrder->orderAllocationInfoAll();
 $addAllocationStatus = true; // trang thai duoc bang giao hoac khong
@@ -33,19 +34,16 @@ $currentHour = $hFunction->currentHour();
 $dataProduct = $dataOrder->productActivityOfOrder();
 
 ?>
-@extends('work.work-allocation.index')
+@extends('work.work-allocation.orders.index')
 @section('titlePage')
     Bàn giao công trình và triển khai thi công
 @endsection
 @section('qc_work_allocation_body')
-    <div id="qc_work_allocation_manage_order_construction_wrap" class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+    <div id="qc_work_allocation_order_construction_wrap" class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
          style="padding-bottom: 50px;">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
                 Về trang trước
-            </a>
-            <a class="btn btn-sm btn-default" href="{!! route('qc.work.work_allocation.manage.get') !!}">
-                Về Danh mục ĐH
             </a>
         </div>
         {{-- BÀN GIAO CÔNG TRÌNH --}}
@@ -54,6 +52,14 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                 <h3 style="color: red;">TRIỂN KHAI THI CÔNG ĐƠN HÀNG</h3>
             </div>
         </div>
+        @if($orderFinishStatus)
+            <div class="row">
+                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                     style="background-color: red; padding-bottom: 10px; padding-top: 10px;">
+                    <span style="color: yellow; ">ĐƠN HÀNG ĐÃ XONG</span>
+                </div>
+            </div>
+        @endif
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
@@ -158,7 +164,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                 {!! $n_o = (isset($n_o))?$n_o+1:1 !!}
                                             </td>
                                             <td>
-                                                <img style="width: 40px; height: 40px; border: 1px solid #d7d7d7;" src="{!! $src !!}">
+                                                <img style="width: 40px; height: 40px; border: 1px solid #d7d7d7;"
+                                                     src="{!! $src !!}">
                                                 {!! $dataStaffReceiveManage->fullname() !!}
                                             </td>
                                             <td>
@@ -177,7 +184,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             <td class="text-center">
                                                 @if($ordersAllocation->checkWaitConfirmFinish($ordersAllocationId))
                                                     <a class="qc_confirm_finish_get qc-link-red"
-                                                       data-href="{!! route('qc.work.work_allocation.manage.order.construction_confirm_finish.get',$ordersAllocationId) !!}">
+                                                       data-href="{!! route('qc.work.work_allocation.order.construction_confirm_finish.get',$ordersAllocationId) !!}">
                                                         Xác Nhận
                                                     </a>
                                                     <br/>
@@ -193,16 +200,20 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                 <em class="qc-color-grey">Không hoàn thành</em>
                                                             @endif
                                                         @else
-                                                            <a class="qc_confirm_finish qc-link-green">
-                                                                Đã kết thúc
-                                                            </a>
+                                                            @if($ordersAllocation->checkCancelAllocation())
+                                                                <span>Đã hủy</span>
+                                                            @else
+                                                                <a class="qc_confirm_finish qc-link-green">
+                                                                    Đã kết thúc
+                                                                </a>
+                                                            @endif
                                                         @endif
                                                     @else
                                                         <em>Đang thi công</em>
                                                         <br/>
-                                                        <a class="qc_delete_construction qc-link-red"
-                                                           data-href="{!! route('qc.work.work_allocation.manage.order.construction.delete',$ordersAllocationId) !!}">
-                                                            Hủy bàn giao
+                                                        <a class="qc_construction_cancel qc-link-red"
+                                                           data-href="{!! route('qc.work.work_allocation.order.construction.delete',$ordersAllocationId) !!}">
+                                                            HỦY BÀN GIAO
                                                         </a>
                                                     @endif
                                                 @endif
@@ -222,16 +233,11 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                 </div>
             </div>
         </div>
-        @if($dataOrder->checkFinishStatus())
+        @if(!$orderFinishStatus)
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-top: 1px dotted #d7d7d7;">
-                    <span style="padding: 3px; background-color: red; color: yellow; ">Đơn hàng đã kết thúc</span>
-                </div>
-            </div>
-        @else
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="background-color: black;color: yellow;">
-                    <h5>BÀN GIAO CHO NHÂN VIÊN PHỤ TRÁCH THI CÔNG:</h5>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                     style="background-color: black;color: yellow; font-size: 2em;">
+                    <label>BÀN GIAO PHỤ TRÁCH THI CÔNG</label> <label style="color: white;">ĐƠN HÀNG</label>
                 </div>
             </div>
             @if($addAllocationStatus)
@@ -239,7 +245,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-top: 1px dotted #d7d7d7;">
                         <form id="frmWorlAllocationOrderConstructionAdd" role="form" method="post"
                               enctype="multipart/form-data"
-                              action="{!! route('qc.work.work_allocation.manage.order.construction.add.post', $orderId) !!}">
+                              action="{!! route('qc.work.work_allocation.order.construction.add.post', $orderId) !!}">
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     @if (Session::has('notifyAdd'))
@@ -256,13 +262,12 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                 <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <label>Nhân viên phụ trách</label>
+                                            <label>Nhân viên phụ trách:</label>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <select class="cbReceiveStaff form-control" name="cbReceiveStaff"
-                                                    style="height: 30px;">
+                                            <select class="cbReceiveStaff form-control" name="cbReceiveStaff">
                                                 <option value="">Chọn nhân viên</option>
                                                 @if($hFunction->checkCount($dataReceiveStaff))
                                                     @foreach($dataReceiveStaff as $receiveStaff)
@@ -283,8 +288,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <select class="cbAllocationDay" name="cbAllocationDay"
-                                                    style="margin-top: 5px; height: 25px;">
+                                            <select class="cbAllocationDay text-right col-xs-2 col-sm-2 col-md-2 col-lg-2"
+                                                    name="cbAllocationDay" style="height: 34px; padding: 0;">
                                                 <option value="">Ngày</option>
                                                 @for($i = 1;$i<= 31; $i++)
                                                     <option value="{!! $i !!}"
@@ -293,40 +298,45 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                     </option>
                                                 @endfor
                                             </select>
-                                            <span>/</span>
-                                            <select class="cbMonthAllocation" name="cbAllocationMonth"
-                                                    style="margin-top: 5px; height: 25px;">
+                                            <select class="cbMonthAllocation text-right col-xs-2 col-sm-2 col-md-2 col-lg-2"
+                                                    name="cbAllocationMonth" style="height: 34px; padding: 0;">
                                                 <option value="">Tháng</option>
                                                 @for($m = 1;$m<= 12; $m++)
                                                     <option value="{!! $m !!}"
-                                                            @if($m == $currentMonth) selected="selected" @endif>{!! $m !!}</option>
-                                                @endfor
-                                            </select>
-                                            <span>/</span>
-                                            <select class="cbAllocationYear" name="cbAllocationYear"
-                                                    style="margin-top: 5px; height: 25px;">
-                                                <?php
-                                                $currentYear = (int)date('Y');
-                                                ?>
-                                                <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
-                                                <option value="{!! $currentYear + 1 !!}">{!! $currentYear + 1 !!}</option>
-                                            </select>
-                                            <select class="cbAllocationHours" name="cbAllocationHours"
-                                                    style="margin-top: 5px; height: 25px;">
-                                                <option value="">Giờ</option>
-                                                @for($i =1;$i<= 24; $i++)
-                                                    <?php
-                                                    $currentHour = ($currentHour < 8) ? 8 : $currentHour;
-                                                    ?>
-                                                    <option value="{!! $i !!}"
-                                                            @if($i == $currentHour) selected="selected" @endif>
-                                                        {!! $i !!}
+                                                            @if($m == $currentMonth) selected="selected" @endif>
+                                                        {!! $m !!}
                                                     </option>
                                                 @endfor
                                             </select>
-                                            <span>:</span>
-                                            <select class="cbAllocationMinute" name="cbAllocationMinute"
-                                                    style="margin-top: 5px; height: 25px;">
+                                            <select class="cbAllocationYear text-right col-xs-4 col-sm-4 col-md-4 col-lg-4"
+                                                    name="cbAllocationYear" style="height: 34px; padding: 0;">
+                                                <?php
+                                                $currentYear = (int)date('Y');
+                                                ?>
+                                                <option value="{!! $currentYear !!}">
+                                                    {!! $currentYear !!}
+                                                </option>
+                                                <option value="{!! $currentYear + 1 !!}">
+                                                    {!! $currentYear + 1 !!}
+                                                </option>
+                                            </select>
+                                            <select class="cbAllocationHours text-right col-xs-2 col-sm-2 col-md-2 col-lg-2"
+                                                    name="cbAllocationHours"
+                                                    style="height: 34px; padding: 0; color: red;">
+                                                <option value="">Giờ</option>
+                                                @for($h =1;$h<= 24; $h++)
+                                                    <?php
+                                                    $currentHour = ($currentHour < 8) ? 8 : $currentHour;
+                                                    ?>
+                                                    <option value="{!! $h !!}"
+                                                            @if($h == $currentHour) selected="selected" @endif>
+                                                        {!! $h !!}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                            <select class="cbAllocationMinute text-right col-xs-2 col-sm-2 col-md-2 col-lg-2"
+                                                    name="cbAllocationMinute"
+                                                    style="height: 34px; padding: 0; color: red;">
                                                 @for($i =0;$i<= 50; $i = $i+10)
                                                     <option value="{!! $i !!}">{!! $i !!}</option>
                                                 @endfor
@@ -342,19 +352,18 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                     </div>
                                     <div class="row">
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                            <select class="cbDeadlineDay" name="cbDeadlineDay"
-                                                    style="margin-top: 5px; height: 25px;">
+                                            <select class="cbDeadlineDay text-right col-xs-2 col-sm-2 col-md-2 col-lg-2"
+                                                    name="cbDeadlineDay" style=" height: 34px; padding: 0; ">
                                                 <option value="">Ngày</option>
-                                                @for($i = 1;$i<= 31; $i++)
-                                                    <option value="{!! $i !!}"
-                                                            @if($i == $currentDay) selected="selected" @endif>
-                                                        {!! $i !!}
+                                                @for($dd = 1;$dd<= 31; $dd++)
+                                                    <option value="{!! $dd !!}"
+                                                            @if($dd == $currentDay) selected="selected" @endif>
+                                                        {!! $dd !!}
                                                     </option>
                                                 @endfor
                                             </select>
-                                            <span>/</span>
-                                            <select class="cbDeadlineMonth" name="cbDeadlineMonth"
-                                                    style="margin-top: 5px; height: 25px;">
+                                            <select class="cbDeadlineMonth text-right col-xs-2 col-sm-2 col-md-2 col-lg-2"
+                                                    name="cbDeadlineMonth" style="height: 34px; padding: 0;">
                                                 <option value="">Tháng</option>
                                                 @for($i = 1;$i<= 12; $i++)
                                                     <option value="{!! $i !!}"
@@ -363,14 +372,14 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                     </option>
                                                 @endfor
                                             </select>
-                                            <span>/</span>
-                                            <select class="cbDeadlineYear" name="cbDeadlineYear"
-                                                    style="margin-top: 5px; height: 25px;">
+                                            <select class="cbDeadlineYear text-right col-xs-4 col-sm-4 col-md-4 col-lg-4"
+                                                    name="cbDeadlineYear" style="height: 34px; padding: 0;">
                                                 <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
                                                 <option value="{!! $currentYear + 1 !!}">{!! $currentYear + 1 !!}</option>
                                             </select>
-                                            <select class="cbDeadlineHours" name="cbDeadlineHours"
-                                                    style="margin-top: 5px; height: 25px;">
+                                            <select class="cbDeadlineHours text-right col-xs-2 col-sm-2 col-md-2 col-lg-2"
+                                                    name="cbDeadlineHours"
+                                                    style="height: 34px; padding: 0; color: red;">
                                                 <option value="">Giờ</option>
                                                 @for($i =1;$i<= 24; $i++)
                                                     <?php
@@ -382,9 +391,9 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                     </option>
                                                 @endfor
                                             </select>
-                                            <span>:</span>
-                                            <select class="cbDeadlineMinute" name="cbDeadlineMinute"
-                                                    style="margin-top: 5px; height: 25px;">
+                                            <select class="cbDeadlineMinute text-right col-xs-2 col-sm-2 col-md-2 col-lg-2"
+                                                    name="cbDeadlineMinute"
+                                                    style="height: 34px; padding: 0; color: red;">
                                                 @for($i =0;$i<= 55; $i = $i+5)
                                                     <option value="{!! $i !!}">{!! $i !!}</option>
                                                 @endfor
@@ -396,7 +405,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                             <div class="row">
                                 <div class="qc-padding-top-20 qc-padding-bot-20  qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                     <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                                    <button type="submit" class="qc_save btn btn-primary btn-sm"> Giao</button>
+                                    <button type="submit" class="qc_save btn btn-primary btn-sm"> BÀN GIAO</button>
                                 </div>
                             </div>
                         </form>
@@ -424,8 +433,9 @@ $dataProduct = $dataOrder->productActivityOfOrder();
 
         {{-- THI CONG SAN PHAM --}}
         <div class="row">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="background-color: black;color: yellow;">
-                <h5>PHÂN VIỆC THI CÔNG SẢN PHẨM</h5>
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                 style="background-color: black;color: yellow; font-size: 2em;">
+                <label>PHÂN VIỆC THI CÔNG</label> <label style="color: white;">SẢN PHẨM</label>
             </div>
         </div>
         @if($hFunction->checkCount($dataProduct))
@@ -445,6 +455,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         # thiet ke sau cung
                                         $dataProductDesign = $product->productDesignInfoLast();
                                     }
+                                    # san pham da ket thuc hay chua
+                                    $checkFinishStatus = $product->checkFinishStatus();
                                     ?>
                                     <tr style="color: brown;">
                                         <td style="width:50px; border: 1px solid #d7d7d7;">
@@ -453,11 +465,10 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         <td style="border: 1px solid #d7d7d7;">
                                             {!! ucwords($product->productType->name()) !!}
                                         </td>
-                                        <td class="text-center" style="padding-bottom: 10px;">
+                                        <td style="padding-bottom: 10px;">
                                             @if($hFunction->checkCount($dataProductDesign))
-                                                <em class="qc-color-grey">Thiết kế SP</em> <br/>
                                                 @if($dataProductDesign->checkApplyStatus())
-                                                    <img style="width: 70px; height: auto; margin: 5px;"
+                                                    <img style="width: 70px; height: auto; margin-right: 5px;"
                                                          title="Đang áp dụng"
                                                          src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                 @else
@@ -465,6 +476,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                          title="Không được áp dụng"
                                                          src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                 @endif
+                                                <br/>
+                                                <em class="qc-color-grey">Thiết kế SP</em>
                                             @else
                                                 @if(!$hFunction->checkEmpty($designImage))
                                                     <img style="width: 70px; height: 70px; margin: 5px; "
@@ -477,15 +490,19 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         <td class="text-left" style="border: 1px solid #d7d7d7;">
                                             <em>{!! $product->description() !!}</em>
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             <em class="qc-color-grey">Thiết kế thi công</em>
                                         </td>
                                         <td class="text-right" style="border: 1px solid #d7d7d7;">
-                                            <a class="qc-link-red" title="Triển khai thi công"
-                                               href="{!! route('qc.work.work_allocation.manage.order.product.work-allocation.add.get',$productId) !!}">
-                                                <i class="qc-font-size-16 glyphicon glyphicon-wrench"></i>
-                                                <span class="qc-font-size-14">PHÂN VIỆC</span>
-                                            </a>
+                                            @if(!$checkFinishStatus)
+                                                <a class="qc-link-red" title="Triển khai thi công"
+                                                   href="{!! route('qc.work.work_allocation.order.product.work-allocation.add.get',$productId) !!}">
+                                                    <i class="qc-font-size-16 glyphicon glyphicon-wrench"></i>
+                                                    <span class="qc-font-size-14">PHÂN VIỆC</span>
+                                                </a>
+                                            @else
+                                                <span>Đã xong</span>
+                                            @endif
                                         </td>
                                     </tr>
                                     <tr>
@@ -509,14 +526,15 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                             $dataWorkAllocationReport = $workAllocation->workAllocationReportInfo($allocationId, 1);
                                                             ?>
                                                             <tr>
-                                                                <td>
-                                                                    <img style="max-width: 50px;height: 50px; border: 1px solid #d7d7d7;" src="{!! $src !!}">
+                                                                <td style="border-top: 0;">
+                                                                    <img style="max-width: 50px;height: 50px; border: 1px solid #d7d7d7;"
+                                                                         src="{!! $src !!}">
                                                                     {!! ucwords($dataStaffReceive->lastName()) !!}
                                                                 </td>
-                                                                <td>
+                                                                <td style="border-top: 0;">
                                                                     <em>{!! $workAllocation->noted() !!}</em>
                                                                 </td>
-                                                                <td>
+                                                                <td style="border-top: 0;">
                                                                     <em>TG nhận:</em>
                                                                     <b>
                                                                         {!! $hFunction->convertDateDMYFromDatetime($workAllocation->allocationDate()) !!}
@@ -524,7 +542,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                         {!! $hFunction->getTimeFromDate($workAllocation->allocationDate()) !!}
                                                                     </b>
                                                                 </td>
-                                                                <td>
+                                                                <td style="border-top: 0;">
                                                                     <em>TG giao:</em>
                                                                     <b>
                                                                         {!! $hFunction->convertDateDMYFromDatetime($workAllocation->receiveDeadline()) !!}
@@ -532,13 +550,13 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                         {!! $hFunction->getTimeFromDate($workAllocation->receiveDeadline()) !!}
                                                                     </b>
                                                                 </td>
-                                                                <td class="text-right">
+                                                                <td class="text-right" style="border-top: 0;">
                                                                     @if($workAllocation->checkActivity())
                                                                         <em style="color: black;">Đang thi công</em>
                                                                         <span>&nbsp;|&nbsp;</span>
                                                                         <a class="qc_cancel_allocation_product qc-link-red-bold"
                                                                            title="Hủy giao việc"
-                                                                           data-href="{!! route('qc.work.work_allocation.manage.order.product.work-allocation.cancel.get', $allocationId) !!}">
+                                                                           data-href="{!! route('qc.work.work_allocation.order.product.work-allocation.cancel.get', $allocationId) !!}">
                                                                             Hủy
                                                                         </a>
                                                                     @else
@@ -551,8 +569,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                     <span>&nbsp;|&nbsp;</span>
                                                                     <a class="qc_work_allocation_view qc-link-green-bold"
                                                                        title="Click xem chi tiết thi công"
-                                                                       data-href="{!! route('qc.work.work_allocation.manage.order.work_allocation.get',$allocationId) !!}">
-                                                                        Xem chi tiết
+                                                                       data-href="{!! route('qc.work.work_allocation.order.work_allocation.get',$allocationId) !!}">
+                                                                        XEM BÁO CÁO
                                                                     </a>
                                                                 </td>
                                                             </tr>
@@ -576,7 +594,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                                 <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                                                     <a class="qc_work_allocation_report_image_view qc-link"
                                                                                        title="Click xem chi tiết hình ảnh"
-                                                                                       data-href="{!! route('qc.work.work_allocation.manage.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
+                                                                                       data-href="{!! route('qc.work.work_allocation.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
                                                                                         <img style="max-width: 100%; max-height: 100%;"
                                                                                              src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
                                                                                     </a>
@@ -596,7 +614,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                         @endforeach
                                                     @else
                                                         <tr>
-                                                            <td colspan="5">
+                                                            <td colspan="5" style="border-top: 0;">
                                                                 @if($product->checkFinishStatus())
                                                                     <em class="qc-color-grey">Đã kết thúc</em>
                                                                 @else

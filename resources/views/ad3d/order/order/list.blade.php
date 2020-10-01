@@ -16,8 +16,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 @extends('ad3d.order.order.index')
 @section('qc_ad3d_order_order')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top : 10px;padding-bottom: 10px; border-bottom: 2px dashed brown;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
@@ -26,11 +25,11 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     <label class="qc-font-size-20">ĐƠN HÀNG</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
+                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 34px;"
                             data-href-filter="{!! $hrefIndex !!}">
-                        @if($dataStaffLogin->checkRootManage())
+                        {{--@if($dataStaffLogin->checkRootManage())
                             <option value="1000">Tất cả</option>
-                        @endif
+                        @endif--}}
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -48,45 +47,6 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0;">
-                    <div class="row">
-                        <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <select class="cbDayFilter" style="height: 25px;" data-href="{!! $hrefIndex !!}">
-                                <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
-                                    Tất cả
-                                </option>
-                                @for($i =1;$i<= 31; $i++)
-                                    <option value="{!! $i !!}"
-                                            @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
-                                @endfor
-                            </select>
-                            <span>/</span>
-                            <select class="cbMonthFilter" style="height: 25px;"
-                                    data-href="{!! $hrefIndex !!}">
-                                <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
-                                    Tất cả
-                                </option>
-                                @for($i =1;$i<= 12; $i++)
-                                    <option value="{!! $i !!}"
-                                            @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                @endfor
-                            </select>
-                            <span>/</span>
-                            <select class="cbYearFilter" style="height: 25px;"
-                                    data-href="{!! $hrefIndex !!}">
-                                <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
-                                    Tất cả
-                                </option>
-                                @for($i =2017;$i<= 2050; $i++)
-                                    <option value="{!! $i !!}"
-                                            @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                                @endfor
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="qc_ad3d_list_content qc-ad3d-table-container row"
                  data-="{!! route('qc.ad3d.order.order.confirm.get') !!}"
                  data-href-view="{!! route('qc.ad3d.order.order.view.get') !!}"
@@ -94,26 +54,27 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                  data-href-del="{!! route('qc.ad3d.order.order.delete') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: whitesmoke;">
+                        <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width:20px;"></th>
                             <th>Mã</th>
-                            <th style="min-width: 150px;">Tên ĐH</th>
+                            <th style="min-width: 150px;">ĐƠN HÀNG</th>
                             {{--<th>Thiết kế</th>--}}
-                            <th style="min-width: 150px;">Khách hàng</th>
-                            <th style="min-width: 100px;">NV nhận</th>
-                            <th>NV & Thi công</th>
-                            <th class="text-center">Hình tiến độ</th>
+                            <th style="min-width: 150px;">KHÁCH HÀNG</th>
+                            <th style="min-width: 100px;">NHÂN VIÊN</th>
+                            <th>THI CÔNG</th>
+                            <th>TIẾN ĐỘ</th>
                             <th class="text-center">
-                                TG nhận <br/>
-                                Giao
+                                TG NHẬN <br/>
+                                GIAO
                             </th>
-                            <th class="text-center" style="min-width: 100px;">Thu tiền</th>
+                            <th>THANH TOÁN</th>
                             <th class="text-right">Tổng tiền</th>
                             <th class="text-right">Giảm</th>
-                            <th class="text-right">Doanh thu</th>
                             <th class="text-right">
-                                Còn lại <br/>
-                                Phải thu
+                                ĐÃ THU
+                            </th>
+                            <th class="text-right">
+                                CHƯA THU
                             </th>
                         </tr>
                         <tr>
@@ -175,7 +136,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </div>
                                 </div>
                             </td>
-                            <td class="text-center" style="padding: 0px;">
+                            <td style="padding: 0px;">
                                 <select class="cbStaffFilterId form-control"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
@@ -189,7 +150,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     @endif
                                 </select>
                             </td>
-                            <td class="text-center" style="padding: 0px;">
+                            <td style="padding: 0px;">
                                 {{--<select class="cbFinishStatus form-control"
                                         data-href="{!! route('qc.ad3d.order.order.get') !!}">
                                     <option value="2" @if($paymentStatus == 100) selected="selected" @endif>Tất cả
@@ -203,7 +164,40 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </select>--}}
                             </td>
                             <td class="text-center"></td>
-                            <td class="text-center"></td>
+                            <td style="padding: 0;">
+                                <select class="cbDayFilter col-xs-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
+                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($i =1;$i<= 31; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                                <select class="cbMonthFilter col-xs-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="height: 34px; padding: 0;"
+                                        data-href="{!! $hrefIndex !!}">
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($i =1;$i<= 12; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                                <select class="cbYearFilter col-xs-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="height: 34px; padding: 0;"
+                                        data-href="{!! $hrefIndex !!}">
+                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($i =2017;$i<= 2050; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                            </td>
                             <td style="padding: 0px;">
                                 <select class="cbPaymentStatus form-control"
                                         data-href="{!! route('qc.ad3d.order.order.get') !!}">
@@ -285,7 +279,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                 </a>
                                             </div>
                                         </div>
-                                        <div  class="row">
+                                        <div class="row">
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                 <a class="qc_view qc-link-green">
                                                     <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
@@ -322,17 +316,16 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         </a>
 
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         @if(!$cancelStatus)
-                                            <a class="qc-link-green" title="Click xem chi tiết thi công"
+                                            {{--<a class="qc-link-green" title="Click xem chi tiết thi công"
                                                href="{!! route('qc.ad3d.order.order.construction.get',$orderId) !!}">
                                                 @if(!$finishStatus)
                                                     Bàn giao công trình
                                                 @else
                                                     Đã kết thúc
                                                 @endif
-                                            </a>
-
+                                            </a>--}}
                                             @if(count($orderWorkAllocationAllInfo)> 0)
                                                 <br/>
                                                 TC:
@@ -340,6 +333,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                     <span>{!! $workAllocation->receiveStaff->lastName() !!}</span>,
                                                     &nbsp;
                                                 @endforeach
+                                            @else
+                                                <em>Không có triển khai thi công</em>
                                             @endif
                                         @else
                                             <em style=" color: brown;">
@@ -350,7 +345,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             <br/>
                                         @endif
                                     </td>
-                                    <td class="text-center qc-color-red">
+                                    <td class="qc-color-red">
                                         @if($hFunction->checkCount($orderWorkAllocationAllInfo))
                                             <?php
                                             $dataWorkAllocationReportImage = $order->workAllocationReportImage($orderId, 1);
@@ -358,7 +353,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             @if($hFunction->checkCount($dataWorkAllocationReportImage))
                                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                     @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
-                                                        <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                        <div style="position: relative; float: left; margin-right: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                             <a class="qc_work_allocation_report_image_view qc-link"
                                                                title="Click xem chi tiết hình ảnh"
                                                                data-href="{!! route('qc.ad3d.work.work_allocation_report.image.view',$workAllocationReportImage->imageId()) !!}">
@@ -368,10 +363,10 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                         </div>
                                                     @endforeach
                                                 </div>
-                                                <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                     <a class="qc-link-green" title="Click xem chi tiết thi công"
                                                        href="{!! route('qc.ad3d.order.order.construction.get',$orderId) !!}">
-                                                        Chi tiết...
+                                                        CHI TIET TC
                                                     </a>
                                                 </div>
                                             @else
@@ -386,7 +381,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         <br/>
                                         <em class="qc-color-grey">{!! $hFunction->convertDateDMYFromDatetime($order->deliveryDate()) !!}</em>
                                     </td>
-                                    <td class="text-center">
+                                    <td>
                                         @if(!$cancelStatus)
                                             @if($checkFinishPayment)
                                                 <em class="qc-color-grey">
@@ -395,7 +390,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             @else
                                                 <a class="qc-link-red"
                                                    href="{!! route('qc.ad3d.order.order.payment.get',$orderId) !!}">
-                                                    Thanh toán
+                                                    THANH TOÁN
                                                     <br/>
                                                     <img alt="icon"
                                                          style="margin-bottom: 3px; border: 1px solid #d7d7d7; width: 30px; height: 30px;"

@@ -33,7 +33,7 @@ class OrdersController extends Controller
         }
     }
 
-    public function index($finishStatus = 0, $monthFilter = 0, $yearFilter = 0, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = 999999999)
+    public function index($finishStatus = 100, $monthFilter = 100, $yearFilter = 100, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = 999999999)
     {
         # $paymentStatus = tat ca / 0 chua thanh toan xong / 1- da thanh toan xong
         $hFunction = new \Hfunction();
@@ -54,7 +54,8 @@ class OrdersController extends Controller
         # kiem tra la nguoi quan ly
         if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = true;
         if ($monthFilter == 100 && $yearFilter == 100) {//xem tất cả đơn hang
-            $dateFilter = null;
+            $yearFilter = date('Y');
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } elseif ($monthFilter < 100 && $yearFilter == 100) {
             $dateFilter = date('Y');
             $yearFilter = date('Y');

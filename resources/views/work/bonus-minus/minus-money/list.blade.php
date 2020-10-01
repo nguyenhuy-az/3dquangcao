@@ -32,7 +32,7 @@ $checkTime = date('m-Y');
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_minus_money_month" style="height: 25px;"
+                                    <select class="qc_work_minus_money_month col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả tháng
@@ -44,8 +44,7 @@ $checkTime = date('m-Y');
                                             </option>
                                         @endfor
                                     </select>
-                                    <span>/</span>
-                                    <select class="qc_work_minus_money_year" style="height: 25px;"
+                                    <select class="qc_work_minus_money_year col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả năm
@@ -158,7 +157,7 @@ $checkTime = date('m-Y');
                                                 @if($actionStatus)
                                                     <a class="qc_minus_money_feedback qc-link-green-bold"
                                                        data-href="{!! route('qc.work.minus_money.feedback.get',$minusId) !!}">
-                                                        Gửi phản hồi
+                                                        GỬI PHẢN HỒI
                                                     </a>
                                                 @else
                                                     <em>Hêt hạn</em>

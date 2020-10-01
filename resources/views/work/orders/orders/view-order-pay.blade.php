@@ -13,25 +13,26 @@ $mobileStatus = $mobile->isMobile();
 @section('qc_container_content')
     <div class="qc-padding-top-20 qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <h3>{!! $dataOrder->name() !!}</h3>
+            <h3 style="color: red;">{!! $dataOrder->name() !!}</h3>
             <em>KH: {!! $dataOrder->customer->name() !!}</em>
         </div>
         {{-- chi tiết Thanh toán --}}
         <div class="qc-padding-top-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row qc-padding-top-10">
-                <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">
                         <table class="table table-bordered" style="margin-bottom: 0;">
                             <tr style="background-color: whitesmoke;">
-                                <th colspan="6">
+                                <th colspan="7">
                                     <i class="qc-font-size-16 glyphicon glyphicon-credit-card"></i>
                                     <b class="qc-color-red">CHI TIẾT THANH TOÁN</b>
                                 </th>
                             </tr>
                             <tr>
                                 <th class="text-center" style="width: 20px;">STT</th>
-                                <th>Người thu</th>
-                                <th>Tên KH</th>
+                                <th>THỦ QUỸ</th>
+                                <th>GHI CHÚ</th>
+                                <th>KHÁCH HÀNG</th>
                                 <th>Điện thoại KH</th>
                                 <th>Ngày</th>
                                 <th class="text-right">Số tiền</th>
@@ -53,6 +54,9 @@ $mobileStatus = $mobile->isMobile();
                                         </td>
                                         <td>
                                             {!! $orderPay->staff->fullName() !!}
+                                        </td>
+                                        <td>
+                                            {!! $orderPay->note() !!}
                                         </td>
                                         <td>
                                             @if(!empty($orderPay->payerName()))
@@ -77,13 +81,13 @@ $mobileStatus = $mobile->isMobile();
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-right" colspan="6">
+                                    <td class="text-right" colspan="7">
                                         <b class="qc-color-red">{!! $hFunction->currencyFormat($totalMoney) !!}</b>
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="qc-padding-top-10" colspan="6">
+                                    <td class="qc-padding-top-10" colspan="7">
                                         @if($dataOrder->discount()== 100)
                                             <em class="qc-color-red">Giảm 100%</em>
                                         @else

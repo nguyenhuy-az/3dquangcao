@@ -25,12 +25,17 @@ $productDesignImage = $dataProduct->productDesignInfoApplyActivity();
 # thong ket thuc phan viec
 $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
 ?>
-@extends('work.work-allocation.index')
+@extends('work.work-allocation.work-allocation.index')
 @section('titlePage')
     Chi tiết thi công
 @endsection
 @section('qc_work_allocation_body')
-    <div class="row qc_work_allocation_detail_wrap">
+    <div class="row qc_work_allocation_work_allocation_detail_wrap">
+        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                Về trang trước
+            </a>
+        </div>
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.work-allocation.menu')
 
@@ -83,7 +88,7 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                 <td class="text-center">
                                     @if(!$hFunction->checkEmpty($productDesignImage))
                                         <a class="qc_design_image_view qc-link"
-                                           data-href="{!! route('qc.work.work_allocation.design_image.view', $productDesignImage->designId()) !!}">
+                                           data-href="{!! route('qc.work.work_allocation.work_allocation.design_image.view', $productDesignImage->designId()) !!}">
                                             <img style="width: 70px; height: 70px;"
                                                  src="{!! $productDesignImage->pathSmallImage($productDesignImage->image()) !!}">
                                         </a>
@@ -168,15 +173,15 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                                                 @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
                                                                     <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                                         <a class="qc_image_view qc-link"
-                                                                           data-href="{!! route('qc.work.work_allocation.report_image_direct.view', $workAllocationReportImage->imageId()) !!}">
+                                                                           data-href="{!! route('qc.work.work_allocation.work_allocation.report_image_direct.view', $workAllocationReportImage->imageId()) !!}">
                                                                             <img style="max-width: 100%; max-height: 100%;"
                                                                                  src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
                                                                         </a>
-                                                                        <a class="qc_delete_image_action qc-link"
+                                                                        {{--<a class="qc_report_image_delete qc-link"
                                                                            title="Xóa ảnh báo cáo"
-                                                                           data-href="{!! route('qc.work.work_allocation.activity.report_image.delete', $workAllocationReportImage->imageId()) !!}">
+                                                                           data-href="{!! route('qc.work.work_allocation.work_allocation.report.image.delete', $workAllocationReportImage->imageId()) !!}">
                                                                             <i style="position: absolute; font-weight: bold; padding: 0 3px; color: red; top: 3px; right: 3px; border: 1px solid #d7d7d7;">x</i>
-                                                                        </a>
+                                                                        </a>--}}
                                                                     </div>
                                                                 @endforeach
                                                             </td>
@@ -185,7 +190,7 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                                             </td>
                                                             <td class="text-center">
                                                                 <a class="qc_delete_report_action qc-link-red-bold"
-                                                                   data-href="{!! route('qc.work.work_allocation.report.cancel.get', $workAllocationReport->reportId()) !!}">
+                                                                   data-href="{!! route('qc.work.work_allocation.work_allocation.report.cancel.get', $workAllocationReport->reportId()) !!}">
                                                                     <i class="glyphicon glyphicon-trash qc-font-size-14"
                                                                        title="Xóa báo cáo"></i>
                                                                 </a>
@@ -202,7 +207,7 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                                                 @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
                                                                     <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                                         <a class="qc_image_view qc-link"
-                                                                           data-href="{!! route('qc.work.work_allocation.report_image.view', $timekeepingProvisionalImage->imageId()) !!}">
+                                                                           data-href="{!! route('qc.work.work_allocation.work_allocation.report_image.view', $timekeepingProvisionalImage->imageId()) !!}">
                                                                             <img style="max-width: 100%; max-height: 100%;"
                                                                                  src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
                                                                         </a>
@@ -214,7 +219,7 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                                             </td>
                                                             <td class="text-center">
                                                                 <a class="qc_delete_report_action qc-link-red-bold"
-                                                                   data-href="{!! route('qc.work.work_allocation.report.cancel.get', $workAllocationReport->reportId()) !!}">
+                                                                   data-href="{!! route('qc.work.work_allocation.work_allocation.report.cancel.get', $workAllocationReport->reportId()) !!}">
                                                                     <i class="glyphicon glyphicon-trash qc-font-size-14"
                                                                        title="Xóa báo cáo"></i>
                                                                 </a>
@@ -243,14 +248,6 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
 
                 </div>
             </div>
-        </div>
-        <div class="text-center qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                Về trang trước
-            </a>
-            <a class="btn btn-sm btn-default" href="{!! route('qc.work.work_allocation.get') !!}">
-                Về danh mục công việc
-            </a>
         </div>
     </div>
 @endsection

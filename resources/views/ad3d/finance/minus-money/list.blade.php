@@ -22,7 +22,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                     </a>
                     <label class="qc-font-size-20">PHẠT</label>
                 </div>
-                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
+                <div class="text-right col-xs-12 col-sm-8 col-md-4 col-lg-4" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter" style="height: 34px;"
                             data-href-filter="{!! $hrefIndex !!}">
                         @if($dataStaffLogin->checkRootManage())
@@ -43,6 +43,11 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                             @endforeach
                         @endif
                     </select>
+                </div>
+                <div class="text-right col-xs-12 col-sm-4 col-md-2 col-lg-2" style="padding-left: 0;padding-right: 0;">
+                    <a class="qc-link-green-bold" href="{!! route('qc.ad3d.finance.minus_money.add.get', $companyFilterId) !!}">
+                        <span style="font-size: 16px;">+ PHẠT</span>
+                    </a>
                 </div>
             </div>
         </div>

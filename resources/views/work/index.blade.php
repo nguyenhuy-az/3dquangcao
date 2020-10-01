@@ -43,7 +43,7 @@ if ($viewLoginObject == 'timekeepingWork') {
     $href = route('qc.work.money.statistical.get');
 } elseif ($viewLoginObject == 'workAllocation') {
     $label = 'Phân việc';
-    $href = route('qc.work.work_allocation.get');
+    $href = route('qc.work.work_allocation.work_allocation.index');
 }elseif ($viewLoginObject == 'workAllocationActivity') {
     $label = 'Việc đang làm';
     $href = route('qc.work.work_allocation.activity.get');
@@ -52,10 +52,10 @@ if ($viewLoginObject == 'timekeepingWork') {
     $href = route('qc.work.work_allocation.finish.get');
 } elseif ($viewLoginObject == 'workAllocationConstruction') {
     $label = 'Đơn hàng được giao';
-    $href = route('qc.work.work_allocation.construction.get');
-} elseif ($viewLoginObject == 'workAllocationManage') {
+    $href = route('qc.work.work_allocation.order_allocation.index');
+} elseif ($viewLoginObject == 'workAllocationOrder') {
     $label = 'Quản lý đơn hàng';
-    $href = route('qc.work.work_allocation.manage.get');
+    $href = route('qc.work.work_allocation.order_allocation.index');
 }elseif ($viewLoginObject == 'timekeeping') {
     $label = 'Chấm công';
     $href = route('qc.work.timekeeping.get');

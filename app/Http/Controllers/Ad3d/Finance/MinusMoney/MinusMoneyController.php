@@ -31,8 +31,9 @@ class MinusMoneyController extends Controller
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
         $modelMinus = new QcMinusMoney();
-        $currentMonth = $hFunction->currentMonth();
-        $currentYear = $hFunction->currentYear();
+
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
 
         $dataPunishContent = $modelPunishContent->getInfo();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
@@ -59,15 +60,18 @@ class MinusMoneyController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-
-        $dataCompany = $modelCompany->getInfo();
+        # lay he thong cty lien cty dang nhap
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
+        # xet theo cty dang nhap
         if (empty($companyFilterId)) {
-            if (!$dataStaffLogin->checkRootManage()) {
-                $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-                $companyFilterId = $dataStaffLogin->companyId();
+            $searchCompanyFilterId = [$companyLoginId];
+            $companyFilterId = $companyLoginId;
+            /*if (!$dataStaffLogin->checkRootManage()) {
+                $searchCompanyFilterId = [$companyLoginId];
+                $companyFilterId = $companyLoginId;
             } else {
                 $searchCompanyFilterId = $modelCompany->listIdActivity();
-            }
+            }*/
         } else {
             if ($companyFilterId == 1000) {
                 $searchCompanyFilterId = $modelCompany->listIdActivity();
@@ -170,29 +174,32 @@ class MinusMoneyController extends Controller
             }
         }
     }
-    /*public function getAdd($companyLoginId = null, $workId = null, $punishId = null)
+
+    public function getAdd($companyLoginId, $workId = null, $punishId = null)
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
         $modelPunishContent = new QcPunishContent();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
         $dataAccess = [
             'accessObject' => 'penalize'
         ];
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        /*$dataStaffLogin = $modelStaff->loginStaffInfo();
         if (empty($companyLoginId)) {
             $companyLoginId = $dataStaffLogin->companyId();
         }
-        $dataCompany = $modelCompany->getInfo($companyLoginId);
-        //dd($dataCompany);
-        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyLoginId], null);
+        $dataCompany = $modelCompany->getInfo($companyLoginId);*/
+        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdActivityOfListCompanyAndListStaff([$companyLoginId], null);
         $dataWork = $modelWork->infoActivityOfListCompanyStaffWork($listCompanyStaffWorkId);
         //$dataWork = $modelWork->infoActivityOfListStaff($modelStaff->listIdOfCompany($companyLoginId));
         $dataWorkSelect = (empty($workId)) ? null : $modelWork->getInfo($workId);
-        $dataPunishContent = $modelPunishContent->getInfoOrderName();
+        // danh muc phat co muc phat truc tiep
+        $dataPunishContent = $modelPunishContent->getInfoForDirectMinusMoney();
         $dataPunishContentSelected = (empty($punishId)) ? null : $modelPunishContent->getInfo($punishId);
-        return view('ad3d.finance.minus-money.add', compact('modelStaff', 'dataPunishContent', 'dataAccess', 'dataCompany', 'companyLoginId', 'dataWork', 'dataWorkSelect', 'dataPunishContentSelected'));
+        return view('ad3d.finance.minus-money.add', compact('modelStaff', 'dataPunishContent', 'dataAccess', 'dataCompanyLogin', 'dataWork', 'dataWorkSelect', 'dataPunishContentSelected'));
     }
 
     public function postAdd()
@@ -215,7 +222,7 @@ class MinusMoneyController extends Controller
             return Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
         }
 
-    }*/
+    }
 
     /*public function getEdit($minusId)
     {

@@ -1063,7 +1063,7 @@ class QcStaff extends Model
         $nameCode = QcStaff::where('account', $account)->pluck('nameCode');
         if (count($nameCode) > 0) {
             $passLog = $this->createStaffPass($password, $nameCode[0]);
-            $staff = QcStaff::where('account', $account)->where('password', $passLog)->first();
+            $staff = QcStaff::where('account', $account)->where('password', $passLog)->where('workStatus', 1)->first();
             if (count($staff) > 0) { // login success
                 Session::put('loginStaff', $staff);
                 return true;
@@ -1078,7 +1078,11 @@ class QcStaff extends Model
     // kiem tra dang nhap
     public function checkLogin()
     {
-        if (Session::has('loginStaff')) return true; else return false;
+        if (Session::has('loginStaff')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // thong tin NV dang nhap
@@ -1112,6 +1116,18 @@ class QcStaff extends Model
     public function loginStaffId()
     {
         return $this->loginStaffInfo('staff_id');
+    }
+
+    // thong tin cty dang nhap
+    public function companyLogin()
+    {
+        $hFunction = new \Hfunction();
+        $loginCompanyStaffWork = $this->loginCompanyStaffWork();
+        if ($hFunction->checkCount($loginCompanyStaffWork)) {
+            return $loginCompanyStaffWork->company;
+        } else {
+            return null;
+        }
     }
 
     //========== ========== ========== dang xuat ========= ========== ==========

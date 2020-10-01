@@ -69,14 +69,14 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
     <div class="qc_ad3d_sys_staff_edit_wrap qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <a class="qc-link-red" href="{!! route('qc.ad3d.system.staff.get') !!}">
-                    <i class="glyphicon glyphicon-backward"></i> Trởlại
+                <a class="qc-link-white-bold btn btn-sm btn-primary" href="{!! route('qc.ad3d.system.staff.get') !!}">
+                    <i class="glyphicon glyphicon-backward"></i> Về trang trước
                 </a>
             </div>
         </div>
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <h3>THÔNG TIN NHÂN VIÊN</h3>
+                <h3 style="color: red;">THÔNG TIN NHÂN VIÊN</h3>
             </div>
         </div>
         <div class="row">
@@ -85,7 +85,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                     <table class="table table-bordered"  style="border: none;">
                         {{--THONG TIN CO BAN--}}
                         <tr>
-                            <td style="background-color: black; color: red;padding-bottom: 0;">
+                            <td style="background-color: black; color: yellow;padding-bottom: 0;">
                                 <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
                                 <label style="font-size: 1.5em;">Thông tin cơ bản</label>
                                 <a class="qc_staffInfoBasicContainerEdit qc-link-red pull-right "
@@ -105,7 +105,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                                 @if(!empty($image))
                                                     <div style="position: relative; margin: 5px 10px 5px 10px; width: 100%; height: 100%;">
                                                         <a class="qc-link" data-href="#">
-                                                            <img style="max-width: 100%;height: 190px;"
+                                                            <img style="max-width: 100%;height: 190px; border: 1px solid #d7d7d7;"
                                                                  src="{!! $dataStaff->pathFullImage($image) !!}">
                                                         </a>
                                                         <a class="qc_ad3d_staff_edit_image_act_del qc-link"
@@ -124,7 +124,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                                 @if(!empty($identityCardFront))
                                                     <div style="position: relative; width: 100%; height: 100%;">
                                                         <a class="qc-link" data-href="#">
-                                                            <img style="max-width: 100%;height: 90px;"
+                                                            <img style="max-width: 100%;height: 90px;border: 1px solid #d7d7d7;"
                                                                  src="{!! $dataStaff->pathFullImage($identityCardFront) !!}">
                                                         </a>
                                                         <a class="qc_ad3d_staff_edit_image_act_del qc-link"
@@ -141,7 +141,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                                 @if(!empty($identityCardBack))
                                                     <div style="position: relative; width: 100%; height: 100%;">
                                                         <a class="qc-link" data-href="#">
-                                                            <img style="max-width: 100%; height: 90px;"
+                                                            <img style="max-width: 100%; height: 90px; border: 1px solid #d7d7d7;"
                                                                  src="{!! $dataStaff->pathFullImage($identityCardBack) !!}">
                                                         </a>
                                                         <a class="qc_ad3d_staff_edit_image_act_del qc-link"
@@ -236,7 +236,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                         </tr>
                         {{--THONG TIN LAM VIEC--}}
                         <tr>
-                            <td style="background-color: black;color: red;padding-bottom: 0;">
+                            <td style="background-color: black;color: yellow;padding-bottom: 0;">
                                 <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
                                 <label style="font-size: 1.5em;">Làm việc</label>
                                 <a class="qc_staffInfoWorkContainerEdit qc-link-red pull-right"
@@ -331,7 +331,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                         </tr>
                         {{--THONG TIN LUONG--}}
                         <tr>
-                            <td style="background-color: black; color: red; padding-bottom: 0;">
+                            <td style="background-color: black; color: yellow; padding-bottom: 0;">
                                 <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
                                 <label style="font-size: 1.5em;">Lương</label>
                                 <a class="qc_staffInfoSalaryContainerEdit qc-link-red pull-right" title="Sửa thông tin"

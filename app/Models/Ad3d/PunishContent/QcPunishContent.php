@@ -72,6 +72,12 @@ class QcPunishContent extends Model
     }
 
     //========= ========== ========== GET INFO ========== ========== ==========
+    # lay danh muc phat truc tiep - co qui dinh muc phat truc tiep
+    public function getInfoForDirectMinusMoney()
+    {
+        return QcPunishContent::where('money', '>', 0)->orderBy('name', 'ASC')->get();
+    }
+    # lay tat ca thong tin
     public function selectInfoAll()
     {
         return QcPunishContent::orderBy('name', 'ASC')->select('*');
@@ -104,9 +110,9 @@ class QcPunishContent extends Model
     public function getInfoOrderName($punishId = '', $field = '')
     {
         if (empty($punishId)) {
-            return QcPunishContent::orderBy('Name', 'DESC')->get();
+            return QcPunishContent::orderBy('name', 'ASC')->get();
         } else {
-            $result = QcPunishContent::where('punish_id', $punishId)->orderBy('Name', 'DESC')->first();
+            $result = QcPunishContent::where('punish_id', $punishId)->orderBy('name', 'ASC')->first();
             if (empty($field)) {
                 return $result;
             } else {

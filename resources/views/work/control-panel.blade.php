@@ -47,7 +47,7 @@ $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
                 </a>
             </div>
             <div class="qc-work-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.work_allocation.get') !!}">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.work_allocation.work_allocation.index') !!}">
                     <i class="glyphicon glyphicon-wrench" style="font-size: 20px;color: grey;"></i> <br/>
                     THI CÔNG
                 </a>

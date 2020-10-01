@@ -53,25 +53,25 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_orders_list_content row"
                      data-href-view-pay="{!! route('qc.work.orders.order_pay.view.get') !!}">
-                    <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered" style="margin-bottom: 100px;">
                                 <tr style="background-color: black; color: yellow;">
                                     <th class="text-center"></th>
                                     <th>Mã ĐH</th>
-                                    <th class="text-center">Thi công</th>
-                                    <th style="width: 200px;">Tên ĐH</th>
-                                    <th style="width: 200px;">Khách hàng</th>
+                                    <th>THI CÔNG</th>
+                                    <th style="width: 200px;">ĐƠN HÀNG</th>
+                                    <th style="width: 200px;">KHÁCH HÀNG</th>
                                     <th class="text-center">
-                                        Ngày nhận
+                                        NGÀY NHẬN
                                     </th>
                                     <th class="text-center">
-                                        Hẹn giao
+                                        HẸN GIAO
                                     </th>
                                     <th class="text-center">
-                                        Ngày Giao khách
+                                        NGÀY GIAO
                                     </th>
-                                    <th class="text-center" style="min-width: 70px;">Thu tiền</th>
+                                    <th>THANH TOÁN</th>
                                     <th class="text-right">Tổng tiền ĐH</th>
                                     <th class="text-right">Giảm</th>
                                     <th class="text-right">
@@ -159,8 +159,9 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center" style="width: 120px; padding: 0;">
-                                        <select class="qcWorkOrderMonthFilter" style="height: 25px;"
+                                    <td style="padding: 0;">
+                                        <select class="qcWorkOrderMonthFilter col-xs-5 col-sm-5 col-md-5 col-lg-5"
+                                                style="height: 34px; padding: 0"
                                                 data-href="{!! $hrefIndex !!}">
                                             <option value="100" @if($monthFilter == 100) selected="selected" @endif>
                                                 Tất cả
@@ -172,11 +173,12 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                                 </option>
                                             @endfor
                                         </select>
-                                        <select class="qcWorkOrderYearFilter" style="height: 25px;"
+                                        <select class="qcWorkOrderYearFilter col-xs-7 col-sm-7 col-md-7 col-lg-7"
+                                                style="height: 34px; padding: 0"
                                                 data-href="{!! $hrefIndex !!}">
-                                            <option value="100" @if($yearFilter == 100) selected="selected" @endif>
+                                            {{--<option value="100" @if($yearFilter == 100) selected="selected" @endif>
                                                 Tất cả
-                                            </option>
+                                            </option>--}}
                                             @for($y = 2017; $y <=2050; $y++)
                                                 <option value="{!! $yearFilter !!}"
                                                         @if($yearFilter == $y) selected="selected" @endif>
@@ -257,7 +259,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                             <td class="text-center">
                                                 <span class="qc-color-grey">{!! $orders->orderCode() !!}</span><br/>
                                             </td>
-                                            <td class="text-center">
+                                            <td>
                                                 @if(!$cancelStatus)
                                                     @if($finishStatus)
                                                         <em>Đã kết thúc</em>
@@ -285,7 +287,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                                         @if($ownerStatus ||$manageStatus)
                                                             <a class="qc_finish_report qc-link-green-bold"
                                                                data-href="{!! route('work.orders.order.report.finish.get',$orderId) !!}">
-                                                                Báo hoàn thành
+                                                                BÁO HOÀN THÀNH
                                                             </a>
                                                         @endif
                                                     @endif
@@ -389,14 +391,14 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                                 @endif
                                             </td>
 
-                                            <td class="text-center">
+                                            <td>
                                                 @if(!$cancelStatus)
                                                     @if(!$orders->checkFinishPayment())
                                                         {{--chu so hua hoac quan ly--}}
                                                         @if($ownerStatus || $manageStatus)
                                                             <a class="qc-link-red" title="Thanh toán đơn hàng"
                                                                href="{!! route('qc.work.orders.payment.get', $orderId) !!} ">
-                                                                Thanh toán <br/>
+                                                                THANH TOÁN <br/>
                                                                 <img alt="icon"
                                                                      style="margin-bottom: 3px; border: 1px solid #d7d7d7; width: 30px; height: 30px;"
                                                                      src="{!! asset('public/images/icons/paymentIcon.jpg') !!}"/>
