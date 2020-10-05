@@ -661,8 +661,15 @@ var qc_ad3d_staff_staff = {
     },
     /*mo cham cong*/
     openWork: function (href) {
-        if (confirm('Bạn đồng ý mở chấm công cho nhân viên này')) {
+        if (confirm('BẠN ĐỒNG Ý MỞ LẠI CHẤM CÔNG TRONG THÁNG CHO NV NÀY?')) {
             qc_ad3d_submit.ajaxHasReload(href, '', false);
+        }
+    },
+    /*phuc hoi vi tri lam viec*/
+    restoreWork: function (href) {
+        if (confirm('BẠN ĐỒNG Ý PHỤC HỒI LẠI VÍ TRÍ LÀM NV NÀY?')) {
+            qc_ad3d_submit.ajaxHasReload(href, '', false);
+            //qc_ad3d_submit.ajaxNotReload(href, '', false);
         }
     },
     image: {
@@ -713,15 +720,9 @@ $(document).ready(function () {
 $(document).ready(function () {
     //loc theo cty
     $('body').on('change', '.cbCompanyFilter', function () {
-        var href = $(this).data('href') + '/' + $(this).val();
+        var href = $(this).data('href') + '/' + $(this).val() + '/' + $(this).data('action-status');
         qc_ad3d_staff_staff.filter(href);
     });
-
-    // loc theo trang thai lam viec
-    /*$('body').on('change', '.cbWorkStatus', function () {
-     var href = $(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $(this).val();
-     qc_ad3d_staff_staff.filter(href);
-     })*/
 });
 
 //-------------------- edit ------------
@@ -783,7 +784,14 @@ $(document).ready(function () {
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_ad3d_staff_open_work_act', function () {
         qc_ad3d_staff_staff.openWork($(this).data('href'));
-    })
+    });
+});
+
+//-------------------- phuc hoi lai cham cong ------------
+$(document).ready(function () {
+    $('.qc_ad3d_list_object').on('click', '.qc_ad3d_staff_restore_work_act', function () {
+        qc_ad3d_staff_staff.restoreWork($(this).data('href'));
+    });
 });
 
 //-------------------- xoan ------------

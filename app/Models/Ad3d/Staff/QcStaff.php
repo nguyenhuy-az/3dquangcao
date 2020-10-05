@@ -120,14 +120,23 @@ class QcStaff extends Model
         return (empty($staffId)) ? $this->staffId() : $staffId;
     }
 
+    # cap nhat tai khoan
     public function updateAccount($staffId, $newAccount)
     {
         return QcStaff::where('staff_id', $staffId)->update(['account' => $newAccount, 'confirmStatus' => 1]);
     }
 
+    # cap nhat thong tin tk ngan hang
     public function updateBankAccount($staffId, $bankAccount, $bankName)
     {
         return QcStaff::where('staff_id', $staffId)->update(['bankAccount' => $bankAccount, 'bankName' => $bankName]);
+    }
+
+    # phuc hoi trang thai lam viec
+    public function restoreWorkStatus($staffId)
+    {
+        return QcStaff::where('staff_id', $staffId)->update(['workStatus' => 1]);
+
     }
 
     // cap nhat thong tin co ban
@@ -162,7 +171,7 @@ class QcStaff extends Model
     public function actionDelete($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        if (empty($staffId)) $staffId = $this->staffId();
+        $staffId = $this->checkIdNull($staffId);
         if (QcStaff::where('staff_id', $staffId)->update(['workStatus' => 0])) {
             $modelCompanyStaffWork->deleteOfStaff($staffId);
         }
@@ -425,11 +434,13 @@ class QcStaff extends Model
     }
 
     #----------- Bo phan lam viec  ------------
+    # ma bo phan cua nv dang lam
     public function departmentActivityOfStaff($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->listIdDepartmentActivityOfStaff($this->checkIdNull($staffId));
     }
+    # thong tin bo phan nv dang lam
 
     //----------- Phan cong trinh -----------
     public function orderAllocationReceiveStaff()

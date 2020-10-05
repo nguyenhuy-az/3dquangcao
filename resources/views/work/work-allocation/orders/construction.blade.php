@@ -185,7 +185,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                 @if($ordersAllocation->checkWaitConfirmFinish($ordersAllocationId))
                                                     <a class="qc_confirm_finish_get qc-link-red"
                                                        data-href="{!! route('qc.work.work_allocation.order.construction_confirm_finish.get',$ordersAllocationId) !!}">
-                                                        Xác Nhận
+                                                        XÁC NHẬN
                                                     </a>
                                                     <br/>
                                                     <span style="padding: 3px; background-color: red; color: yellow;">
@@ -234,13 +234,13 @@ $dataProduct = $dataOrder->productActivityOfOrder();
             </div>
         </div>
         @if(!$orderFinishStatus)
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                     style="background-color: black;color: yellow; font-size: 2em;">
-                    <label>BÀN GIAO PHỤ TRÁCH THI CÔNG</label> <label style="color: white;">ĐƠN HÀNG</label>
-                </div>
-            </div>
             @if($addAllocationStatus)
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                         style="background-color: black;color: yellow; font-size: 2em;">
+                        <label>BÀN GIAO PHỤ TRÁCH THI CÔNG</label> <label style="color: white;">ĐƠN HÀNG</label>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-top: 1px dotted #d7d7d7;">
                         <form id="frmWorlAllocationOrderConstructionAdd" role="form" method="post"
@@ -441,25 +441,25 @@ $dataProduct = $dataOrder->productActivityOfOrder();
         @if($hFunction->checkCount($dataProduct))
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="row">
-                        <div class="table-responsive">
-                            <table class="table table-hover qc-margin-bot-none">
-                                @foreach($dataProduct as $product)
-                                    <?php
-                                    $productId = $product->productId();
-                                    $dataWorkAllocation = $product->workAllocationInfoOfProduct();
-                                    $designImage = $product->designImage();
-                                    # thiet ke dang ap dung
-                                    $dataProductDesign = $product->productDesignInfoApplyActivity();
-                                    if ($hFunction->getCountFromData($dataProductDesign) == 0) {
-                                        # thiet ke sau cung
-                                        $dataProductDesign = $product->productDesignInfoLast();
-                                    }
-                                    # san pham da ket thuc hay chua
-                                    $checkFinishStatus = $product->checkFinishStatus();
-                                    ?>
-                                    <tr style="color: brown;">
-                                        <td style="width:50px; border: 1px solid #d7d7d7;">
+                    @foreach($dataProduct as $product)
+                        <?php
+                        $productId = $product->productId();
+                        $dataWorkAllocation = $product->workAllocationInfoOfProduct();
+                        $designImage = $product->designImage();
+                        # thiet ke dang ap dung
+                        $dataProductDesign = $product->productDesignInfoApplyActivity();
+                        if ($hFunction->getCountFromData($dataProductDesign) == 0) {
+                            # thiet ke sau cung
+                            $dataProductDesign = $product->productDesignInfoLast();
+                        }
+                        # san pham da ket thuc hay chua
+                        $checkFinishStatus = $product->checkFinishStatus();
+                        ?>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table class="table" style="border: 1px solid black;">
+                                    <tr>
+                                        <td style="width:50px;">
                                             SP_{!! $sp_n_o = (isset($sp_n_o))?$sp_n_o+1:1 !!}
                                         </td>
                                         <td style="border: 1px solid #d7d7d7;">
@@ -506,10 +506,9 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td style="background-color: grey;"></td>
-                                        <td colspan="5">
+                                        <td colspan="6" style="padding: 0;">
                                             <div class="table-responsive">
-                                                <table class="table" style="margin-bottom: 0;">
+                                                <table class="table" style="margin:0;">
                                                     @if($hFunction->checkCount($dataWorkAllocation))
                                                         @foreach($dataWorkAllocation as $workAllocation)
                                                             <?php
@@ -526,15 +525,15 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                             $dataWorkAllocationReport = $workAllocation->workAllocationReportInfo($allocationId, 1);
                                                             ?>
                                                             <tr>
-                                                                <td style="border-top: 0;">
-                                                                    <img style="max-width: 50px;height: 50px; border: 1px solid #d7d7d7;"
+                                                                <td>
+                                                                    <img style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
                                                                          src="{!! $src !!}">
                                                                     {!! ucwords($dataStaffReceive->lastName()) !!}
                                                                 </td>
-                                                                <td style="border-top: 0;">
+                                                                <td>
                                                                     <em>{!! $workAllocation->noted() !!}</em>
                                                                 </td>
-                                                                <td style="border-top: 0;">
+                                                                <td>
                                                                     <em>TG nhận:</em>
                                                                     <b>
                                                                         {!! $hFunction->convertDateDMYFromDatetime($workAllocation->allocationDate()) !!}
@@ -542,7 +541,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                         {!! $hFunction->getTimeFromDate($workAllocation->allocationDate()) !!}
                                                                     </b>
                                                                 </td>
-                                                                <td style="border-top: 0;">
+                                                                <td>
                                                                     <em>TG giao:</em>
                                                                     <b>
                                                                         {!! $hFunction->convertDateDMYFromDatetime($workAllocation->receiveDeadline()) !!}
@@ -550,7 +549,41 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                         {!! $hFunction->getTimeFromDate($workAllocation->receiveDeadline()) !!}
                                                                     </b>
                                                                 </td>
-                                                                <td class="text-right" style="border-top: 0;">
+                                                                <td>
+                                                                    @if($hFunction->checkCount($dataWorkAllocationReport))
+                                                                        @foreach($dataWorkAllocationReport as $workAllocationReport)
+                                                                            <?php
+                                                                            $dataWorkAllocationReportImage = $workAllocationReport->workAllocationReportImageInfo();
+                                                                            #bao cao khi bao gio ra
+                                                                            $dataTimekeepingProvisionalImage = $workAllocationReport->timekeepingProvisionalImageInfo();
+                                                                            ?>
+                                                                            @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
+                                                                                <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                                                    <a class="qc_work_allocation_report_image_view qc-link"
+                                                                                       title="Click xem chi tiết hình ảnh"
+                                                                                       data-href="{!! route('qc.work.work_allocation.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
+                                                                                        <img style="max-width: 100%; max-height: 100%;"
+                                                                                             src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
+                                                                                    </a>
+                                                                                </div>
+                                                                            @endforeach
+                                                                            <i class="glyphicon glyphicon-calendar"></i>
+                                                                            &nbsp;
+                                                                            <b>{!! $hFunction->convertDateDMYHISFromDatetime($workAllocationReport->reportDate()) !!}</b>
+                                                                            <br/>
+                                                                            <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
+                                                                            <br/>
+                                                                            <a class="qc_work_allocation_view qc-link-green-bold"
+                                                                               title="Click xem chi tiết thi công"
+                                                                               data-href="{!! route('qc.work.work_allocation.order.work_allocation.get',$allocationId) !!}">
+                                                                                XEM BÁO CÁO
+                                                                            </a>
+                                                                        @endforeach
+                                                                    @else
+                                                                        <em class="qc-color-grey">Không có báo cáo</em>
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-right">
                                                                     @if($workAllocation->checkActivity())
                                                                         <em style="color: black;">Đang thi công</em>
                                                                         <span>&nbsp;|&nbsp;</span>
@@ -566,51 +599,10 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                             <em style="color: grey;">Đã kết thúc</em>
                                                                         @endif
                                                                     @endif
-                                                                    <span>&nbsp;|&nbsp;</span>
-                                                                    <a class="qc_work_allocation_view qc-link-green-bold"
-                                                                       title="Click xem chi tiết thi công"
-                                                                       data-href="{!! route('qc.work.work_allocation.order.work_allocation.get',$allocationId) !!}">
-                                                                        XEM BÁO CÁO
-                                                                    </a>
+
                                                                 </td>
                                                             </tr>
-                                                            @if($hFunction->checkCount($dataWorkAllocationReport))
-                                                                @foreach($dataWorkAllocationReport as $workAllocationReport)
-                                                                    <?php
-                                                                    $dataWorkAllocationReportImage = $workAllocationReport->workAllocationReportImageInfo();
-                                                                    #bao cao khi bao gio ra
-                                                                    $dataTimekeepingProvisionalImage = $workAllocationReport->timekeepingProvisionalImageInfo();
-                                                                    ?>
-                                                                    <tr>
-                                                                        <td style="background-color: whitesmoke;"></td>
-                                                                        <td colspan="2">
-                                                                            <i class="glyphicon glyphicon-calendar"></i>&nbsp;
-                                                                            <b>{!! $hFunction->convertDateDMYHISFromDatetime($workAllocationReport->reportDate()) !!}</b>
-                                                                            <br/>
-                                                                            <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
-                                                                        </td>
-                                                                        <td colspan="2">
-                                                                            @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
-                                                                                <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
-                                                                                    <a class="qc_work_allocation_report_image_view qc-link"
-                                                                                       title="Click xem chi tiết hình ảnh"
-                                                                                       data-href="{!! route('qc.work.work_allocation.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
-                                                                                        <img style="max-width: 100%; max-height: 100%;"
-                                                                                             src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
-                                                                                    </a>
-                                                                                </div>
-                                                                            @endforeach
-                                                                        </td>
-                                                                    </tr>
-                                                                @endforeach
-                                                            @else
-                                                                <tr>
-                                                                    <td style=" background-color: whitesmoke;"></td>
-                                                                    <td colspan="4">
-                                                                        <em class="qc-color-grey">Không có báo cáo</em>
-                                                                    </td>
-                                                                </tr>
-                                                            @endif
+
                                                         @endforeach
                                                     @else
                                                         <tr>
@@ -627,10 +619,10 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             </div>
                                         </td>
                                     </tr>
-                                @endforeach
-                            </table>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
 

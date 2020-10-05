@@ -61,7 +61,7 @@ var qc_work_allocation = {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
         },
     },
-    manage: {
+    /*manage: {
         productWorkAllocation: {
             addStaff: function (href) {
                 qc_master_submit.ajaxNotReload(href, '#qc_product_work_allocation_staff_wrap', false);
@@ -172,11 +172,11 @@ var qc_work_allocation = {
             }
         },
 
-    }
+    }*/
 }
 
 //------------ ---------- quản lý dơn hang duoc ban giao ----------- ---------
-$(document).ready(function () {
+/*$(document).ready(function () {
     $('body').on('change', '.cbWorkAllocationConstructionFinishStatus', function () {
         qc_main.url_replace($(this).data('href') + '/' + $(this).val() + '/' + $('.cbWorkAllocationConstructionMonthFilter').val() + '/' + $('.cbWorkAllocationConstructionYearFilter').val());
     });
@@ -207,7 +207,7 @@ $(document).ready(function () {
     $('body').on('click', '.frmWorkAllocationConstructionConfirm .qc_save', function () {
         qc_work_allocation.construct.postConfirmAllocation($(this).parents('.frmWorkAllocationConstructionConfirm'));
     });
-});
+});*/
 //------------ ---------- quan ly phan viec ----------- ---------
 /*$(document).ready(function () {
     //Theo trạng thái hoàn thành
@@ -288,6 +288,7 @@ $(document).ready(function () {
 });
 
 //------------ ---------- quản lý dơn hang thi cong ----------- ---------
+/*
 $(document).ready(function () {
     var dateFilter = $('.cbAllocationManageDayFilter').val() + '/' + $('.cbAllocationManageMonthFilter').val() + '/' + $('.cbAllocationManageYearFilter').val();
     //----- --------- tim theo trang thai thi cong ----- ------------
@@ -344,7 +345,7 @@ $(document).ready(function () {
             });
         }
     });
-    /* click vao ten don hang goi y*/
+    /!* click vao ten don hang goi y*!/
     $('body').on('click', '.qc_work_allocation_filter_order_name_suggestions_select', function () {
         var txtOrderFilterKeyword = $(this).data('name');
         if ($('.txtAllocationManageKeywordFilter').val(txtOrderFilterKeyword)) {
@@ -388,7 +389,7 @@ $(document).ready(function () {
         qc_main.url_replace($(this).data('href') + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
     });
 
-    /* ---------- --------  loc theo ten khach hang ------- ---------*/
+    /!* ---------- --------  loc theo ten khach hang ------- ---------*!/
     $('body').on('keyup', '.qc_work_allocation_manage_wrap .txtOrderCustomerFilterKeyword', function () {
         $('#qc_work_allocation_filter_order_name_suggestions_wrap').hide();
         var name = $(this).val();
@@ -435,7 +436,7 @@ $(document).ready(function () {
             });
         }
     });
-    /* click vao ten khach hang hang goi y*/
+    /!* click vao ten khach hang hang goi y*!/
     $('body').on('click', '.qc_work_allocation_filter_customer_name_suggestions_select', function () {
         var txtOrderCustomerFilterKeyword = $(this).data('name');
         if ($('.txtOrderCustomerFilterKeyword').val(txtOrderCustomerFilterKeyword)) {
@@ -456,7 +457,7 @@ $(document).ready(function () {
         }
     });
 
-    /* ---------- --------  xac nhan hoan thanh thi  cong ------- ---------*/
+    /!* ---------- --------  xac nhan hoan thanh thi  cong ------- ---------*!/
     $('#qc_work_allocation_manage_order_construction_wrap').on('click', '.qc_confirm_finish_get', function () {
         qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
     });
@@ -467,22 +468,22 @@ $(document).ready(function () {
         }
     });
 
-    /* ---------- --------  huy ban giao cong trinh ------- ---------*/
+    /!* ---------- --------  huy ban giao cong trinh ------- ---------*!/
     $('#qc_work_allocation_manage_order_construction_wrap').on('click', '.qc_delete_construction', function () {
         if (confirm('Bạn muốn hủy bàn giao công trình này?')) {
             qc_master_submit.ajaxHasReload($(this).data('href'), '', false);
         }
     });
 
-    /* ---------- --------  trien khai thi cong san pham - v1 ------- ---------*/
+    /!* ---------- --------  trien khai thi cong san pham - v1 ------- ---------*!/
     $(document).ready(function () {
-        /*$('#frmWorkAllocationManageProductConstruction').on('click', '.qc_product_work_allocation_staff_add', function () {
+        /!*$('#frmWorkAllocationManageProductConstruction').on('click', '.qc_product_work_allocation_staff_add', function () {
          qc_work_allocation.manage.productWorkAllocation.addStaff($(this).data('href'));
-         });*/
+         });*!/
         //xoa nhan vien
-        /*$('body').on('click', '.qc_work_allocation_product_work_allocation_staff_add .qc_delete', function () {
+        /!*$('body').on('click', '.qc_work_allocation_product_work_allocation_staff_add .qc_delete', function () {
          $(this).parents('.qc_work_allocation_product_work_allocation_staff_add').remove();
-         });*/
+         });*!/
         //giao viec
         $('#frmWorkAllocationManageProductConstruction').on('click', '.qc_save', function () {
             qc_work_allocation.manage.productWorkAllocation.save($(this).parents('#frmWorkAllocationManageProductConstruction'));
@@ -517,4 +518,4 @@ $(document).ready(function () {
         });
     });
 
-});
+});*/

@@ -10,11 +10,11 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
-$hrefIndex = route('qc.work.work_allocation.construction.get');
+$hrefIndex = route('qc.work.work_allocation.order_allocation.index');
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaffLogin->staffId();
 ?>
-@extends('work.work-allocation.index')
+@extends('work.work-allocation.order-allocation.index')
 @section('titlePage')
     Đơn hàng được bàn giao
 @endsection
@@ -73,9 +73,9 @@ $loginStaffId = $dataStaffLogin->staffId();
                                     <select class="cbWorkAllocationConstructionYearFilter col-sx-8 col-sm-8 col-md-8 col-lg-8"
                                             style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
-                                        <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                                        {{--<option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả năm
-                                        </option>
+                                        </option>--}}
                                         @for($y =2017;$y<= 2050; $y++)
                                             <option value="{!! $y !!}"
                                                     @if($yearFilter == $y) selected="selected" @endif>
@@ -130,7 +130,7 @@ $loginStaffId = $dataStaffLogin->staffId();
                                             </span>
                                             <br/>
                                             <a class="qc-link-green-bold"
-                                               href="{!! route('qc.work.work_allocation.construction.product.get',$allocationId) !!}">
+                                               href="{!! route('qc.work.work_allocation.order_allocation.product.get',$allocationId) !!}">
                                                 <i class="glyphicon glyphicon-arrow-right"></i>
                                                 CHI TIẾT
                                             </a>
@@ -186,8 +186,8 @@ $loginStaffId = $dataStaffLogin->staffId();
                                                     <em>---</em>
                                                 @else
                                                     <a class="qc_report_finish_get qc-link-green"
-                                                       data-href="{!! route('qc.work.work_allocation.construction.report_finish.get', $allocationId) !!}">
-                                                        Báo hoàn thành đơn hàng
+                                                       data-href="{!! route('qc.work.work_allocation.order_allocation.report_finish.get', $allocationId) !!}">
+                                                        BÁO HOÀN THÀNH
                                                     </a>
                                                 @endif
                                             @else
@@ -201,8 +201,8 @@ $loginStaffId = $dataStaffLogin->staffId();
                                                             <em class="qc-color-grey">Không hoàn thành</em>
                                                         @endif
                                                     @else
-                                                        <em style="background-color: green; color: white; padding: 3px;">Chờ
-                                                            duyệt</em>
+                                                        <em style="background-color: green; color: white; padding: 3px;">
+                                                            Chờ duyệt</em>
                                                     @endif
 
                                                 @endif

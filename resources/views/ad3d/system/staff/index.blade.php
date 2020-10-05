@@ -7,6 +7,8 @@
  */
 if (isset($dataAccess)) {
     $subMenuObject = (isset($dataAccess['subObject'])) ? $dataAccess['subObject'] : null;
+}else{
+    $subMenuObject = null;
 }
 ?>
 @extends('ad3d.system.index')

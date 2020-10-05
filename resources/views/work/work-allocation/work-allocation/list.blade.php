@@ -37,8 +37,8 @@ $workId = $dataWork->workId();
                             <tr style="background-color: black;color: yellow;">
                                 <th style="width: 20px;"></th>
                                 <th>NGÀY NHẬN</th>
-                                <th>SẢN PHẨM</th>
                                 <th>TIẾN ĐỘ</th>
+                                <th>SẢN PHẨM</th>
                                 <th class="text-center">HẠN GIAO</th>
                                 <th class="text-center">NGÀY BÁO HOÀN THÀNH</th>
                             </tr>
@@ -72,7 +72,6 @@ $workId = $dataWork->workId();
                                         @endfor
                                     </select>
                                 </td>
-
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -103,11 +102,13 @@ $workId = $dataWork->workId();
                                     $allocationDate = $workAllocation->allocationDate();
                                     $receiveDeadline = $workAllocation->receiveDeadline();
                                     $allocationNote = $workAllocation->noted();
-                                    $dataWorkAllocationReport = $workAllocation->workAllocationReportInfo();
+                                    //$dataWorkAllocationReport = $workAllocation->workAllocationReportInfo();
+                                    # bao cao tien do
+                                    $dataWorkAllocationReport = $workAllocation->workAllocationReportInfo($allocationId, 1);
                                     $dataProduct = $workAllocation->product;
                                     ///$productDesignImage = $dataProduct->designImage();
                                     # thiet ke dang ap dung
-                                            $productDesignImage = $dataProduct->productDesignInfoApplyActivity();
+                                    $productDesignImage = $dataProduct->productDesignInfoApplyActivity();
                                     $n_o = $n_o + 1;
                                     # thong ket thuc phan viec
                                     $dataWorkAllocationFinish = $workAllocation->workAllocationFinishInfo();
@@ -128,25 +129,43 @@ $workId = $dataWork->workId();
                                             <br/>
                                             <a class="qc-link-green-bold"
                                                href="{!! route('qc.work.work_allocation.work_allocation.detail.get', $allocationId) !!}">
-                                                CHI TIẾT
+                                                CHI TIẾT THI CÔNG
                                             </a>
-                                            @if($workAllocation->checkViewedNewWorkAllocation($allocationId,$workAllocation->receiveStaffId()))
+                                            {{--@if($workAllocation->checkViewedNewWorkAllocation($allocationId,$workAllocation->receiveStaffId()))
                                                 <em style="color: grey;"> - Đã xem</em>
                                             @else
                                                 <em style="color: red;"> - Chưa xem</em>
-                                            @endif
+                                            @endif--}}
                                         </td>
                                         <td>
-                                            <b class="qc-color-red">{!! $workAllocation->product->productType->name() !!}</b>
-                                            <em style="color:grey;">
-                                                - (ĐH: {!! $workAllocation->product->order->name() !!})
-                                            </em>
-                                            @if(!empty($allocationNote))
+                                            @if($hFunction->checkCount($dataWorkAllocationReport))
+                                                @foreach($dataWorkAllocationReport as $workAllocationReport)
+                                                    <?php
+                                                    $dataWorkAllocationReportImage = $workAllocationReport->workAllocationReportImageInfo();
+                                                    #bao cao khi bao gio ra
+                                                    $dataTimekeepingProvisionalImage = $workAllocationReport->timekeepingProvisionalImageInfo();
+                                                    ?>
+                                                    @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
+                                                        <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                            <a class="qc_work_allocation_report_image_view qc-link"
+                                                               title="Click xem chi tiết hình ảnh"
+                                                               data-href="{!! route('qc.work.work_allocation.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
+                                                                <img style="max-width: 100%; max-height: 100%;"
+                                                                     src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
+                                                            </a>
+                                                        </div>
+                                                    @endforeach
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                    &nbsp;
+                                                    <b>{!! $hFunction->convertDateDMYHISFromDatetime($workAllocationReport->reportDate()) !!}</b>
+                                                    <br/>
+                                                    <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
+                                                    <br/>
+                                                @endforeach
+                                            @else
+                                                <em class="qc-color-grey">Không có báo cáo</em>
                                                 <br/>
-                                                {!! $allocationNote !!}
                                             @endif
-                                        </td>
-                                        <td>
                                             @if($workAllocation->checkCancel())
                                                 <em style="color: blue;">Đã hủy</em>
                                             @else
@@ -158,6 +177,16 @@ $workId = $dataWork->workId();
                                                         BÁO CÁO CÔNG VIỆC
                                                     </a>
                                                 @endif
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <b class="qc-color-red">{!! $workAllocation->product->productType->name() !!}</b>
+                                            <em style="color:grey;">
+                                                - (ĐH: {!! $workAllocation->product->order->name() !!})
+                                            </em>
+                                            @if(!empty($allocationNote))
+                                                <br/>
+                                                {!! $allocationNote !!}
                                             @endif
                                         </td>
                                         <td class="text-center">

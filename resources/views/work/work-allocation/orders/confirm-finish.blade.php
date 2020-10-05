@@ -24,7 +24,7 @@ $dataOrder = $dataOrderAllocation->orders;
         <div class="row">
             <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <form class="frmWorkAllocationConstructionConfirmFinish" role="form" method="post"
-                      action="{!! route('qc.work.work_allocation.manage.order.construction_confirm_finish.post', $dataOrderAllocation->allocationId()) !!}">
+                      action="{!! route('qc.work.work_allocation.order.construction_confirm_finish.post', $dataOrderAllocation->allocationId()) !!}">
                     <div class="row">
                         <div class="notifyConfirm qc-color-red text-center col-xs-12 col-sm-12 col-md-6 col-lg-6"></div>
                     </div>

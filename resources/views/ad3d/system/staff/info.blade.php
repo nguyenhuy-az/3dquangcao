@@ -69,7 +69,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
     <div class="qc_ad3d_sys_staff_edit_wrap qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <a class="qc-link-white-bold btn btn-sm btn-primary" href="{!! route('qc.ad3d.system.staff.get') !!}">
+                <a class="qc-link-white-bold btn btn-sm btn-primary" onclick="qc_main.page_back_go();">
                     <i class="glyphicon glyphicon-backward"></i> Về trang trước
                 </a>
             </div>
@@ -79,10 +79,15 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                 <h3 style="color: red;">THÔNG TIN NHÂN VIÊN</h3>
             </div>
         </div>
+        @if(!$dataStaff->checkWorkStatus())
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style=" background-color: red; color: yellow; padding: 5px;">
+                <span>ĐÃ NGHỈ</span>
+            </div>
+        @endif
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="table-responsive">
-                    <table class="table table-bordered"  style="border: none;">
+                    <table class="table table-bordered" style="border: none;">
                         {{--THONG TIN CO BAN--}}
                         <tr>
                             <td style="background-color: black; color: yellow;padding-bottom: 0;">

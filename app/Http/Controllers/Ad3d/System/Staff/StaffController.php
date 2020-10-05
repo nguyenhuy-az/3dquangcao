@@ -25,7 +25,7 @@ use Request;
 
 class StaffController extends Controller
 {
-    public function index($companyFilterId = 0, $workStatus = 1)
+    public function index($companyFilterId = 0, $actionStatus = 1)
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
@@ -40,24 +40,28 @@ class StaffController extends Controller
         }
         # lay thong tin cong ty cung he thong
         $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
-        if($workStatus == 1){
+        # lay thong tin lam viec cua nv tai cty dang truy cap
+        $dataCompanyStaffWork = $modelCompanyStaffWork->selectInfoOfCompanyAndActionStatus($companyFilterId, $actionStatus)->paginate(30);
+        if ($actionStatus == 1) {
             $dataAccess = [
                 'accessObject' => 'staff',
                 'subObject' => 'staffOn'
             ];
-            $listStaffId = $modelCompanyStaffWork->staffIdOfCompanyAndActionStatus($companyFilterId, $workStatus); // 1 - chi lay thong tin dang hoat dong
-        }else{
+            //$listStaffId = $modelCompanyStaffWork->staffIdOfCompanyAndActionStatus($companyFilterId, $actionStatus); // 1 - chi lay thong tin dang hoat dong
+            //$selectStaff = $modelStaff->selectInfoAll($listStaffId, 100);
+            //$dataStaff = $selectStaff->paginate(30);
+            return view('ad3d.system.staff.list-on', compact('modelStaff', 'dataCompanyStaffWork', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
+        } else {
             $dataAccess = [
                 'accessObject' => 'staff',
                 'subObject' => 'staffOff'
             ];
-            $listStaffId = $modelCompanyStaffWork->staffIdOfCompanyAndActionStatus($companyFilterId, 100); // 1 - tat ca thong tin cua cty
-            //dd($listStaffId);
+            //$listStaffId = $modelCompanyStaffWork->staffIdOfCompanyAndActionStatus($companyFilterId, $actionStatus); // 1 - tat ca thong tin cua cty
+            //$selectStaff = $modelStaff->selectInfoAll($listStaffId, 100);
+            //$dataStaff = $selectStaff->paginate(30);
+            return view('ad3d.system.staff.list-off', compact('modelStaff', 'dataCompanyStaffWork', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
         }
-        $selectStaff = $modelStaff->selectInfoAll($listStaffId, $workStatus);
-        $dataStaff = $selectStaff->paginate(30);
-        //dd($dataStaff);
-        return view('ad3d.system.staff.list', compact('modelStaff', 'modelCompanyStaffWork', 'modelDepartment', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
+
 
     }
 
@@ -616,11 +620,14 @@ class StaffController extends Controller
     //=========== ================ mo cham cong =========== ================
     public function openWork($companyStaffWorkId)
     {
-        $hFunction = new \Hfunction();
-        $modelWork = new QcWork();
-        $fromDateWork = $hFunction->currentDate();
-        $toDateWork = $hFunction->lastDateOfMonthFromDate($fromDateWork);
-        $modelWork->insert($fromDateWork, $toDateWork, $companyStaffWorkId);
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelCompanyStaffWork->openWork($companyStaffWorkId);
+    }
+
+    public function restoreWork($companyStaffWorkId)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        return $modelCompanyStaffWork->restoreWork($companyStaffWorkId);
     }
 
     //them hinh anh

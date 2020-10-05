@@ -18,51 +18,47 @@ use Illuminate\Http\Request;
 class OrderAllocationController extends Controller
 {
     // danh sach cong trinh dc ban giao
-    public function index($finishStatus = 100, $monthFilter = 0, $yearFilter = 0)
+    public function index($finishStatus = 100, $monthFilter = 100, $yearFilter = 0)
     {
         $modelStaff = new QcStaff();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataAccess = [
-            'object' => 'workAllocationConstruction'
+            'object' => 'workAllocationOrderAllocation'
         ];
-        if ($modelStaff->checkLogin()) {
-            $loginStaffId = $dataStaffLogin->staffId();
+        $loginStaffId = $dataStaffLogin->staffId();
+        $dateFilter = null;
+        if ($monthFilter == 0 && $yearFilter == 0) { //khong chon thoi gian xem
+            $monthFilter = 100;
+            $yearFilter = 100;
+        } elseif ($monthFilter == 100 && $yearFilter == 0) { //xam tat ca cac thang va khong chon nam
+            $yearFilter = date('Y');
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter == 100) { //co chon thang va khong chon nam
+            $yearFilter = date('Y');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //co chon thang va chon nam
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
             $dateFilter = null;
-            if ($monthFilter == 0 && $yearFilter == 0) { //khong chon thoi gian xem
-                $monthFilter = 100;
-                $yearFilter = 100;
-            } elseif ($monthFilter == 100 && $yearFilter == 0) { //xam tat ca cac thang va khong chon nam
-                $yearFilter = date('Y');
-                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-            } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter == 100) { //co chon thang va khong chon nam
-                $yearFilter = date('Y');
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //co chon thang va chon nam
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
-                $dateFilter = null;
-            } elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả
-                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-            } else {
-                $dateFilter = date('Y-m');
-                $monthFilter = date('m');
-                $yearFilter = date('Y');
-            }
-            $dataOrdersAllocation = $dataStaffLogin->selectOrderAllocationInfoOfReceiveStaff($loginStaffId, $dateFilter, $finishStatus)->paginate(50);
-            return view('work.work-allocation.construction.construction', compact('dataAccess', 'modelStaff', 'dataOrdersAllocation', 'dateFilter', 'finishStatus', 'monthFilter', 'yearFilter'));
+        } elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } else {
-            return view('work.login');
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
         }
+        $dataOrdersAllocation = $dataStaffLogin->selectOrderAllocationInfoOfReceiveStaff($loginStaffId, $dateFilter, $finishStatus)->paginate(50);
+        return view('work.work-allocation.order-allocation.list', compact('dataAccess', 'modelStaff', 'dataOrdersAllocation', 'dateFilter', 'finishStatus', 'monthFilter', 'yearFilter'));
     }
 
-    # XAC NHAN DON HANG
+    # bao hoan thanh don hang
     public function getConstructionReportFinish($allocationId = null)
     {
         $hFunction = new \Hfunction();
         $modelOrderAllocation = new QcOrderAllocation();
         $dataOrderAllocation = $modelOrderAllocation->getInfo($allocationId);
         if ($hFunction->checkCount($dataOrderAllocation)) {
-            return view('work.work-allocation.construction.report-finish', compact('dataOrderAllocation'));
+            return view('work.work-allocation.order-allocation.report-finish', compact('dataOrderAllocation'));
         }
     }
 
@@ -86,7 +82,7 @@ class OrderAllocationController extends Controller
         $modelProductDesign = new QcProductDesign();
         $dataProductDesign = $modelProductDesign->getInfo($designId);
         if ($hFunction->checkCount($dataProductDesign)) {
-            return view('work.work-allocation.construction.product.view-design-image', compact('dataProductDesign'));
+            return view('work.work-allocation.order-allocation.product.view-design-image', compact('dataProductDesign'));
         }
     }
 
@@ -98,12 +94,12 @@ class OrderAllocationController extends Controller
         $modelOrderAllocation = new QcOrderAllocation();
         if ($modelStaff->checkLogin()) {
             $dataAccess = [
-                'object' => 'workAllocationConstruction',
+                'object' => 'workAllocationOrderAllocation',
                 'subObjectLabel' => 'Sản phẩm'
             ];
             $dataOrdersAllocation = $modelOrderAllocation->getInfo($allocationId);
             $modelStaffNotify->updateViewedOfStaffAndOrderAllocation($modelStaff->loginStaffId(), $allocationId);
-            return view('work.work-allocation.construction.product.product', compact('dataAccess', 'modelStaff', 'dataOrdersAllocation'));
+            return view('work.work-allocation.order-allocation.product.product', compact('dataAccess', 'modelStaff', 'dataOrdersAllocation'));
         } else {
             return view('work.login');
         }
@@ -116,7 +112,7 @@ class OrderAllocationController extends Controller
         $modelProduct = new QcProduct();
         $dataProduct = $modelProduct->getInfo($productId);
         if ($hFunction->checkCount($dataProduct)) {
-            return view('work.work-allocation.construction.product.confirm-finish', compact('dataProduct'));
+            return view('work.work-allocation.order-allocation.product.confirm-finish', compact('dataProduct'));
         }
     }
 

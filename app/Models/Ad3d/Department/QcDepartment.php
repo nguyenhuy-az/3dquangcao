@@ -127,6 +127,11 @@ class QcDepartment extends Model
         return QcDepartment::orderBy('name', 'ASC')->select('*');
     }
 
+    # lay thong tin theo danh sach ma bo phan co san
+    public function getInfoByListId($listId)
+    {
+        return QcDepartment::whereIn('department_id', $listId)->get();
+    }
 
     public function getInfo($departmentId = '', $field = '')
     {

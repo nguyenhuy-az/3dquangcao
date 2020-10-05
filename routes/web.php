@@ -558,9 +558,11 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('add/department', ['as' => 'qc.ad3d.system.staff.department.add', 'uses' => 'Ad3d\System\Staff\StaffController@getAddDepartment']);
             Route::post('add', ['as' => 'qc.ad3d.system.staff.add.post', 'uses' => 'Ad3d\System\Staff\StaffController@postAdd']);
 
-            //mo cham com
+            //mo cham cong
             Route::get('open-work/{companyStaffWorkId?}', ['as' => 'qc.ad3d.system.staff.open_work.get', 'uses' => 'Ad3d\System\Staff\StaffController@openWork']);
 
+            // phuc hoi lại vi tri làm viec
+            Route::get('restore-work/{companyStaffWorkId?}', ['as' => 'qc.ad3d.system.staff.restore_work.get', 'uses' => 'Ad3d\System\Staff\StaffController@restoreWork']);
             //sửa
             Route::get('info/{staffId?}', ['as' => 'qc.ad3d.system.staff.info.get', 'uses' => 'Ad3d\System\Staff\StaffController@getInfo']);
             #thong tin co ban
@@ -1182,17 +1184,17 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::group(['prefix' => 'order-allocation'], function () {
             Route::group(['prefix' => 'product'], function () {
                 // xem thiet ke
-                Route::get('design-view/{designId?}', ['as' => 'qc.work.work_allocation.construction.product.design.view', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@viewProductDesign']);
+                Route::get('design-view/{designId?}', ['as' => 'qc.work.work_allocation.order_allocation.product.design.view', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@viewProductDesign']);
                 # xac nhan hoan thanh sp
-                Route::get('confirm/{productId?}', ['as' => 'qc.work.work_allocation.construction.product.confirm.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@getConstructionProductConfirm']);
-                Route::post('confirm/{productId?}', ['as' => 'qc.work.work_allocation.construction.product.confirm.post', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@postConstructionProductConfirm']);
+                Route::get('confirm/{productId?}', ['as' => 'qc.work.work_allocation.order_allocation.product.confirm.get', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@getConstructionProductConfirm']);
+                Route::post('confirm/{productId?}', ['as' => 'qc.work.work_allocation.order_allocation.product.confirm.post', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@postConstructionProductConfirm']);
 
                 # sản phẩm
-                Route::get('/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.product.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@constructionProduct']);
+                Route::get('/{allocationId?}', ['as' => 'qc.work.work_allocation.order_allocation.product.get', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@constructionProduct']);
             });
             # bao cao hoan thanh thi cong
-            Route::get('report-finish/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.report_finish.get', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@getConstructionReportFinish']);
-            Route::post('report-finish/{allocationId?}', ['as' => 'qc.work.work_allocation.construction.report_finish.post', 'uses' => 'Work\WorkAllocation\WorkAllocationConstructionController@postConstructionReportFinish']);
+            Route::get('report-finish/{allocationId?}', ['as' => 'qc.work.work_allocation.order_allocation.report_finish.get', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@getConstructionReportFinish']);
+            Route::post('report-finish/{allocationId?}', ['as' => 'qc.work.work_allocation.order_allocation.report_finish.post', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@postConstructionReportFinish']);
 
             Route::get('/{finishStatus?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.work_allocation.order_allocation.index', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@index']);
         });

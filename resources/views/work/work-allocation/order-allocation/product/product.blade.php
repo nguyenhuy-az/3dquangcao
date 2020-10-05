@@ -16,7 +16,7 @@ $orderId = $dataOrders->orderId();
 $customerId = $dataOrders->customerId();
 $dataProduct = $dataOrders->allProductOfOrder();
 ?>
-@extends('work.work-allocation.index')
+@extends('work.work-allocation.order-allocation.index')
 @section('titlePage')
     Sản phẩm
 @endsection
@@ -92,7 +92,7 @@ $dataProduct = $dataOrders->allProductOfOrder();
                                                 @else
                                                     @if($dataOrdersAllocation->checkActivity())
                                                         <a class="qc_confirm_finish_product_act qc-link-green"
-                                                           data-href="{!! route('qc.work.work_allocation.construction.product.confirm.get',$productId) !!}">
+                                                           data-href="{!! route('qc.work.work_allocation.order_allocation.product.confirm.get',$productId) !!}">
                                                             BÁO HOÀN THÀNH
                                                         </a>
                                                     @else
@@ -110,7 +110,7 @@ $dataProduct = $dataOrders->allProductOfOrder();
                                             @if($hFunction->checkCount($dataProductDesign))
                                                 @if($dataProductDesign->checkApplyStatus())
                                                     <a class="qc_work_allocation_construct_product_design_image_view qc-link"
-                                                       data-href="{!! route('qc.work.work_allocation.construction.product.design.view', $dataProductDesign->designId()) !!}">
+                                                       data-href="{!! route('qc.work.work_allocation.order_allocation.product.design.view', $dataProductDesign->designId()) !!}">
                                                         <img style="width: 70px; height: auto; margin-bottom: 5px;"
                                                              title="Đang áp dụng"
                                                              src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
@@ -118,7 +118,7 @@ $dataProduct = $dataOrders->allProductOfOrder();
                                                     <br/>
                                                 @else
                                                     <a class="qc_work_allocation_construct_product_design_image_view qc-link"
-                                                       data-href="{!! route('qc.work.work_allocation.construction.product.design.view', $dataProductDesign->designId()) !!}">
+                                                       data-href="{!! route('qc.work.work_allocation.order_allocation.product.design.view', $dataProductDesign->designId()) !!}">
                                                         <img style="width: 70px; height: 70px; margin-bottom: 5px;"
                                                              title="Không được áp dụng"
                                                              src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">

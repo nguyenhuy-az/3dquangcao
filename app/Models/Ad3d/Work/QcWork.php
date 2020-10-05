@@ -66,6 +66,7 @@ class QcWork extends Model
     public function makeSalaryOfWork($workId, $benefit, $workStatus)
     {
         $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaffWorkSalary = new QcStaffWorkSalary();
         $modelSalary = new QcSalary();
@@ -116,7 +117,8 @@ class QcWork extends Model
                                 $currentDate = date('Y-m-d');
                                 //$fromDateWork = $hFunction->firstDateOfMonthFromDate($currentDate);
                                 $toDateWork = $hFunction->lastDateOfMonthFromDate($currentDate);
-                                if (count($companyStaffWorkId) > 0) { # chi them cham cong khi co lam o 1 cty  - phien ban moi
+                                if (count($companyStaffWorkId) > 0) {
+                                    # chi them cham cong khi co lam o 1 cty  - phien ban moi
                                     $this->insert($currentDate, $toDateWork, $companyStaffWorkId);
                                 }
 
@@ -124,7 +126,9 @@ class QcWork extends Model
 
                         } else {
                             # tat thong tin lam viec tai cty
-                            $modelCompanyStaffWork->updateEndWork($companyStaffWorkId);
+                            //$modelCompanyStaffWork->updateEndWork($companyStaffWorkId);
+                            # xoa nhan vien
+                            $modelStaff->actionDelete($modelCompanyStaffWork->staffId($companyStaffWorkId));
                         }
                     }
 
@@ -195,6 +199,13 @@ class QcWork extends Model
         return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'companyStaffWork_id', 'work_id');
     }
 
+    # lay bang cham cong sau cung
+    public function lastInfoOfCompanyStaffWork($companyStaffWorkId)
+    {
+        return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->OrderBy('work_id', 'DESC')->first();
+    }
+
+    # kiem tra ton tai bang cham cong dang hoat dong
     public function checkCompanyStaffWorkActivity($companyStaffWorkId)
     {
         return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->where('action', 1)->exists();

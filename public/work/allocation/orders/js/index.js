@@ -303,47 +303,53 @@ $(document).ready(function () {
         }
     });
 
-    /* ---------- --------  trien khai thi cong san pham - v1 ------- ---------*/
-    $(document).ready(function () {
-        /*$('#frmWorkAllocationOrderProductConstruction').on('click', '.qc_product_work_allocation_staff_add', function () {
-         qc_work_allocation_orders.manage.productWorkAllocation.addStaff($(this).data('href'));
-         });*/
-        //xoa nhan vien
-        /*$('body').on('click', '.qc_work_allocation_orders_product_work_allocation_staff_add .qc_delete', function () {
-         $(this).parents('.qc_work_allocation_orders_product_work_allocation_staff_add').remove();
-         });*/
-        //giao viec
-        $('#frmWorkAllocationOrderProductConstruction').on('click', '.qc_save', function () {
-            qc_work_allocation_orders.productWorkAllocation.save($(this).parents('#frmWorkAllocationOrderProductConstruction'));
-        });
-
-        //------ xem chi tiet thi cong san pham -------
-        $('#qc_work_allocation_order_construction_wrap').on('click', '.qc_work_allocation_orders_view', function () {
-            qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
-            qc_main.scrollTop();
-        });
-
-        //------ xem chi tiet anh bao cao -------
-        $('#qc_work_allocation_order_construction_wrap').on('click', '.qc_work_allocation_orders_report_image_view', function () {
-            // qc_ad3d_order_order.viewAllocationReportImage($(this).data('href'));
-        });
-
-        //------ in don hang -------
-        $('#qc_work_allocation_orders_order_print_wrap_act').on('click', '.qc_print', function () {
-            $(this).parents('#qc_work_allocation_orders_order_print_wrap_act').hide();
-            window.print();
-        });
-
-        //------ in xac nhan don hang -------
-        $('#qc_work_allocation_orders_order_print_confirm_wrap_act').on('click', '.qc_print', function () {
-            $(this).parents('#qc_work_allocation_orders_order_print_confirm_wrap_act').hide();
-            window.print();
-        });
-
-        // -------- Xoa ban giao tren san pham -------
-        $('#qc_work_allocation_order_construction_wrap').on('click', '.qc_cancel_allocation_product', function () {
-            qc_work_allocation_orders.productWorkAllocation.cancelAllocation($(this).data('href'));
-        });
+});
+/* ---------- --------  trien khai thi cong san pham - v1 ------- ---------*/
+$(document).ready(function () {
+    /*$('#frmWorkAllocationOrderProductConstruction').on('click', '.qc_product_work_allocation_staff_add', function () {
+     qc_work_allocation_orders.manage.productWorkAllocation.addStaff($(this).data('href'));
+     });*/
+    //xoa nhan vien
+    /*$('body').on('click', '.qc_work_allocation_orders_product_work_allocation_staff_add .qc_delete', function () {
+     $(this).parents('.qc_work_allocation_orders_product_work_allocation_staff_add').remove();
+     });*/
+    //giao viec
+    $('#frmWorkAllocationOrderProductConstruction').on('click', '.qc_save', function () {
+        qc_work_allocation_orders.productWorkAllocation.save($(this).parents('#frmWorkAllocationOrderProductConstruction'));
     });
 
+    //------ xem chi tiet thi cong san pham -------
+    $('#qc_work_allocation_order_construction_wrap').on('click', '.qc_work_allocation_orders_view', function () {
+        qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
+        qc_main.scrollTop();
+    });
+
+    //------ xem chi tiet anh bao cao -------
+    $('#qc_work_allocation_order_construction_wrap').on('click', '.qc_work_allocation_orders_report_image_view', function () {
+        //qc_ad3d_order_order.viewAllocationReportImage($(this).data('href'));
+    });
+
+    //------ in don hang -------
+    $('#qc_work_allocation_orders_order_print_wrap_act').on('click', '.qc_print', function () {
+        $(this).parents('#qc_work_allocation_orders_order_print_wrap_act').hide();
+        window.print();
+    });
+
+    //------ in xac nhan don hang -------
+    $('#qc_work_allocation_orders_order_print_confirm_wrap_act').on('click', '.qc_print', function () {
+        $(this).parents('#qc_work_allocation_orders_order_print_confirm_wrap_act').hide();
+        window.print();
+    });
+
+    // -------- Xoa ban giao tren san pham -------
+    $('#qc_work_allocation_order_construction_wrap').on('click', '.qc_cancel_allocation_product', function () {
+        qc_work_allocation_orders.productWorkAllocation.cancelAllocation($(this).data('href'));
+    });
+    // xem bao cao
+    $('#qc_work_allocation_order_construction_wrap').on('click', '.qc_work_allocation_view', function () {
+        qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
+        qc_main.scrollTop();
+    });
 });
+
+

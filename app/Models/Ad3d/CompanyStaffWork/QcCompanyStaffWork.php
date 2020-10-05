@@ -70,6 +70,32 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::where('work_id', $this->checkIdNull($workId))->update(['level' => $level]);
     }
 
+    # mo bang cham cong mơi
+    public function openWork($companyStaffWorkId)
+    {
+        $hFunction = new \Hfunction();
+        $modelWork = new QcWork();
+        $fromDateWork = $hFunction->currentDate();
+        $toDateWork = $hFunction->lastDateOfMonthFromDate($fromDateWork);
+        $modelWork->insert($fromDateWork, $toDateWork, $companyStaffWorkId);
+    }
+
+    # phuc hoi lai vi tri lam viec
+    public function restoreWork($companyStaffWorkId)
+    {
+        $modelStaff = new QcStaff();
+        $staffId = $this->staffId($companyStaffWorkId);
+        if ($modelStaff->restoreWorkStatus($staffId)) {
+            if (QcCompanyStaffWork::where('work_id', $companyStaffWorkId)->update(['action' => 1])) {
+                return $this->openWork($companyStaffWorkId);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     # ---------- ---------- tra do nghe ---------- ----------
     public function toolReturn()
     {
@@ -144,7 +170,7 @@ class QcCompanyStaffWork extends Model
         $modelStaff = new QcStaff();
         $modelCompanyStoreCheck = new QcCompanyStoreCheck();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        if($hFunction->checkCount($dataStaffLogin)){
+        if ($hFunction->checkCount($dataStaffLogin)) {
             $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
             $companyLoginId = $dataCompanyStaffWorkLogin->companyId();
             # chua duoc phan cong
@@ -214,6 +240,14 @@ class QcCompanyStaffWork extends Model
         return $modelWork->checkCompanyStaffWorkActivity($this->checkIdNull($workId));
     }
 
+    # bang cham cong sau cung
+    public function workLastInfo($staffWorkId = null)
+    {
+        $modelWork = new QcWork();
+        return $modelWork->lastInfoOfCompanyStaffWork($this->checkIdNull($staffWorkId));
+    }
+
+    # bang cham cong dang hoat dong
     public function workInfoActivity($staffWorkId = null)
     {
         $modelWork = new QcWork();
@@ -362,6 +396,14 @@ class QcCompanyStaffWork extends Model
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $dataWork = $this->infoActivityOfStaff($staffId);
         return $modelStaffWorkDepartment->listIdDepartmentActivityOfWork($dataWork->workId());
+    }
+
+    # thong tin bo phan dang lam viec
+    public function infoDepartmentActivityOfStaff($companyStaffWorkId = null)
+    {
+        $modelDepartment = new QcDepartment();
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        return $modelDepartment->getInfoByListId($modelStaffWorkDepartment->listIdDepartmentActivityOfWork($this->checkIdNull($companyStaffWorkId)));
     }
 
     # lay danh sach tat ca ma lam viec cua 1 nv
@@ -814,6 +856,16 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::where('company_id', $companyId)->pluck('staff_id');
     }
 
+    # lay danh sach thong tin theo 1 cty va trang thai lam viẹc
+    public function selectInfoOfCompanyAndActionStatus($companyId, $actionStatus = 100) // mac dinh chon tat ca = 100
+    {
+        if ($actionStatus == 100) {
+            return QcCompanyStaffWork::where('company_id', $companyId)->select('*');
+        } else {
+            return QcCompanyStaffWork::where('company_id', $companyId)->where('action', $actionStatus)->select('*');
+        }
+    }
+
     # lay danh sach ma nv theo 1 cty va trang thai lam viẹc
     public function staffIdOfCompanyAndActionStatus($companyId, $actionStatus = 100) // mac dinh chon tat ca = 100
     {
@@ -834,7 +886,7 @@ class QcCompanyStaffWork extends Model
         }
     }
 
-# lay danh sach ma nv theo danh sach ma cty
+    # lay danh sach ma nv theo danh sach ma cty
     public function staffIdOfListCompany($listCompanyId = null)
     {
         if (empty($listCompanyId)) {

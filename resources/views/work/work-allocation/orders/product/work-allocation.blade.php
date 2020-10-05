@@ -17,6 +17,7 @@ $currentMonth = (int)date('m');
 $currentYear = (int)date('Y');
 $currentHour = (int)date('H');
 $currentMinute = (int)date('i');
+$currentHour = ($currentHour < 8) ? 8 : $currentHour;
 $designImage = $dataProduct->designImage();
 # thiet ke dang ap dung
 $dataProductDesign = $dataProduct->productDesignInfoApplyActivity();
@@ -161,17 +162,121 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <tr>
-                                    <th colspan="7" style="border: none;">
+                                    <th colspan="4" style="border: none;">
                                         <i class="glyphicon glyphicon-wrench qc-font-size-20"></i>
                                         <b style="color: blue; font-size: 1.5em;">PHÂN CÔNG</b>
                                     </th>
                                 </tr>
+                                <tr class="text-right" >
+                                    <td>
+                                        Từ:
+                                    </td>
+                                    <td colspan="3" style="padding: 0;">
+                                        <select class="cbDayAllocation text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
+                                                name="cbDayAllocation"
+                                                style="padding: 0; height: 34px; color: red;">
+                                            <option value="">Ngày</option>
+                                            @for($i = 1;$i<= 31; $i++)
+                                                <option value="{!! $i !!}"
+                                                        @if($i == $currentDay) selected="selected" @endif >
+                                                    {!! $i !!}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <select class="cbMonthAllocation text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
+                                                name="cbMonthAllocation"
+                                                style="padding: 0; height: 34px; color: red;">
+                                            <option value="">Tháng</option>
+                                            @for($i = 1;$i<= 12; $i++)
+                                                <option value="{!! $i !!}"
+                                                        @if($i == $currentMonth) selected="selected" @endif>{!! $i !!}</option>
+                                            @endfor
+                                        </select>
+                                        <select class="cbYearAllocation text-right col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                                name="cbYearAllocation"
+                                                style="padding: 0; height: 34px; color: red;">
+                                            <?php
+                                            $currentYear = (int)date('Y');
+                                            ?>
+                                            <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
+                                            <option value="{!! $currentYear + 1 !!}">{!! $currentYear + 1 !!}</option>
+                                        </select>
+                                        <select class="cbHoursAllocation text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
+                                                name="cbHoursAllocation"
+                                                style="padding: 0; height: 34px;">
+                                            <option value="">Giờ</option>
+                                            @for($i =1;$i<= 24; $i++)
+                                                <option value="{!! $i !!}"
+                                                        @if($i == $currentHour) selected="selected" @endif>
+                                                    {!! $i !!}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <select class="cbMinuteAllocation text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
+                                                name="cbMinuteAllocation"
+                                                style="padding: 0; height: 34px;">
+                                            @for($i =0;$i<= 55; $i = $i+5)
+                                                <option value="{!! $i !!}">{!! $i !!}</option>
+                                            @endfor
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="text-right">
+                                    <td>
+                                        Đến
+                                    </td>
+                                    <td colspan="3" style="padding: 0;">
+                                        <select class="cbDayDeadline text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
+                                                name="cbDayDeadline"
+                                                style="padding: 0; height: 34px; color: red;">
+                                            <option value="">Ngày</option>
+                                            @for($i = 1;$i<= 31; $i++)
+                                                <option value="{!! $i !!}"
+                                                        @if($i == $currentDay) selected="selected" @endif>
+                                                    {!! $i !!}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <select class="cbMonthDeadline text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
+                                                name="cbMonthDeadline" style="padding: 0; height: 34px; color: red;">
+                                            <option value="">Tháng</option>
+                                            @for($i = 1;$i<= 12; $i++)
+                                                <option value="{!! $i !!}"
+                                                        @if($i == $currentMonth) selected="selected" @endif>
+                                                    {!! $i !!}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <select class="cbYearDeadline text-right col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                                name="cbYearDeadline"
+                                                style="padding: 0; height: 34px; color: red;">
+                                            <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
+                                            <option value="{!! $currentYear + 1 !!}">{!! $currentYear + 1 !!}</option>
+                                        </select>
+                                        <select class="cbHoursDeadline text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
+                                                name="cbHoursDeadline"
+                                                style="padding: 0; height: 34px;">
+                                            <option value="">Giờ</option>
+                                            @for($i =1;$i<= 24; $i++)
+                                                <option value="{!! $i !!}"
+                                                        @if($i == $currentHour) selected="selected" @endif>
+                                                    {!! $i !!}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <select class="cbMinuteDeadline text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
+                                                name="cbMinuteDeadline"
+                                                style="padding: 0; height: 34px;">
+                                            @for($i =0;$i<= 55; $i = $i+5)
+                                                <option value="{!! $i !!}">{!! $i !!}</option>
+                                            @endfor
+                                        </select>
+                                    </td>
+                                    </td>
+                                </tr>
                                 <tr style="background-color: black; color: yellow;">
-                                    <th class="text-center" style="width:20px;">STT</th>
+                                    <th class="text-center" style="width:20px;">GIAO</th>
                                     <th>Nhân viên</th>
-                                    <th class="text-center">Giao</th>
-                                    <th class="text-center">Thời gian nhận</th>
-                                    <th class="text-center">Thời gian bàn giao</th>
                                     <th class="text-center">Vai trò</th>
                                     <th>Nội dung</th>
                                 </tr>
@@ -189,117 +294,13 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                         ?>
                                         @if(!$dataProduct->checkStaffReceiveProduct($receiveStaff->staffId(), $dataProduct->productId()))
                                             <tr>
-                                                <td class="text-center">
-                                                    {!! $n_o_add = (isset($n_o_add))?$n_o_add+1: 1 !!}
-                                                </td>
-                                                <td>
-                                                    <img style="max-width: 50px;height: 50px;" src="{!! $src !!}">
-                                                    {!! $receiveStaff->fullName() !!}
-                                                </td>
                                                 <td class="text-center" style="padding: 0;">
                                                     <input type="checkbox" name="staffReceive[]" checked="checked"
                                                            value="{!! $receiveStaffId !!}">
                                                 </td>
-                                                <td style="padding: 0; width: 200px;">
-                                                    <select class="cbDayAllocation col-sx-2 col-sm-2 col-md-2 col-lg-2"
-                                                            name="cbDayAllocation_{!! $receiveStaffId !!}"
-                                                            style="padding: 0; height: 34px; color: red;">
-                                                        <option value="">Ngày</option>
-                                                        @for($i = 1;$i<= 31; $i++)
-                                                            <option value="{!! $i !!}"
-                                                                    @if($i == $currentDay) selected="selected" @endif >{!! $i !!}</option>
-                                                        @endfor
-                                                    </select>
-                                                    <select class="cbMonthAllocation col-sx-2 col-sm-2 col-md-2 col-lg-2"
-                                                            name="cbMonthAllocation_{!! $receiveStaffId !!}"
-                                                            style="padding: 0; height: 34px; color: red;">
-                                                        <option value="">Tháng</option>
-                                                        @for($i = 1;$i<= 12; $i++)
-                                                            <option value="{!! $i !!}"
-                                                                    @if($i == $currentMonth) selected="selected" @endif>{!! $i !!}</option>
-                                                        @endfor
-                                                    </select>
-                                                    <select class="cbYearAllocation col-sx-4 col-sm-4 col-md-4 col-lg-4"
-                                                            name="cbYearAllocation_{!! $receiveStaffId !!}"
-                                                            style="padding: 0; height: 34px; color: red;">
-                                                        <?php
-                                                        $currentYear = (int)date('Y');
-                                                        ?>
-                                                        <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
-                                                        <option value="{!! $currentYear + 1 !!}">{!! $currentYear + 1 !!}</option>
-                                                    </select>
-                                                    <select class="cbHoursAllocation col-sx-2 col-sm-2 col-md-2 col-lg-2"
-                                                            name="cbHoursAllocation_{!! $receiveStaffId !!}"
-                                                            style="padding: 0; height: 34px;">
-                                                        <option value="">Giờ</option>
-                                                        @for($i =1;$i<= 24; $i++)
-                                                            <?php
-                                                            $currentHour = ($currentHour < 8) ? 8 : $currentHour;
-                                                            ?>
-                                                            <option value="{!! $i !!}"
-                                                                    @if($i == $currentHour) selected="selected" @endif>
-                                                                {!! $i !!}
-                                                            </option>
-                                                        @endfor
-                                                    </select>
-                                                    <select class="cbMinuteAllocation col-sx-2 col-sm-2 col-md-2 col-lg-2"
-                                                            name="cbMinuteAllocation_{!! $receiveStaffId !!}"
-                                                            style="padding: 0; height: 34px;">
-                                                        @for($i =0;$i<= 55; $i = $i+5)
-                                                            <option value="{!! $i !!}">{!! $i !!}</option>
-                                                        @endfor
-                                                    </select>
-                                                </td>
-                                                <td style="padding: 0; width: 200px;">
-                                                    <select class="cbDayDeadline col-sx-2 col-sm-2 col-md-2 col-lg-2"
-                                                            name="cbDayDeadline_{!! $receiveStaffId !!}"
-                                                            style="padding: 0; height: 34px; color: red;">
-                                                        <option value="">Ngày</option>
-                                                        @for($i = 1;$i<= 31; $i++)
-                                                            <option value="{!! $i !!}"
-                                                                    @if($i == $currentDay) selected="selected" @endif>
-                                                                {!! $i !!}
-                                                            </option>
-                                                        @endfor
-                                                    </select>
-                                                    <select class="cbMonthDeadline col-sx-2 col-sm-2 col-md-2 col-lg-2"
-                                                            name="cbMonthDeadline_{!! $receiveStaffId !!}"
-                                                            style="padding: 0; height: 34px; color: red;">
-                                                        <option value="">Tháng</option>
-                                                        @for($i = 1;$i<= 12; $i++)
-                                                            <option value="{!! $i !!}"
-                                                                    @if($i == $currentMonth) selected="selected" @endif>
-                                                                {!! $i !!}
-                                                            </option>
-                                                        @endfor
-                                                    </select>
-                                                    <select class="cbYearDeadline col-sx-4 col-sm-4 col-md-4 col-lg-4"
-                                                            name="cbYearDeadline_{!! $receiveStaffId !!}"
-                                                            style="padding: 0; height: 34px; color: red;">
-                                                        <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
-                                                        <option value="{!! $currentYear + 1 !!}">{!! $currentYear + 1 !!}</option>
-                                                    </select>
-                                                    <select class="cbHoursDeadline col-sx-2 col-sm-2 col-md-2 col-lg-2"
-                                                            name="cbHoursDeadline_{!! $receiveStaffId !!}"
-                                                            style="padding: 0; height: 34px;">
-                                                        <option value="">Giờ</option>
-                                                        @for($i =1;$i<= 24; $i++)
-                                                            <?php
-                                                            $currentHour = ($currentHour < 8) ? 8 : $currentHour;
-                                                            ?>
-                                                            <option value="{!! $i !!}"
-                                                                    @if($i == $currentHour) selected="selected" @endif>
-                                                                {!! $i !!}
-                                                            </option>
-                                                        @endfor
-                                                    </select>
-                                                    <select class="cbMinuteDeadline col-sx-2 col-sm-2 col-md-2 col-lg-2"
-                                                            name="cbMinuteDeadline_{!! $receiveStaffId !!}"
-                                                            style="padding: 0; height: 34px;">
-                                                        @for($i =0;$i<= 55; $i = $i+5)
-                                                            <option value="{!! $i !!}">{!! $i !!}</option>
-                                                        @endfor
-                                                    </select>
+                                                <td>
+                                                    <img style="max-width: 50px;height: 50px;" src="{!! $src !!}">
+                                                    {!! $receiveStaff->fullName() !!}
                                                 </td>
                                                 <td style="padding: 0;">
                                                     <select class="cbRole text-center form-control"
@@ -318,7 +319,8 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                     @endforeach
                                     @if (Session::has('notifyAddAllocation'))
                                         <tr>
-                                            <td class="text-center" colspan="7" style="background-color: red; color: yellow;">
+                                            <td class="text-center" colspan="7"
+                                                style="background-color: red; color: yellow;">
                                                 {!! Session::get('notifyAddAllocation') !!}
                                                 <?php
                                                 Session::forget('notifyAddAllocation');
