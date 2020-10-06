@@ -31,12 +31,14 @@ class MinusMoneyController extends Controller
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
         $modelMinus = new QcMinusMoney();
-
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
-
-        $dataPunishContent = $modelPunishContent->getInfo();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        if ($companyFilterId == null || $companyFilterId == 0) {
+            $companyFilterId = $companyLoginId;
+        }
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         $dataAccess = [
             'accessObject' => 'penalize'
         ];
@@ -60,39 +62,20 @@ class MinusMoneyController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        # lay he thong cty lien cty dang nhap
-        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
-        # xet theo cty dang nhap
-        if (empty($companyFilterId)) {
-            $searchCompanyFilterId = [$companyLoginId];
-            $companyFilterId = $companyLoginId;
-            /*if (!$dataStaffLogin->checkRootManage()) {
-                $searchCompanyFilterId = [$companyLoginId];
-                $companyFilterId = $companyLoginId;
-            } else {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            }*/
-        } else {
-            if ($companyFilterId == 1000) {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            } else {
-                $searchCompanyFilterId = [$companyFilterId];
-            }
-        }
 
         if ($monthFilter < 8 && $yearFilter <= 2019) { # du lieu phien ban cu
             if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listIdOfListCompanyAndName($searchCompanyFilterId, $nameFiler);
+                $listStaffId = $modelStaff->listIdOfListCompanyAndName([$companyFilterId], $nameFiler);
             } else {
-                $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
+                $listStaffId = $modelStaff->listIdOfListCompany([$companyFilterId]);
             }
             $listWorkId = $modelWork->listIdOfListStaffId($listStaffId);
         } else {
             if (!empty($nameFiler)) {
                 $listStaffId = $modelStaff->listStaffIdByName($nameFiler);
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId, $listStaffId);
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $listStaffId);
             } else {
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId, null);
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], null);
             }
             $listWorkId = $modelWork->listIdOfListCompanyStaffWork($listCompanyStaffWorkId);
         }

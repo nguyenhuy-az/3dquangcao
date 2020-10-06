@@ -25,9 +25,9 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                 <div class="text-right col-xs-12 col-sm-8 col-md-4 col-lg-4" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter" style="height: 34px;"
                             data-href-filter="{!! $hrefIndex !!}">
-                        @if($dataStaffLogin->checkRootManage())
+                        {{--@if($dataStaffLogin->checkRootManage())
                             <option value="1000">Tất cả</option>
-                        @endif
+                        @endif--}}
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())

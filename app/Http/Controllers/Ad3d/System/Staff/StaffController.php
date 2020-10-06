@@ -47,18 +47,12 @@ class StaffController extends Controller
                 'accessObject' => 'staff',
                 'subObject' => 'staffOn'
             ];
-            //$listStaffId = $modelCompanyStaffWork->staffIdOfCompanyAndActionStatus($companyFilterId, $actionStatus); // 1 - chi lay thong tin dang hoat dong
-            //$selectStaff = $modelStaff->selectInfoAll($listStaffId, 100);
-            //$dataStaff = $selectStaff->paginate(30);
             return view('ad3d.system.staff.list-on', compact('modelStaff', 'dataCompanyStaffWork', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
         } else {
             $dataAccess = [
                 'accessObject' => 'staff',
                 'subObject' => 'staffOff'
             ];
-            //$listStaffId = $modelCompanyStaffWork->staffIdOfCompanyAndActionStatus($companyFilterId, $actionStatus); // 1 - tat ca thong tin cua cty
-            //$selectStaff = $modelStaff->selectInfoAll($listStaffId, 100);
-            //$dataStaff = $selectStaff->paginate(30);
             return view('ad3d.system.staff.list-off', compact('modelStaff', 'dataCompanyStaffWork', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
         }
 

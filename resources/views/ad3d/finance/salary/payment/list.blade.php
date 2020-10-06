@@ -25,9 +25,6 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                             data-href-filter="{!! route('qc.ad3d.finance.salary.payment.get') !!}">
-                        @if($dataStaffLogin->checkRootManage())
-                            <option value="0">Tất cả</option>
-                        @endif
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -137,15 +134,25 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 } else {
                                     $dataStaffSalary = $dataWork->staff; // phien ban cu
                                 }
+                                $image = $dataStaffSalary->image();
+                                $src = $dataStaffSalary->pathAvatar($image);
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $salaryId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td style="padding: 0;">
-                                        <img style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
-                                             src="{!! $dataStaffSalary->pathAvatar($dataStaffSalary->image()) !!}">
-                                        {!! $dataStaffSalary->fullName() !!}
+                                        <div class="media" style="margin: 3px;">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $src !!}">
+                                            </a>
+
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataStaffSalary->fullName() !!}</h5>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
                                         <a class="qc_view qc-link-green">

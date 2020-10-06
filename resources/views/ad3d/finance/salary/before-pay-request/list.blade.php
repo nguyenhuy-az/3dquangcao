@@ -32,9 +32,9 @@ $totalNewSalaryBeforePayRequest = $modelStaff->totalNewSalaryBeforePayRequest();
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter" style="height: 34px;"
                             data-href-filter="{!! route('qc.ad3d.salary.before_pay_request.get') !!}">
-                        @if($dataStaffLogin->checkRootManage())
+                       {{-- @if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
-                        @endif
+                        @endif--}}
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -67,7 +67,7 @@ $totalNewSalaryBeforePayRequest = $modelStaff->totalNewSalaryBeforePayRequest();
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
-                            <th class="text-center">STT</th>
+                            <th class="text-center" style="width: 20px;">STT</th>
                             <th>Tên</th>
                             <th class="text-center">Ngày</th>
                             <th class="text-right">Xin ứng</th>
@@ -92,17 +92,31 @@ $totalNewSalaryBeforePayRequest = $modelStaff->totalNewSalaryBeforePayRequest();
                                 $requestDate = $salaryBeforePayRequest->dateRequest();
                                 $dataWork = $salaryBeforePayRequest->work;
                                 $workCompanyId = $dataWork->companyIdOfWork()[0];
+                                # thong tin nhan vien
+                                if (!empty($dataWork->companyStaffWorkId())) {
+                                    $dataStaffWork = $dataWork->companyStaffWork->staff;
+                                } else {
+                                    $dataStaffWork = $dataWork->staff; // phien ban cu
+                                }
+                                $image = $dataStaffWork->image();
+                                $src = $dataStaffWork->pathAvatar($image);
                                 ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $licenseId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
+                                    data-object="{!! $licenseId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        @if(!empty($dataWork->companyStaffWorkId()))
-                                            {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                                        @else
-                                            {!! $dataWork->staff->fullName() !!}
-                                        @endif
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $src !!}">
+                                            </a>
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataStaffWork->fullName() !!}</h5>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="text-center">
                                         {!! date('d-m-Y', strtotime($requestDate)) !!}

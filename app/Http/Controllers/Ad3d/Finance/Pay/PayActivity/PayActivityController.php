@@ -23,14 +23,21 @@ class PayActivityController extends Controller
         $modelPayActivityDetail = new QcPayActivityDetail();
         $currentMonth = $hFunction->currentMonth();
         $currentYear = $hFunction->currentYear();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataAccess = [
             'accessObject' => 'payActivityDetail'
         ];
-        $dataCompany = $modelCompany->getInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        if ($companyFilterId == null || $companyFilterId == 0) {
+            $companyFilterId = $companyLoginId;
+        }
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
+       // $dataCompany = $modelCompany->getInfo();
         //$dataPaymentType = $modelPaymentType->getInfo();
 
-        if ($dataStaffLogin->checkRootManage()) {
+        /*if ($dataStaffLogin->checkRootManage()) {
             if (empty($companyFilterId)) {
                 $searchCompanyFilterId = $modelCompany->listIdActivity();
                 $companyFilterId = $dataStaffLogin->companyId();
@@ -40,7 +47,7 @@ class PayActivityController extends Controller
         } else {
             $searchCompanyFilterId = [$dataStaffLogin->companyId()];
             $companyFilterId = $dataStaffLogin->companyId();
-        }
+        }*/
         if(empty($dayFilter) && empty($monthFilter) && empty($yearFilter)){
             $monthFilter = date('m');
             $yearFilter = date('Y');
@@ -68,9 +75,9 @@ class PayActivityController extends Controller
         }
 
         if ($staffFilterId > 0) {
-            $selectPayActivity = $modelPayActivityDetail->selectInfoOfListCompanyAndStaff($searchCompanyFilterId, $staffFilterId, $dateFilter, $confirmStatusFilter);
+            $selectPayActivity = $modelPayActivityDetail->selectInfoOfListCompanyAndStaff([$companyFilterId], $staffFilterId, $dateFilter, $confirmStatusFilter);
         } else {
-            $selectPayActivity = $modelPayActivityDetail->selectInfoOfListCompany($searchCompanyFilterId, $dateFilter, $confirmStatusFilter);
+            $selectPayActivity = $modelPayActivityDetail->selectInfoOfListCompany([$companyFilterId], $dateFilter, $confirmStatusFilter);
         }
 
         $dataPayActivityDetail = $selectPayActivity->paginate(30);

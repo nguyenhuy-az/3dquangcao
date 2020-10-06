@@ -330,12 +330,36 @@ class QcTransfers extends Model
         }
     }
 
-    // ---------- ---------- STAFF INFO --------- -------
+    // ---------- ----------  LAY THONG TIN --------- -------
+    # chon thong tin chuyen tien theo 1 danh sach ma nhan vien / cong ty theo ngay thang
+    public function selectInfoByListTransfersStaffAndDate($listStaffId, $companyId, $date, $transfersType)
+    {
+        if ($transfersType == 0) {
+            return QcTransfers::wherein('transfersStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->orderBy('transfersDate', 'DESC')->orderBy('transfers_id', 'DESC')->select('*');
+        } else {
+            return QcTransfers::wherein('transfersStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->where('transferType', $transfersType)->orderBy('transfersDate', 'DESC')->orderBy('transfers_id', 'DESC')->select('*');
+        }
+    }
+
+    # tong so tien chuyen theo danh sach thong tin chuyen
+    public function totalMoneyByListInfo($dataTransfers)
+    {
+        $hFunction = new \Hfunction();
+        $totalMoney = 0;
+        if ($hFunction->checkCount($dataTransfers)) {
+            foreach ($dataTransfers as $transfers)
+                $totalMoney = $totalMoney + $transfers->money();
+        }
+        return $totalMoney;
+    }
+
+    # lay thong tin thep ma thanh toan
     public function infoFromPaymentCode($transfersCode)
     {
         return QcTransfers::where('transfersCode', $transfersCode)->first();
     }
 
+    # lay thong tin 1 cot theo ma nhap vao
     public function pluck($column, $objectId = null)
     {
         if (empty($objectId)) {
@@ -385,6 +409,18 @@ class QcTransfers extends Model
 
         return $this->pluck('transferType', $transfersId);
     }
+
+    public function transferTypeLabel($transferType)
+    {
+        if ($transferType == 1) {
+            return 'Chuyển doanh thu';
+        } elseif ($transferType == 2) {
+            return 'Chuyển đầu tư';
+        } else {
+            return 'Không xác định';
+        }
+    }
+
 
     public function confirmDate($transfersId = null)
     {

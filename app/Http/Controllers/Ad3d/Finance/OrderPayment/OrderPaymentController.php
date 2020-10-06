@@ -8,7 +8,6 @@ use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Ad3d\TransfersDetail\QcTransfersDetail;
 use File;
 use Illuminate\Support\Facades\Session;
 use Input;
@@ -21,11 +20,16 @@ class OrderPaymentController extends Controller
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelOrder = new QcOrder();
-        $modelTransferDetail = new QcTransfersDetail();
-
+        $modelOrderPay = new QcOrderPay();
         $orderFilterName = ($orderFilterName == 'null') ? null : $orderFilterName;
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
-
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        if ($companyFilterId == null || $companyFilterId == 0) {
+            $companyFilterId = $companyLoginId;
+        }
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         $dataAccess = [
             'accessObject' => 'orderPayment'
         ];
@@ -38,7 +42,7 @@ class OrderPaymentController extends Controller
         } else {
             $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
         }
-        $dataCompany = $modelCompany->getInfo();
+        /*$dataCompany = $modelCompany->getInfo();
         if ($dataStaffLogin->checkRootManage()) {
             if (empty($companyFilterId)) {
                 $searchCompanyFilterId = [$dataStaffLogin->companyId()];//$modelCompany->listIdActivity();
@@ -50,32 +54,22 @@ class OrderPaymentController extends Controller
             $searchCompanyFilterId = [$dataStaffLogin->companyId()];
             $companyFilterId = $dataStaffLogin->companyId();
         }
-
+        */
         if ($staffFilterId > 0) {
             $listStaffId = [$staffFilterId];
         } else {
-            $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
+            $listStaffId = $modelStaff->listIdOfCompany($companyFilterId);
         }
 
-        $listOrderId = $modelOrder->listIdOfListCompanyAndName($searchCompanyFilterId, $orderFilterName);
+        $listOrderId = $modelOrder->listIdOfCompanyAndName($companyFilterId, $orderFilterName);
         if (count($listOrderId) > 0) {
-            if ($transferStatus == 1) { // da giao
-                $listPayIdTransferred = $modelTransferDetail->listPayId();
-                $dataOrderPay = QcOrderPay:: whereIn('pay_id', $listPayIdTransferred)->whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$dateFilter%")->orderBy('datePay', 'DESC')->select('*')->paginate(30);
-                $totalOrderPay = QcOrderPay::whereIn('pay_id', $listPayIdTransferred)->whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$dateFilter%")->sum('money');
-            } elseif ($transferStatus == 0) { // chua giao
-                $listPayIdTransferred = $modelTransferDetail->listPayId();
-                $dataOrderPay = QcOrderPay:: whereNotIn('pay_id', $listPayIdTransferred)->whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$dateFilter%")->orderBy('datePay', 'DESC')->select('*')->paginate(30);
-                $totalOrderPay = QcOrderPay::whereNotIn('pay_id', $listPayIdTransferred)->whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$dateFilter%")->sum('money');
-            } else {
-                $dataOrderPay = QcOrderPay::whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$dateFilter%")->orderBy('datePay', 'DESC')->select('*')->paginate(30);
-                $totalOrderPay = QcOrderPay::whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$dateFilter%")->sum('money');
-            }
+            $selectOrderPay = $modelOrderPay->selectInfoByListOrderOrListStaffOrDateAndTransferStatus($listOrderId,$listStaffId,$dateFilter, $transferStatus);
+            $dataOrderPay =  $selectOrderPay->paginate(30);
+            $totalOrderPay = $modelOrderPay->totalMoneyByListInfo($selectOrderPay->get());
         } else {
             $dataOrderPay = null;
-            $totalOrderPay = null;
+            $totalOrderPay = 0;
         }
-
         //danh sach NV
         $dataStaff = $modelCompany->staffInfoActivityOfListCompanyId([$companyFilterId]);
         return view('ad3d.finance.order-payment.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataStaff', 'dataOrderPay', 'totalOrderPay', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'orderFilterName', 'staffFilterId', 'transferStatus'));

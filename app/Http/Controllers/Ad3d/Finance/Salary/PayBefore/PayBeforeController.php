@@ -27,7 +27,14 @@ class PayBeforeController extends Controller
         $modelWork = new QcWork();
         $currentMonth = $hFunction->currentMonth();
         $currentYear = $hFunction->currentYear();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        if ($companyFilterId == null || $companyFilterId == 0) {
+            $companyFilterId = $companyLoginId;
+        }
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         $dataAccess = [
             'accessObject' => 'payBefore'
         ];
@@ -54,8 +61,7 @@ class PayBeforeController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        $dataCompany = $modelCompany->getInfo();
-        if ($dataStaffLogin->checkRootManage()) {
+        /*if ($dataStaffLogin->checkRootManage()) {
             if (empty($companyFilterId)) {
                 $searchCompanyFilterId = $modelCompany->listIdActivity();
             } else {
@@ -64,25 +70,26 @@ class PayBeforeController extends Controller
         } else {
             $searchCompanyFilterId = [$dataStaffLogin->companyId()];
             $companyFilterId = $dataStaffLogin->companyId();
-        }
+        }*/
 
         if ($monthFilter < 8 && $yearFilter < 2019) { # du lieu cu phien ban cu --  loc theo staff_id
             if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listIdOfListCompanyAndName($searchCompanyFilterId, $nameFiler);
+                $listStaffId = $modelStaff->listIdOfListCompanyAndName([$companyFilterId], $nameFiler);
             } else {
-                $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
+                $listStaffId = $modelStaff->listIdOfListCompany([$companyFilterId]);
             }
             $listWorkId = $modelWork->listIdOfListStaffInBeginDate($listStaffId, $dateFilter);
         } else { # du lieu phien ban moi - loc theo thong tin lam viec tai cty (companyStaffWork)
             if (!empty($nameFiler)) {
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId, $modelStaff->listStaffIdByName($nameFiler));
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $modelStaff->listStaffIdByName($nameFiler));
             } else {
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId);
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId]);
             }
             $listWorkId = $modelWork->listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter);
         }
-        $dataSalaryBeforePay = QcSalaryBeforePay::where('datePay', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->orderBy('datePay', 'DESC')->select('*')->paginate(30);
-        $totalMoneyBeforePay = QcSalaryBeforePay::where('datePay', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->sum('money');
+        $selectSalaryBeforePay = $modelQcSalaryBeforePay->selectInfoOfListWorkAndDate($listWorkId, $dateFilter);
+        $dataSalaryBeforePay = $selectSalaryBeforePay->paginate(30);
+        $totalMoneyBeforePay = $modelQcSalaryBeforePay->totalMoneyByListInfo($selectSalaryBeforePay->get());
         return view('ad3d.finance.salary.pay-before.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataSalaryBeforePay', 'totalMoneyBeforePay', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));
 
     }
@@ -113,7 +120,7 @@ class PayBeforeController extends Controller
         $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyLoginId], null);
         $dataWork = $modelWork->infoActivityOfListCompanyStaffWork($listCompanyStaffWorkId);
         $dataWorkSelect = (empty($workId)) ? null : $modelWork->getInfo($workId);
-        return view('ad3d.finance.salary.pay-before.add', compact('modelStaff','modelCompanyStaffWork', 'dataAccess', 'dataCompany', 'companyLoginId', 'dataWork', 'dataWorkSelect'));
+        return view('ad3d.finance.salary.pay-before.add', compact('modelStaff', 'modelCompanyStaffWork', 'dataAccess', 'dataCompany', 'companyLoginId', 'dataWork', 'dataWorkSelect'));
     }
 
     public function postAdd()

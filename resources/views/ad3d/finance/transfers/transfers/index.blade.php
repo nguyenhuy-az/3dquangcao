@@ -8,7 +8,7 @@
 ?>
 @extends('ad3d.finance.index')
 @section('titlePage')
-    Thu đơn hàng
+    Chuyển tiền
 @endsection
 @section('qc_ad3d_finance_body')
     <div class="qc_ad3d_index_content col-xs-12 col-md-12 col-md-12 col-lg-12">
@@ -17,6 +17,6 @@
 @endsection
 
 @section('qc_js_footer')
-    <script src="{{ url('public/ad3d/finance/order-payment/js/index.js')}}"></script>
+    <script src="{{ url('public/ad3d/finance/transfers/transfers/js/index.js')}}"></script>
 @endsection
 

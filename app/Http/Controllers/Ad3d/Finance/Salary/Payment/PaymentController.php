@@ -24,11 +24,17 @@ class PaymentController extends Controller
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
         $modelSalary = new QcSalary();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        if ($companyFilterId == null || $companyFilterId == 0) {
+            $companyFilterId = $companyLoginId;
+        }
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         $dataAccess = [
             'accessObject' => 'salary'
         ];
-        $dataCompany = $modelCompany->getInfo();
         if (empty($monthFilter) && empty($yearFilter)) {
             $dateFilter = date('Y-m');
             $monthFilter = date('m');
@@ -38,7 +44,7 @@ class PaymentController extends Controller
         } else {
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
-        if ($dataStaffLogin->checkRootManage()) {
+        /*if ($dataStaffLogin->checkRootManage()) {
             if (empty($companyFilterId)) {
                 $searchCompanyFilterId = $modelCompany->listIdActivity();
             } else {
@@ -47,20 +53,20 @@ class PaymentController extends Controller
         } else {
             $searchCompanyFilterId = [$dataStaffLogin->companyId()];
             $companyFilterId = $dataStaffLogin->companyId();
-        }
+        }*/
 
         if($monthFilter < 8 && $yearFilter <= 2019){ # du lieu cu phien ban cu --  loc theo staff_id
             if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listIdOfListCompanyAndName($searchCompanyFilterId, $nameFiler);
+                $listStaffId = $modelStaff->listIdOfListCompanyAndName([$companyFilterId], $nameFiler);
             } else {
-                $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
+                $listStaffId = $modelStaff->listIdOfListCompany([$companyFilterId]);
             }
             $listWorkId = $modelWork->listIdOfListStaffInBeginDate($listStaffId, $dateFilter);
         }else{ # du lieu phien ban moi - loc theo thong tin lam viec tai cty (companyStaffWork)
             if (!empty($nameFiler)) {
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId, $modelStaff->listStaffIdByName($nameFiler));
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $modelStaff->listStaffIdByName($nameFiler));
             } else {
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId);
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId]);
             }
 
             $listWorkId = $modelWork->listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter);

@@ -24,9 +24,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter" style="height: 34px;"
                             data-href-filter="{!! route('qc.ad3d.finance.salary.pay-before.get') !!}">
-                        @if($dataStaffLogin->checkRootManage())
+                        {{--@if($dataStaffLogin->checkRootManage())
                             <option value="0">Tất cả</option>
-                        @endif
+                        @endif--}}
                         @if(count($dataCompany)> 0)
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -55,13 +55,14 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             <th style="width: 150px;">Ngày</th>
                             <th>Tên</th>
                             <th class="text-right">Ghi chú</th>
-                            <th class="text-right"></th>
+                            <th class="text-right">Xác nhận</th>
                             <th class="text-right">Tiền ứng</th>
                         </tr>
                         <tr>
                             <td class="text-center"></td>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;"
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0;height: 34px;"
                                         data-href="{!! route('qc.ad3d.finance.salary.pay-before.get') !!}">
                                     <option value="100" @if((int)$dayFilter == 0) selected="selected" @endif >
                                         Tất cả
@@ -73,7 +74,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0; height: 34px;"
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0; height: 34px;"
                                         data-href="{!! route('qc.ad3d.finance.salary.pay-before.get') !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -85,7 +87,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0;height: 34px;"
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="padding: 0;height: 34px;"
                                         data-href="{!! route('qc.ad3d.finance.salary.pay-before.get') !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -132,6 +135,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 } else {
                                     $dataStaffWork = $dataWork->staff; // phien ban cu
                                 }
+                                $image = $dataStaffWork->image();
+                                $src = $dataStaffWork->pathAvatar($image);
                                 ?>
                                 <tr class="qc_ad3d_list_object" data-object="{!! $payId !!}">
                                     <td class="text-center">
@@ -142,9 +147,16 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     </td>
 
                                     <td>
-                                        <img style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
-                                             src="{!! $dataStaffWork->pathAvatar($dataStaffWork->image()) !!}">
-                                        {!! $dataStaffWork->fullName() !!}
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $src !!}">
+                                            </a>
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataStaffWork->fullName() !!}</h5>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="text-right">
                                         {!! $salaryBeforePay->description() !!}

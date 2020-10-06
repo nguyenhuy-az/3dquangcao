@@ -271,16 +271,19 @@ class QcOrderPay extends Model
         return $this->belongsTo('App\Models\Ad3d\Order\QcOrder', 'order_id', 'order_id');
     }
 
+    # danh sach thanh toans cua 1 don hang
     public function infoOfOrder($orderId)
     {
         return QcOrderPay::where('order_id', $orderId)->get();
     }
 
+    # tong tien da thanh toan cua 1 don hang
     public function totalPayOfOrder($orderId)
     {
         return QcOrderPay::where('order_id', $orderId)->sum('money');
     }
 
+    # tong tien da thanh toan cua 1 don hang theo ngay
     public function totalPayOfOrderAndDate($orderId, $date = null)
     {
         if (!empty($date)) {
@@ -289,6 +292,35 @@ class QcOrderPay extends Model
             return QcOrderPay::where('order_id', $orderId)->sum('money');
         }
 
+    }
+
+    # chon danh sach thanh toan theo: ngay / danh sach don hang / danh sach ma nv / trang thai thanh toan/
+    public function selectInfoByListOrderOrListStaffOrDateAndTransferStatus($listOrderId, $listStaffId, $date, $transferStatus = 100)
+    {
+        $modelTransferDetail = new QcTransfersDetail();
+        # 100 - mac dinh chon tat ca
+        if ($transferStatus == 1) { // da giao
+            $listPayIdTransferred = $modelTransferDetail->listPayId();
+            return QcOrderPay:: whereIn('pay_id', $listPayIdTransferred)->whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$date%")->orderBy('datePay', 'DESC')->select('*');
+        } elseif ($transferStatus == 0) { // chua giao
+            $listPayIdTransferred = $modelTransferDetail->listPayId();
+            return QcOrderPay:: whereNotIn('pay_id', $listPayIdTransferred)->whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$date%")->orderBy('datePay', 'DESC')->select('*');
+        } else {
+            return QcOrderPay::whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$date%")->orderBy('datePay', 'DESC')->select('*');
+        }
+    }
+
+    # tong tin thanh toan tu 1 danh sach thang toan
+    public function totalMoneyByListInfo($dataOrderPay)
+    {
+        $hFunction = new \Hfunction();
+        $totalMoney = 0;
+        if ($hFunction->checkCount($dataOrderPay)) {
+            foreach ($dataOrderPay as $orderPay) {
+                $totalMoney = $totalMoney + $orderPay->money();
+            }
+        }
+        return $totalMoney;
     }
 
     //---------- chi tiet chuyen tien -----------

@@ -166,7 +166,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             <td>
                                                 <div class="media">
                                                     <a class="pull-left" href="#">
-                                                        <img class="media-object" style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                                        <img class="media-object" style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7; border-radius: 10px;"
                                                              src="{!! $src !!}">
                                                     </a>
                                                     <div class="media-body">
@@ -534,7 +534,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                 <td>
                                                                     <div class="media">
                                                                         <a class="pull-left" href="#">
-                                                                            <img class="media-object" style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                                                            <img class="media-object" style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                                                  src="{!! $src !!}">
                                                                         </a>
                                                                         <div class="media-body">

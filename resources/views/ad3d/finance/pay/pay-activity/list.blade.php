@@ -148,6 +148,15 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 $payImage = $payActivityDetail->payImage();
                                 $confirmStatus = $payActivityDetail->checkConfirm();
                                 $payCompanyId = $payActivityDetail->companyId();
+                                # thong tin nhan vien
+                                $dataStaffPay = $payActivityDetail->staff;
+                                # anh dai dien
+                                $image = $dataStaffPay->image();
+                                if ($hFunction->checkEmpty($image)) {
+                                    $src = $dataStaffPay->pathDefaultImage();
+                                } else {
+                                    $src = $dataStaffPay->pathFullImage($image);
+                                }
                                 ?>
                                 <tr class="qc_ad3d_list_object qc-ad3d-list-object @if($n_o%2) info @endif"
                                     data-object="{!! $payId !!}">
@@ -177,7 +186,17 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         {!! $payActivityDetail->payActivityList->typeLabel() !!}
                                     </td>
                                     <td style="color: grey;">
-                                        {!! $payActivityDetail->staff->fullName()  !!}
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $src !!}">
+                                            </a>
+
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataStaffPay->fullName() !!}</h5>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
                                         @if($confirmStatus)

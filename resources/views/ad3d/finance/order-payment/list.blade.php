@@ -54,17 +54,17 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black;color: yellow;">
                             <th class="text-center"></th>
-                            <th style="width: 150px;">Ngày thu</th>
-                            <th>Tên ĐH</th>
-                            <th>Mã ĐH</th>
-                            <th>Thủ quỹ</th>
-                            <th class="text-center">Giao tiền</th>
-                            <th class="text-right">Thành tiền</th>
+                            <th style="width: 150px;">NGÀY THU</th>
+                            <th>ĐƠN HÀNG</th>
+                            <th>THỦ QUỸ</th>
+                            <th class="text-center">GIAO TIỀN</th>
+                            <th class="text-right">SỐ TIỀN</th>
                         </tr>
                         <tr>
                             <td class="text-center"></td>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;"
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
                                         Tất cả
@@ -76,7 +76,8 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     @for($m =1;$m<= 12; $m++)
                                         <option value="{!! $m !!}"
                                                 @if((int)$monthFilter == $m) selected="selected" @endif>
@@ -84,7 +85,8 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
                                                 @if($yearFilter == $y) selected="selected" @endif>
@@ -106,7 +108,6 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                       </span>
                                 </div>
                             </td>
-                            <td></td>
                             <td class="text-center" style="padding: 0px;">
                                 <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
@@ -147,6 +148,15 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                             @foreach($dataOrderPay as $orderPay)
                                 <?php
                                 $payId = $orderPay->payid();
+                                # nhan vien thu
+                                $dataStaffReceive = $orderPay->staff;
+                                # anh dai dien
+                                $image = $dataStaffReceive->image();
+                                if ($hFunction->checkEmpty($image)) {
+                                    $src = $dataStaffReceive->pathDefaultImage();
+                                } else {
+                                    $src = $dataStaffReceive->pathFullImage($image);
+                                }
                                 ?>
                                 <tr class="qc_ad3d_list_object  @if($n_o%2 == 1) info @endif"
                                     data-object="{!! $payId !!}">
@@ -161,12 +171,21 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                     </td>
                                     <td>
                                         {!! $orderPay->order->name() !!}
-                                    </td>
-                                    <td class="qc-color-grey">
-                                        {!! $orderPay->order->orderCode() !!}
+                                        <br/>
+                                        <em style="color: grey;">Mã: {!! $orderPay->order->orderCode() !!}</em>
                                     </td>
                                     <td>
-                                        {!! $orderPay->staff->fullName() !!}
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $src !!}">
+                                            </a>
+
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataStaffReceive->fullName() !!}</h5>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="text-center qc-color-grey">
                                         @if($orderPay->checkExistTransfersDetail())

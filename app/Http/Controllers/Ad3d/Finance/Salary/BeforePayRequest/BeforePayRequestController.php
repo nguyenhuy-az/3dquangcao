@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Ad3d\Finance\Salary\BeforePayRequest;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
-use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\SalaryBeforePayRequest\QcSalaryBeforePayRequest;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Work\QcWork;
@@ -26,7 +25,14 @@ class BeforePayRequestController extends Controller
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
         $modelSalaryBeforePayRequest = new QcSalaryBeforePayRequest();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        if ($companyFilterId == null || $companyFilterId == 0) {
+            $companyFilterId = $companyLoginId;
+        }
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         $dataAccess = [
             'accessObject' => 'payBeforeRequest'
         ];
@@ -40,7 +46,7 @@ class BeforePayRequestController extends Controller
         } else {
             $dateFilter = null;// date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
         }
-        $dataCompany = $modelCompany->getInfo();
+        /*$dataCompany = $modelCompany->getInfo();
         if (empty($companyFilterId)) {
             if (!$dataStaffLogin->checkRootManage()) {
                 $searchCompanyFilterId = [$dataStaffLogin->companyId()];
@@ -50,7 +56,7 @@ class BeforePayRequestController extends Controller
             }
         } else {
             $searchCompanyFilterId = [$companyFilterId];
-        }
+        }*/
 
         /*if (!empty($nameFiler)) {
             $listStaffId = $modelStaff->listIdOfListCompanyAndName($searchCompanyFilterId, $nameFiler);
@@ -58,7 +64,7 @@ class BeforePayRequestController extends Controller
             $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
         }*/
         //$listWorkId = $modelWork->listIdOfListStaffId($listStaffId);
-        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId);
+        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId]);
         $listWorkId = $modelWork->listIdOfListCompanyStaffId($listCompanyStaffWorkId);
         $selectSalaryBeforePayRequest = $modelSalaryBeforePayRequest->selectInfoOffListWorkAndDate($listWorkId, $dateFilter);
         $dataSalaryBeforePayRequest = $selectSalaryBeforePayRequest->paginate(30);

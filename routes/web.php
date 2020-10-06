@@ -258,22 +258,24 @@ Route::group(['prefix' => 'ad3d'], function () {
         });
         # giao tien
         Route::group(['prefix' => 'transfers'], function () {
-            Route::get('view/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.view.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@view']);
+            Route::group(['prefix' => 'transfers'], function () {
+                Route::get('view/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.view.get', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@view']);
 
-            Route::get('edit/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.edit.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@getEdit']);
-            Route::post('edit/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.edit.post', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@postEdit']);
+                Route::get('edit/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.edit.get', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@getEdit']);
+                Route::post('edit/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.edit.post', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@postEdit']);
 
-            Route::get('add', ['as' => 'qc.ad3d.finance.transfers.add.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@getAdd']);
-            Route::post('add', ['as' => 'qc.ad3d.finance.transfers.add.post', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@postAdd']);
+                Route::get('add', ['as' => 'qc.ad3d.finance.transfers.transfers.add.get', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@getAdd']);
+                Route::post('add', ['as' => 'qc.ad3d.finance.transfers.transfers.add.post', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@postAdd']);
 
-            #xác nhận giao tiền
-            Route::get('confirm/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.confirm.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@getConfirmReceive']);
-            Route::post('confirm/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.confirm.post', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@postConfirmReceive']);
+                #xác nhận giao tiền
+                //Route::get('confirm/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfer.confirm.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@getConfirmReceive']);
+                //Route::post('confirm/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfer.confirm.post', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@postConfirmReceive']);
 
-            //xóa
-            Route::get('delete/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.delete', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@deleteTransfers']);
+                //xóa
+                Route::get('delete/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.delete', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@deleteTransfers']);
 
-            Route::get('/{companyId?}/{day?}/{month?}/{year?}/{typeId?}', ['as' => 'qc.ad3d.finance.transfers.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@index']);
+                Route::get('/{companyId?}/{day?}/{month?}/{year?}/{typeId?}/{staffId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.get', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@index']);
+            });
         });
 
         // chi hoat dong cty

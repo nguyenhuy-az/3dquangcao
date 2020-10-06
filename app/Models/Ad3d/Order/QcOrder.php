@@ -705,6 +705,16 @@ class QcOrder extends Model
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
     }
 
+    # lay thong tin cua 1 cong ty
+    public function listIdOfCompanyAndName($companyId, $name = null)
+    {
+        if (empty($name)) {
+            return QcOrder::where('company_id', $companyId)->pluck('order_id');
+        } else {
+            return QcOrder::where('company_id', $companyId)->where('name', 'like', "%$name%")->pluck('order_id');
+        }
+    }
+    # lay thong tin theo danh sach cong ty
     public function listIdOfListCompanyAndName($listCompanyId, $name = null)
     {
         if (empty($name)) {

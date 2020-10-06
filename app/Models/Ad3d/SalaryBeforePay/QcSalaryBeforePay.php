@@ -123,12 +123,32 @@ class QcSalaryBeforePay extends Model
         return $this->belongsTo('App\Models\Ad3d\Work\QcWork', 'work_id', 'work_id');
     }
 
+    # chon thong tin ung theo danh sach bang cham cong
+    public function selectInfoOfListWorkAndDate($listWorkId, $date)
+    {
+        return QcSalaryBeforePay::where('datePay', 'like', "%$date%")->whereIn('work_id', $listWorkId)->orderBy('datePay', 'DESC')->select('*');
+    }
+
+    # tong tien tu 1 danh sach ung
+    public function totalMoneyByListInfo($dataSalaryBeforePay)
+    {
+        $hFunction = new \Hfunction();
+        $totalMoney = 0;
+        if ($hFunction->checkCount($dataSalaryBeforePay)) {
+            foreach ($dataSalaryBeforePay as $salaryBeforePay) {
+                $totalMoney = $totalMoney + $salaryBeforePay->money();
+            }
+        }
+        return $totalMoney;
+    }
+
+    # tong tien da ung cua 1 bang cham cong
     public function totalMoneyOfWork($workId)
     {
         return QcSalaryBeforePay::where('work_id', $workId)->sum('money');
     }
 
-    # tong tien ung da xac nhan
+    # tong tien ung da xac nhan cua 1 bang cham cong
     public function totalMoneyConfirmedOfWork($workId)
     {
         return QcSalaryBeforePay::where('work_id', $workId)->where('confirmStatus', 1)->sum('money');

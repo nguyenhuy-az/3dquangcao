@@ -50,7 +50,6 @@ $indexHref = route('qc.ad3d.system.staff.get');
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black;color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th class="text-center">ẢNH</th>
                             <th>TÊN</th>
                             <th>
                                 CÔNG TY ĐANG LÀM
@@ -74,7 +73,6 @@ $indexHref = route('qc.ad3d.system.staff.get');
                             </th>
                         </tr>
                         <tr>
-                            <td></td>
                             <td></td>
                             <td></td>
                             <td style="padding: 0 !important;">
@@ -125,34 +123,38 @@ $indexHref = route('qc.ad3d.system.staff.get');
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
-                                    <td class="text-canter" style="padding: 0;">
-                                        <a class="qc-link-green"
-                                           href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
-                                            <img style="max-width: 50px;height: 50px;"
-                                                 src="{!! $src !!}">
-                                        </a>
-                                    </td>
-                                    <td>
-                                        {!! $staff->firstName().' '.$staff->lastName() !!}
-                                        <br/>
-                                        @if($staff->checkRootStatus())
-                                            @if($dataStaffLogin->checkRootStatus())
-                                                <a class="qc_edit qc-link" title="Quản lý thông tin"
-                                                   href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
-                                                    <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
-                                                </a>
-                                            @endif
-                                        @else
-                                            <a class="qc_edit qc-link" title="Quản lý thông tin"
+                                    <td style="padding: 0;">
+                                        <div class="media" style="margin: 3px;">
+                                            <a class="pull-left"
                                                href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
-                                                <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $src !!}">
                                             </a>
-                                            {{--<span>|</span>
-                                            <a class="qc_delete qc-link-red" href="#"
-                                               title="Xóa khỏi danh sách NV">
-                                                <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
-                                            </a>--}}
-                                        @endif
+
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $staff->fullName() !!}</h5>
+
+                                                @if($staff->checkRootStatus())
+                                                    @if($dataStaffLogin->checkRootStatus())
+                                                        <a class="qc_edit qc-link" title="Quản lý thông tin"
+                                                           href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
+                                                            <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                                        </a>
+                                                    @endif
+                                                @else
+                                                    <a class="qc_edit qc-link" title="Quản lý thông tin"
+                                                       href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
+                                                        <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                                    </a>
+                                                    {{--<span>|</span>
+                                                    <a class="qc_delete qc-link-red" href="#"
+                                                       title="Xóa khỏi danh sách NV">
+                                                        <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
+                                                    </a>--}}
+                                                @endif
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
                                         {!! $companyStaffWork->company->nameCode() !!}
@@ -184,7 +186,7 @@ $indexHref = route('qc.ad3d.system.staff.get');
                                                 <em style="color: red;">Đã tắt</em>
                                                 <br/>
                                                 <a class="qc_ad3d_staff_open_work_act qc-link-red"
-                                                   data-href="{!! route('qc.ad3d.system.staff.open_work.get', $dataCompanyStaffWork->workId()) !!}">
+                                                   data-href="{!! route('qc.ad3d.system.staff.open_work.get', $companyStaffWork->workId()) !!}">
                                                     Mở chấm công
                                                 </a>
                                             @endif
@@ -210,7 +212,7 @@ $indexHref = route('qc.ad3d.system.staff.get');
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="11">
+                                <td class="text-center" colspan="10">
                                     {!! $hFunction->page($dataCompanyStaffWork) !!}
                                 </td>
                             </tr>
