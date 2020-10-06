@@ -10,6 +10,8 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$productId = $dataProduct->productId();
+$description = $dataProduct->description();
 $dataWorkAllocation = $dataProduct->workAllocationInfoOfProduct();
 $role = 1; # mac dinh lam chín
 $currentDay = (int)date('d');
@@ -37,7 +39,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                 Về Trang trước
             </a>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dotted brown;">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <h3 style="color: red;">TRIỂN KHAI THI CÔNG SẢN PHẨM</h3>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -45,13 +47,18 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">
-                        <table class="table table-hover table-bordered">
+                        <table class="table table-hover table-bordered" style="background-color: #d7d7d7;">
                             <tr>
                                 <td>
-                                    <h3>{!! $dataProduct->productType->name() !!}</h3>
-                                    <em>{!! $dataProduct->width() !!}x{!! $dataProduct->height() !!}mm -
-                                        SL: {!! $dataProduct->amount() !!}</em>
+                                    <label style="font-size: 2em;">{!! $dataProduct->productType->name() !!}</label>
                                     <span class="qc-color-grey">- {!! $dataProduct->order->name() !!}</span>
+                                    <br/>
+                                    <em>
+                                        {!! $dataProduct->width() !!}x{!! $dataProduct->height() !!}mm -
+                                        SL: {!! $dataProduct->amount() !!}</em>
+                                    @if($hFunction->checkCount($description))
+                                        - {!! $description !!}
+                                    @endif
                                 </td>
                                 <td>
                                     @if($hFunction->checkCount($dataProductDesign))
@@ -86,7 +93,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <tr>
-                                    <th colspan="7" style="border: none;">
+                                    <th colspan="6" style="border: none;">
                                         <i class="glyphicon glyphicon-user qc-font-size-20"></i>
                                         <b style="color: blue; font-size: 1.5em;">ĐÃ PHÂN CÔNG</b>
                                     </th>
@@ -96,12 +103,12 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                     <th>Nhân viên</th>
                                     <th class="text-center">Ngày nhận</th>
                                     <th class="text-center">Ngày giao</th>
-                                    <th class="text-center">Vai trò</th>
                                     <th>Chi chú</th>
                                     <th class="text-center">Trạng thái</th>
                                 </tr>
                                 @foreach($dataWorkAllocation as $workAllocation)
                                     <?php
+                                    $allocationId = $workAllocation->allocationId();
                                     $dataStaffAllocation = $workAllocation->receiveStaff;
                                     # anh dai dien
                                     $image = $dataStaffAllocation->image();
@@ -116,8 +123,20 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                             {!! $n_o = (isset($n_o))?$n_o+1: 1 !!}
                                         </td>
                                         <td>
-                                            <img style="max-width: 50px;height: 50px;" src="{!! $src !!}">
-                                            {!! $dataStaffAllocation->fullName() !!}
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object" style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                                         src="{!! $src !!}">
+                                                </a>
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">{!! $dataStaffAllocation->fullName() !!}</h5>
+                                                    @if($workAllocation->checkRoleMain())
+                                                        <em class="qc-color-red">Làm chính</em>
+                                                    @else
+                                                        <em style="color: brown;">Làm phụ</em>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </td>
                                         <td class="text-center">
                                             {!! date('d/m/Y H:j',strtotime($workAllocation->allocationDate())) !!}
@@ -125,27 +144,22 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                         <td class="text-center">
                                             {!! date('d/m/Y H:j', strtotime($workAllocation->receiveDeadline())) !!}
                                         </td>
-                                        <td class="text-center">
-                                            @if($workAllocation->checkRoleMain())
-                                                <em class="qc-color-red">Làm chính</em>
-                                            @else
-                                                <em>Làm phụ</em>
-                                            @endif
-                                        </td>
                                         <td class="qc-color-grey">
                                             {!! $workAllocation->noted() !!}
                                         </td>
                                         <td class="text-center">
                                             @if($workAllocation->checkActivity())
                                                 <em>Đang làm</em>
+                                                <br/>
+                                                <a class="qc_cancel_allocation_product qc-link-red-bold"
+                                                   data-href="{!! route('qc.work.work_allocation.order.product.work-allocation.cancel.get', $allocationId) !!}">
+                                                    HỦY
+                                                </a>
                                             @else
-                                                <?php
-                                                $workAllocationFinish = $workAllocation->workAllocationFinishInfo()
-                                                ?>
-                                                @if($hFunction->checkCount($workAllocationFinish) && $workAllocationFinish->checkSystemCancel())
-                                                    <em class="qc-color-red">Đã hủy</em>
+                                                @if($workAllocation->checkCancel())
+                                                    <em style="color: grey;">Đã hủy</em>
                                                 @else
-                                                    <em class="qc-color-red">Xong</em>
+                                                    <em style="color: grey;">Đã kết thúc</em>
                                                 @endif
                                             @endif
                                         </td>
@@ -158,23 +172,23 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <form id="frmWorkAllocationOrderProductConstruction" role="form" method="post"
                           enctype="multipart/form-data"
-                          action="{!! route('qc.work.work_allocation.order.product.work-allocation.add.post', $dataProduct->productId()) !!}">
+                          action="{!! route('qc.work.work_allocation.order.product.work-allocation.add.post', $productId) !!}">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <tr>
                                     <th colspan="4" style="border: none;">
                                         <i class="glyphicon glyphicon-wrench qc-font-size-20"></i>
-                                        <b style="color: blue; font-size: 1.5em;">PHÂN CÔNG</b>
+                                        <b style="color: red; font-size: 1.5em;">PHÂN CÔNG</b>
                                     </th>
                                 </tr>
-                                <tr class="text-right" >
+                                <tr class="text-right">
                                     <td>
                                         Từ:
                                     </td>
-                                    <td colspan="3" style="padding: 0;">
+                                    <td style="padding: 0;">
                                         <select class="cbDayAllocation text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
                                                 name="cbDayAllocation"
-                                                style="padding: 0; height: 34px; color: red;">
+                                                style="padding: 0; height: 34px; color: blue;">
                                             <option value="">Ngày</option>
                                             @for($i = 1;$i<= 31; $i++)
                                                 <option value="{!! $i !!}"
@@ -185,7 +199,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                         </select>
                                         <select class="cbMonthAllocation text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
                                                 name="cbMonthAllocation"
-                                                style="padding: 0; height: 34px; color: red;">
+                                                style="padding: 0; height: 34px; color: blue;">
                                             <option value="">Tháng</option>
                                             @for($i = 1;$i<= 12; $i++)
                                                 <option value="{!! $i !!}"
@@ -194,7 +208,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                         </select>
                                         <select class="cbYearAllocation text-right col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                                 name="cbYearAllocation"
-                                                style="padding: 0; height: 34px; color: red;">
+                                                style="padding: 0; height: 34px; color: blue;">
                                             <?php
                                             $currentYear = (int)date('Y');
                                             ?>
@@ -203,7 +217,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                         </select>
                                         <select class="cbHoursAllocation text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
                                                 name="cbHoursAllocation"
-                                                style="padding: 0; height: 34px;">
+                                                style="padding: 0; height: 34px; color: blue;">
                                             <option value="">Giờ</option>
                                             @for($i =1;$i<= 24; $i++)
                                                 <option value="{!! $i !!}"
@@ -214,21 +228,21 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                         </select>
                                         <select class="cbMinuteAllocation text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
                                                 name="cbMinuteAllocation"
-                                                style="padding: 0; height: 34px;">
+                                                style="padding: 0; height: 34px; color: blue;">
                                             @for($i =0;$i<= 55; $i = $i+5)
                                                 <option value="{!! $i !!}">{!! $i !!}</option>
                                             @endfor
                                         </select>
                                     </td>
+                                    <td colspan="2"></td>
                                 </tr>
                                 <tr class="text-right">
                                     <td>
                                         Đến
                                     </td>
-                                    <td colspan="3" style="padding: 0;">
+                                    <td style="padding: 0;">
                                         <select class="cbDayDeadline text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
-                                                name="cbDayDeadline"
-                                                style="padding: 0; height: 34px; color: red;">
+                                                name="cbDayDeadline" style="padding: 0; height: 34px; color: red;">
                                             <option value="">Ngày</option>
                                             @for($i = 1;$i<= 31; $i++)
                                                 <option value="{!! $i !!}"
@@ -255,7 +269,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                         </select>
                                         <select class="cbHoursDeadline text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
                                                 name="cbHoursDeadline"
-                                                style="padding: 0; height: 34px;">
+                                                style="padding: 0; height: 34px; color: red;">
                                             <option value="">Giờ</option>
                                             @for($i =1;$i<= 24; $i++)
                                                 <option value="{!! $i !!}"
@@ -266,19 +280,20 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                         </select>
                                         <select class="cbMinuteDeadline text-right col-sx-2 col-sm-2 col-md-2 col-lg-2"
                                                 name="cbMinuteDeadline"
-                                                style="padding: 0; height: 34px;">
+                                                style="padding: 0; height: 34px; color: red;">
                                             @for($i =0;$i<= 55; $i = $i+5)
                                                 <option value="{!! $i !!}">{!! $i !!}</option>
                                             @endfor
                                         </select>
                                     </td>
                                     </td>
+                                    <td colspan="2" style="border: 0;"></td>
                                 </tr>
                                 <tr style="background-color: black; color: yellow;">
                                     <th class="text-center" style="width:20px;">GIAO</th>
                                     <th>Nhân viên</th>
                                     <th class="text-center">Vai trò</th>
-                                    <th>Nội dung</th>
+                                    <th style="border: 0;">Nội dung</th>
                                 </tr>
                                 @if($hFunction->checkCount($dataReceiveStaff))
                                     @foreach($dataReceiveStaff as $receiveStaff)
@@ -299,8 +314,15 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                                            value="{!! $receiveStaffId !!}">
                                                 </td>
                                                 <td>
-                                                    <img style="max-width: 50px;height: 50px;" src="{!! $src !!}">
-                                                    {!! $receiveStaff->fullName() !!}
+                                                    <div class="media">
+                                                        <a class="pull-left" href="#">
+                                                            <img class="media-object" style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                                                 src="{!! $src !!}">
+                                                        </a>
+                                                        <div class="media-body">
+                                                            <h5 class="media-heading">{!! $receiveStaff->fullName() !!}</h5>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                                 <td style="padding: 0;">
                                                     <select class="cbRole text-center form-control"

@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Session;
 
 class OrderController extends Controller
 {
-        public function index($dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $orderFilterName = null, $orderCustomerFilterName = null, $finishStatus = 100)
+    public function index($dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $orderFilterName = null, $orderCustomerFilterName = null, $finishStatus = 100)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -42,7 +42,7 @@ class OrderController extends Controller
         if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
             $dayFilter = 100;
             $monthFilter = date('m');
-            $yearFilter =  date('Y');
+            $yearFilter = date('Y');
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
@@ -60,7 +60,7 @@ class OrderController extends Controller
             $yearFilter = date('Y');
         }
         if (!empty($orderCustomerFilterName)) {
-            $dataOrderSelect = $modelOrder->selectInfoOfListCustomerOfCompany($companyLoginId,$modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, 2);
+            $dataOrderSelect = $modelOrder->selectInfoOfListCustomerOfCompany($companyLoginId, $modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, 2);
         } else {
             $dataOrderSelect = $modelOrder->selectInfoManageConstructionOfCompany($companyLoginId, $orderFilterName, $dateFilter, $finishStatus);
         }
@@ -275,7 +275,8 @@ class OrderController extends Controller
         return view('work.work-allocation.orders.product.work-allocation', compact('modelStaff', 'dataAccess', 'dataProduct', 'dataReceiveStaff'));
     }
 
-    public function getAddStaff($productId) # thêm nv làm sản phẩm
+    # thêm nv làm sản phẩm
+    public function getAddStaff($productId)
     {
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
@@ -294,28 +295,29 @@ class OrderController extends Controller
 
         $loginStaffId = $modelStaff->loginStaffId();
         $errorContent = "Thông tin nhập bị lỗi: <br/> ";
+        $dayAllocation = $request->input('cbDayAllocation');
+        $monthAllocation = $request->input('cbMonthAllocation');
+        $yearAllocation = $request->input('cbYearAllocation');
+        $hoursAllocation = $request->input('cbHoursAllocation');
+        $minuteAllocation = $request->input('cbMinuteAllocation');
+        $dayDeadline = $request->input('cbDayDeadline');
+        $monthDeadline = $request->input('cbMonthDeadline');
+        $yearDeadline = $request->input('cbYearDeadline');
+        $hoursDeadline = $request->input('cbHoursDeadline');
+        $minuteDeadline = $request->input('cbMinuteDeadline');
         # thong tin nhan vien nhan
         $staffReceive = $request->input('staffReceive');
-        if ($hFunction->checkCount($staffReceive)) { # co chon nguoi phan viec
-            foreach ($staffReceive as $key => $receiveStaffId) {
-                $dayAllocation = $request->input('cbDayAllocation_' . $receiveStaffId);
-                $monthAllocation = $request->input('cbMonthAllocation_' . $receiveStaffId);
-                $yearAllocation = $request->input('cbYearAllocation_' . $receiveStaffId);
-                $hoursAllocation = $request->input('cbHoursAllocation_' . $receiveStaffId);
-                $minuteAllocation = $request->input('cbMinuteAllocation_' . $receiveStaffId);
-                $dayDeadline = $request->input('cbDayDeadline_' . $receiveStaffId);
-                $monthDeadline = $request->input('cbMonthDeadline_' . $receiveStaffId);
-                $yearDeadline = $request->input('cbYearDeadline_' . $receiveStaffId);
-                $hoursDeadline = $request->input('cbHoursDeadline_' . $receiveStaffId);
-                $minuteDeadline = $request->input('cbMinuteDeadline_' . $receiveStaffId);
-                $role = $request->input('cbRole_' . $receiveStaffId);
-                $txtDescription = $request->input('txtDescription_' . $receiveStaffId);
-                $dateAllocation = $hFunction->convertStringToDatetime("$monthAllocation/$dayAllocation/$yearAllocation $hoursAllocation:$minuteAllocation:00");
-                $dateDeadline = $hFunction->convertStringToDatetime("$monthDeadline/$dayDeadline/$yearDeadline $hoursDeadline:$minuteDeadline:00");
-                if ($dateDeadline < $dateAllocation) {
-                    $errorContent = $errorContent . "- Thời gian kết thúc phải lớn hơn thời gian nhận <br/>";
-                    $errorStatus = false;
-                } else {
+        $dateAllocation = $hFunction->convertStringToDatetime("$monthAllocation/$dayAllocation/$yearAllocation $hoursAllocation:$minuteAllocation:00");
+        $dateDeadline = $hFunction->convertStringToDatetime("$monthDeadline/$dayDeadline/$yearDeadline $hoursDeadline:$minuteDeadline:00");
+        $errorStatus = false;
+        if ($dateDeadline <= $dateAllocation) {
+            $errorContent = $errorContent . "- Thời gian kết thúc phải lớn hơn thời gian nhận <br/>";
+            $errorStatus = true;
+        } else {
+            if ($hFunction->checkCount($staffReceive)) { # co chon nguoi phan viec
+                foreach ($staffReceive as $key => $receiveStaffId) {
+                    $role = $request->input('cbRole_' . $receiveStaffId);
+                    $txtDescription = $request->input('txtDescription_' . $receiveStaffId);
                     # chua duoc phan cong
                     if (!$modelProduct->checkStaffReceiveProduct($receiveStaffId, $productId)) {
                         #them giao viec
@@ -325,12 +327,12 @@ class OrderController extends Controller
                         }
                     }
                 }
+            } else {
+                $errorContent = $errorContent . "- Không có thông tin người nhận việc <br/>";
+                $errorStatus = true;
             }
-        } else {
-            $errorContent = $errorContent . "- Không có thông tin người nhận việc <br/>";
-            $errorStatus = false;
         }
-        if (!$errorStatus) {
+        if ($errorStatus) {
             Session::put('notifyAddAllocation', $errorContent);
         }
         return redirect()->back();

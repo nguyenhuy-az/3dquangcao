@@ -164,9 +164,15 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                 {!! $n_o = (isset($n_o))?$n_o+1:1 !!}
                                             </td>
                                             <td>
-                                                <img style="width: 40px; height: 40px; border: 1px solid #d7d7d7;"
-                                                     src="{!! $src !!}">
-                                                {!! $dataStaffReceiveManage->fullname() !!}
+                                                <div class="media">
+                                                    <a class="pull-left" href="#">
+                                                        <img class="media-object" style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                                             src="{!! $src !!}">
+                                                    </a>
+                                                    <div class="media-body">
+                                                        <h5 class="media-heading">{!! ucwords($dataStaffReceiveManage->lastName()) !!}</h5>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>
                                                 {!! date('d/m/Y H:i', strtotime($allocationDate)) !!}
@@ -440,7 +446,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
         </div>
         @if($hFunction->checkCount($dataProduct))
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
                     @foreach($dataProduct as $product)
                         <?php
                         $productId = $product->productId();
@@ -459,11 +465,11 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                             <div class="table-responsive">
                                 <table class="table" style="border: 1px solid black;">
                                     <tr>
-                                        <td style="width:50px;">
+                                        <td style="width:50px; background-color: #d7d7d7 ;" >
                                             SP_{!! $sp_n_o = (isset($sp_n_o))?$sp_n_o+1:1 !!}
                                         </td>
                                         <td style="border: 1px solid #d7d7d7;">
-                                            {!! ucwords($product->productType->name()) !!}
+                                            <label style="font-size: 1.5em;">{!! ucwords($product->productType->name()) !!}</label>
                                         </td>
                                         <td style="padding-bottom: 10px;">
                                             @if($hFunction->checkCount($dataProductDesign))
@@ -526,9 +532,20 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                             ?>
                                                             <tr>
                                                                 <td>
-                                                                    <img style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
-                                                                         src="{!! $src !!}">
-                                                                    {!! ucwords($dataStaffReceive->lastName()) !!}
+                                                                    <div class="media">
+                                                                        <a class="pull-left" href="#">
+                                                                            <img class="media-object" style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                                                                 src="{!! $src !!}">
+                                                                        </a>
+                                                                        <div class="media-body">
+                                                                            <h5 class="media-heading">{!! ucwords($dataStaffReceive->lastName()) !!}</h5>
+                                                                            @if($workAllocation->checkRoleMain())
+                                                                                <em class="qc-color-red">Làm chính</em>
+                                                                            @else
+                                                                                <em style="color: brown;">Làm phụ</em>
+                                                                            @endif
+                                                                        </div>
+                                                                    </div>
                                                                 </td>
                                                                 <td>
                                                                     <em>{!! $workAllocation->noted() !!}</em>
@@ -586,11 +603,11 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                 <td class="text-right">
                                                                     @if($workAllocation->checkActivity())
                                                                         <em style="color: black;">Đang thi công</em>
-                                                                        <span>&nbsp;|&nbsp;</span>
+                                                                        <br/>
                                                                         <a class="qc_cancel_allocation_product qc-link-red-bold"
                                                                            title="Hủy giao việc"
                                                                            data-href="{!! route('qc.work.work_allocation.order.product.work-allocation.cancel.get', $allocationId) !!}">
-                                                                            Hủy
+                                                                            HỦY
                                                                         </a>
                                                                     @else
                                                                         @if($workAllocation->checkCancel())

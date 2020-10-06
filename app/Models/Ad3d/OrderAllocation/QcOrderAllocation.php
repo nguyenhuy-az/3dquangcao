@@ -75,7 +75,10 @@ class QcOrderAllocation extends Model
         if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate, 'paymentStatus' => $paymentStatus, 'action' => 0])) {
             $dataOrder = $modelOrder->getInfo($orderId);
             # thong bao hoan thanh thi cong cho quan ly thi cong (nguoi phan viec)
-            $modelStaffNotify->insert(null, $this->allocationStaffId($allocationId)[0], 'Hoàn thành thi công', null, null, null, null, $allocationId);
+            $staffNotifyId = $this->allocationStaffId($allocationId)[0];
+            if (!$hFunction->checkEmpty($staffNotifyId)) {
+                $modelStaffNotify->insert(null, $staffNotifyId, 'Hoàn thành thi công', null, null, null, null, $allocationId);
+            }
             # bao ket thuc san pham
             if ($hFunction->checkCount($dataProduct)) {
                 foreach ($dataProduct as $product) {
@@ -113,6 +116,7 @@ class QcOrderAllocation extends Model
                 $modelStaffNotify->insert(null, $dataOrder->staffId(), 'Hoàn thành thi công', null, null, null, null, $allocationId);
 
                 # ----  XET THUONG NGUOI THI CONG SAN PHAM   ----------
+                # Xet thuong khi nhan tien don hang
                 /*# khong tre ngay phan cong
                 if (!$this->checkLate($allocationId)) {
                     $receiveStaffId = $this->receiveStaffId($allocationId);
