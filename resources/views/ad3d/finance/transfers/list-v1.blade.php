@@ -159,7 +159,6 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             @else
                                                 <em class="qc-color-grey">Chờ xác nhận</em>
                                             @endif
-
                                         @endif
                                     </td>
                                     <td class="text-right qc-color-red">

@@ -100,7 +100,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.receive.get');
                                         @foreach($dataStaff as $staff)
                                             <option @if($staff->staffId() == $staffFilterId) selected="selected"
                                                     @endif  value="{!! $staff->staffId() !!}">
-                                                {!! $staff->lastName() !!}
+                                                {!! $staff->fullName() !!}
                                             </option>
                                         @endforeach
                                     @endif
@@ -187,11 +187,13 @@ $hrefIndex = route('qc.ad3d.finance.transfers.receive.get');
                                             <em class="qc-color-grey">Đã xác nhận</em>
                                         @else
                                             <em style="color: red;">Chờ xác nhận</em>
-                                            <br/>
-                                            <a class="qc_edit qc-link-green-bold"
-                                               data-href="{!! route('qc.ad3d.finance.transfers.transfers.edit.get',$transfersId) !!}">
-                                                XÁC NHẬN
-                                            </a>
+                                            @if($dataStaffLogin->staffId() == $transfers->receiveStaffId())
+                                                <br/>
+                                                <a class="qc_ad3d_transfer_confirm_receive_act qc-link-green"
+                                                   data-href="{!! route('qc.ad3d.finance.transfers.receive.confirm.get',$transfersId) !!}">
+                                                    XÁC NHẬN
+                                                </a>
+                                            @endif
                                         @endif
                                     </td>
                                     <td class="text-right" style="color: blue;">

@@ -22,19 +22,14 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
     <div class="row">
         <div class="qc_work_money_transfer_receive_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             {{-- chi tiêt --}}
-            <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <span style="color: deeppink;">Nhận tiền bàn giao </span>
-                    </div>
-                </div>
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_money_transfer_receive_list_content row">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width: 20px;"></th>
-                                <th>Ngày nhận</th>
-                                <th>Người giao</th>
+                                <th>Thời gian</th>
+                                <th>Người chuyển</th>
                                 <th>Hình thức</th>
                                 <th>Ghi chú</th>
                                 <th class="text-center">Xác nhận</th>
@@ -43,7 +38,7 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_money_transfer_filter_month" style="height: 30px;"
+                                    <select class="qc_work_money_transfer_filter_month col-sx-5 col-sm-5 col-md-5 col-lg-5" style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefFilter !!}">
                                         @for($m = 1; $m <=12; $m++)
                                             <option value="{!! $m !!}" @if($monthFilter == $m) selected="selected" @endif>
@@ -51,7 +46,7 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_money_transfer_filter_year" style="height: 30px;"
+                                    <select class="qc_work_money_transfer_filter_year col-sx-7 col-sm-7 col-md-7 col-lg-7" style="height: 34px;padding: 0;"
                                             data-href="{!! $hrefFilter !!}">
                                         @for($y = 2017; $y <=2050; $y++)
                                             <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
@@ -76,6 +71,8 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                     $transferMoney = $transfer->money();
                                     $totalMoney = $totalMoney + $transferMoney;
                                     $n_o = $n_o + 1;
+                                    # thong tin nguoi chuyen
+                                    $dataTransfersStaff = $transfer->transfersStaff;
                                     ?>
                                     <tr>
                                         <td class="text-center">
@@ -89,7 +86,16 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                             </a>
                                         </td>
                                         <td>
-                                            <span>{!! $transfer->transfersStaff->fullname() !!}</span>
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object"
+                                                         style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                         src="{!! $dataTransfersStaff->pathAvatar($dataTransfersStaff->image()) !!}">
+                                                </a>
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">{!! $dataTransfersStaff->fullName() !!}</h5>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             {!! $transfer->transferTypeName() !!}
@@ -101,14 +107,13 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                             @if($transfer->checkConfirmReceive())
                                                 <em>Đã xác nhận</em>
                                             @else
-                                                <a class="qc_receive_confirm_act qc-link-red"
-                                                   data-money="{!! $transferMoney !!}"
+                                                <a class="qc_receive_confirm_act qc-link-red" data-money="{!! $transferMoney !!}"
                                                    data-href="{!! route('qc.work.money.transfer.receive.confirm.get',$transferId) !!}">
-                                                    Xác nhận
+                                                    XÁC NHẬN
                                                 </a>
                                             @endif
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-right" style="color: blue;">
                                             {!! $hFunction->currencyFormat($transfer->money()) !!}
                                         </td>
                                     </tr>

@@ -23,11 +23,6 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
         <div class="qc_work_money_transfer_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             {{-- chi tiêt --}}
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="row" style="margin-top: 10px;">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <h4 style="color: deeppink;">Tiền đã bàn giao </h4>
-                    </div>
-                </div>
                 <div class="qc_work_money_receive_list_content row">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
@@ -42,7 +37,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_money_transfer_filter_month" style="height: 30px;"
+                                    <select class="qc_work_money_transfer_filter_month col-sx-5 col-sm-5 col-md-5 col-lg-5" style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefFilter !!}">
                                         @for($m = 1; $m <=12; $m++)
                                             <option value="{!! $m !!}"
@@ -51,7 +46,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_money_transfer_filter_year" style="height: 30px;"
+                                    <select class="qc_work_money_transfer_filter_year col-sx-7 col-sm-7 col-md-7 col-lg-7" style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefFilter !!}">
                                         @for($y = 2017; $y <=2050; $y++)
                                             <option value="{!! $y !!}"
@@ -75,6 +70,8 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                     $transfersId = $transfer->transfersId();
                                     $totalMoney = $totalMoney + $transfer->money();
                                     $confirmReceiveStatus = $transfer->checkConfirmReceive();
+                                    # thong tin nguoi nhan
+                                    $dataReceiveStaff = $transfer->receiveStaff;
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
                                         <td class="text-center">
@@ -82,6 +79,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                         </td>
                                         <td>
                                             <span>{!! date('d/m/Y',strtotime($transfer->transfersDate()))  !!}</span>
+                                            <br/>
                                             @if(!$confirmReceiveStatus)
                                                 &nbsp;
                                                 <a class="qc-link-red" href="{!! route('qc.work.money.transfer.transfer.info.get',$transfersId) !!}">
@@ -95,7 +93,16 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                             @endif
                                         </td>
                                         <td>
-                                            <span>{!! $transfer->receiveStaff->fullname() !!}</span>
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object"
+                                                         style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                         src="{!! $dataReceiveStaff->pathAvatar($dataReceiveStaff->image()) !!}">
+                                                </a>
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">{!! $dataReceiveStaff->fullName() !!}</h5>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             {!! $transfer->reason() !!}
@@ -107,7 +114,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                                 <span style="background-color: red; color: white; padding: 3px;">Chưa xác nhận</span>
                                             @endif
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-right" style="color: blue;">
                                             {!! $hFunction->currencyFormat($transfer->money()) !!}
                                         </td>
                                     </tr>

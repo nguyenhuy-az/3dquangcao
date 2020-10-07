@@ -16,38 +16,8 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
-                        <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
-                    </a>
-                    <label class="qc-font-size-20">PHẠT</label>
-                </div>
-                <div class="text-right col-xs-12 col-sm-8 col-md-4 col-lg-4" style="padding-left: 0;padding-right: 0;">
-                    <select class="cbCompanyFilter form-control" name="cbCompanyFilter" style="height: 34px;"
-                            data-href-filter="{!! $hrefIndex !!}">
-                        {{--@if($dataStaffLogin->checkRootManage())
-                            <option value="1000">Tất cả</option>
-                        @endif--}}
-                        @if($hFunction->checkCount($dataCompany))
-                            @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
-                                    <option value="{!! $company->companyId() !!}"
-                                            @if($companyFilterId == $company->companyId()) selected="selected" @endif >
-                                        {!! $company->name() !!}
-                                    </option>
-                                @else
-                                    @if($companyFilterId == $company->companyId())
-                                        <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
-                                    @endif
-                                @endif
-                            @endforeach
-                        @endif
-                    </select>
-                </div>
-                <div class="text-right col-xs-12 col-sm-4 col-md-2 col-lg-2" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! route('qc.ad3d.finance.minus_money.add.get', $companyFilterId) !!}">
-                        <span style="font-size: 16px;">+ PHẠT</span>
-                    </a>
+                <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-left: 0;padding-right: 0;">
+
                 </div>
             </div>
         </div>
@@ -56,9 +26,42 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                  data-href-cancel="{!! route('qc.ad3d.finance.minus-money.cancel') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
+                        <tr>
+                            <td colspan="4">
+                                <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
+                                    <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
+                                </a>
+                                <label class="qc-font-size-20">PHẠT</label>
+                            </td>
+                            <td colspan="3" style="padding: 0;">
+                                <select class="cbCompanyFilter form-control" name="cbCompanyFilter" style="height: 34px;"
+                                        data-href-filter="{!! $hrefIndex !!}">
+                                    @if($hFunction->checkCount($dataCompany))
+                                        @foreach($dataCompany as $company)
+                                            @if($dataStaffLogin->checkRootManage())
+                                                <option value="{!! $company->companyId() !!}"
+                                                        @if($companyFilterId == $company->companyId()) selected="selected" @endif >
+                                                    {!! $company->name() !!}
+                                                </option>
+                                            @else
+                                                @if($companyFilterId == $company->companyId())
+                                                    <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
+                                                @endif
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </td>
+                            <td style="padding: 0;">
+                                <a class="qc-link-white-bold form-control btn btn-primary" href="{!! route('qc.ad3d.finance.minus_money.add.get', $companyFilterId) !!}">
+                                    <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
+                                    <span style="font-size: 16px;">PHẠT</span>
+                                </a>
+                            </td>
+                        </tr>
                         <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Tên</th>
+                            <th>Nhân viên</th>
                             <th style="width: 150px;">Ngày</th>
                             <th>Nguyên nhân</th>
                             <th>Ghi chú</th>
@@ -132,7 +135,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                             <td class="text-right"></td>
                             <td></td>
                             <td class="text-center"></td>
-                            <td class="text-right">
+                            <td style="color: red;">
                                 <b> {!! $hFunction->currencyFormat($totalMinusMoney)  !!}</b>
                             </td>
                         </tr>
@@ -171,9 +174,16 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        <img style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
-                                             src="{!! $dataStaffMinus->pathAvatar($dataStaffMinus->image()) !!}">
-                                        {!! $dataStaffMinus->fullName() !!}
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $dataStaffMinus->pathAvatar($dataStaffMinus->image()) !!}">
+                                            </a>
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataStaffMinus->fullName() !!}</h5>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
                                         {!! date('d/m/Y', strtotime($minusMoney->dateMinus())) !!}
@@ -249,11 +259,11 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                             {{--chi hien khi khong co phan hoi--}}
                                             @if(!$checkMinusMoneyLostToolStatus)
                                                 <br/>
-                                                <a class="qc_cancel_act qc-link-red">Hủy</a>
+                                                <a class="qc_cancel_act qc-link-red">HỦY</a>
                                             @endif
                                         @endif
                                     </td>
-                                    <td class="text-right" style="color: red;">
+                                    <td class="text-right" style="color: blue;">
                                         {!! $hFunction->currencyFormat($money) !!}
                                     </td>
                                 </tr>

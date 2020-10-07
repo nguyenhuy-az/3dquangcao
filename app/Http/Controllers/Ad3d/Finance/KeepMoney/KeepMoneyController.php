@@ -23,13 +23,26 @@ class KeepMoneyController extends Controller
         $modelCompany = new QcCompany();
         $modelKeepMoney = new QcKeepMoney();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        $staffLoginId = $dataStaffLogin->staffId();
         $currentMonth = $hFunction->currentMonth();
         $currentYear = $hFunction->currentYear();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        if ($companyFilterId == 0) {
+            $companyFilterId = $companyLoginId;
+        }
+        if ($staffFilterId > 0) {
+            $listStaffId = [$staffFilterId];
+        } else {
+            $listStaffId = $modelStaff->listIdOfCompany($companyFilterId);
+        }
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
+        //danh sach NV
+        $dataStaff = $modelCompany->staffInfoActivityOfListCompanyId([$companyFilterId]);
         $dataAccess = [
             'accessObject' => 'keepMoney'
         ];
-        $dataCompany = $modelCompany->getInfo();
         $dateFilter = null;
         if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
             $dayFilter = 100;
@@ -53,7 +66,7 @@ class KeepMoneyController extends Controller
             $yearFilter = date('Y');
         }
 
-        if ($dataStaffLogin->checkRootManage()) {
+        /*if ($dataStaffLogin->checkRootManage()) {
             if (empty($companyFilterId) || $companyFilterId == 1000) {
                 $searchCompanyFilterId = $modelCompany->listIdActivity();
                 $companyFilterId = 1000;// $dataStaffLogin->companyId();
@@ -64,19 +77,12 @@ class KeepMoneyController extends Controller
         } else {
             $searchCompanyFilterId = [$dataStaffLogin->companyId()];
             $companyFilterId = $dataStaffLogin->companyId();
-        }
+        }*/
 
-        if ($staffFilterId > 0) {
-            $listStaffId = [$staffFilterId];
-        } else {
-            $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
-        }
         $listWorkId = $modelStaff->allListWorkIdOfListStaffId($listStaffId);
         $listSalaryId = $modelSalary->listIdOfListWorkId($listWorkId);
         $dataKeepMoneySelect = $modelKeepMoney->selectInfoOfListSalary($listSalaryId, $dateFilter, $payStatus);
         $dataKeepMoney = $dataKeepMoneySelect->paginate(30);
-        //danh sach NV
-        $dataStaff = $modelCompany->staffInfoActivityOfListCompanyId([$searchCompanyFilterId]);
         return view('ad3d.finance.keep-money.list', compact('modelStaff', 'dataCompany','dataStaff', 'dataAccess', 'dataKeepMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter','staffFilterId', 'payStatus'));
 
     }

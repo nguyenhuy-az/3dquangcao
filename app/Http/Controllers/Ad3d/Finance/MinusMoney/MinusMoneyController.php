@@ -82,7 +82,8 @@ class MinusMoneyController extends Controller
         $punishContentFilterId = ($punishContentFilterId == 0) ? null : $punishContentFilterId;
         $dataMinusMoney = $modelMinus->selectInfoHasFilter($listWorkId, $punishContentFilterId, $dateFilter)->paginate(30);
         $totalMinusMoney = $modelMinus->totalMoneyHasFilter($listWorkId, $punishContentFilterId, $dateFilter);
-        //dd($searchCompanyFilterId);
+        # danh muc phat cua cong ty
+        $dataPunishContent = $modelPunishContent->getInfo();
         return view('ad3d.finance.minus-money.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataPunishContent', 'dataMinusMoney', 'totalMinusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'punishContentFilterId', 'nameFiler'));
 
     }

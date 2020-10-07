@@ -25,9 +25,6 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                             data-href-filter="{!! $hrefIndex !!}">
-                        @if($dataStaffLogin->checkRootManage())
-                            <option value="0">Tất cả</option>
-                        @endif
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -60,7 +57,8 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                         <tr>
                             <td></td>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;"
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -72,7 +70,8 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -83,7 +82,8 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
                                                 @if($yearFilter == $y) selected="selected" @endif>
@@ -134,6 +134,12 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                                 <?php
                                 $keepMoneyId = $keepMoney->keepId();
                                 $dataWork = $keepMoney->salary->work;
+                                # thong tin nhan vien
+                                if (!empty($dataWork->companyStaffWorkId())) {
+                                    $dataKeepStaffMinus = $dataWork->companyStaffWork->staff;
+                                } else {
+                                    $dataKeepStaffMinus = $dataWork->staff; // phien ban cu
+                                }
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
                                     data-object="{!! $keepMoneyId !!}">
@@ -143,12 +149,18 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                                     <td>
                                         {!! date('d/m/Y', strtotime($keepMoney->keepDate())) !!}
                                     </td>
-                                    <td>
-                                        @if(!empty($dataWork->companyStaffWorkId()))
-                                            {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                                        @else
-                                            {!! $dataWork->staff->fullName() !!}
-                                        @endif
+                                    <td style="padding: 3px;">
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $dataKeepStaffMinus->pathAvatar($dataKeepStaffMinus->image()) !!}">
+                                            </a>
+
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataKeepStaffMinus->fullName() !!}</h5>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
                                         {!! $keepMoney->description() !!}

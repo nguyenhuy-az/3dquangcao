@@ -60,7 +60,7 @@ class ReceiveController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        $selectTransfers = $modelTransfers->selectInfoByListTransfersStaffAndDate($listStaffId, $companyFilterId, $dateFilter, $transfersType);
+        $selectTransfers = $modelTransfers->selectInfoByListReceiveStaffAndDate($listStaffId, $companyFilterId, $dateFilter, $transfersType);
         $dataTransfers = $selectTransfers->paginate(30);
         $totalMoneyTransfers = $modelTransfers->totalMoneyByListInfo($selectTransfers->get());
         return view('ad3d.finance.transfers.receive.list', compact('modelStaff', 'dataCompany', 'dataStaff', 'dataAccess', 'dataTransfers', 'totalMoneyTransfers', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'transfersType', 'staffFilterId', 'totalMoneyTransfers'));
@@ -72,7 +72,7 @@ class ReceiveController extends Controller
         $modelTransfers = new QcTransfers();
         $dataTransfers = $modelTransfers->getInfo($transfersId);
         if (count($dataTransfers) > 0) {
-            return view('ad3d.finance.transfers.view', compact('dataTransfers'));
+            //return view('ad3d.finance.transfers.view', compact('dataTransfers'));
         }
     }
 
@@ -82,14 +82,14 @@ class ReceiveController extends Controller
         $modelTransfers = new QcTransfers();
         $dataTransfers = $modelTransfers->getInfo($transfersId);
         if (count($dataTransfers) > 0) {
-            return view('ad3d.finance.transfers.confirm-receive', compact('modelStaff', 'dataTransfers'));
+            return view('ad3d.finance.transfers.receive.confirm-receive', compact('modelStaff', 'dataTransfers'));
         }
     }
 
     public function postConfirmReceive($transfersId)
     {
         $modelTransfer = new QcTransfers();
-        $modelTransfer->updateConfirmReceive($transfersId);
+        $modelTransfer->updateConfirmReceive($transfersId, 'Xác nhận đã nhận tiền', 1);
     }
 
 

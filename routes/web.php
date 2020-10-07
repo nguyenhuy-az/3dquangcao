@@ -267,15 +267,15 @@ Route::group(['prefix' => 'ad3d'], function () {
                 Route::get('add', ['as' => 'qc.ad3d.finance.transfers.transfers.add.get', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@getAdd']);
                 Route::post('add', ['as' => 'qc.ad3d.finance.transfers.transfers.add.post', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@postAdd']);
 
-                #xác nhận giao tiền
-                //Route::get('confirm/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfer.confirm.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@getConfirmReceive']);
-                //Route::post('confirm/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfer.confirm.post', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@postConfirmReceive']);
-
                 //huy chuyen tien
                 Route::get('delete/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.delete', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@deleteTransfers']);
                 Route::get('/{companyId?}/{day?}/{month?}/{year?}/{typeId?}/{staffId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.get', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@index']);
             });
             Route::group(['prefix' => 'receive'], function () {
+                # xac nhan da nhan tien
+                Route::get('confirm/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.receive.confirm.get', 'uses' => 'Ad3d\Finance\Transfers\Receive\ReceiveController@getConfirmReceive']);
+                Route::post('confirm/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.receive.confirm.post', 'uses' => 'Ad3d\Finance\Transfers\Receive\ReceiveController@postConfirmReceive']);
+
                 Route::get('/{companyId?}/{day?}/{month?}/{year?}/{typeId?}/{staffId?}', ['as' => 'qc.ad3d.finance.transfers.receive.get', 'uses' => 'Ad3d\Finance\Transfers\Receive\ReceiveController@index']);
             });
         });

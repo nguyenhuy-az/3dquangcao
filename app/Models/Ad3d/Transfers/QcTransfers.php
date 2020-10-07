@@ -327,6 +327,15 @@ class QcTransfers extends Model
 
     // ---------- ----------  LAY THONG TIN --------- -------
     # chon thong tin chuyen tien theo 1 danh sach ma nhan vien / cong ty theo ngay thang
+    public function selectInfoByListReceiveStaffAndDate($listStaffId, $companyId, $date, $transfersType)
+    {
+        if ($transfersType == 0) {
+            return QcTransfers::wherein('receiveStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->orderBy('transfersDate', 'DESC')->select('*');
+        } else {
+            return QcTransfers::wherein('receiveStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->where('transferType', $transfersType)->orderBy('transfersDate', 'DESC')->select('*');
+        }
+    }
+    # chon thong tin chuyen tien theo 1 danh sach ma nhan vien / cong ty theo ngay thang
     public function selectInfoByListTransfersStaffAndDate($listStaffId, $companyId, $date, $transfersType)
     {
         if ($transfersType == 0) {

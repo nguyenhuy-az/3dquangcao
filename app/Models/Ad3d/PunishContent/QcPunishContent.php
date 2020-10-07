@@ -96,7 +96,7 @@ class QcPunishContent extends Model
     public function getInfo($punishId = '', $field = '')
     {
         if (empty($punishId)) {
-            return QcPunishContent::get();
+            return QcPunishContent::orderBy('name', 'ASC')->get();
         } else {
             $result = QcPunishContent::where('punish_id', $punishId)->first();
             if (empty($field)) {
