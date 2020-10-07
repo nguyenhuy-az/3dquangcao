@@ -14,7 +14,7 @@ use Request;
 
 class TransfersController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $transfersType = 0, $staffFilterId = 0)
+    public function index($companyFilterId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $transfersType = 0, $staffFilterId = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -27,7 +27,7 @@ class TransfersController extends Controller
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
         $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
-        if ($companyFilterId == null || $companyFilterId == 0) {
+        if ($companyFilterId == 0) {
             $companyFilterId = $companyLoginId;
         }
         if ($staffFilterId > 0) {
@@ -49,24 +49,23 @@ class TransfersController extends Controller
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-        } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+        } elseif ($dayFilter == 0 && $monthFilter > 0 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+        } elseif ($dayFilter > 0 && $monthFilter > 0 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $monthFilter = $currentMonth;
             $yearFilter = $currentYear;
             $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
-        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
-            $dateFilter = null;
         } else {
             $dateFilter = date('Y-m');
-            $dayFilter = 100;
+            $dayFilter = 0;
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
+        //dd($dateFilter);
         $selectTransfers = $modelTransfers->selectInfoByListTransfersStaffAndDate($listStaffId, $companyFilterId, $dateFilter, $transfersType);
         $dataTransfers = $selectTransfers->paginate(30);
         $totalMoneyTransfers = $modelTransfers->totalMoneyByListInfo($selectTransfers->get());
-        return view('ad3d.finance.transfers.transfers.list', compact('modelStaff', 'dataCompany','dataStaff', 'dataAccess', 'dataTransfers', 'totalMoneyTransfers', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'transfersType','staffFilterId','totalMoneyTransfers'));
+        return view('ad3d.finance.transfers.transfers.list', compact('modelStaff', 'dataCompany', 'dataStaff', 'dataAccess', 'dataTransfers', 'totalMoneyTransfers', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'transfersType', 'staffFilterId', 'totalMoneyTransfers'));
 
     }
 
@@ -75,26 +74,23 @@ class TransfersController extends Controller
         $modelTransfers = new QcTransfers();
         $dataTransfers = $modelTransfers->getInfo($transfersId);
         if (count($dataTransfers) > 0) {
-            return view('ad3d.finance.transfers.view', compact('dataTransfers'));
+            //return view('ad3d.finance.transfers.view', compact('dataTransfers'));
         }
     }
 
+    # thuc hien chuyen tien
     public function getAdd()
     {
         $modelStaff = new QcStaff();
-        $modelCompany = new QcCompany();
         $modelDepartment = new QcDepartment();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
         $dataAccess = [
-            'accessObject' => 'transfers'
+            'accessObject' => 'transfers',
+            'subObject' => 'transferTransfer'
         ];
-        if ($dataStaffLogin->checkRootManage()) {
-            $companyFilterId = $modelCompany->listIdActivity();# lay tat ca NV thu quy cua he thong
-        } else {
-            $companyFilterId = [$dataStaffLogin->companyId()];# lay NV thu quy cua cty dang lam
-        }
-        $dataStaffReceive = $modelStaff->getInfoActivityOfListCompanyAndDepartment($companyFilterId, $modelDepartment->treasurerDepartmentId());
-        return view('ad3d.finance.transfers.add', compact('modelStaff', 'dataStaffReceive', 'dataAccess'));
+        $dataStaffReceive = $modelStaff->getInfoActivityOfListCompanyAndDepartment([$companyLoginId], $modelDepartment->treasurerDepartmentId());
+        return view('ad3d.finance.transfers.transfers.add', compact('modelStaff', 'dataStaffReceive', 'dataAccess'));
     }
 
     public function postAdd()
@@ -103,55 +99,37 @@ class TransfersController extends Controller
         $modelStaff = new QcStaff();
         $modelTransfers = new QcTransfers();
         $cbReceiveStaffId = Request::input('cbReceiveStaff');
-        $cbDay = Request::input('cbDay');
-        $cbMonth = Request::input('cbMonth');
-        $cbYear = Request::input('cbYear');
         $txtMoney = Request::input('txtMoney');
         $txtMoney = $hFunction->convertCurrencyToInt($txtMoney);
         $txtReason = Request::input('txtReason');
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
         $staffId = $modelStaff->loginStaffId();
-        $datePay = $hFunction->convertStringToDatetime("$cbMonth/$cbDay/$cbYear 00:00:00");
-        $cbDay = ($cbDay < 10) ? "0$cbDay" : $cbDay;
-        $cbMonth = ($cbMonth < 10) ? "0$cbMonth" : $cbMonth;
-        if ($hFunction->checkValidDate("$cbYear-$cbMonth-$cbDay")) {
-            if ($modelTransfers->insert($txtMoney, $datePay, $txtReason, null, $staffId, $cbReceiveStaffId, null)) {
-                return Session::put('notifyAdd', 'Thêm thành công, chọn thông tin và tiếp tục');
-            } else {
-                return Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
-            }
+        if ($modelTransfers->insert($txtMoney, $hFunction->carbonNow(), $txtReason, null, $staffId, $cbReceiveStaffId, $companyLoginId, 2)) {
+            return Session::put('notifyAdd', 'Thêm thành công, chọn thông tin và tiếp tục');
         } else {
-            return Session::put('notifyAdd', "Ngày '$cbYear-$cbMonth-$cbDay' không hộp lệ ");
+            return Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
         }
-
     }
 
+    # cap nhat thong tin chuyen
     public function getEdit($transfersId)
     {
         $modelStaff = new QcStaff();
         $modelTransfers = new QcTransfers();
         $dataTransfers = $modelTransfers->getInfo($transfersId);
-        return view('ad3d.finance.transfers.edit', compact('modelStaff', 'dataTransfers'));
+        return view('ad3d.finance.transfers.transfers.edit', compact('modelStaff', 'dataTransfers'));
     }
 
     public function postEdit($transfersId)
     {
         $hFunction = new \Hfunction();
         $modelTransfers = new QcTransfers();
-        $cbReceiveStaffId = Request::input('cbReceiveStaff');
-        $cbDay = Request::input('cbDay');
-        $cbMonth = Request::input('cbMonth');
-        $cbYear = Request::input('cbYear');
         $txtMoney = Request::input('txtMoney');
+        $txtMoney = $hFunction->convertCurrencyToInt($txtMoney);
         $txtReason = Request::input('txtReason');
-        $cbDay = ($cbDay < 10) ? "0$cbDay" : $cbDay;
-        $cbMonth = ($cbMonth < 10) ? "0$cbMonth" : $cbMonth;
-        if ($hFunction->checkValidDate("$cbYear-$cbMonth-$cbDay")) {
-            $transferDate = $hFunction->convertStringToDatetime("$cbMonth/$cbDay/$cbYear 00:00:00");
-            if (!$modelTransfers->updateInfo($transfersId, $txtMoney, $transferDate, $txtReason, $cbReceiveStaffId, null)) {
-                return "Cập nhật thất bại";
-            }
-        } else {
-            return "Ngày $cbYear-$cbMonth-$cbDay không hợp lệ ";
+        if (!$modelTransfers->updateInfo($transfersId, $txtMoney, $txtReason)) {
+            return "Cập nhật thất bại";
         }
 
     }

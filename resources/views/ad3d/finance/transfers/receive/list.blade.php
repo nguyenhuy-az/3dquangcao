@@ -9,9 +9,9 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
+$hrefIndex = route('qc.ad3d.finance.transfers.receive.get');
 ?>
-@extends('ad3d.finance.transfers.transfers.index')
+@extends('ad3d.finance.transfers.receive.index')
 @section('qc_ad3d_index_content')
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-left: 0;">
@@ -22,7 +22,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr>
-                            <td colspan="4"></td>
+                            <td colspan="5"></td>
                             <td colspan="3" style="padding: 0;">
                                 <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                                         style="height: 34px;"
@@ -41,19 +41,12 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                     @endif
                                 </select>
                             </td>
-                            <td style="padding: 0;">
-                                <a class="qc-link-white-bold btn btn-primary form-control"
-                                   href="{!! route('qc.ad3d.finance.transfers.transfers.add.get') !!}">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    <span style="font-size: 16px;">CHUYỂN</span>
-                                </a>
-                            </td>
                         </tr>
                         <tr style="background-color: black; color: yellow;">
                             <th style="width:20px;">STT</th>
                             <th style="width: 150px;">Ngày</th>
-                            <th>NGƯỜI CHUYỂN</th>
                             <th>NGƯỜI NHẬN</th>
+                            <th>NGƯỜI CHUYỂN</th>
                             <th>Hình thức chuyển</th>
                             <th>Ghi chú</th>
                             <th class="text-center">Xác nhận</th>
@@ -156,21 +149,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                     <td>
                                         <a class="qc_view qc-link-green">
                                             {!! date('d/m/Y', strtotime($transfers->transfersDate())) !!}
-                                            {{-- &nbsp;
-                                             <i class="glyphicon glyphicon-eye-open"></i>--}}
                                         </a>
-                                    </td>
-                                    <td style="padding: 3px;">
-                                        <div class="media">
-                                            <a class="pull-left" href="#">
-                                                <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
-                                                     src="{!! $dataTransfersStaff->pathAvatar($dataTransfersStaff->image()) !!}">
-                                            </a>
-                                            <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataTransfersStaff->fullName() !!}</h5>
-                                            </div>
-                                        </div>
                                     </td>
                                     <td>
                                         <div class="media">
@@ -182,6 +161,18 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
 
                                             <div class="media-body">
                                                 <h5 class="media-heading">{!! $dataReceiveStaff->fullName() !!}</h5>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 3px;">
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $dataTransfersStaff->pathAvatar($dataTransfersStaff->image()) !!}">
+                                            </a>
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataTransfersStaff->fullName() !!}</h5>
                                             </div>
                                         </div>
                                     </td>
@@ -199,12 +190,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                             <br/>
                                             <a class="qc_edit qc-link-green-bold"
                                                data-href="{!! route('qc.ad3d.finance.transfers.transfers.edit.get',$transfersId) !!}">
-                                                <i class="glyphicon glyphicon-pencil" style="font-size: 16px;"></i>
-                                            </a>
-                                            |
-                                            <a class="qc_delete qc-link-green-bold"
-                                               data-href="{!! route('qc.ad3d.finance.transfers.transfers.delete',$transfersId) !!}">
-                                                <i class="glyphicon glyphicon-trash" style="font-size: 16px;"></i>
+                                                XÁC NHẬN
                                             </a>
                                         @endif
                                     </td>

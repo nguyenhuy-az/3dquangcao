@@ -23,7 +23,7 @@ $subObject = (isset($dataAccess['subObject'])) ? $dataAccess['subObject'] : null
                 </a>
             </li>
             <li @if($subObject == 'transferReceive') class="active" @endif>
-                <a class="qc-link" href="{!! route('qc.ad3d.finance.transfers.transfers.get') !!}" @if($subObject == 'transferReceive') style="background-color: whitesmoke;" @endif>
+                <a class="qc-link" href="{!! route('qc.ad3d.finance.transfers.receive.get') !!}" @if($subObject == 'transferReceive') style="background-color: whitesmoke;" @endif>
                     <i class="qc-font-size-16 glyphicon glyphicon-refresh"></i>
                     NHẬN TIỀN
                 </a>

@@ -25,8 +25,8 @@ var qc_ad3d_finance_transfers_transfers = {
         }
     },
     edit: {
-        get: function (listObject) {
-            qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-edit') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
+        get: function (href) {
+            qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
         },
         save: function (formObject) {
             var txtMoney = $(formObject).find("input[name='txtMoney']");
@@ -38,64 +38,73 @@ var qc_ad3d_finance_transfers_transfers = {
             if (qc_main.check.inputNull(txtReason, 'Nhập lý do chuyển')) {
                 return false;
             } else {
-                qc_ad3d_submit.ajaxFormHasReload(formObject, containNotify, true);
-                $('#qc_container_content').animate({
-                    scrollTop: 0
-                })
+                if (confirm('Bạn đồng ý cập nhật thông tin này')) {
+                    qc_ad3d_submit.ajaxFormHasReload(formObject, containNotify, true);
+                    $('#qc_container_content').animate({
+                        scrollTop: 0
+                    });
+                }
             }
 
         }
-    }/*,
-    confirm: {
-        get: function (href) {
-            var contain = qc_ad3d.bodyIdName();
-            qc_ad3d_submit.ajaxNotReload(href, $('#' + contain), false);
-        },
-        save: function (frm) {
-            if(confirm('Tôi đã nhận được tiền bàn giao?')){
-                qc_ad3d_submit.ajaxFormHasReload(frm);
-            }
-        }
     },
-    delete: function (listObject) {
-        if (confirm('Bạn muốn xóa thông tin ')) {
-            qc_ad3d_submit.ajaxHasReload($(listObject).parents('.qc_ad3d_list_content').data('href-del') + '/' + $(listObject).data('object'), '', false);
+    /*
+     confirm: {
+     get: function (href) {
+     var contain = qc_ad3d.bodyIdName();
+     qc_ad3d_submit.ajaxNotReload(href, $('#' + contain), false);
+     },
+     save: function (frm) {
+     if(confirm('Tôi đã nhận được tiền bàn giao?')){
+     qc_ad3d_submit.ajaxFormHasReload(frm);
+     }
+     }
+     },*/
+    delete: function (href) {
+        if (confirm('Bạn muốn hủy chuyển tiền này')) {
+            qc_ad3d_submit.ajaxHasReload(href, '', false);
         }
-    }*/
+    }
 }
 
 //-------------------- lọc thông tin ------------
-$(document).ready(function () {;
+$(document).ready(function () {
+    ;
     //khi chọn công ty...
     $('body').on('change', '.cbCompanyFilter', function () {
         var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val();
-        var href = $(this).data('href-filter') + '/' + $(this).val() + '/' + dateFilter + '/' + $('.cbTransfersStatus').val();
+        var href = $(this).data('href-filter') + '/' + $(this).val() + '/' + dateFilter + '/' + $('.cbTransfersType').val() + '/' + $('.cbStaffFilterId').val();
         qc_main.url_replace(href);
-    })
+    });
 
     //khi tìm theo tên ..
-    $('body').on('change', '.cbTransfersStatus', function () {
+    $('body').on('change', '.cbTransfersType', function () {
         var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val()
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbTransfersStatus').val());
-    })
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $(this).val() + '/' + $('.cbStaffFilterId').val());
+    });
     // theo ngay tháng ...
     $('body').on('change', '.cbDayFilter', function () {
         var dateFilter = $(this).val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbTransfersStatus').val());
-    })
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbTransfersType').val() + '/' + $('.cbStaffFilterId').val());
+    });
     $('body').on('change', '.cbMonthFilter', function () {
         var dateFilter = $('.cbDayFilter').val() + '/' + $(this).val() + '/' + $('.cbYearFilter').val()
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbTransfersStatus').val());
-    })
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbTransfersType').val() + '/' + $('.cbStaffFilterId').val());
+    });
     $('body').on('change', '.cbYearFilter', function () {
         var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $(this).val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbTransfersStatus').val());
-    })
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbTransfersType').val() + '/' + $('.cbStaffFilterId').val());
+    });
+    // theo nhan vien
+    $('body').on('change', '.cbStaffFilterId', function () {
+        var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val();
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbTransfersType').val() + '/' + $(this).val());
+    });
 });
 //view
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_view', function () {
-        qc_ad3d_finance_transfers_transfers.view($(this).parents('.qc_ad3d_list_object'));
+       // qc_ad3d_finance_transfers_transfers.view($(this).parents('.qc_ad3d_list_object'));
     })
 });
 
@@ -110,7 +119,7 @@ $(document).ready(function () {
 //-------------------- sửa ------------
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_edit', function () {
-        qc_ad3d_finance_transfers_transfers.edit.get($(this).parents('.qc_ad3d_list_object'));
+        qc_ad3d_finance_transfers_transfers.edit.get($(this).data('href'));
     });
 
     $('body').on('click', '.frmEdit .qc_save', function () {
@@ -120,18 +129,18 @@ $(document).ready(function () {
 
 //-------------------- xác nhận ------------
 /*$(document).ready(function () {
-    $('.qc_ad3d_list_object').on('click', '.qc_ad3d_transfer_confirm_receive_act', function () {
-        qc_ad3d_finance_transfers_transfers.confirm.get($(this).data('href'));
-    });
+ $('.qc_ad3d_list_object').on('click', '.qc_ad3d_transfer_confirm_receive_act', function () {
+ qc_ad3d_finance_transfers_transfers.confirm.get($(this).data('href'));
+ });
 
-    $('body').on('click', '.frmAd3dTransferConfirmReceive .qc_save', function () {
-        qc_ad3d_finance_transfers_transfers.confirm.save($(this).parents('.frmAd3dTransferConfirmReceive'));
-    });
-});*/
+ $('body').on('click', '.frmAd3dTransferConfirmReceive .qc_save', function () {
+ qc_ad3d_finance_transfers_transfers.confirm.save($(this).parents('.frmAd3dTransferConfirmReceive'));
+ });
+ });*/
 
 //xóa
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_delete', function () {
-        qc_ad3d_finance_transfers_transfers.delete($(this).parents('.qc_ad3d_list_object'));
+        qc_ad3d_finance_transfers_transfers.delete($(this).data('href'));
     });
 });

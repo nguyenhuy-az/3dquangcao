@@ -53,16 +53,11 @@ class QcTransfers extends Model
     }
 
     // insert
-    public function updateInfo($transfersId, $money, $transfersDate, $reason, $receiveStaffId, $companyId = null)
+    public function updateInfo($transfersId, $money, $reason)
     {
-        $modelStaff = new QcStaff();
-        $companyId = (empty($companyId)) ? $modelStaff->companyId($receiveStaffId) : $companyId;
         return QcTransfers::where('transfers_id', $transfersId)->update([
             'money' => $money,
-            'transfersDate' => $transfersDate,
-            'reason' => $reason,
-            'receiveStaff_id' => $receiveStaffId,
-            'company_id' => $companyId
+            'reason' => $reason
         ]);
     }
 
@@ -335,9 +330,9 @@ class QcTransfers extends Model
     public function selectInfoByListTransfersStaffAndDate($listStaffId, $companyId, $date, $transfersType)
     {
         if ($transfersType == 0) {
-            return QcTransfers::wherein('transfersStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->orderBy('transfersDate', 'DESC')->orderBy('transfers_id', 'DESC')->select('*');
+            return QcTransfers::wherein('transfersStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->orderBy('transfersDate', 'DESC')->select('*');
         } else {
-            return QcTransfers::wherein('transfersStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->where('transferType', $transfersType)->orderBy('transfersDate', 'DESC')->orderBy('transfers_id', 'DESC')->select('*');
+            return QcTransfers::wherein('transfersStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->where('transferType', $transfersType)->orderBy('transfersDate', 'DESC')->select('*');
         }
     }
 

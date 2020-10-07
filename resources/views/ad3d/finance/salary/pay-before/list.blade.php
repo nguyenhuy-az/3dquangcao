@@ -53,9 +53,10 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                         <tr style="background-color: black; color: yellow;">
                             <th style="width: 20px;">STT</th>
                             <th style="width: 150px;">Ngày</th>
-                            <th>Tên</th>
-                            <th class="text-right">Ghi chú</th>
-                            <th class="text-right">Xác nhận</th>
+                            <th>Người ứng</th>
+                            <th>Ghi chú</th>
+                            <th>Thủ Quỹ</th>
+                            <th class="text-center">Xác nhận</th>
                             <th class="text-right">Tiền ứng</th>
                         </tr>
                         <tr>
@@ -113,6 +114,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                       </span>
                                 </div>
                             </td>
+                            <td></td>
                             <td class="text-right"></td>
                             <td class="text-right"></td>
                             <td class="text-right">
@@ -137,6 +139,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 }
                                 $image = $dataStaffWork->image();
                                 $src = $dataStaffWork->pathAvatar($image);
+                                # thong tin thu quy
+                                $dataStaffPay = $salaryBeforePay->staff;
                                 ?>
                                 <tr class="qc_ad3d_list_object" data-object="{!! $payId !!}">
                                     <td class="text-center">
@@ -153,15 +157,28 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                      style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $src !!}">
                                             </a>
+
                                             <div class="media-body">
                                                 <h5 class="media-heading">{!! $dataStaffWork->fullName() !!}</h5>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-right">
+                                    <td>
                                         {!! $salaryBeforePay->description() !!}
                                     </td>
-                                    <td class="text-right">
+                                    <td>
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $dataStaffPay->pathAvatar($dataStaffPay->image()) !!}">
+                                            </a>
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataStaffPay->fullName() !!}</h5>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
                                         {{--<a class="qc_view qc-link-green">Chi tiết</a>--}}
                                         @if(!$salaryBeforePay->checkConfirm())
                                             <em style="color: brown;">Chưa xác nhận</em>
@@ -185,13 +202,13 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="6">
+                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="7">
                                     {!! $hFunction->page($dataSalaryBeforePay) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="qc-padding-top-20 qc-padding-bot-20 text-center" colspan="6">
+                                <td class="qc-padding-top-20 qc-padding-bot-20 text-center" colspan="7">
                                     <em class="qc-color-red">Không tìm thấy thông tin</em>
                                 </td>
                             </tr>

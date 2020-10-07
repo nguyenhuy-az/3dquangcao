@@ -259,7 +259,7 @@ Route::group(['prefix' => 'ad3d'], function () {
         # giao tien
         Route::group(['prefix' => 'transfers'], function () {
             Route::group(['prefix' => 'transfers'], function () {
-                Route::get('view/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.view.get', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@view']);
+                //Route::get('view/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.view.get', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@view']);
 
                 Route::get('edit/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.edit.get', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@getEdit']);
                 Route::post('edit/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.edit.post', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@postEdit']);
@@ -271,10 +271,12 @@ Route::group(['prefix' => 'ad3d'], function () {
                 //Route::get('confirm/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfer.confirm.get', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@getConfirmReceive']);
                 //Route::post('confirm/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfer.confirm.post', 'uses' => 'Ad3d\Finance\Transfers\TransfersController@postConfirmReceive']);
 
-                //xóa
+                //huy chuyen tien
                 Route::get('delete/{transfersId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.delete', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@deleteTransfers']);
-
                 Route::get('/{companyId?}/{day?}/{month?}/{year?}/{typeId?}/{staffId?}', ['as' => 'qc.ad3d.finance.transfers.transfers.get', 'uses' => 'Ad3d\Finance\Transfers\Transfers\TransfersController@index']);
+            });
+            Route::group(['prefix' => 'receive'], function () {
+                Route::get('/{companyId?}/{day?}/{month?}/{year?}/{typeId?}/{staffId?}', ['as' => 'qc.ad3d.finance.transfers.receive.get', 'uses' => 'Ad3d\Finance\Transfers\Receive\ReceiveController@index']);
             });
         });
 
