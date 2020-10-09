@@ -9,6 +9,7 @@
  */
 $hFunction = new Hfunction();
 $importId = $dataImport->importId();
+$image = $dataImport->image();
 $totalMoney = $dataImport->totalMoneyOfImport();
 $importDate = $dataImport->importDate();
 $dataImportDetail = $dataImport->infoDetailOfImport();
@@ -26,26 +27,16 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                         <b class="qc-color-red" style="font-size: 1.5em;" >{!! $dataImport->staffImport->lastName() !!}</b>
                         <b class="qc-color-red" style="font-size: 1.5em;"> -- {!! date('d/m/Y', strtotime($importDate)) !!}</b>
                     </div>
-                    @if($hFunction->checkCount($dataImportImage))
-                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="row">
-                                @foreach($dataImportImage as $importImage)
-                                    <div class="table-responsive">
-                                        <table class="table ">
-                                            <tr>
-                                                <td class="tex-center">
-                                                    <img class="qc-link" onclick="qc_main.rotateImage(this);" alt="..."
-                                                         title="Click xoay hình"
-                                                         src="{!! $importImage->pathFullImage($importImage->name()) !!}"
-                                                         style="max-width: 30%; border: 1px solid #d7d7d7;">
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        @if(!$hFunction->checkEmpty($image))
+                            <img class="media-object qc-link" alt="..." onclick="qc_main.rotateImage(this);"
+                                 style="max-width: 30%; border: 1px solid #d7d7d7;"  title="Click xoay hình"
+                                 src="{!! $dataImport->pathFullImage($image) !!}">
+
+                        @else
+                            Không có Ảnh HĐ
+                        @endif
+                    </div>
                     {{-- chi tiêt --}}
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">

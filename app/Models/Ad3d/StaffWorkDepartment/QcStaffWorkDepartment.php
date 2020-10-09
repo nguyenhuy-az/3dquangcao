@@ -73,14 +73,16 @@ class QcStaffWorkDepartment extends Model
     # kiem tra ton tai dang lam viec tai 1 bo phan va vi tri lam
     public function checkExistWorkActivityOfDepartmentAndRank($workId, $departmentId, $rankId)
     {
-        return QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId,'rank_id'=>$rankId, 'action' => 1])->exists();
+        return QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId, 'rank_id' => $rankId, 'action' => 1])->exists();
     }
 
+    # danh sach ma bo phan cua 1 bang lam viec  - tat ca
     public function listIdDepartmentOfWork($workId)
     {
         return QcStaffWorkDepartment::where(['work_id' => $workId])->pluck('department_id');
     }
 
+    # danh sach ma bo phan cua 1 bang lam viec - dang hoat dong
     public function listIdDepartmentActivityOfWork($workId)
     {
         return QcStaffWorkDepartment::where(['work_id' => $workId, 'action' => 1])->pluck('department_id');

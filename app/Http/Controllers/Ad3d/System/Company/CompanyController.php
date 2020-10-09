@@ -18,10 +18,13 @@ class CompanyController extends Controller
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
         $dataAccess = [
             'accessObject' => 'company'
         ];
-        $dataCompany = QcCompany::where('action', 1)->orderBy('name', 'ASC')->select('*')->paginate(30);
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->selectInfoSameSystemOfCompany($companyLoginId)->paginate(30);
         return view('ad3d.system.company.list', compact('modelStaff', 'modelCompany', 'dataCompany', 'dataAccess'));
 
     }

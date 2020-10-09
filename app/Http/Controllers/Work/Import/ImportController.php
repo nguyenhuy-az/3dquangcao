@@ -4,13 +4,9 @@ namespace App\Http\Controllers\Work\Import;
 
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportDetail\QcImportDetail;
-use App\Models\Ad3d\ImportImage\QcImportImage;
-use App\Models\Ad3d\Rule\QcRules;
-use App\Models\Ad3d\Salary\QcSalary;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Supplies\QcSupplies;
 use App\Models\Ad3d\Tool\QcTool;
-use App\Models\Ad3d\Work\QcWork;
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
@@ -24,6 +20,8 @@ class ImportController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelImport = new QcImport();
+        $modelImport->checkAutoUpdateImage();
         $dataStaff = $modelStaff->loginStaffInfo();
         $dataAccess = [
             'object' => 'import',
@@ -90,11 +88,11 @@ class ImportController extends Controller
         return view('work.import.add', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataSupplies', 'dataTool'));
     }
 
-    # them anh hoa don
+    /*# them anh hoa don
     public function getAddImage()
     {
         return view('work.import.add-image');
-    }
+    }*/
 
     # ---------- ---------- kiem tra ten nhap --------- -----------
     public function checkImportName($name)
@@ -144,7 +142,7 @@ class ImportController extends Controller
         $hFunction = new \Hfunction();
         $modelImport = new QcImport();
         $modelImportDetail = new QcImportDetail();
-        $modelImportImage = new QcImportImage();
+        //$modelImportImage = new QcImportImage();
         $modelSupplies = new QcSupplies();
         $modelTool = new QcTool();
 
@@ -160,23 +158,15 @@ class ImportController extends Controller
         $txtObjectMoney = Request::input('txtObjectMoney');
         $cbImportProduct = Request::input('cbImportProduct');
         $companyId = $modelStaff->companyId($staffLoginId);
-        if ($modelImport->insert($txtImportDate, $companyId, null, $staffLoginId)) {
+        $name_img = null; // mac dinh null
+        if (!empty($txtImportImage)) {
+            $name_img = stripslashes($_FILES['txtImportImage']['name']);
+            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $source_img = $_FILES['txtImportImage']['tmp_name'];
+            $modelImport->uploadImage($source_img, $name_img);
+        }
+        if ($modelImport->insert($name_img, $txtImportDate, $companyId, null, $staffLoginId)) {
             $importId = $modelImport->insertGetId();
-            // them anh hoa don
-            if (count($txtImportImage) > 0) {
-                $n_o = 0;
-                foreach ($_FILES['txtImportImage']['name'] as $name => $value) {
-                    $name_img = stripslashes($_FILES['txtImportImage']['name'][$name]);
-                    if (!empty($name_img)) {
-                        $n_o = $n_o + 1;
-                        $name_img = $hFunction->getTimeCode() . "_$n_o." . $hFunction->getTypeImg($name_img);
-                        $source_img = $_FILES['txtImportImage']['tmp_name'][$name];
-                        if ($modelImportImage->uploadImage($source_img, $name_img, 500)) {
-                            $modelImportImage->insert($name_img, $importId);
-                        }
-                    }
-                }
-            }
             // mua dụng cụ
             if ($txtImportName) {
                 foreach ($txtImportName as $key => $importName) {
@@ -208,22 +198,44 @@ class ImportController extends Controller
                 }
             }
             Session::put('notifyAddImport', 'Thêm thành công');
-        }else{
+        } else {
             Session::put('notifyAddImport', 'Thêm thất bại, hãy thử lại');
         }
         return redirect()->back();
     }
 
+    //========= ========= CẬP NHẬT ẢNH HÓA ĐƠN ========= ========
+    public function getUpdateImage($importId)
+    {
+        $modelImport = new QcImport();
+        $dataImport = $modelImport->getInfo($importId);
+        return view('work.import.update-image', compact('dataImport'));
+    }
 
-    // xác nhận thanh toán
+    public function postUpdateImage($importId)
+    {
+        $hFunction = new \Hfunction();
+        $modelImport = new QcImport();
+        //hinh anh
+        $txtImportImage = Request::file('txtImportImage');
+        $name_img = null; // mac dinh null
+        if (!empty($txtImportImage)) {
+            $name_img = stripslashes($_FILES['txtImportImage']['name']);
+            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $source_img = $_FILES['txtImportImage']['tmp_name'];
+            $modelImport->uploadImage($source_img, $name_img);
+            $modelImport->updateImage($importId, $name_img);
+        }
+    }
+
+    # xác nhận thanh toán
     public function getConfirmPay($importId)
     {
         $modelImport = new QcImport();
         $modelImport->updateConfirmPayOfImport($importId);
     }
 
-    # huy thong tin nhap
-    //xóa
+    #
     public function deleteImport($importId)
     {
         $modelImport = new QcImport();

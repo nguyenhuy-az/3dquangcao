@@ -166,20 +166,21 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\SystemDateOff\QcSystemDateOff', 'company_id', 'company_id');
     }
 
+    # lay ngay nghi cua 1 cong ty
     public function systemDateOfFOfCompanyAndDate($companyId, $date = null)
     {
         $modelSystemDateOff = new QcSystemDateOff();
         return $modelSystemDateOff->selectInfoOfCompanyAndDate($companyId, $date)->get();
     }
 
-    # ngay bat buoc nghi
+    # ngay bat buoc nghi cua 1 cong ty
     public function systemDateOffObligatoryOfCompanyAndDate($companyId, $date = null)
     {
         $modelSystemDateOff = new QcSystemDateOff();
         return $modelSystemDateOff->infoDateObligatoryOfCompanyAndDate($companyId, $date);
     }
 
-    # ngay khong bat buoc nghi
+    # ngay khong bat buoc nghi cua 1 cong ty
     public function systemDateOffOptionalOfCompanyAndDate($companyId, $date = null)
     {
         $modelSystemDateOff = new QcSystemDateOff();
@@ -193,12 +194,8 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'company_id', 'company_id');
     }
 
-    #----------- nhân viên cũ ------------ xoa
-    public function staff()
-    {
-        return $this->hasMany('App\Models\Ad3d\Staff\QcStaff', 'company_id', 'company_id');
-    }
-
+    #----------- nhân viên cũ ------------ x
+    # danh sach tat ca nhan vien cua 1 cong ty
     public function staffOfCompany($companyId = null)
     {
         $modelStaff = new QcStaff();
@@ -218,11 +215,34 @@ class QcCompany extends Model
         $modelStaff = new QcStaff();
         return $modelStaff->getInfoActivityByListStaffId($this->staffIdOfListCompanyId([$companyId]));
     }
+
     # lay danh sach nv DANG HOAT DONG theo danh sach cong ty
     public function staffInfoActivityOfListCompanyId($listCompanyId)
     {
         $modelStaff = new QcStaff();
         return $modelStaff->getInfoActivityByListStaffId($this->staffIdOfListCompanyId($listCompanyId));
+    }
+
+    # danh sach nhan vien BO PHAN THU QUY CAP QUA LY- dang hoat dong
+    public function staffInfoActivityOfTreasurerManage($companyId)
+    {
+        $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->treasurerDepartmentId()], $modelRank->manageRankId());
+        return $modelStaff->getInfoByListStaffId($listStaffId);
+    }
+
+    # danh sach nhan vien BO PHAN THU QUY CAP NHAN VIEN- dang hoat dong
+    public function staffInfoActivityOfTreasurerStaff($companyId)
+    {
+        $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->treasurerDepartmentId()], $modelRank->staffRankId());
+        return $modelStaff->getInfoByListStaffId($listStaffId);
     }
 
     #----------- chi - PHIEN BAN CU ------------
@@ -362,6 +382,12 @@ class QcCompany extends Model
     public function infoByListId($listId)
     {
         return QcCompany::whereIn('company_id', $listId)->get();
+    }
+
+    # chon thong tin cong ty cung he thong
+    public function selectInfoSameSystemOfCompany($companyId)
+    {
+        return QcCompany::where('parent_id', $companyId)->orWhere('company_id', $companyId)->select();
     }
 
     # lay he thong cty lien quan cua 1 cty dang nhap
@@ -565,6 +591,14 @@ class QcCompany extends Model
         return $modelTimekeepingProvisional->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->get();
     }
     #============ =========== ============ THONG KE DOANH THU ============= =========== ==========
+    # thong ke tong tien dang giua cua 1 thu quy cap nhan vien trong cty
+    public function totalKeepMoneyOfTreasurerStaff($dateFilter = null)
+    {
+        if (!empty($dateFilter)) {
+
+        }
+    }
+
     # tong tien doanh so
     public function statisticalTotalMoneyOrder($companyId, $dateFilter = null)
     {

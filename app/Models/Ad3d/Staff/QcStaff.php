@@ -47,7 +47,12 @@ class QcStaff extends Model
     {
         $this->checkAutoInfo();
     }
+
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
+    public function checkFixSystem()
+    {
+
+    }
     //---------- Insert ----------
     //tạo mật khẩu cho người dùng
     public function createStaffPass($password, $nameCode)
@@ -1596,11 +1601,11 @@ class QcStaff extends Model
     }
 
     #============ =========== ============ STATISTICAL ============= =========== ==========
-//  ========== ================= THONG KE THU ===================
+    //  ========== ================= THONG KE THU ===================
     public function totalReceivedMoneyForCompany($staffId, $date = null)
     {
         //  tong tien nhan tu thu don hang
-        $totalMoneyOrderPay = $this->totalReceiveMoneyFromOrderPay($staffId, $date);
+        $totalMoneyOrderPay = 0;// $this->totalReceiveMoneyFromOrderPay($staffId, $date);
         // tien duoc giao
         $totalReceivedMoneyOfStaffAndDate = $this->totalMoneyReceivedTransferOfStaffAndDate($staffId, $date);
         return $totalMoneyOrderPay + $totalReceivedMoneyOfStaffAndDate;
@@ -1645,7 +1650,7 @@ class QcStaff extends Model
         return $totalPaidMoneyVariable + $totalPaidMoneyPermanent;
     }
 
-    #bien phi
+    # bien phi
     public function totalPaidMoneyVariable($staffId, $date = null)
     {
         #chi ứng luong

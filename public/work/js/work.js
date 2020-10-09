@@ -213,7 +213,7 @@ $(document).ready(function () {
 
     //-------------lịch sử thu chi -------------------
     //theo ngày
-    $('body').on('change', '.qc_work_money_history_receive_login_day', function () {
+    /*$('body').on('change', '.qc_work_money_history_receive_login_day', function () {
         qc_work.money.history.receiveFilter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_history_receive_login_month').val() + '/' + $('.qc_work_money_history_receive_login_year').val());
     });
     //theo tháng
@@ -225,19 +225,11 @@ $(document).ready(function () {
     $('body').on('change', '.qc_work_money_history_receive_login_year', function () {
         qc_work.money.history.receiveFilter($(this).data('href') + '/' + $('.qc_work_money_history_receive_login_day').val() + '/' + $('.qc_work_money_history_receive_login_month').val() + '/' + $(this).val());
     });
-
+*/
 
     //-------------thong ke -------------------
 
-    //theo tháng
-    $('body').on('change', '.qc_work_money_statistical_login_month', function () {
-        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $(this).val() + '/' + $('.qc_work_money_statistical_login_year').val());
-    });
 
-    // năm
-    $('body').on('change', '.qc_work_money_statistical_login_year', function () {
-        qc_work.money.history.receiveFilter($(this).data('href') + '/' + $('.qc_work_money_statistical_login_month').val() + '/' + $(this).val());
-    });
 
 
 });

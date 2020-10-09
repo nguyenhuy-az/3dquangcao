@@ -34,8 +34,7 @@ $currentMonth = $hFunction->currentMonth();
                 <table class="table table-hover table-bordered">
                     <tr style="background-color: black; color: yellow;">
                         <th class="text-center" style="width:20px;">STT</th>
-                        <th>Hóa đơn</th>
-                        <th style="width: 120px;">Tháng/Năm</th>
+                        <th>HÓA ĐƠN</th>
                         <th style="width: 300px;"> Dụng cụ / Vật tư</th>
                         <th>Nhân viên</th>
                         <th>Chi chú duyệt</th>
@@ -45,9 +44,9 @@ $currentMonth = $hFunction->currentMonth();
                     </tr>
                     <tr>
                         <td class="text-center qc-color-red"></td>
-                        <td></td>
                         <td style="padding: 0;">
-                            <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
+                            <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                    style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                 <option value="100" @if($monthFilter == 100) selected="selected" @endif>Tất cả</option>
                                 @for($m =1;$m<= 12; $m++)
                                     <option value="{!! $m !!}"
@@ -56,7 +55,8 @@ $currentMonth = $hFunction->currentMonth();
                                     </option>
                                 @endfor
                             </select>
-                            <select class="cbYearFilter col-sx-8 col-sm-8 col-md-8 col-lg-8" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
+                            <select class="cbYearFilter col-sx-8 col-sm-8 col-md-8 col-lg-8"
+                                    style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                 <option value="100" @if($yearFilter == 100) selected="selected" @endif>Tất cả</option>
                                 @for($y =2017;$y<= 2050; $y++)
                                     <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
@@ -74,7 +74,7 @@ $currentMonth = $hFunction->currentMonth();
                                 @if($hFunction->checkCount($dataListStaff))
                                     @foreach($dataListStaff as $staff)
                                         <option @if($staff->staffId() == $staffFilterId) selected="selected"
-                                                @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                                @endif  value="{!! $staff->staffId() !!}">{!! $staff->fullName() !!}</option>
                                     @endforeach
                                 @endif
                             </select>
@@ -113,6 +113,7 @@ $currentMonth = $hFunction->currentMonth();
                         @foreach($dataImport as $import)
                             <?php
                             $importId = $import->importId();
+                            $image = $import->image();
                             $importDate = $import->importDate();
                             $companyImportId = $import->companyId();
                             $confirmStatus = $import->checkConfirm();
@@ -121,6 +122,8 @@ $currentMonth = $hFunction->currentMonth();
                             $dataImportDetail = $import->infoDetailOfImport();
                             #anh hoa don
                             $dataImportImage = $import->importImageInfoOfImport();
+                            # nguoi nhap
+                            $dataImportStaff = $import->staffImport;
                             ?>
                             <tr class="@if(!$import->checkExactlyStatus()) danger  @else @if($n_o%2 == 1) info @endif @endif "
                                 data-object="{!! $importId !!}">
@@ -128,20 +131,30 @@ $currentMonth = $hFunction->currentMonth();
                                     {!! $n_o += 1 !!}
                                 </td>
                                 <td style="padding: 0;">
-                                    @foreach($dataImportImage as $importImage)
-                                        <a class="qc-link" href="{!! route('qc.work.pay.import.get.view.get',$importId) !!}">
-                                            <img class="qc-link" alt="..." style="width: 150px;"
-                                                 src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                        </a>
-                                    @endforeach
-                                </td>
-                                <td>
-                                    <a class="qc-link-green"
-                                       href="{!! route('qc.work.pay.import.get.view.get',$importId) !!}">
-                                        {!! date('d-m-Y', strtotime($importDate)) !!}
-                                        <br/>
-                                        <i class="glyphicon glyphicon-eye-open"></i>
-                                    </a>
+                                    <div class="media">
+                                        <div class="pull-left" href="#">
+                                            <div class="text-center" style="width: 150px;">
+                                                @if(!$hFunction->checkEmpty($image))
+                                                    <a href="{!! route('qc.work.pay.import.get.view.get',$importId) !!}">
+                                                        <img class="media-object qc-link" alt="..."
+                                                             style="width: 150px;"
+                                                             src="{!! $import->pathFullImage($image) !!}">
+                                                    </a>
+
+                                                @else
+                                                    <span style=" background-color: red; color: yellow;">Không có Ảnh HĐ</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <a class="qc-link-green"
+                                               href="{!! route('qc.work.pay.import.get.view.get',$importId) !!}">
+                                                {!! date('d-m-Y', strtotime($importDate)) !!}
+                                                <br/>
+                                                <i class="glyphicon glyphicon-eye-open"></i>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
                                     @if($hFunction->checkCount($dataImportDetail))
@@ -164,7 +177,17 @@ $currentMonth = $hFunction->currentMonth();
                                     @endif
                                 </td>
                                 <td>
-                                    {!! $import->staffImport->fullName() !!}
+                                    <div class="media">
+                                        <a class="pull-left" href="#">
+                                            <img class="media-object"
+                                                 style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                 src="{!! $dataImportStaff->pathAvatar($dataImportStaff->image()) !!}">
+                                        </a>
+
+                                        <div class="media-body">
+                                            <h5 class="media-heading">{!! $dataImportStaff->fullName() !!}</h5>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
                                     <em class="qc-color-grey">{!! $import->confirmNote() !!}</em>
@@ -216,13 +239,13 @@ $currentMonth = $hFunction->currentMonth();
                         @endforeach
                     @else
                         <tr>
-                            <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="9">
+                            <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="8">
                                 <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                             </td>
                         </tr>
                     @endif
                     <tr>
-                        <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="9">
+                        <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="8">
                             <div class="row">
                                 <div class="text-center qc-padding-top-10 qc-padding-bot-10 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     {!! $hFunction->page($dataImport) !!}

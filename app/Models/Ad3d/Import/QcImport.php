@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcImport extends Model
 {
     protected $table = 'qc_import';
-    protected $fillable = ['import_id', 'importDate', 'confirmDate', 'confirmStatus', 'confirmNote', 'payStatus', 'exactlyStatus', 'created_at', 'company_id', 'confirmStaff_id', 'importStaff_id'];
+    protected $fillable = ['import_id', 'image', 'importDate', 'confirmDate', 'confirmStatus', 'confirmNote', 'payStatus', 'exactlyStatus', 'created_at', 'company_id', 'confirmStaff_id', 'importStaff_id'];
     protected $primaryKey = 'import_id';
     public $timestamps = false;
 
@@ -19,12 +19,29 @@ class QcImport extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm mới ----------
+    # cap nhat anh hoa don phien ban cu
+    public function checkAutoUpdateImage()
+    {
+        $hFunction = new \Hfunction();
+        $modelImportImage = new QcImportImage();
+        $dataImportImage = $modelImportImage->getInfo();
+        if ($hFunction->checkCount($dataImportImage)) {
+            foreach ($dataImportImage as $importImage) {
+                $name = $importImage->name();
+                $importId = $importImage->importId();
+                if (empty($this->image($importId)[0])) {
+                   $this->updateImage($importId, $name);
+                }
+            }
+        }
+    }
 
     // insert
-    public function insert($importDate, $companyId, $confirmStaffId = null, $importStaffId)
+    public function insert($image = null, $importDate, $companyId, $confirmStaffId = null, $importStaffId)
     {
         $hFunction = new \Hfunction();
         $modelImport = new QcImport();
+        $modelImport->image = $image;
         $modelImport->importDate = $importDate;
         $modelImport->company_id = $companyId;
         $modelImport->confirmStaff_id = $confirmStaffId;
@@ -43,7 +60,14 @@ class QcImport extends Model
     {
         return $this->lastId;
     }
-
+    # cap nhat anh hoa don
+    public function updateImage($importId, $image)
+    {
+        return QcImport::where('import_id', $importId)->update([
+            'image' => $image
+        ]);
+        # PHAI XOA ANH CU - CAP NHAT SAU
+    }
     // xác nhận
     public function confirmImport($importId, $payStatus, $exactlyStatus, $confirmStaffId, $confirmNote = null)
     {
@@ -74,12 +98,60 @@ class QcImport extends Model
     {
         return QcImport::where('import_id', $this->checkIdNull($importId))->delete();
     }
+
+    #----------- update ----------
+    public function rootPathFullImage()
+    {
+        return 'public/images/import-image/full';
+    }
+
+    public function rootPathSmallImage()
+    {
+        return 'public/images/import-image/small';
+    }
+
+    //thêm hình ảnh
+    public function uploadImage($file, $imageName, $size = 500)
+    {
+        $hFunction = new \Hfunction();
+        $pathSmallImage = $this->rootPathSmallImage();
+        $pathFullImage = $this->rootPathFullImage();
+        if (!is_dir($pathFullImage)) mkdir($pathFullImage);
+        if (!is_dir($pathSmallImage)) mkdir($pathSmallImage);
+        return $hFunction->uploadSaveByFileName($file, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $size);
+    }
+
+    //Xóa ảnh
+    public function dropImage($imageName)
+    {
+        unlink($this->rootPathSmallImage() . '/' . $imageName);
+        unlink($this->rootPathFullImage() . '/' . $imageName);
+    }
+
+    public function pathSmallImage($image = null)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset('public/images/import-image/small/' . $image);
+        }
+    }
+
+    public function pathFullImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathFullImage() . '/' . $image);
+        }
+    }
     //========== ========= ========= RELATION ========== ========= =========='
     //---------- nhap kho -----------
     public function companyStore()
     {
         return $this->hasMany('App\Models\Ad3d\CompanyStore\QcCompanyStore', 'import_id', 'import_id');
     }
+
     //---------- nhân viên nhập -----------
     public function staffImport()
     {
@@ -261,7 +333,8 @@ class QcImport extends Model
     }
 
     # lay 1 hinh anh - tat tinh nang cho up nhieu anh hoa don
-    public function getOneImportImage($importId=null){
+    public function getOneImportImage($importId = null)
+    {
         $modelImportImage = new QcImportImage();
         return $modelImportImage->oneInfoOfImport($this->checkIdNull($importId));
     }
@@ -365,11 +438,15 @@ class QcImport extends Model
         return $this->import_id;
     }
 
+    public function image($importId = null)
+    {
+        return $this->pluck('image', $importId);
+    }
+
     public function importDate($importId = null)
     {
         return $this->pluck('importDate', $importId);
     }
-
 
     public function confirmDate($importId = null)
     {
@@ -446,7 +523,7 @@ class QcImport extends Model
     public function checkExactlyStatus($importId = null)
     {
         $exactlyStatus = $this->exactlyStatus($importId);
-        $exactlyStatus = (is_int($exactlyStatus)) ?$exactlyStatus:$exactlyStatus[0] ;
+        $exactlyStatus = (is_int($exactlyStatus)) ? $exactlyStatus : $exactlyStatus[0];
         return ($exactlyStatus == 0) ? false : true;
     }
 }

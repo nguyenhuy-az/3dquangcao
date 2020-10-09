@@ -89,7 +89,7 @@ class TransfersController extends Controller
             'accessObject' => 'transfers',
             'subObject' => 'transferTransfer'
         ];
-        $dataStaffReceive = $modelStaff->getInfoActivityOfListCompanyAndDepartment([$companyLoginId], $modelDepartment->treasurerDepartmentId());
+        $dataStaffReceive = $dataCompanyLogin->staffInfoActivityOfTreasurerStaff([$companyLoginId], $modelDepartment->treasurerDepartmentId());
         return view('ad3d.finance.transfers.transfers.add', compact('modelStaff', 'dataStaffReceive', 'dataAccess'));
     }
 

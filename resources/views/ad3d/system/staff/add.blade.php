@@ -1,4 +1,4 @@
-<?php
+    <?php
 /**
  * Created by PhpStorm.
  * User: HUY
@@ -11,6 +11,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$dataCompanyLogin = $modelStaff->companyLogin();
 $companyLoginId = $dataStaffLogin->companyId();
 ?>
 @extends('ad3d.system.staff.index')
@@ -22,7 +23,7 @@ $companyLoginId = $dataStaffLogin->companyId();
             </a>
         </div>
         <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <h3>THÊM NHÂN VIÊN</h3>
+            <h3 style="color: red;">THÊM NHÂN VIÊN</h3>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <form id="frmAdd" class="frmAdd" name="frmAdd" role="form" method="post" enctype="multipart/form-data"
@@ -156,22 +157,9 @@ $companyLoginId = $dataStaffLogin->companyId();
                                     <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                 </label>
                                 <select class="form-control" name="cbCompany">
-                                    @if($dataStaffLogin->checkRootManage())
-                                        <option value="">
-                                            Chọn công ty
-                                        </option>
-                                        @if($hFunction->checkCount($dataCompany))
-                                            @foreach($dataCompany as $company)
-                                                <option value="{!! $company->companyId() !!}">
-                                                    {!! $company->name() !!}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                    @else
-                                        <option value="{!! $companyLoginId !!}">
-                                            {!! $modelCompany->name($companyLoginId)[0] !!}
-                                        </option>
-                                    @endif
+                                    <option value="{!! $companyLoginId !!}">
+                                        {!! $dataCompanyLogin->name() !!}
+                                    </option>
                                 </select>
                             </div>
                         </div>

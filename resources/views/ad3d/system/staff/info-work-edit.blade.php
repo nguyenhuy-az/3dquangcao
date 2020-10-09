@@ -80,13 +80,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                     <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                 </label>
                 <select class="form-control" name="cbCompany">
-                    @if($hFunction->checkCount($dataCompany))
-                        @foreach($dataCompany as $company)
-                            <option value="{!! $company->companyId() !!}"
-                                    @if($company->companyId() == $companyId ) selected="true" @endif >{!! $company->name() !!}</option>
-                        @endforeach
-                    @endif
-
+                    <option value="{!! $companyId !!}">{!! $companyName !!}</option>
                 </select>
             </div>
         </div>

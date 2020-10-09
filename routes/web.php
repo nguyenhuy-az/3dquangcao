@@ -865,7 +865,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         # lay form nhan vat tu
         Route::get('add', ['as' => 'qc.work.import.add.get', 'uses' => 'Work\Import\ImportController@getAdd']);
         # them hinh anh hoa don
-        Route::get('add/image', ['as' => 'qc.work.import.add.image.get', 'uses' => 'Work\Import\ImportController@getAddImage']);
+        ////Route::get('add/image', ['as' => 'qc.work.import.add.image.get', 'uses' => 'Work\Import\ImportController@getAddImage']);
         # them vat tu / dung cu
         Route::get('add/object', ['as' => 'qc.work.import.add.object.get', 'uses' => 'Work\Import\ImportController@getAddObject']);
         # kiem tra goi y nhap
@@ -875,7 +875,10 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
         // xác nhận thanh toán
         Route::get('confirm-pay/{importId?}', ['as' => 'qc.work.import.confirm_pay.get', 'uses' => 'Work\Import\ImportController@getConfirmPay']);
-        // xóa
+        # cap nhat anh hoa don
+        Route::get('update-image/{importId?}', ['as' => 'qc.work.import.image.update.get', 'uses' => 'Work\Import\ImportController@getUpdateImage']);
+        Route::post('update-image/{importId?}', ['as' => 'qc.work.import.image.update.post', 'uses' => 'Work\Import\ImportController@postUpdateImage']);
+        # Huy hoa don
         Route::get('delete/{importId?}', ['as' => 'qc.work.import.delete.get', 'uses' => 'Work\Import\ImportController@deleteImport']);
 
         Route::get('/{dayFilter?}/{monthFilter?}/{yearFilter?}/{payStatusFilter?}', ['as' => 'qc.work.import.get', 'uses' => 'Work\Import\ImportController@index']);
@@ -1092,6 +1095,10 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
         # thong ke
         Route::group(['prefix' => 'statistical'], function () {
+            # nop tien cho thu quy cap quan ly
+            Route::get('transfers/', ['as' => 'qc.work.money.statistical.transfers.get', 'uses' => 'Work\Money\Statistical\MoneyStatisticalController@getTransfers']);
+            Route::post('transfers/', ['as' => 'qc.work.money.statistical.transfers.post', 'uses' => 'Work\Money\Statistical\MoneyStatisticalController@postTransfers']);
+
             Route::get('/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.statistical.get', 'uses' => 'Work\Money\Statistical\MoneyStatisticalController@index']);
         });
     });

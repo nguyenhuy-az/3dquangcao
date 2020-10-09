@@ -30,8 +30,6 @@ class StaffController extends Controller
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelDepartment = new QcDepartment();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
         $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
@@ -70,7 +68,6 @@ class StaffController extends Controller
     public function getAdd()
     {
         $modelStaff = new QcStaff();
-        $modelCompany = new QcCompany();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $dataDepartment = $modelDepartment->getInfo();
@@ -79,8 +76,7 @@ class StaffController extends Controller
             'accessObject' => 'staff',
             'subObject' => 'staffOn'
         ];
-        $dataCompany = $modelCompany->getInfo();
-        return view('ad3d.system.staff.add', compact('modelStaff', 'modelCompany', 'dataCompany', 'dataDepartment', 'dataRank', 'dataAccess'));
+        return view('ad3d.system.staff.add', compact('modelStaff', 'dataDepartment', 'dataRank', 'dataAccess'));
     }
 
     public function getAddDepartment()
@@ -274,15 +270,13 @@ class StaffController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        $modelCompany = new QcCompany();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
-        $dataCompany = $modelCompany->getInfo();
         $dataDepartment = $modelDepartment->getInfo();
         $dataStaff = $modelStaff->getInfo($staffId);
         $dataRank = $modelRank->getInfo();
         if ($hFunction->checkCount($dataStaff)) {
-            return view('ad3d.system.staff.info-work-edit', compact('modelStaff', 'modelRank', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank'));
+                return view('ad3d.system.staff.info-work-edit', compact('modelStaff', 'modelRank', 'dataStaff', 'dataDepartment', 'dataRank'));
         }
     }
 

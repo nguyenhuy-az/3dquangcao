@@ -106,6 +106,23 @@ var qc_work_import = {
             qc_master_submit.ajaxHasReload(href, '#qc_master', false);
         }
     },
+    image: {
+        updateGet: function (href) {
+            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+        },
+        updateSave: function (frm) {
+            var img = $(frm).find('.txtImportImage');
+            if (qc_main.check.inputNull(img, 'PHẢI CHỌN HÌNH ẢNH')) {
+                img.focus();
+                return false;
+            } else {
+                if (confirm('Tôi đồng cập nhật ảnh hóa đơn này?')) {
+                    qc_master_submit.ajaxFormHasReload(frm, '', false);
+                    qc_main.scrollTop();
+                }
+            }
+        }
+    },
     confirmPay: function (href) {
         if (confirm('Tôi đã được thanh toán hóa đơn này')) {
             qc_master_submit.ajaxHasReload(href, '#qc_master', false);
@@ -133,15 +150,6 @@ $(document).ready(function () {
     });
 });
 $(document).ready(function () {
-    //----- -------------- thêm hình ảnh
-    $('body').on('click', '#frm_work_import_add .qc_work_import_add_image', function () {
-        var href = $(this).data('href');
-        qc_work_import.add.addImage($(this).data('href'));
-    });
-    $('body').on('click', '#frm_work_import_add .qc_work_import_image_add .qc_delete', function () {
-        $(this).parents('.qc_work_import_image_add').remove();
-    });
-
     //============= ===========  them vat tu / dụng cụ ============= ====================
     $('body').on('click', '#frm_work_import_add .qc_work_import_add_object', function () {
         qc_work_import.add.addObject($(this).data('href'));
@@ -223,7 +231,13 @@ $(document).ready(function () {
     $('body').on('click', '.qc_work_import_wrap .qc_work_import_confirm_pay_act', function () {
         qc_work_import.confirmPay($(this).data('href'));
     });
-
+    // ---------- ---------- cap nhat anh hoa dơn ---------- ----------
+    $('.qc_work_import_wrap').on('click', '.qc_work_import_update_image_get', function () {
+        qc_work_import.image.updateGet($(this).data('href'));
+    });
+    $('body').on('click', '.qc_frm_import_update_image .qc_save', function () {
+        qc_work_import.image.updateSave($(this).parents('.qc_frm_import_update_image'));
+    });
     //xóa
     $('body').on('click', '.qc_work_import_wrap .qc_work_import_delete', function () {
         qc_work_import.delete($(this).data('href'));

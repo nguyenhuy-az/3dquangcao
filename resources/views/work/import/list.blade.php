@@ -24,24 +24,22 @@ $currentMonth = $hFunction->currentMonth();
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
-                                <th style="width: 20px;"></th>
-                                <th>Hóa đơn</th>
-                                <th style="width: 190px;">Ngày chi</th>
+                                <th style="width: 20px;">STT</th>
+                                <th>HÓA ĐƠN</th>
                                 <th style="width: 300px;">
                                     Vật tư / Dụng cụ
                                 </th>
                                 <th class="text-center">Thanh toán</th>
-                                <th class="text-center">Duyệt</th>
-                                <th>Chi chú duyệt</th>
+                                <th>Duyệt</th>
                                 <th class="text-right">Số tiền</th>
                                 <th class="text-right">Đã thanh toán</th>
                                 <th class="text-right">Chưa thanh toán</th>
                             </tr>
                             <tr>
                                 <td></td>
-                                <td></td>
                                 <td style="padding: 0 !important;">
-                                    <select class="qc_work_import_day_filter" style="height: 30px;"
+                                    <select class="qc_work_import_day_filter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                            style="padding: 0; height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if($dayFilter == null) selected="selected" @endif>
                                             Tất cả
@@ -52,7 +50,8 @@ $currentMonth = $hFunction->currentMonth();
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_import_month_filter" style="height: 30px;"
+                                    <select class="qc_work_import_month_filter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                            style="padding: 0; height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả
@@ -64,7 +63,8 @@ $currentMonth = $hFunction->currentMonth();
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_import_year_filter" style="height: 30px;"
+                                    <select class="qc_work_import_year_filter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                            style="padding: 0; height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả
@@ -93,7 +93,6 @@ $currentMonth = $hFunction->currentMonth();
                                         </option>
                                     </select>
                                 </td>
-                                <td class="text-center"></td>
                                 <td class="text-right"></td>
                                 <td class="text-right"></td>
                                 <td class="text-right"></td>
@@ -109,6 +108,8 @@ $currentMonth = $hFunction->currentMonth();
                                 @foreach($dataImport as $import)
                                     <?php
                                     $importId = $import->importId();
+                                    $image = $import->image();
+                                    $confirmNote = $import->confirmNote();
                                     $importDate = $import->importDate();
                                     $totalMoneyOfImport = $import->totalMoneyOfImport();
                                     $sumMoney = $sumMoney + $totalMoneyOfImport;
@@ -121,35 +122,51 @@ $currentMonth = $hFunction->currentMonth();
                                         $moneyUnPaid = $totalMoneyOfImport;
                                         $sumUnPaid = $sumUnPaid + $moneyUnPaid;
                                     }
+                                    # trang thai duyet
+                                    $checkConfirmStatus = $import->checkConfirm();
                                     # thong tin chi tiet nhap
                                     $dataImportDetail = $import->infoDetailOfImport();
-                                    #anh hoa don
-                                    $dataImportImage = $import->importImageInfoOfImport();
                                     ?>
                                     <tr class="@if(!$import->checkExactlyStatus()) danger  @else @if($n_o%2 == 1) info @endif @endif">
                                         <td class="text-center">
                                             {!! $n_o = $n_o + 1 !!}
                                         </td>
                                         <td>
-                                            @foreach($dataImportImage as $importImage)
-                                                <img class="qc-link" alt="..." style="width: 150px;"
-                                                     src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            <a class="qc-link-green"
-                                               href="{!! route('qc.work.import.view.get',$importId) !!}">
-                                                {!! date('d-m-Y', strtotime($importDate)) !!}
-                                                <br/>
-                                                <i class="glyphicon glyphicon-eye-open"></i>
-                                            </a>
-                                            @if(!$import->checkConfirm())
-                                                <span>&nbsp | &nbsp</span>
-                                                <a class="qc_work_import_delete qc-link-red-bold"
-                                                   data-href="{!! route('qc.work.import.delete.get',$importId) !!}">
-                                                    Hủy
-                                                </a>
-                                            @endif
+                                            <div class="media">
+                                                <div class="pull-left" href="#">
+                                                    <div class="text-center" style="width: 150px;">
+                                                        @if(!$hFunction->checkEmpty($image))
+                                                            <img class="media-object qc-link" alt="..."
+                                                                 style="width: 150px;" src="{!! $import->pathFullImage($image) !!}">
+                                                        @else
+                                                            Không có Ảnh HĐ
+                                                        @endif
+                                                        @if(!$checkConfirmStatus)
+                                                            <br/>
+                                                            <a class="qc_work_import_update_image_get qc-link-red-bold"
+                                                               data-href="{!! route('qc.work.import.image.update.get',$importId) !!}">
+                                                                CẬP NHẬT ẢNH ĐH
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                </div>
+
+                                                <div class="media-body">
+                                                    <a class="qc-link-green"
+                                                       href="{!! route('qc.work.import.view.get',$importId) !!}">
+                                                        {!! date('d-m-Y', strtotime($importDate)) !!}
+                                                        <br/>
+                                                        <i class="glyphicon glyphicon-eye-open"></i>
+                                                    </a>
+                                                    @if(!$checkConfirmStatus)
+                                                        <span>&nbsp | &nbsp</span>
+                                                        <a class="qc_work_import_delete qc-link-red-bold"
+                                                           data-href="{!! route('qc.work.import.delete.get',$importId) !!}">
+                                                            HỦY
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             @if($hFunction->checkCount($dataImportDetail))
@@ -180,7 +197,7 @@ $currentMonth = $hFunction->currentMonth();
                                                         <a class="qc_work_import_confirm_pay_act qc-link"
                                                            style="background-color: red; padding: 3px; color: yellow !important;"
                                                            data-href="{!! route('qc.work.import.confirm_pay.get',$importId) !!}">
-                                                            Xác nhận thanh toán
+                                                            XÁC NHẬN THANH TOÁN
                                                         </a>
                                                     @endif
                                                 @else
@@ -191,15 +208,16 @@ $currentMonth = $hFunction->currentMonth();
                                             @endif
 
                                         </td>
-                                        <td class="text-center" style="color: grey;">
-                                            @if($import->checkConfirm())
+                                        <td>
+                                            @if($checkConfirmStatus)
                                                 <em>Đã duyệt</em>
                                             @else
-                                                <em>Chưa duyệt</em>
+                                                <em style="color: grey;">Chưa duyệt</em>
                                             @endif
-                                        </td>
-                                        <td>
-                                            <em class="qc-color-grey">{!! $import->confirmNote() !!}</em>
+                                            @if(!empty($confirmNote))
+                                                <br/>
+                                                <span>{!! $confirmNote !!}</span>
+                                            @endif
                                         </td>
                                         <td class="text-right">
                                             <span style="color: blue;">
@@ -216,36 +234,26 @@ $currentMonth = $hFunction->currentMonth();
                                 @endforeach
                                 <tr style="border-top: 2px solid brown;">
                                     <td class="text-right qc-color-red"
-                                        style="background-color: whitesmoke;" colspan="7"></td>
+                                        style="background-color: whitesmoke;" colspan="5"></td>
                                     <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($sumMoney)  !!}
+                                        <b>{!! $hFunction->currencyFormat($sumMoney)  !!}</b>
                                     </td>
                                     <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($sumPaid)  !!}
+                                        <b>{!! $hFunction->currencyFormat($sumPaid)  !!}</b>
                                     </td>
                                     <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($sumUnPaid)  !!}
+                                        <b>{!! $hFunction->currencyFormat($sumUnPaid)  !!}</b>
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-right" colspan="10">
+                                    <td class="text-right" colspan="8">
                                         <em class="qc-color-red">Không có thông tin mua</em>
                                     </td>
                                 </tr>
                             @endif
                         </table>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                        Về trang trước
-                    </a>
-                    <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
-                        Về trang chủ
-                    </a>
                 </div>
             </div>
         </div>

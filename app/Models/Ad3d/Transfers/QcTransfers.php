@@ -278,7 +278,7 @@ class QcTransfers extends Model
         }
     }
 
-# tong tien da nhan va da xac nhan tu tien thu don hang cua 1 NV
+    # tong tien da nhan va da xac nhan tu tien thu don hang cua 1 NV
     public function totalMoneyReceivedFromOrderPayOfStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
@@ -288,7 +288,7 @@ class QcTransfers extends Model
         }
     }
 
-# tong tien da nhan va da xac nhan tu dau tu cua 1 NV
+    # tong tien da nhan va da xac nhan tu dau tu cua 1 NV
     public function totalMoneyReceivedFromInvestmentOfStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {

@@ -136,6 +136,11 @@ class QcImportImage extends Model
         return $this->pluck('created_at', $imageId);
     }
 
+    public function importId($imageId = null)
+    {
+        return $this->pluck('import_id', $imageId);
+    }
+
     // get path image
     public function pathSmallImage($image = null)
     {

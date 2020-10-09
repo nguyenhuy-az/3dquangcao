@@ -97,27 +97,17 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
-                        {{--<div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <i class="glyphicon glyphicon-pencil qc-color-green"></i>
-                                <span class="qc-color-red qc-font-size-16">Ảnh hóa đơn</span>
-                            </div>
-                        </div>--}}
                         <div class="row">
-                            <div id="qc_work_import_add_image_wrap" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                @include('work.import.add-image')
+                            <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10" style="overflow: hidden;">
+                                <label>Chọn ảnh:</label>
+                                <input class="txtImportImage"onclick="$(this).click();" type="file" name="txtImportImage" >
                             </div>
-                        </div>
-                        {{--tat tinh nang them nhieu anh hoa don--}}
-                        {{--<div class="row">
-                            <div class="qc-padding-top-5 qc-border-none text-left col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                <a class="qc_work_import_add_image qc-link-green qc-font-size-12"
-                                   data-href="{!! route('qc.work.import.add.image.get') !!}">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    THÊM ẢNH HOÁ ĐƠN
+                            <div class="text-right col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                                <a class="qc_delete qc-link-red" data-href="">
+                                    <i class="qc-font-size-20 glyphicon glyphicon-remove"></i>
                                 </a>
                             </div>
-                        </div>--}}
+                        </div>
                     </div>
                 </div>
                 <div class="row">
