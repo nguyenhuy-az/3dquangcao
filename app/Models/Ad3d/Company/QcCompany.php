@@ -8,6 +8,7 @@ use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\Order\QcOrder;
+use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
 use App\Models\Ad3d\Payment\QcPayment;
@@ -590,14 +591,81 @@ class QcCompany extends Model
         $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyId]));
         return $modelTimekeepingProvisional->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->get();
     }
-    #============ =========== ============ THONG KE DOANH THU ============= =========== ==========
-    # thong ke tong tien dang giua cua 1 thu quy cap nhan vien trong cty
-    public function totalKeepMoneyOfTreasurerStaff($dateFilter = null)
+    #============ =========== ============ THONG KE TIEN CUA 1 NHAN VIEN ============= =========== ==========
+    # thong ke tong tien dang giua cua 1 thu quy trong cty -
+    public function totalKeepMoneyOfTreasurerStaff($staffId, $dateFilter = null)
     {
-        if (!empty($dateFilter)) {
-
-        }
+        $totalReceiveMoney = 0;
+        $totalPaymentMoney = 0;
+        //-------- Nhan
+        # tien nhan tu bo phan kinh doanh thu cua don hang
+        $totalReceiveMoney = $totalReceiveMoney + $this->totalReceiveMoneyOfTreasurerFromBusiness($staffId, $dateFilter);
+        # nhan tien dau tu - xac nhan
+        $totalReceiveMoney = $totalReceiveMoney + $this->totalReceiveMoneyOfTreasurerFromTreasurerManage($staffId, $dateFilter);
+        //------- Chi
+        # tong tien thanh toan vat tu da xac nhan
+        $totalPaymentMoney = $totalPaymentMoney + $this->totalMoneyConfirmedImportOfTreasurer($staffId, $dateFilter);
+        # tong tien chi hoat dong da xac nhan
+        $totalPaymentMoney = $totalPaymentMoney + $this->totalMoneyConfirmedPayActivityOfTreasurer($staffId, $dateFilter);
+        # tong tien thanh toan luong da xac nhan
+        $totalPaymentMoney = $totalPaymentMoney + $this->totalMoneyConfirmedSalaryPayOfTreasurer($staffId, $dateFilter);
+        # tong tien ung luong da xac nhan
+        $totalPaymentMoney = $totalPaymentMoney + $this->totalMoneyConfirmedSalaryBeforePayOfTreasurer($staffId, $dateFilter);
+        # tong tien tra lai khi huy don hang
+        $totalPaymentMoney = $totalPaymentMoney + $this->totalMoneyPaidOrderCancelOfTreasurer($staffId, $dateFilter);
+        return $totalReceiveMoney - $totalPaymentMoney;
     }
+
+    # thong ke tien da nhan tu bo phan kinh doanh giao cua 1 thu quy trong cty
+    public function totalReceiveMoneyOfTreasurerFromBusiness($staffId, $dateFilter = null)
+    {
+        $modelTransfer = new QcTransfers();
+        return $modelTransfer->totalMoneyReceivedFromOrderPayOfStaffAndDate($staffId, $dateFilter);
+    }
+
+    # thong ke tien dau tu da nhan tu thu quy cap quan ly, cua 1 thu quy  trong cty
+    public function totalReceiveMoneyOfTreasurerFromTreasurerManage($staffId, $dateFilter = null)
+    {
+        $modelTransfer = new QcTransfers();
+        return $modelTransfer->totalMoneyReceivedFromInvestmentOfStaffAndDate($staffId, $dateFilter);
+    }
+
+    # thong ke tien thanh toan mua vat tu da duoc xac nhan, cua 1 thu quy  trong cty
+    public function  totalMoneyConfirmedImportOfTreasurer($staffId, $dateFilter = null)
+    {
+        $modelImportPay = new QcImportPay();
+        return $modelImportPay->totalMoneyConfirmedOfPayStaffAndDate($staffId, $dateFilter);
+    }
+
+    # thong ke tien chi hoat dong da duoc xac nhan, cua 1 thu quy trong cty
+    public function totalMoneyConfirmedPayActivityOfTreasurer($staffId, $dateFilter = null)
+    {
+        $modelPayActivityDetail = new QcPayActivityDetail();
+        return $modelPayActivityDetail->totalMoneyConfirmedAndInvalidOfStaffAndDate($staffId, $dateFilter);
+    }
+
+    # thong ke tien thanh toan luong da duoc xac nhan, cua 1 thu quy trong cty
+    public function totalMoneyConfirmedSalaryPayOfTreasurer($staffId, $dateFilter = null)
+    {
+        $modelSalaryPay = new QcSalaryPay();
+        return $modelSalaryPay->totalMoneyConfirmedOfStaffAndDate($staffId, $dateFilter);
+    }
+
+    # thong ke tien cho ung luong da duoc xac nhan, cua 1 thu quy trong cty
+    public function totalMoneyConfirmedSalaryBeforePayOfTreasurer($staffId, $dateFilter = null)
+    {
+        $modelSalaryBeforePay = new QcSalaryBeforePay();
+        return $modelSalaryBeforePay->totalMoneyConfirmedOfStaffAndDate($staffId, $dateFilter);
+    }
+
+    # thong ke tien tra lai khi huy don hang
+    public function totalMoneyPaidOrderCancelOfTreasurer($staffId, $dateFilter = null)
+    {
+        $modelOrderCancel = new QcOrderCancel();
+        return $modelOrderCancel->totalPaymentOfStaffAndDate($staffId, $dateFilter);
+    }
+
+    #========= ============== =========== THONG KE CUA 1 CONG TY ==================  ========
 
     # tong tien doanh so
     public function statisticalTotalMoneyOrder($companyId, $dateFilter = null)
@@ -631,6 +699,7 @@ class QcCompany extends Model
         $modelTransfer = new QcTransfers();
         return $modelTransfer->totalMoneyReceivedFromInvestmentOfCompanyAndDate($companyId, $dateFilter);
     }
+
 
     # tong tien da thanh toan cua cong ty theo thoi gian
     public function statisticalTotalPaymentMoney($companyId, $dateFilter = null)

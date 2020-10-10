@@ -9,7 +9,6 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $hFunction = new Hfunction();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-//$dataStaff = $modelStaff->getTreasureInfoActivity(); // người quản lý
 ?>
 @extends('work.money.statistical.index')
 @section('titlePage')

@@ -60,11 +60,11 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                         </select>
                                     </td>
                                     <td style="padding: 0;">
-                                        {{--<a class="qc-link-white-bold btn btn-primary form-control"
+                                        <a class="qc-link-white-bold btn btn-primary form-control"
                                            href="{!! route('qc.work.money.statistical.transfers.get') !!}">
                                             <i class="glyphicon glyphicon-plus"></i>
                                             NỘP TIỀN
-                                        </a>--}}
+                                        </a>
                                     </td>
                                 </tr>
                                 <tr style="background-color: black; color:yellow;">
@@ -118,6 +118,29 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                         </b>
                                     </td>
                                     <td class="text-right"></td>
+                                    <td class="text-right"></td>
+                                    <td class="text-right"></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">
+                                        -
+                                    </td>
+                                    <td>
+                                        <a class="qc-link-red-bold"
+                                           href="{!! route('qc.work.money.transfer.transfer.get',"$monthFilter/$yearFilter") !!}">
+                                            Nộp tiền về công ty
+                                        </a>
+                                        <br/>
+                                        <em class="qc-color-grey">
+                                            Chuyển tiền cho thủ quỹ cấp quản lý
+                                        </em>
+                                    </td>
+                                    <td class="text-right"></td>
+                                    <td class="text-right">
+                                        <b style="color: red;">
+                                            {!! $hFunction->currencyFormat(0)  !!}
+                                        </b>
+                                    </td>
                                     <td class="text-right"></td>
                                     <td class="text-right"></td>
                                 </tr>
@@ -233,7 +256,7 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2" style="background-color: grey;"></td>
+                                    <td colspan="2"></td>
                                     <td class="text-right" style="border-top: 2px solid green;">
                                         <b style="color: green;">
                                             {!! $hFunction->currencyFormat($totalMoneyTransferReceive)  !!}
@@ -254,7 +277,7 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2" class="text-right" style="background-color: grey;">
+                                    <td colspan="2" class="text-right" style="background-color: black;">
                                         <b style="color: yellow; font-size: 12px;">
                                             TỔNG TIỀN ĐANG GIỮ
                                         </b>

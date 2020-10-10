@@ -16,8 +16,9 @@ $totalNotifyNewWorkAllocation = $dataStaffLogin->totalNotifyNewWorkAllocation();
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
             <li @if($objectAccess == 'workAllocation') class="active " @endif>
-                <a class="qc-link" href="{!! route('qc.work.work_allocation.work_allocation.index') !!}"
+                <a class="qc-link-bold" href="{!! route('qc.work.work_allocation.work_allocation.index') !!}"
                    @if($objectAccess == 'workAllocation') style="background-color: whitesmoke;" @endif>
+                    <i class="qc-font-size-16 glyphicon glyphicon-refresh"></i>
                     <label>THI CÔNG SẢN PHẨM</label>
                     @if($totalNotifyNewWorkAllocation > 0)
                         &nbsp;
@@ -36,8 +37,9 @@ $totalNotifyNewWorkAllocation = $dataStaffLogin->totalNotifyNewWorkAllocation();
                 </a>
             </li>--}}
             <li @if($objectAccess == 'workAllocationOrderAllocation') class="active" @endif>
-                <a href="{!! route('qc.work.work_allocation.order_allocation.index') !!}"
+                <a class="qc-link-bold" href="{!! route('qc.work.work_allocation.order_allocation.index') !!}"
                    @if($objectAccess == 'workAllocationOrderAllocation') style="background-color: whitesmoke;" @endif>
+                    <i class="qc-font-size-16 glyphicon glyphicon-refresh"></i>
                     <label>PHỤ TRÁCH ĐƠN HÀNG</label>
                     @if($totalNotifyNewOrderAllocation > 0)
                         &nbsp;
@@ -50,9 +52,10 @@ $totalNotifyNewWorkAllocation = $dataStaffLogin->totalNotifyNewWorkAllocation();
                 $totalNotifyNewOrder = $dataStaffLogin->totalNotifyNewOrder();
                 ?>
                 <li @if($objectAccess == 'workAllocationOrder') class="active" @endif>
-                    <a href="{!! route('qc.work.work_allocation.orders.index') !!}"
+                    <a class="qc-link-bold" href="{!! route('qc.work.work_allocation.orders.index') !!}"
                        @if($objectAccess == 'workAllocationOrder') style="background-color: whitesmoke;"
                        @endif title="Đang cập nhật">
+                        <i class="qc-font-size-16 glyphicon glyphicon-refresh"></i>
                         <label>DANH SÁCH ĐƠN HÀNG</label>
                         @if($totalNotifyNewOrder > 0)
                             &nbsp;

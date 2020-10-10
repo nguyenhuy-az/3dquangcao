@@ -10,6 +10,7 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$currentMonth = date('m');
 if (isset($dataAccess)) {
     $viewLoginObject = $dataAccess['object'];
     //$subObjectLabel = (isset($dataAccess['subObjectLabel'])) ? $dataAccess['subObjectLabel'] : null;
@@ -23,12 +24,14 @@ if (isset($dataAccess)) {
         <ul class="nav nav-tabs" role="tablist">
             <li @if($viewLoginObject == 'timekeeping') class="active" @endif>
                 <a href="{!! route('qc.work.timekeeping.get') !!}" @if($viewLoginObject == 'timekeeping') style="background-color: whitesmoke;" @endif>
-                    <label>Chấm công</label>
+                    <i class="glyphicon glyphicon-refresh qc-font-size-16"></i>
+                    <label>CHẤM CÔNG THÁNG {!! $currentMonth !!}</label>
                 </a>
             </li>
             <li @if($viewLoginObject == 'timekeepingWork') class="active" @endif>
                 <a href="{!! route('qc.work.timekeeping.work.get') !!}" @if($viewLoginObject == 'timekeepingWork') style="background-color: whitesmoke;" @endif>
-                    <label>Thông tin làm việc</label>
+                    <i class="glyphicon glyphicon-refresh qc-font-size-16"></i>
+                    <label>BẢNG LƯƠNG TẠM THÁNG {!! $currentMonth !!}</label>
                 </a>
             </li>
         </ul>

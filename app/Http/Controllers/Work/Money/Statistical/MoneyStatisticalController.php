@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Work\Money\Statistical;
 
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
@@ -60,7 +61,7 @@ class MoneyStatisticalController extends Controller
             # chi hoat dong - da duyet
             $totalMoneyPayActivityDetailOfStaff = $modelPayActivityDetail->totalMoneyConfirmedAndInvalidOfStaffAndDate($loginStaffId, $dateFilter);
 
-            # thanh toan luong - nguoi nhan da xac nhan
+            # thanh toan luong - da xac nhan
             $totalMoneySalaryPayOfStaff = $modelSalaryPay->totalMoneyConfirmedOfStaffAndDate($loginStaffId, $dateFilter);
 
             # chi ung luong luong - da xac nhan
@@ -88,14 +89,17 @@ class MoneyStatisticalController extends Controller
     public function getTransfers()
     {
         $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
         $dataCompanyLogin = $modelStaff->companyLogin();
         $dataAccess = [
             'object' => 'moneyStatistical',
             'subObjectLabel' => 'Thống kê'
         ];
+        $limitTransfers = $modelCompany->totalKeepMoneyOfTreasurerStaff($modelStaff->loginStaffId(), null);
+        echo $limitTransfers;
         # danh sach NV nhan tien la bo phan thu quy cua cty
-        $dataStaffReceiveTransfer = $dataCompanyLogin->staffInfoActivityOfTreasurerManage($dataCompanyLogin->companyId());
-        return view('work.money.statistical.transfers-add', compact('dataAccess', 'modelStaff','dataStaffReceiveTransfer'));
+        //$dataStaffReceiveTransfer = $dataCompanyLogin->staffInfoActivityOfTreasurerManage($dataCompanyLogin->companyId());
+        //return view('work.money.statistical.transfers-add', compact('dataAccess', 'modelStaff','dataStaffReceiveTransfer'));
     }
 
     public function postTransfers()

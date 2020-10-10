@@ -32,44 +32,6 @@ if ($hFunction->checkCount($dataWork)) {
             <div class="qc_timekeeping_container_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12"
                  data-work="{!! $workId !!}">
                 {{-- thông tin khách hàng --}}
-                <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                            <em class="qc-text-under">Tháng:</em>
-                            <b class="qc-color-red">&nbsp; {!! date('m-Y',strtotime($dataWork->fromDate())) !!}</b>
-                        </div>
-                        <div class="text-center col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                            <span class="qc-font-bold"
-                                  style="background-color: red; color: white; padding: 3px; font-size: 1.5em;">
-                                17h30
-                            </span>
-                            <span class="qc-font-bold"
-                                  style="background-color: red; color: yellow; padding: 3px; font-size: 1.5em;">
-                                KHÔNG BÁO ẢNH TIẾN ĐỘ CÔNG VIỆC
-                            </span>
-                            <span class="qc-font-bold"
-                                  style="background-color: red; color: white; padding: 3px; font-size: 1.5em;">
-                                SẼ BỊ PHẠT
-                            </span>
-                        </div>
-                        <div class="text-right col-xs-12 col-sm-12 col-md-3 col-lg-3" style="padding-top: 5px;">
-                            <a class="qc_time_begin_action qc-link-white-bold btn btn-primary"
-                               data-href="{!! route('qc.work.timekeeping.timeBegin.get') !!}">
-                                BÁO GIỜ VÀO
-                            </a>
-                            <span>&nbsp;||&nbsp;</span>
-                            <a class="ac_off_work_action qc-link-green-bold btn btn-default"
-                               data-href="{!! route('qc.work.timekeeping.offWork.get') !!}">
-                                Xin nghỉ
-                            </a>
-                            <span>&nbsp;||&nbsp;</span>
-                            <a class="ac_late_work_action qc-link-green-bold"
-                               data-href="{!! route('qc.work.timekeeping.lateWork.get') !!}">
-                                Xin trễ
-                            </a>
-                        </div>
-                    </div>
-                </div>
                 <div class="qc_timekeeping_contain qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12"
                      data-href-time-end="{!! route('qc.work.timekeeping.timeEnd.get') !!}"
                      data-href-image="{!! route('qc.work.timekeeping.timekeeping_provisional_image.add.get') !!}"
@@ -77,6 +39,42 @@ if ($hFunction->checkCount($dataWork)) {
                     {{-- thong tin lam viec --}}
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
+                            <tr>
+                                <td colspan="2" style="padding: 0;">
+                                    <a class="qc_time_begin_action form-control qc-link-white-bold btn btn-primary"
+                                       data-href="{!! route('qc.work.timekeeping.timeBegin.get') !!}">
+                                        BÁO GIỜ VÀO
+                                    </a>
+                                </td>
+                                <td style="padding: 0;">
+                                    <a class="ac_off_work_action form-control qc-link-green-bold btn btn-default"
+                                       data-href="{!! route('qc.work.timekeeping.offWork.get') !!}">
+                                        XIN NGHỈ
+                                    </a>
+                                </td>
+                                <td style="padding: 0;">
+                                    <a class="ac_late_work_action form-control qc-link-green-bold btn btn-default"
+                                       data-href="{!! route('qc.work.timekeeping.lateWork.get') !!}">
+                                        XIN TRỄ
+                                    </a>
+                                </td>
+                                <td colspan="3" style="padding: 0;">
+                                    <div class="form-control col-sx-12 col-sm-12 col-md-12 col-lg-12" style="background-color: red;">
+                                         <span class="qc-font-bold"
+                                               style="color: white; padding: 3px; font-size: 1.5em;">
+                                            17h30
+                                        </span>
+                                        <span class="qc-font-bold"
+                                              style="color: yellow; padding: 3px; font-size: 1.5em;">
+                                            KHÔNG BÁO ẢNH TIẾN ĐỘ CÔNG VIỆC
+                                        </span>
+                                        <span class="qc-font-bold"
+                                              style="color: white; padding: 3px; font-size: 1.5em;">
+                                            SẼ BỊ PHẠT
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Giờ vào</th>
@@ -158,10 +156,10 @@ if ($hFunction->checkCount($dataWork)) {
                                                 <span>---</span>
                                             @endif
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" style="padding: 0;">
                                             @if($hFunction->checkCount($dataTimekeepingProvisionalImage))
                                                 @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
-                                                    <div style="position: relative; float: left; margin: 5px 10px 5px 10px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                    <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                         <a class="qc_work_allocation_report_image_view qc-link"
                                                            data-href="{!! route('qc.work.timekeeping_provisional.image.get', $timekeepingProvisionalImage->imageId()) !!}">
                                                             <img style="max-width: 100%; max-height: 100%;"

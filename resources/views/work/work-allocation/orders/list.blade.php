@@ -28,70 +28,15 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
         <div class="qc_work_allocation_manage_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.work-allocation.menu',compact('modelStaff'))
 
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top : 10px;">
-                <div class="row">
-                    <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6"
-                         style="padding-left: 0;padding-right: 0;">
-                        <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
-                            <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
-                        </a>
-                        <label class="qc-font-size-20" style="color: red;">ĐƠN HÀNG</label>
-                    </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <h4 style="background-color: red; color: white; margin: 0; padding: 5px;">
+                        QUẢN LÝ THI CÔNG @if($actionStatus) "{!! $dataStaffLogin->lastName() !!}" @endif
+                        PHẢI CHỊU TRÁCH NHIỆM THƯỞNG / PHẠT TRÊN TẤT CẢ ĐƠN HÀNG
+                    </h4>
                 </div>
             </div>
             <div class="qc_work_allocation_activity_contain col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0;">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-                                <h4 style="background-color: red; color: white; margin: 0; padding: 5px;">
-                                    QUẢN LÝ THI CÔNG @if($actionStatus) "{!! $dataStaffLogin->lastName() !!}" @endif
-                                    PHẢI CHỊU TRÁCH NHIỆM THƯỞNG / PHẠT TRÊN TẤT CẢ ĐƠN HÀNG
-                                </h4>
-                            </div>
-                            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                                <select class="cbAllocationManageDayFilter text-right col-xs-3 col-sm-3 col-md-3 col-lg-3"
-                                        style="height: 34px; padding: 0;"
-                                        data-href="{!! $hrefIndex !!}">
-                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
-                                        Tất cả
-                                    </option>
-                                    @for($d =1;$d<= 31; $d++)
-                                        <option value="{!! $d !!}"
-                                                @if((int)$dayFilter == $d) selected="selected" @endif >
-                                            {!! $d !!}
-                                        </option>
-                                    @endfor
-                                </select>
-                                <select class="cbAllocationManageMonthFilter text-right col-xs-3 col-sm-3 col-md-3 col-lg-3"
-                                        style="height: 34px; padding: 0;"
-                                        data-href="{!! $hrefIndex !!}">
-                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
-                                        Tất cả
-                                    </option>
-                                    @for($m =1;$m<= 12; $m++)
-                                        <option value="{!! $m !!}"
-                                                @if((int)$monthFilter == $m) selected="selected" @endif>
-                                            {!! $m !!}
-                                        </option>
-                                    @endfor
-                                </select>
-                                <select class="cbAllocationManageYearFilter text-right col-xs-6 col-sm-6 col-md-6 col-lg-6"
-                                        style="height: 34px; padding: 0;"
-                                        data-href="{!! $hrefIndex !!}">
-                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
-                                        Tất cả
-                                    </option>
-                                    @for($y =2017;$y<= 2050; $y++)
-                                        <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
-                                            {!! $y !!}
-                                        </option>
-                                    @endfor
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="qc_work_allocation_manage_list_content  row">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
@@ -101,11 +46,7 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                 </th>
                                 <th>THI CÔNG</th>
                                 <th style="min-width: 150px;">ĐƠN HÀNG</th>
-                                <th class="text-center">NGÀY NHẬN</th>
-                                <th class="text-center">
-                                    NGÀY GIAO <br/>
-                                    <em style="color: white;">(Hẹn giao)</em>
-                                </th>
+                                <th class="text-center">NGÀY NHẬN/GIAO</th>
                                 <th class="text-center">
                                     NGÀY BÀN GIAO <br/>
                                     <em style="color: white;">(Ngày xác nhận)</em>
@@ -166,8 +107,47 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                         </div>
                                     </div>
                                 </td>
-                                <td class="text-center"></td>
-                                <td></td>
+                                <td class="text-center" style="padding: 0;">
+                                    <select class="cbAllocationManageDayFilter text-right col-xs-3 col-sm-3 col-md-3 col-lg-3"
+                                            style="height: 34px; padding: 0;"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
+                                            Tất cả
+                                        </option>
+                                        @for($d =1;$d<= 31; $d++)
+                                            <option value="{!! $d !!}"
+                                                    @if((int)$dayFilter == $d) selected="selected" @endif >
+                                                {!! $d !!}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <select class="cbAllocationManageMonthFilter text-right col-xs-3 col-sm-3 col-md-3 col-lg-3"
+                                            style="height: 34px; padding: 0;"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                            Tất cả
+                                        </option>
+                                        @for($m =1;$m<= 12; $m++)
+                                            <option value="{!! $m !!}"
+                                                    @if((int)$monthFilter == $m) selected="selected" @endif>
+                                                {!! $m !!}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <select class="cbAllocationManageYearFilter text-right col-xs-6 col-sm-6 col-md-6 col-lg-6"
+                                            style="height: 34px; padding: 0;"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                                            Tất cả
+                                        </option>
+                                        @for($y =2017;$y<= 2050; $y++)
+                                            <option value="{!! $y !!}"
+                                                    @if($yearFilter == $y) selected="selected" @endif>
+                                                {!! $y !!}
+                                            </option>
+                                        @endfor
+                                    </select>
+                                </td>
                                 <td></td>
                                 <td style="padding: 0px;"></td>
                                 <td></td>
@@ -317,9 +297,7 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                         </td>
                                         <td class="text-center">
                                             {!! $hFunction->convertDateDMYFromDatetime($order->receiveDate()) !!}
-                                        </td>
-
-                                        <td class="text-center">
+                                            <br/>
                                             <b>{!! $hFunction->convertDateDMYFromDatetime($order->deliveryDate()) !!}</b>
                                         </td>
                                         <td class="text-center">
@@ -357,18 +335,14 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                                 $dataWorkAllocationReportImage = $order->workAllocationReportImage($orderId, 1);
                                                 ?>
                                                 @if($hFunction->checkCount($dataWorkAllocationReportImage))
-                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                        @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
-                                                            <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
-                                                                <a class="qc_work_allocation_report_image_view qc-link"
-                                                                   title="Click xem chi tiết hình ảnh"
-                                                                   data-href="#">
-                                                                    <img style="max-width: 100%; max-height: 100%;"
-                                                                         src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
-                                                                </a>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
+                                                    @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
+                                                        <a class="qc_work_allocation_report_image_view qc-link"
+                                                           title="Click xem chi tiết "
+                                                           href="{!! route('qc.work.work_allocation.order.construction.get',$orderId) !!}">
+                                                            <img style="float: left; width: 70px; height: 70px; border: 1px solid #d7d7d7;"
+                                                                 src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
+                                                        </a>
+                                                    @endforeach
                                                 @else
                                                     <em class="qc-color-grey">Không có ảnh BC</em>
                                                 @endif
@@ -377,10 +351,14 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfManageRank()) !!}
+                                            <b style="color: blue;">
+                                                {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfManageRank()) !!}
+                                            </b>
                                         </td>
                                         <td class="text-right">
-                                            {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfManageRank()) !!}
+                                            <b style="color: red;">
+                                                {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfManageRank()) !!}
+                                            </b>
                                         </td>
                                         <td>
                                             {!! $order->customer->name() !!}
@@ -388,13 +366,13 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-center" colspan="12">
+                                    <td class="text-center" colspan="11">
                                         {!! $hFunction->page($dataOrder) !!}
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="12">
+                                    <td class="text-center" colspan="11">
                                         <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                     </td>
                                 </tr>
