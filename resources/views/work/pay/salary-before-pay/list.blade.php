@@ -17,18 +17,20 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
 @extends('work.pay.salary-before-pay.index')
 @section('qc_work_pay_salary_before_pay_body')
     <div class="row">
-        <div class="qc_work_pay_salary_before_pay_wrap qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <a class="qc-link-red-bold btn btn-sm" href="{!! route('qc.work.pay.salary_before_pay.add.get') !!}">
-                        + Ứng lương
-                    </a>
-                </div>
-            </div>
+        <div class="qc_work_pay_salary_before_pay_wrap col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_work_pay_salary_before_pay_list row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
+                            <tr>
+                                <td colspan="2" style="padding: 0;">
+                                    <a class="qc-link-red-bold btn btn-default form-control"
+                                       href="{!! route('qc.work.pay.salary_before_pay.add.get') !!}">
+                                        + ỨNG LƯƠNG
+                                    </a>
+                                </td>
+                                <td colspan="4"></td>
+                            </tr>
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th style="width: 170px;">Ngày</th>
@@ -41,9 +43,11 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                             <tr>
                                 <td></td>
                                 <td style="padding: 0;">
-                                    <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px;padding: 0;"
+                                    <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                            style="height: 34px;padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
-                                        <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >Tất cả
+                                        <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >Tất
+                                            cả
                                         </option>
                                         @for($d =1;$d<= 31; $d++)
                                             <option value="{!! $d !!}"
@@ -52,16 +56,19 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px;padding: 0;"
+                                    <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                            style="height: 34px;padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
-                                        <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >Tất cả
+                                        <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                            Tất cả
                                         @for($m = 1; $m <=12; $m++)
                                             <option @if($monthFilter == $m) selected="selected" @endif>
                                                 {!! $m !!}
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px;padding: 0;" data-href="{!! $hrefIndex !!}">
+                                    <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                            style="height: 34px;padding: 0;" data-href="{!! $hrefIndex !!}">
                                         @for($y = 2017; $y <=2050; $y++)
                                             <option @if($yearFilter == $y) selected="selected" @endif>
                                                 {!! $y !!}
@@ -85,6 +92,8 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                                     $money = $salaryBeforePay->money();
                                     $dataWork = $salaryBeforePay->work;
                                     $totalMoney = $totalMoney + $money;
+                                    # nhan vien ung
+                                    $dataReceiveStaff = $dataWork->companyStaffWork->staff;
                                     ?>
                                     <tr data-object="{!! $payId !!}">
                                         <td class="text-center">
@@ -94,11 +103,17 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                                             {!! date('d/m/Y', strtotime($salaryBeforePay->datePay())) !!}
                                         </td>
                                         <td>
-                                            @if(!empty($dataWork->companyStaffWorkId()))
-                                                {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                                            @else
-                                                {!! $dataWork->staff->fullName() !!}
-                                            @endif
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object"
+                                                         style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                         src="{!! $dataReceiveStaff->pathAvatar($dataReceiveStaff->image()) !!}">
+                                                </a>
+
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">{!! $dataReceiveStaff->fullName() !!}</h5>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             {!! $salaryBeforePay->description() !!}
@@ -107,7 +122,8 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                                             @if(!$salaryBeforePay->checkConfirm())
                                                 <em style="color: brown;">Chưa xác nhận</em>
                                                 <span>|</span>
-                                                <a class="qc_edit qc-link-green" data-href="{!! route('qc.work.pay.salary_before_pay.edit.get',$payId) !!}">
+                                                <a class="qc_edit qc-link-green"
+                                                   data-href="{!! route('qc.work.pay.salary_before_pay.edit.get',$payId) !!}">
                                                     <i class="glyphicon glyphicon-pencil" title="Sửa thông tin ứng"></i>
                                                 </a>
                                                 &nbsp;<span>|</span>&nbsp;
@@ -140,17 +156,6 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                             @endif
                         </table>
                     </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                        Về trang trước
-                    </a>
-                    <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
-                        Về trang chủ
-                    </a>
                 </div>
             </div>
         </div>

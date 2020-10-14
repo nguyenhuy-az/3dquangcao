@@ -121,16 +121,26 @@ $workId = $dataWork->workId();
                                         </td>
                                         <td>
                                             <span class="qc-font-bold" style="color: brown;">
-                                                {!! date('d-m-Y ', strtotime($receiveDeadline)) !!}
-                                                </span>
-                                                <span class="qc-font-bold">
-                                                    {!! date('H:i', strtotime($receiveDeadline)) !!}
+                                                {!! date('d-m-Y  ', strtotime($allocationDate)) !!}
                                             </span>
-                                            <br/>
-                                            <a class="qc-link-green-bold"
-                                               href="{!! route('qc.work.work_allocation.work_allocation.detail.get', $allocationId) !!}">
-                                                CHI TIẾT THI CÔNG
-                                            </a>
+                                            <span class="qc-font-bold">
+                                                {!! date('H:i', strtotime($allocationDate)) !!}
+                                            </span>
+                                            @if($workAllocation->checkCancel())
+                                                <br/>
+                                                <em style="color: blue;">Đã hủy</em>
+                                            @else
+                                                @if($hFunction->checkCount($dataWorkAllocationFinish))
+                                                    <br/>
+                                                    <em style="color: grey;">Đã kết thúc</em>
+                                                @else
+                                                    <br/>
+                                                    <a class="qc_work_allocation_report_act qc-link-green-bold"
+                                                       data-href="{!! route('qc.work.work_allocation.work_allocation.report.get',$allocationId) !!}">
+                                                        BÁO CÁO CÔNG VIỆC
+                                                    </a>
+                                                @endif
+                                            @endif
                                             {{--@if($workAllocation->checkViewedNewWorkAllocation($allocationId,$workAllocation->receiveStaffId()))
                                                 <em style="color: grey;"> - Đã xem</em>
                                             @else
@@ -160,29 +170,21 @@ $workId = $dataWork->workId();
                                                     <b>{!! $hFunction->convertDateDMYHISFromDatetime($workAllocationReport->reportDate()) !!}</b>
                                                     <br/>
                                                     <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
-                                                    <br/>
                                                 @endforeach
                                             @else
                                                 <em class="qc-color-grey">Không có báo cáo</em>
-                                                <br/>
                                             @endif
-                                            @if($workAllocation->checkCancel())
-                                                <em style="color: blue;">Đã hủy</em>
-                                            @else
-                                                @if($hFunction->checkCount($dataWorkAllocationFinish))
-                                                    <em style="color: grey;">Đã kết thúc</em>
-                                                @else
-                                                    <a class="qc_work_allocation_report_act qc-link-green-bold"
-                                                       data-href="{!! route('qc.work.work_allocation.work_allocation.report.get',$allocationId) !!}">
-                                                        BÁO CÁO CÔNG VIỆC
-                                                    </a>
-                                                @endif
-                                            @endif
+                                            <br/>
+                                            <a class="qc-link-green-bold"
+                                               href="{!! route('qc.work.work_allocation.work_allocation.detail.get', $allocationId) !!}">
+                                                CHI TIẾT THI CÔNG
+                                            </a>
                                         </td>
                                         <td>
                                             <b class="qc-color-red">{!! $workAllocation->product->productType->name() !!}</b>
+                                            <br/>
                                             <em style="color:grey;">
-                                                - (ĐH: {!! $workAllocation->product->order->name() !!})
+                                                - ĐH: {!! $workAllocation->product->order->name() !!}
                                             </em>
                                             @if(!empty($allocationNote))
                                                 <br/>
@@ -190,11 +192,11 @@ $workId = $dataWork->workId();
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <span class="qc-font-bold" style="color: grey;">
-                                                {!! date('d-m-Y  ', strtotime($allocationDate)) !!}
+                                            <span class="qc-font-bold" style="color: brown;">
+                                                {!! date('d-m-Y ', strtotime($receiveDeadline)) !!}
                                                 </span>
                                                 <span class="qc-font-bold">
-                                                    {!! date('H:i', strtotime($allocationDate)) !!}
+                                                    {!! date('H:i', strtotime($receiveDeadline)) !!}
                                             </span>
                                         </td>
                                         <td class="text-center">

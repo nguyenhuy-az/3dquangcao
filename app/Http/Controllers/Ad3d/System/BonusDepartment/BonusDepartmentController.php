@@ -16,8 +16,6 @@ class BonusDepartmentController extends Controller
         $modelStaff = new QcStaff();
         $modelRank = new QcRank();
         $modelDepartment = new QcDepartment();
-        $modelPunishType = new QcBonusDepartment();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataAccess = [
             'accessObject' => 'bonusDepartment'
         ];
@@ -44,7 +42,7 @@ class BonusDepartmentController extends Controller
         $modelStaff = new QcStaff();
         $modelBonusDepartment = new QcBonusDepartment();
         $txtPercent = $request->input('txtPercent');
-        # khong trung thong tin có san
+        # khong trung thong tin co san
 
         if (!$modelBonusDepartment->existPercentActivityOfDepartmentAndRank($txtPercent, $departmentId, $rankId)) {
             # vo hieu muc thuong cu neu co

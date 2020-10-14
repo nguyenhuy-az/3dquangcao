@@ -2,26 +2,26 @@
 
 namespace App\Models\Ad3d\Company;
 
+use App\Models\Ad3d\BonusDepartment\QcBonusDepartment;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Import\QcImport;
+use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\Order\QcOrder;
+use App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
-use App\Models\Ad3d\Payment\QcPayment;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductTypePrice\QcProductTypePrice;
 use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
-use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\SystemDateOff\QcSystemDateOff;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
-use App\Models\Ad3d\ToolAllocationDetail\QcToolAllocationDetail;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +34,59 @@ class QcCompany extends Model
     public $timestamps = false;
 
     private $lastId;
+
+    //---------- CẬP NHẬT ĐỮ LIỆU CŨ BANG CODE ----------
+    # cap nhat du lieu he thong
+    public function checkAutoUpdateInfo()
+    {
+        # cap nhat ngan sach thuong cua don hang
+        $this->checkAutoUpdateBonusBudget();
+    }
+
+    # cap nhat ngan sach thuong cua don hang
+    public function checkAutoUpdateBonusBudget()
+    {
+        $hFunction = new \Hfunction();
+        $modelDepartment = new QcDepartment();
+        $modelBonusDepartment = new QcBonusDepartment();
+        $modelOrder = new QcOrder();
+        $modelOrderBonusBudget = new QcOrderBonusBudget();
+        # thong tin thuong cua bo phan thi cong cap quan ly
+        $dataBonusDepartment = $modelBonusDepartment->getActivityInfo();
+        # lay danh sach don hang
+        $dataOrder = $modelOrder->get();
+        if ($hFunction->checkCount($dataOrder)) {
+            foreach ($dataOrder as $order) {
+                $orderId = $order->orderId();
+                foreach ($dataBonusDepartment as $bonusDepartment) {
+                    $bonusId = $bonusDepartment->bonusId();
+                    $departmentId = $bonusDepartment->departmentId();
+                    $rankId = $bonusDepartment->rankId();
+                    #chu ap dung moi them vao
+                    if (!$modelOrderBonusBudget->checkExistOrderAndBonusDepartment($orderId, $bonusId)) {
+                        $modelOrderBonusBudget->insert($orderId, $bonusId, $departmentId, $rankId);
+                    }
+                }
+            }
+        }
+    }
+
+    # cap nhat anh hoa don phien ban cu
+    public function checkAutoUpdateImportImage()
+    {
+        $hFunction = new \Hfunction();
+        $modelImportImage = new QcImportImage();
+        $dataImportImage = $modelImportImage->getInfo();
+        if ($hFunction->checkCount($dataImportImage)) {
+            foreach ($dataImportImage as $importImage) {
+                $name = $importImage->name();
+                $importId = $importImage->importId();
+                if (empty($this->image($importId)[0])) {
+                    $this->updateImage($importId, $name);
+                }
+            }
+        }
+    }
 
     #========== ========== ========== THEM && CAP NHAT ========== ========== ==========
     #---------- thêm ----------
@@ -222,6 +275,16 @@ class QcCompany extends Model
     {
         $modelStaff = new QcStaff();
         return $modelStaff->getInfoActivityByListStaffId($this->staffIdOfListCompanyId($listCompanyId));
+    }
+
+    # danh sach tat ca nhan vien BO PHAN THU QUY - dang hoat dong
+    public function staffInfoActivityOfTreasurerDepartment($companyId)
+    {
+        $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->treasurerDepartmentId()]);
+        return $modelStaff->getInfoByListStaffId($listStaffId);
     }
 
     # danh sach nhan vien BO PHAN THU QUY CAP QUA LY- dang hoat dong
@@ -532,6 +595,16 @@ class QcCompany extends Model
     }
 
     #============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
+    # kiem tra thong bao nhan vien kiem tra thong tin truoc khi xuat bang luong - cuoi thang
+    public function checkNotifyForEndOfMonth()
+    {
+        $hFunction = new \Hfunction();
+        $currentDay = $hFunction->currentDay();
+        $totalDayInMonth = $hFunction->totalDayInMonth($hFunction->currentMonth(), $hFunction->currentYear());
+        return (($totalDayInMonth - $currentDay) <= 3) ? true : false;
+    }
+
+    # kiem tra cty co phai cong ty me hay khong
     public function checkRoot($companyId = null)
     {
         $hFunction = new \Hfunction();
@@ -592,7 +665,7 @@ class QcCompany extends Model
         return $modelTimekeepingProvisional->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->get();
     }
     #============ =========== ============ THONG KE TIEN CUA 1 NHAN VIEN ============= =========== ==========
-    # thong ke tong tien dang giua cua 1 thu quy trong cty -
+    # thong ke tong tien dang giua cua 1 thu quy trong cty
     public function totalKeepMoneyOfTreasurerStaff($staffId, $dateFilter = null)
     {
         $totalReceiveMoney = 0;
@@ -613,6 +686,8 @@ class QcCompany extends Model
         $totalPaymentMoney = $totalPaymentMoney + $this->totalMoneyConfirmedSalaryBeforePayOfTreasurer($staffId, $dateFilter);
         # tong tien tra lai khi huy don hang
         $totalPaymentMoney = $totalPaymentMoney + $this->totalMoneyPaidOrderCancelOfTreasurer($staffId, $dateFilter);
+        # tong tien da nop cho cong ty
+        $totalPaymentMoney = $totalPaymentMoney + $this->totalMoneyConfirmedForTreasureManageOfTreasurer($staffId, $dateFilter);
         return $totalReceiveMoney - $totalPaymentMoney;
     }
 
@@ -665,6 +740,12 @@ class QcCompany extends Model
         return $modelOrderCancel->totalPaymentOfStaffAndDate($staffId, $dateFilter);
     }
 
+    # thong ke tien chuyen cho thu quy cap quan ly - nop cong ty
+    public function totalMoneyConfirmedForTreasureManageOfTreasurer($staffId, $dateFilter = null)
+    {
+        $modelTransfers = new QcTransfers();
+        return $modelTransfers->totalMoneyConfirmedTransfersForTreasurerManage($staffId, $dateFilter);
+    }
     #========= ============== =========== THONG KE CUA 1 CONG TY ==================  ========
 
     # tong tien doanh so
@@ -750,5 +831,6 @@ class QcCompany extends Model
         $modelOrderPay = new QcOrderPay();
         return $modelOrderPay->totalOrderPayOfCompanyStaffDate($listCompanyId, $staffId, $dateFilter);
     }
+
 
 }

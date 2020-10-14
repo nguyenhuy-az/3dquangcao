@@ -15,6 +15,11 @@ class QcTransfers extends Model
 
     private $lastId;
 
+    /*
+    transferType = 1; // kinh doanh nop tien cho thu quỹ cap nhan vien
+    transferType = 2; // Thu quy cap quan ly chuyen tien dau tu cho thu quy nhan vien chi hoat dong cong ty
+    transferType = 3; // Thu quy cap nhan vien nop tien cho Thu quy cap quan ly - nop cho cong ty
+    */
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- Insert ----------
 
@@ -189,6 +194,7 @@ class QcTransfers extends Model
 
     }
 
+    // tong tien da giao cua 1 nhan vien
     public function totalMoneyOfTransferStaffAndDate($staffId, $date = null)
     {
         if (!empty($date)) {
@@ -228,6 +234,17 @@ class QcTransfers extends Model
             return QcTransfers::where('transfersStaff_id', $staffId)->where('acceptStatus', 1)->where('confirmReceive', 1)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('acceptStatus', 1)->where('confirmReceive', 1)->sum('money');
+        }
+
+    }
+
+    // tong tien nop cho cong ty cua 1 nhan vien - nop cho thu quy cap quan ly
+    public function totalMoneyConfirmedTransfersForTreasurerManage($staffId, $date = null)
+    {
+        if (!empty($date)) {
+            return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', 1)->where('transferType', 3)->where('transfersDate', 'like', "%$date%")->sum('money');
+        } else {
+            return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', 1)->where('transferType', 3)->sum('money');
         }
 
     }
@@ -298,6 +315,16 @@ class QcTransfers extends Model
         }
     }
 
+    // tong tien da nhan va chua xac nhan cua 1 nhan vien
+    public function sumReceiveUnconfirmedOfStaff($staffId, $date)
+    {
+        if (!empty($date)) {
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', 0)->where('transfersDate', 'like', "%$date%")->count();
+        } else {
+            return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', 0)->count();
+        }
+
+    }
     //---------- chi tiet chuyen tien -----------
     public function transfersDetail()
     {
@@ -335,6 +362,7 @@ class QcTransfers extends Model
             return QcTransfers::wherein('receiveStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->where('transferType', $transfersType)->orderBy('transfersDate', 'DESC')->select('*');
         }
     }
+
     # chon thong tin chuyen tien theo 1 danh sach ma nhan vien / cong ty theo ngay thang
     public function selectInfoByListTransfersStaffAndDate($listStaffId, $companyId, $date, $transfersType)
     {
@@ -420,6 +448,8 @@ class QcTransfers extends Model
             return 'Chuyển doanh thu';
         } elseif ($transferType == 2) {
             return 'Chuyển đầu tư';
+        }elseif($transferType == 3){
+            return 'Nộp tiền lên công ty';
         } else {
             return 'Không xác định';
         }

@@ -114,7 +114,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-7">
                         <div class="table-responsive">
                             <table class="table table-hover">
-                                <tr style="background-color: whitesmoke;">
+                                <tr>
                                     <th colspan="6">
                                         <i class="qc-font-size-16 glyphicon glyphicon-user"></i>
                                         <b style="color: blue; font-size: 1.5em;">PHỤ TRÁCH ĐƠN HÀNG</b>
@@ -439,9 +439,8 @@ $dataProduct = $dataOrder->productActivityOfOrder();
 
         {{-- THI CONG SAN PHAM --}}
         <div class="row">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                 style="background-color: black;color: yellow; font-size: 2em;">
-                <label>PHÂN VIỆC THI CÔNG</label> <label style="color: white;">SẢN PHẨM</label>
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <label style="color: blue;font-size: 1.5em;">PHÂN VIỆC THI CÔNG SẢN PHẨM</label>
             </div>
         </div>
         @if($hFunction->checkCount($dataProduct))
@@ -463,10 +462,12 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                         ?>
                         <div class="row">
                             <div class="table-responsive">
-                                <table class="table" style="border: 1px solid black;">
+                                <table class="table" style="border: 3px solid black;">
                                     <tr>
                                         <td style="width:50px; background-color: #d7d7d7 ;" >
-                                            SP_{!! $sp_n_o = (isset($sp_n_o))?$sp_n_o+1:1 !!}
+                                            <b style="color: red; font-size: 1.5em;">
+                                                SP_{!! $sp_n_o = (isset($sp_n_o))?$sp_n_o+1:1 !!}
+                                            </b>
                                         </td>
                                         <td style="border: 1px solid #d7d7d7;">
                                             <label style="font-size: 1.5em;">{!! ucwords($product->productType->name()) !!}</label>

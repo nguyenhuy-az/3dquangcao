@@ -63,9 +63,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                     <th style="width: 200px;">ĐƠN HÀNG</th>
                                     <th style="width: 200px;">KHÁCH HÀNG</th>
                                     <th class="text-center">
-                                        NGÀY NHẬN
-                                    </th>
-                                    <th class="text-center">
+                                        NGÀY NHẬN <br/>
                                         HẸN GIAO
                                     </th>
                                     <th class="text-center">
@@ -187,7 +185,6 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                             @endfor
                                         </select>
                                     </td>
-                                    <td class="text-center"></td>
                                     <td class="text-center"></td>
                                     <td class="text-center" style="padding: 0px;"> {{--phat trien sau--}}
                                         <select class="qcWorkOrderPaymentStatusFilter form-control"
@@ -375,8 +372,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                             </td>
                                             <td class="text-center">
                                                 <span>{!! date('d/m', strtotime($orderReceiveDate)) !!}</span>
-                                            </td>
-                                            <td class="text-center">
+                                                <br/>
                                                 <b>{!! date('d/m', strtotime($orderDeliveryDate)) !!}</b>
                                             </td>
                                             <td class="text-center">
@@ -472,7 +468,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                         </td>
                                     </tr>--}}
                                     <tr>
-                                        <td class="text-center" colspan="14">
+                                        <td class="text-center" colspan="13">
                                             {!! $hFunction->page($dataOrders) !!}
                                         </td>
                                     </tr>

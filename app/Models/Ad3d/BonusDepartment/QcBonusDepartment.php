@@ -15,8 +15,8 @@ class QcBonusDepartment extends Model
     private $lastId;
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
-    //---------- thêm ----------
-    // insert
+    //---------- THEM ----------
+    # insert
     public function insert($departmentId, $rankId, $percent, $description = null)
     {
         $hFunction = new \Hfunction();
@@ -35,13 +35,13 @@ class QcBonusDepartment extends Model
         }
     }
 
-    // l?y id m?i thêm
+    // lay id moi them
     public function insertGetId()
     {
         return $this->lastId;
     }
 
-    // c?p nh?t thông tin
+    // cap nhat thong tin
     /* public function updateInfo($bonusId, $name, $money, $note, $typeId)
      {
          return QcBonusDepartment::where('bonus_id', $bonusId)->update([
@@ -58,33 +58,39 @@ class QcBonusDepartment extends Model
         return QcBonusDepartment::where('bonus_id', $bonusId)->delete();
     }
     //========== ========= ========= RELATION ========== ========= ==========
-    //---------- cap bac thuong -----------
+    #---------- thong tin thuong tren don hang -----------
+    public function orderBonusBudget()
+    {
+        return $this->belongsTo('App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget', 'bonus_id', 'bonus_id');
+    }
+
+    #---------- cap bac thuong -----------
     public function rank()
     {
         return $this->belongsTo('App\Models\Ad3d\Rank\QcRank', 'rank_id', 'rank_id');
     }
 
-    //---------- bo phan -----------
+    #---------- bo phan -----------
     public function department()
     {
         return $this->belongsTo('App\Models\Ad3d\Department\QcRank', 'department_id', 'department_id');
     }
 
-# lay thong tin thuong ?ang hoat dong cua bo phan theo cap quan ly
+    #lay thong tin thuong dang hoat dong cua bo phan theo cap quan ly
     public function infoActivityOfManageRank($departmentId)
     {
         $modelRank = new QcRank();
         return $this->infoActivityOfDepartmentRank($departmentId, $modelRank->manageRankId());
     }
 
-# lay thong tin thuong ?ang hoat dong cua bo phan theo cap nhan vien
+    # lay thong tin thuong dang hoat dong cua bo phan theo cap nhan vien
     public function infoActivityOfStaffRank($departmentId)
     {
         $modelRank = new QcRank();
         return $this->infoActivityOfDepartmentRank($departmentId, $modelRank->staffRankId());
     }
 
-    # lay thong tin thuong ?ang hoat dong cua bo phan theo cap bac
+    # lay thong tin thuong dang hoat dong cua bo phan theo cap bac
     public function infoActivityOfDepartmentRank($departmentId, $rankId)
     {
         return QcBonusDepartment::where('department_id', $departmentId)->where('rank_id', $rankId)->where('action', 1)->first();
@@ -99,6 +105,12 @@ class QcBonusDepartment extends Model
     public function selectInfoByDepartment($departmentId)
     {
         return QcBonusDepartment::where('department_id', $departmentId)->orderBy('created_at', 'ASC')->select('*');
+    }
+
+    # lay tat ca thong tin dang hoat dong
+    public function getActivityInfo()
+    {
+        return QcBonusDepartment::where('applyStatus', 1)->where('action', 1)->get();
     }
 
     public function getInfo($bonusId = '', $field = '')

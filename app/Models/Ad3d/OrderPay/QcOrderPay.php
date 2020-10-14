@@ -168,8 +168,8 @@ class QcOrderPay extends Model
         return $this->hasMany('App\Models\Ad3d\Bonus\QcBonus', 'pay_id', 'pay_id');
     }
 
-    # lay gia tri tien thuong  1 lan thanh toan cua cap quan ly
-    public function getBonusMoneyOfManageRank($payId)
+    # lay gia tri tien thuong  1 lan thanh toan cua bo phan kinh doanh cap quan ly
+    public function getBonusMoneyOfBusinessManageRank($payId)
     {
         $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
@@ -187,8 +187,8 @@ class QcOrderPay extends Model
 
     }
 
-    # lay gia tri tien thuong  1 lan thanh toan cua cap quan ly
-    public function getBonusOfStaffRank($payId = null)
+    # lay gia tri tien thuong  1 lan thanh toan cua bo phan kinh doanh cap nhan vien
+    public function getBonusMoneyOfBusinessStaffRank($payId = null)
     {
         $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
@@ -218,10 +218,10 @@ class QcOrderPay extends Model
             $dataOrder = $dataOrderPay->order;
             # thong tin nhan vien tao don hang
             $dataStaffCreated = $dataOrder->staff;
-            // CAP QUAN LY - lay danh sach NV kinh doanh cap quan ly
+            # CAP QUAN LY - lay danh sach NV kinh doanh cap quan ly
             $dataStaffBusiness = $modelStaff->infoActivityStaffBusinessRankManage($dataOrder->companyId());
             if ($hFunction->checkCount($dataStaffBusiness)) {
-                $bonusMoney = $this->getBonusMoneyOfManageRank($payId);
+                $bonusMoney = $this->getBonusMoneyOfBusinessManageRank($payId);
                 if ($bonusMoney > 0) {
                     foreach ($dataStaffBusiness as $staffBusiness) {
                         $dataWork = $staffBusiness->workInfoActivityOfStaff();
@@ -244,7 +244,7 @@ class QcOrderPay extends Model
             }
             //NGUOI NHAN DON HANG - thuong cho nguoi nhan don hang
             if ($hFunction->checkCount($dataStaffCreated)) {
-                $bonusMoney_created = $this->getBonusOfStaffRank($payId);
+                $bonusMoney_created = $this->getBonusMoneyOfBusinessStaffRank($payId);
                 if ($bonusMoney_created > 0) {
                     $dataWork = $dataStaffCreated->workInfoActivityOfStaff();
                     if ($hFunction->checkCount($dataWork)) {
@@ -264,7 +264,13 @@ class QcOrderPay extends Model
             }
         }
     }
-    //public function
+
+    // ---------- --------- XET THUONG KHI THU TIEN DON HANNG ----------- -----------
+    public function checkBonus($payId)
+    {
+
+    }
+
     //---------- DON HANG -----------
     public function order()
     {

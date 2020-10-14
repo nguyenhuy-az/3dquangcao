@@ -8,7 +8,7 @@
 /*
  * dataAccess
  */
-$accessObject = (isset($dataAccess['accessObject']))?$dataAccess['accessObject']: null;
+$accessObject = (isset($dataAccess['accessObject'])) ? $dataAccess['accessObject'] : null;
 $dataLogin = $modelStaff->loginStaffInfo();
 $dataCompanyLogin = $dataLogin->companyInfoActivity();
 ?>
@@ -24,7 +24,8 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                 <div class="container-fluid">
                     <!-- Brand and toggle get grouped for better mobile display -->
                     <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse"
+                                data-target="#bs-example-navbar-collapse-1">
                             <span class="sr-only">Toggle navigation</span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
@@ -40,14 +41,19 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            {{--<li @if($accessObject == 'revenue') class="active" @endif>
-                                <a href="{!! route('qc.ad3d.statistic.revenue.system.get') !!}">
-                                    Doanh thu
-                                </a>
-                            </li>--}}
                             <li @if($accessObject == 'receiveAndPay') class="active" @endif>
                                 <a href="{!! route('qc.ad3d.statistic.revenue.company.get') !!}">
                                     Thu - Chi
+                                </a>
+                            </li>
+                            <li @if($accessObject == 'revenue') class="active" @endif>
+                                <a href="#" style="color: grey;" title="Chưa viết">
+                                    Lợi nhuận
+                                </a>
+                            </li>
+                            <li @if($accessObject == 'revenue') class="active" @endif>
+                                <a href="#" style="color: grey;" title="Chưa viết">
+                                    Đầu tư
                                 </a>
                             </li>
                         </ul>

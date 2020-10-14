@@ -123,8 +123,11 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                     <option value="1" @if($transfersType == 1) selected="selected" @endif>
                                         Chuyển doanh thu
                                     </option>
-                                    <option value="2 " @if($transfersType == 2) selected="selected" @endif >
+                                    <option value="2" @if($transfersType == 2) selected="selected" @endif >
                                         Chuyển đầu tư
+                                    </option>
+                                    <option value="3" @if($transfersType == 3) selected="selected" @endif >
+                                        Chuyển nộp lên cty
                                     </option>
                                 </select>
                             </td>

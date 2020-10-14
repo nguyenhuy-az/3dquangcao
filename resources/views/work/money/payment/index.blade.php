@@ -18,13 +18,19 @@ $indexHref = route('qc.work.money.payment.get');
 @endsection
 @section('qc_work_body')
     <div class="row">
+        <div class="qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                Về trang trước
+            </a>
+        </div>
         <div class="qc_work_money_receive_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.money.money-menu')
             {{-- chi tiêt --}}
-            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
-                    <div class="col-xs-6 col-sm-8 col-md-8 col-lg-8" >
-                        <select class="qc_work_money_payment_filter_object form-control" style="background-color: yellow;" data-href="{!! $indexHref !!}">
+                    <div class="col-xs-6 col-sm-8 col-md-8 col-lg-8" style="padding: 0;">
+                        <select class="qc_work_money_payment_filter_object form-control"
+                                style="color: red;" data-href="{!! $indexHref !!}">
                             <option value="activityPay" @if($object == 'activityPay') selected="selected" @endif >
                                 Chi hoạt động được duyệt
                             </option>
@@ -34,7 +40,8 @@ $indexHref = route('qc.work.money.payment.get');
                             <option value="salaryPay" @if($object == 'salaryPay') selected="selected" @endif>
                                 Thanh toán lương
                             </option>
-                            <option value="salaryBeforePay" @if($object == 'salaryBeforePay') selected="selected" @endif>
+                            <option value="salaryBeforePay"
+                                    @if($object == 'salaryBeforePay') selected="selected" @endif>
                                 Thanh toán ứng lương
                             </option>
                             <option value="orderCancel" @if($object == 'orderCancel') selected="selected" @endif>

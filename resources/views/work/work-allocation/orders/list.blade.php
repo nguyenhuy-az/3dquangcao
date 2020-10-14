@@ -54,14 +54,14 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                 <th>PHÂN VIỆC</th>
                                 <th>ẢNH TIẾN ĐỘ</th>
                                 <th class="text-right">
-                                    THƯỞNG <br/>
+                                    NGÂN SÁCH THƯỞNG <br/>
                                     <em style="color: white;">(Đúng hẹn)</em>
                                 </th>
                                 <th class="text-right">
                                     PHẠT <br/>
                                     <em style="color: white;">(Trễ hẹn)</em>
                                 </th>
-                                <th style="min-width: 150px;">KHÁCH HÀNG</th>
+                                <th>KHÁCH HÀNG</th>
                             </tr>
                             <tr>
                                 <td class="text-center qc-color-red"></td>
@@ -220,6 +220,9 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
 
                                     // phan viec tren san pham
                                     $orderWorkAllocationAllInfo = $order->workAllocationOnProduct();
+
+                                    # tien thuong va phat
+                                    $totalMoneyBonusAndMinus = $order->getBonusAndMinusMoneyOfConstructionManage();
                                     ?>
                                     <tr class="qc_ad3d_list_object @if($n_o%2 == 1) info @endif"
                                         data-object="{!! $orderId !!}">
@@ -256,6 +259,8 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                                         @endif
                                                     @endif
                                                 @endif
+                                            @else
+                                                <em style="color: grey;">Đã hủy</em>
                                             @endif
                                         </td>
                                         <td>
@@ -352,12 +357,12 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                         </td>
                                         <td class="text-right">
                                             <b style="color: blue;">
-                                                {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfManageRank()) !!}
+                                                {!! $hFunction->currencyFormat($totalMoneyBonusAndMinus) !!}
                                             </b>
                                         </td>
                                         <td class="text-right">
                                             <b style="color: red;">
-                                                {!! $hFunction->currencyFormat($order->getBonusAndMinusMoneyOfManageRank()) !!}
+                                                {!! $hFunction->currencyFormat($totalMoneyBonusAndMinus) !!}
                                             </b>
                                         </td>
                                         <td>

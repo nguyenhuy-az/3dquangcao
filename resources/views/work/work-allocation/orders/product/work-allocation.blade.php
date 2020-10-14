@@ -47,10 +47,11 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">
-                        <table class="table table-hover table-bordered" style="background-color: #d7d7d7;">
+                        <table class="table table-hover table-bordered" style="background-color: #d7d7d7;margin: 0;">
                             <tr>
                                 <td>
                                     <label style="font-size: 2em;">{!! $dataProduct->productType->name() !!}</label>
+                                    <br/>
                                     <span class="qc-color-grey">- {!! $dataProduct->order->name() !!}</span>
                                     <br/>
                                     <em>
@@ -91,7 +92,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                 @if($hFunction->checkCount($dataWorkAllocation))
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
-                            <table class="table table-hover table-bordered">
+                            <table class="table table-hover table-bordered" style="">
                                 <tr>
                                     <th colspan="6" style="border: none;">
                                         <i class="glyphicon glyphicon-user qc-font-size-20"></i>
@@ -125,9 +126,11 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                         <td>
                                             <div class="media">
                                                 <a class="pull-left" href="#">
-                                                    <img class="media-object" style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                                    <img class="media-object"
+                                                         style="max-width: 40px;height: 40px; border-radius: 10px; border: 1px solid #d7d7d7;"
                                                          src="{!! $src !!}">
                                                 </a>
+
                                                 <div class="media-body">
                                                     <h5 class="media-heading">{!! $dataStaffAllocation->fullName() !!}</h5>
                                                     @if($workAllocation->checkRoleMain())
@@ -174,7 +177,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                           enctype="multipart/form-data"
                           action="{!! route('qc.work.work_allocation.order.product.work-allocation.add.post', $productId) !!}">
                         <div class="table-responsive">
-                            <table class="table table-hover table-bordered">
+                            <table class="table table-hover table-bordered" style="border: 3px solid black;">
                                 <tr>
                                     <th colspan="4" style="border: none;">
                                         <i class="glyphicon glyphicon-wrench qc-font-size-20"></i>
@@ -193,7 +196,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                             @for($i = 1;$i<= 31; $i++)
                                                 <option value="{!! $i !!}"
                                                         @if($i == $currentDay) selected="selected" @endif >
-                                                    {!! $i !!}
+                                                    Ngày {!! $i !!}
                                                 </option>
                                             @endfor
                                         </select>
@@ -203,7 +206,9 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                             <option value="">Tháng</option>
                                             @for($i = 1;$i<= 12; $i++)
                                                 <option value="{!! $i !!}"
-                                                        @if($i == $currentMonth) selected="selected" @endif>{!! $i !!}</option>
+                                                        @if($i == $currentMonth) selected="selected" @endif>
+                                                    {!! $i !!}
+                                                </option>
                                             @endfor
                                         </select>
                                         <select class="cbYearAllocation text-right col-sx-4 col-sm-4 col-md-4 col-lg-4"
@@ -247,7 +252,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                             @for($i = 1;$i<= 31; $i++)
                                                 <option value="{!! $i !!}"
                                                         @if($i == $currentDay) selected="selected" @endif>
-                                                    {!! $i !!}
+                                                    Ngày {!! $i !!}
                                                 </option>
                                             @endfor
                                         </select>
@@ -316,9 +321,11 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                                 <td>
                                                     <div class="media">
                                                         <a class="pull-left" href="#">
-                                                            <img class="media-object" style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                                            <img class="media-object"
+                                                                 style="max-width: 40px;height: 40px; border-radius: 10px; border: 1px solid #d7d7d7;"
                                                                  src="{!! $src !!}">
                                                         </a>
+
                                                         <div class="media-body">
                                                             <h5 class="media-heading">{!! $receiveStaff->fullName() !!}</h5>
                                                         </div>

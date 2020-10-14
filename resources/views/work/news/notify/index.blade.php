@@ -100,7 +100,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                         </td>
                                         <td>
                                             <a class="qc-link-green"
-                                               href="{!! route('qc.work.work_allocation.manage.order.view', "$orderId/$notifyId") !!}">
+                                               href="{!! route('qc.work.work_allocation.order.view', "$orderId/$notifyId") !!}">
                                                 Xem
                                             </a>
                                             @if($staffNotify->checkNewInfo())
@@ -112,7 +112,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                         <td>
                                             <span style="color: deeppink;">Đã thêm ĐH:</span>
                                             <a class="qc-link-green-bold"
-                                               href="{!! route('qc.work.work_allocation.manage.order.view', "$orderId/$notifyId") !!}">
+                                               href="{!! route('qc.work.work_allocation.order.view', "$orderId/$notifyId") !!}">
                                                 {!! $staffNotify->orders->name() !!}
                                             </a>
                                             <span style="background-color: blue; padding: 3px; color: white;">
@@ -132,7 +132,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                         </td>
                                         <td>
                                             <a class="qc-link-green"
-                                               href="{!! route('qc.work.work_allocation.construction.product.get',$orderAllocationId) !!}">
+                                               href="{!! route('qc.work.work_allocation.order_allocation.product.get',$orderAllocationId) !!}">
                                                 Xem
                                             </a>
                                             @if($staffNotify->checkNewInfo())
@@ -144,7 +144,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                         <td>
                                             <span style="color: blue;">{!! $staffNotify->note() !!}:</span>
                                             <a class="qc-link-green-bold"
-                                               href="{!! route('qc.work.work_allocation.construction.product.get',$orderAllocationId) !!}">
+                                               href="{!! route('qc.work.work_allocation.order_allocation.product.get',$orderAllocationId) !!}">
                                                 {!! $staffNotify->orderAllocation->orders->name() !!}
                                             </a>
                                             <span style="background-color: black; padding: 3px; color: white;">
@@ -163,7 +163,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                         </td>
                                         <td>
                                             <a class="qc-link-green"
-                                               href="{!! route('qc.work.work_allocation.detail.get', $workAllocationId) !!}">
+                                               href="{!! route('qc.work.work_allocation.work_allocation.detail.get', $workAllocationId) !!}">
                                                 Xem
                                             </a>
                                             @if($staffNotify->checkNewInfo())
@@ -175,7 +175,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                         <td>
                                             <span style="color: brown;">{!! $staffNotify->note() !!}:</span>
                                             <a class="qc-link-green-bold"
-                                               href="{!! route('qc.work.work_allocation.detail.get', $workAllocationId) !!}">
+                                               href="{!! route('qc.work.work_allocation.work_allocation.detail.get', $workAllocationId) !!}">
                                                 {!! $staffNotify->workAllocation->product->productType->name() !!}
                                             </a>
                                             <span style="background-color: black; padding: 3px; color: yellow;">
@@ -218,7 +218,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                             <td>
                                                 <span style="color: red;">{!! $staffNotify->note() !!}:</span>
                                                 <a class="qc-link-green-bold"
-                                                   href="{!! route('qc.work.work_allocation.construction.product.get',$dataBonus->orderAllocationId()) !!}">
+                                                   href="{!! route('qc.work.work_allocation.order_allocation.product.get',$dataBonus->orderAllocationId()) !!}">
                                                     {!! $dataBonus->orderAllocation->orders->name() !!}
                                                 </a>
                                             <span style="background-color: red; padding: 3px; color: yellow;">
@@ -251,7 +251,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                             <td>
                                                 <span style="color: red;">{!! $staffNotify->note() !!}:</span>
                                                 <a class="qc-link-green-bold"
-                                                   href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderConstructionId) !!}">
+                                                   href="{!! route('qc.work.work_allocation.order.construction.get',$orderConstructionId) !!}">
                                                     {!! $dataBonus->orderConstruction->name() !!}
                                                 </a>
                                             <span style="background-color: red; padding: 3px; color: yellow;">
@@ -360,7 +360,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                                     <span style="color: black;">Phạt {!! $staffNotify->note() !!}
                                                         :</span>
                                                 <a class="qc-link-green-bold"
-                                                   href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderConstructionId) !!}">
+                                                   href="{!! route('qc.work.work_allocation.order.construction.get',$orderConstructionId) !!}">
                                                     {!! $dataMinusMoney->orderConstruction->name() !!}
                                                 </a>
                                             <span style="background-color: red; padding: 3px; color: white;">
@@ -416,7 +416,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                         </td>
                                         <td>
                                             <a class="qc-link-green"
-                                               href="{!! route('qc.work.work_allocation.manage.order.construction.get', "$orderId/$notifyId") !!}">
+                                               href="{!! route('qc.work.work_allocation.order.construction.get', "$orderId/$notifyId") !!}">
                                                 Xem
                                             </a>
                                             @if($staffNotify->checkNewInfo())
@@ -428,7 +428,7 @@ $hrefIndex = route('qc.work.news.notify.get');
                                         <td>
                                             <span style="color: black;">{!! $staffNotify->note() !!}:</span>
                                             <a class="qc-link-green-bold"
-                                               href="{!! route('qc.work.work_allocation.manage.order.construction.get',"$orderId/$notifyId") !!}">
+                                               href="{!! route('qc.work.work_allocation.order.construction.get',"$orderId/$notifyId") !!}">
                                                 {!! $order->name() !!}
                                             </a>
                                             <span style="background-color: blue; padding: 3px 10px; color: yellow;">

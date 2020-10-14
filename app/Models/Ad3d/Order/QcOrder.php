@@ -7,6 +7,7 @@ use App\Models\Ad3d\BonusDepartment\QcBonusDepartment;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
+use App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderImage\QcOrderImage;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
@@ -373,6 +374,13 @@ class QcOrder extends Model
     public function infoAllOfCustomer($customerId, $orderBy = 'DESC')
     {
         return QcOrder::where('customer_id', $customerId)->orderBy('receiveDate', $orderBy)->get();
+    }
+
+    //---------- ---------- ---------- thong tin thuong tren don hang ----------- ----------
+    # ngan sach thuong cua don hang
+    public function orderBonusBudget()
+    {
+        return $this->belongsTo('App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget', 'order_id', 'order_id');
     }
 
     //---------- ---------- ---------- nhan vien ----------- ---------- ----------
@@ -1359,13 +1367,13 @@ class QcOrder extends Model
         return ($this->action($orderId) == 1) ? true : false;
     }
 
-    // trang thai xac nhan hay chua
+    # trang thai xac nhan hay chua
     public function checkConfirmStatus($orderId = null)
     {
         return ($this->confirmStatus($orderId) == 1) ? true : false;
     }
 
-    // kiem tra ket thuc don hang
+    # kiem tra ket thuc don hang
     public function checkFinishStatus($orderId = null)
     {
         $result = $this->finishStatus($orderId);
@@ -1373,7 +1381,7 @@ class QcOrder extends Model
         return ($result == 1) ? true : false;
     }
 
-    // xac nhan dong y don hang
+    # xac nhan dong y don hang
     public function checkConfirmAgree($orderId = null)
     {
         return ($this->confirmAgree($orderId) == 1) ? true : false;
@@ -1384,39 +1392,18 @@ class QcOrder extends Model
         return ($this->vat($orderId) == 1) ? true : false;
     }
 
-    # lay gia tri tien thuong - phạt tren don hang cua cap quan ly cua bo phan thi cong
-    public function getBonusAndMinusMoneyOfManageRank($orderId = null)
+    # tien thuong - phạt tren don hang cua bo phan thi cong cap quan ly
+    public function getBonusAndMinusMoneyOfConstructionManage($orderId = null)
     {
-        $hFunction = new \Hfunction();
-        $modelDepartment = new QcDepartment();
-        $modelBonusDepartment = new QcBonusDepartment();
-        $dataBonusDepartment = $modelBonusDepartment->infoActivityOfManageRank($modelDepartment->constructionDepartmentId());
-        # co ap dung thuong
-        if ($hFunction->checkCount($dataBonusDepartment)) {
-            $orderTotalPrice = $this->totalPrice($orderId);
-            $percent = $dataBonusDepartment->percent();
-            return (int)$orderTotalPrice * ($percent / 100);
-        } else {
-            return 0;
-        }
-
+        $modelOrderBonusBudget = new QcOrderBonusBudget();
+        return $modelOrderBonusBudget->getBudgetMoneyOfConstructionManage($this->checkIdNull($orderId));
     }
 
-    # lay gia tri tien thuong - phạt tren don hang cua cap nhan vien
-    public function getBonusAndMinusMoneyOfStaffRank($orderId = null)
+    # tien thuong - phạt tren don hang cua cap nhan vien
+    public function getBonusAndMinusMoneyOfConstructionRank($orderId = null)
     {
-        $hFunction = new \Hfunction();
-        $modelDepartment = new QcDepartment();
-        $modelBonusDepartment = new QcBonusDepartment();
-        $dataBonusDepartment = $modelBonusDepartment->infoActivityOfStaffRank($modelDepartment->constructionDepartmentId());
-        # co ap dung thuong
-        if ($hFunction->checkCount($dataBonusDepartment)) {
-            $orderTotalPrice = $this->totalPrice($orderId);
-            $percent = $dataBonusDepartment->percent();
-            return (int)$orderTotalPrice * ($percent / 100);
-        } else {
-            return 0;
-        }
+        $modelOrderBonusBudget = new QcOrderBonusBudget();
+        return $modelOrderBonusBudget->getBudgetMoneyOfConstructionRank($this->checkIdNull($orderId));
 
     }
 
@@ -1432,7 +1419,7 @@ class QcOrder extends Model
         return $this->getBonusAndMinusMoneyOfStaffRank($orderId);
     }
 
-#============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
+    //============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
     # kiem tra thuong nguoi quan ly thi cong
     public function checkBonusConstruction($orderId)
     {

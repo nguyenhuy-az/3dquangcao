@@ -20,8 +20,6 @@ class TransfersController extends Controller
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelTransfers = new QcTransfers();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
-        $staffLoginId = $dataStaffLogin->staffId();
         $currentMonth = $hFunction->currentMonth();
         $currentYear = $hFunction->currentYear();
         $dataCompanyLogin = $modelStaff->companyLogin();
@@ -89,7 +87,7 @@ class TransfersController extends Controller
             'accessObject' => 'transfers',
             'subObject' => 'transferTransfer'
         ];
-        $dataStaffReceive = $dataCompanyLogin->staffInfoActivityOfTreasurerStaff([$companyLoginId], $modelDepartment->treasurerDepartmentId());
+        $dataStaffReceive = $dataCompanyLogin->staffInfoActivityOfTreasurerDepartment([$companyLoginId], $modelDepartment->treasurerDepartmentId());
         return view('ad3d.finance.transfers.transfers.add', compact('modelStaff', 'dataStaffReceive', 'dataAccess'));
     }
 

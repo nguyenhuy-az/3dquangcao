@@ -21,7 +21,6 @@ class ImportController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelImport = new QcImport();
-        $modelImport->checkAutoUpdateImage();
         $dataStaff = $modelStaff->loginStaffInfo();
         $dataAccess = [
             'object' => 'import',

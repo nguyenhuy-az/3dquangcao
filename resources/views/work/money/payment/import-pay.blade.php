@@ -47,6 +47,8 @@ $loginStaffId = $dataStaffLogin->staffId();
                                 $totalMoneyNoConfirm = $totalMoneyNoConfirm + $money;
                             }
                             $dataImport = $importPay->import;
+                            # thong tin nguoi nhap
+                            $dataStaffImport = $dataImport->staffImport;
                             ?>
                             <tr class="@if($n_o%2) info @endif">
                                 <td class="text-center">
@@ -56,19 +58,29 @@ $loginStaffId = $dataStaffLogin->staffId();
                                     {!! date('d/m/Y',strtotime($importPay->createdAt()))  !!}
                                 </td>
                                 <td>
-                                    <span>{!! $dataImport->staffImport->fullName() !!}</span>
+                                    <div class="media">
+                                        <a class="pull-left" href="#">
+                                            <img class="media-object"
+                                                 style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                 src="{!! $dataStaffImport->pathAvatar($dataStaffImport->image()) !!}">
+                                        </a>
+
+                                        <div class="media-body">
+                                            <h5 class="media-heading">{!! $dataStaffImport->fullName() !!}</h5>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td class="text-center">
                                     {!! date('d/m/Y',strtotime($dataImport->importDate()))  !!}
                                 </td>
-                                <td class="text-right">
+                                <td class="text-right" style="color: red;">
                                     @if($importPay->checkConfirm())
                                         <span>0</span>
                                     @else
                                         {!! $hFunction->currencyFormat($money) !!}
                                     @endif
                                 </td>
-                                <td class="text-right">
+                                <td class="text-right" style="color: blue;">
                                     @if($importPay->checkConfirm())
                                         {!! $hFunction->currencyFormat($money) !!}
                                     @else
@@ -82,10 +94,14 @@ $loginStaffId = $dataStaffLogin->staffId();
                                 style="background-color: whitesmoke;" colspan="4">
                             </td>
                             <td class="text-right qc-color-red">
-                                <b>{!! $hFunction->currencyFormat($totalMoneyNoConfirm) !!}</b>
+                                <b style="color: red; font-size: 1.5em;">
+                                    {!! $hFunction->currencyFormat($totalMoneyNoConfirm) !!}
+                                </b>
                             </td>
                             <td class="text-right" style="color: blue;">
-                                <b>{!! $hFunction->currencyFormat($totalMoneyConfirmed) !!}</b>
+                                <b style="color: blue; font-size: 1.5em">
+                                    {!! $hFunction->currencyFormat($totalMoneyConfirmed) !!}
+                                </b>
                             </td>
                         </tr>
                     @else
@@ -97,14 +113,6 @@ $loginStaffId = $dataStaffLogin->staffId();
                     @endif
                 </table>
             </div>
-        </div>
-        <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                Về trang trước
-            </a>
-            <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
-                Về trang chủ
-            </a>
         </div>
     </div>
 @endsection

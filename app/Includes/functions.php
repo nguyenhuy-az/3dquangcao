@@ -13,6 +13,7 @@ class Hfunction
     {
         return date_default_timezone_set('Asia/Ho_Chi_Minh');
     }
+
     # lay gio mac dinh
     public function defaultTimezone($city = null)
     {
@@ -71,12 +72,16 @@ class Hfunction
     {
         return ($dataCheck == null) ? true : false;
     }
+
     // gop 2 mang
-    public function arrayMergeTwo($array_1, $array_2){
+    public function arrayMergeTwo($array_1, $array_2)
+    {
         return array_merge($array_1, $array_2);
     }
+
     // xoa gia tri trung
-    public function arrayUnique($array){
+    public function arrayUnique($array)
+    {
         return array_unique($array);
     }
 
@@ -164,9 +169,11 @@ class Hfunction
     }
 
     # chuyen toa chuoi sang chu hoa
-    public function strtoupper($str){
+    public function strtoupper($str)
+    {
         return strtoupper($str);
     }
+
     //cat chuoi
     public function cutString($string, $length, $more = '')
     {
@@ -279,6 +286,7 @@ class Hfunction
     {
         return in_array($element, $array);
     }
+
     // tim phan tu trong chuoi co dau phay
     public function checkExistOfString($element, $string)
     {
@@ -346,6 +354,38 @@ class Hfunction
     }
 
     //========== ========== ========= DATE =========== ========== =========
+    # lay so ngay trong thang
+    public function totalDayInMonth($month, $year)
+    {
+        switch ($month) {
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                $d = 31;
+                break;
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                $d = 30;
+                break;
+            case 2:
+                if ($year % 100 != 0 && $year % 4 == 0 || $year % 400 === 0) {
+                    $d = 29;
+                } else {
+                    $d = 28;
+                }
+                break;
+            default:
+                $d = 0;
+        }
+        return $d;
+    }
+
     public function frmDayMonthYear($dayName, $monthName, $yearName)
     {
         ?>

@@ -18,24 +18,6 @@ class QcImport extends Model
     private $lastId;
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
-    //---------- thêm mới ----------
-    # cap nhat anh hoa don phien ban cu
-    public function checkAutoUpdateImage()
-    {
-        $hFunction = new \Hfunction();
-        $modelImportImage = new QcImportImage();
-        $dataImportImage = $modelImportImage->getInfo();
-        if ($hFunction->checkCount($dataImportImage)) {
-            foreach ($dataImportImage as $importImage) {
-                $name = $importImage->name();
-                $importId = $importImage->importId();
-                if (empty($this->image($importId)[0])) {
-                   $this->updateImage($importId, $name);
-                }
-            }
-        }
-    }
-
     // insert
     public function insert($image = null, $importDate, $companyId, $confirmStaffId = null, $importStaffId)
     {

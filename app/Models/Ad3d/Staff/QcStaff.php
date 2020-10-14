@@ -969,6 +969,12 @@ class QcStaff extends Model
         return $modelTransfer->totalMoneyReceivedFromOrderPayOfStaffAndDate($staffId, $date);
     }
 
+    # tong tien nop cho cong ty (Thu quy cap quan ly) va da xac nhan
+    public function totalMoneyConfirmedTransferForTreasurerManage($staffId, $date = null)
+    {
+        $modelTransfer = new QcTransfers();
+        return $modelTransfer->totalMoneyConfirmedTransfersForTreasurerManage($staffId, $date);
+    }
     # tong tien nhan chuyen tu dau tu va da xac nhan
     public function totalMoneyReceiveTransferInvestmentConfirmed($staffId, $date = null)
     {

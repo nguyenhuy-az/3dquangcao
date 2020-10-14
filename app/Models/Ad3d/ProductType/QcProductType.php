@@ -178,7 +178,7 @@ class QcProductType extends Model
     #----------- thông tin -------------
     public function infoFromExactlyName($name)
     {
-        return QcProductType::where('name', 'like', "$name")->where('applyStatus', 1)->first();
+        return QcProductType::where('name', '=', $name)->first();
     }
 
     public function infoFromSuggestionName($name)

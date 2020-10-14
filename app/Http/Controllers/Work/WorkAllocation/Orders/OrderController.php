@@ -59,6 +59,7 @@ class OrderController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
+
         if (!empty($orderCustomerFilterName)) {
             $dataOrderSelect = $modelOrder->selectInfoOfListCustomerOfCompany($companyLoginId, $modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, 2);
         } else {

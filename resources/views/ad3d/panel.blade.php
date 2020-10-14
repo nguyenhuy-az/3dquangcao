@@ -7,16 +7,19 @@
  *
  * modelStaff
  */
+$hFunction = new Hfunction();
+$currentYear = $hFunction->currentYear();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$staffLoginId = $dataStaffLogin->staffId();
 $companyLoginId = $dataStaffLogin->companyId($dataStaffLogin->staffId());
 $dataCompany = $modelStaff->companyInfoActivity($dataStaffLogin->staffId());
 $staffLevel = $dataStaffLogin->level();
 # thong tin chi mua vat tu chua dc duyet cua cty
 $totalImportNotConfirmOfCompany = $dataCompany->totalImportNotConfirmOfCompany($companyLoginId);
-$totalImportNotConfirmOfCompany = (empty($totalImportNotConfirmOfCompany))?0:$totalImportNotConfirmOfCompany;
+$totalImportNotConfirmOfCompany = (empty($totalImportNotConfirmOfCompany)) ? 0 : $totalImportNotConfirmOfCompany;
 # thong tin chi hoat dong chua duyet cua cong ty
 $totalPayActivityNotConfirmOfCompany = $dataCompany->totalPayActivityNotConfirmOfCompany($companyLoginId);
-$totalPayActivityNotConfirmOfCompany = (empty($totalPayActivityNotConfirmOfCompany))?0:$totalPayActivityNotConfirmOfCompany;
+$totalPayActivityNotConfirmOfCompany = (empty($totalPayActivityNotConfirmOfCompany)) ? 0 : $totalPayActivityNotConfirmOfCompany;
 # bao cham cong theo cong ty dang nhap
 $totalNewTimekeepingProvisional = $modelStaff->totalNewTimekeepingProvisional($companyLoginId);
 # xin di tre chưa duyet theo cong ty dang nhap
@@ -28,9 +31,11 @@ $totalNewSalaryBeforePayRequest = $modelStaff->totalNewSalaryBeforePayRequest($c
 $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
 
 # so luong ho so tuyen dung chua duyet
-$totalJobApplicationUnconfirmed =  $modelStatistical->totalJobApplicationUnconfirmed();
+$totalJobApplicationUnconfirmed = $modelStatistical->totalJobApplicationUnconfirmed();
 # ho si phong van chua xac nhan
 $totalJobApplicationInterviewUnconfirmed = $modelStatistical->totalJobApplicationInterviewUnconfirmed();
+#nhan nop tien chua xac nhan cua 1 thu quy
+$totalReceiveMoneyUnconfirmed = $modelStatistical->sumReceiveMoneyUnconfirmedOfStaff($staffLoginId);
 
 ?>
 @extends('ad3d.index')
@@ -45,11 +50,17 @@ $totalJobApplicationInterviewUnconfirmed = $modelStatistical->totalJobApplicatio
                     <a href="#" class="list-group-item active">
                         Thông tin mới
                     </a>
-                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}" >
+                    <a class="qc-link list-group-item"
+                       href="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}">
                         <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                              {!! $totalNewTimekeepingProvisional !!}
                         </span>
                         Chấm công
+                        @if($totalNewTimekeepingProvisional > 0)
+                            <em style="background-color: red; color: yellow; padding: 3px; border-radius: 5px;">
+                                + New
+                            </em>
+                        @endif
                     </a>
                     {{--<a class="qc-link list-group-item" href="{!! route('qc.ad3d.store.import.get') !!}">
                         <span class="qc-color-red badge" style="background:none;">
@@ -62,36 +73,72 @@ $totalJobApplicationInterviewUnconfirmed = $modelStatistical->totalJobApplicatio
                             {!! $totalPayActivityNotConfirmOfCompany !!}
                         </span>
                         Duyệt chi hoạt động
+                        @if($totalPayActivityNotConfirmOfCompany > 0)
+                            <em style="background-color: red; color: yellow; padding: 3px; border-radius: 5px;">+
+                                New</em>
+                        @endif
                     </a>
-                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.off-work.get') !!}" >
+                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.off-work.get') !!}">
                         <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                             {!! $totalNewLicenseOffWork !!}
                         </span>
                         Xin nghỉ
+                        @if($totalNewLicenseOffWork > 0)
+                            <em style="background-color: red; color: yellow; padding: 3px; border-radius: 5px;">+
+                                New</em>
+                        @endif
                     </a>
-                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.late-work.get') !!}" >
+                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.work.late-work.get') !!}">
                         <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                             {!! $totalNewLicenseLateWork !!}
                         </span>
                         Xin trễ
+                        @if($totalNewLicenseLateWork > 0)
+                            <em style="background-color: red; color: yellow; padding: 3px; border-radius: 5px;">+
+                                New</em>
+                        @endif
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.salary.before_pay_request.get') !!}">
                         <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                             {!! $totalNewSalaryBeforePayRequest !!}
                         </span>
                         Xin ứng lương
+                        @if($totalNewSalaryBeforePayRequest > 0)
+                            <em style="background-color: red; color: yellow; padding: 3px; border-radius: 5px;">+
+                                New</em>
+                        @endif
+                    </a>
+                    <a class="qc-link list-group-item"
+                       href="{!! route('qc.ad3d.finance.transfers.receive.get',"$companyLoginId/0/0/$currentYear/0/$staffLoginId") !!}">
+                        <span class="qc-color-red badge qc-font-size-16" style="background:none;">
+                            {!! $totalReceiveMoneyUnconfirmed !!}
+                        </span>
+                        Nhận nộp tiền
+                        @if($totalReceiveMoneyUnconfirmed > 0)
+                            <em style="background-color: red; color: yellow; padding: 3px; border-radius: 5px;">+
+                                New</em>
+                        @endif
                     </a>
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.system.job-application.get') !!}">
                         <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                             {!! $totalJobApplicationUnconfirmed !!}
                         </span>
                         Hồ sơ tuyển dụng
+                        @if($totalJobApplicationInterviewUnconfirmed > 0)
+                            <em style="background-color: red; color: yellow; padding: 3px; border-radius: 5px;">+
+                                New</em>
+                        @endif
                     </a>
-                    <a class="qc-link list-group-item" href="{!! route('qc.ad3d.system.job-application-interview.get') !!}">
+                    <a class="qc-link list-group-item"
+                       href="{!! route('qc.ad3d.system.job-application-interview.get') !!}">
                         <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                              {!! $totalJobApplicationInterviewUnconfirmed !!}
                         </span>
                         Hồ sơ phỏng vấn
+                        @if($totalJobApplicationInterviewUnconfirmed > 0)
+                            <em style="background-color: red; color: yellow; padding: 3px; border-radius: 5px;">+
+                                New</em>
+                        @endif
                     </a>
 
                 </div>
@@ -142,7 +189,8 @@ $totalJobApplicationInterviewUnconfirmed = $modelStatistical->totalJobApplicatio
                 </div>
                 <div class="ac-ad3d-panel col-xs-12 col-sm-6 col-md-4 col-lg-4">
                     <div class="ac-ad3d-panel-icon-wrap">
-                        <a class="ac-ad3d-panel-icon-link" href="{!! route('qc.ad3d.statistic.revenue.company.get') !!}">
+                        <a class="ac-ad3d-panel-icon-link"
+                           href="{!! route('qc.ad3d.statistic.revenue.company.get') !!}">
                             <i class="glyphicon glyphicon-wrench" style="font-size: 20px; color: grey;"></i><br>
                             Thống kê
                         </a>

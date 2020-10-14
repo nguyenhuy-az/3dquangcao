@@ -12,16 +12,22 @@ use App\Http\Controllers\Controller;
 
 class RevenueCompanyController extends Controller
 {
-    public function index($companyStatisticId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0)
+    public function index($companyStatisticId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelDepartment = new QcDepartment();
         $modelCompany = new QcCompany();
-        $modelPayment = new QcPayment();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
         $currentMonth = $hFunction->currentMonth();
         $currentYear = $hFunction->currentYear();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        $companyStatisticId = ($companyStatisticId == 'null') ? null : $companyStatisticId;
+        if ($companyStatisticId == 0) {
+            $companyStatisticId = $companyLoginId;
+        }
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         //payment
         $dataAccess = [
             'accessObject' => 'receiveAndPay',
@@ -47,13 +53,6 @@ class RevenueCompanyController extends Controller
             $dayFilter = 100;
             $monthFilter = date('m');
             $yearFilter = date('Y');
-        }
-
-        $companyStatisticId = (empty($companyStatisticId)) ? $dataStaffLogin->companyId() : $companyStatisticId;
-        if ($dataStaffLogin->checkRootManage()) {
-            $dataCompany = $modelCompany->getInfo();
-        } else {
-            $dataCompany = $modelCompany->selectInfo($dataStaffLogin->companyId())->get();
         }
 
         $dataCompanyStatistic = $modelCompany->getInfo($companyStatisticId);

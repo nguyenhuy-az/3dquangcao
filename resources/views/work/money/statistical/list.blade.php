@@ -138,7 +138,7 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                     <td class="text-right"></td>
                                     <td class="text-right">
                                         <b style="color: red;">
-                                            {!! $hFunction->currencyFormat(0)  !!}
+                                            {!! $hFunction->currencyFormat($totalMoneyTransferForTreasurerManage)  !!}
                                         </b>
                                     </td>
                                     <td class="text-right"></td>
@@ -283,8 +283,8 @@ $hrefFilter = route('qc.work.money.statistical.get');
                                         </b>
                                     </td>
                                     <td colspan="4" class="text-center" style="border-top: 2px solid red;">
-                                        <b style="color: red;">
-                                            {!! $hFunction->currencyFormat($totalMoneyReceive + $totalMoneyTransferReceive -$totalMoneyPay)  !!}
+                                        <b style="color: red;font-size: 2em;">
+                                            {!! $hFunction->currencyFormat($totalMoneyReceive + $totalMoneyTransferReceive - $totalMoneyTransferForTreasurerManage - $totalMoneyPay)  !!}
                                         </b>
                                     </td>
                                 </tr>

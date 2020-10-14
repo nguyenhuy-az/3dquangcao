@@ -104,7 +104,7 @@ $checkTime = date('m-Y');
                                                 <br/>
                                                 <em>Đơn hàng:</em>
                                                 <a class="qc-link-red"
-                                                   href="{!! route('qc.work.work_allocation.construction.product.get',$orderAllocationId) !!}">
+                                                   href="{!! route('qc.work.work_allocation.order_allocation.product.get',$orderAllocationId) !!}">
                                                     {!! $minusMoney->orderAllocation->orders->name() !!}
                                                 </a>
                                             @endif
@@ -112,7 +112,7 @@ $checkTime = date('m-Y');
                                                 <br/>
                                                 <em>Đơn hàng:</em>
                                                 <a class="qc-link-red"
-                                                   href="{!! route('qc.work.work_allocation.manage.order.construction.get',$orderConstructionId) !!}">
+                                                   href="{!! route('qc.work.work_allocation.order.construction.get',$orderConstructionId) !!}">
                                                     {!! $minusMoney->orderConstruction->name() !!}
                                                 </a>
                                             @endif
