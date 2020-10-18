@@ -360,7 +360,7 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                     <tr>
                                         <td colspan="7" style="border: none;">
                                             <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                                            <button class="qc_save btn btn-primary form-control">
+                                            <button type="button" class="qc_save btn btn-primary form-control">
                                                 XÁC NHẬN PHÂN VIỆC
                                             </button>
                                         </td>

@@ -114,9 +114,11 @@ class QcProduct extends Model
             [
                 'finishStatus' => 1,
                 'finishDate' => $hFunction->carbonNow(),
-                'confirmStaff_id' => $staffReportFinishId
+                'finishReportStaff_id' => $staffReportFinishId,
+                'confirmStaff_id' => $staffReportFinishId // tam thoi khong can duyen
             ])
         ) {
+            # ket thuc phan viec tren san pham
             $modelWorkAllocation->confirmFinishFromFinishProduct($productId);
         }
     }
@@ -260,7 +262,7 @@ class QcProduct extends Model
     {
         $hFunction = new \Hfunction();
         $totalPrice = 0;
-        $dataProduct = QcProduct::where('order_id', $orderId)->where('cancelStatus',0)->get();
+        $dataProduct = QcProduct::where('order_id', $orderId)->where('cancelStatus', 0)->get();
         if ($hFunction->checkCount($dataProduct)) {
             foreach ($dataProduct as $key => $value) {
                 $totalPrice = $totalPrice + ($value['price'] * $value['amount']);
@@ -485,6 +487,10 @@ class QcProduct extends Model
         return $this->pluck('order_id', $productId);
     }
 
+    public function finishReportStaffId($productId = null)
+    {
+        return $this->pluck('finishReportStaff_id', $productId);
+    }
 
     public function confirmStaffId($productId = null)
     {

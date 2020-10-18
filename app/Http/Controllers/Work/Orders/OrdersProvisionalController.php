@@ -179,12 +179,14 @@ class OrdersProvisionalController extends Controller
                 $updateStatus = true;
                 $dataCustomer = $dataOrder->customer;
                 if ($modelOrder->confirmProvision($orderId, $txtDateReceive, $txtDateDelivery)) {
+                    # xet them vao ngan sach thuong
+                    $modelOrder->checkAddBonusBudget($orderId);
                     # thanh toan
                     if ($txtPayMoney > 0) {
                         # thanh toan don hang
                         if($modelOrderPay->insert($txtPayMoney, null, $txtDateReceive, $orderId, $staffLoginId, $dataCustomer->name(), $dataCustomer->phone())){
                             # xet thuong
-                            $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
+                            $modelOrderPay->checkApplyBonus($modelOrderPay->insertGetId());
                         }
                         # cap nhat thong tin thanh toan don hang
                         $modelOrder->updateFinishPayment($orderId);

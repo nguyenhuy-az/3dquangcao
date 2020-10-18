@@ -158,10 +158,11 @@ class QcOrder extends Model
         ]);
     }
 
-    # xac nhan hoan thanh
+    # BO PHAN KINH DOANH BAO HOAN THANH BAN GIAO KHACH HANG
     public function confirmReportFinish($orderId, $finishStatus, $staffReportFinishId)
     {
         $hFunction = new \Hfunction();
+        $modelOrderBonusBudget = new QcOrderBonusBudget();
         $modelOrderAllocation = new QcOrderAllocation();
         $modelProduct = new QcProduct();
         $dataProduct = $this->productActivityOfOrder($orderId);
@@ -183,7 +184,7 @@ class QcOrder extends Model
             }
 
             # -------------- ----------  xet thuong cho quan ly thi cong ---------- ----------
-            $this->checkBonusConstruction($orderId);
+            $modelOrderBonusBudget->checkBonusConstruction($orderId);
             return true;
 
         } else {
@@ -281,6 +282,7 @@ class QcOrder extends Model
     {
         return $this->selectInfoOfListCustomer($listCustomerId, $date, $paymentStatus, $orderBy)->get();
     }
+
     # lay don hang theo thong tin khach hang cua TAT CA CONG
     public function selectInfoOfListCustomer($listCustomerId, $date = null, $paymentStatus = 3, $orderBy = 'DESC')
     {
@@ -295,8 +297,9 @@ class QcOrder extends Model
             return QcOrder::whereIn('customer_id', $listCustomerId)->where('confirmStatus', 1)->orderBy('receiveDate', $orderBy)->select('*');
         }
     }
+
     # lay don hang theo thong tin khach hang cua 1 CONG TY
-    public function selectInfoOfListCustomerOfCompany($companyId,$listCustomerId, $date = null, $paymentStatus = 3, $orderBy = 'DESC')
+    public function selectInfoOfListCustomerOfCompany($companyId, $listCustomerId, $date = null, $paymentStatus = 3, $orderBy = 'DESC')
     {
         #$paymentStatus = 3 - tat ca /
         if (!empty($date) && $paymentStatus < 2) {
@@ -381,6 +384,34 @@ class QcOrder extends Model
     public function orderBonusBudget()
     {
         return $this->belongsTo('App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget', 'order_id', 'order_id');
+    }
+
+    # xet them vao ngan sach thuong cua don hang
+    public function checkAddBonusBudget($orderId)
+    {
+        $hFunction = new \Hfunction();
+        $modelBonusDepartment = new QcBonusDepartment();
+        $modelOrderBonusBudget = new QcOrderBonusBudget();
+        # thong tin thuong cua bo phan thi cong cap quan ly dang hoat dong
+        $dataBonusDepartment = $modelBonusDepartment->getActivityInfo();
+        if ($hFunction->checkCount($dataBonusDepartment)) {
+            foreach ($dataBonusDepartment as $bonusDepartment) {
+                $bonusId = $bonusDepartment->bonusId();
+                $departmentId = $bonusDepartment->departmentId();
+                $rankId = $bonusDepartment->rankId();
+                #chu ap dung moi them vao
+                if (!$modelOrderBonusBudget->checkExistOrderAndBonusDepartment($orderId, $bonusId)) {
+                    $modelOrderBonusBudget->insert($orderId, $bonusId, $departmentId, $rankId);
+                }
+            }
+        }
+    }
+
+    # thong tin ngan sach thuong cua don hang
+    public function orderBonusBudgetInfo($orderId = null)
+    {
+        $modelOrderBonusBudget = new QcOrderBonusBudget();
+        return $modelOrderBonusBudget->infoOfOrder($this->checkIdNull($orderId));
     }
 
     //---------- ---------- ---------- nhan vien ----------- ---------- ----------
@@ -625,6 +656,7 @@ class QcOrder extends Model
         }
         return $dataOrder;
     }
+
     # lay thong tin don hang quan ly thi cong theo danh sach nhan vien
     public function selectInfoManageConstruction($listStaffId, $nameFiler = null, $dateFilter = null, $finishStatus = 100)
     {
@@ -722,6 +754,7 @@ class QcOrder extends Model
             return QcOrder::where('company_id', $companyId)->where('name', 'like', "%$name%")->pluck('order_id');
         }
     }
+
     # lay thong tin theo danh sach cong ty
     public function listIdOfListCompanyAndName($listCompanyId, $name = null)
     {
@@ -1407,62 +1440,7 @@ class QcOrder extends Model
 
     }
 
-    # ------ code cu - bo
-    public function getBonusByOrderAllocation($orderId = null)
-    {
-        return $this->getBonusAndMinusMoneyOfStaffRank($orderId);
-    }
-
-    # lay gia tri tien phat tre ban giao don hang - cap thi cong
-    public function getMinusMoneyOrderAllocationLate($orderId = null)
-    {
-        return $this->getBonusAndMinusMoneyOfStaffRank($orderId);
-    }
-
     //============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
-    # kiem tra thuong nguoi quan ly thi cong
-    public function checkBonusConstruction($orderId)
-    {
-        $hFunction = new \Hfunction();
-        $modelBonus = new QcBonus();
-        $modelStaffNotify = new QcStaffNotify();
-        $modelOrderAllocation = new QcOrderAllocation();
-        $dataOrderAllocationFinish = $modelOrderAllocation->infoFinishOfOrder($orderId);
-        # co thong tin xac nhan hoan thanh
-        if ($hFunction->checkCount($dataOrderAllocationFinish)) {
-            # ngay xac nhan hoan thanh thi cong don hang
-            $allocationConfirmDate = $dataOrderAllocationFinish->confirmDate();
-            $allocationConfirmDate = date('Y-m-d', strtotime($allocationConfirmDate));
-            # ngay hen giao don hang
-            $orderDeliveryDate = $this->deliveryDate($orderId);
-            $orderDeliveryDate = date('Y-m-d', strtotime($orderDeliveryDate[0]));
-            # khong bi tre
-            if ($allocationConfirmDate <= $orderDeliveryDate) {
-                # lay thong tin cua quan ly ban giao
-                $dataAllocationStaff = $dataOrderAllocationFinish->allocationStaff;
-                # thong tin lam viec
-                $dataWork = $dataAllocationStaff->workInfoActivityOfStaff();
-                if ($hFunction->checkCount($dataWork)) {
-                    $workId = $dataWork->workId();
-                    if (!$modelBonus->checkExistBonusWorkOfOrderConstruction($workId, $orderId)) { # chua ap dung thuong
-                        #tien thuong hoan thanh thi cong
-                        $orderBonusPrice = $this->getBonusAndMinusMoneyOfManageRank($orderId);
-                        if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý triển khai thi công', 0, $workId, null, $orderId, null)) {
-                            $bonusId = $modelBonus->insertGetId();
-                            $allocationStaffId = $dataAllocationStaff->staffId();
-                            $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
-                            # thong bao cho nguoi nhan thuong
-                            $modelStaffNotify->insert(null, $allocationStaffId, 'Quản lý triển khai thi công', null, null, $bonusId, null, null);
-                        }
-                    }
-                }
-            } else {
-                echo "$allocationConfirmDate = $orderDeliveryDate Bonus No";
-            }
-
-        }
-    }
-
     # kiem tra phat nguoi quan ly thi cong cua don hang don hang - cap quan ly
     public function checkMinusMoneyConstruction($orderId)
     {

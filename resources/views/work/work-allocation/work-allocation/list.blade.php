@@ -25,6 +25,16 @@ $workId = $dataWork->workId();
         <div class="qc_work_allocation_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.work-allocation.menu',compact('modelStaff'))
 
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <h4 style="background-color: red; margin: 0;padding: 3px 10px;">
+                        <span style="color: white;">THƯỞNG</span>
+                        <span style="color: yellow;">Khi hoàn thành đúng hạn</span>,
+                        <span style="color: white;">PHẠT</span>
+                        <span style="color: yellow;">Khi hoàn thành trễ hạn Theo nội quy của công ty.</span>
+                    </h4>
+                </div>
+            </div>
             <div class="qc_work_allocation_contain qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="table-responsive">
@@ -36,13 +46,14 @@ $workId = $dataWork->workId();
                             </tr>--}}
                             <tr style="background-color: black;color: yellow;">
                                 <th style="width: 20px;"></th>
+                                <th>SẢN PHẨM</th>
                                 <th>NGÀY NHẬN</th>
                                 <th>TIẾN ĐỘ</th>
-                                <th>SẢN PHẨM</th>
                                 <th class="text-center">HẠN GIAO</th>
                                 <th class="text-center">NGÀY BÁO HOÀN THÀNH</th>
                             </tr>
                             <tr>
+                                <td></td>
                                 <td></td>
                                 <td style="padding:0;">
                                     <select class="cbWorkAllocationMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
@@ -72,7 +83,6 @@ $workId = $dataWork->workId();
                                         @endfor
                                     </select>
                                 </td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td style="padding: 0;">
@@ -118,6 +128,25 @@ $workId = $dataWork->workId();
                                         @endif data-work-allocation="{!! $allocationId !!}">
                                         <td class="text-center">
                                             <b>{!! $n_o !!}</b>
+                                        </td>
+                                        <td>
+                                            <b class="qc-color-red">{!! $workAllocation->product->productType->name() !!}</b>
+                                            <br/>
+                                            <em style="color:grey;">
+                                                - ĐH: {!! $workAllocation->product->order->name() !!}
+                                            </em>
+                                            @if($workAllocation->checkRoleMain())
+                                                <br/>
+                                                <em style="color: blue;">Vai trò: Làm chính</em>
+                                            @else
+                                                <br/>
+                                                <em style="color: blue;">Vai trò: Làm phụ</em>
+                                            @endif
+                                            @if(!empty($allocationNote))
+                                                <br/>
+                                                {!! $allocationNote !!}
+                                            @endif
+
                                         </td>
                                         <td>
                                             <span class="qc-font-bold" style="color: brown;">
@@ -179,17 +208,6 @@ $workId = $dataWork->workId();
                                                href="{!! route('qc.work.work_allocation.work_allocation.detail.get', $allocationId) !!}">
                                                 CHI TIẾT THI CÔNG
                                             </a>
-                                        </td>
-                                        <td>
-                                            <b class="qc-color-red">{!! $workAllocation->product->productType->name() !!}</b>
-                                            <br/>
-                                            <em style="color:grey;">
-                                                - ĐH: {!! $workAllocation->product->order->name() !!}
-                                            </em>
-                                            @if(!empty($allocationNote))
-                                                <br/>
-                                                {!! $allocationNote !!}
-                                            @endif
                                         </td>
                                         <td class="text-center">
                                             <span class="qc-font-bold" style="color: brown;">

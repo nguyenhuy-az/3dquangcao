@@ -300,30 +300,18 @@ class OrdersController extends Controller
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $modelCustomer = new QcCustomer();
-        $modelProductType = new QcProductType();
-        $dataProductType = $modelProductType->infoActivity();
         $dataAccess = [
             'object' => 'orders',
             'subObjectLabel' => 'Sản phảm'
         ];
         $dataCustomer = ($hFunction->checkEmpty($customerId)) ? $customerId : $modelCustomer->getInfo($customerId);
         $dataOrders = ($hFunction->checkEmpty($orderId)) ? $orderId : $modelOrder->getInfo($orderId);
-        //$request->session()->forget('listProductAdd');
-        //if (!Session::has('listProductAdd')){
-        // $numberRow = 1;
-        //$rowsProductions = Session::get('listProductAdd');
-        //$rowsProductions= json_decode($rowsProductions);
-        //$rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType'))->render();
-        ///$request->session()->put('listProductAdd',json_encode($rowsProductions));
-        //$request->session()->put('listProductAdd',$rowsProductions);
-        //}
         return view('work.orders.orders.add', compact('modelStaff', 'dataAccess', 'dataCustomer', 'orderType', 'dataOrders'));
     }
 
     public function addProduct(Request $request)
     {
-        //$data = $request->session()->all();
-        //$hFunction = new \Hfunction();
+
         $modelProductType = new QcProductType();
         $dataProductType = $modelProductType->infoActivity();
         if (Session::has('listProductAdd')) {
@@ -332,12 +320,6 @@ class OrdersController extends Controller
         } else {
             $rowsProductions = [];
         }
-        //$numberRow =  count($rowsProductions) + 1;
-        //$rowsProductions[] = view('work.orders.orders.add-product', compact('dataProductType'))->render();
-        ///$request->session()->put('listProductAdd',json_encode($rowsProductions));
-        // $request->session()->put('listProductAdd',$rowsProductions);
-
-        //$numberRow = 1;
         return view('work.orders.orders.add-product');
     }
 
@@ -369,7 +351,6 @@ class OrdersController extends Controller
         $modelOrderPay = new QcOrderPay();
         $modelOrderAllocation = new QcOrderAllocation();
         $modelStaff = new QcStaff();
-
         $dataStaff = $modelStaff->loginStaffInfo();
         $staffLoginId = $modelStaff->loginStaffId();
         //thong tin khach hang
@@ -433,6 +414,8 @@ class OrdersController extends Controller
             $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
             if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 1, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 1, null, 1)) {
                 $orderId = $modelOrder->insertGetId();
+                # xet them vao ngan sach thuong
+                $modelOrder->checkAddBonusBudget($orderId);
                 # thong bao them don hang
                 $listStaffReceiveNotify = $modelStaff->infoStaffReceiveNotifyNewOrder($dataStaff->companyId());
                 if ($hFunction->checkCount($listStaffReceiveNotify)) {
@@ -471,8 +454,8 @@ class OrdersController extends Controller
                 if ($txtBeforePay > 0) {
                     # thanh toan don hang
                     if ($modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone)) {
-                        # xet thuong cho bo phan kinh doanh
-                        $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
+                        # xet thuong khi thu tien don hang
+                        $modelOrderPay->checkApplyBonus($modelOrderPay->insertGetId());
                     }
                 }
 
@@ -667,13 +650,10 @@ class OrdersController extends Controller
                 }
             }
         }
-        //$dataOrder = $modelOrders->getInfo($orderId);
-        //$pageBack = 2;
         return redirect()->route('qc.work.orders.info.get', $orderId);
-        //return view('work.orders.orders.order-info', compact('dataAccess', 'dataOrder', 'pageBack'));
     }
 
-    // ======== ======= BAO CAO HOAN THANH ======= =======
+    // ======== ======= KINH DOANH BAO CAO HOAN THANH ======= =======
     public function getReportFinish($orderId)
     {
         $modelStaff = new QcStaff();
@@ -729,8 +709,8 @@ class OrdersController extends Controller
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($txtMoney) && $hFunction->checkCount($dataOrder)) {
             if ($modelOrderPay->insert($txtMoney, $txtNote, $hFunction->carbonNow(), $orderId, $modelStaff->loginStaffId(), $txtName, $txtPhone)) {
-                # xet thuong cho bo phan kinh doanh
-                $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
+                # xet thuong khi thu tien
+                $modelOrderPay->checkApplyBonus($modelOrderPay->insertGetId());
                 # cap nhat thong tin thanh toan don hang
                 $modelOrders->updateFinishPayment($orderId);
                 return redirect()->route('qc.work.orders.print.get', $orderId);

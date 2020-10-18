@@ -27,17 +27,21 @@ $loginStaffId = $dataStaffLogin->staffId();
         </div>
         <div class="qc_work_allocation_construction_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.work-allocation.menu')
-
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <h4 style="background-color: red; margin: 0;padding: 3px 10px;">
+                        <span style="color: white;">THƯỞNG</span>
+                        <span style="color: yellow;">Khi hoàn thành đúng hạn</span>,
+                        <span style="color: white;">PHẠT</span>
+                        <span style="color: yellow;">Khi hoàn thành trễ hạn Theo nội quy của công ty.</span>
+                    </h4>
+                </div>
+            </div>
             {{-- chi tiêt --}}
             <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_allocation_construction_list_content row">
                     <div class="table-responsive">
                         <table class="table table-bordered" style="border: none;">
-                            <tr>
-                                <th colspan="8" style="border-top: none;">
-                                    <em style="color: deeppink;">(Danh sách đơn hàng được bàn giao)</em>
-                                </th>
-                            </tr>
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>NGÀY NHẬN</th>
@@ -115,6 +119,8 @@ $loginStaffId = $dataStaffLogin->staffId();
                                     $orderId = $orders->orderId();
                                     $customerId = $orders->customerId();
                                     $allocationFinishDate = $ordersAllocation->finishDate();
+                                    # tien thuong va phat
+                                    $totalMoneyBonusAndMinus = $orders->getBonusAndMinusMoneyOfConstructionManage();
                                     ?>
                                     <tr class="qc_work_list_content_object @if($n_o%2) info @endif"
                                         data-object="{!! $orderId !!}">
@@ -175,10 +181,14 @@ $loginStaffId = $dataStaffLogin->staffId();
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            {!! $hFunction->currencyFormat($orders->getBonusAndMinusMoneyOfStaffRank()) !!}
+                                            <b style="color: blue;">
+                                                {!! $hFunction->currencyFormat($totalMoneyBonusAndMinus) !!}
+                                            </b>
                                         </td>
                                         <td class="text-right">
-                                            {!! $hFunction->currencyFormat($orders->getBonusAndMinusMoneyOfStaffRank()) !!}
+                                            <b style="color: red;">
+                                                {!! $hFunction->currencyFormat($totalMoneyBonusAndMinus) !!}
+                                            </b>
                                         </td>
                                         <td class="text-center">
                                             @if($ordersAllocation->checkActivity())

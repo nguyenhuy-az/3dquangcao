@@ -242,10 +242,8 @@ class OrderController extends Controller
 
     public function postConfirmFinishConstruction(Request $request, $allocationId)
     {
-        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrderAllocation = new QcOrderAllocation();
-        //$dataOrderAllocation = $modelOrderAllocation->getInfo($allocationId);
         $confirmFinishStatus = $request->input('cbConfirmFinishStatus');
         $confirmNote = $request->input('txtConfirmNote');
         $modelOrderAllocation->confirmFinishAllocation($allocationId, $confirmFinishStatus, $modelStaff->staffId(), $confirmNote);

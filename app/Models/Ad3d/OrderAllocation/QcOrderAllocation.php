@@ -67,13 +67,11 @@ class QcOrderAllocation extends Model
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelStaffNotify = new QcStaffNotify();
-        $modelBonus = new QcBonus();
         $modelProduct = new QcProduct();
         $modelOrder = new QcOrder();
         $orderId = $this->orderId($allocationId);
         $dataProduct = $modelOrder->productActivityOfOrder($orderId);
         if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['finishStatus' => 1, 'finishNote' => $finishNote, 'finishDate' => $reportDate, 'paymentStatus' => $paymentStatus, 'action' => 0])) {
-            $dataOrder = $modelOrder->getInfo($orderId);
             # thong bao hoan thanh thi cong cho quan ly thi cong (nguoi phan viec)
             $staffNotifyId = $this->allocationStaffId($allocationId)[0];
             if (!$hFunction->checkEmpty($staffNotifyId)) {
@@ -92,11 +90,8 @@ class QcOrderAllocation extends Model
     public function confirmFinishAllocation($allocationId, $confirmFinish, $confirmStaffId, $confirmNote = null)
     {
         $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
         $modelStaffNotify = new QcStaffNotify();
         $modelOrder = new QcOrder();
-        $modelBonus = new QcBonus();
-        $modelMinusMoney = new QcMinusMoney();
         #$confirmFinish == 1 - hoan thanh / 0 - khong hoan thanh
         $allocationId = $this->checkNullId($allocationId);
         if (QcOrderAllocation::where('allocation_id', $allocationId)->update(
@@ -114,32 +109,9 @@ class QcOrderAllocation extends Model
                 # xac nhan dong y  hoan thanh
                 # thong bao hoan thanh thi cong cho kinh doanh
                 $modelStaffNotify->insert(null, $dataOrder->staffId(), 'Hoàn thành thi công', null, null, null, null, $allocationId);
-
-                # ----  XET THUONG NGUOI THI CONG SAN PHAM   ----------
-                # Xet thuong khi nhan tien don hang
-                /*# khong tre ngay phan cong
-                if (!$this->checkLate($allocationId)) {
-                    $receiveStaffId = $this->receiveStaffId($allocationId);
-                    $dataWork = $modelStaff->firstInfoActivityToWork($receiveStaffId); # bang cham cong cua NV
-                    if ($hFunction->checkCount($dataWork)) {
-                        $workId = $dataWork->workId();
-                        if (!$modelBonus->checkExistBonusWorkOfOrderAllocation($workId, $allocationId)) { # chua ap dung thuong
-                            #tien thuong hoan thanh thi cong
-                            $orderBonusPrice = $dataOrder->getBonusByOrderAllocation();
-                            if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Thưởng hoàn thành thi công', 0, $workId, $allocationId, null)) {
-                                $bonusId = $modelBonus->insertGetId();
-                                $receiveStaffId = (is_int($receiveStaffId)) ? $receiveStaffId : $receiveStaffId[0];
-                                # thong bao cho nguoi nhan thuong
-                                $modelStaffNotify->insert(null, $receiveStaffId, 'Thưởng hoàn thành thi công', null, null, $bonusId, null, null);
-                            }
-                        }
-                    }
-                }*/
-
             } else {
                 # xac nhan khong hoan thanh thi cong
-                # ap phat khong hoan thanh
-
+                # ap phat khong hoan thanh - PHAT TRIEN SAU
             }
             return true;
         } else {
@@ -160,17 +132,6 @@ class QcOrderAllocation extends Model
                 $this->confirmFinishAllocation($orderAllocation->allocationId(), $confirmFinish, $staffReportConformId, $confirmNote = 'Kinh doanh báo kết thúc đơn hàng');
             }
         }
-        //
-        /*return QcOrderAllocation::where('order_id', $orderId)->where('action', 1)->update(
-            [
-                'finishStatus' => $finishStatus,
-                'finishDate' => $hFunction->carbonNow(),
-                'confirmStatus' => 1,
-                'confirmDate' => $hFunction->carbonNow(),
-                'confirmFinish' => $confirmFinish,
-                'confirmStaff_id' => $staffReportConformId,
-                'action' => 0
-            ]);*/
     }
 
     //========== ========= ========= RELATION ========== ========= ==========

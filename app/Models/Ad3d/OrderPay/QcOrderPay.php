@@ -168,107 +168,25 @@ class QcOrderPay extends Model
         return $this->hasMany('App\Models\Ad3d\Bonus\QcBonus', 'pay_id', 'pay_id');
     }
 
-    # lay gia tri tien thuong  1 lan thanh toan cua bo phan kinh doanh cap quan ly
-    public function getBonusMoneyOfBusinessManageRank($payId)
+    // ---------- --------- XET THUONG KHI THU TIEN DON HANG ----------- -----------
+    # xet thuong theo tung lan thu
+    public function checkApplyBonus($payId)
     {
         $hFunction = new \Hfunction();
-        $modelDepartment = new QcDepartment();
-        $modelBonusDepartment = new QcBonusDepartment();
-        $dataBonusDepartment = $modelBonusDepartment->infoActivityOfManageRank($modelDepartment->businessDepartmentId());
-        # co ap dung thuong
-        if ($hFunction->checkCount($dataBonusDepartment)) {
-            $moneyPay = $this->money($payId);
-            $moneyPay = (is_int($moneyPay)) ? $moneyPay : $moneyPay[0];
-            $percent = $dataBonusDepartment->percent();
-            return (int)$moneyPay * ($percent / 100);
-        } else {
-            return 0;
-        }
-
-    }
-
-    # lay gia tri tien thuong  1 lan thanh toan cua bo phan kinh doanh cap nhan vien
-    public function getBonusMoneyOfBusinessStaffRank($payId = null)
-    {
-        $hFunction = new \Hfunction();
-        $modelDepartment = new QcDepartment();
-        $modelBonusDepartment = new QcBonusDepartment();
-        $dataBonusDepartment = $modelBonusDepartment->infoActivityOfStaffRank($modelDepartment->businessDepartmentId());
-        # co ap dung thuong
-        if ($hFunction->checkCount($dataBonusDepartment)) {
-            $moneyPay = $this->money($payId);
-            $moneyPay = (is_int($moneyPay)) ? $moneyPay : $moneyPay[0];
-            $percent = $dataBonusDepartment->percent();
-            return (int)$moneyPay * ($percent / 100);
-        } else {
-            return 0;
-        }
-
-    }
-
-    # xet thuong cho bo phan kinh doanh
-    public function applyBonusDepartmentBusiness($payId)
-    {
-        $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
-        $modelStaffNotify = new QcStaffNotify();
-        $modelBonus = new QcBonus();
+        # lay thong tin thanh toan
         $dataOrderPay = $this->getInfo($payId);
-        if ($hFunction->checkCount($dataOrderPay)) {
-            $dataOrder = $dataOrderPay->order;
-            # thong tin nhan vien tao don hang
-            $dataStaffCreated = $dataOrder->staff;
-            # CAP QUAN LY - lay danh sach NV kinh doanh cap quan ly
-            $dataStaffBusiness = $modelStaff->infoActivityStaffBusinessRankManage($dataOrder->companyId());
-            if ($hFunction->checkCount($dataStaffBusiness)) {
-                $bonusMoney = $this->getBonusMoneyOfBusinessManageRank($payId);
-                if ($bonusMoney > 0) {
-                    foreach ($dataStaffBusiness as $staffBusiness) {
-                        $dataWork = $staffBusiness->workInfoActivityOfStaff();
-                        if ($hFunction->checkCount($dataWork)) {
-                            $workId = $dataWork->workId();
-                            # kiem tra da duoc thuong chua - neu chua thi thuong
-                            if (!$modelBonus->checkOrderPayBonus($workId, $payId)) {
-                                if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), 'Thưởng Quản lý kinh doanh nhận tiền từ đơn hàng', 1, $workId, null, null, $payId)) {
-                                    $bonusId = $modelBonus->insertGetId();
-                                    $notifyStaffId = $staffBusiness->staffId();
-                                    $notifyStaffId = (is_int($notifyStaffId)) ? $notifyStaffId : $notifyStaffId[0];
-                                    # thong bao cho nguoi nhan thuong
-                                    $modelStaffNotify->insert(null, $notifyStaffId, 'Thưởng Quản lý kinh doanh nhận tiền từ đơn hàng', null, null, $bonusId, null, null);
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-            //NGUOI NHAN DON HANG - thuong cho nguoi nhan don hang
-            if ($hFunction->checkCount($dataStaffCreated)) {
-                $bonusMoney_created = $this->getBonusMoneyOfBusinessStaffRank($payId);
-                if ($bonusMoney_created > 0) {
-                    $dataWork = $dataStaffCreated->workInfoActivityOfStaff();
-                    if ($hFunction->checkCount($dataWork)) {
-                        $workId = $dataWork->workId();
-                        # kiem tra da duoc thuong chua - neu chua thi thuong
-                        if (!$modelBonus->checkOrderPayBonus($workId, $payId)) {
-                            if ($modelBonus->insert($bonusMoney_created, $hFunction->carbonNow(), 'Thưởng Nhân viên kinh doanh nhận tiền đơn hàng', 1, $workId, null, null, $payId)) {
-                                $bonusId = $modelBonus->insertGetId();
-                                $notifyStaffId = $dataStaffCreated->staffId();
-                                $notifyStaffId = (is_int($notifyStaffId)) ? $notifyStaffId : $notifyStaffId[0];
-                                # thong bao cho nguoi nhan thuong
-                                $modelStaffNotify->insert(null, $notifyStaffId, 'Thưởng Nhân viên kinh doanh nhận tiền đơn hàng', null, null, $bonusId, null, null);
-                            }
-                        }
-                    }
-                }
+        # thong tin don hang
+        $dataOrder = $dataOrderPay->order;
+        # lay ngan sach thuong theo cac bo phan
+        $dataOrderBonusBudget = $dataOrder->orderBonusBudgetInfo();
+        #co thuong
+        if ($hFunction->checkCount($dataOrderBonusBudget)) {
+            foreach ($dataOrderBonusBudget as $orderBonusBudget) {
+                $bonusDepartment = $orderBonusBudget->bornusDepartment;
+                $bonusPercent = $bonusDepartment->percent();
+                #------------------ cap nhat sau
             }
         }
-    }
-
-    // ---------- --------- XET THUONG KHI THU TIEN DON HANNG ----------- -----------
-    public function checkBonus($payId)
-    {
-
     }
 
     //---------- DON HANG -----------

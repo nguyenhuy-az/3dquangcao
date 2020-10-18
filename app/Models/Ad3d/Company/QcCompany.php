@@ -41,6 +41,27 @@ class QcCompany extends Model
     {
         # cap nhat ngan sach thuong cua don hang
         $this->checkAutoUpdateBonusBudget();
+        # cap nhat bao cao hoan thanh san pham
+        $this->checkFixProduct();
+    }
+
+    # cap nhat bao hoan thanh san pha
+    public function checkFixProduct()
+    {
+        $hFunction = new \Hfunction();
+        $modelProduct = new QcProduct();
+        $dataProduct = $modelProduct->getInfo();
+        if ($hFunction->checkCount($dataProduct)) {
+            foreach ($dataProduct as $product) {
+                $productId = $product->productId();
+                $finishReportStaffId = $product->finishReportStaffId();
+                $confirmStaffId = $product->confirmStaffId();
+                if ($confirmStaffId > 0 && !empty($finishReportStaffId)) {
+                    QcProduct::where('product_id', $productId)->update(['finishReportStaff_id' => $confirmStaffId]);
+                }
+            }
+        }
+
     }
 
     # cap nhat ngan sach thuong cua don hang
@@ -51,7 +72,7 @@ class QcCompany extends Model
         $modelBonusDepartment = new QcBonusDepartment();
         $modelOrder = new QcOrder();
         $modelOrderBonusBudget = new QcOrderBonusBudget();
-        # thong tin thuong cua bo phan thi cong cap quan ly
+        # thong tin thuong cua bo phan thi cong cap quan ly dang hoat dong
         $dataBonusDepartment = $modelBonusDepartment->getActivityInfo();
         # lay danh sach don hang
         $dataOrder = $modelOrder->get();
