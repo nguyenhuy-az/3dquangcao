@@ -183,8 +183,8 @@ class QcOrder extends Model
                 }
             }
 
-            # -------------- ----------  xet thuong cho quan ly thi cong ---------- ----------
-            $modelOrderBonusBudget->checkBonusConstruction($orderId);
+            # xet thuong cho quan ly thi cong
+            $modelOrderBonusBudget->applyBonusConstruction($orderId);
             return true;
 
         } else {
@@ -1425,24 +1425,24 @@ class QcOrder extends Model
         return ($this->vat($orderId) == 1) ? true : false;
     }
 
-    # tien thuong - phạt tren don hang cua bo phan thi cong cap quan ly
+    # Tong tien thuong - phạt tren don hang cua bo phan thi cong cap quan ly
     public function getBonusAndMinusMoneyOfConstructionManage($orderId = null)
     {
         $modelOrderBonusBudget = new QcOrderBonusBudget();
-        return $modelOrderBonusBudget->getBudgetMoneyOfConstructionManage($this->checkIdNull($orderId));
+        return $modelOrderBonusBudget->totalBudgetMoneyOfConstructionManage($this->checkIdNull($orderId));
     }
 
-    # tien thuong - phạt tren don hang cua cap nhan vien
+    # Tong tien thuong - phạt tren don hang cua cap nhan vien
     public function getBonusAndMinusMoneyOfConstructionRank($orderId = null)
     {
         $modelOrderBonusBudget = new QcOrderBonusBudget();
-        return $modelOrderBonusBudget->getBudgetMoneyOfConstructionRank($this->checkIdNull($orderId));
+        return $modelOrderBonusBudget->totalBudgetMoneyOfConstructionRank($this->checkIdNull($orderId));
 
     }
 
     //============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
-    # kiem tra phat nguoi quan ly thi cong cua don hang don hang - cap quan ly
-    public function checkMinusMoneyConstruction($orderId)
+    # kiem tra don hang giao thi cong bi tre
+    /*public function checkMinusMoneyConstruction($orderId)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -1456,13 +1456,14 @@ class QcOrder extends Model
         $dataOrder = $this->getInfo($orderId);
         #ngay hen giao
         $receiveDeadline = $dataOrder->deliveryDate();
-
         # danh muc phat quan ly thi cong tre
         $punishId = $modelPunishContent->getPunishIdOfOrderConstructionLate();
-        if ($receiveDeadline < $checkDate) { # het han ban hen giao
+
+        if ($receiveDeadline < $checkDate) {# het han ban hen giao
             # lay thong tin thi cong da co xac nhan hoan thanh
             $dataOrderAllocationFinish = $modelOrderAllocation->infoFinishOfOrder($orderId);
             if ($hFunction->checkCount($dataOrderAllocationFinish)) { # quan ly thi cong xac nhan hoan thanh
+                //$orderAllocationId =
                 $confirmDate = date('Y-m-d', strtotime($dataOrderAllocationFinish->confirmDate()));
                 if ($confirmDate > $receiveDeadline) { # ngay xac nhan hoan thanh thi cong tre
                     # phat quan ly thi cong
@@ -1477,10 +1478,10 @@ class QcOrder extends Model
                                     $workId = $dataWork->workId();
                                     if (!$modelMinusMoney->checkExistMinusMoneyOrderConstructionLate($orderId, $workId)) { # chua phat
                                         $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
-                                        if ($modelMinusMoney->insert($checkDate, 'Quản lý thi công trễ đơn hàng', $workId, null, $punishId, 0, null, $orderId, null)) {
+                                        if ($modelMinusMoney->insert($checkDate, 'Quản lý thi công trễ đơn hàng', $workId, null, $punishId, 0, null, $orderId, null, null, 0)) {
                                             $modelStaffNotify->insert(null, $staffMinusMoneyId, 'Quản lý thi công trễ đơn hàng', null, null, null, $modelMinusMoney->insertGetId());
                                         }
-                                    }
+                                   }
                                 }
 
                             }
@@ -1514,10 +1515,10 @@ class QcOrder extends Model
 
             }
         }
-    }
+    }*/
 
-    #kiem tra tu dong don hang thi cong tre
-    public function autoCheckMinusMoneyLateConstruction()
+    # tu dong kiem tra don hang thi cong tre
+    /*public function autoCheckMinusMoneyLateConstruction()
     {
         $hFunction = new \Hfunction();
         $modelPunishContent = new QcPunishContent();
@@ -1527,13 +1528,12 @@ class QcOrder extends Model
             $punishId = $modelPunishContent->getPunishIdOfOrderConstructionLate();
             if (!$hFunction->checkEmpty($punishId)) {
                 foreach ($dataOrder as $order) {
-                    //echo $order->orderId()."<br/>";
-                    $this->checkMinusMoneyConstruction($order->orderId());
+                    //$this->checkMinusMoneyConstruction($order->orderId());
                 }
             }
 
         }
-    }
+    }*/
 
     # kiem tra cap nhat trang thai thanh toan don hang cu
     public function checkUpdatePaymentStatus()

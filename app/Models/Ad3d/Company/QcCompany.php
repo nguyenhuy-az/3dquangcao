@@ -10,6 +10,7 @@ use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\Order\QcOrder;
+use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
@@ -39,13 +40,13 @@ class QcCompany extends Model
     # cap nhat du lieu he thong
     public function checkAutoUpdateInfo()
     {
-        # cap nhat ngan sach thuong cua don hang
+        # cap nhat ngan sach thuong cua don hang - CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
         $this->checkAutoUpdateBonusBudget();
-        # cap nhat bao cao hoan thanh san pham
+        # cap nhat bao cao hoan thanh san pham - CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
         $this->checkFixProduct();
     }
 
-    # cap nhat bao hoan thanh san pha
+    # cap nhat bao hoan thanh san phaC- CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
     public function checkFixProduct()
     {
         $hFunction = new \Hfunction();
@@ -64,7 +65,7 @@ class QcCompany extends Model
 
     }
 
-    # cap nhat ngan sach thuong cua don hang
+    # cap nhat ngan sach thuong cua don hang - CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
     public function checkAutoUpdateBonusBudget()
     {
         $hFunction = new \Hfunction();
@@ -92,7 +93,7 @@ class QcCompany extends Model
         }
     }
 
-    # cap nhat anh hoa don phien ban cu
+    # cap nhat anh hoa don phien ban cu - CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
     public function checkAutoUpdateImportImage()
     {
         $hFunction = new \Hfunction();
@@ -107,6 +108,28 @@ class QcCompany extends Model
                 }
             }
         }
+    }
+
+    #========== ========== ========== TU DONG KIEM TRA DU LIEU CUA HE THONG ========== ========== ==========
+    # kiem tra tu tinh cong cuoi thang
+    public function checkAutoInfo()
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelWork = new QcWork();
+        $modelOrderAllocation = new QcOrderAllocation();
+        # kiem tra quan ly thi cong don hang
+        //$modelOrder->autoCheckMinusMoneyLateConstruction();
+        # kiem tra thong tin ban giao don hang
+        $modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
+        # phan cong kiem tra do nghe
+        $modelCompanyStaffWork->checkCompanyStoreOfCurrentDate();
+
+        //$modelWork->checkAutoTimekeepingOfActivityWork();
+        # kiem tra cham cong
+        //$modelWork->checkAutoTimekeepingOfActivityWork();
+        #kiểm tra đầu tháng để cho ra bảng làm việc của tháng mới
+        $modelWork->checkEndWorkOfMonth();
+
     }
 
     #========== ========== ========== THEM && CAP NHAT ========== ========== ==========

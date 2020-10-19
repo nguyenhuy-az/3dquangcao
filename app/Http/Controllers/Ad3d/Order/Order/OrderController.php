@@ -527,10 +527,6 @@ class OrderController extends Controller
         $dataOrder = $modelOrders->getInfo($orderId);
         if (count($txtMoney) > 0 && count($dataOrder) > 0) {
             if ($modelOrderPay->insert($txtMoney, $txtNote, $hFunction->carbonNow(), $orderId, $modelStaff->loginStaffId(), $txtName, $txtPhone)) {
-                # xet thuong cho bo phan kinh doanh
-                $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
-                # cap nhat thong tin thanh toan don hang
-                $modelOrders->updateFinishPayment($orderId);
                 return redirect()->route('qc.ad3d.order.order.get');
             }
         } else {

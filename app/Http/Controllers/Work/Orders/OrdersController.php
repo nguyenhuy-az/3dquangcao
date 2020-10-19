@@ -453,15 +453,8 @@ class OrdersController extends Controller
                 # thanh toan
                 if ($txtBeforePay > 0) {
                     # thanh toan don hang
-                    if ($modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone)) {
-                        # xet thuong khi thu tien don hang
-                        $modelOrderPay->checkApplyBonus($modelOrderPay->insertGetId());
-                    }
+                    $modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone);
                 }
-
-                # cap nhat thong tin thanh toan don hang
-                $modelOrder->updateFinishPayment($orderId);
-
                 # bàn giao don hang = cong trinh
                 ///$modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
 
@@ -709,10 +702,6 @@ class OrdersController extends Controller
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($txtMoney) && $hFunction->checkCount($dataOrder)) {
             if ($modelOrderPay->insert($txtMoney, $txtNote, $hFunction->carbonNow(), $orderId, $modelStaff->loginStaffId(), $txtName, $txtPhone)) {
-                # xet thuong khi thu tien
-                $modelOrderPay->checkApplyBonus($modelOrderPay->insertGetId());
-                # cap nhat thong tin thanh toan don hang
-                $modelOrders->updateFinishPayment($orderId);
                 return redirect()->route('qc.work.orders.print.get', $orderId);
             }
         } else {

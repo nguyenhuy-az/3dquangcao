@@ -282,8 +282,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                                         @endif
                                                         {{--nguoi so huu hoac là nguoi quan ly--}}
                                                         @if($ownerStatus ||$manageStatus)
-                                                            <a class="qc_finish_report qc-link-green-bold"
-                                                               data-href="{!! route('work.orders.order.report.finish.get',$orderId) !!}">
+                                                            <a class="qc_finish_report qc-link-green-bold" data-href="{!! route('work.orders.order.report.finish.get',$orderId) !!}">
                                                                 BÁO HOÀN THÀNH
                                                             </a>
                                                         @endif

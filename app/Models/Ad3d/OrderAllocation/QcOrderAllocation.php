@@ -475,7 +475,7 @@ class QcOrderAllocation extends Model
         }
     }
 
-    #kiem tra phan viec bi tre
+    #kiem tra phan viec bi tre hay khong
     public function checkLate($allocationId)
     {
         $hFunction = new \Hfunction();
@@ -495,6 +495,7 @@ class QcOrderAllocation extends Model
         return $lateStatus;
     }
 
+    # kiem tra cua 1 lan ban giao
     public function checkMinusMoneyLate($allocationId = null)
     {
         $hFunction = new \Hfunction();
@@ -514,10 +515,10 @@ class QcOrderAllocation extends Model
         if ($hFunction->checkCount($dataWork)) {
             $workId = $dataWork->workId();
             if ($receiveDeadline < $checkDate) { # tre ngay
-                if (!$modelMinusMoney->checkExistMinusMoneyAllocationLate($allocationId)) {
+                if (!$modelMinusMoney->checkExistMinusMoneyAllocationLate($allocationId)) { // Neu chua phat thi se phat
                     $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
-                    if ($modelMinusMoney->insert($checkDate, 'Thi công trễ đơn hàng', $workId, null, $punishId, 0, $allocationId, null)) {
-                        $modelStaffNotify->insert(null, $dataReceiveStaff->staffId(), 'Thi công trễ đơn hàng', null, null, null, $modelMinusMoney->insertGetId());
+                    if ($modelMinusMoney->insert($checkDate, 'Quản lý Thi công trễ đơn hàng', $workId, null, $punishId, 0, $allocationId, null,null, null, 0)) {
+                        $modelStaffNotify->insert(null, $dataReceiveStaff->staffId(), 'Quản lý thi công trễ đơn hàng', null, null, null, $modelMinusMoney->insertGetId());
                     }
                 }
 
@@ -525,7 +526,7 @@ class QcOrderAllocation extends Model
         }
     }
 
-    #kiem tra tu dong giao don hang
+    #kiem tra tu dong thi cong don hang don hang - tat ca thong tin ban giao
     public function autoCheckMinusMoneyLateOrderAllocation()
     {
         $hFunction = new \Hfunction();

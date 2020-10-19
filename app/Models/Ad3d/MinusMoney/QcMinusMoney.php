@@ -21,6 +21,12 @@ class QcMinusMoney extends Model
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
+    /*
+`   $orderAllocationId : quan ly thi cong don hang
+    $orderConstructionId
+    $companyStoreCheckReportId: mat do nghe
+    $workAllocationId => phan viec thi cong san pham
+    */
     public function insert($dateMinus, $reason, $workId, $staffId = null, $punishId, $applyStatus = 1, $orderAllocationId = null,
                            $orderConstructionId = null, $companyStoreCheckReportId = null, $workAllocationId = null, $money = 0)
     {
@@ -36,15 +42,15 @@ class QcMinusMoney extends Model
                 # tien phat
                 $money = $modelPunishContent->money($punishId);
             } else {
-                # phat theo gia tri don han
+                # phat theo gia tri don hang
                 if (!empty($orderAllocationId)) {
-                    # phat truong thi cong
+                    # quan ly thi cong don hag
                     $dataOrderAllocation = $modelOrderAllocation->getInfo($orderAllocationId);
                     $dataOrder = $dataOrderAllocation->orders;
-                    $money = (int)$dataOrder->getMinusMoneyOrderAllocationLate();
+                    $money = (int)$dataOrder->getBonusAndMinusMoneyOfConstructionManage();
                 } elseif (!empty($orderConstructionId)) {
-                    # phat quan ly thi cong
-                    $money = (int)$modelOrder->getBonusAndMinusMoneyOfManageRank($orderConstructionId);
+                    # kinh doanh tre don hang giao khach
+                    $money = 0;// (int)$modelOrder->getBonusAndMinusMoneyOfConstructionManage($orderConstructionId);  - chua phat kinh doanh
                 } elseif (!empty($companyStoreCheckReportId)) {
                     $punishIdLostTool = $modelPunishContent->getPunishIdLostPublicTool();
                     $punishIdLostTool = (is_int($punishIdLostTool)) ? $punishIdLostTool : $punishIdLostTool[0];

@@ -45,7 +45,7 @@ class QcStaff extends Model
 
     function __construct()
     {
-        $this->checkAutoInfo();
+
     }
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
@@ -975,6 +975,7 @@ class QcStaff extends Model
         $modelTransfer = new QcTransfers();
         return $modelTransfer->totalMoneyConfirmedTransfersForTreasurerManage($staffId, $date);
     }
+
     # tong tien nhan chuyen tu dau tu va da xac nhan
     public function totalMoneyReceiveTransferInvestmentConfirmed($staffId, $date = null)
     {
@@ -1832,14 +1833,4 @@ class QcStaff extends Model
         return ($hFunction->checkCount($this->workInfoActivityOfStaff($this->checkIdNull($staffId)))) ? true : false;
     }
 
-    # kiem tra tu tinh cong cuoi thangc
-    public function checkAutoInfo()
-    {
-        $modelWork = new QcWork();
-        # kiem tra cham cong
-        //$modelWork->checkAutoTimekeepingOfActivityWork();
-        #kiểm tra đầu tháng để cho ra bảng làm việc của tháng mới
-        $modelWork->checkEndWorkOfMonth();
-
-    }
 }

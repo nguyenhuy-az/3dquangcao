@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Work;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
-use App\Models\Ad3d\Order\QcOrder;
-use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 
 use App\Models\Ad3d\Rule\QcRules;
 use App\Models\Ad3d\Staff\QcStaff;
@@ -24,22 +22,11 @@ class WorkController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        //$modelWork = new QcWork();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelCompany = new QcCompany();
-        $modelOrder = new QcOrder();
-        $modelOrderAllocation = new QcOrderAllocation();
-
+        # KIEM TRA DU LIEU TU DONG
+        $modelCompany->checkAutoInfo();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         if ($hFunction->checkCount($dataStaffLogin)) {
-            # kiem tra quan ly thi cong don hang
-            $modelOrder->autoCheckMinusMoneyLateConstruction();
-            # kiem tra thong tin ban giao don hang
-            //$modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
-            # phan cong kiem tra do nghe
-            $modelCompanyStaffWork->checkCompanyStoreOfCurrentDate();
-
-            //$modelWork->checkAutoTimekeepingOfActivityWork();
             return view('work.control-panel', compact('modelCompany', 'modelStaff', 'sysInfoObject'));
         } else {
             return view('work.login');
