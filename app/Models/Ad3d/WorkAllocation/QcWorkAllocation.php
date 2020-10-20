@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcWorkAllocation extends Model
 {
     protected $table = 'qc_work_allocation';
-    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'confirmStatus', 'confirmDate', 'noted', 'role', 'action', 'product_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
+    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'confirmStatus', 'confirmDate', 'noted', 'role', 'cancelStatus', 'cancelDate', 'action', 'product_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
     protected $primaryKey = 'allocation_id';
     public $timestamps = false;
 
@@ -106,6 +106,12 @@ class QcWorkAllocation extends Model
         return QcWorkAllocation::where('allocation_id', $allocationId)->update(['action' => 0, 'cancelStatus' => 1, 'cancelDate' => $hFunction->carbonNow()]);
     }
     //========== ========= ========= RELATION ========== ========= ==========
+    //---------- thuong  -----------
+    public function bonus()
+    {
+        return $this->hasMany('App\Models\Ad3d\Bonus\QcBonus', 'workAllocation_id', 'allocation_id');
+    }
+
     //---------- phat  -----------
     public function minusMoney()
     {
@@ -269,15 +275,24 @@ class QcWorkAllocation extends Model
         return QcWorkAllocation::where('product_id', $productId)->exists();
     }
 
+    # danh sach thi cong cua san pham  - DANG HOAT DONG
     public function infoActivityOfProduct($productId)
     {
         return QcWorkAllocation::where('product_id', $productId)->where('action', 1)->get();
     }
 
+    # danh sach thi cong cua san pham - TAT CA
     public function infoOfProduct($productId, $orderBy = 'DESC')
     {
         return QcWorkAllocation::where('product_id', $productId)->orderBy('allocationDate', $orderBy)->get();
     }
+
+    # danh sach thi cong cua san pham - KHONG BI HUY
+    public function infoNotCancelOfProduct($productId, $orderBy = 'DESC')
+    {
+        return QcWorkAllocation::where('product_id', $productId)->where('cancelStatus', 0)->orderBy('allocationDate', $orderBy)->get();
+    }
+
 
     public function listReceiveStaffIdOfListProduct($listProductId)
     {

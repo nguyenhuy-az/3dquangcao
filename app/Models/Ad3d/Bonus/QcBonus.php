@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class QcBonus extends Model
 {
     protected $table = 'qc_bonus';
-    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'orderAllocation_id', 'orderConstruction_id', 'orderPay_id'];
+    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'orderAllocation_id', 'orderConstruction_id', 'orderPay_id', 'workAllocation_id'];
     protected $primaryKey = 'bonus_id';
     public $timestamps = false;
     private $lastId;
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($money, $bonusDate, $note, $applyStatus, $workId, $orderAllocationId = null, $orderConstructionId = null, $orderPayId = null)
+    public function insert($money, $bonusDate, $note, $applyStatus, $workId, $orderAllocationId = null, $orderConstructionId = null, $orderPayId = null, $workAllocationId = null)
     {
         $hFunction = new \Hfunction();
         $modelBonus = new QcBonus();
@@ -27,6 +27,7 @@ class QcBonus extends Model
         $modelBonus->orderAllocation_id = $orderAllocationId;
         $modelBonus->orderConstruction_id = $orderConstructionId;
         $modelBonus->orderPay_id = $orderPayId;
+        $modelBonus->workAllocation_id = $workAllocationId;
         $modelBonus->created_at = $hFunction->createdAt();
         if ($modelBonus->save()) {
             $this->lastId = $modelBonus->bonus_id;
@@ -120,6 +121,12 @@ class QcBonus extends Model
     public function checkExistBonusWorkOfOrderAllocation($workId, $orderAllocationId)
     {
         return QcBonus::where('work_id', $workId)->where('orderAllocation_id', $orderAllocationId)->exists();
+    }
+
+    //---------- thong bao ban giao don hang moi -----------
+    public function workAllocation()
+    {
+        return $this->belongsTo('App\Models\Ad3d\WorkAllocation\QcWorkAllocation', 'allocation_id', 'workAllocation_id');
     }
 
     //---------- thong bao ban giao don hang moi -----------
@@ -231,9 +238,15 @@ class QcBonus extends Model
     {
         return $this->pluck('orderConstruction_id', $bonusId);
     }
+
     public function orderPayId($bonusId = null)
     {
         return $this->pluck('orderPay_id', $bonusId);
+    }
+
+    public function workAllocationId($bonusId = null)
+    {
+        return $this->pluck('workAllocation_id', $bonusId);
     }
 
     #========= ============= ============= ============= =============

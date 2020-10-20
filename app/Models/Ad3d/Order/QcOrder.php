@@ -183,8 +183,8 @@ class QcOrder extends Model
                 }
             }
 
-            # xet thuong cho quan ly thi cong
-            $modelOrderBonusBudget->applyBonusConstruction($orderId);
+            # xet thuong cho bo pham thi cong
+            $modelOrderBonusBudget->applyBonusDepartmentConstruction($orderId);
             return true;
 
         } else {

@@ -4,10 +4,12 @@ namespace App\Models\Ad3d\OrderBonusBudget;
 
 use App\Models\Ad3d\Bonus\QcBonus;
 use App\Models\Ad3d\BonusDepartment\QcBonusDepartment;
+use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
+use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
@@ -125,52 +127,103 @@ class QcOrderBonusBudget extends Model
 
     // ======== ======== THUONG BO PHAN THI CONG ========= ========
     # xet thuong bo phan thi cong tat ca cac cap bac
-    public function applyBonusConstruction($orderId)
+    public function applyBonusDepartmentConstruction($orderId)
+    {
+        # Thuong cap quan ly
+        $this->applyBonusDepartmentConstructionManage($orderId);
+        # Thuong cap nhan vien
+        $this->applyBonusDepartmentConstructionStaff($orderId);
+    }
+
+    # ap dung thuong cho thi cong cap quan ly
+    public function applyBonusDepartmentConstructionManage($orderId)
     {
         $hFunction = new \Hfunction();
-        $modelOrder = new QcOrder();
         $modelBonus = new QcBonus();
         $modelStaffNotify = new QcStaffNotify();
         $modelOrderAllocation = new QcOrderAllocation();
-        #QUAN LY THI CONG DON HANG
-        $dataOrderAllocationFinish = $modelOrderAllocation->infoFinishOfOrder($orderId);
-        # co thong tin xac nhan hoan thanh
-        if ($hFunction->checkCount($dataOrderAllocationFinish)) {
-            $dataOrder = $modelOrder->getInfo($orderId);
-            # ngay xac nhan hoan thanh thi cong don hang
-            $allocationConfirmDate = $dataOrderAllocationFinish->confirmDate();
-            $allocationConfirmDate = date('Y-m-d', strtotime($allocationConfirmDate));
-            # ngay hen giao don hang
-            $orderDeliveryDate = $dataOrder->deliveryDate($orderId);
-            $orderDeliveryDate = date('Y-m-d', strtotime($orderDeliveryDate[0]));
-            # khong bi tre
-            if ($allocationConfirmDate <= $orderDeliveryDate) {
-                # lay thong tin cua quan ly ban giao
-                $dataAllocationStaff = $dataOrderAllocationFinish->allocationStaff;
-                # thong tin lam viec
-                $dataWork = $dataAllocationStaff->workInfoActivityOfStaff();
-                if ($hFunction->checkCount($dataWork)) {
-                    $workId = $dataWork->workId();
-                    if (!$modelBonus->checkExistBonusWorkOfOrderConstruction($workId, $orderId)) { # chua ap dung thuong
-                        #tien thuong hoan thanh thi cong
-                        /*$orderBonusPrice = $dataOrder->getBonusAndMinusMoneyOfManageRank($orderId);
-                        if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý triển khai thi công', 0, $workId, null, $orderId, null)) {
-                            $bonusId = $modelBonus->insertGetId();
-                            $allocationStaffId = $dataAllocationStaff->staffId();
-                            $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
-                            # thong bao cho nguoi nhan thuong
-                            $modelStaffNotify->insert(null, $allocationStaffId, 'Quản lý triển khai thi công', null, null, $bonusId, null, null);
-                        }*/
+        #tien thuong hoan thanh thi cong cap quan ly
+        $orderBonusPrice = $this->totalBudgetMoneyOfConstructionManage($orderId);
+        if ($orderBonusPrice > 0) { # CO AP DUNG THUONG
+            # lay thong tin ban giao thi cong sau cung
+            $dataOrderAllocation = $modelOrderAllocation->lastInfoOfOrder($orderId);
+            # co ban giao quan ly thi cong
+            if ($hFunction->checkCount($dataOrderAllocation)) {
+                # KHONG BI HUY VA BI TRE => XET THUONG
+                if (!$dataOrderAllocation->checkCancelAllocation() && !$dataOrderAllocation->checkLate()) {
+                    $allocationId = $dataOrderAllocation->allocationId();
+                    # lay thong tin cua nguoi nhan thuong (duoc ban giao)
+                    $dataReceiveStaff = $dataOrderAllocation->receiveStaff;
+                    # thong tin lam viec dang hoat dong
+                    $dataWork = $dataReceiveStaff->workInfoActivityOfStaff();
+                    if ($hFunction->checkCount($dataWork)) {
+                        $workId = $dataWork->workId();
+                        if (!$modelBonus->checkExistBonusWorkOfOrderConstruction($workId, $orderId)) { # chua ap dung thuong
+                            if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý thi công đơn hàng', 0, $workId, $allocationId, null, null)) {
+                                $bonusId = $modelBonus->insertGetId();
+                                $allocationStaffId = $dataReceiveStaff->staffId();
+                                $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
+                                # thong bao cho nguoi nhan thuong
+                                $modelStaffNotify->insert(null, $allocationStaffId, 'Quản lý thi công đơn hàng', null, null, $bonusId, null, null);
+                            }
+                        }
                     }
                 }
             }
         }
-        # THUONG NHAN VIEN THI CONG SAN PHAM
-        # lay danh sach san pham cua don hang
-
-        # xe thuong thi cong tre tung san pham
     }
-    # lay phan tram thuong tren don hang cua bo phan thi cong cap quan ly
+
+    # ap dung thuong  cho thi cong cap nhan vien
+    public function applyBonusDepartmentConstructionStaff($orderId)
+    {
+        $hFunction = new \Hfunction();
+        $modelBonus = new QcBonus();
+        $modelStaffNotify = new QcStaffNotify();
+        $modelProduct = new QcProduct();
+        # lay phan tram thuong thi cong cap nhan vien tren 1 don hang
+        $orderBonusPercent = $this->getPercentOfConstructionStaff($orderId);
+        if ($orderBonusPercent > 0) { # co ap dung thuong
+            # lay danh sach san pham cua don hang khong bi huy
+            $dataProduct = $modelProduct->infoActivityOfOrder($orderId);
+            if ($hFunction->checkCount($dataProduct)) {
+                foreach ($dataProduct as $product) {
+                    $productId = $product->productId();
+                    # lay danh sach trien khai thi cong cua san pham - KHONG BI HUY
+                    $dataWorkAllocation = $product->workAllocationInfoNotCancelOfProduct();
+                    if ($hFunction->checkCount($dataWorkAllocation)) { # co trien khai thi cong
+                        # so tien moi nguoi nhan
+                        $bonusMoneyOfEachPerson = $this->totalBudgetMoneyEachPersonOfConstructionStaffOfProduct($productId);
+                        # lay so tien chia cho moi nguoi thi cong
+                        foreach ($dataWorkAllocation as $workAllocation) {
+                            $allocationId = $workAllocation->allocationId();
+                            # kiem tra co bi tre khong
+                            if (!$workAllocation->checkLate()) {
+                                # lay thong tin cua nguoi nhan
+                                $dataReceiveStaff = $workAllocation->receiveStaff;
+                                # thong tin lam viec dang hoat dong
+                                $dataWork = $dataReceiveStaff->workInfoActivityOfStaff();
+                                if ($hFunction->checkCount($dataWork)) {
+                                    $workId = $dataWork->workId();
+                                    if (!$modelBonus->checkExistBonusWorkOfOrderConstruction($workId, $orderId)) { # chua ap dung thuong
+                                        if ($modelBonus->insert($bonusMoneyOfEachPerson, $hFunction->carbonNow(), 'Thi công sản phẩm', 0, $workId, null, null, null, $allocationId)) {
+                                            $bonusId = $modelBonus->insertGetId();
+                                            $allocationStaffId = $dataReceiveStaff->staffId();
+                                            $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
+                                            # thong bao cho nguoi nhan thuong
+                                            $modelStaffNotify->insert(null, $allocationStaffId, 'Thi công sản phẩm', null, null, $bonusId, null, null);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    # lay phan tram thuong - phat tren don hang cua bo phan thi cong cap quan ly
     public function getPercentOfConstructionManage($orderId)
     {
         $hFunction = new \Hfunction();
@@ -183,16 +236,17 @@ class QcOrderBonusBudget extends Model
             return 0;
         }
     }
+
     # Tong tien thuong - phạt tren don hang cua bo phan thi cong cap quan ly
     public function totalBudgetMoneyOfConstructionManage($orderId)
     {
         $modelOrder = new QcOrder();
         # tong tien hoa don
         $orderTotalPrice = $modelOrder->totalPrice($orderId);
-        return  (int)$orderTotalPrice * ($this->getPercentOfConstructionManage($orderId) / 100);
+        return (int)$orderTotalPrice * ($this->getPercentOfConstructionManage($orderId) / 100);
     }
 
-    # lay phan tram thuong tren don hang cua bo phan thi cong cap nhan vien
+    # lay phan tram thuong - phat tren don hang cua bo phan thi cong cap nhan vien
     public function getPercentOfConstructionStaff($orderId)
     {
         $hFunction = new \Hfunction();
@@ -205,14 +259,44 @@ class QcOrderBonusBudget extends Model
             return 0;
         }
     }
+
     # Tong tien thuong - phạt tren don hang cua bo phan thi cong cap nhan vien
-    public function totalBudgetMoneyOfConstructionRank($orderId)
+    public function totalBudgetMoneyOfConstructionStaff($orderId)
     {
         $modelOrder = new QcOrder();
         # tong tien hoa don
         $orderTotalPrice = $modelOrder->totalPrice($orderId);
-        return  (int)$orderTotalPrice * ($this->getPercentOfConstructionStaff($orderId) / 100);
+        return (int)$orderTotalPrice * ($this->getPercentOfConstructionStaff($orderId) / 100);
     }
+
+    # Tong tien thuong - phat tren 1 san pham cua bo phan thi cong cap nhan vien
+    public function totalBudgetMoneyOfConstructionStaffOfProduct($productId)
+    {
+        $modelProduct = new QcProduct();
+        $dataProduct = $modelProduct->getInfo($productId);
+        $productPrice = $dataProduct->price();
+        $orderId = $dataProduct->orderId();
+        $bonusPercent = $this->getPercentOfConstructionStaff($orderId);
+        return (int)$productPrice * ($bonusPercent / 100);
+    }
+
+    # Tong tien thuong - phat tren 1 san pham cua moi nguoi thi cong cap nhan vien
+    public function totalBudgetMoneyEachPersonOfConstructionStaffOfProduct($productId)
+    {
+        $hFunction = new \Hfunction();
+        $modelWorkAllocation = new QcCompanyStaffWork();
+        # lay danh sach trien khai thi cong cua san pham - KHONG BI HUY
+        $dataWorkAllocation = $modelWorkAllocation->infoNotCancelOfProduct($productId);
+        # so luong nguoi thi cong
+        $amountAllocation = $hFunction->getCount($dataWorkAllocation);
+        if ($amountAllocation > 0) {
+            $totalBonusMoney = $this->totalBudgetMoneyOfConstructionStaffOfProduct($productId);
+            return (int)($totalBonusMoney / $amountAllocation);
+        } else {
+            return 0;
+        }
+    }
+
     #============ =========== ============ LAY THONG TIN ============= =========== ==========
     # lay thong tin ngan sach cua don hang theo bo phan va cap bac
     public function getInfoOfOrderAndDepartmentRank($orderId, $departmentId, $rankId)

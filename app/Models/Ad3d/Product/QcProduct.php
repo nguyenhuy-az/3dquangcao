@@ -320,18 +320,25 @@ class QcProduct extends Model
         return $modelWorkAllocation->existInfoActivityOfProduct($this->checkIdNull($productId));
     }
 
-    # thong tin phan viec
+    # thong tin phan viec - DANG HOAT DONG
     public function workAllocationInfoActivityOfProduct($productId = null)
     {
         $modelWorkAllocation = new QcWorkAllocation();
         return $modelWorkAllocation->infoActivityOfProduct($this->checkIdNull($productId));
     }
 
-    # thong tin phan viec
+    # thong tin phan viec - TAT CA
     public function workAllocationInfoOfProduct($productId = null)
     {
         $modelWorkAllocation = new QcWorkAllocation();
         return $modelWorkAllocation->infoOfProduct($this->checkIdNull($productId));
+    }
+
+    # thong tin phan viec - KHONG BI HUY
+    public function workAllocationInfoNotCancelOfProduct($productId = null)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+        return $modelWorkAllocation->infoNotCancelOfProduct($this->checkIdNull($productId));
     }
 
     # kiem ton tai nhan vien da duoc phan cong
