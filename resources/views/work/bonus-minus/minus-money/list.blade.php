@@ -190,23 +190,13 @@ $checkTime = date('m-Y');
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center qc-padding-none" colspan="5">
-                                        Không có thông tin phạt
+                                    <td colspan="7">
+                                        <label style="color: red;">Không có thông tin phạt</label>
                                     </td>
                                 </tr>
                             @endif
                         </table>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                        Về trang trước
-                    </a>
-                    <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
-                        Về trang chủ
-                    </a>
                 </div>
             </div>
         </div>

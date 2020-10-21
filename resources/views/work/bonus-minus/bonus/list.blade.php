@@ -30,7 +30,7 @@ $hrefIndex = route('qc.work.bonus.get');
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_bonus_month" style="height: 25px;" data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_bonus_month col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả tháng
                                         </option>--}}
@@ -40,8 +40,7 @@ $hrefIndex = route('qc.work.bonus.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <span>/</span>
-                                    <select class="qc_work_bonus_year" style="height: 25px;" data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_bonus_year col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả năm
                                         </option>--}}
@@ -133,16 +132,6 @@ $hrefIndex = route('qc.work.bonus.get');
                             @endif
                         </table>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                        Về trang trước
-                    </a>
-                    <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
-                        Về trang chủ
-                    </a>
                 </div>
             </div>
         </div>

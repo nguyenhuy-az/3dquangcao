@@ -164,10 +164,17 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        <img style="width: 40px; height: 40px; border: 1px solid black;"
-                                             src="{!! $src !!}">
-                                        {!! $dataStaffTimekeeping->fullName() !!}
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $src !!}">
+                                            </a>
 
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataStaffTimekeeping->fullName() !!}</h5>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="text-center">
                                         @if(!$timekeeping->checkOff())
@@ -222,9 +229,9 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                             <span>---</span>
                                         @endif
                                     </td>
-                                    <td class="text-center">
+                                    <td style="padding: 3px 0; ">
                                         @if($hFunction->checkCount($dataTimekeepingImage))
-                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
                                                 @foreach($dataTimekeepingImage as $timekeepingImage)
                                                     <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                         <a class="qc_ad3d_timekeeping_image_view qc-link"

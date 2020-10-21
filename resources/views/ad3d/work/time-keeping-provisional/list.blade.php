@@ -65,7 +65,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             <th class="text-center">Giờ ra</th>
                             <th class="text-center">Làm trưa</th>
                             <th class="text-center">Ảnh BC</th>
-                            <th class="text-center">Ghi chú</th>
+                            <th>Ghi chú</th>
                             <th></th>
                         </tr>
                         @if($hFunction->checkCount($dataTimekeepingProvisional ))
@@ -99,11 +99,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 $dataStaffTimekeepingProvisional = $dataWork->companyStaffWork->staff;
                                 # anh dai dien
                                 $image = $dataStaffTimekeepingProvisional->image();
-                                if ($hFunction->checkEmpty($image)) {
-                                    $src = $dataStaffTimekeepingProvisional->pathDefaultImage();
-                                } else {
-                                    $src = $dataStaffTimekeepingProvisional->pathFullImage($image);
-                                }
+                                $src = $dataStaffTimekeepingProvisional->pathAvatar($image);
                                 ?>
                                 {{--chi lay thong tin chua tinh luong--}}
                                 @if(!$timekeepingProvisional->work->checkSalaryStatus())
@@ -113,8 +109,16 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             {!! $n_o += 1 !!}
                                         </td>
                                         <td>
-                                            <img style="width: 40px; height: 40px; border: 1px solid black;" src="{!! $src !!}">
-                                            {!! $dataStaffTimekeepingProvisional->fullName() !!}
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object"
+                                                         style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                         src="{!! $src !!}">
+                                                </a>
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">{!! $dataStaffTimekeepingProvisional->fullName() !!}</h5>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td class="text-center">
                                             <span class="qc-color-grey">Vào: {!! $hFunction->getTimeFromDate($createdAt) !!}</span>
@@ -143,17 +147,16 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                 <em class="qc-color-grey">...</em>
                                             @endif
                                         </td>
-                                        <td>
+                                        <td style="padding: 3px 0; ">
                                             @if($hFunction->checkCount($dataTimekeepingProvisionalImage))
-                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
                                                     @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
-                                                        <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                        <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                             <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
                                                                data-href="{!! route('qc.ad3d.work.time-keeping-provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
                                                                 <img style="max-width: 100%; max-height: 100%;"
                                                                      src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
                                                             </a>
-
                                                             <a class="ac_delete_image_action qc-link"
                                                                data-href="{!! route('qc.work.timekeeping.timekeeping_provisional_image.delete', $timekeepingProvisionalImage->imageId()) !!}">
                                                                 <i style="position: absolute; font-weight: bold; padding: 0 3px; color: red; top: 3px; right: 3px; border: 1px solid #d7d7d7;">x</i>
@@ -163,7 +166,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                 </div>
                                             @endif
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             @if(!$hFunction->checkEmpty($note))
                                                 <em class="qc-color-grey">{!! $note !!}</em>
                                             @else

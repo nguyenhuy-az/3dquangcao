@@ -238,7 +238,7 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                                                         <td style="border: none;">
                                                             <i class="glyphicon glyphicon-arrow-right"></i>
                                                             <em>Họ và tên: </em>
-                                                            <b> Tên ứng tuyển</b>
+                                                            <b> {!! "$firstName $lastName" !!}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -266,14 +266,14 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                                                         <td style="border: none;">
                                                             <i class="glyphicon glyphicon-arrow-right"></i>
                                                             <em>Địa chỉ: </em>&nbsp;&nbsp;
-                                                            <b>Thông tin địa chỉ</b>
+                                                            <b>{!! $address !!}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td style="border: none;">
                                                             <i class="glyphicon glyphicon-arrow-right"></i>
                                                             <em>Email: </em>&nbsp;&nbsp;
-                                                            <b>{!! $address !!}</b>
+                                                            <b>{!! $email !!}</b>
                                                         </td>
                                                     </tr>
                                                     <tr>

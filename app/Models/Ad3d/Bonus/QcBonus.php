@@ -129,6 +129,10 @@ class QcBonus extends Model
         return $this->belongsTo('App\Models\Ad3d\WorkAllocation\QcWorkAllocation', 'allocation_id', 'workAllocation_id');
     }
 
+    public function checkExistBonusWorkOfWorkAllocation($workId, $workAllocationId)
+    {
+        return QcBonus::where('work_id', $workId)->where('workAllocation_id', $workAllocationId)->exists();
+    }
     //---------- thong bao ban giao don hang moi -----------
     public function staffNotify()
     {

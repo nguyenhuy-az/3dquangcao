@@ -20,8 +20,8 @@ $totalMoneyUnpaid = $dataOrder->totalMoneyUnpaid()
 @section('qc_work_order_body')
     <div class="qc-padding-top-20 qc-padding-bot-20 col-sx-12 col-sm-12 col-md-10 col-lg-8">
         <div class="row">
-            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-                <h3>THANH TOÁN</h3>
+            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px dashed brown;">
+                <h3 style="color: red">THANH TOÁN</h3>
             </div>
             <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <form id ="qc_frm_work_orders_payment" class="qc_frm_work_orders_payment form-horizontal" name="qc_frm_work_orders_payment" role="form"
@@ -102,7 +102,7 @@ $totalMoneyUnpaid = $dataOrder->totalMoneyUnpaid()
                             <div class="text-center form-group form-group-sm">
                                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                                 <button type="button" class="qc_save btn btn-sm btn-primary">
-                                    Thanh toán
+                                    THANH TOÁN
                                 </button>
                                 <button type="reset" class="btn btn-sm btn-default">
                                     Nhập lại

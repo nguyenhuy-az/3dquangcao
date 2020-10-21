@@ -4,7 +4,6 @@ namespace App\Models\Ad3d\Product;
 
 use App\Models\Ad3d\ProductCancel\QcProductCancel;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
-use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use Illuminate\Database\Eloquent\Model;
 
@@ -335,10 +334,10 @@ class QcProduct extends Model
     }
 
     # thong tin phan viec - KHONG BI HUY
-    public function workAllocationInfoNotCancelOfProduct($productId = null)
+    public function workAllocationInfoNotCancelOfProduct($productId)
     {
         $modelWorkAllocation = new QcWorkAllocation();
-        return $modelWorkAllocation->infoNotCancelOfProduct($this->checkIdNull($productId));
+        return $modelWorkAllocation->infoNotCancelOfProduct($productId);
     }
 
     # kiem ton tai nhan vien da duoc phan cong

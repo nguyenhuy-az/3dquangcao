@@ -13,6 +13,7 @@ use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
+use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use Illuminate\Database\Eloquent\Model;
 
 class QcOrderBonusBudget extends Model
@@ -150,16 +151,16 @@ class QcOrderBonusBudget extends Model
             # co ban giao quan ly thi cong
             if ($hFunction->checkCount($dataOrderAllocation)) {
                 # KHONG BI HUY VA BI TRE => XET THUONG
-                if (!$dataOrderAllocation->checkCancelAllocation() && !$dataOrderAllocation->checkLate()) {
-                    $allocationId = $dataOrderAllocation->allocationId();
+                $allocationId = $dataOrderAllocation->allocationId();
+                if (!$dataOrderAllocation->checkCancelAllocation() && !$dataOrderAllocation->checkLate($allocationId)) {
                     # lay thong tin cua nguoi nhan thuong (duoc ban giao)
                     $dataReceiveStaff = $dataOrderAllocation->receiveStaff;
                     # thong tin lam viec dang hoat dong
                     $dataWork = $dataReceiveStaff->workInfoActivityOfStaff();
                     if ($hFunction->checkCount($dataWork)) {
                         $workId = $dataWork->workId();
-                        if (!$modelBonus->checkExistBonusWorkOfOrderConstruction($workId, $orderId)) { # chua ap dung thuong
-                            if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý thi công đơn hàng', 0, $workId, $allocationId, null, null)) {
+                        if (!$modelBonus->checkExistBonusWorkOfOrderAllocation($workId, $allocationId)) { # chua ap dung thuong
+                            if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý thi công đơn hàng', 0, $workId, $allocationId, null, null, null)) {
                                 $bonusId = $modelBonus->insertGetId();
                                 $allocationStaffId = $dataReceiveStaff->staffId();
                                 $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
@@ -180,7 +181,8 @@ class QcOrderBonusBudget extends Model
         $modelBonus = new QcBonus();
         $modelStaffNotify = new QcStaffNotify();
         $modelProduct = new QcProduct();
-        # lay phan tram thuong thi cong cap nhan vien tren 1 don hang
+        $modelWorkAllocation = new QcWorkAllocation();
+        # lay phan tram thuong thi cong tren 1 don hang - cap nhan vien
         $orderBonusPercent = $this->getPercentOfConstructionStaff($orderId);
         if ($orderBonusPercent > 0) { # co ap dung thuong
             # lay danh sach san pham cua don hang khong bi huy
@@ -189,7 +191,7 @@ class QcOrderBonusBudget extends Model
                 foreach ($dataProduct as $product) {
                     $productId = $product->productId();
                     # lay danh sach trien khai thi cong cua san pham - KHONG BI HUY
-                    $dataWorkAllocation = $product->workAllocationInfoNotCancelOfProduct();
+                    $dataWorkAllocation = $modelWorkAllocation->infoNotCancelOfProduct($productId);
                     if ($hFunction->checkCount($dataWorkAllocation)) { # co trien khai thi cong
                         # so tien moi nguoi nhan
                         $bonusMoneyOfEachPerson = $this->totalBudgetMoneyEachPersonOfConstructionStaffOfProduct($productId);
@@ -197,14 +199,14 @@ class QcOrderBonusBudget extends Model
                         foreach ($dataWorkAllocation as $workAllocation) {
                             $allocationId = $workAllocation->allocationId();
                             # kiem tra co bi tre khong
-                            if (!$workAllocation->checkLate()) {
+                            if (!$workAllocation->checkLate($allocationId)) {
                                 # lay thong tin cua nguoi nhan
                                 $dataReceiveStaff = $workAllocation->receiveStaff;
                                 # thong tin lam viec dang hoat dong
                                 $dataWork = $dataReceiveStaff->workInfoActivityOfStaff();
                                 if ($hFunction->checkCount($dataWork)) {
                                     $workId = $dataWork->workId();
-                                    if (!$modelBonus->checkExistBonusWorkOfOrderConstruction($workId, $orderId)) { # chua ap dung thuong
+                                    if (!$modelBonus->checkExistBonusWorkOfWorkAllocation($workId, $allocationId)) { # chua ap dung thuong
                                         if ($modelBonus->insert($bonusMoneyOfEachPerson, $hFunction->carbonNow(), 'Thi công sản phẩm', 0, $workId, null, null, null, $allocationId)) {
                                             $bonusId = $modelBonus->insertGetId();
                                             $allocationStaffId = $dataReceiveStaff->staffId();
@@ -284,7 +286,7 @@ class QcOrderBonusBudget extends Model
     public function totalBudgetMoneyEachPersonOfConstructionStaffOfProduct($productId)
     {
         $hFunction = new \Hfunction();
-        $modelWorkAllocation = new QcCompanyStaffWork();
+        $modelWorkAllocation = new QcWorkAllocation();
         # lay danh sach trien khai thi cong cua san pham - KHONG BI HUY
         $dataWorkAllocation = $modelWorkAllocation->infoNotCancelOfProduct($productId);
         # so luong nguoi thi cong
