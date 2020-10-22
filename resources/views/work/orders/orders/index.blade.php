@@ -30,35 +30,52 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                 </a>
             </div>
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-9 col-lg-9">
+                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     @include('work.orders.menu')
-                </div>
-                <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
-                    <select class="qcWorkOrdersStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
-                        @if($manageStatus)
-                            <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
-                                Tất cả nhân viên
-                            </option>
-                        @endif
-                        @if($hFunction->checkCount($dataStaffFilter))
-                            @foreach($dataStaffFilter as $staff)
-                                <option @if($staff->staffId() == $staffFilterId) selected="selected"
-                                        @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
-                            @endforeach
-                        @endif
-                    </select>
                 </div>
             </div>
             {{-- chi tiêt --}}
-            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_orders_list_content row"
                      data-href-view-pay="{!! route('qc.work.orders.order_pay.view.get') !!}">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered" style="margin-bottom: 100px;">
+                                <tr>
+                                    <td colspan="4"></td>
+                                    <td class="text-center" colspan="2">
+                                        <a class="qc_work_before_pay_request_action qc-link-green-bold"
+                                           href="{!! route('qc.work.orders.add.get') !!}" style="font-size: 1.5em;">
+                                            THÊM ĐƠN HÀNG
+                                        </a>
+                                    </td>
+                                    <td class="text-center" colspan="2" >
+                                        <a class="qc-link-red-bold" style="font-size: 1.5em;" title="Báo giá"
+                                           href="{!! route('qc.work.orders.add.get',0) !!}">
+                                            BÁO GIÁ
+                                        </a>
+                                    </td>
+                                    <td colspan="4" style="padding: 0;">
+                                        <select class="qcWorkOrdersStaffFilterId form-control"
+                                                data-href="{!! $hrefIndex !!}">
+                                            @if($manageStatus)
+                                                <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                                    Tất cả nhân viên
+                                                </option>
+                                            @endif
+                                            @if($hFunction->checkCount($dataStaffFilter))
+                                                @foreach($dataStaffFilter as $staff)
+                                                    <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                                            @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </td>
+                                </tr>
                                 <tr style="background-color: black; color: yellow;">
-                                    <th class="text-center"></th>
-                                    <th>Mã ĐH</th>
+                                    <th class="text-center">
+                                        Mã ĐH
+                                    </th>
                                     <th>THI CÔNG</th>
                                     <th style="width: 200px;">ĐƠN HÀNG</th>
                                     <th style="width: 200px;">KHÁCH HÀNG</th>
@@ -85,8 +102,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                     </th>
                                 </tr>
                                 <tr>
-                                    <td class="text-center qc-color-red"></td>
-                                    <td></td>
+                                    <td class="text-center"></td>
                                     <td class="text-center" style="padding: 0;">
                                         <select class="qcWorkOrdersFinishStatusFilter form-control"
                                                 data-href="{!! $hrefIndex !!}">
@@ -251,10 +267,9 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                         <tr class="qc_work_list_content_object @if($checkDateOfSort > $orderReceiveDate) danger @elseif($n_o%2) info @endif"
                                             data-object="{!! $orderId !!}">
                                             <td class="text-center">
-                                                {!! $n_o += 1 !!}
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="qc-color-grey">{!! $orders->orderCode() !!}</span><br/>
+                                                <label>{!! $n_o += 1 !!}</label>
+                                                <br/>
+                                                <span style="color: blue">{!! $orders->orderCode() !!}</span>
                                             </td>
                                             <td>
                                                 @if(!$cancelStatus)
@@ -282,7 +297,8 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                                         @endif
                                                         {{--nguoi so huu hoac là nguoi quan ly--}}
                                                         @if($ownerStatus ||$manageStatus)
-                                                            <a class="qc_finish_report qc-link-green-bold" data-href="{!! route('work.orders.order.report.finish.get',$orderId) !!}">
+                                                            <a class="qc_finish_report qc-link-green-bold"
+                                                               data-href="{!! route('work.orders.order.report.finish.get',$orderId) !!}">
                                                                 BÁO HOÀN THÀNH
                                                             </a>
                                                         @endif
@@ -446,34 +462,14 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                             </td>
                                         </tr>
                                     @endforeach
-                                    {{--<tr>
-                                        <td class="text-right" colspan="8"
-                                            style="background-color: whitesmoke;">
-                                        </td>
-                                        <td class="text-right qc-color-red">
-                                            <b>{!! $hFunction->currencyFormat($sumOrderMoney)  !!}</b>
-                                        </td>
-                                        <td class="text-right" style="color: blue;">
-                                            <b>{!! $hFunction->currencyFormat($sumDiscountMoney)  !!}</b>
-                                        </td>
-                                        <td class="text-right qc-color-red">
-                                            <b>{!! $hFunction->currencyFormat($sumPaidMoney)  !!}</b>
-                                        </td>
-                                        <td class="text-right" style="color: blue;">
-                                            <b>{!! $hFunction->currencyFormat($sumUnPaidMoney) !!}</b>
-                                        </td>
-                                        <td class="text-right" style="color: red;">
-                                            <b>{!! $hFunction->currencyFormat($sumPaidMoneyInDate) !!}</b>
-                                        </td>
-                                    </tr>--}}
                                     <tr>
-                                        <td class="text-center" colspan="13">
+                                        <td class="text-center" colspan="12">
                                             {!! $hFunction->page($dataOrders) !!}
                                         </td>
                                     </tr>
                                 @else
                                     <tr>
-                                        <td class="text-center" colspan="14">
+                                        <td class="text-center" colspan="12">
                                             <em class="qc-color-red">Không đơn hàng</em>
                                         </td>
                                     </tr>

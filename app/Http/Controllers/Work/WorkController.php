@@ -23,8 +23,6 @@ class WorkController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
-        # KIEM TRA DU LIEU TU DONG
-        $modelCompany->checkAutoInfo();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         if ($hFunction->checkCount($dataStaffLogin)) {
             return view('work.control-panel', compact('modelCompany', 'modelStaff', 'sysInfoObject'));

@@ -26,14 +26,11 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     <a class="qc-link-green-bold" href="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <label class="qc-font-size-20">DUYỆT CHẤM CÔNG</label>
+                    <label class="qc-font-size-20" style="color: red;">DUYỆT CHẤM CÔNG</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                             data-href-filter="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}">
-                        @if($dataStaffLogin->checkRootManage())
-                            <option value="0">Tất cả</option>
-                        @endif
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -57,6 +54,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                  data-href-cancel="{!! route('qc.ad3d.work.time-keeping-provisional.cancel.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
+
                         <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width:20px;">STT</th>
                             <th>Nhân viên</th>
@@ -82,8 +80,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 $note = $timekeepingProvisional->note();
                                 $createdAt = $timekeepingProvisional->createdAt();
                                 $updatedAt = $timekeepingProvisional->updatedAt();
-                                #thong tin bang cham cong
+                                                                 #thong tin bang cham cong
                                 $dataWork = $timekeepingProvisional->work;
+
                                 $dataCompanyStaffWorkId = $dataWork->companyStaffWorkId();
                                 #hinh anh bao cham cong
                                 $dataTimekeepingProvisionalImage = $timekeepingProvisional->imageOfTimekeepingProvisional($timekeepingProvisionalId);
@@ -96,7 +95,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 } else {
                                     $endCheckStatus = true;
                                 }
+
                                 $dataStaffTimekeepingProvisional = $dataWork->companyStaffWork->staff;
+
                                 # anh dai dien
                                 $image = $dataStaffTimekeepingProvisional->image();
                                 $src = $dataStaffTimekeepingProvisional->pathAvatar($image);
@@ -173,17 +174,21 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                 <em class="qc-color-grey">...</em>
                                             @endif
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-center">
                                             @if($hFunction->checkEmpty($timeEnd))
                                                 @if($endCheckStatus)
-                                                    <a class="qc_confirm qc-link-green">Xác nhận</a>
+                                                    <a class="qc_confirm qc-link-green">
+                                                        XÁC NHẬN
+                                                    </a>
                                                 @else
                                                     <em class="qc-color-grey">Hết hạn báo giờ ra</em>
                                                     <span>&nbsp;|&nbsp;</span>
                                                     <a class="qc_cancel qc-link-green">Hủy</a>
                                                 @endif
                                             @else
-                                                <a class="qc_confirm qc-link-green">Xác nhận</a>
+                                                <a class="qc_confirm qc-link-green">
+                                                    XÁC NHẬN
+                                                </a>
                                             @endif
 
                                         </td>

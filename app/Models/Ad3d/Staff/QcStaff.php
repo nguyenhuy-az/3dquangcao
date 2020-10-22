@@ -1082,12 +1082,15 @@ class QcStaff extends Model
     //========== ========== ========== dang nhap ========== ========== ==========
     public function login($account, $password)
     {
+        $modelCompany = new QcCompany();
         //$passLog = Hash::make($pass);
         $nameCode = QcStaff::where('account', $account)->pluck('nameCode');
         if (count($nameCode) > 0) {
             $passLog = $this->createStaffPass($password, $nameCode[0]);
             $staff = QcStaff::where('account', $account)->where('password', $passLog)->where('workStatus', 1)->first();
             if (count($staff) > 0) { // login success
+                # KIEM TRA DU LIEU TU DONG
+                $modelCompany->checkAutoInfo();
                 Session::put('loginStaff', $staff);
                 return true;
             } else {

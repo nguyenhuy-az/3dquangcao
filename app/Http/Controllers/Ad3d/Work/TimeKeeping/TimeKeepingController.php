@@ -25,7 +25,7 @@ use Request;
 
 class TimeKeepingController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = 0,$monthFilter = 0, $yearFilter = 0, $nameFiler = null)
+    public function index($companyFilterId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $nameFiler = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -33,80 +33,50 @@ class TimeKeepingController extends Controller
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
         $modelTimekeeping = new QcTimekeeping();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        if ($companyFilterId == 0) {
+            $companyFilterId = $companyLoginId;
+        }
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         $dataAccess = [
             'accessObject' => 'timeKeeping'
         ];
-        $currentMonth = $hFunction->currentMonth();
-        $currentYear = $hFunction->currentYear();
         $dateFilter = null;
-        if ($yearFilter == 100) { # lay tat ca thong tin
-            $dayFilter = null;
-            $dayFilter = 100;
-            $monthFilter = 100;
-        } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
-            $dayFilter = 100;
-            $monthFilter = date('m');
+        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
             $yearFilter = date('Y');
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-        } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+        } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($dayFilter == 0 && $monthFilter > 0 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
-            $monthFilter = $currentMonth;
-            $yearFilter = $currentYear;
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
-        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
-            $dateFilter = null;
+        } elseif ($dayFilter > 0 && $monthFilter > 0 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
         } else {
             $dateFilter = date('Y-m');
-            $dayFilter = 100;
+            $dayFilter = 0;
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        $dataCompany = $modelCompany->getInfo();
-        if (empty($companyFilterId)) {
-            if (!$dataStaffLogin->checkRootManage()) {
-                $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-                $companyFilterId = $dataStaffLogin->companyId();
-            } else {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            }
-        } else {
-            if($companyFilterId == 1000){
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            }else{
-                $searchCompanyFilterId = [$companyFilterId];
-            }
-
-        }
-
         if ($monthFilter < 8 && $yearFilter <= 2019) { # du lieu phien ban cu
             if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listIdOfListCompanyAndName($searchCompanyFilterId, $nameFiler);
+                $listStaffId = $modelStaff->listIdOfListCompanyAndName([$companyFilterId], $nameFiler);
             } else {
-                $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
+                $listStaffId = $modelStaff->listIdOfListCompany([$companyFilterId]);
             }
             $listWorkId = $modelWork->listIdOfListStaffId($listStaffId);
         } else {
             if (!empty($nameFiler)) {
                 $listStaffId = $modelStaff->listStaffIdByName($nameFiler);
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId, $listStaffId);
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $listStaffId);
             } else {
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId, null);
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], null);
             }
             $listWorkId = $modelWork->listIdOfListCompanyStaffWork($listCompanyStaffWorkId);
         }
-
-        $query = QcTimekeeping::whereIn('work_id', $listWorkId);
-        $query = $query->where(function ($q) use ($dateFilter) {
-            $q->orWhere('timeBegin', 'LIKE', '%' . $dateFilter . '%')
-                ->orWhere('dateOff', 'LIKE', '%' . $dateFilter . '%');
-        });
-        $dataTimekeeping = $query->orderBy('timeBegin', 'DESC')->orderBy('dateOff', 'DESC')->paginate(30);
-
-        #$dataTimekeeping = QcTimekeeping::whereIn('work_id', $listWorkId)->where('timeBegin', 'like', "%$dateFilter%")->orWhere('dateOff', 'like', "%$dateFilter%")->orderBy('timeBegin', 'DESC')->orderBy('dateOff', 'DESC')->select('*')->paginate(30);
+        $dataTimekeeping = $modelTimekeeping->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->paginate(30);
         return view('ad3d.work.time-keeping.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataTimekeeping', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));
 
     }

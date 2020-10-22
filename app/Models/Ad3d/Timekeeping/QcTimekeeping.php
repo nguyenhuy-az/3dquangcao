@@ -283,6 +283,15 @@ class QcTimekeeping extends Model
 
 
     //======= check info =========
+    # chon danh sach cham cong theo thoi gian va ma cham cong
+    public function selectInfoByListWorkAndDate($listWorkId, $dateFilter){
+        $query = QcTimekeeping::whereIn('work_id', $listWorkId);
+        $query = $query->where(function ($q) use ($dateFilter) {
+            $q->orWhere('timeBegin', 'LIKE', '%' . $dateFilter . '%')
+                ->orWhere('dateOff', 'LIKE', '%' . $dateFilter . '%');
+        });
+        return $query->orderBy('timeBegin', 'DESC')->orderBy('dateOff', 'DESC')->select('*');
+    }
     public function checkWorking($timekeepingId = null)
     {
         return ($this->workStatus($timekeepingId) == 1) ? true : false;

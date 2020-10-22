@@ -24,20 +24,33 @@ $hrefIndex = route('qc.work.orders.provisional.get');
                 <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
                     Về trang trước
                 </a>
-                <a class="btn btn-sm btn-default" href="{!! route('qc.work.home') !!}">
-                    Về trang chủ
-                </a>
             </div>
-
             @include('work.orders.menu')
             {{-- chi tiêt --}}
-            <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_orders_provisional_list_content row" style="min-height: 3000px;"
                      data-href-cancel="{!! route('qc.work.orders.provisional.cancel.get') !!}"
                      data-href-confirm="{!! route('qc.work.orders.provisional.confirm.get') !!}">
                     <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered" style="margin-bottom: 100px;">
+                                <tr>
+                                    <td colspan="4"></td>
+                                    <td class="text-center" colspan="3">
+                                        <a class="qc_work_before_pay_request_action qc-link-green-bold"
+                                           href="{!! route('qc.work.orders.add.get') !!}" style="font-size: 1.5em;">
+                                            <i class="glyphicon glyphicon-plus qc-font-size-16"></i>
+                                            THÊM ĐƠN HÀNG
+                                        </a>
+                                    </td>
+                                    <td class="text-center" colspan="3" >
+                                        <a class="qc-link-red-bold" style="font-size: 1.5em;" title="Báo giá"
+                                           href="{!! route('qc.work.orders.add.get',0) !!}">
+                                            <i class="glyphicon glyphicon-plus qc-font-size-16"></i>
+                                            BÁO GIÁ
+                                        </a>
+                                    </td>
+                                </tr>
                                 <tr style="background-color: black;color: yellow;">
                                     <th class="text-center"></th>
                                     <th>Mã ĐH</th>
@@ -84,7 +97,7 @@ $hrefIndex = route('qc.work.orders.provisional.get');
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td style="padding: 0;">
                                         <div class="input-group">
                                             <input type="text"
                                                    class="txtOrderProvisionalCustomerFilterKeyword form-control"
@@ -113,8 +126,8 @@ $hrefIndex = route('qc.work.orders.provisional.get');
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center" style="padding: 0; width: 120px;">
-                                        <select class="qc_work_orders_provisional_login_month" style="height: 25px;"
+                                    <td style="padding: 0;">
+                                        <select class="qc_work_orders_provisional_login_month col-xs-4 col-sm-4 col-md-4 col-lg-4" style="height: 34px;padding: 0;"
                                                 data-href="{!! $hrefIndex !!}">
                                             <option value="100" @if($monthFilter == 100) selected="selected" @endif>Tất cả</option>
                                             @for($m = 1; $m <=12; $m++)
@@ -123,7 +136,7 @@ $hrefIndex = route('qc.work.orders.provisional.get');
                                                 </option>
                                             @endfor
                                         </select>
-                                        <select class="qc_work_orders_provisional_login_year" style="height: 25px;"
+                                        <select class="qc_work_orders_provisional_login_year col-xs-8 col-sm-8 col-md-8 col-lg-8" style="height: 34px;padding: 0;"
                                                 data-href="{!! $hrefIndex !!}">
                                             <option value="100" @if($yearFilter == 100) selected="selected" @endif>Tất cả</option>
                                             @for($y = 2017; $y <=2050; $y++)

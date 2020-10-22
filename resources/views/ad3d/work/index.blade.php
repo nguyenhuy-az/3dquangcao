@@ -9,7 +9,6 @@
  * $dataAccess
  */
 $accessObject = (isset($dataAccess['accessObject'])) ? $dataAccess['accessObject'] : null;
-$modelStaff->checkAutoInfo();
 $dataLogin = $modelStaff->loginStaffInfo();
 $dataCompanyLogin = $dataLogin->companyInfoActivity();
 ?>

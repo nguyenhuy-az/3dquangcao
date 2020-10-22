@@ -29,8 +29,14 @@ class TimeKeepingProvisionalController extends Controller
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
-
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        if ($companyFilterId == 0) {
+            $companyFilterId = $companyLoginId;
+        }
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         $dataAccess = [
             'accessObject' => 'timeKeepingProvisional'
         ];
@@ -45,23 +51,11 @@ class TimeKeepingProvisionalController extends Controller
             $dateFilter = null;// date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
         }
 
-        $dataCompany = $modelCompany->getInfo();
-        if (empty($companyFilterId)) {
-            if (!$dataStaffLogin->checkRootManage()) {
-                $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-                $companyFilterId = $dataStaffLogin->companyId();
-            } else {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            }
-        } else {
-            $searchCompanyFilterId = [$companyFilterId];
-        }
-
         if (!empty($nameFiler)) {
-            $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId, $modelStaff->listStaffIdByName($nameFiler)));
+            $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $modelStaff->listStaffIdByName($nameFiler)));
         } else {
 
-            $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId));
+            $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId]));
         }
         $dataTimekeepingProvisional = $modelTimekeepingProvisional->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->paginate(30);
         return view('ad3d.work.time-keeping-provisional.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataTimekeepingProvisional', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));

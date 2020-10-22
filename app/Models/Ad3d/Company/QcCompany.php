@@ -112,21 +112,18 @@ class QcCompany extends Model
 
     #========== ========== ========== TU DONG KIEM TRA DU LIEU CUA HE THONG ========== ========== ==========
     # kiem tra tu tinh cong cuoi thang
+    /*DUOC GOI TRONG FUNCTION "LOGIN" MODEL NHAN VIEN*/
     public function checkAutoInfo()
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
         $modelOrderAllocation = new QcOrderAllocation();
-        # kiem tra quan ly thi cong don hang
-        //$modelOrder->autoCheckMinusMoneyLateConstruction();
-        # kiem tra thong tin ban giao don hang
+        # kiem tra thong tin ban giao don hang - cua bo phan thi cong cap quan ly
         $modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
         # phan cong kiem tra do nghe
         $modelCompanyStaffWork->checkCompanyStoreOfCurrentDate();
-
-        //$modelWork->checkAutoTimekeepingOfActivityWork();
         # kiem tra cham cong
-        //$modelWork->checkAutoTimekeepingOfActivityWork();
+        $modelWork->checkAutoTimekeepingOfActivityWork();
         #kiểm tra đầu tháng để cho ra bảng làm việc của tháng mới
         $modelWork->checkEndWorkOfMonth();
 

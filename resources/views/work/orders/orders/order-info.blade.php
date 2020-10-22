@@ -66,40 +66,42 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
 @section('qc_work_order_body')
     <div id="qc_work_orders_wrap" class="row qc_work_orders_wrap">
         <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <a class=" qc-link-red" onclick="qc_main.page_back_go({!! $pageBack !!});">
-                    <i class="qc-font-size-14 glyphicon glyphicon-backward"></i>
-                    <span class="qc-font-size-16" style="color: blue;">Trởlại</span>
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom: 5px;">
+                <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                    Về trang trước
                 </a>
-            </div>
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                @if($checkProvisionUnConfirmed)
-                    <label class="qc-color-red qc-font-size-20">BÁO GIÁ:</label>
-                @else
-                    <label class="qc-color-red qc-font-size-20">ĐƠN HÀNG:</label>
-                    <em class="pull-right qc-color-red">
-                        Hạn sửa: {!! date('d/m/Y H:i', strtotime($hFunction->datetimePlusHour($createdAt, 8))) !!}
-                    </em>
-                @endif
-                <label class="qc-font-size-20">{!! $orderName !!}</label>
-                @if($cancelStatus)
-                    <em class="qc-font-size-14" style="color: blue;"> - (Đã hủy)</em>
-                @endif
             </div>
             {{-- thong tin don hang --}}
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12"
-                         style="border-bottom: 1px solid black;">
-                        {{--<i class="qc-font-size-16 glyphicon glyphicon-list-alt"></i>--}}
-                        {{--<label class="qc-color-red ">ĐƠN HÀNG</label>--}}
-                        @if($editInfoStatus)
-                            <a class="qc-link-red pull-right" title="Sửa thông tin"
-                               onclick="qc_main.toggle('#qc_work_order_info_order_show'); qc_main.toggle('#qc_work_order_frm_order_edit');">
-                                <i class=" glyphicon glyphicon-pencil"></i>
-                            </a>
+                    <div class="col-sx-8 col-sm-8 col-md-8 col-lg-8">
+                        @if($checkProvisionUnConfirmed)
+                            <label class="qc-color-red qc-font-size-20">BÁO GIÁ:</label>
                         @else
-                            <em class="pull-right">---</em>
+                            <label class="qc-color-red qc-font-size-20">ĐƠN HÀNG:</label>
+                        @endif
+                        <label class="qc-font-size-20">{!! $orderName !!}</label>
+                    </div>
+                    <div class="text-right col-sx-4 col-sm-4 col-md-4 col-lg-4">
+                        @if($cancelStatus)
+                            <em style="background-color: red; padding: 3px; color: yellow;"> ĐÃ HỦY</em>
+                        @else
+                            @if($finishStatus)
+                                <em style="background-color: red; padding: 3px; color: yellow;">ĐÃ KẾT THÚC</em>
+                            @else
+                                @if($editInfoStatus)
+                                    <a class="qc-link-red pull-right" title="Sửa thông tin"
+                                       onclick="qc_main.toggle('#qc_work_order_info_order_show'); qc_main.toggle('#qc_work_order_frm_order_edit');">
+                                        <i class=" glyphicon glyphicon-pencil"></i>
+                                    </a>
+                                @else
+                                    <label>Hạn sửa: </label>
+                                    <em class="pull-right qc-color-red">
+                                        {!! date('d/m/Y H:i', strtotime($hFunction->datetimePlusHour($createdAt, 8))) !!}
+                                    </em>
+                                @endif
+
+                            @endif
                         @endif
                     </div>
                 </div>
@@ -169,11 +171,13 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         <em class="qc-color-grey">Xuất VAT:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b>@if($hFunction->checkNull($orderVat) > 0)
+                                        <b>
+                                            @if($hFunction->checkNull($orderVat) > 0)
                                                 Có
                                             @else
                                                 Không
-                                            @endif</b>
+                                            @endif
+                                        </b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -310,14 +314,12 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12" style="border-bottom: 1px solid black;">
                         <i class="qc-font-size-16 glyphicon glyphicon-user"></i>
-                        <label class="qc-color-red">KHÁCH HÀNG</label>
+                        <label class="qc-color-red qc-font-size-16">KHÁCH HÀNG</label>
                         @if($editInfoStatus)
                             <a class="qc-link-red pull-right" title="Sửa thông tin"
                                onclick="qc_main.toggle('#qc_work_order_info_customer_show'); qc_main.toggle('#qc_work_order_frm_customer_edit');">
                                 <i class=" glyphicon glyphicon-pencil"></i>
                             </a>
-                        @else
-                            <em class="pull-right">---</em>
                         @endif
                     </div>
                 </div>
@@ -423,11 +425,9 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                 <div class="row">
                     <div class=" col-xs-12 col-sm-12 col-dm-12 col-lg-12" style="border-bottom: 1px solid black;">
                         <i class="qc-font-size-16 glyphicon glyphicon-shopping-cart"></i>
-                        <label class="qc-color-red">SẢM PHẨM</label>
+                        <label class="qc-color-red qc-font-size-16">SẢM PHẨM</label>
                         @if(!$dataOrder->checkCancelStatus())
-                            @if($finishStatus)
-                                <em class="pull-right" style="padding: 3px; background-color: red; color: white;">ĐH đã kết thúc</em>
-                            @else
+                            @if(!$finishStatus)
                                 <a class="qc-link-red-bold pull-right" title="Thêm sản phẩm"
                                    href="{!! route('work.orders.edit.addProduct.get',$orderId) !!}">
                                     + Thêm SP
@@ -602,7 +602,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12" style="border-bottom: 1px solid black;">
                             <i class="qc-font-size-16 glyphicon glyphicon-credit-card"></i>
-                            <label class="qc-color-red">THANH TOÁN</label>
+                            <label class="qc-color-red qc-font-size-16">THANH TOÁN</label>
                         </div>
                     </div>
                     <div id="qc_work_order_info_payment_show" class="row">
@@ -615,9 +615,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         <th>Người thu</th>
                                         <th>Tên người nộp</th>
                                         <th>Ghi chú</th>
-                                        <th class="text-center">Điện thoại</th>
                                         <th class="text-right">Số tiền</th>
-                                        <th></th>
                                     </tr>
                                     <?php
                                     $dataOrderPay = $dataOrder->infoOrderPayOfOrder();
@@ -626,6 +624,8 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         @foreach($dataOrderPay as $orderPay)
                                             <?php
                                             $payId = $orderPay->payId();
+                                            # Thong tin nhan vien nha
+                                            $dataReceiveStaff = $orderPay->staff;
                                             ?>
                                             <tr>
                                                 <td class="text-center">
@@ -635,48 +635,58 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                     {!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}
                                                 </td>
                                                 <td>
-                                                    {!! $orderPay->staff->fullName() !!}
+                                                    <div class="media">
+                                                        <a class="pull-left" href="#">
+                                                            <img class="media-object"
+                                                                 style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                                 src="{!! $dataReceiveStaff->pathAvatar($dataReceiveStaff->image()) !!}">
+                                                        </a>
+
+                                                        <div class="media-body">
+                                                            <h5 class="media-heading">{!! $dataReceiveStaff->fullName() !!}</h5>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     @if(!empty($orderPay->payerName()))
                                                         <span>{!! $orderPay->payerName() !!}</span>
+                                                        @if(!empty($orderPay->payerPhone()))
+                                                            <br/>
+                                                            <em style="color: grey;">ĐT:</em>
+                                                            <span> {!! $orderPay->payerPhone() !!}</span>
+                                                        @endif
                                                     @else
                                                         <span>{!! $orderPay->order->customer->name() !!}</span>
+                                                        @if(empty($orderPay->payerPhone()))
+                                                            <br/>
+                                                            <em style="color: grey;">ĐT:</em>
+                                                            <span>{!! $orderPay->order->customer->phone() !!}</span>
+                                                        @endif
                                                     @endif
+
                                                 </td>
                                                 <td>
                                                     {!! $orderPay->note()  !!}
                                                 </td>
-                                                <td class="text-center">
-                                                    @if(!empty($orderPay->payerPhone()))
-                                                        <span>{!! $orderPay->payerPhone() !!}</span>
-                                                    @else
-                                                        <span>{!! $orderPay->order->customer->phone() !!}</span>
-                                                    @endif
-                                                </td>
                                                 <td class="text-right">
-                                                    {!! $hFunction->currencyFormat($orderPay->money()) !!}
-                                                </td>
-                                                <td class="text-center">
-                                                    @if(!$cancelStatus)
+                                                    <label style="color: blue;">{!! $hFunction->currencyFormat($orderPay->money()) !!}</label>
+                                                    @if(!$cancelStatus && !$finishStatus)
                                                         @if($orderPay->checkOwnerStatusOfStaff($loginStaffId,$payId))
+                                                            <br/>
                                                             <a class="qc_work_order_info_payment_edit_act qc-link-red"
                                                                data-href="{!! route('qc.work.orders.info.pay.edit.post',$payId) !!}"
                                                                title="Sửa thanh toán">
                                                                 <i class=" glyphicon glyphicon-pencil"></i>
                                                             </a>
-                                                        @else
-                                                            <em class="qc-color-grey">---</em>
                                                         @endif
-                                                    @else
-                                                        <em class="qc-color-grey">---</em>
                                                     @endif
                                                 </td>
+
                                             </tr>
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td class="text-center" colspan="8">
+                                            <td class="text-center" colspan="6">
                                                 Không có thông tin thanh toán
                                             </td>
                                         </tr>

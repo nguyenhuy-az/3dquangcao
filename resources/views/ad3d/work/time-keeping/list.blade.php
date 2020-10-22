@@ -27,14 +27,11 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                     <a class="qc-link-green-bold" href="{!! $indexHref !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <label class="qc-font-size-20">CHẤM CÔNG</label>
+                    <label class="qc-font-size-20" style="color: red;">CHẤM CÔNG ĐÃ DUYỆT</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-right: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                             data-href-filter="{!! $indexHref !!}">
-                        @if($dataStaffLogin->checkRootManage())
-                            <option value="0">Tất cả</option>
-                        @endif
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -87,7 +84,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                 <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
                                         style="height: 34px; padding: 0;"
                                         data-href="{!! $indexHref !!}">
-                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
+                                    <option value="0" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($d =1;$d<= 31; $d++)
@@ -100,7 +97,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                 <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
                                         style="height: 34px; padding: 0;"
                                         data-href="{!! $indexHref !!}">
-                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                    <option value="0" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($m =1;$m<= 12; $m++)
@@ -113,7 +110,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                 <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
                                         style="height: 34px; padding: 0;"
                                         data-href="{!! $indexHref !!}">
-                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                                    <option value="0" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($y =2019;$y<= 2050; $y++)

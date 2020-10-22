@@ -50,16 +50,13 @@ class TransfersController extends Controller
         } elseif ($dayFilter == 0 && $monthFilter > 0 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         } elseif ($dayFilter > 0 && $monthFilter > 0 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
-            $monthFilter = $currentMonth;
-            $yearFilter = $currentYear;
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
+            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
         } else {
             $dateFilter = date('Y-m');
             $dayFilter = 0;
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        //dd($dateFilter);
         $selectTransfers = $modelTransfers->selectInfoByListTransfersStaffAndDate($listStaffId, $companyFilterId, $dateFilter, $transfersType);
         $dataTransfers = $selectTransfers->paginate(30);
         $totalMoneyTransfers = $modelTransfers->totalMoneyByListInfo($selectTransfers->get());

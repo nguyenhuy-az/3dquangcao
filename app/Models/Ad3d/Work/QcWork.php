@@ -243,6 +243,12 @@ class QcWork extends Model
         return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('action', 1)->pluck('work_id');
     }
 
+    # chon sanh sach cham cong trong thang theo thoi gian
+    public function selectInfoOfListCompanyStaffWorkAndDate($listCompanyStaffWorkId, $dateFilter)
+    {
+      return QcWork::where('fromDate', 'like', "%$dateFilter%")->whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('fromDate', 'DESC')->select('*');
+    }
+
     //----------- NHAN VIEN ------------
     public function staff()
     {
@@ -302,13 +308,6 @@ class QcWork extends Model
                 return QcWork::where(['staff_id' => $staffId])->first();
             }
         }
-        /*
-        if (!empty($date)) {
-            return QcWork::where(['staff_id' => $staffId])->where('fromDate', 'like', "%$date%")->first();
-        } else {
-            return QcWork::where(['staff_id' => $staffId])->orderBy('work_id', 'DESC')->first();
-        }*/
-
     }
 
     public function listIdOfListStaffId($listStaffId)
