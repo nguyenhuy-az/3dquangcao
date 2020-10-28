@@ -22,6 +22,18 @@ class Hfunction
         }
     }
 
+    # lay chu viet tat cua 1 chuoi - chu cai dau tien
+    public function getAcronymOfString($string)
+    {
+        $newString = '';
+        # tach chuoi thanh mang
+        $array = explode(" ", $string);
+        foreach ($array as $value) {
+            $newString = $newString . substr($value, 0, 1);
+        }
+        return $newString;
+    }
+
     # chuyen so sang chu
     public function convertNumberToWord($num = false)
     {

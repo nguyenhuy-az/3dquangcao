@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Work\Orders;
 
-use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\Customer\QcCustomer;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
-use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderImage\QcOrderImage;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Product\QcProduct;
@@ -102,7 +100,7 @@ class OrdersController extends Controller
         }
         $dataOrders = $dataOrderSelect->paginate(50);
         $dataOrdersProvisional = $dataStaffLogin->orderProvisionNoCancelAndPayInfoOfStaffReceive($loginStaffId, $dateFilter, 0, null);
-        return view('work.orders.orders.index', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional', 'dataStaffFilter', 'staffFilterId', 'dateFilter', 'finishStatus', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
+        return view('work.orders.orders.list', compact('modelOrders', 'dataAccess', 'modelStaff', 'dataOrders', 'dataOrdersProvisional', 'dataStaffFilter', 'staffFilterId', 'dateFilter', 'finishStatus', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName'));
 
     }
 
@@ -349,7 +347,6 @@ class OrdersController extends Controller
         $modelOrder = new QcOrder();
         $modelStaffNotify = new QcStaffNotify();
         $modelOrderPay = new QcOrderPay();
-        $modelOrderAllocation = new QcOrderAllocation();
         $modelStaff = new QcStaff();
         $dataStaff = $modelStaff->loginStaffInfo();
         $staffLoginId = $modelStaff->loginStaffId();
@@ -365,6 +362,7 @@ class OrdersController extends Controller
         $txtHeight = $request->input('txtHeight');
         //$txtDepth = Request::input('txtDepth');
         $txtUnit = $request->input('txtUnit');
+        $txtWarrantyTime = $request->input('txtWarrantyTime');
         $txtAmount = $request->input('txtAmount');
         $txtPrice = $request->input('txtPrice');
         $txtDescription = $request->input('txtDescription');
@@ -427,12 +425,13 @@ class OrdersController extends Controller
                 # them san pham
                 if ($hFunction->checkCount($productType)) {
                     foreach ($productType as $key => $value) {
+                        $warrantyTime = $txtWarrantyTime[$key];
                         $dataProductType = $modelProductType->infoFromExactlyName($value);
                         if ($hFunction->checkCount($dataProductType)) {
                             $productTypeId = $dataProductType->typeId();
                         } else {
                             $unit = $txtUnit[$key];
-                            if ($modelProductType->insert(null, $value, null, $unit, 0, 0)) {
+                            if ($modelProductType->insert($value, null, $unit, 0, 0, $warrantyTime)) {
                                 $productTypeId = $modelProductType->insertGetId();
                             } else {
                                 $productTypeId = null;
@@ -446,7 +445,7 @@ class OrdersController extends Controller
                             $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
                             $description = $txtDescription[$key];
                             $modelProduct = new QcProduct();
-                            $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId);
+                            $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, null, $warrantyTime);
                         }
                     }
                 }
@@ -494,6 +493,7 @@ class OrdersController extends Controller
         $txtUnit = $request->input('txtUnit');
         $txtAmount = $request->input('txtAmount');
         $txtPrice = $request->input('txtPrice');
+        $txtWarrantyTime = $request->input('txtWarrantyTime');
         $txtDescription = $request->input('txtDescription');
         $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
         $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
@@ -543,12 +543,13 @@ class OrdersController extends Controller
                 if (count($productType) > 0) {
                     # them san pham
                     foreach ($productType as $key => $value) {
+                        $warrantyTime = $txtWarrantyTime[$key];
                         $dataProductType = $modelProductType->infoFromExactlyName($value);
                         if (count($dataProductType) > 0) {
                             $productTypeId = $dataProductType->typeId();
                         } else {
                             $unit = $txtUnit[$key];
-                            if ($modelProductType->insert(null, $value, null, $unit, 0, 0)) {
+                            if ($modelProductType->insert($value, null, $unit, 0, 0, $warrantyTime)) {
                                 $productTypeId = $modelProductType->insertGetId();
                             } else {
                                 $productTypeId = null;
@@ -562,7 +563,7 @@ class OrdersController extends Controller
                             $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
                             $description = $txtDescription[$key];
                             $modelProduct = new QcProduct();
-                            $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId);
+                            $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, null, $warrantyTime);
                         }
                     }
                 }
@@ -735,6 +736,59 @@ class OrdersController extends Controller
             $modelOrder->cancelOrder($orderId, $txtPayment, $txtReason, $dataStaffLogin->staffId());
         }
 
+    }
+
+    //======= ======== ===== QUAN LY THONG TIN DƠN HANG ==== ======== ======
+    # ban giao don hang - cong trinh
+    public function getOrderConstruction($orderId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelOrders = new QcOrder();
+        $dataAccess = [
+            'object' => 'orders',
+            'subObjectLabel' => 'Chi tiết thi công'
+        ];
+        $dataOrder = $modelOrders->getInfo($orderId);
+        if ($hFunction->checkCount($dataOrder)) {
+            # cap nhat da xem thong bao
+            return view('work.orders.orders.detail-construction', compact('modelStaff', 'dataAccess', 'dataOrder'));
+        } else {
+            return redirect()->back();
+        }
+    }
+
+    # bao sua chua san pham
+    public function getRepairProduct($productId)
+    {
+        $modelProduct = new QcProduct();
+        $dataProduct = $modelProduct->getInfo($productId);
+        return view('work.orders.orders.add-repair-product', compact('dataProduct'));
+    }
+
+    public function postRepairProduct(Request $request, $productId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelOrder = new QcOrder();
+        $modelOrderImage = new QcOrderImage();
+        $txtImage = $request->file('txtImage');
+        $txtNote = $request->file('txtNote');
+        $loginStaffId = $modelStaff->loginStaffId();
+        /*
+        if ($hFunction->getCount($txtDesignImage) > 0 & $hFunction->checkCount($dataOrder)) {
+            $name_img = stripslashes($_FILES['txtImage']['name']);
+            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $source_img = $_FILES['txtImage']['tmp_name'];
+            if ($modelOrderImage->uploadImage($source_img, $name_img)) {
+                if (!$modelOrderImage->insert($name_img, $orderId, $loginStaffId)) {
+                    $modelOrderImage->dropImage($name_img);
+                    return "Tính năng đang cập nhật";
+                }
+            }
+        } else {
+            return "Chọn ảnh thiết kế";
+        }*/
     }
 
     //======= ======== ===== QUAN LY THONG TIN DƠN HANG ==== ======== ======

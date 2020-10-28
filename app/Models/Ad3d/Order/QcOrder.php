@@ -868,6 +868,13 @@ class QcOrder extends Model
         return $modelOrderConstruction->infoAllOfOrder($this->checkIdNull($orderId));
     }
 
+    # thong tin ban giao thi cong sau cung
+    public function orderAllocationLastInfo($orderId=null)
+    {
+        $modelOrderConstruction = new QcOrderAllocation();
+        return $modelOrderConstruction->lastInfoOfOrder($this->checkIdNull($orderId));
+    }
+
     # lay tat ca thong tin ban giao don hang
     public function orderAllocationAllInfo($orderId = null)
     {

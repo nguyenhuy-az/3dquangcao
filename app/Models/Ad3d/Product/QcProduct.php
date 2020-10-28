@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcProduct extends Model
 {
     protected $table = 'qc_products';
-    protected $fillable = ['product_id', 'width', 'height', 'depth', 'price', 'amount', 'description', 'designImage', 'productImage', 'finishStatus', 'finishDate', 'cancelStatus', 'created_at', 'type_id', 'order_id', 'confirmStaff_id'];
+    protected $fillable = ['product_id', 'width', 'height', 'depth', 'warrantyTime', 'price', 'amount', 'description', 'designImage', 'productImage', 'finishStatus', 'finishDate', 'cancelStatus', 'created_at', 'type_id', 'order_id', 'confirmStaff_id'];
     protected $primaryKey = 'product_id';
     public $timestamps = false;
 
@@ -19,13 +19,14 @@ class QcProduct extends Model
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- Insert ----------
     // insert
-    public function insert($width, $height, $depth, $price, $amount, $description, $typeId, $orderId, $designImage = null)
+    public function insert($width, $height, $depth, $price, $amount, $description, $typeId, $orderId, $designImage = null, $warrantyTime = 0)
     {
         $hFunction = new \Hfunction();
         $modelProduct = new QcProduct();
         $modelProduct->width = $width;
         $modelProduct->height = $height;
         $modelProduct->depth = $depth;
+        $modelProduct->warrantyTime = $warrantyTime;
         $modelProduct->price = $price;
         $modelProduct->amount = $amount;
         $modelProduct->description = $description;
@@ -400,6 +401,11 @@ class QcProduct extends Model
         return $this->pluck('depth', $productId);
     }
 
+    public function warrantyTime($productId = null)
+    {
+        return $this->pluck('warrantyTime', $productId);
+    }
+
     public function price($productId = null)
     {
         return $this->pluck('price', $productId);
@@ -524,5 +530,25 @@ class QcProduct extends Model
     public function checkCancelStatus($productId = null)
     {
         return ($this->cancelStatus($productId) == 0) ? false : true;
+    }
+
+    # kiem tra
+    public function checkWarrantyExpires($productId = null)
+    {
+        $hFunction = new \Hfunction();
+        $productId = $this->checkIdNull($productId);
+        $warrantyTime = $this->warrantyTime($productId)[0];
+        $createdAd = $this->createdAt($productId);
+        if ($warrantyTime == 0) {
+            return false;
+        } else {
+            $currentDate = $hFunction->carbonNow();
+            $checkTime = $hFunction->datetimePlusMonth($createdAd, $warrantyTime);
+            if ($checkTime > $currentDate) {
+                return true; // con bao hanh
+            }else{
+                return false; // het bao hanh
+            }
+        }
     }
 }

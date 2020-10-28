@@ -430,7 +430,8 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                             @if(!$finishStatus)
                                 <a class="qc-link-red-bold pull-right" title="Thêm sản phẩm"
                                    href="{!! route('work.orders.edit.addProduct.get',$orderId) !!}">
-                                    + Thêm SP
+                                    <i class="glyphicon glyphicon-plus qc-font-size-16"></i>
+                                    <span class="qc-font-size-16">THÊM SẢN PHẨM</span>
                                 </a>
                             @endif
                         @else
@@ -540,7 +541,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                     @else
                                                         <a class="qc_work_orders_product_confirm_act qc-link-green"
                                                            data-href="{!! route('qc.work.orders.product.confirm.get',$productId) !!}">
-                                                            Báo hoàn thành
+                                                            BÁO HOÀN THÀNH
                                                         </a>
                                                         <br/>
                                                         <a class="qc_work_orders_product_edit_act qc-link"
@@ -577,7 +578,9 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                             </td>
 
                                             <td class="text-right">
-                                                {!! $hFunction->currencyFormat($product->price()) !!}
+                                                <b style="color: blue;">
+                                                    {!! $hFunction->currencyFormat($product->price()) !!}
+                                                </b>
                                             </td>
 
                                         </tr>
@@ -676,7 +679,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                             <a class="qc_work_order_info_payment_edit_act qc-link-red"
                                                                data-href="{!! route('qc.work.orders.info.pay.edit.post',$payId) !!}"
                                                                title="Sửa thanh toán">
-                                                                <i class=" glyphicon glyphicon-pencil"></i>
+                                                                <i class=" glyphicon glyphicon-pencil qc-font-size-16"></i>
                                                             </a>
                                                         @endif
                                                     @endif
@@ -737,76 +740,76 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                     </div>
                 @endif
             @endif
-
-
             <div class="row">
-                <div class="qc-container-table qc-container-table-border-none pull-right col-xs-12 col-sm-12 col-dm-6 col-lg-4">
-                    <div class="table-responsive">
-                        <table class="table table-hover qc-margin-bot-none">
-                            <tr>
-                                <td>
-                                    <em class=" qc-color-grey">Tổng tiền:</em>
-                                </td>
-                                <td class="text-right">
-                                    <b>{!! $hFunction->currencyFormat($dataOrder->totalPrice()) !!}</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <em class="qc-color-grey">Giảm {!! $dataOrder->discount() !!}%:</em>
-                                </td>
-                                <td class="text-right">
-                                    <b>{!! $hFunction->currencyFormat($dataOrder->totalMoneyDiscount()) !!}</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <em class="qc-color-grey">VAT {!! $dataOrder->vat() !!}%:</em>
-                                </td>
-                                <td class="text-right">
-                                    <b>{!! $hFunction->currencyFormat($dataOrder->totalMoneyOfVat()) !!}</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <em class="qc-color-grey">Tổng thanh toán:</em>
-                                </td>
-                                <td class="text-right">
-                                    <b class="qc-color-red">{!! $hFunction->currencyFormat($dataOrder->totalMoneyPayment()) !!}</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <em class="qc-color-grey">Đã thanh toán:</em>
-                                </td>
-                                <td class="text-right">
-                                    <b>{!! $hFunction->currencyFormat($dataOrder->totalPaid()) !!}</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <em class="qc-color-grey">Còn lại:</em>
-                                </td>
-                                <td class="text-right">
-                                    <b class="qc-color-red">{!! $hFunction->currencyFormat($dataOrder->totalMoneyUnpaid()) !!}</b>
-                                </td>
-                            </tr>
-                        </table>
+                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="pull-right col-xs-12 col-sm-12 col-dm-6 col-lg-4">
+                        <div class="table-responsive">
+                            <table class="table table-hover qc-margin-bot-none">
+                                <tr>
+                                    <td>
+                                        <em class=" qc-color-grey">Tổng tiền:</em>
+                                    </td>
+                                    <td class="text-right">
+                                        <b>{!! $hFunction->currencyFormat($dataOrder->totalPrice()) !!}</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <em class="qc-color-grey">Giảm {!! $dataOrder->discount() !!}%:</em>
+                                    </td>
+                                    <td class="text-right">
+                                        <b>- {!! $hFunction->currencyFormat($dataOrder->totalMoneyDiscount()) !!}</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <em class="qc-color-grey">VAT {!! $dataOrder->vat() !!}%:</em>
+                                    </td>
+                                    <td class="text-right">
+                                        <b>+ {!! $hFunction->currencyFormat($dataOrder->totalMoneyOfVat()) !!}</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <em class="qc-color-grey">Tổng thanh toán:</em>
+                                    </td>
+                                    <td class="text-right">
+                                        <b class="qc-color-red">{!! $hFunction->currencyFormat($dataOrder->totalMoneyPayment()) !!}</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <em class="qc-color-grey">Đã thanh toán:</em>
+                                    </td>
+                                    <td class="text-right">
+                                        <b>- {!! $hFunction->currencyFormat($dataOrder->totalPaid()) !!}</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <em class="qc-color-grey">Còn lại:</em>
+                                    </td>
+                                    <td class="text-right">
+                                        <b class="qc-color-red">{!! $hFunction->currencyFormat($dataOrder->totalMoneyUnpaid()) !!}</b>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="row">
                 <div class="qc-container-table-border-none col-xs-12 col-sm-12 col-dm-12 col-lg-12">
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="margin: 0;">
                         <table class="table table-bordered" style="margin-bottom: 0px;">
                             @if(!$finishStatus)
                                 <tr>
                                     <td colspan="2">
-                                        <a class="qc_work_order_design_image_add qc-link-green"
+                                        <a class="qc_work_order_design_image_add qc-link-red-bold"
                                            data-href="{!! route('qc.work.orders.info.design.add.get',$orderId) !!}">
                                             <i class="glyphicon glyphicon-plus"></i>
-                                            Thêm thiết kế tổng thể
+                                            THÊM THIẾT KẾ TỔNG THỂ
                                         </a>
                                     </td>
                                 </tr>
@@ -835,14 +838,6 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                 </div>
             </div>
 
-        </div>
-        <div class="qc-padding-top-10 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                Về trang trước
-            </a>
-            <a class="btn btn-sm btn-default" href="{!! route('qc.work.orders.get') !!}">
-                Về Danh mục ĐH
-            </a>
         </div>
     </div>
 @endsection

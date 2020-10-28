@@ -13,7 +13,7 @@ $mobileStatus = $mobile->isMobile();
 @section('qc_ad3d_index_content')
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-            <h3>THÊM MỚI</h3>
+            <h3 style="color: red;">THÊM MỚI</h3>
         </div>
         <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <form class="frmAdd" name="frmAdd" role="form" method="post" enctype="multipart/form-data"
@@ -21,16 +21,17 @@ $mobileStatus = $mobile->isMobile();
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                @if (Session::has('notifyAdd'))
-                                    <div class="form-group form-group-sm text-center qc-color-red">
-                                        {!! Session::get('notifyAdd') !!}
+                            @if (Session::has('notifyAdd'))
+                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="form-group form-group-sm qc-color-red">
+                                        <h4>{!! Session::get('notifyAdd') !!}</h4>
                                         <?php
                                         Session::forget('notifyAdd');
                                         ?>
                                     </div>
-                                @endif
-                            </div>
+                                </div>
+                            @endif
+
                             <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
                                 <div class="form-group form-group-sm">
                                     <label>
@@ -45,21 +46,21 @@ $mobileStatus = $mobile->isMobile();
                             <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
                                 <div class="form-group form-group-sm">
                                     <label>
-                                        Mã loại sản phẩm:
-                                        <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
-                                    </label>
-                                    <input type="text" name="txtTypeCode" class="form-control"
-                                           placeholder="Nhập mã loại sản phẩm" value="">
-                                </div>
-                            </div>
-                            <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
-                                <div class="form-group form-group-sm">
-                                    <label>
                                         Đơn vị tính:
                                         <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                     </label>
                                     <input type="text" name="txtUnit" class="form-control"
                                            placeholder="Nhập đơn vị tính: cái, m2 ..." value="">
+                                </div>
+                            </div>
+                            <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                                <div class="form-group form-group-sm">
+                                    <label>
+                                        Thời gian bảo hành (Tháng):
+                                        <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
+                                    </label>
+                                    <input type="number" name="txtWarrantyTime" class="form-control"
+                                           placeholder="Thời gian bảo hành" value="0">
                                 </div>
                             </div>
                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -76,13 +77,14 @@ $mobileStatus = $mobile->isMobile();
                                     <label>
                                         Danh mục thi công liên quan:
                                     </label>
+
                                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                        @if($hFunction->checkCount($dataConstructionWork))
-                                            @foreach($dataConstructionWork as $constructionWork)
+                                        @if($hFunction->checkCount($dataDepartmentWork))
+                                            @foreach($dataDepartmentWork as $departmentWork)
                                                 <label class="checkbox-inline">
-                                                    <input type="checkbox" name="cbConstructionWork[]"
-                                                           value="{!! $constructionWork->constructionId() !!}">
-                                                    {!! $constructionWork->name() !!}
+                                                    <input type="checkbox" name="cbDepartmentWork[]"
+                                                           value="{!! $departmentWork->workId() !!}">
+                                                    {!! $departmentWork->name() !!}
                                                 </label>
                                             @endforeach
                                         @else

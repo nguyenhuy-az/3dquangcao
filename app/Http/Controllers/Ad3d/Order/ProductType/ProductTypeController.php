@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Ad3d\Order\ProductType;
 use App\Http\Controllers\Controller;
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\ConstructionWork\QcConstructionWork;
+use App\Models\Ad3d\DepartmentWork\QcDepartmentWork;
 use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\ProductTypeConstruction\QcProductTypeConstruction;
 use App\Models\Ad3d\ProductTypeImage\QcProductTypeImage;
@@ -43,12 +44,12 @@ class ProductTypeController extends Controller
     public function getAdd()
     {
         $modelStaff = new QcStaff();
-        $modelConstructionWork = new QcConstructionWork();
+        $modelDepartmentWork = new QcDepartmentWork();
         $dataAccess = [
             'accessObject' => 'productType'
         ];
-        $dataConstructionWork =  $modelConstructionWork->selectActivityInfo()->get();
-        return view('ad3d.order.product-type.add', compact('modelStaff', 'dataAccess', 'dataConstructionWork'));
+        $dataDepartmentWork = $modelDepartmentWork->getInfoOfDepartmentConstruction();
+        return view('ad3d.order.product-type.add', compact('modelStaff', 'dataAccess', 'dataDepartmentWork'));
     }
 
     public function postAdd()
@@ -58,61 +59,56 @@ class ProductTypeController extends Controller
         $modelProductTypeConstruction = new QcProductTypeConstruction();
         $modelProductTypeImage = new QcProductTypeImage();
         $name = Request::input('txtName');
-        $typeCode = Request::input('txtTypeCode');
         $txtUnit = Request::input('txtUnit');
+        $txtWarrantyTime = Request::input('txtWarrantyTime');
         $txtDescription = Request::input('txtDescription');
-        $cbConstructionWork = Request::input('cbConstructionWork');
+        $cbDepartmentWork = Request::input('cbDepartmentWork');
         $txtImage_1 = Request::file('txtImage_1');
         $txtImage_2 = Request::file('txtImage_2');
         $txtImage_3 = Request::file('txtImage_3');
-
         // check exist of name
         if ($modelProductType->existName($name)) {
             Session::put('notifyAdd', "Thêm thất bại <b>'$name'</b> đã tồn tại.");
         } else {
-            if ($modelProductType->existTypeCode($name)) {
-                Session::put('notifyAdd', "Thêm thất bại, mã <b>'$typeCode'</b> đã tồn tại.");
-            } else {
-                if ($modelProductType->insert($typeCode, $name, $txtDescription, $txtUnit)) {
-                    $newTypeId = $modelProductType->insertGetId();
-                    # them danh muc thi cong
-                    if(!empty($cbConstructionWork)){
-                        foreach($cbConstructionWork as $value){
-                            $modelProductTypeConstruction->insert($newTypeId, $value);
-                        }
+            if ($modelProductType->insert($name, $txtDescription, $txtUnit, 1, 1, $txtWarrantyTime)) {
+                $newTypeId = $modelProductType->insertGetId();
+                # them danh muc thi cong
+                if (!empty($cbDepartmentWork)) {
+                    foreach ($cbDepartmentWork as $value) {
+                        $modelProductTypeConstruction->insert($newTypeId, $value);
                     }
-                    # anh bao cao 1
-                    if (!empty($txtImage_1)) {
-                        $name_img = stripslashes($_FILES['txtImage_1']['name']);
-                        $name_img = $hFunction->getTimeCode() . '_1.' . $hFunction->getTypeImg($name_img);
-                        $source_img = $_FILES['txtImage_1']['tmp_name'];
-                        if ($modelProductTypeImage->uploadImage($source_img, $name_img, 500)) {
-                            $modelProductTypeImage->insert($name_img, $newTypeId);
-                        }
-                    }
-                    # anh bao cao 2
-                    if (!empty($txtImage_2)) {
-                        $name_img = stripslashes($_FILES['txtImage_2']['name']);
-                        $name_img = $hFunction->getTimeCode() . '_2.' . $hFunction->getTypeImg($name_img);
-                        $source_img = $_FILES['txtImage_2']['tmp_name'];
-                        if ($modelProductTypeImage->uploadImage($source_img, $name_img, 500)) {
-                            $modelProductTypeImage->insert($name_img, $newTypeId);
-                        }
-                    }
-
-                    # anh bao cao 3
-                    if (!empty($txtImage_3)) {
-                        $name_img = stripslashes($_FILES['txtImage_3']['name']);
-                        $name_img = $hFunction->getTimeCode() . '_3.' . $hFunction->getTypeImg($name_img);
-                        $source_img = $_FILES['txtImage_3']['tmp_name'];
-                        if ($modelProductTypeImage->uploadImage($source_img, $name_img, 500)) {
-                            $modelProductTypeImage->insert($name_img, $newTypeId);
-                        }
-                    }
-                    Session::put('notifyAdd', 'Thêm thành công, Nhập thông tin để tiếp tục');
-                } else {
-                    Session::put('notifyAdd', 'Thêm thất bại, Nhập thông tin để tiếp tục');
                 }
+                # anh bao cao 1
+                if (!empty($txtImage_1)) {
+                    $name_img = stripslashes($_FILES['txtImage_1']['name']);
+                    $name_img = $hFunction->getTimeCode() . '_1.' . $hFunction->getTypeImg($name_img);
+                    $source_img = $_FILES['txtImage_1']['tmp_name'];
+                    if ($modelProductTypeImage->uploadImage($source_img, $name_img, 500)) {
+                        $modelProductTypeImage->insert($name_img, $newTypeId);
+                    }
+                }
+                # anh bao cao 2
+                if (!empty($txtImage_2)) {
+                    $name_img = stripslashes($_FILES['txtImage_2']['name']);
+                    $name_img = $hFunction->getTimeCode() . '_2.' . $hFunction->getTypeImg($name_img);
+                    $source_img = $_FILES['txtImage_2']['tmp_name'];
+                    if ($modelProductTypeImage->uploadImage($source_img, $name_img, 500)) {
+                        $modelProductTypeImage->insert($name_img, $newTypeId);
+                    }
+                }
+
+                # anh bao cao 3
+                if (!empty($txtImage_3)) {
+                    $name_img = stripslashes($_FILES['txtImage_3']['name']);
+                    $name_img = $hFunction->getTimeCode() . '_3.' . $hFunction->getTypeImg($name_img);
+                    $source_img = $_FILES['txtImage_3']['tmp_name'];
+                    if ($modelProductTypeImage->uploadImage($source_img, $name_img, 500)) {
+                        $modelProductTypeImage->insert($name_img, $newTypeId);
+                    }
+                }
+                Session::put('notifyAdd', 'Thêm thành công, Nhập thông tin để tiếp tục');
+            } else {
+                Session::put('notifyAdd', 'Thêm thất bại, Nhập thông tin để tiếp tục');
             }
         }
     }
@@ -122,11 +118,11 @@ class ProductTypeController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
-        $modelConstructionWork = new QcConstructionWork();
+        $modelDepartmentWork = new QcDepartmentWork();
         $dataProductType = $modelProductType->getInfo($typeId);
         if ($hFunction->checkCount($dataProductType)) {
-            $dataConstructionWork =  $modelConstructionWork->selectActivityInfo()->get();
-            return view('ad3d.order.product-type.edit', compact('dataProductType','dataConstructionWork'));
+            $dataDepartmentWork = $modelDepartmentWork->getInfoOfDepartmentConstruction();
+            return view('ad3d.order.product-type.edit', compact('dataProductType', 'dataDepartmentWork'));
         }
     }
 
@@ -135,30 +131,23 @@ class ProductTypeController extends Controller
         $modelProductType = new QcProductType();
         $modelProductTypeConstruction = new QcProductTypeConstruction();
         $name = Request::input('txtName');
-        $typeCode = Request::input('txtTypeCode');
         $txtUnit = Request::input('txtUnit');
+        $txtWarrantyTime = Request::input('txtWarrantyTime');
         $txtDescription = Request::input('txtDescription');
-        $cbConstructionWork = Request::input('cbConstructionWork');
+        $cbDepartmentWork = Request::input('cbDepartmentWork');
         $notifyContent = null;
         if ($modelProductType->existEditName($typeId, $name)) {
             $notifyContent = "Tên <b>'$name'</b> đã tồn tại.";
         }
-        if ($modelProductType->existEditTypeCode($typeId, $typeCode)) {
-            if (empty($notifyContent)) {
-                $notifyContent = "Mã <b>'$typeCode'</b> đã tồn tại.";
-            } else {
-                $notifyContent = $notifyContent . "<br/> Mã <b>'$typeCode'</b> đã tồn tại.";
-            }
-        }
         if (!empty($notifyContent)) {
             return $notifyContent;
         } else {
-            $modelProductType->updateInfo($typeId, $typeCode, $name, $txtDescription, $txtUnit);
+            $modelProductType->updateInfo($typeId, $name, $txtDescription, $txtUnit, $txtWarrantyTime);
             // xoa thong tin ton tai
             $modelProductTypeConstruction->deleteInfoOfType($typeId);
             # them danh mục thi cong
-            if(!empty($cbConstructionWork)){
-                foreach($cbConstructionWork as $value){
+            if (!empty($cbDepartmentWork)) {
+                foreach ($cbDepartmentWork as $value) {
                     $modelProductTypeConstruction->insert($typeId, $value);
                 }
             }

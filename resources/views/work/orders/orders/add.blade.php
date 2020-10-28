@@ -55,11 +55,11 @@ if ($provisionalStatus) {
     <div class="row qc_work_orders_wrap">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-10">
             @if (!$provisionalStatus)
-                <label class="qc-font-size-20">ĐƠN HÀNG</label>
-                <span class="qc-font-size-20 qc-color-red"><i class="glyphicon glyphicon-minus"></i> THỰC</span>
+                <label class="qc-font-size-20" style="color: red;">THÊM ĐƠN HÀNG</label>
+                {{--<span class="qc-font-size-20 qc-color-red"><i class="glyphicon glyphicon-minus"></i> THỰC</span>--}}
             @else
-                <label class="qc-font-size-20">TẠO ĐƠN HÀNG</label>
-                <span class="qc-font-size-20 qc-color-red"><i class="glyphicon glyphicon-minus"></i> BÁO GIÁ</span>
+                <label class="qc-font-size-20" style="color: red;">ĐƠN HÀNG BÁO GIÁ</label>
+                {{--<span class="qc-font-size-20 qc-color-red"><i class="glyphicon glyphicon-minus"></i> BÁO GIÁ</span>--}}
             @endif
 
         </div>
@@ -84,7 +84,7 @@ if ($provisionalStatus) {
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
                              style="border-bottom: 1px solid grey;">
                             <i class="glyphicon glyphicon-pencil qc-color-green"></i>
-                            <span class="qc-color-red qc-font-size-16">Khách Hàng</span>
+                            <span class="qc-font-size-16" style="color: blue;">Khách Hàng</span>
                         </div>
                     </div>
                     <div class="row">
@@ -172,7 +172,7 @@ if ($provisionalStatus) {
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 qc-padding-none"
                              style="border-bottom: 1px solid grey;">
                             <i class="glyphicon glyphicon-pencil qc-color-green"></i>
-                            <span class="qc-color-red qc-font-size-16">Đơn hàng</span>
+                            <span class="qc-font-size-16" style="color: blue;">Đơn hàng</span>
                         </div>
                     </div>
                     <div class="row">
@@ -379,13 +379,13 @@ if ($provisionalStatus) {
                 {{-- sản phẩm --}}
                 <div class=" col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 qc-padding-none"
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
                              style="border-bottom: 1px solid grey;">
                             <i class="glyphicon glyphicon-pencil qc-color-green"></i>
-                            <span class="qc-color-red qc-font-size-16">Sản phẩm</span>
+                            <span class="qc-font-size-16" style="color: blue;">Sản phẩm</span>
                         </div>
                     </div>
-                    <div id="qc_work_orders_add_product_wrap" class="row">
+                    <div id="qc_work_orders_add_product_wrap">
                         @if (Session::has('listProductAdd'))
                             <?php
                             $listProduct = Session::get('listProductAdd');
@@ -422,7 +422,7 @@ if ($provisionalStatus) {
                         <a class="qc_orders_product_add_act qc-link-green"
                            data-href="{!! route('qc.work.orders.add.product.get') !!}">
                             <i class="glyphicon glyphicon-plus"></i>
-                            Thêm sản phẩm
+                            THÊM SẢN PHẨM
                         </a>
                     </div>
                 </div>
@@ -431,7 +431,7 @@ if ($provisionalStatus) {
                     <div class="qc-padding-top-20 qc-padding-bot-20  qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                         <input type="hidden" name="orderType" value="{!! $orderType !!}">
-                        <button type="button" class="qc_save btn btn-primary btn-sm"> Đặt hàng</button>
+                        <button type="button" class="qc_save btn btn-primary btn-sm"> ĐẶT HÀNG</button>
                         <a class="btn btn-default btn-sm" type="button" href="{!! $returnHref !!}">
                             Đóng
                         </a>

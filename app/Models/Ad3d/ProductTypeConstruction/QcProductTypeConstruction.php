@@ -2,13 +2,13 @@
 
 namespace App\Models\Ad3d\ProductTypeConstruction;
 
-use App\Models\Ad3d\ConstructionWork\QcConstructionWork;
+use App\Models\Ad3d\DepartmentWork\QcDepartmentWork;
 use Illuminate\Database\Eloquent\Model;
 
 class QcProductTypeConstruction extends Model
 {
     protected $table = 'qc_product_type_construction';
-    protected $fillable = ['detail_id', 'created_at', 'type_id', 'construction_id'];
+    protected $fillable = ['detail_id', 'created_at', 'type_id', 'work_id'];
     protected $primaryKey = 'detail_id';
     public $timestamps = false;
 
@@ -16,12 +16,12 @@ class QcProductTypeConstruction extends Model
 
     #========== ========== ========== THEM - SUA ========== ========== ==========
     #---------- Them ----------
-    public function insert($typeId, $constructionId)
+    public function insert($typeId, $workId)
     {
         $hFunction = new \Hfunction();
         $modelProductTypeConstruction = new QcProductTypeConstruction();
         $modelProductTypeConstruction->type_id = $typeId;
-        $modelProductTypeConstruction->construction_id = $constructionId;
+        $modelProductTypeConstruction->work_id = $workId;
         $modelProductTypeConstruction->created_at = $hFunction->createdAt();
         if ($modelProductTypeConstruction->save()) {
             $this->lastId = $modelProductTypeConstruction->detail_id;
@@ -52,27 +52,26 @@ class QcProductTypeConstruction extends Model
         return QcProductTypeConstruction::where('type_id', $typeId)->orderBy('created_at', $orderBy)->get();
     }
 
-    public function listConstructWorkIdOfProductType($typeId)
+    public function listDepartmentWorkIdOfProductType($typeId)
     {
-        return QcProductTypeConstruction::where('type_id', $typeId)->pluck('construction_id');
+        return QcProductTypeConstruction::where('type_id', $typeId)->pluck('work_id');
     }
 
-    public function infoConstructWorkOfProductType($typeId)
+    public function infoDepartmentWorkOfProductType($typeId)
     {
-        $modelConstructionWork = new QcConstructionWork();
-        $listConstructId = $this->listConstructWorkIdOfProductType($typeId);
-        return $modelConstructionWork->getInfoByListId($listConstructId);
+        $modelDepartmentWork = new QcDepartmentWork();
+        return $modelDepartmentWork->getInfoByListId($this->listDepartmentWorkIdOfProductType($typeId));
     }
 
     //---------- danh muc thi cong  -----------
-    public function constructionWork()
+    public function departmentWork()
     {
-        return $this->belongsTo('App\Models\Ad3d\ConstructionWork\QcConstructionWork', 'construction_id', 'construction_id');
+        return $this->belongsTo('App\Models\Ad3d\DepartmentWork\QcDepartmentWork', 'work_id', 'work_id');
     }
 
-    public function infoOfConstructionWork($constructionId, $orderBy = 'DESC')
+    public function infoOfConstructionWork($workId, $orderBy = 'DESC')
     {
-        return QcProductTypeConstruction::where('construction_id', $constructionId)->orderBy('created_at', $orderBy)->get();
+        return QcProductTypeConstruction::where('work_id', $workId)->orderBy('created_at', $orderBy)->get();
     }
 
 
@@ -110,9 +109,9 @@ class QcProductTypeConstruction extends Model
         return $this->pluck('type_id', $detailId);
     }
 
-    public function constructionId($detailId = null)
+    public function workId($detailId = null)
     {
-        return $this->pluck('construction_id', $detailId);
+        return $this->pluck('work_id', $detailId);
     }
 
     public function createdAt($detailId = null)

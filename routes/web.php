@@ -885,6 +885,14 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     });
     //quản lý đơn hàng
     Route::group(['prefix' => 'orders'], function () {
+        # chi tiet thi cong don hang
+        Route::group(['prefix' => 'construction-detail'], function () {
+            # bao sua chua san pham
+            Route::get('repair/{productId?}', ['as' => 'qc.work.orders.construction.detail.repair.get', 'uses' => 'Work\Orders\OrdersController@getRepairProduct']);
+            Route::post('repair/{productId?}', ['as' => 'qc.work.orders.construction.detail.repair.post', 'uses' => 'Work\Orders\OrdersController@postRepairProduct']);
+
+            Route::get('/{orderId?}', ['as' => 'qc.work.orders.construction.detail.get', 'uses' => 'Work\Orders\OrdersController@getOrderConstruction']);
+        });
         Route::group(['prefix' => 'info'], function () {
             #thay doi thong tin khach hang
             Route::post('customer-edit/{customerId?}', ['as' => 'qc.work.orders.info.customer.edit.post', 'uses' => 'Work\Orders\OrdersController@postEditInfoCustomer']);
@@ -1002,7 +1010,6 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::get('/{orderId?}', ['as' => 'qc.work.orders.order.delete.get', 'uses' => 'Work\Orders\OrdersController@getOrderCancel']);
             Route::post('/{orderId}', ['as' => 'qc.work.orders.order.delete.post', 'uses' => 'Work\Orders\OrdersController@postOrderCancel']);
         });
-
 
         #bao gia
         Route::group(['prefix' => 'provisional'], function () {

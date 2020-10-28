@@ -8,20 +8,15 @@ var qc_ad3d_order_product_type = {
     },
     add: {
         save: function (form) {
-            var txtName = $(form).find("input[name='txtName']");
-            var txtTypeCode = $(form).find("input[name='txtTypeCode']");
+            var txtName = $(form).find("input[name='txtName']");;
 
             if (qc_main.check.inputNull(txtName, 'Nhập tên loại sản phẩm')) {
                 return false;
             } else {
                 if (qc_main.check.inputMaxLength(txtName, 50, 'Tên không dài quá 50 ký tự')) return false;
             }
-            if (qc_main.check.inputNull(txtTypeCode, 'Nhập mã loại sản phẩm')) {
-                return false;
-            } else {
-                if (qc_main.check.inputMaxLength(txtTypeCode, 30, 'Mã số thuế dài không quá 30 ký tự')) return false;
-            }
             qc_ad3d_submit.ajaxFormHasReload(form, '', false);
+            //qc_ad3d_submit.ajaxFormNotReload(form, '', false);
             qc_main.scrollTop();
             $(form).find('.qc_reset').click();
         }
@@ -32,18 +27,12 @@ var qc_ad3d_order_product_type = {
         },
         save: function (formObject) {
             var txtName = $(formObject).find("input[name='txtName']");
-            var txtTypeCode = $(formObject).find("input[name='txtTypeCode']");
             var containNotify = $(formObject).find('.frm_notify');
 
             if (qc_main.check.inputNull(txtName, 'Nhập tên công ty')) {
                 return false;
             } else {
                 if (qc_main.check.inputMaxLength(txtName, 50, 'Tên không dài quá 50 ký tự')) return false;
-            }
-            if (qc_main.check.inputNull(txtTypeCode, 'Nhập mã số thuế')) {
-                return false;
-            } else {
-                if (qc_main.check.inputMaxLength(txtTypeCode, 30, 'Mã số thuế dài không quá 30 ký tự')) return false;
             }
             qc_ad3d_submit.ajaxFormHasReload(formObject, containNotify, true);
             $('#qc_container_content').animate({

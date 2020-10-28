@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcProductType extends Model
 {
     protected $table = 'qc_product_type';
-    protected $fillable = ['type_id', 'typeCode', 'name', 'unit', 'description', 'confirmStatus', 'applyStatus', 'action', 'created_at'];
+    protected $fillable = ['type_id', 'typeCode', 'name', 'unit', 'description', 'warrantyTime', 'confirmStatus', 'applyStatus', 'action', 'created_at'];
     protected $primaryKey = 'type_id';
     public $timestamps = false;
 
@@ -18,14 +18,15 @@ class QcProductType extends Model
 
     #========== ========== ========== Thêm && cập nhật ========== ========== ==========
     #---------- Thêm ----------
-    public function insert($typeCode, $name, $description = null, $unit = null, $confirmStatus = 1, $applyStatus = 1)
+    public function insert($name, $description = null, $unit = null, $confirmStatus = 1, $applyStatus = 1, $warrantyTime = 0)
     {
         $hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
-        $modelProductType->typeCode = $typeCode;
+        $modelProductType->typeCode = $hFunction->strtoupper($hFunction->getAcronymOfString($name));
         $modelProductType->name = $hFunction->convertValidHTML($name);
         $modelProductType->unit = $unit;
         $modelProductType->description = $hFunction->convertValidHTML($description);
+        $modelProductType->warrantyTime = $warrantyTime;
         $modelProductType->confirmStatus = $confirmStatus;
         $modelProductType->applyStatus = $applyStatus;
         $modelProductType->created_at = $hFunction->createdAt();
@@ -44,12 +45,14 @@ class QcProductType extends Model
     }
 
     #----------- cập nhật thông tin ----------
-    public function updateInfo($typeId, $typeCode, $name, $description, $unit)
+    public function updateInfo($typeId, $name, $description, $unit, $warrantyTime)
     {
+        $hFunction = new \Hfunction();
         return QcProductType::where('type_id', $typeId)->update([
-            'typeCode' => $typeCode,
+            'typeCode' => $hFunction->strtoupper($hFunction->getAcronymOfString($name)),
             'name' => $name,
             'unit' => $unit,
+            'warrantyTime' => $warrantyTime,
             'description' => $description
         ]);
     }
@@ -107,13 +110,13 @@ class QcProductType extends Model
     public function constructionWorkListId($typeId = null)
     {
         $modelProductTypeConstruction = new QcProductTypeConstruction();
-        return $modelProductTypeConstruction->listConstructWorkIdOfProductType($this->checkIdNull($typeId));
+        return $modelProductTypeConstruction->listDepartmentWorkIdOfProductType($this->checkIdNull($typeId));
     }
 
     public function constructionWorkInfo($typeId = null)
     {
         $modelProductTypeConstruction = new QcProductTypeConstruction();
-        return $modelProductTypeConstruction->infoConstructWorkOfProductType($this->checkIdNull($typeId));
+        return $modelProductTypeConstruction->infoDepartmentWorkOfProductType($this->checkIdNull($typeId));
     }
 
     #============ =========== ============ Lấy thông tin ============= =========== ==========
@@ -211,6 +214,11 @@ class QcProductType extends Model
     {
         $hFunction = new \Hfunction();
         return $hFunction->htmlEntities($this->pluck('description', $typeId));
+    }
+
+    public function warrantyTime($typeId = null)
+    {
+        return $this->pluck('warrantyTime', $typeId);
     }
 
     public function confirmStatus($typeId = null)

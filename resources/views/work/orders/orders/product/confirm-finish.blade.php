@@ -17,7 +17,7 @@ $mobileStatus = $mobile->isMobile();
     <div class="qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
             <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-                <h3>XÁC NHẬN HOÀN THÀNH SẢN PHẨM </h3>
+                <h3 style="color: red;">XÁC NHẬN HOÀN THÀNH SẢN PHẨM </h3>
             </div>
         </div>
         <div class="row">
@@ -50,7 +50,7 @@ $mobileStatus = $mobile->isMobile();
                     <div class="row">
                         <div class="text-center qc-padding-bot-20  qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                            <button type="button" class="qc_save btn btn-sm btn-primary">Xác nhận</button>
+                            <button type="button" class="qc_save btn btn-sm btn-primary">XÁC NHẬN</button>
                             <button type="button" class="qc_container_close btn btn-sm btn-default">Đóng</button>
                         </div>
                     </div>

@@ -612,7 +612,7 @@ var qc_work_orders = {
                         if (qc_main.check.inputNull(txtProductType, 'Chọn loại sản phẩm')) {
                             txtProductType.focus();
                             return false;
-                        }else {
+                        } else {
                             if (txtProductType.val().length > 50) {
                                 alert('Tên loại sản phẩm không dài quá 50 ký tự');
                                 txtProductType.focus();
@@ -699,6 +699,25 @@ var qc_work_orders = {
                 qc_master_submit.ajaxHasReload($(listObject).parents('.qc_work_orders_provisional_list_content').data('href-cancel') + '/' + $(listObject).data('object'), '', false);
             }
         },
+    },
+    construction: {
+        product: {
+            /*thong bao sua san pham*/
+            getRepair: function (href) {
+                qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+            },
+            saveRepair: function (frm) {
+                var containerNotify = $(frm).find(".frm_notify");
+                var txtNote = $(frm).find("input[name='txtNote']");
+                if (qc_main.check.inputNull(txtNote, 'Nhập ghi chú cho thông báo')) {
+                    txtNote.focus();
+                    return false;
+                } else {
+                    if (confirm('Bạn đồng ý với thông báo này?'))
+                        qc_master_submit.ajaxFormHasReload(frm, containerNotify, true);
+                }
+            }
+        }
     }
 }
 
@@ -758,7 +777,7 @@ $(document).ready(function () {
     $('body').on('change', '.qcWorkOrdersStaffFilterId', function () {
         var txtOrderFilterKeyword = 'null';
         var txtOrderCustomerFilterKeyword = 'null';
-        qc_work_orders.filter($(this).data('href') + '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword +  '/' + $(this).val());
+        qc_work_orders.filter($(this).data('href') + '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + $(this).val());
     });
 
     /*theo tháng*/
@@ -767,7 +786,7 @@ $(document).ready(function () {
         txtOrderFilterKeyword = (txtOrderFilterKeyword.length == 0) ? 'null' : txtOrderFilterKeyword;
         var txtOrderCustomerFilterKeyword = $('.txtOrderCustomerFilterKeyword').val();
         txtOrderCustomerFilterKeyword = (txtOrderCustomerFilterKeyword.length == 0) ? 'null' : txtOrderCustomerFilterKeyword;
-        qc_work_orders.filter($(this).data('href') + '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $(this).val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword +  '/' + $('.qcWorkOrdersStaffFilterId').val());
+        qc_work_orders.filter($(this).data('href') + '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $(this).val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + $('.qcWorkOrdersStaffFilterId').val());
     });
     /* năm*/
     $('body').on('change', '.qcWorkOrderYearFilter', function () {
@@ -775,7 +794,7 @@ $(document).ready(function () {
         txtOrderFilterKeyword = (txtOrderFilterKeyword.length == 0) ? 'null' : txtOrderFilterKeyword;
         var txtOrderCustomerFilterKeyword = $('.txtOrderCustomerFilterKeyword').val();
         txtOrderCustomerFilterKeyword = (txtOrderCustomerFilterKeyword.length == 0) ? 'null' : txtOrderCustomerFilterKeyword;
-        qc_work_orders.filter($(this).data('href')+ '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $(this).val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword+  '/' + $('.qcWorkOrdersStaffFilterId').val());
+        qc_work_orders.filter($(this).data('href') + '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $(this).val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + $('.qcWorkOrdersStaffFilterId').val());
     });
     /* loc theo ten don hang*/
     $('body').on('keyup', '#qc_work_orders_wrap .txtOrderFilterKeyword', function () {
@@ -913,11 +932,11 @@ $(document).ready(function () {
     });
     /*theo trang thai hoan thanh*/
     $('body').on('change', '.qcWorkOrdersFinishStatusFilter', function () {
-        qc_work_orders.filter($(this).data('href')+ '/' + $(this).val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() +  '/' + $('.qcWorkOrderPaymentStatusFilter').val()  + '/' + 'null' + '/' + 'null' +  '/' + $('.qcWorkOrdersStaffFilterId').val());
+        qc_work_orders.filter($(this).data('href') + '/' + $(this).val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $('.qcWorkOrderPaymentStatusFilter').val() + '/' + 'null' + '/' + 'null' + '/' + $('.qcWorkOrdersStaffFilterId').val());
     });
     /*theo trang thai thanh toam*/
     $('body').on('change', '.qcWorkOrderPaymentStatusFilter', function () {
-        qc_work_orders.filter($(this).data('href')+ '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $(this).val()  + '/' + 'null' + '/' + 'null' +  '/' + $('.qcWorkOrdersStaffFilterId').val());
+        qc_work_orders.filter($(this).data('href') + '/' + $('.qcWorkOrdersFinishStatusFilter').val() + '/' + $('.qcWorkOrderMonthFilter').val() + '/' + $('.qcWorkOrderYearFilter').val() + '/' + $(this).val() + '/' + 'null' + '/' + 'null' + '/' + $('.qcWorkOrdersStaffFilterId').val());
     });
 });
 /* ---------- THANH TOAN DON HANG -----------------*/
@@ -942,6 +961,16 @@ $(document).ready(function () {
         if (confirm('Thiết kế hủy sẽ không được phục hồi, hủy?')) {
             qc_master_submit.ajaxHasReload($(this).data('href'), '', false);
         }
+    });
+});
+/* ---------- CHI TIET THI CONG DON HANG --------- */
+$(document).ready(function () {
+    /*thong bao sua san pham*/
+    $('#qc_order_order_construction_wrap').on('click', '.qc_product_repair_get', function () {
+        qc_work_orders.construction.product.getRepair($(this).data('href'))
+    });
+    $('body').on('click', '.qc_frm_product_repair_add .qc_save', function () {
+        qc_work_orders.construction.product.saveRepair($(this).parents('.qc_frm_product_repair_add'));
     });
 });
 /* ---------- THEM DON HANG THUC -----------------*/
@@ -1168,8 +1197,9 @@ $(document).ready(function () {
                         for (var i = 0; i < content.length; i++) {
                             var contentName = content[i]['name'];
                             var contentUnit = content[i]['unit'];
+                            var contentWarrantyTime = content[i]['warrantyTime'];
                             $(suggestions_content).append(
-                                "<a class='qc_order_add_product_type_suggestions_select qc-link' data-name='" + contentName + "' data-unit='" + contentUnit + "'> " + contentName + "</a><br/>"
+                                "<a class='qc_order_add_product_type_suggestions_select qc-link' data-name='" + contentName + "' data-unit='" + contentUnit + "' data-warranty-time='" + contentWarrantyTime + "'> " + contentName + "</a><br/>"
                             );
                         }
                     } else if (result['status'] == 'notExist') {
@@ -1191,11 +1221,10 @@ $(document).ready(function () {
     });
     /*chon don loai san pham goi y*/
     $('body').on('click', '#frmWorkOrdersAdd .qc_order_add_product_type_suggestions_select', function () {
-        var name = $(this).data('name');
-        var unit = $(this).data('unit');
         var objectWrap = $(this).parents('.qc_work_orders_product_add');
-        objectWrap.find('.txtProductType').val(name);
-        objectWrap.find('.txtUnit').val(unit);
+        objectWrap.find('.txtProductType').val($(this).data('name'));
+        objectWrap.find('.txtUnit').val($(this).data('unit'));
+        objectWrap.find('.txtWarrantyTime').val($(this).data('warranty-time'));
         objectWrap.find('.qc_order_add_product_type_suggestions_wrap').hide();
 
     });

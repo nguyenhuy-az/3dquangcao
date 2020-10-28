@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcProductRepair extends Model
 {
     protected $table = 'qc_product_repair';
-    protected $fillable = ['repair_id', 'beginDate', 'deadline', 'repairType','noted', 'action', 'product_id', 'allocationStaff_id', 'created_at'];
+    protected $fillable = ['repair_id', 'image','noted','finishStatus','finishDate','confirmStatus','confirmDate', 'action', 'created_at','product_id','notifyStaff_id', 'confirmStaff_id'];
     protected $primaryKey = 'repair_id';
     public $timestamps = false;
 
@@ -16,16 +16,14 @@ class QcProductRepair extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- them moi ----------
-    public function insert($beginDate, $deadline, $repairType, $noted, $productId, $allocationStaffId)
+    public function insert($image, $note, $productId, $notifyStaffId)
     {
         $hFunction = new \Hfunction();
         $modelProductRepair = new QcProductRepair();
-        $modelProductRepair->beginDate = $beginDate;
-        $modelProductRepair->deadline = $deadline;
-        $modelProductRepair->repairType = $repairType;
-        $modelProductRepair->noted = $noted;
+        $modelProductRepair->image = $image;
+        $modelProductRepair->note = $note;
         $modelProductRepair->product_id = $productId;
-        $modelProductRepair->allocationStaff_id = $allocationStaffId;
+        $modelProductRepair->notifyStaff_id = $notifyStaffId;
         $modelProductRepair->created_at = $hFunction->createdAt();
         if ($modelProductRepair->save()) {
             $this->lastId = $modelProductRepair->repair_id;
@@ -42,31 +40,13 @@ class QcProductRepair extends Model
     }
 
     // ket thuc cong viec
-    public function confirmFinish($repairId, $reportDate, $finishStatus, $finishReason = 0)
-    {
-        $hFunction = new \Hfunction();
-        $modelProductRepairFinish = new QcProductRepairFinish();
-        $repairId = (empty($repairId)) ? $this->allocationId() : $repairId;
-        /*if (QcProductRepair::where('repair_id', $repairId)->update(['action' => 0])) {
-            $receiveDate = $this->receiveDeadline($repairId)[0];
-            if (date('Y-m-d H:i', strtotime($reportDate)) > date('Y-m-d H:i', strtotime($receiveDate))) {
-                # hoan thanh tre
-                $finishLevel = 2;
-            } elseif (date('Y-m-d H:i', strtotime($reportDate)) == date('Y-m-d H:i', strtotime($receiveDate))) {
-                $finishLevel = 0;
-            } else {
-                $finishLevel = 1;
-            }
-            $modelProductRepairFinish->insert($reportDate, $finishStatus, $finishLevel, $finishReason, '', $repairId);
-        }*/
-    }
     //========== ========= ========= RELATION ========== ========= ==========
-    //---------- nhân viên bàn giao -----------
-    public function allocationStaff()
+    //---------- nhan vien bao sua -----------
+    public function notifyStaff()
     {
-        return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'allocationStaff_id', 'staff_id');
+        return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'notifyStaff_id', 'staff_id');
     }
-//---------- san pham -----------
+    //---------- san pham -----------
     public function product()
     {
         return $this->belongsTo('App\Models\Ad3d\Product\QcProduct', 'product_id', 'product_id');

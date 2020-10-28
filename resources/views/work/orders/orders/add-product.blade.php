@@ -77,15 +77,24 @@ $mobileStatus = $mobile->isMobile();
                                 <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                             </label>
                             <input class="txtPrice form-control" type="text" name="txtPrice[]"
-                                   placeholder="Gía trên một sản phẩm"
-                                   value="" style="height:25px;">
+                                   placeholder="Gía trên một sản phẩm" value="" >
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                    <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                        <div class="form-group form-group-sm qc-margin-none">
+                            <label>
+                                Bảo hành (Tháng):
+                                <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
+                            </label>
+                            <input class="txtWarrantyTime form-control" type="text" name="txtWarrantyTime[]"
+                                   placeholder="Số tháng bảo hành" value="0">
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <div class="form-group form-group-sm qc-margin-none">
                             <label>Chi chú</label>
                             <input type="text" class="txtDescription form-control" name="txtDescription[]"
-                                   placeholder="Chú thích sản phảm" value="" style="height: 25px;">
+                                   placeholder="Chú thích sản phảm" value="">
                         </div>
                     </div>
                 </div>

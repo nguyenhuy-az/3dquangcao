@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\DepartmentWork;
 
+use App\Models\Ad3d\Department\QcDepartment;
 use Illuminate\Database\Eloquent\Model;
 
 class QcDepartmentWork extends Model
@@ -64,10 +65,23 @@ class QcDepartmentWork extends Model
         return QcDepartmentWork::where('department_id', $departmentId)->orderBy('name', 'ASC')->get();
     }
 
+    # lay thong tin cua bo phan thi cong
+    public function getInfoOfDepartmentConstruction()
+    {
+        $modelDepartment = new QcDepartment();
+        return $this->getInfoOfDepartment($modelDepartment->constructionDepartmentId());
+    }
+
     #============ =========== ============ GET INFO ============= =========== ==========
     public function selectInfoAll()
     {
         return QcDepartmentWork::orderBy('name', 'ASC')->select('*');
+    }
+
+    # lay thong tin theo danh sach ma cong viec
+    public function getInfoByListId($listWorkId)
+    {
+        return QcDepartmentWork::whereIn('work_id', $listWorkId)->get();
     }
 
     public function getInfo($workId = '', $field = '')
