@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcWorkAllocation extends Model
 {
     protected $table = 'qc_work_allocation';
-    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'confirmStatus', 'confirmDate', 'noted', 'role', 'cancelStatus', 'cancelDate', 'action', 'product_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
+    protected $fillable = ['allocation_id', 'allocationDate', 'constructionNumber', 'receiveStatus', 'receiveDeadline', 'confirmStatus', 'confirmDate', 'noted', 'role', 'cancelStatus', 'cancelDate', 'action', 'product_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at', 'productRepair_id'];
     protected $primaryKey = 'allocation_id';
     public $timestamps = false;
 
@@ -21,11 +21,12 @@ class QcWorkAllocation extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- them moi ----------
-    public function insert($allocationDate, $receiveStatus, $receiveDeadline, $confirmStatus, $confirmDate, $noted, $productId, $allocationStaffId, $receiveStaffId, $role = 0)
+    public function insert($allocationDate, $receiveStatus, $receiveDeadline, $confirmStatus, $confirmDate, $noted, $productId, $allocationStaffId, $receiveStaffId, $role = 0, $constructionNumber = 1, $productRepairId = null)
     {
         $hFunction = new \Hfunction();
         $modelWorkAllocation = new QcWorkAllocation();
         $modelWorkAllocation->allocationDate = $allocationDate;
+        $modelWorkAllocation->constructionNumber = $constructionNumber;
         $modelWorkAllocation->receiveStatus = $receiveStatus;
         $modelWorkAllocation->receiveDeadline = $receiveDeadline;
         $modelWorkAllocation->confirmStatus = $confirmStatus;
@@ -35,6 +36,7 @@ class QcWorkAllocation extends Model
         $modelWorkAllocation->product_id = $productId;
         $modelWorkAllocation->allocationStaff_id = $allocationStaffId;
         $modelWorkAllocation->receiveStaff_id = $receiveStaffId;
+        $modelWorkAllocation->productRepair_id = $productRepairId;
         $modelWorkAllocation->created_at = $hFunction->createdAt();
         if ($modelWorkAllocation->save()) {
             $this->lastId = $modelWorkAllocation->allocation_id;
@@ -380,6 +382,11 @@ class QcWorkAllocation extends Model
         return $this->pluck('allocationDate', $allocationId);
     }
 
+    public function constructionNumber($allocationId = null)
+    {
+        return $this->pluck('constructionNumber', $allocationId);
+    }
+
     public function receiveStatus($allocationId = null)
     {
         return $this->pluck('receiveStatus', $allocationId);
@@ -443,6 +450,11 @@ class QcWorkAllocation extends Model
     public function receiveStaffId($allocationId = null)
     {
         return $this->pluck('receiveStaff_id', $allocationId);
+    }
+
+    public function productRepairId($allocationId = null)
+    {
+        return $this->pluck('productRepair_id', $allocationId);
     }
 
     public function action($allocationId = null)

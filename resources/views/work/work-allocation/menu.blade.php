@@ -26,16 +26,6 @@ $totalNotifyNewWorkAllocation = $dataStaffLogin->totalNotifyNewWorkAllocation();
                     @endif
                 </a>
             </li>
-            {{--<li @if($objectAccess == 'workAllocationActivity') class="active " @endif>
-                <a class="qc-link" href="{!! route('qc.work.work_allocation.activity.get') !!}">
-                    Việc đang làm
-                </a>
-            </li>--}}
-            {{--<li @if($objectAccess == 'workAllocationFinish') class="active" @endif>
-                <a class="qc-link" href="{!! route('qc.work.work_allocation.finish.get') !!}">
-                    Việc đã làm
-                </a>
-            </li>--}}
             <li @if($objectAccess == 'workAllocationOrderAllocation') class="active" @endif>
                 <a class="qc-link-bold" href="{!! route('qc.work.work_allocation.order_allocation.index') !!}"
                    @if($objectAccess == 'workAllocationOrderAllocation') style="background-color: whitesmoke;" @endif>
@@ -63,6 +53,14 @@ $totalNotifyNewWorkAllocation = $dataStaffLogin->totalNotifyNewWorkAllocation();
                         @endif
                     </a>
                 </li>
+                    <li @if($objectAccess == 'workAllocationProductRepair') class="active" @endif>
+                        <a class="qc-link-bold" href="{!! route('qc.work.work_allocation.product_repair.index') !!}"
+                           @if($objectAccess == 'workAllocationProductRepair') style="background-color: whitesmoke;"
+                           @endif title="Đang cập nhật">
+                            <i class="qc-font-size-16 glyphicon glyphicon-refresh"></i>
+                            <label>SỬA CHỬA SẢN PHẨM</label>
+                        </a>
+                    </li>
             @endif
         </ul>
     </div>

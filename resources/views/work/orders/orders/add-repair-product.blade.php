@@ -21,7 +21,7 @@ $mobileStatus = $mobile->isMobile();
             <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <form class="qc_frm_product_repair_add form-horizontal" name="qc_frm_product_repair_add" role="form"
                       method="post" enctype="multipart/form-data"
-                      action="{!! route('qc.work.orders.product.design.add.post',$dataProduct->productId()) !!}">
+                      action="{!! route('qc.work.orders.construction.detail.repair.post',$dataProduct->productId()) !!}">
                     <div class="row">
                         <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="font-weight: bold;">
                             <div class="frm_notify qc-font-size-16 form-group form-group-sm qc-color-red"></div>

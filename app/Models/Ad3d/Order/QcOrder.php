@@ -626,37 +626,6 @@ class QcOrder extends Model
         return $dataOrder;
     }
 
-    # lay thong tin don hang quan ly thi cong CUA 1 CONG TY
-    public function selectInfoManageConstructionOfCompany($companyId, $nameFiler = null, $dateFilter = null, $finishStatus = 100)
-    {
-        $dataOrder = null;
-        if ($finishStatus == 100) { // 100 = tat ca don hang
-            if (empty($nameFiler)) {
-                if (empty($dateFilter)) {
-                    $dataOrder = QcOrder::where('company_id', $companyId)->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
-
-                } else {
-                    $dataOrder = QcOrder::where('company_id', $companyId)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
-                }
-
-            } else {
-                if (empty($dateFilter)) {
-                    $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->where('company_id', $companyId)->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
-                } else {
-                    $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->where('company_id', $companyId)->where('created_at', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
-                }
-            }
-
-        } else {
-            if (empty($nameFiler)) {
-                $dataOrder = QcOrder::where('finishStatus', $finishStatus)->where('company_id', $companyId)->where('created_at', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
-            } else {
-                $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->where('finishStatus', $finishStatus)->where('company_id', $companyId)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
-            }
-        }
-        return $dataOrder;
-    }
-
     # lay thong tin don hang quan ly thi cong theo danh sach nhan vien
     public function selectInfoManageConstruction($listStaffId, $nameFiler = null, $dateFilter = null, $finishStatus = 100)
     {
@@ -745,6 +714,36 @@ class QcOrder extends Model
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
     }
 
+    # lay thong tin don hang quan ly thi cong CUA 1 CONG TY
+    public function selectInfoManageConstructionOfCompany($companyId, $nameFiler = null, $dateFilter = null, $finishStatus = 100)
+    {
+        $dataOrder = null;
+        if ($finishStatus == 100) { // 100 = tat ca don hang
+            if (empty($nameFiler)) {
+                if (empty($dateFilter)) {
+                    $dataOrder = QcOrder::where('company_id', $companyId)->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+
+                } else {
+                    $dataOrder = QcOrder::where('company_id', $companyId)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+                }
+
+            } else {
+                if (empty($dateFilter)) {
+                    $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->where('company_id', $companyId)->orderBy('created_at', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+                } else {
+                    $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->where('company_id', $companyId)->where('created_at', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+                }
+            }
+
+        } else {
+            if (empty($nameFiler)) {
+                $dataOrder = QcOrder::where('finishStatus', $finishStatus)->where('company_id', $companyId)->where('created_at', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+            } else {
+                $dataOrder = QcOrder::where('name', 'like', "%$nameFiler%")->where('finishStatus', $finishStatus)->where('company_id', $companyId)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->orderBy('orderCode', 'DESC')->select('*');
+            }
+        }
+        return $dataOrder;
+    }
     # lay thong tin cua 1 cong ty
     public function listIdOfCompanyAndName($companyId, $name = null)
     {

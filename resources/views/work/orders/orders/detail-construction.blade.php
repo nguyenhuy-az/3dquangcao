@@ -51,7 +51,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
         @if($orderFinishStatus)
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                     style="background-color: red; padding-bottom: 10px; padding-top: 10px;">
+                     style="background-color: grey; padding-bottom: 10px; padding-top: 10px;">
                     <span style="color: yellow; ">ĐƠN HÀNG ĐÃ XONG</span>
                 </div>
             </div>
@@ -145,14 +145,14 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                         ?>
                         <div class="row">
                             <div class="table-responsive">
-                                <table class="table" style="border: 3px solid black;">
+                                <table class="table table-bordered" style="border: 3px solid black;">
                                     <tr>
-                                        <td style="width:50px; background-color: #d7d7d7 ;">
+                                        <td class="text-center" style="width:50px; background-color: #d7d7d7 ;">
                                             <b style="color: red; font-size: 1.5em;">
-                                                SP_{!! $sp_n_o = (isset($sp_n_o))?$sp_n_o+1:1 !!}
+                                                SP {!! $sp_n_o = (isset($sp_n_o))?$sp_n_o+1:1 !!}
                                             </b>
                                         </td>
-                                        <td style="border: 1px solid #d7d7d7;">
+                                        <td>
                                             <label style="font-size: 1.5em;">{!! ucwords($product->productType->name()) !!}</label>
                                             <br/>
                                             @if(!$checkFinishStatus)
@@ -160,13 +160,17 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             @else
                                                 <em style="color: blue;">Đã xong</em>
                                                 <em style="color: grey;">-</em>
-                                                <a class="qc_product_repair_get qc-link-red-bold"
-                                                   data-href="{!! route('qc.work.orders.construction.detail.repair.get', $productId) !!}">
-                                                    BÁO SỬA CHỮA
-                                                </a>
+                                                @if($product->productRepairActivityOfProduct())
+                                                    <span style="background-color: red; color: yellow; padding: 3px;">ĐANG SỬA CHỬA</span>
+                                                @else
+                                                    <a class="qc_product_repair_get qc-link-red-bold"
+                                                       data-href="{!! route('qc.work.orders.construction.detail.repair.get', $productId) !!}">
+                                                        BÁO SỬA CHỮA
+                                                    </a>
+                                                @endif
                                             @endif
                                         </td>
-                                        <td style="padding-bottom: 10px;">
+                                        <td >
                                             @if($hFunction->checkCount($dataProductDesign))
                                                 @if($dataProductDesign->checkApplyStatus())
                                                     <img style="width: 70px; height: auto; margin-right: 5px;"
@@ -188,7 +192,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                 @endif
                                             @endif
                                         </td>
-                                        <td class="text-left" style="border: 1px solid #d7d7d7;">
+                                        <td class="text-left">
                                             <em>{!! $product->description() !!}</em>
                                         </td>
                                         <td>
@@ -198,11 +202,12 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                     <tr>
                                         <td colspan="5" style="padding: 0;">
                                             <div class="table-responsive">
-                                                <table class="table" style="margin:0;">
+                                                <table class="table table-bordered" style="margin:0;">
                                                     @if($hFunction->checkCount($dataWorkAllocation))
                                                         @foreach($dataWorkAllocation as $workAllocation)
                                                             <?php
                                                             $allocationId = $workAllocation->allocationId();
+                                                            $constructionNumber = $workAllocation->constructionNumber();
                                                             $dataStaffReceive = $workAllocation->receiveStaff;
                                                             # anh dai dien
                                                             $image = $dataStaffReceive->image();
@@ -215,6 +220,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                             $dataWorkAllocationReport = $workAllocation->workAllocationReportInfo($allocationId, 1);
                                                             ?>
                                                             <tr>
+                                                                <td style="width: 50px; background-color: whitesmoke; border-top: none;" ></td>
                                                                 <td>
                                                                     <div class="media">
                                                                         <a class="pull-left" href="#">
@@ -226,12 +232,21 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                         <div class="media-body">
                                                                             <h5 class="media-heading">{!! ucwords($dataStaffReceive->lastName()) !!}</h5>
                                                                             @if($workAllocation->checkRoleMain())
-                                                                                <em class="qc-color-red">Làm chính</em>
+                                                                                <em style="color: blue;">Làm chính</em>
                                                                             @else
                                                                                 <em style="color: brown;">Làm phụ</em>
                                                                             @endif
                                                                         </div>
                                                                     </div>
+                                                                </td>
+                                                                <td>
+                                                                    @if($constructionNumber > 1)
+                                                                        <span>Thi công lần {!! $constructionNumber !!} :</span>
+                                                                        <em style="color: red">sửa chữa</em>
+                                                                    @else
+                                                                        <em>Thi công lần {!! $constructionNumber !!} :</em>
+                                                                        <em style="color: red">Sản xuất</em>
+                                                                    @endif
                                                                 </td>
                                                                 <td>
                                                                     @if($hFunction->checkCount($dataWorkAllocationReport))
@@ -256,27 +271,21 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                             <b>{!! $hFunction->convertDateDMYHISFromDatetime($workAllocationReport->reportDate()) !!}</b>
                                                                             <br/>
                                                                             <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
-                                                                            <br/>
-                                                                            <a class="qc_work_allocation_view qc-link-green-bold"
-                                                                               title="Click xem chi tiết thi công"
-                                                                               data-href="{!! route('qc.work.work_allocation.order.work_allocation.get',$allocationId) !!}">
-                                                                                XEM BÁO CÁO
-                                                                            </a>
                                                                         @endforeach
                                                                     @else
                                                                         <em class="qc-color-grey">Không có báo cáo</em>
                                                                     @endif
                                                                 </td>
                                                             </tr>
-
                                                         @endforeach
                                                     @else
                                                         <tr>
-                                                            <td colspan="5" style="border-top: 0;">
+                                                            <td colspan="3" style="border-top: 0;">
                                                                 @if($product->checkFinishStatus())
                                                                     <em class="qc-color-grey">Đã kết thúc</em>
+                                                                    <em> - KHÔNG CÓ THI CÔNG</em>
                                                                 @else
-                                                                    <em class="qc-color-grey">Chưa triển khai</em>
+                                                                    <em class="qc-color-red"> CHƯA TRIỂN KHAI THI CÔNG</em>
                                                                 @endif
                                                             </td>
                                                         </tr>

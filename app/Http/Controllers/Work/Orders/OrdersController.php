@@ -10,6 +10,7 @@ use App\Models\Ad3d\OrderImage\QcOrderImage;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
+use App\Models\Ad3d\ProductRepair\QcProductRepair;
 use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
@@ -770,25 +771,23 @@ class OrdersController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        $modelOrder = new QcOrder();
-        $modelOrderImage = new QcOrderImage();
+        $modelProductRepair = new QcProductRepair();
         $txtImage = $request->file('txtImage');
-        $txtNote = $request->file('txtNote');
+        $txtNote = $request->input('txtNote');
         $loginStaffId = $modelStaff->loginStaffId();
-        /*
-        if ($hFunction->getCount($txtDesignImage) > 0 & $hFunction->checkCount($dataOrder)) {
+        $name_img = null;
+        if (!empty($txtImage)) {
             $name_img = stripslashes($_FILES['txtImage']['name']);
             $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtImage']['tmp_name'];
-            if ($modelOrderImage->uploadImage($source_img, $name_img)) {
-                if (!$modelOrderImage->insert($name_img, $orderId, $loginStaffId)) {
-                    $modelOrderImage->dropImage($name_img);
-                    return "Tính năng đang cập nhật";
-                }
+            if (!$modelProductRepair->uploadImage($source_img, $name_img)) {
+                $name_img = null;
             }
-        } else {
-            return "Chọn ảnh thiết kế";
-        }*/
+        }
+        if (!$modelProductRepair->insert($name_img, $txtNote, $productId, $loginStaffId)) {
+            $modelProductRepair->dropImage($name_img);
+            return "Tính năng đang cập nhật";
+        }
     }
 
     //======= ======== ===== QUAN LY THONG TIN DƠN HANG ==== ======== ======

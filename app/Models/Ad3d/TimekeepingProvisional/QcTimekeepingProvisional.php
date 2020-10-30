@@ -167,6 +167,13 @@ class QcTimekeepingProvisional extends Model
 
     }*/
 
+    # kiem tra da bao gio ra hay chu
+    public function checkReportedTimeEnd($timekeepingId)
+    {
+        return QcTimekeepingProvisional::where('timekeeping_provisional_id', $timekeepingId)->whereNotNull('timeEnd')->exists();
+    }
+
+    # cap nhat bao gio ra
     public function updateTimeEnd($timekeepingId, $timeEnd, $afternoonStatus, $note)
     {
         $hFunction = new \Hfunction();

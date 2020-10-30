@@ -115,7 +115,7 @@ class QcImport extends Model
         if (empty($image)) {
             return null;
         } else {
-            return asset('public/images/import-image/small/' . $image);
+            return asset($this->rootPathSmallImage() . '/'. $image);
         }
     }
 

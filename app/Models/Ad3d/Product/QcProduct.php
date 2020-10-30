@@ -4,6 +4,7 @@ namespace App\Models\Ad3d\Product;
 
 use App\Models\Ad3d\ProductCancel\QcProductCancel;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
+use App\Models\Ad3d\ProductRepair\QcProductRepair;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use Illuminate\Database\Eloquent\Model;
 
@@ -289,9 +290,29 @@ class QcProduct extends Model
         return QcProduct::where('order_id', $orderId)->where('finishStatus', 0)->exists();
     }
 
+    # danh sach ma san pham cua 1 don hang
     public function listIdOfOrder($orderId)
     {
         return QcProduct::where('order_id', $orderId)->pluck('product_id');
+    }
+
+    # danh sach ma san pham tu danh sach ma don hang
+    public function listIdOfListOrderId($listOrderId)
+    {
+        return QcProduct::whereIn('order_id', $listOrderId)->pluck('product_id');
+    }
+
+    //---------- ---------- bao sua chua ---------- ----------
+    public function productRepair()
+    {
+        return $this->hasMany('App\Models\Ad3d\ProductRepair\QcProductRepair', 'product_id', 'product_id');
+    }
+
+    #kiem ton tai san pham dang duoc bao sua chua
+    public function productRepairActivityOfProduct($productId = null)
+    {
+        $modelProductRepair = new QcProductRepair();
+        return $modelProductRepair->existInfoActivityOfProduct($this->checkIdNull($productId));
     }
 
     //---------- ---------- phan viec ---------- ----------
@@ -532,7 +553,14 @@ class QcProduct extends Model
         return ($this->cancelStatus($productId) == 0) ? false : true;
     }
 
-    # kiem tra
+    # kiem tra san pham co duoc bao hanh hay
+    public function checkHasWarranty($productId = null)
+    {
+        $warrantyTime = $this->warrantyTime($productId)[0];
+        return ($warrantyTime == 0) ? false : true;
+    }
+
+    # kiem tra con thoi gian bao hanh hay khong
     public function checkWarrantyExpires($productId = null)
     {
         $hFunction = new \Hfunction();
@@ -546,7 +574,7 @@ class QcProduct extends Model
             $checkTime = $hFunction->datetimePlusMonth($createdAd, $warrantyTime);
             if ($checkTime > $currentDate) {
                 return true; // con bao hanh
-            }else{
+            } else {
                 return false; // het bao hanh
             }
         }

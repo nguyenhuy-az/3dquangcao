@@ -112,7 +112,7 @@ $currentDateCheck = $hFunction->carbonNow();
                         <div class="row" style="padding-top: 5px; margin-bottom: 10px; border-top: 1px solid #d7d7d7;">
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label>Ảnh xác nhận 1:</label>
-                                <input type="file" class="txtTimekeepingImage" name="txtTimekeepingImage_1">
+                                <input type="file" class="txtTimekeepingImage_1" name="txtTimekeepingImage_1">
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                 <label>Sản phẩm: </label><br/>
