@@ -17,13 +17,12 @@ class QcPunishContent extends Model
     //---------- thêm ----------
 
     // insert
-    public function insert($punishCode, $name, $money, $note, $typeId)
+    public function insert($name, $money, $note, $typeId)
     {
         $hFunction = new \Hfunction();
         $modelPunishContent = new QcPunishContent();
-        // insert
         $modelPunishContent->name = $name;
-        $modelPunishContent->punishCode = $punishCode;
+        $modelPunishContent->punishCode = $hFunction->strtoupper($hFunction->getAcronymOfString($name));// ten viet tat
         $modelPunishContent->money = $money;
         $modelPunishContent->note = $note;
         $modelPunishContent->type_id = $typeId;
@@ -45,7 +44,10 @@ class QcPunishContent extends Model
     // cập nhật thông tin
     public function updateInfo($punishId, $name, $money, $note, $typeId)
     {
+        $hFunction = new \Hfunction();
+        $punishCode = $hFunction->strtoupper($hFunction->getAcronymOfString($name));// ten viet tat
         return QcPunishContent::where('punish_id', $punishId)->update([
+            'punishCode' => $punishCode,
             'name' => $name,
             'money' => $money,
             'note' => $note,

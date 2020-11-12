@@ -92,10 +92,12 @@ class QcLicenseLateWork extends Model
         $orderBy = (empty($orderBy)) ? 'DESC' : $orderBy;
         return QcLicenseLateWork::where(['staff_id' => $staffId])->orderBy('dateLate', "$orderBy")->get();
     }
+
     public function disableOfStaff($staffId)
     {
         return QcLicenseLateWork::where('staff_id', $staffId)->update(['action' => 0]);
     }
+
     //----------- nhân viên xac nhan ------------
     public function staffConfirm()
     {
@@ -196,15 +198,11 @@ class QcLicenseLateWork extends Model
     }
 
     //======= statistic info =========
-    public function totalNewLicenseLateWork($companyId = null)
+    public function totalNewInfo($companyId)
     {
         $modelCompany = new QcCompany();
-        if (empty($companyId)) {
-            return QcLicenseLateWork::where('confirmStatus', 0)->count();
-        } else {
-            $listStaffId = $modelCompany->staffIdOfListCompanyId([$companyId]);
-            return QcLicenseLateWork::whereIn('staff_id', $listStaffId)->where('confirmStatus', 0)->count();
-        }
+        $listStaffId = $modelCompany->staffIdOfListCompanyId([$companyId]);
+        return QcLicenseLateWork::whereIn('staff_id', $listStaffId)->where('confirmStatus', 0)->count();
     }
 
 

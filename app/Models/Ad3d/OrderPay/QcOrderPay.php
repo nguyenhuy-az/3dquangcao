@@ -37,8 +37,10 @@ class QcOrderPay extends Model
         $modelPay->staff_id = $staffReceiveId;
         $modelPay->created_at = $hFunction->createdAt();
         if ($modelPay->save()) {
-            $this->lastId = $modelPay->pay_id;
-            $this->actionAfterInsert($modelPay->pay_id);
+            $newId = $modelPay->pay_id;
+            $this->lastId = $newId;
+            # cac hanh dong sau thanh toan
+            $this->actionAfterInsert($newId);
             return true;
         } else {
             return false;
@@ -49,9 +51,8 @@ class QcOrderPay extends Model
     public function actionAfterInsert($payId)
     {
         $modelOrders = new QcOrder();
-        $modelOrderPay = new QcOrderPay();
         # xet thuong khi thu tien don hang cua bo phan kinh doanh
-        $modelOrderPay->applyBonusDepartmentBusiness($payId);
+        $this->applyBonusDepartmentBusiness($payId);
         # cap nhat thong tin thanh toan don hang
         $modelOrders->updateFinishPayment($this->orderId($payId));
     }
@@ -201,6 +202,7 @@ class QcOrderPay extends Model
         $dataOrderPay = $this->getInfo($payId);
         if ($hFunction->checkCount($dataOrderPay)) {
             $dataOrder = $dataOrderPay->order;
+            # lay tien thương tren 1 lan thanh toan
             $bonusMoney = $this->getBonusMoneyOfBusinessManage($payId);
             if ($bonusMoney > 0) {
                 # CAP QUAN LY - lay danh sach NV kinh doanh cap quan ly
@@ -271,8 +273,8 @@ class QcOrderPay extends Model
         $bonusPercent = $modelOrderBonusBudget->getPercentOfBusinessManage($dataOrder->orderId());
         if ($bonusPercent > 0) {
             $moneyPay = $dataOrderPay->money();
-            $moneyPay = (is_int($moneyPay)) ? $moneyPay : $moneyPay[0];
-            return (int)$moneyPay * ($bonusPercent / 100);
+            $moneyPay = (is_array($moneyPay)) ? $moneyPay[0]:$moneyPay;
+            return (int)($moneyPay * ($bonusPercent / 100));
         } else {
             return 0;
         }
@@ -287,8 +289,8 @@ class QcOrderPay extends Model
         $bonusPercent = $modelOrderBonusBudget->getPercentOfBusinessStaff($dataOrder->orderId());
         if ($bonusPercent > 0) {
             $moneyPay = $dataOrderPay->money();
-            $moneyPay = (is_int($moneyPay)) ? $moneyPay : $moneyPay[0];
-            return (int)$moneyPay * ($bonusPercent / 100);
+            $moneyPay = (is_array($moneyPay)) ? $moneyPay[0]:$moneyPay;
+            return (int)($moneyPay * ($bonusPercent / 100));
         } else {
             return 0;
         }

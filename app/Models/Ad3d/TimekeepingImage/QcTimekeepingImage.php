@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcTimekeepingImage extends Model
 {
     protected $table = 'qc_timekeeping_image';
-    protected $fillable = ['image_id', 'name', 'created_at', 'timekeeping_id'];
+    protected $fillable = ['image_id', 'name', 'reportPeriod', 'created_at', 'timekeeping_id'];
     protected $primaryKey = 'image_id';
     public $timestamps = false;
 
@@ -15,11 +15,12 @@ class QcTimekeepingImage extends Model
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
-    public function insert($name, $timekeepingId)
+    public function insert($name, $timekeepingId, $reportPeriod = 2) // $reportPeriod: 2 mac dinh buoi chieu 3 - toi / 1 -sang
     {
         $hFunction = new \Hfunction();
         $modelTimekeepingImage = new QcTimekeepingImage();
         $modelTimekeepingImage->name = $name;
+        $modelTimekeepingImage->reportPeriod = $reportPeriod;
         $modelTimekeepingImage->timekeeping_id = $timekeepingId;
         $modelTimekeepingImage->created_at = $hFunction->createdAt();
         if ($modelTimekeepingImage->save()) {
@@ -69,7 +70,7 @@ class QcTimekeepingImage extends Model
         $pathFullImage = $this->rootPathFullImage();
         if (!is_dir($pathFullImage)) mkdir($pathFullImage);
         if (!is_dir($pathSmallImage)) mkdir($pathSmallImage);
-        return $hFunction->uploadSaveByFileName($file,$imageName, $pathSmallImage . '/', $pathFullImage . '/', $size);
+        return $hFunction->uploadSaveByFileName($file, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $size);
     }
 
     //Xóa ảnh
@@ -85,7 +86,7 @@ class QcTimekeepingImage extends Model
         if (empty($image)) {
             return null;
         } else {
-            return asset($this->rootPathSmallImage().'/' . $image);
+            return asset($this->rootPathSmallImage() . '/' . $image);
         }
     }
 
@@ -94,7 +95,7 @@ class QcTimekeepingImage extends Model
         if (empty($image)) {
             return null;
         } else {
-            return asset($this->rootPathFullImage().'/' . $image);
+            return asset($this->rootPathFullImage() . '/' . $image);
         }
     }
     #========== ========== ========== RELATION ========== ========== ==========
@@ -106,7 +107,7 @@ class QcTimekeepingImage extends Model
 
     public function infoOfTimekeeping($timekeepingId)
     {
-        return QcTimekeepingImage::where('timekeeping_id',$timekeepingId)->get();
+        return QcTimekeepingImage::where('timekeeping_id', $timekeepingId)->get();
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
@@ -143,6 +144,12 @@ class QcTimekeepingImage extends Model
     {
         return $this->pluck('name', $imageId);
     }
+
+    public function reportPeriod($imageId = null)
+    {
+        return $this->pluck('reportPeriod', $imageId);
+    }
+
 
     public function timekeepingId($imageId = null)
     {

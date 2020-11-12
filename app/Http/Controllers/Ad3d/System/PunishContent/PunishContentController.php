@@ -59,25 +59,18 @@ class PunishContentController extends Controller
 
     public function postAdd()
     {
-        $modelStaff = new QcStaff();
         $modelPunishContent = new QcPunishContent();
         $cbPunishTypeId = Request::input('cbPunishType');
-        $txtPunishName = Request::input('txtPunishName');
         $txtName = Request::input('txtName');
         $txtMoney = Request::input('txtMoney');
         $txtNote = Request::input('txtNote');
-
-        if ($modelPunishContent->existPunishCode($txtPunishName)) {
-            Session::put('notifyAdd', "Thêm thất bại, Mã <b>'$txtPunishName'</b> đã tồn tại.");
+        if ($modelPunishContent->existName($txtName)) {
+            Session::put('notifyAdd', "Thêm thất bại <b>'$txtName'</b> đã tồn tại.");
         } else {
-            if ($modelPunishContent->existName($txtName)) {
-                Session::put('notifyAdd', "Thêm thất bại <b>'$txtName'</b> đã tồn tại.");
+            if ($modelPunishContent->insert($txtName, $txtMoney, $txtNote, $cbPunishTypeId)) {
+                return Session::put('notifyAdd', 'Thêm thành công, chọn thông tin và tiếp tục');
             } else {
-                if ($modelPunishContent->insert($txtPunishName, $txtName, $txtMoney, $txtNote, $cbPunishTypeId)) {
-                    return Session::put('notifyAdd', 'Thêm thành công, chọn thông tin và tiếp tục');
-                } else {
-                    return Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
-                }
+                return Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
             }
         }
 

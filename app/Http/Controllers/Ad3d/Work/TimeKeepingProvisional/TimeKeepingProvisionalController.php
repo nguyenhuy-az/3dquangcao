@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ad3d\Work\TimeKeepingProvisional;
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
+use App\Models\Ad3d\OverTimeRequest\QcOverTimeRequest;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Timekeeping\QcTimekeeping;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
@@ -57,7 +58,7 @@ class TimeKeepingProvisionalController extends Controller
 
             $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId]));
         }
-        $dataTimekeepingProvisional = $modelTimekeepingProvisional->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->paginate(30);
+        $dataTimekeepingProvisional = $modelTimekeepingProvisional->selectInfoUnconfirmedByListWorkAndDate($listWorkId, $dateFilter)->paginate(30);
         return view('ad3d.work.time-keeping-provisional.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataTimekeepingProvisional', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));
     }
 
@@ -140,11 +141,40 @@ class TimeKeepingProvisionalController extends Controller
         $accuracyStatus = (empty($accuracyStatus) ? 1 : 0); // 1 - chinh xac; 0 - khong chinh xac
         $applyTimekeepingStatus = (empty($applyTimekeepingStatus) ? 1 : 0); // 1 - ap dung tinh cong; 0 - khong tin cong
         $applyRuleStatus = (empty($applyRuleStatus) ? 0 : 1); // 1 - a dung; 0 - khong ap dung
-        $modelTimekeepingProvisional->confirmWork($timekeepingId, $staffLoginId, $confirmNote, $permissionLateStatus,$accuracyStatus,$applyTimekeepingStatus, $applyRuleStatus);
+        $modelTimekeepingProvisional->confirmWork($timekeepingId, $staffLoginId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus);
 
     }
 
-    // hủy
+    #------- yeu cau tang ca --------
+    public function getOverTime($companyStaffWorkId)
+    {
+        $hFunction = new \Hfunction();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $dataCompanyStaffWork = $modelCompanyStaffWork->getInfo($companyStaffWorkId);
+        if ($hFunction->checkCount($dataCompanyStaffWork)) {
+            return view('ad3d.work.time-keeping-provisional.over-time', compact('dataCompanyStaffWork'));
+        }
+    }
+
+    public function postOverTime($companyStaffWorkId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelOverTimeRequest = new QcOverTimeRequest();
+        $txtNote = Request::input('txtNote');
+        if (!$modelOverTimeRequest->insert($hFunction->carbonNow(), $txtNote, $companyStaffWorkId, $modelStaff->loginStaffId())) {
+            return "Tính năng đang bảo trì";
+        }
+    }
+
+    // huy yeu cau tang ca
+    public function cancelOverTime($requestId)
+    {
+        $modelOverTimeRequest = new QcOverTimeRequest();
+        return $modelOverTimeRequest->deleteInfo($requestId);
+    }
+
+    // huy cham cong
     public function cancelTimekeepingProvisional($timekeepingId)
     {
         $modelStaff = new QcStaff();

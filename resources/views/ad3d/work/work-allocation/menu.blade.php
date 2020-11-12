@@ -11,6 +11,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$subObject = isset($dataAccess['subObject']) ? $dataAccess['subObject'] : 'workAllocation';
 ?>
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -20,7 +21,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     @if($subObject == 'workAllocationReport')
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     @endif
-                    Báo cáo
+                    BÁO CÁO TRÊN PHÂN VIỆC
                 </a>
             </li>
             <li @if($subObject == 'workAllocation') class="active" @endif>
@@ -28,7 +29,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                     @if($subObject == 'workAllocation')
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     @endif
-                    Phân việc
+                    PHÂN VIỆC
                 </a>
             </li>
         </ul>

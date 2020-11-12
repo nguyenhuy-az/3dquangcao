@@ -23,10 +23,33 @@ var qc_ad3d_work_time_keeping_provisional = {
         },
         save: function (frm) {
             var notifyContent = $(frm).find('.notifyConfirm');
-            //qc_ad3d_submit.ajaxFormNotReload(frm, notifyContent, true);
-            qc_ad3d_submit.ajaxFormHasReload(frm, notifyContent, true);
+            if (confirm('Xác nhận đồng ý chấm công này?')) {
+                //qc_ad3d_submit.ajaxFormNotReload(frm, notifyContent, true);
+                qc_ad3d_submit.ajaxFormHasReload(frm, notifyContent, true);
+                qc_main.scrollTop();
+            }
+        },
+    },
+    //yeu cau tang ca
+    overtTime: {
+        getForm: function (href) {
+            qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
             qc_main.scrollTop();
+        },
+        save: function (frm) {
+            var notifyContent = $(frm).find('.qc_notify_content');
+            if (confirm('Xác nhận đồng ý báo tăng ca này?')) {
+                //qc_ad3d_submit.ajaxFormNotReload(frm, notifyContent, true);
+                qc_ad3d_submit.ajaxFormHasReload(frm, notifyContent, true);
+                qc_main.scrollTop();
+            }
+        },
+        cancel: function (href) {
+            if (confirm('Xác nhận đồng ý hủy báo tăng ca này?')) {
+                qc_ad3d_submit.ajaxHasReload(href, '', false);
+            }
         }
+
     }
 }
 //-------------------- lọc ------------
@@ -58,13 +81,26 @@ $(document).ready(function () {
     });
 });
 
-//-------------------- xác nhận ------------
+//-------------------- xac nhan cham cong ------------
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_confirm', function () {
         qc_ad3d_work_time_keeping_provisional.confirm.get($(this).parents('.qc_ad3d_list_object'));
     });
     $('body').on('click', '.qc_ad3d_frm_confirm .qc_save', function () {
         qc_ad3d_work_time_keeping_provisional.confirm.save($(this).parents('.qc_ad3d_frm_confirm'));
+    });
+});
+
+//-------------------- yeu cau tang ca ------------
+$(document).ready(function () {
+    $('.qc_ad3d_list_object').on('click', '.qc_over_time_request_get', function () {
+        qc_ad3d_work_time_keeping_provisional.overtTime.getForm($(this).data('href'));
+    });
+    $('body').on('click', '.qc_ad3d_frm_over_time_add .qc_save', function () {
+        qc_ad3d_work_time_keeping_provisional.overtTime.save($(this).parents('.qc_ad3d_frm_over_time_add'));
+    });
+    $('.qc_ad3d_list_object').on('click', '.qc_over_time_request_cancel', function () {
+        qc_ad3d_work_time_keeping_provisional.overtTime.cancel($(this).data('href'));
     });
 });
 

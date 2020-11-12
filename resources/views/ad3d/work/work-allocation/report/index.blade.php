@@ -11,8 +11,13 @@
     Phân việc
 @endsection
 @section('qc_ad3d_work_body')
-    <div class="qc_ad3d_index_content col-xs-12 col-md-12 col-md-12 col-lg-12">
-        @yield('qc_ad3d_index_content')
+    <div class="row">
+        <div class="col-xs-12 col-md-12 col-md-12 col-lg-12">
+            @include('ad3d.work.work-allocation.menu',compact('subObject'))
+        </div>
+        <div class="qc_ad3d_index_content col-xs-12 col-md-12 col-md-12 col-lg-12">
+            @yield('qc_ad3d_index_content')
+        </div>
     </div>
 @endsection
 

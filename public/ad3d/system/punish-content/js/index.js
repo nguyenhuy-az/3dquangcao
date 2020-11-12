@@ -9,27 +9,23 @@ var qc_ad3d_system_punish_content = {
     add: {
         save: function (form) {
             var cbPunishType = $(form).find("select[name='cbPunishType']");
-            var txtPunishName = $(form).find("input[name='txtPunishName']");
             var txtName = $(form).find("input[name='txtName']");
             var txtMoney = $(form).find("input[name='txtMoney']");
             var txtNote = $(form).find("input[name='txtNote']");
             if (qc_main.check.inputNull(cbPunishType, 'Chọn lĩnh vực phạt')) {
                 return false;
             }
-
-            if (qc_main.check.inputNull(txtPunishName, 'Nhập mã nội dung phạt')) {
-                return false;
-            }
-
             if (qc_main.check.inputNull(txtName, 'Nhập nội dung phạt')) {
                 return false;
             }
             if (qc_main.check.inputNull(txtMoney, 'Nhập số tiền phạt')) {
                 return false;
             }
+            if(confirm('Bạn đồng ý thêm danh mục phạt này')){
+                qc_ad3d_submit.ajaxFormHasReload(form, '', false);
+                qc_main.scrollTop();
+            }
 
-            qc_ad3d_submit.ajaxFormHasReload(form, '', false);
-            qc_main.scrollTop();
         }
     },
     edit: {

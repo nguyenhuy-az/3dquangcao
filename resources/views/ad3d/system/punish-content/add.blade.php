@@ -56,18 +56,6 @@ $dataPunishType = $modelPunishType->getInfo();
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <div class="form-group qc-padding-none">
                             <label>
-                                Mã phạt <em>(Không thay đổi)</em>
-                                <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
-                            </label>
-                            <em class="qc-color-grey">Tên viết tắc</em>
-                            <input type="text" class="form-control" name="txtPunishName" value="">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                        <div class="form-group qc-padding-none">
-                            <label>
                                 Lý do phạt:
                                 <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                             </label>

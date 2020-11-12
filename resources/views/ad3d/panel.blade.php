@@ -21,13 +21,13 @@ $totalImportNotConfirmOfCompany = (empty($totalImportNotConfirmOfCompany)) ? 0 :
 $totalPayActivityNotConfirmOfCompany = $dataCompany->totalPayActivityNotConfirmOfCompany($companyLoginId);
 $totalPayActivityNotConfirmOfCompany = (empty($totalPayActivityNotConfirmOfCompany)) ? 0 : $totalPayActivityNotConfirmOfCompany;
 # bao cham cong theo cong ty dang nhap
-$totalNewTimekeepingProvisional = $modelStaff->totalNewTimekeepingProvisional($companyLoginId);
+$totalNewTimekeepingProvisional = $dataCompany->totalTimekeepingProvisionalUnconfirmed();
 # xin di tre chưa duyet theo cong ty dang nhap
-$totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork($companyLoginId);
+$totalNewLicenseOffWork = $dataCompany->totalLicenseOffWorkUnconfirmed();
 # xin nghỉ chưa duyet theo cong ty dang nhap
-$totalNewLicenseLateWork = $modelStaff->totalNewLicenseLateWork($companyLoginId);
+$totalNewLicenseLateWork = $dataCompany->totalLicenseLateWorkUnconfirmed();
 # yeu cau ung luong chưa duyet theo cong ty dang nhap
-$totalNewSalaryBeforePayRequest = $modelStaff->totalNewSalaryBeforePayRequest($companyLoginId);
+$totalNewSalaryBeforePayRequest = $dataCompany->totalSalaryBeforePayRequestUnconfirmed();
 $manageDepartmentStatus = true;// $dataStaffLogin->checkManageDepartment();
 
 # so luong ho so tuyen dung chua duyet
@@ -42,10 +42,28 @@ $totalReceiveMoneyUnconfirmed = $modelStatistical->sumReceiveMoneyUnconfirmedOfS
 @section('titlePage')
     Trang chủ
 @endsection
+<style type="text/css">
+    .qc-ad3d-panel {
+        text-align: center;
+        height: 60px;
+        padding-top: 10px;
+        /*line-height: 100px;*/
+        border: 1px solid #d7d7d7;
+    }
+
+    .qc-ad3d-panel:hover {
+        background-color: #d7d7d7;
+        color: red;
+    }
+    .qc-ad3d-panel-icon{
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+</style>
 @section('qc_ad3d_body')
     @if($staffLevel <= 3)
-        <div class="row">
-            <div class="qc-padding-top-20 col-xs-12 col-sm-4 col-md-4 col-lg-3">
+        <div class="row" style="padding-top: 20px;">
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-3">
                 <div class="list-group">
                     <a href="#" class="list-group-item active">
                         Thông tin mới
@@ -145,60 +163,49 @@ $totalReceiveMoneyUnconfirmed = $modelStatistical->sumReceiveMoneyUnconfirmedOfS
 
             </div>
             <div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">
-                @if($manageDepartmentStatus)
-                    <div class="ac-ad3d-panel col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                        <div class="ac-ad3d-panel-icon-wrap">
+                <div class="row">
+                    @if($manageDepartmentStatus)
+                        <div class="qc-ad3d-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">
                             <a class="ac-ad3d-panel-icon-link" href="{!! route('qc.ad3d.system.staff.get') !!}">
-                                <i class="glyphicon glyphicon-user" style="font-size: 20px; color: grey;"></i><br>
-                                Nhân sự & Hệ thống
+                                <i class="glyphicon glyphicon-user qc-ad3d-panel-icon" style="color: red;"></i><br>
+                                NHÂN SỰ & HỆ THỐNG
                             </a>
                         </div>
-                    </div>
-                @endif
-                <div class="ac-ad3d-panel col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                    <div class="ac-ad3d-panel-icon-wrap">
+                    @endif
+                    <div class="qc-ad3d-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">
                         <a class="ac-ad3d-panel-icon-link" href="{!! route('qc.ad3d.finance.order-payment.get') !!}">
-                            <i class="glyphicon glyphicon-usd" style="font-size: 20px; color: grey;"></i><br>
-                            Tài chính
+                            <i class="glyphicon glyphicon-usd qc-ad3d-panel-icon" style="color: grey;"></i><br>
+                            TÀI CHÍNH
                         </a>
                     </div>
-                </div>
-                <div class="ac-ad3d-panel text-center col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                    <div class="ac-ad3d-panel-icon-wrap">
+                    <div class="qc-ad3d-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">
                         <a class="ac-ad3d-panel-icon-link" href="{!! route('qc.ad3d.work.time-keeping.get') !!}">
-                            <i class="glyphicon glyphicon-list-alt" style="font-size: 20px; color: grey;"></i><br>
-                            Làm việc
+                            <i class="glyphicon glyphicon-list-alt qc-ad3d-panel-icon" style="color: grey;"></i><br>
+                            LÀM VIỆC
                         </a>
                     </div>
-                </div>
-                <div class="ac-ad3d-panel col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                    <div class="ac-ad3d-panel-icon-wrap">
+                    <div class="qc-ad3d-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">
                         <a class="ac-ad3d-panel-icon-link" href="{!! route('qc.ad3d.order.order.get') !!}">
-                            <i class="glyphicon glyphicon-shopping-cart" style="font-size: 20px; color: grey;"></i><br>
-                            Đơn hàng & Sản phẩm
+                            <i class="glyphicon glyphicon-shopping-cart qc-ad3d-panel-icon" style="color: grey;"></i><br>
+                            ĐƠN HÀNG & SẢN PHẨM
                         </a>
                     </div>
-                </div>
-                <div class="ac-ad3d-panel col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                    <div class="ac-ad3d-panel-icon-wrap">
+                    <div class="qc-ad3d-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">
                         <a class="ac-ad3d-panel-icon-link" href="{!! route("qc.ad3d.store.supplies.supplies.get") !!}">
-                            <i class="glyphicon glyphicon-hdd" style="font-size: 30px; color: grey;"></i><br>
-                            Dụng cụ - Vật Tư
+                            <i class="glyphicon glyphicon-hdd qc-ad3d-panel-icon" style="color: grey;"></i><br>
+                            DỤNG CỤ & VẬT TƯ
                         </a>
                     </div>
-                </div>
-                <div class="ac-ad3d-panel col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                    <div class="ac-ad3d-panel-icon-wrap">
+                    <div class="qc-ad3d-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">
                         <a class="ac-ad3d-panel-icon-link"
                            href="{!! route('qc.ad3d.statistic.revenue.company.get') !!}">
-                            <i class="glyphicon glyphicon-wrench" style="font-size: 20px; color: grey;"></i><br>
-                            Thống kê
+                            <i class="glyphicon glyphicon-wrench qc-ad3d-panel-icon" style="color: grey;"></i><br>
+                            THỐNG KÊ
                         </a>
                     </div>
-                </div>
-                <div class="ac-ad3d-panel col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                    <div class="ac-ad3d-panel-icon-wrap">
+                    <div class="qc-ad3d-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">
                         <a class="ac-ad3d-panel-icon-link" href="{!! route('qc.ad3d.login.exit') !!}">
+                            <i class="glyphicon glyphicon-log-out qc-ad3d-panel-icon" style="color: grey;"></i><br>
                             Đăng xuất
                         </a>
                     </div>

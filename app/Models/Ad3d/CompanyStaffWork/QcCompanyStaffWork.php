@@ -4,6 +4,7 @@ namespace App\Models\Ad3d\CompanyStaffWork;
 
 use App\Models\Ad3d\CompanyStoreCheck\QcCompanyStoreCheck;
 use App\Models\Ad3d\Department\QcDepartment;
+use App\Models\Ad3d\OverTimeRequest\QcOverTimeRequest;
 use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
@@ -94,6 +95,33 @@ class QcCompanyStaffWork extends Model
         } else {
             return false;
         }
+    }
+
+    # ---------- ---------- tra do nghe ---------- ----------
+    public function overTimeRequest()
+    {
+        return $this->hasMany('App\Models\Ad3d\OverTimeRequest\QcOverTimeRequest', 'work_id ', 'work_id');
+    }
+
+    // kiem ta ton tai yeu cau tang ca trong ngay
+    public function checkExistOverTimeRequestOfDate($date, $workId = null)
+    {
+        $modelOverTimeRequest = new QcOverTimeRequest();
+        return $modelOverTimeRequest->checkExistDateOfCompanyStaffWork($this->checkIdNull($workId), $date);
+    }
+
+    // lay thong tin yeu cau tang ca trong ngay
+    public function overTimeRequestGetInfoInDate($date, $workId = null)
+    {
+        $modelOverTimeRequest = new QcOverTimeRequest();
+        return $modelOverTimeRequest->getInfoOfCompanyStaffWorkAndDate($this->checkIdNull($workId), $date);
+    }
+
+    // kiem ta ton tai yeu cau tang ca đang hoat dong
+    public function overTimeRequestGetInfoActivity($workId = null)
+    {
+        $modelOverTimeRequest = new QcOverTimeRequest();
+        return $modelOverTimeRequest->getInfoActivityOfCompanyStaffWork($this->checkIdNull($workId));
     }
 
     # ---------- ---------- tra do nghe ---------- ----------

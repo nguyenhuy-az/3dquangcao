@@ -9,6 +9,8 @@ use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\ImportPay\QcImportPay;
+use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
+use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget;
@@ -19,10 +21,12 @@ use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductTypePrice\QcProductTypePrice;
 use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
+use App\Models\Ad3d\SalaryBeforePayRequest\QcSalaryBeforePayRequest;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\SystemDateOff\QcSystemDateOff;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
+use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
@@ -41,9 +45,9 @@ class QcCompany extends Model
     public function checkAutoUpdateInfo()
     {
         # cap nhat ngan sach thuong cua don hang - CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
-        $this->checkAutoUpdateBonusBudget();
+        ///$this->checkAutoUpdateBonusBudget();
         # cap nhat bao cao hoan thanh san pham - CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
-        $this->checkFixProduct();
+        ///$this->checkFixProduct();
     }
 
     # cap nhat bao hoan thanh san phaC- CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
@@ -111,7 +115,7 @@ class QcCompany extends Model
     }
 
     #========== ========== ========== TU DONG KIEM TRA DU LIEU CUA HE THONG ========== ========== ==========
-    # kiem tra tu tinh cong cuoi thang
+    # KIEM TRA DU LIEU TU DONG
     /*DUOC GOI TRONG FUNCTION "LOGIN" MODEL NHAN VIEN*/
     public function checkAutoInfo()
     {
@@ -126,6 +130,7 @@ class QcCompany extends Model
         $modelWork->checkAutoTimekeepingOfActivityWork();
         #kiểm tra đầu tháng để cho ra bảng làm việc của tháng mới
         $modelWork->checkEndWorkOfMonth();
+        # kiem tra ket thuc bao tang ca
 
     }
 
@@ -704,6 +709,33 @@ class QcCompany extends Model
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyId]));
         return $modelTimekeepingProvisional->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->get();
+    }
+    # ---------- ------------ THONG KE THONG TIN CUA 1 CONG TY ---------- -------- -------
+    # thong tin cham cong chua duyet cua thang hien hanh
+    public function totalTimekeepingProvisionalUnconfirmed($companyId = null)
+    {
+        $modelTimekeepingProvisional = new QcTimekeepingProvisional();
+        return $modelTimekeepingProvisional->totalInfoUnconfirmed($this->checkIdNull($companyId));
+    }
+
+    # thong tin xin nghi chua duoc duyet
+    public function totalLicenseOffWorkUnconfirmed($companyId = null)
+    {
+        $modelLicenseOffWork = new QcLicenseOffWork();
+        return $modelLicenseOffWork->totalNewInfo($this->checkIdNull($companyId));
+    }
+
+    # thong tin xin tre chua duoc duyet
+    public function totalLicenseLateWorkUnconfirmed($companyId = null)
+    {
+        $modelLicenseLateWork = new QcLicenseLateWork();
+        return $modelLicenseLateWork->totalNewInfo($this->checkIdNull($companyId));
+    }
+
+    public function totalSalaryBeforePayRequestUnconfirmed($companyId = null)
+    {
+        $modelRequest = new QcSalaryBeforePayRequest();
+        return $modelRequest->totalNewRequest($this->checkIdNull($companyId));
     }
     #============ =========== ============ THONG KE TIEN CUA 1 NHAN VIEN ============= =========== ==========
     # thong ke tong tien dang giua cua 1 thu quy trong cty

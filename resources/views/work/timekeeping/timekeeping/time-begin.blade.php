@@ -19,80 +19,71 @@ $currentMonth = (int)date('m');
 $currentYear = (int)date('Y');
 $currentHour = (int)date('H');
 $currentMinute = (int)date('i');
-if($currentHour < 8){
+if ($currentHour < 8) {
     $currentHour = 8;
     $currentMinute = 0;
 }
 ?>
 @extends('components.container.container-6')
 @section('qc_container_content')
-    <div class="qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
-            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-                <h3>GIỜ VÀO</h3>
+            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                 style="margin-bottom: 5px; border-bottom: 1px dashed brown;">
+                <h3 style="color: red;">GIỜ VÀO</h3>
             </div>
-            <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <form class="frm_time_begin_add form-horizontal" name="frm_time_begin_add" role="form" method="post"
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <form class="frm_time_begin_add form" name="frm_time_begin_add" role="form" method="post"
                       action="{!! route('qc.work.timekeeping.timeBegin.post') !!}">
-                    <div class="row">
-                        @if( $currentHour >= 8 && ($currentHour +$currentMinute) > 8)
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="text-center form-group qc-color-red">
-                                    <span>Chấm công trễ</span>
-                                </div>
-                            </div>
-                        @endif
-                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="frm_notify text-center form-group qc-color-red"></div>
-                        </div>
-                        <div class="form-group form-group-sm col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <label class="col-sm-2 control-label">Giờ vào:</label>
-                            <div class="col-sm-10">
-                                <select name="cbDayBegin" style="height: 25px;">
-                                    <option value="{!! $currentDay !!}">{!! $currentDay !!}</option>
-                                    {{--
-                                    @for($i = $hFunction->getDayFromDate($fromDate);$i<= 31; $i++)
-                                        <option value="{!! $i !!}" @if($i == $currentDay) selected="selected" @endif>
-                                            {!! $i !!}
-                                        </option>
-                                    @endfor
-                                    --}}
-                                </select>
-                                <span>/</span>
-                                <select name="cbMonthBegin" style="height: 25px;">
-                                    <option value="{!! $currentMonth !!}">{!! $currentMonth !!}</option>
-                                    {{--<option value="{!! (int)$hFunction->getMonthFromDate($fromDate) !!}">{!! (int)$hFunction->getMonthFromDate($fromDate) !!}</option>--}}
-                                </select>
-                                <span>/</span>
-                                <select name="cbYearBegin" style="height: 25px;">
-                                    <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
-                                    {{--<option value="{!! $hFunction->getYearFromDate($fromDate) !!}">{!! $hFunction->getYearFromDate($fromDate) !!}</option>--}}
-                                </select>
-                                &emsp;
-                                <select name="cbHoursBegin" style="height: 25px;">
-                                    <option value="{!! $currentHour !!}">{!! $currentHour !!}</option>
-                                    {{--<option value="">Chọn giờ</option>
-                                    @for($i =1;$i<= 24; $i++)
-                                        <option value="{!! $i !!}" @if($i == $currentHour) selected="selected" @endif>
-                                            {!! $i !!}
-                                        </option>
-                                    @endfor--}}
-                                </select>
-                                <span>:</span>
-                                <select name="cbMinuteBegin" style="height: 25px;">
-                                    <option value="{!! $currentMinute !!}">{!! $currentMinute !!}</option>
-                                    {{--@for($i =0;$i<= 55; $i = $i+5)
-                                        <option value="{!! $i !!}">{!! $i !!}</option>
-                                    @endfor--}}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group form-group-sm col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <label class="col-sm-2 control-label">Chi chú:</label>
 
-                            <div class="col-sm-10">
-                                <input class="form-control" type="text" name="txtNote" value="">
+                    @if( $currentHour >= 8 && ($currentHour +$currentMinute) > 8)
+                        <div class="form-group row">
+                            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12 " style="color: blue;">
+                                <span style="background-color: red; color: yellow; padding: 5px;">chấm công trễ</span>
                             </div>
+                        </div>
+                    @endif
+                    <div class="form-group row">
+                        <div class="frm_notify col-sx-12 col-sm-12 col-md-12 col-lg-12 text-center  qc-color-red"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label>Giờ vào:</label>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="padding: 0;">
+                                <select class="form-control" name="cbHoursBegin" style="padding: 0; color: red;">
+                                    <option value="{!! $currentHour !!}">
+                                        {!! $currentHour !!} giờ
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="padding: 0;">
+                                <select class="form-control" name="cbMinuteBegin" style="padding: 0; color: red;">
+                                    <option value="{!! $currentMinute !!}">{!! $currentMinute !!} phút</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="padding: 0;">
+                                <select class="form-control" name="cbDayBegin" style="padding: 0;">
+                                    <option value="{!! $currentDay !!}">Ngày {!! $currentDay !!}</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="padding: 0;">
+                                <select class="form-control" name="cbMonthBegin" style="padding: 0;">
+                                    <option value="{!! $currentMonth !!}">{!! $currentMonth !!}</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="padding: 0;">
+                                <select class="form-control" name="cbYearBegin" style="padding: 0;">
+                                    <option value="{!! $currentYear !!}">{!! $currentYear !!}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label>Chi chú:</label>
+                            <input class="form-control" type="text" name="txtNote" value="">
                         </div>
                     </div>
                     <div class="row">

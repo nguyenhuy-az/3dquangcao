@@ -82,6 +82,7 @@ class QcWorkAllocationReport extends Model
         return $this->hasMany('App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage', 'report_id', 'report_id');
     }
 
+    # anh bao cao thong qua bao gio ra trong ngay
     public function timekeepingProvisionalImageInfo($reportId = null)
     {
         $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();

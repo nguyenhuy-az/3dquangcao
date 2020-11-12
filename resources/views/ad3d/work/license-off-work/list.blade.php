@@ -15,7 +15,8 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$totalNewLicenseOffWork = $modelStaff->totalNewLicenseOffWork();
+$dataCompanyLogin = $modelStaff->companyLogin();
+$totalNewLicenseOffWork = $dataCompanyLogin->totalLicenseOffWorkUnconfirmed();
 $indexHref = route('qc.ad3d.work.off-work.get');
 ?>
 @extends('ad3d.work.license-off-work.index')

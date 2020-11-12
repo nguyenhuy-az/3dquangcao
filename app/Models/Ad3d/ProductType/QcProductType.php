@@ -25,7 +25,7 @@ class QcProductType extends Model
         $modelProductType->typeCode = $hFunction->strtoupper($hFunction->getAcronymOfString($name));
         $modelProductType->name = $hFunction->convertValidHTML($name);
         $modelProductType->unit = $unit;
-        $modelProductType->description = $hFunction->convertValidHTML($description);
+        $modelProductType->description = (empty($description)) ? $description : $hFunction->convertValidHTML($description);
         $modelProductType->warrantyTime = $warrantyTime;
         $modelProductType->confirmStatus = $confirmStatus;
         $modelProductType->applyStatus = $applyStatus;

@@ -321,7 +321,7 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                                 @if($hFunction->checkCount($orderWorkAllocationAllInfo))
                                                     @foreach($orderWorkAllocationAllInfo as $workAllocation)
                                                         @if($workAllocation->checkActivity())
-                                                            <span>{!! $workAllocation->receiveStaff->lastName() !!}</span>
+                                                            <span style="color: blue;">{!! $workAllocation->receiveStaff->lastName() !!}</span>
                                                             ,&nbsp;
                                                         @endif
                                                     @endforeach

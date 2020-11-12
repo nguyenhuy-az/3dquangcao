@@ -744,6 +744,7 @@ class QcOrder extends Model
         }
         return $dataOrder;
     }
+
     # lay thong tin cua 1 cong ty
     public function listIdOfCompanyAndName($companyId, $name = null)
     {
@@ -868,7 +869,7 @@ class QcOrder extends Model
     }
 
     # thong tin ban giao thi cong sau cung
-    public function orderAllocationLastInfo($orderId=null)
+    public function orderAllocationLastInfo($orderId = null)
     {
         $modelOrderConstruction = new QcOrderAllocation();
         return $modelOrderConstruction->lastInfoOfOrder($this->checkIdNull($orderId));
@@ -1416,7 +1417,7 @@ class QcOrder extends Model
     public function checkFinishStatus($orderId = null)
     {
         $result = $this->finishStatus($orderId);
-        $result = (is_int($result)) ? $result : $result[0];
+        $result = (is_int($result)) ? $result:$result[0];
         return ($result == 1) ? true : false;
     }
 
@@ -1442,7 +1443,7 @@ class QcOrder extends Model
     public function getBonusAndMinusMoneyOfConstructionRank($orderId = null)
     {
         $modelOrderBonusBudget = new QcOrderBonusBudget();
-        return $modelOrderBonusBudget->totalBudgetMoneyOfConstructionRank($this->checkIdNull($orderId));
+        return $modelOrderBonusBudget->totalBudgetMoneyOfConstructionStaff($this->checkIdNull($orderId));
 
     }
 

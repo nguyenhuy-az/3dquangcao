@@ -124,6 +124,118 @@ class QcStaff extends Model
     {
         return (empty($staffId)) ? $this->staffId() : $staffId;
     }
+    public function staffId()
+    {
+        return $this->staff_id;
+    }
+
+    public function fullName($staffId = null)
+    {
+        return $this->firstName($staffId) . ' ' . $this->lastName();
+    }
+
+    public function firstName($staffId = null)
+    {
+        $hFunction = new \Hfunction();
+        return $hFunction->htmlEntities($this->pluck('firstName', $staffId));
+    }
+
+    public function lastName($staffId = null)
+    {
+        $hFunction = new \Hfunction();
+        return $hFunction->htmlEntities($this->pluck('lastName', $staffId));
+    }
+
+    public function identityCard($staffId = null)
+    {
+        return $this->pluck('identityCard', $staffId);
+    }
+
+    public function nameCode($staffId = null)
+    {
+        return $this->pluck('nameCode', $staffId);
+    }
+
+    public function account($staffId = null)
+    {
+        return $this->pluck('account', $staffId);
+    }
+
+    public function birthday($staffId = null)
+    {
+
+        return $this->pluck('birthday', $staffId);
+    }
+
+    public function email($staffId = null)
+    {
+
+        return $this->pluck('email', $staffId);
+    }
+
+    public function phone($staffId = null)
+    {
+
+        return $this->pluck('phone', $staffId);
+    }
+
+    public function address($staffId = null)
+    {
+        $hFunction = new \Hfunction();
+        return $hFunction->htmlEntities($this->pluck('address', $staffId));
+    }
+
+
+    public function createdAt($staffId = null)
+    {
+        return $this->pluck('created_at', $staffId);
+    }
+
+
+    public function image($staffId = null)
+    {
+        return $this->pluck('image', $staffId);
+    }
+
+    public function identityCardBack($staffId = null)
+    {
+        return $this->pluck('identityCardBack', $staffId);
+    }
+
+    public function identityCardFront($staffId = null)
+    {
+        return $this->pluck('identityCardFront', $staffId);
+    }
+
+    public function rootStatus($staffId = null)
+    {
+        return $this->pluck('rootStatus', $staffId);
+    }
+
+    public function confirmStatus($staffId = null)
+    {
+        return $this->pluck('confirmStatus', $staffId);
+    }
+
+    public function gender($staffId = null)
+    {
+        return $this->pluck('gender', $staffId);
+    }
+
+    public function workStatus($staffId = null)
+    {
+        return $this->pluck('workStatus', $staffId);
+    }
+
+    public function bankAccount($staffId = null)
+    {
+        return $this->pluck('bankAccount', $staffId);
+    }
+
+    public function bankName($staffId = null)
+    {
+        return $this->pluck('bankName', $staffId);
+    }
 
     # cap nhat tai khoan
     public function updateAccount($staffId, $newAccount)
@@ -1318,11 +1430,6 @@ class QcStaff extends Model
         return QcStaff::where('workStatus', 1)->pluck('staff_id');
     }
 
-    public function staffId()
-    {
-        return $this->staff_id;
-    }
-
     public function pluck($column, $objectId = null)
     {
         if (empty($objectId)) {
@@ -1333,113 +1440,6 @@ class QcStaff extends Model
         }
     }
 
-    public function fullName($staffId = null)
-    {
-        return $this->firstName($staffId) . ' ' . $this->lastName();
-    }
-
-    public function firstName($staffId = null)
-    {
-        $hFunction = new \Hfunction();
-        return $hFunction->htmlEntities($this->pluck('firstName', $staffId));
-    }
-
-    public function lastName($staffId = null)
-    {
-        $hFunction = new \Hfunction();
-        return $hFunction->htmlEntities($this->pluck('lastName', $staffId));
-    }
-
-    public function identityCard($staffId = null)
-    {
-        return $this->pluck('identityCard', $staffId);
-    }
-
-    public function nameCode($staffId = null)
-    {
-        return $this->pluck('nameCode', $staffId);
-    }
-
-    public function account($staffId = null)
-    {
-        return $this->pluck('account', $staffId);
-    }
-
-    public function birthday($staffId = null)
-    {
-
-        return $this->pluck('birthday', $staffId);
-    }
-
-    public function email($staffId = null)
-    {
-
-        return $this->pluck('email', $staffId);
-    }
-
-    public function phone($staffId = null)
-    {
-
-        return $this->pluck('phone', $staffId);
-    }
-
-    public function address($staffId = null)
-    {
-        $hFunction = new \Hfunction();
-        return $hFunction->htmlEntities($this->pluck('address', $staffId));
-    }
-
-
-    public function createdAt($staffId = null)
-    {
-        return $this->pluck('created_at', $staffId);
-    }
-
-
-    public function image($staffId = null)
-    {
-        return $this->pluck('image', $staffId);
-    }
-
-    public function identityCardBack($staffId = null)
-    {
-        return $this->pluck('identityCardBack', $staffId);
-    }
-
-    public function identityCardFront($staffId = null)
-    {
-        return $this->pluck('identityCardFront', $staffId);
-    }
-
-    public function rootStatus($staffId = null)
-    {
-        return $this->pluck('rootStatus', $staffId);
-    }
-
-    public function confirmStatus($staffId = null)
-    {
-        return $this->pluck('confirmStatus', $staffId);
-    }
-
-    public function gender($staffId = null)
-    {
-        return $this->pluck('gender', $staffId);
-    }
-
-    public function workStatus($staffId = null)
-    {
-        return $this->pluck('workStatus', $staffId);
-    }
-
-    public function bankAccount($staffId = null)
-    {
-        return $this->pluck('bankAccount', $staffId);
-    }
-
-    public function bankName($staffId = null)
-    {
-        return $this->pluck('bankName', $staffId);
-    }
 
     // total records
     public function totalRecords()
@@ -1805,30 +1805,6 @@ class QcStaff extends Model
     }
 
     //======= thống kê =========
-    public function totalNewTimekeepingProvisional($companyId = null)
-    {
-        $modelTimekeepingProvisional = new QcTimekeepingProvisional();
-        return $modelTimekeepingProvisional->totalNewTimekeepingProvisional($companyId);
-    }
-
-    public function totalNewLicenseOffWork($companyId = null)
-    {
-        $modelLicense = new QcLicenseOffWork();
-        return $modelLicense->totalNewLicenseOffWork($companyId);
-    }
-
-    public function totalNewLicenseLateWork($companyId = null)
-    {
-        $modelLicense = new QcLicenseLateWork();
-        return $modelLicense->totalNewLicenseLateWork($companyId);
-    }
-
-    public function totalNewSalaryBeforePayRequest($companyId = null)
-    {
-        $modelRequest = new QcSalaryBeforePayRequest();
-        return $modelRequest->totalNewRequest($companyId);
-    }
-
     # kiem tra ton tai bang cham cong dang hoat dong
     public function checkActivityWork($staffId = null)
     {

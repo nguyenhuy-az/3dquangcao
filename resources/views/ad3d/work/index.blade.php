@@ -52,12 +52,12 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                             </li>
                             <li @if($accessObject == 'timeKeepingProvisional') class="active" @endif>
                                 <a href="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}">
-                                    Duyệt chấm công
+                                    Chấm công
                                 </a>
                             </li>
                             <li @if($accessObject == 'timeKeeping') class="active" @endif>
                                 <a href="{!! route('qc.ad3d.work.time-keeping.get') !!}">
-                                    Chấm công
+                                    Chấm công đã duyệt
                                 </a>
                             </li>
                             <li @if($accessObject == 'offWork') class="active" @endif>

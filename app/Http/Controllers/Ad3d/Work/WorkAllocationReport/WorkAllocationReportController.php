@@ -36,7 +36,7 @@ class WorkAllocationReportController extends Controller
         $companyFilterId = $dataStaffLogin->companyId();
 
         $searchCompanyFilterId = [$companyFilterId];
-        $dataCompany = $modelCompany->getInfo($companyFilterId);
+        //$dataCompany = $modelCompany->getInfo($companyFilterId);
         # lay danh sach ID nhan vien cua cty
         if (!empty($nameFiler)) {
             $listStaffId = $modelStaff->listIdOfCompanyAndName($searchCompanyFilterId, $nameFiler);

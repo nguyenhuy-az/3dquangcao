@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\TimekeepingProvisionalImage;
 
+use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
 use App\Models\Ad3d\WorkAllocationReport\QcWorkAllocationReport;
 use Illuminate\Database\Eloquent\Model;
 use League\Flysystem\File;
@@ -9,19 +10,34 @@ use League\Flysystem\File;
 class QcTimekeepingProvisionalImage extends Model
 {
     protected $table = 'qc_timekeeping_provisional_image';
-    protected $fillable = ['image_id', 'name', 'created_at', 'timekeeping_provisional_id', 'report_id'];
+    protected $fillable = ['image_id', 'name', 'reportPeriod', 'created_at', 'timekeeping_provisional_id', 'report_id'];
     protected $primaryKey = 'image_id';
     public $timestamps = false;
 
     private $lastId;
 
     #========== ========== ========== THEM  && CAP NHAT ========== ========== ==========
+
+    # lay giai doan up hinh thong qua thơi gian hien tai
+    public function getReportPeriodByCurrentTime()
+    {
+        $hours = (int)date('H');
+        if (8 < $hours && $hours < 14) { # tinh vao buoi sang
+            return 1;
+        } elseif (14 < $hours && $hours < 18) { # tinh vao buoi chieu
+            return 2;
+        } else {
+            return 3; # buoi toi
+        }
+    }
+
     #---------- them moi ----------
     public function insert($name, $timekeepingProvisionalId, $reportId = null)
     {
         $hFunction = new \Hfunction();
         $modelTimekeepingImage = new QcTimekeepingProvisionalImage();
         $modelTimekeepingImage->name = $name;
+        $modelTimekeepingImage->reportPeriod = $this->getReportPeriodByCurrentTime();
         $modelTimekeepingImage->timekeeping_provisional_id = $timekeepingProvisionalId;
         $modelTimekeepingImage->report_id = $reportId;
         $modelTimekeepingImage->created_at = $hFunction->createdAt();
@@ -37,6 +53,12 @@ class QcTimekeepingProvisionalImage extends Model
     public function insertGetId()
     {
         return $this->lastId;
+    }
+
+    # check id
+    public function checkNullId($id)
+    {
+        return (empty($id)) ? $this->imageId() : $id;
     }
 
     #----------- cap nhat thong tin ----------
@@ -61,7 +83,7 @@ class QcTimekeepingProvisionalImage extends Model
     public function actionDelete($imageId = null)
     {
         $modelWorkAllocationReport = new QcWorkAllocationReport();
-        if (empty($imageId)) $imageId = $this->imageId();
+        $imageId = $this->checkNullId($imageId);
         $imageName = $this->name($imageId)[0];
         $reportId = $this->reportId();
         if (QcTimekeepingProvisionalImage::where('image_id', $imageId)->delete()) {
@@ -94,12 +116,31 @@ class QcTimekeepingProvisionalImage extends Model
         return $this->belongsTo('App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional', 'timekeeping_provisional_id', 'timekeeping_provisional_id');
     }
 
+    // lay thong tin ảnh bao cao cham cong
     public function infoOfTimekeepingProvisional($timekeepingProvisionalId)
     {
         return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->get();
     }
 
-    #----------- work-allocation - report ------------
+    // lay thong tin hình anh bao cao cua 1 cham cong  cua buoi sang
+    public function infoOfTimekeepingProvisionalInMorning($timekeepingProvisionalId)
+    {
+        return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->where('reportPeriod', 1)->get();
+    }
+
+    // lay thong tin hình anh bao cao cua 1 cham cong  cua buoi sang
+    public function infoOfTimekeepingProvisionalInAfternoon($timekeepingProvisionalId)
+    {
+        return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->where('reportPeriod', 2)->get();
+    }
+
+    // lay thong tin hình anh bao cao cua 1 cham cong  cua buoi sang
+    public function infoOfTimekeepingProvisionalInEvening($timekeepingProvisionalId)
+    {
+        return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->where('reportPeriod', 3)->get();
+    }
+
+    #----------- anh bao cao tren phan viec ------------
     public function workAllocationReport()
     {
         return $this->belongsTo('App\Models\Ad3d\WorkAllocationReport\QcWorkAllocationReport', 'report_id', 'report_id');
@@ -145,6 +186,11 @@ class QcTimekeepingProvisionalImage extends Model
         return $this->pluck('name', $imageId);
     }
 
+    public function reportPeriod($image = null)
+    {
+        return $this->pluck('reportPeriod', $image);
+    }
+
     public function reportId($imageId = null)
     {
         return $this->pluck('report_id', $imageId);
@@ -172,5 +218,11 @@ class QcTimekeepingProvisionalImage extends Model
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
         }
+    }
+
+    # kiem tra ton tai hinh anh
+    public function checkExistName($name)
+    {
+        return QcTimekeepingProvisionalImage::where('name', $name)->exists();
     }
 }

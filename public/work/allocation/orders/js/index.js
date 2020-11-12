@@ -11,16 +11,16 @@ var qc_work_allocation_orders = {
         },
         save: function (frm) {
             if (confirm('Bạn đồng ý với thông tin phân việc này?')) {
-                qc_master_submit.normalForm(form);
+                qc_master_submit.normalForm(frm);
             }
         },
-        save_v1: function (form) {
-            if ($(form).find('.qc_work_allocation_orders_product_work_allocation_staff_add').length > 0) {
-                //qc_ad3d_submit.ajaxFormHasReload(form, '', false);
+        save_v1: function (frm) {
+            if ($(frm).find('.qc_work_allocation_orders_product_work_allocation_staff_add').length > 0) {
+                //qc_ad3d_submit.ajaxFormHasReload(frm, '', false);
                 //qc_main.scrollTop();
-                //qc_ad3d_submit.normalForm(form);
+                //qc_ad3d_submit.normalForm(frm);
                 //qc_ad3d_order_order.add.checkProductInput();
-                qc_work_allocation_orders.productWorkAllocation.checkSubmit(form);
+                qc_work_allocation_orders.productWorkAllocation.checkSubmit(frm);
             } else {
                 alert('Chọn nhân viên');
                 return false;

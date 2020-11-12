@@ -202,16 +202,11 @@ class QcLicenseOffWork extends Model
     }
 
     //======= statistic info =========
-    public function totalNewLicenseOffWork($companyId = null)
+    public function totalNewInfo($companyId)
     {
         $modelCompany = new QcCompany();
-        if (empty($companyId)) {
-            return QcLicenseOffWork::where('confirmStatus', 0)->count();
-        } else {
-            $listStaffId = $modelCompany->staffIdOfListCompanyId([$companyId]);
-            return QcLicenseOffWork::whereIn('staff_id', $listStaffId)->where('confirmStatus', 0)->count();
-        }
-
+        $listStaffId = $modelCompany->staffIdOfListCompanyId([$companyId]);
+        return QcLicenseOffWork::whereIn('staff_id', $listStaffId)->where('confirmStatus', 0)->count();
     }
 
 }

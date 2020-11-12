@@ -15,7 +15,8 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$totalNewLicenseLateWork = $modelStaff->totalNewLicenseLateWork();
+$dataCompanyLogin = $modelStaff->companyLogin();
+$totalNewLicenseLateWork = $dataCompanyLogin->totalLicenseLateWorkUnconfirmed();
 $indexHref = route('qc.ad3d.work.late-work.get');
 ?>
 @extends('ad3d.work.license-late-work.index')

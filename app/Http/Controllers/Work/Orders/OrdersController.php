@@ -290,8 +290,6 @@ class OrdersController extends Controller
     }
 
     //tao don hang
-
-
     # them order moi va them san pham
     public function getAdd(Request $request, $orderType = 1, $customerId = null, $orderId = null) // $type: 1 - don hang thuc / 2 - don hang bao gia
     {
@@ -426,7 +424,7 @@ class OrdersController extends Controller
                 # them san pham
                 if ($hFunction->checkCount($productType)) {
                     foreach ($productType as $key => $value) {
-                        $warrantyTime = $txtWarrantyTime[$key];
+                        $warrantyTime = (int)$txtWarrantyTime[$key];
                         $dataProductType = $modelProductType->infoFromExactlyName($value);
                         if ($hFunction->checkCount($dataProductType)) {
                             $productTypeId = $dataProductType->typeId();
@@ -453,7 +451,7 @@ class OrdersController extends Controller
                 # thanh toan
                 if ($txtBeforePay > 0) {
                     # thanh toan don hang
-                    $modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone);
+                    $modelOrderPay->insert($txtBeforePay, 'Thu nhận đơn hàng', $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone);
                 }
                 # bàn giao don hang = cong trinh
                 ///$modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
@@ -616,6 +614,7 @@ class OrdersController extends Controller
         $txtDepth = $request->input('txtDepth');
         $txtAmount = $request->input('txtAmount');
         $txtPrice = $request->input('txtPrice');
+        $txtWarrantyTime = $request->input('txtWarrantyTime');
         $txtDescription = $request->input('txtDescription');
         $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
         $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
@@ -623,11 +622,12 @@ class OrdersController extends Controller
         if (count($productType) > 0) {
             # them san pham
             foreach ($productType as $key => $value) {
+                $warrantyTime = $txtWarrantyTime[$key];
                 $dataProductType = $modelProductType->infoFromExactlyName($value);
                 if (count($dataProductType) > 0) {
                     $productTypeId = $dataProductType->typeId();
                 } else {
-                    if ($modelProductType->insert(null, $value, null, null, 0, 0)) {
+                    if ($modelProductType->insert($value, null, null, 0, 0, $warrantyTime)) {
                         $productTypeId = $modelProductType->insertGetId();
                     } else {
                         $productTypeId = null;
