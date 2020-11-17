@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcBonusDepartment extends Model
 {
     protected $table = 'qc_bonus_department';
-    protected $fillable = ['bonus_id', 'percent', 'description', 'applyStatus', 'action', 'created_at', 'rank_id', 'department_id'];
+    protected $fillable = ['bonus_id', 'percent', 'description', 'applyBonus', 'applyMinus', 'applyStatus', 'action', 'created_at', 'rank_id', 'department_id'];
     protected $primaryKey = 'bonus_id';
     public $timestamps = false;
 
@@ -153,6 +153,19 @@ class QcBonusDepartment extends Model
         return $this->pluck('description', $bonusId);
     }
 
+    public function applyBonus($bonusId = null)
+    {
+
+        return $this->pluck('applyBonus', $bonusId);
+    }
+
+    public function applyMinus($bonusId = null)
+    {
+
+        return $this->pluck('applyMinus', $bonusId);
+    }
+
+
     public function applyStatus($bonusId = null)
     {
 
@@ -187,6 +200,21 @@ class QcBonusDepartment extends Model
         return (empty($result)) ? 0 : $result->bonus_id;
     }
 
+    # cap nhat trang thai ap dung thuong
+    public function updateApplyBonus($bonusId, $applyBonus)
+    {
+        return QcBonusDepartment::where('bonus_id', $bonusId)->update([
+            'applyBonus' => $applyBonus
+        ]);
+    }
+
+    # cap nhat trang thai ap dung PHAT
+    public function updateApplyMinus($bonusId, $applyBonus)
+    {
+        return QcBonusDepartment::where('bonus_id', $bonusId)->update([
+            'applyMinus' => $applyBonus
+        ]);
+    }
     // ---------- ---------- CHECK INFO --------- -------
     # ton tai phan tram cua cap bac dang ap dung
     public function existPercentActivityOfDepartmentAndRank($percent, $departmentId, $rankId)
@@ -199,4 +227,21 @@ class QcBonusDepartment extends Model
     {
         return QcBonusDepartment::where('department_id', $departmentId)->where('rank_id', $rankId)->update(['action' => 0, 'applyStatus' => 0]);
     }
+
+    # kiem tra co ap dung thuong
+    public function checkApplyBonus($bonusId = null)
+    {
+        $result = $this->applyBonus($bonusId);
+        $result = (int)(is_array($result)) ? $result[0] : $result;
+        return ($result == 0) ? false : true;
+    }
+
+    # kiem tra co ap dung phat
+    public function checkApplyMinus($bonusId = null)
+    {
+        $result = $this->applyMinus($bonusId);
+        $result = (int)(is_array($result)) ? $result[0] : $result;
+        return ($result == 0) ? false : true;
+    }
+
 }

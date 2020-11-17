@@ -217,6 +217,12 @@ class QcWork extends Model
         return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->update(['action' => 0]);
     }
 
+    # lay thong tin bang cham cong theo ngay thang
+    public function infoOfCompanyStaffWorkInDate($companyStaffWorkId, $date)
+    {
+        $date = date('Y-m-d', strtotime($date));
+        return QcWork::where(['companyStaffWork_id' => $companyStaffWorkId])->where('fromDate', '<=', $date)->where('toDate', '>=', $date)->first();
+    }
     # lay 1 bang cham cong dang lam viec
     public function infoActivityOfCompanyStaffWork($companyStaffWorkId, $date = null)
     {
@@ -246,7 +252,7 @@ class QcWork extends Model
     # chon sanh sach cham cong trong thang theo thoi gian
     public function selectInfoOfListCompanyStaffWorkAndDate($listCompanyStaffWorkId, $dateFilter)
     {
-      return QcWork::where('fromDate', 'like', "%$dateFilter%")->whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('fromDate', 'DESC')->select('*');
+        return QcWork::where('fromDate', 'like', "%$dateFilter%")->whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('fromDate', 'DESC')->select('*');
     }
 
     //----------- NHAN VIEN ------------

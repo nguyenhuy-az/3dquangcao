@@ -356,10 +356,10 @@ class QcProduct extends Model
     }
 
     # thong tin phan viec - KHONG BI HUY
-    public function workAllocationInfoNotCancelOfProduct($productId)
+    public function workAllocationInfoNotCancelOfProduct($productId=null)
     {
         $modelWorkAllocation = new QcWorkAllocation();
-        return $modelWorkAllocation->infoNotCancelOfProduct($productId);
+        return $modelWorkAllocation->infoNotCancelOfProduct($this->checkIdNull($productId));
     }
 
     # kiem ton tai nhan vien da duoc phan cong

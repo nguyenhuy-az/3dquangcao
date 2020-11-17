@@ -40,17 +40,18 @@ $staffRankId = $modelRank->staffRankId();
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black;color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Bộ phận</th>
+                            <th>BỘ PHẬN</th>
                             <th class="text-center">
-                                Cấp quản lý <br/>
+                                CẤP QUẢN LÝ
+                                <br/>
                                 %
                             </th>
                             <th class="text-center">
-                                Cấp Nhân viên <br/>
+                                CẤP NHÂN VIÊN <br/>
                                 %
                             </th>
                             <th class="text-center">
-                                Tổng Thưởng/Phạt <br/>
+                                TỔNG THƯỞNG /PHẠT <br/>
                                 %
                             </th>
                         </tr>
@@ -92,40 +93,106 @@ $staffRankId = $modelRank->staffRankId();
                                     <td class="text-center">
                                         <b style="color: blue;">{!! $valueBonusManageRank !!}</b>
                                         <br>
-                                        <a class="qc_add qc-link-green" data-href="{!! route('qc.ad3d.system.bonus_department.add.get',"$departmentId/$manageRankId") !!}" title="Cập nhật thưởng">
+                                        <a class="qc_add qc-link-green"
+                                           data-href="{!! route('qc.ad3d.system.bonus_department.add.get',"$departmentId/$manageRankId") !!}"
+                                           title="Cập nhật thưởng">
                                             <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
                                         </a>
                                         &nbsp;|&nbsp;
                                         <a class="qc_delete qc-link-red" href="#" title="Xóa">
                                             <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
                                         </a>
+                                        <br/>
+                                        @if ($hFunction->checkCount($bonusManageRank))
+                                            <?php
+                                            $manageBonusId = $bonusManageRank->bonusId();
+                                            ?>
+                                            @if ($bonusManageRank->checkApplyBonus())
+                                                <em style="color: brown;">Đang mở thưởng |</em>
+                                                <a class="qc_update_apply_bonus qc-link-green-bold" data-href="{!! route('qc.ad3d.system.bonus_department.apply_bonus.update',"$manageBonusId/0") !!}">
+                                                    TẮT
+                                                </a>
+                                            @else
+                                                <em style="color: grey;">Đang tắt thưởng |</em>
+                                                <a class="qc_update_apply_bonus qc-link-green-bold" data-href="{!! route('qc.ad3d.system.bonus_department.apply_bonus.update',"$manageBonusId/1") !!}">
+                                                    MỞ
+                                                </a>
+                                            @endif
+                                            <br/>
+                                            @if ($bonusManageRank->checkApplyMinus())
+                                                <em style="color: grey;">Đang mở phạt |</em>
+                                                <a class="qc_update_apply_minus qc-link-green-bold" data-href="{!! route('qc.ad3d.system.bonus_department.apply_minus.update',"$manageBonusId/0") !!}">
+                                                    TẮT
+                                                </a>
+                                            @else
+                                                <em style="color: grey;">Đang tắt phạt |</em>
+                                                <a class="qc_update_apply_minus qc-link-green-bold" data-href="{!! route('qc.ad3d.system.bonus_department.apply_minus.update',"$manageBonusId/1") !!}">
+                                                    MỞ
+                                                </a>
+                                            @endif
+                                        @else
+                                            <em>Chưa áp dụng thưởng - phạt</em>
+                                        @endif
                                     </td>
                                     <td class="text-center">
                                         <b style="color: blue;">{!! $valueBonusStaffRank !!}</b>
                                         <br>
-                                        <a class="qc_add qc-link-green" data-href="{!! route('qc.ad3d.system.bonus_department.add.get',"$departmentId/$staffRankId") !!}" title="Cập nhật thưởng">
+                                        <a class="qc_add qc-link-green"
+                                           data-href="{!! route('qc.ad3d.system.bonus_department.add.get',"$departmentId/$staffRankId") !!}"
+                                           title="Cập nhật thưởng">
                                             <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
                                         </a>
                                         &nbsp;|&nbsp;
                                         <a class="qc_delete qc-link-red" href="#" title="Xóa">
                                             <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
                                         </a>
+                                        <br/>
+                                        @if ($hFunction->checkCount($bonusStaffRank))
+                                            <?php
+                                                $staffBonusId = $bonusStaffRank->bonusId();
+                                            ?>
+                                            @if ($bonusStaffRank->checkApplyBonus())
+                                                <em style="color: brown;">Đang mở thưởng |</em>
+                                                <a class="qc_update_apply_bonus qc-link-green-bold" data-href="{!! route('qc.ad3d.system.bonus_department.apply_bonus.update',"$staffBonusId/0") !!}">
+                                                    TẮT
+                                                </a>
+                                            @else
+                                                <em style="color: grey;">Đang tắt thưởng |</em>
+                                                <a class="qc_update_apply_bonus qc-link-green-bold" data-href="{!! route('qc.ad3d.system.bonus_department.apply_bonus.update',"$staffBonusId/1") !!}">
+                                                    MỞ
+                                                </a>
+                                            @endif
+                                            <br/>
+                                            @if ($bonusStaffRank->checkApplyMinus())
+                                                <em style="color: grey;">Đang mở phạt |</em>
+                                                <a class="qc_update_apply_minus qc-link-green-bold" data-href="{!! route('qc.ad3d.system.bonus_department.apply_minus.update',"$staffBonusId/0") !!}">
+                                                    TẮT
+                                                </a>
+                                            @else
+                                                <em style="color: grey;">Đang tắt phạt |</em>
+                                                <a class="qc_update_apply_minus qc-link-green-bold" data-href="{!! route('qc.ad3d.system.bonus_department.apply_minus.update',"$staffBonusId/1") !!}">
+                                                    MỞ
+                                                </a>
+                                            @endif
+                                        @else
+                                            <em>Chưa áp dụng thưởng - phạt</em>
+                                        @endif
                                     </td>
                                     <td class="text-center">
                                         {!! $valueBonusManageRank + $valueBonusStaffRank !!}
                                     </td>
                                 </tr>
                             @endforeach
-                                <tr>
-                                    <td class="text-right" colspan="4" style="color: red">
-                                        <h4>Tổng thưởng trên 1 đơn hàng</h4>
-                                    </td>
-                                    <td class="text-center">
-                                        <b style="color: red;">
-                                            <h4>{!! $totalBonus !!}</h4>
-                                        </b>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td class="text-right" colspan="4" style="color: red">
+                                    <h4>Tổng thưởng trên 1 đơn hàng</h4>
+                                </td>
+                                <td class="text-center">
+                                    <b style="color: red;">
+                                        <h4>{!! $totalBonus !!}</h4>
+                                    </b>
+                                </td>
+                            </tr>
                             <tr>
                                 <td class="text-center" colspan="5">
                                     {!! $hFunction->page($dataDepartment) !!}

@@ -16,6 +16,7 @@ use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
+use App\Models\Ad3d\OverTimeRequest\QcOverTimeRequest;
 use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductTypePrice\QcProductTypePrice;
@@ -29,6 +30,7 @@ use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
 use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Work\QcWork;
+use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use Illuminate\Database\Eloquent\Model;
 
 class QcCompany extends Model
@@ -119,21 +121,56 @@ class QcCompany extends Model
     /*DUOC GOI TRONG FUNCTION "LOGIN" MODEL NHAN VIEN*/
     public function checkAutoInfo()
     {
+        $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
         $modelOrderAllocation = new QcOrderAllocation();
+        $modelWorkAllocation = new QcWorkAllocation();
+        $modelOverTimeRequest = new QcOverTimeRequest();
+        # gio hien tai
+        $currentHours = (int)$hFunction->currentHour();
         # kiem tra thong tin ban giao don hang - cua bo phan thi cong cap quan ly
         $modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
+        # kiem tra ap dung phat tr thi cong san pham
+        $modelWorkAllocation->autoCheckMinusMoneyLateWorkAllocation();
         # phan cong kiem tra do nghe
         $modelCompanyStaffWork->checkCompanyStoreOfCurrentDate();
         # kiem tra cham cong
         $modelWork->checkAutoTimekeepingOfActivityWork();
         #kiểm tra đầu tháng để cho ra bảng làm việc của tháng mới
         $modelWork->checkEndWorkOfMonth();
+        # sau 8h sang
+        if ($currentHours > 8) {
+            # chua kiem tra
+            if (!$this->checkAutoInCurrentDate()) {
+                # kiem tra hang tang ca
+                $modelOverTimeRequest->checkAutoFinish();
+                # cap nhat ngay kiem tra
+                $this->updateCheckAutoDate();
+            }
+        }
         # kiem tra ket thuc bao tang ca
 
     }
 
+    # kiem tra ngay hien tai co kiem tra du lieu tu dong chua - cua tat ca cong ty
+    public function checkAutoInCurrentDate()
+    {
+        $hFunction = new \Hfunction();
+        $checkDate = $hFunction->currentDate();
+        return QcCompany::where('checkAutoDate', 'like', "%$checkDate%")->exists();
+    }
+
+    # cap nhat ngay kiem tra du lieu tu dong cua hang hien tai - cua tat ca cong ty
+    public function updateCheckAutoDate()
+    {
+        $hFunction = new \Hfunction();
+        return QcCompany::where('action', 1)->update(
+            [
+                'checkAutoDate' => $hFunction->carbonNow()
+            ]
+        );
+    }
     #========== ========== ========== THEM && CAP NHAT ========== ========== ==========
     #---------- thêm ----------
     public function insert($companyCode, $name, $nameCode, $address, $phone, $email, $website, $companyType = 1, $logo = null, $parentId = null)
@@ -168,6 +205,34 @@ class QcCompany extends Model
     public function checkIdNull($companyId)
     {
         return (empty($companyId)) ? $this->companyId() : $companyId;
+    }
+
+    #------ ------ lay gia tri mac dinh cua he thong ------ ----
+    # thoi gian vao lam viec mac dinh cua ngay hien tai
+    public function getDefaultTimeBeginToWorkOfCurrentDate() //return Y-m-d H:i
+    {
+        $hFunction = new \Hfunction();
+        return $this->getDefaultTimeBeginToWorkOfDate($hFunction->carbonNow());
+    }
+
+    # thoi gian vao lam viec mac dinh theo ngay
+    public function getDefaultTimeBeginToWorkOfDate($date) //return Y-m-d H:i
+    {
+        //$hFunction = new \Hfunction();
+        return date('Y-m-d 08:00', strtotime($date));
+    }
+
+    # thoi gian vao lam viec mac dinh cua ngay hien tai
+    public function getDefaultTimeEndToWorkOfCurrentDate() //return Y-m-d H:i
+    {
+        $hFunction = new \Hfunction();
+        return $this->getDefaultTimeEndToWorkOfDate($hFunction->carbonNow());
+    }
+
+    # thoi gian vao lam viec mac dinh theo ngay
+    public function getDefaultTimeEndToWorkOfDate($date) //return Y-m-d H:i
+    {
+        return date('Y-m-d 17:30', strtotime($date));
     }
 
     #----------- cập nhật ----------

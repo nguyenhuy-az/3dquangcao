@@ -108,16 +108,8 @@ if ($hFunction->checkCount($dataWork)) {
                                 # bao cao tang ca
                                 $dataTimekeepingProvisionalImageInEvening = $timekeepingProvisional->infoTimekeepingProvisionalImageInEvening();
                                 $checkConfirmStatus = $timekeepingProvisional->checkConfirmStatus($timekeepingProvisionalId);
-
-                                $beginCheckDate = date('Y-m-d 08:00:00', strtotime($timeBegin));
-                                $endCheck = $hFunction->datetimePlusDay($beginCheckDate, 1);
-                                # kiem tra han bao gio ra
-                                $currentDateCheck = $hFunction->carbonNow();
-                                if ($endCheck < $currentDateCheck) {
-                                    $endCheckStatus = false;
-                                } else {
-                                    $endCheckStatus = true;
-                                }
+                                # xet han bao gio ra
+                                $endCheckStatus = $timekeepingProvisional->checkTimeOutToEndWork();
                                 $n_o = (isset($n_o)) ? $n_o + 1 : 1;
                                 ?>
                                 <tr class="qc_timekeeping_provisional_object @if(!($n_o%2)) info @endif"

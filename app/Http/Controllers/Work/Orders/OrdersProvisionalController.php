@@ -184,12 +184,15 @@ class OrdersProvisionalController extends Controller
                     # thanh toan
                     if ($txtPayMoney > 0) {
                         # thanh toan don hang
-                        if($modelOrderPay->insert($txtPayMoney, null, $txtDateReceive, $orderId, $staffLoginId, $dataCustomer->name(), $dataCustomer->phone())){
+                        if ($modelOrderPay->insert($txtPayMoney, null, $txtDateReceive, $orderId, $staffLoginId, $dataCustomer->name(), $dataCustomer->phone())) {
                             # xet thuong bo phan kinh doanh trong 1 lan thu
                             $modelOrderPay->applyBonusDepartmentBusiness($modelOrderPay->insertGetId());
                         }
-                        # bàn giao don hang = cong trinh
-                        //$modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
+                    }
+                    # bàn giao don hang = cong trinh
+                    if ($modelStaff->checkConstructionDepartment($staffLoginId)) {
+                        # neu thuoc bo thi cong -> ban giao quan ly thi cong
+                        $modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
                     }
                     # thong bao them don hang
                     $listStaffReceiveNotify = $modelStaff->infoStaffReceiveNotifyNewOrder($dataStaffLogin->companyId());

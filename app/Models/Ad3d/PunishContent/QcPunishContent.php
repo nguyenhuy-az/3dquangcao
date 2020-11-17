@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcPunishContent extends Model
 {
     protected $table = 'qc_punish_content';
-    protected $fillable = ['punish_id', 'punishCode', 'name', 'money', 'note', 'created_at', 'type_id'];
+    protected $fillable = ['punish_id', 'punishCode', 'name', 'money', 'note', 'applyStatus', 'created_at', 'type_id'];
     protected $primaryKey = 'punish_id';
     public $timestamps = false;
 
@@ -35,13 +35,13 @@ class QcPunishContent extends Model
         }
     }
 
-    // lấy id mới thêm
+    # lay id moi them
     public function insertGetId()
     {
         return $this->lastId;
     }
 
-    // cập nhật thông tin
+    # cap nhat thong tin
     public function updateInfo($punishId, $name, $money, $note, $typeId)
     {
         $hFunction = new \Hfunction();
@@ -52,6 +52,14 @@ class QcPunishContent extends Model
             'money' => $money,
             'note' => $note,
             'type_id' => $typeId
+        ]);
+    }
+
+    # cap nhat trang thai ap dung
+    public function updateApplyStatus($punishId, $applyStatus)
+    {
+        return QcPunishContent::where('punish_id', $punishId)->update([
+            'applyStatus' => $applyStatus
         ]);
     }
 
@@ -79,6 +87,7 @@ class QcPunishContent extends Model
     {
         return QcPunishContent::where('money', '>', 0)->orderBy('name', 'ASC')->get();
     }
+
     # lay tat ca thong tin
     public function selectInfoAll()
     {
@@ -160,6 +169,12 @@ class QcPunishContent extends Model
         return $this->pluck('note', $punishId);
     }
 
+    public function applyStatus($punishId = null)
+    {
+
+        return $this->pluck('applyStatus', $punishId);
+    }
+
     public function createdAt($punishId = null)
     {
         return $this->pluck('created_at', $punishId);
@@ -183,20 +198,6 @@ class QcPunishContent extends Model
         return (empty($result)) ? 0 : $result->punish_id;
     }
 
-    public function punishIdOfLateWork()
-    {
-        return QcPunishContent::where('punishCode', 'ĐLTKP')->pluck('punish_id');
-    }
-
-    public function punishIdOfOffWork()
-    {
-        return QcPunishContent::where('punishCode', 'NLKP')->pluck('punish_id');
-    }
-
-    public function punishIdOfTimekeepingAccuracy()
-    {
-        return QcPunishContent::where('punishCode', 'BGKĐ')->pluck('punish_id');
-    }
 
     // ---------- ---------- CHECK INFO --------- -------
     public function existName($name)
@@ -223,6 +224,11 @@ class QcPunishContent extends Model
         return ($result > 0) ? true : false;
     }
 
+    # kiem tra co ap dung phat theo danh muc phat
+    public function checkApplyStatus($punishId = null)
+    {
+        return ($this->applyStatus($punishId) == 0) ? false : true;
+    }
     #============= ======== lay id cua danh muc phat =========== ==========
     # lay Id theo  ma phat
     public function getPunishIdByCode($punishCode)
@@ -231,22 +237,46 @@ class QcPunishContent extends Model
         return (count($result) > 0) ? $result : null;
     }
 
+    # di lam tre khong phep
+    public function punishIdOfLateWork()
+    {
+        return QcPunishContent::where('punishCode', 'ĐLTKP')->pluck('punish_id');
+    }
+
+    # nghi lam khong phep
+    public function punishIdOfOffWork()
+    {
+        return QcPunishContent::where('punishCode', 'NLKP')->pluck('punish_id');
+    }
+
+    # bao gio khong dung
+    public function punishIdOfTimekeepingAccuracy()
+    {
+        return QcPunishContent::where('punishCode', 'BGKĐ')->pluck('punish_id');
+    }
+
+    # quan ly thi cong don hang tre - bo phan thi cong
+    public function getPunishIdForOrderAllocationLate()
+    {
+        return $this->getPunishIdByCode('QLTCĐHT');
+    }
+
     # ma phat boi thuong vat tu thi cong
     public function getPunishIdForMinusMoneySupplies()
     {
         return $this->getPunishIdByCode('BTVTTC');
     }
 
-    # ban giao don hang tre
-    public function getPunishIdOfOrderAllocationLate()
+    # ban giao don hang tre - bo phan kinh doanh
+    public function getPunishIdForOrderLate()
     {
         return $this->getPunishIdByCode('BGĐHT');
     }
 
-    # quan ly đơn hàng thi cong tre
-    public function getPunishIdOfOrderConstructionLate()
+    # thi cong san pham tre - bo phan thi cong
+    public function getPunishIdForWorkAllocationLate()
     {
-        return $this->getPunishIdByCode('QLĐHTCT');
+        return $this->getPunishIdByCode('TCSPT');
     }
 
     # thi cong khong dem do nghe
@@ -265,5 +295,33 @@ class QcPunishContent extends Model
     public function getPunishIdWrongReportLostTool()
     {
         return $this->getPunishIdByCode('BCLMĐNKĐ');
+    }
+
+
+    //======= ======= KIEM TRA TRANG THAI AP DUNG THUONG - PHAT CA ======= ========
+    # kiem tra co ap dung phat khi giao don hang thi cong bi tre
+    /*goi trong Order_allocation*/
+    public function checkApplyMinusMoneyWhenOrderAllocationLate()
+    {
+        $punishId = $this->getPunishIdForOrderAllocationLate();
+        if ($punishId > 0) { # da co danh muc phat
+            return $this->checkApplyStatus($punishId);
+        } else {
+            return false;
+        }
+    }
+
+    # kiem tra co ap dung phat khi thi cong san pham bi tre
+    /*goi trong work_allocation*/
+    public function checkApplyMinusMoneyWhenWorkAllocationLate()
+    {
+        $punishId = $this->getPunishIdForWorkAllocationLate();
+        if ($punishId > 0) { # da co danh muc phat
+            return $this->checkApplyStatus($punishId);
+        } else {
+            //echo 'chưa ap dung';
+            //dd($punishId);
+            return false;
+        }
     }
 }

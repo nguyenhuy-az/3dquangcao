@@ -15,7 +15,7 @@ $amount = $hFunction->getCount($dataOverTimeRequest);
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
          style="padding-top: 3px; padding-bottom: 3px; background-color: red;">
         <i class="glyphicon glyphicon-warning-sign" style="color: white; font-size: 16px;"></i>
-        <span style="color: yellow;">THÔNG BÁO TĂNG CA NGÀY: </span>
+        <span style="color: yellow;">YÊU CẦU TĂNG CA NGÀY: </span>
         @foreach($dataOverTimeRequest as $overTimeRequest)
             <?php $n_o = $n_o + 1; ?>
             <em style="color: white">{!! date('d/m/Y', strtotime($overTimeRequest->requestDate())) !!}</em>

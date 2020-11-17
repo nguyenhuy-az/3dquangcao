@@ -27,7 +27,6 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
         </div>
         <div class="qc_work_allocation_manage_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.work-allocation.menu',compact('modelStaff'))
-
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <h4 style="background-color: red; color: white; margin: 0; padding: 5px;">
@@ -53,15 +52,16 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                 </th>
                                 <th>PHÂN VIỆC</th>
                                 <th>ẢNH TIẾN ĐỘ</th>
-                                <th class="text-right">
-                                    NGÂN SÁCH THƯỞNG <br/>
+                                <th>KHÁCH HÀNG</th>
+                                {{--<th class="text-right">
+                                    THƯỞNG <br/>
                                     <em style="color: white;">(Đúng hẹn)</em>
                                 </th>
                                 <th class="text-right">
                                     PHẠT <br/>
                                     <em style="color: white;">(Trễ hẹn)</em>
-                                </th>
-                                <th>KHÁCH HÀNG</th>
+                                </th>--}}
+
                             </tr>
                             <tr>
                                 <td class="text-center qc-color-red"></td>
@@ -151,8 +151,6 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                 <td></td>
                                 <td style="padding: 0px;"></td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
                                 <td style="padding: 0px; min-width: 100px;">
                                     <div class="input-group">
                                         <input type="text" class="txtOrderCustomerFilterKeyword form-control"
@@ -181,7 +179,6 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                         </div>
                                     </div>
                                 </td>
-
                             </tr>
                             @if($hFunction->checkCount($dataOrder))
                                 <?php
@@ -215,14 +212,14 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                     $dataOrderAllocation = $order->orderAllocationActivity()->first();
                                     # thong tin thi cong da xac nhan hoan thanh
                                     $dataOrderAllocationFinish = $order->infoAllocationFinish($orderId);
-                                    // san pham
+                                    # san pham
                                     $dataProduct = $order->allProductOfOrder();
 
-                                    // phan viec tren san pham
+                                    # phan viec tren san pham
                                     $orderWorkAllocationAllInfo = $order->workAllocationOnProduct();
 
                                     # tien thuong va phat
-                                    $totalMoneyBonusAndMinus = $order->getBonusAndMinusMoneyOfConstructionManage();
+                                    ///$totalMoneyBonusAndMinus = $order->getBonusAndMinusMoneyOfConstructionManage();
                                     ?>
                                     <tr class="qc_ad3d_list_object @if($n_o%2 == 1) info @endif"
                                         data-object="{!! $orderId !!}">
@@ -301,7 +298,9 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                             </div>
                                         </td>
                                         <td class="text-center">
-                                            {!! $hFunction->convertDateDMYFromDatetime($order->receiveDate()) !!}
+                                            <span style="color: red;">
+                                                {!! $hFunction->convertDateDMYFromDatetime($order->receiveDate()) !!}
+                                            </span>
                                             <br/>
                                             <b>{!! $hFunction->convertDateDMYFromDatetime($order->deliveryDate()) !!}</b>
                                         </td>
@@ -317,21 +316,34 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                             @endif
                                         </td>
                                         <td class="text-left">
-                                            @if(!$cancelStatus)
-                                                @if($hFunction->checkCount($orderWorkAllocationAllInfo))
-                                                    @foreach($orderWorkAllocationAllInfo as $workAllocation)
-                                                        @if($workAllocation->checkActivity())
+                                            @if($hFunction->checkCount($dataProduct))
+                                                <?php $n_o_sp = 0; ?>
+                                                @foreach($dataProduct as $product)
+                                                    <?php
+                                                        $n_o_sp = $n_o_sp + 1;
+                                                    # lay danh sach cung thi cong san pham lien quan khong bi huy
+                                                    $dataWorkAllocationRelation = $product->workAllocationInfoNotCancelOfProduct();
+                                                    ?>
+                                                    <b style="color: red;">
+                                                        {!! $n_o_sp !!}.
+                                                    </b>
+                                                    <b>
+                                                        {!! $product->productType->name() !!}
+                                                    </b>
+                                                    <br/>
+                                                    <em style="color: grey;">--- Nhân sự:</em>
+                                                    @if($hFunction->checkCount($dataWorkAllocationRelation))
+                                                        @foreach($dataWorkAllocationRelation as $workAllocation)
                                                             <span style="color: blue;">{!! $workAllocation->receiveStaff->lastName() !!}</span>
-                                                            ,&nbsp;
-                                                        @endif
-                                                    @endforeach
-                                                @else
-                                                    @if(!$finishStatus)
-                                                        <span style="background-color: red; color: yellow; padding: 3px;">Chưa phân việc</span>
+                                                            , &nbsp;
+                                                        @endforeach
                                                     @else
-                                                        <em style="color: grey;">Không phân có phân việc</em>
+                                                        <em style="color: grey;">Không có</em>
                                                     @endif
-                                                @endif
+                                                    <br/>
+                                                @endforeach
+                                            @else
+                                                <span style="color: grey;">Không có sản phẩm</span>
                                             @endif
                                         </td>
                                         <td class="qc-color-red">
@@ -355,29 +367,19 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                                 <em class="qc-color-grey">Không có ảnh BC</em>
                                             @endif
                                         </td>
-                                        <td class="text-right">
-                                            <b style="color: blue;">
-                                                {!! $hFunction->currencyFormat($totalMoneyBonusAndMinus) !!}
-                                            </b>
-                                        </td>
-                                        <td class="text-right">
-                                            <b style="color: red;">
-                                                {!! $hFunction->currencyFormat($totalMoneyBonusAndMinus) !!}
-                                            </b>
-                                        </td>
                                         <td>
                                             {!! $order->customer->name() !!}
                                         </td>
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-center" colspan="11">
+                                    <td class="text-center" colspan="8">
                                         {!! $hFunction->page($dataOrder) !!}
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="11">
+                                    <td class="text-center" colspan="8">
                                         <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                     </td>
                                 </tr>

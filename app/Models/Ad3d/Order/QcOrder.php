@@ -1052,6 +1052,7 @@ class QcOrder extends Model
         return $totalMoney;
     }
 
+    # tong tien thanh toan theo danh sach don hang
     public function totalMoneyPaidOfListOrder($listOrder)
     {
         $totalMoney = 0;
@@ -1439,7 +1440,7 @@ class QcOrder extends Model
         return $modelOrderBonusBudget->totalBudgetMoneyOfConstructionManage($this->checkIdNull($orderId));
     }
 
-    # Tong tien thuong - phạt tren don hang cua cap nhan vien
+    # Tong tien thuong - phạt tren don hang cua bo phan cap nhan vien
     public function getBonusAndMinusMoneyOfConstructionRank($orderId = null)
     {
         $modelOrderBonusBudget = new QcOrderBonusBudget();

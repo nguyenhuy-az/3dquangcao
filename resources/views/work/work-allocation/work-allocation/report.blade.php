@@ -44,11 +44,28 @@ $currentMinute = date('i');
                                 <label class="col-sm-3 control-label">Ngày - Giờ:</label>
 
                                 <div class="col-sm-9">
+                                    <select name="cbHoursReport" class="text-right col-xs-2 col-sm-2 col-md-2 col-lg-2" style="height: 34px; padding: 0; color: red;">
+                                        <option value="">Giờ</option>
+                                        @for($h =1;$h<= 24; $h++)
+                                            <option value="{!! $h !!}"
+                                                    @if($currentHours == $h) selected="selected" @endif>
+                                                {!! $h !!} Giờ
+                                            </option>
+                                        @endfor
+                                    </select>
+                                    <select name="cbMinuteReport" class="text-right col-xs-2 col-sm-2 col-md-2 col-lg-2" style="height: 34px; padding: 0; color: red;">
+                                        @for($i =0;$i<= 55; $i = $i+5)
+                                            <option value="{!! $i !!}"
+                                                    @if($currentMinute == $i) selected="selected" @endif>
+                                                {!! $i !!} Phút
+                                            </option>
+                                        @endfor
+                                    </select>
                                     <select name="cbDayReport" class="text-right col-xs-2 col-sm-2 col-md-2 col-lg-2" style="height: 34px; padding: 0;">
                                         @for($i = 1;$i<= 31; $i++)
                                             <option value="{!! $i !!}"
                                                     @if($currentDay == $i) selected="selected" @endif>
-                                                {!! $i !!}
+                                                Ngày {!! $i !!}
                                             </option>
                                         @endfor
                                     </select>
@@ -71,23 +88,7 @@ $currentMinute = date('i');
                                             {!! $currentYear + 1 !!}
                                         </option>
                                     </select>
-                                    <select name="cbHoursReport" class="text-right col-xs-2 col-sm-2 col-md-2 col-lg-2" style="height: 34px; padding: 0; color: red;">
-                                        <option value="">Giờ</option>
-                                        @for($i =1;$i<= 24; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if($currentHours == $i) selected="selected" @endif>
-                                                {!! $i !!}
-                                            </option>
-                                        @endfor
-                                    </select>
-                                    <select name="cbMinuteReport" class="text-right col-xs-2 col-sm-2 col-md-2 col-lg-2" style="height: 34px; padding: 0; color: red;">
-                                        @for($i =0;$i<= 55; $i = $i+5)
-                                            <option value="{!! $i !!}"
-                                                    @if($currentMinute == $i) selected="selected" @endif>
-                                                {!! $i !!}
-                                            </option>
-                                        @endfor
-                                    </select>
+
                                 </div>
                             </div>
                         </div>

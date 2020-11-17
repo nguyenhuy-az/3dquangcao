@@ -38,21 +38,35 @@ $workId = $dataWork->workId();
             <div class="qc_work_allocation_contain qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="table-responsive">
-                        <table class="table table-bordered qc-margin-bot-none" style="border: none;">
+                        <table class="table table-bordered qc-margin-bot-none">
                             {{--<tr>
                                 <th colspan="7" style="border-top: none;">
                                     <em style="color: deeppink;">(CÔNG VIỆC ĐƯỢC BÀN GIAO)</em>
                                 </th>
                             </tr>--}}
                             <tr style="background-color: black;color: yellow;">
-                                <th style="width: 20px;"></th>
-                                <th>SẢN PHẨM</th>
-                                <th>NGÀY NHẬN</th>
+                                <th class="text-center">HẠN GIAO - HOÀN THÀNH</th>
+                                <th>THI CÔNG SẢN PHẨM</th>
                                 <th>TIẾN ĐỘ</th>
-                                <th class="text-center">HẠN GIAO</th>
-                                <th class="text-center">NGÀY BÁO HOÀN THÀNH</th>
+                                <th>NGÀY NHẬN</th>
                             </tr>
                             <tr>
+                                <td style="padding: 0;">
+                                    <select class="cbWorkAllocationFinishStatus form-control"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="100"
+                                                @if($finishStatus == 100) selected="selected" @endif>
+                                            Tất cả
+                                        </option>
+                                        <option value="0" @if($finishStatus == 0) selected="selected" @endif>
+                                            Chưa Xong
+                                        </option>
+                                        <option value="1"
+                                                @if($finishStatus == 1) selected="selected" @endif>
+                                            Đã Xong
+                                        </option>
+                                    </select>
+                                </td>
                                 <td></td>
                                 <td></td>
                                 <td style="padding:0;">
@@ -83,24 +97,6 @@ $workId = $dataWork->workId();
                                         @endfor
                                     </select>
                                 </td>
-                                <td></td>
-                                <td></td>
-                                <td style="padding: 0;">
-                                    <select class="cbWorkAllocationFinishStatus form-control"
-                                            data-href="{!! $hrefIndex !!}">
-                                        <option value="100"
-                                                @if($finishStatus == 100) selected="selected" @endif>
-                                            Tất cả
-                                        </option>
-                                        <option value="0" @if($finishStatus == 0) selected="selected" @endif>
-                                            Chưa Xong
-                                        </option>
-                                        <option value="1"
-                                                @if($finishStatus == 1) selected="selected" @endif>
-                                            Đã Xong
-                                        </option>
-                                    </select>
-                                </td>
                             </tr>
                             @if($hFunction->checkCount($dataWorkAllocation))
                                 <?php
@@ -116,9 +112,21 @@ $workId = $dataWork->workId();
                                     # bao cao tien do
                                     $dataWorkAllocationReport = $workAllocation->workAllocationReportInfo($allocationId, 1);
                                     $dataProduct = $workAllocation->product;
+                                    $productWidth = $dataProduct->width();
+                                    $productHeight = $dataProduct->height();
+                                    $productAmount = $dataProduct->amount();
+                                    $productDescription = $dataProduct->description();
+                                    $dataProductDesign = $dataProduct->productDesignInfoApplyActivity();
+                                    if ($hFunction->getCountFromData($dataProductDesign) == 0) {
+                                        # thiet ke sau cung
+                                        $dataProductDesign = $dataProduct->productDesignInfoLast();
+                                    }
                                     ///$productDesignImage = $dataProduct->designImage();
                                     # thiet ke dang ap dung
-                                    $productDesignImage = $dataProduct->productDesignInfoApplyActivity();
+                                    //$productDesignImage = $dataProduct->productDesignInfoApplyActivity();
+
+                                    # lay danh sach cung thi cong san pham lien quan khong bi huy
+                                    $dataWorkAllocationRelation = $dataProduct->workAllocationInfoNotCancelOfProduct();
                                     $n_o = $n_o + 1;
                                     # thong ket thuc phan viec
                                     $dataWorkAllocationFinish = $workAllocation->workAllocationFinishInfo();
@@ -126,34 +134,12 @@ $workId = $dataWork->workId();
                                     <tr class="qc_work_allocation_object"
                                         @if($n_o%2 == 0) style="background-color: whitesmoke;"
                                         @endif data-work-allocation="{!! $allocationId !!}">
-                                        <td class="text-center">
-                                            <b>{!! $n_o !!}</b>
-                                        </td>
-                                        <td>
-                                            <b class="qc-color-red">{!! $workAllocation->product->productType->name() !!}</b>
-                                            <br/>
-                                            <em style="color:grey;">
-                                                - ĐH: {!! $workAllocation->product->order->name() !!}
-                                            </em>
-                                            @if($workAllocation->checkRoleMain())
-                                                <br/>
-                                                <em style="color: blue;">Vai trò: Làm chính</em>
-                                            @else
-                                                <br/>
-                                                <em style="color: blue;">Vai trò: Làm phụ</em>
-                                            @endif
-                                            @if(!empty($allocationNote))
-                                                <br/>
-                                                {!! $allocationNote !!}
-                                            @endif
-
-                                        </td>
-                                        <td>
-                                            <span class="qc-font-bold" style="color: brown;">
-                                                {!! date('d-m-Y  ', strtotime($allocationDate)) !!}
+                                        <td class="text-center" style="padding: 0;">
+                                             <span class="qc-font-bold" style="color: red;">
+                                                {!! date('d-m-Y ', strtotime($receiveDeadline)) !!}
                                             </span>
                                             <span class="qc-font-bold">
-                                                {!! date('H:i', strtotime($allocationDate)) !!}
+                                                {!! date('H:i', strtotime($receiveDeadline)) !!}
                                             </span>
                                             @if($workAllocation->checkCancel())
                                                 <br/>
@@ -162,6 +148,13 @@ $workId = $dataWork->workId();
                                                 @if($hFunction->checkCount($dataWorkAllocationFinish))
                                                     <br/>
                                                     <em style="color: grey;">Đã kết thúc</em>
+                                                    <br/>
+                                                    <span class="qc-font-bold" style="color: blue;">
+                                                        {!! date('d-m-Y ', strtotime($dataWorkAllocationFinish->finishDate())) !!}
+                                                    </span>
+                                                    <span class="qc-font-bold">
+                                                        {!! date('H:i', strtotime($dataWorkAllocationFinish->finishDate())) !!}
+                                                    </span>
                                                 @else
                                                     <br/>
                                                     <a class="qc_work_allocation_report_act qc-link-green-bold"
@@ -169,12 +162,78 @@ $workId = $dataWork->workId();
                                                         BÁO CÁO CÔNG VIỆC
                                                     </a>
                                                 @endif
+                                                @if($workAllocation->checkLate($allocationId))
+                                                    <br/>
+                                                    <span style="color: white; padding: 3px; background-color: red;">TRỄ</span>
+                                                @endif
                                             @endif
-                                            {{--@if($workAllocation->checkViewedNewWorkAllocation($allocationId,$workAllocation->receiveStaffId()))
-                                                <em style="color: grey;"> - Đã xem</em>
+                                        </td>
+                                        <td>
+                                            <b style="background-color: grey; color: blue; padding: 3px;">
+                                                {!! $workAllocation->product->productType->name() !!}
+                                            </b>
+                                            <br/>
+                                            <em style="color:grey;">
+                                                - ĐH: {!! $workAllocation->product->order->name() !!}
+                                            </em>
+                                            <br/>
+                                            <em>- Ngang: </em>
+                                            <span> {!! $productWidth !!} mm</span>
+                                            <em>- Cao: </em>
+                                            <span>{!! $productHeight !!} mm</span>
+                                            <em>- Số lượng: </em>
+                                            <span style="color: red;">{!! $productAmount !!}</span>
+                                            <br/>
+                                            <em style="color: blue;">
+                                                - Mô tả SP:
+                                            </em>
+                                            <span style="color: red;">
+                                                @if($hFunction->checkEmpty($productDescription))
+                                                    {!! $productDescription !!}
+                                                @else
+                                                    Không có
+                                                @endif
+                                            </span>
+                                            <br/>
+                                            <em>
+                                                - Thiết kế SP:
+                                            </em>
+                                            @if($hFunction->checkCount($dataProductDesign))
+                                                @if($dataProductDesign->checkApplyStatus())
+                                                    <img style="width: 70px; height: auto; margin-right: 5px;"
+                                                         title="Đang áp dụng"
+                                                         src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                                                @else
+                                                    <em class="qc-color-grey">Chưa có thiết kế</em>
+                                                @endif
                                             @else
-                                                <em style="color: red;"> - Chưa xem</em>
-                                            @endif--}}
+                                                <em class="qc-color-grey">Chưa có thiết kế</em>
+                                            @endif
+                                            <br/>
+                                            <em style="color: blue;">
+                                                - Vai trò:
+                                            </em>
+                                            @if($workAllocation->checkRoleMain())
+                                                <span>Làm chính</span>
+                                            @else
+                                                <span>Làm phụ</span>
+                                            @endif
+                                            <br/>
+                                            <em>
+                                                - Ghi chú:
+                                            </em>
+                                            @if(!empty($allocationNote))
+                                                {!! $allocationNote !!}
+                                            @else
+                                                <span>Làm theo phân công</span>
+                                            @endif
+                                            <br/>
+                                            <em style="color: blue;">- Nhân sự:</em>
+                                            @if($hFunction->checkCount($dataWorkAllocationRelation))
+                                                @foreach($dataWorkAllocationRelation as $workAllocationRelation)
+                                                    <b>{!! $workAllocationRelation->receiveStaff->lastName() !!}, </b>
+                                                @endforeach
+                                            @endif
                                         </td>
                                         <td>
                                             @if($hFunction->checkCount($dataWorkAllocationReport))
@@ -209,44 +268,24 @@ $workId = $dataWork->workId();
                                                 CHI TIẾT THI CÔNG
                                             </a>
                                         </td>
-                                        <td class="text-center">
+                                        <td>
                                             <span class="qc-font-bold" style="color: brown;">
-                                                {!! date('d-m-Y ', strtotime($receiveDeadline)) !!}
-                                                </span>
-                                                <span class="qc-font-bold">
-                                                    {!! date('H:i', strtotime($receiveDeadline)) !!}
+                                                {!! date('d-m-Y  ', strtotime($allocationDate)) !!}
                                             </span>
-                                        </td>
-                                        <td class="text-center">
-                                            @if($workAllocation->checkCancel())
-                                                <em style="color: grey;">Đã hủy</em>
-                                            @else
-                                                @if($hFunction->checkCount($dataWorkAllocationFinish))
-                                                    <span class="qc-font-bold" style="color: brown;">
-                                                    {!! date('d-m-Y ', strtotime($dataWorkAllocationFinish->finishDate())) !!}
-                                                </span>
-                                                    <span class="qc-font-bold">
-                                                    {!! date('H:i', strtotime($dataWorkAllocationFinish->finishDate())) !!}
-                                                </span>
-                                                @else
-                                                    <em style="color: grey;">Đang thi công</em>
-                                                @endif
-                                                @if($workAllocation->checkLate($allocationId))
-                                                    <br/>
-                                                    <span style="color: white; padding: 3px; background-color: red;">TRỄ</span>
-                                                @endif
-                                            @endif
+                                            <span class="qc-font-bold">
+                                                {!! date('H:i', strtotime($allocationDate)) !!}
+                                            </span>
                                         </td>
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-center" colspan="6">
+                                    <td class="text-center" colspan="4">
                                         {!! $hFunction->page($dataWorkAllocation) !!}
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="6">
+                                    <td class="text-center" colspan="4">
                                         <span class="qc-color-red">Không có công việc</span>
                                     </td>
                                 </tr>

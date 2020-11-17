@@ -7,8 +7,10 @@ use App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport;
 use App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
+use App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
+use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use Illuminate\Database\Eloquent\Model;
 
 class QcMinusMoney extends Model
@@ -31,23 +33,28 @@ class QcMinusMoney extends Model
                            $orderConstructionId = null, $companyStoreCheckReportId = null, $workAllocationId = null, $money = 0)
     {
         $hFunction = new \Hfunction();
-        $modelOrder = new QcOrder();
+        $modelOrderBonusBudget = new QcOrderBonusBudget();
         $modelOrderAllocation = new QcOrderAllocation();
+        $modelWorkAllocation = new QcWorkAllocation();
         $modelPunishContent = new QcPunishContent();
         $modelMinusMoney = new QcMinusMoney();
         $modelCompanyStore = new QcCompanyStore();
         $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
         if ($money == 0) {
-            if (empty($orderAllocationId) && empty($orderConstructionId) && empty($companyStoreCheckReportId)) {  # phat theo noi quy
+            if (empty($orderAllocationId) && empty($orderConstructionId) && empty($companyStoreCheckReportId) && empty($workAllocationId)) {  # phat theo noi quy
                 # tien phat
                 $money = $modelPunishContent->money($punishId);
             } else {
                 # phat theo gia tri don hang
                 if (!empty($orderAllocationId)) {
-                    # quan ly thi cong don hag
+                    # quan ly thi cong don hang
                     $dataOrderAllocation = $modelOrderAllocation->getInfo($orderAllocationId);
                     $dataOrder = $dataOrderAllocation->orders;
                     $money = (int)$dataOrder->getBonusAndMinusMoneyOfConstructionManage();
+                } elseif (!empty($workAllocationId)) {
+                    # phat thi cong san pham
+                    $productId = $modelWorkAllocation->productId($workAllocationId);
+                    $money = (int)$modelOrderBonusBudget->totalBudgetMoneyEachPersonOfConstructionStaffOfProduct($productId);
                 } elseif (!empty($orderConstructionId)) {
                     # kinh doanh tre don hang giao khach
                     $money = 0;// (int)$modelOrder->getBonusAndMinusMoneyOfConstructionManage($orderConstructionId);  - chua phat kinh doanh
@@ -206,17 +213,25 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('workAllocation_id', $allocationId)->get();
     }
 
+    # kiem tra da phat thi cong san pham tre
+    public function checkExistMinusMoneyWorkAllocationLate($workAllocationId)
+    {
+        $modelPunishContent = new QcPunishContent();
+        $punishId = $modelPunishContent->getPunishIdForWorkAllocationLate();
+        return QcMinusMoney::where('orderAllocation_id', $workAllocationId)->where('punish_id', $punishId)->exists();
+    }
+
     //---------- ban giao don hang -----------
     public function orderAllocation()
     {
         return $this->belongsTo('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'orderAllocation_id', 'allocation_id');
     }
 
-# kiem tra da phat thi cong tre
-    public function checkExistMinusMoneyAllocationLate($orderAllocationId)
+    # kiem tra da phat ban giao don hang thi cong tre
+    public function checkExistMinusMoneyOrderAllocationLate($orderAllocationId)
     {
         $modelPunishContent = new QcPunishContent();
-        $punishId = $modelPunishContent->getPunishIdOfOrderAllocationLate();
+        $punishId = $modelPunishContent->getPunishIdForOrderAllocationLate();
         return QcMinusMoney::where('orderAllocation_id', $orderAllocationId)->where('punish_id', $punishId)->exists();
     }
 
@@ -235,8 +250,7 @@ class QcMinusMoney extends Model
     }
 
 # kiem tra da phat bao cao lam mat do nghe dung chung
-    public
-    function checkExistMinusMoneyReportWrongLostTool($reportId, $workId)
+    public function checkExistMinusMoneyReportWrongLostTool($reportId, $workId)
     {
         $modelPunishContent = new QcPunishContent();
         $punishId = $modelPunishContent->getPunishIdWrongReportLostTool();

@@ -655,7 +655,10 @@ Route::group(['prefix' => 'ad3d'], function () {
             //thêm mới
             Route::get('add/{departmentId?}/{rankId?}', ['as' => 'qc.ad3d.system.bonus_department.add.get', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@getAdd']);
             Route::post('add/{departmentId?}/{rankId?}', ['as' => 'qc.ad3d.system.bonus_department.add.post', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@postAdd']);
-
+            # cap nhat tran thai ap dung thuong
+            Route::get('update-apply-bonus/{bonusId?}/{applyBonusStatus?}', ['as' => 'qc.ad3d.system.bonus_department.apply_bonus.update', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@updateApplyBonus']);
+            # cap nhat tran thai ap dung phat
+            Route::get('update-apply-minus/{bonusId?}/{applyMinusStatus?}', ['as' => 'qc.ad3d.system.bonus_department.apply_minus.update', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@updateApplyMinus']);
             //xóa
             Route::get('delete/{bonusId?}', ['as' => 'qc.ad3d.system.bonus_department.delete', 'uses' => 'Ad3d\System\BonusDepartment\BonusDepartmentController@deleteInfo']);
 

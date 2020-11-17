@@ -296,6 +296,28 @@ class QcCompanyStaffWork extends Model
         }
     }
 
+    # danh sach ma bang cham cong
+    public function workGetListId($companyStaffWorkId = null)
+    {
+        $modelWork = new QcWork();
+        return $modelWork->listIdOfListCompanyStaffWork([$this->checkIdNull($companyStaffWorkId)]);
+    }
+
+    // lay thong tin cham cong cua trong ngay cua 1 NV
+    public function infoTimekeepingProvisionalInDate($date, $companyStaffWorkId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modeWork = new QcWork();
+        $date = date('Y-m-d', strtotime($date));
+        $companyStaffWorkId = $this->checkIdNull($companyStaffWorkId);
+        # bang cham cong theo ngay thang cua bang lam viec
+        $dataWork = $modeWork->infoOfCompanyStaffWorkInDate($companyStaffWorkId, $date);
+        # thong tin cham cong
+        return ($hFunction->checkCount($dataWork)) ? $dataWork->timekeepingProvisionalOfDate($dataWork->workId(), $date) : null;
+
+
+    }
+
     # ----------- nghi viec tai 1 cty --------------
     public function companyStaffWorkEnd()
     {

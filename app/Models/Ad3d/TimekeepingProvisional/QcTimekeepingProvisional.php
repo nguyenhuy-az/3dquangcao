@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\TimekeepingProvisional;
 
+use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
@@ -67,6 +68,7 @@ class QcTimekeepingProvisional extends Model
                 'confirmDate' => $hFunction->createdAt(),
             ]);
     }
+
     // kiem tra tong tin cham cong lam viec trong ngay - KIEM TRA NGAY TRƯƠC
     public function checkAutoTimekeepingOfWorkAndDate($workId, $checkDate)
     {
@@ -544,6 +546,29 @@ class QcTimekeepingProvisional extends Model
     }
 
     //======= kiểm tra thông tin =========
+    # kiem tra hang bao gio ra
+    public function checkTimeOutToEndWork($timekeepingId = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelCompany = new QcCompany();
+        # kiem tra han bao gio ra
+        $currentDateCheck = $hFunction->carbonNow();
+        $beginCheckDate = $modelCompany->getDefaultTimeBeginToWorkOfDate($this->timeBegin($timekeepingId));
+        $endCheck = $hFunction->datetimePlusDay($beginCheckDate, 1); # sau 1 ngay
+        return ($endCheck < $currentDateCheck) ? false : true;
+    }
+
+    # kiem tra co tang ca hay khong
+    public function checkHasOverTime($timekeepingId = null)
+    {
+        $modelCompany = new QcCompany();
+        # thoi gian bao ra
+        $timeEnd = $this->timeEnd($timekeepingId);
+        # thoi gia ra mac dinh trong ngay yeu cau tang ca
+        $timeEndDefault = $modelCompany->getDefaultTimeEndToWorkOfDate($timeEnd);
+        return ($timeEnd > $timeEndDefault) ? true : false;
+    }
+
     # kiem tra co lam trua hay khong
     public function checkAfternoonWork($timekeepingId = null)
     {

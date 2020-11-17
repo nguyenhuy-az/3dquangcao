@@ -114,7 +114,8 @@ class WorkController extends Controller
             return redirect()->back();
         } else {
             if ($modelStaff->login($account, $pass)) {
-                return redirect()->route('qc.work.home');
+                return redirect()->route('qc.work.work_allocation.work_allocation.index');
+                //return redirect()->route('qc.work.home');
             } else {
                 Session::put('notifyLogin', "Tài khoản hoặc mật khẩu không đúng.");
                 return redirect()->back();

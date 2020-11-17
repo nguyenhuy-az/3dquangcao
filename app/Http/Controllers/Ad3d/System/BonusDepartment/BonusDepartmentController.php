@@ -34,12 +34,11 @@ class BonusDepartmentController extends Controller
         $dataDepartment = $modelDepartment->getInfo($departmentId);
         $dataRank = $modelRank->getInfo($rankId);
         $dataBonusDepartmentActivity = $modelBonusDepartment->infoActivityOfDepartmentRank($departmentId, $rankId);
-        return view('ad3d.system.bonus-department.add', compact('modelStaff', 'dataDepartment', 'dataRank','dataBonusDepartmentActivity'));
+        return view('ad3d.system.bonus-department.add', compact('modelStaff', 'dataDepartment', 'dataRank', 'dataBonusDepartmentActivity'));
     }
 
     public function postAdd(Request $request, $departmentId, $rankId)
     {
-        $modelStaff = new QcStaff();
         $modelBonusDepartment = new QcBonusDepartment();
         $txtPercent = $request->input('txtPercent');
         # khong trung thong tin co san
@@ -54,5 +53,19 @@ class BonusDepartmentController extends Controller
                 $modelBonusDepartment->insert($departmentId, $rankId, $txtPercent, null);
             }
         }
+    }
+
+    // ======== ======== cap nhat trang ap dung thuong phat ======== =====
+    # ap dung thuong
+    public function updateApplyBonus($bonusId, $applyBonus)
+    {
+        $modelBonusDepartment = new QcBonusDepartment();
+        return $modelBonusDepartment->updateApplyBonus($bonusId, $applyBonus);
+    }
+    # ap dung phat
+    public function updateApplyMinus($bonusId, $applyBonus)
+    {
+        $modelBonusDepartment = new QcBonusDepartment();
+        return $modelBonusDepartment->updateApplyMinus($bonusId, $applyBonus);
     }
 }

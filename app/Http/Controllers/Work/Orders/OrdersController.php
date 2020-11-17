@@ -346,6 +346,7 @@ class OrdersController extends Controller
         $modelOrder = new QcOrder();
         $modelStaffNotify = new QcStaffNotify();
         $modelOrderPay = new QcOrderPay();
+        $modelOrderAllocation = new QcOrderAllocation();
         $modelStaff = new QcStaff();
         $dataStaff = $modelStaff->loginStaffInfo();
         $staffLoginId = $modelStaff->loginStaffId();
@@ -454,7 +455,10 @@ class OrdersController extends Controller
                     $modelOrderPay->insert($txtBeforePay, 'Thu nhận đơn hàng', $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone);
                 }
                 # bàn giao don hang = cong trinh
-                ///$modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
+                if ($modelStaff->checkConstructionDepartment($staffLoginId)) {
+                    # neu thuoc bo thi cong -> ban giao quan ly thi cong
+                    $modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
+                }
 
                 return redirect()->route('qc.work.orders.print.get', $orderId);
             } else {

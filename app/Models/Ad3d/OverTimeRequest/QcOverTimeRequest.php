@@ -2,12 +2,13 @@
 
 namespace App\Models\Ad3d\OverTimeRequest;
 
+use App\Models\Ad3d\Company\QcCompany;
 use Illuminate\Database\Eloquent\Model;
 
 class QcOverTimeRequest extends Model
 {
     protected $table = 'qc_over_time_request';
-    protected $fillable = ['request_id', 'requestDate', 'note', 'action', 'created_at', 'work_id', 'requestStaff_id'];
+    protected $fillable = ['request_id', 'requestDate', 'acceptStatus', 'note', 'action', 'created_at', 'work_id', 'requestStaff_id'];
     protected $primaryKey = 'request_id';
     public $timestamps = false;
 
@@ -35,6 +36,11 @@ class QcOverTimeRequest extends Model
     public function insertGetId()
     {
         return $this->lastId;
+    }
+
+    public function checkNullId($id)
+    {
+        return (empty($id)) ? $this->requestId() : $id;
     }
 
     public function deleteInfo($requestId)
@@ -75,19 +81,6 @@ class QcOverTimeRequest extends Model
     }
 
     //========= ========== ========== lay thong tin ========== ========== ==========
-    public function getInfo($requestId = '', $field = '')
-    {
-        if (empty($requestId)) {
-            return QcOverTimeRequest::get();
-        } else {
-            $result = QcOverTimeRequest::where('request_id', $requestId)->first();
-            if (empty($field)) {
-                return $result;
-            } else {
-                return $result->$field;
-            }
-        }
-    }
 
     public function pluck($column, $objectId = null)
     {
@@ -106,6 +99,11 @@ class QcOverTimeRequest extends Model
     public function requestDate($requestId = null)
     {
         return $this->pluck('requestDate', $requestId);
+    }
+
+    public function acceptStatus($requestId = null)
+    {
+        return $this->pluck('acceptStatus', $requestId);
     }
 
     public function note($requestId = null)
@@ -140,19 +138,65 @@ class QcOverTimeRequest extends Model
         return (empty($result)) ? 0 : $result->request_id;
     }
 
+    # lay danh sach yeu cau dang hoat dong
+    public function  getAllInfoActivity()
+    {
+        return QcOverTimeRequest::where('action', 1)->get();
+    }
+
+    public function getInfo($requestId = '', $field = '')
+    {
+        if (empty($requestId)) {
+            return QcOverTimeRequest::get();
+        } else {
+            $result = QcOverTimeRequest::where('request_id', $requestId)->first();
+            if (empty($field)) {
+                return $result;
+            } else {
+                return $result->$field;
+            }
+        }
+    }
+    // ========== ========= Cap nhat thong tin =========== ========
     # xac nhan ket thuc yeu cau
-    public function confirmFinish($requestId)
+    public function confirmFinish($requestId = null)
     {
         $hFunction = new \Hfunction();
-        $dataRequest = $this->getInfo($requestId);
+        $dataRequest = $this->getInfo($this->checkNullId($requestId));
+        $agreeStatus = 0;
         if ($hFunction->checkCount($dataRequest)) {
-            
+            $requestDate = $dataRequest->requestDate();
+            $dataCompanyStaffWork = $dataRequest->companyStaffWork;
+            $dataTimekeepingProvisional = $dataCompanyStaffWork->infoTimekeepingProvisionalInDate($requestDate);
+            if ($hFunction->checkCount($dataTimekeepingProvisional)) {
+                # kiem tra co tang ca hay khong
+                if ($dataTimekeepingProvisional->checkHasOverTime()) $agreeStatus = 1;
+            }
         }
+        return QcOverTimeRequest::where('request_id', $requestId)->update([
+            'acceptStatus' => $agreeStatus,
+            'action' => 0
+        ]);
+
     }
 
     # kiem tra ket thuc yeu cau tu dong
     public function checkAutoFinish()
     {
+        $hFunction = new \Hfunction();
+        $modelCompany = new QcCompany();
+        $currentDateCheck = $hFunction->carbonNow();
+        # lay thong tin dang hoa dong
+        $dataRequest = $this->getAllInfoActivity();
+        if ($hFunction->checkCount($dataRequest)) {
+            foreach ($dataRequest as $request) {
+                $requestDate = $request->requestDate();
+                $checkDate = $hFunction->datetimePlusDay($modelCompany->getDefaultTimeBeginToWorkOfDate($requestDate), 1);
+                if ($currentDateCheck > $checkDate) {# qua ngay tang ca
+                    $this->confirmFinish($request->requestId());
+                }
+            }
+        }
 
     }
 }

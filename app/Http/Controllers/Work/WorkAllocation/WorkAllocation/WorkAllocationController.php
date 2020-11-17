@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Work\WorkAllocation\WorkAllocation;
 
 
+use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
@@ -18,54 +19,48 @@ class WorkAllocationController extends Controller
     public function index($finishStatus = 100, $monthFilter = 100,$yearFilter = 100)
     {
         $modelStaff = new QcStaff();
-        if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'workAllocation'
-            ];
+        $modelCompany = new QcCompany();
+        //$modelCompany->checkAutoInfo();
+        $dataAccess = [
+            'object' => 'workAllocation'
+        ];
+        $dateFilter = null;
+        if ($monthFilter == 0 && $yearFilter == 0) { //khong chon thoi gian xem
+            $monthFilter = 100;
+            $yearFilter = 100;
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter == 100 && $yearFilter == 0) { //xam tat ca cac thang va khong chon nam
+            $yearFilter = date('Y');
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter == 100) { //co chon thang va khong chon nam
+            $yearFilter = date('Y');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //co chon thang va chon nam
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
             $dateFilter = null;
-            if ($monthFilter == 0 && $yearFilter == 0) { //khong chon thoi gian xem
-                $monthFilter = 100;
-                $yearFilter = 100;
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            } elseif ($monthFilter == 100 && $yearFilter == 0) { //xam tat ca cac thang va khong chon nam
-                $yearFilter = date('Y');
-                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-            } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter == 100) { //co chon thang va khong chon nam
-                $yearFilter = date('Y');
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //co chon thang va chon nam
-                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-            } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
-                $dateFilter = null;
-            }elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả
-                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-            } else {
-                $dateFilter = date('Y-m');
-                $monthFilter = date('m');
-                $yearFilter = date('Y');
-            }
-            $dataStaff = $modelStaff->loginStaffInfo();
-            $dataWorkAllocation = $dataStaff->selectWorkAllocationOfStaffReceive($dataStaff->staffId(),$finishStatus,$dateFilter)->paginate(50);
-            return view('work.work-allocation.work-allocation.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataWorkAllocation','finishStatus','monthFilter','yearFilter'));
+        }elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } else {
-            return view('work.login');
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
         }
+        $dataStaff = $modelStaff->loginStaffInfo();
+        $dataWorkAllocation = $dataStaff->selectWorkAllocationOfStaffReceive($dataStaff->staffId(),$finishStatus,$dateFilter)->paginate(50);
+        return view('work.work-allocation.work-allocation.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataWorkAllocation','finishStatus','monthFilter','yearFilter'));
 
     }
     public function getAllocationReport($allocationId)
     {
         $modelStaff = new QcStaff();
         $modelWorkAllocation = new QcWorkAllocation();
-        if ($modelStaff->checkLogin()) {
-            $dataAccess = [
-                'object' => 'workAllocationActivity'
-            ];
-            $dataStaff = $modelStaff->loginStaffInfo();
-            $dataWorkAllocation = $modelWorkAllocation->getInfo($allocationId);
-            return view('work.work-allocation.work-allocation.report', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataWorkAllocation'));
-        } else {
-            return view('work.login');
-        }
+        $dataAccess = [
+            'object' => 'workAllocationActivity'
+        ];
+        $dataStaff = $modelStaff->loginStaffInfo();
+        $dataWorkAllocation = $modelWorkAllocation->getInfo($allocationId);
+        return view('work.work-allocation.work-allocation.report', compact('dataAccess', 'modelStaff', 'dataStaff', 'dataWorkAllocation'));
 
     }
     public function postAllocationReport(Request $request)

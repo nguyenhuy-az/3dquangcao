@@ -63,8 +63,18 @@ $(document).ready(function () {
         qc_ad3d_system_bonus_department.add.save($(this).parents('.frmAdd'));
     })
 });
-
-//-------------------- edit ------------
+//-------------------- cap nhat thong tin ap dung thuong phat ------------
+$(document).ready(function () {
+    /*trang thai thuong*/
+    $('.qc_ad3d_list_object').on('click', '.qc_update_apply_bonus', function () {
+        qc_ad3d_submit.ajaxHasReload($(this).data('href'),'',false);
+    });
+    /*trang thai phat*/
+    $('.qc_ad3d_list_object').on('click', '.qc_update_apply_minus', function () {
+        qc_ad3d_submit.ajaxHasReload($(this).data('href'),'',false);
+    });
+});
+//-------------------- cap nhat thong tin ------------
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_edit', function () {
         qc_ad3d_system_bonus_department.edit.get($(this).parents('.qc_ad3d_list_object'));

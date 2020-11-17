@@ -3,6 +3,7 @@
 namespace App\Models\Ad3d\OrderAllocation;
 
 use App\Models\Ad3d\Bonus\QcBonus;
+use App\Models\Ad3d\BonusDepartment\QcBonusDepartment;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\Product\QcProduct;
@@ -289,6 +290,7 @@ class QcOrderAllocation extends Model
     }
 
     //========= ========== ========== lay thong tin ========== ========== ==========
+    # chon tat ca ca thong tin dang hoat dong
     public function selectInfoActivity()
     {
         return QcOrderAllocation::where('action', 1);
@@ -502,7 +504,24 @@ class QcOrderAllocation extends Model
         return $lateStatus;
     }
 
-    # kiem tra cua 1 lan ban giao
+    // ======== ======== KIEM TRA PHAT TREN PHAN CONG ======== ========
+    #kiem tra tu dong thi cong don hang don hang - tat ca thong tin ban giao
+    public function autoCheckMinusMoneyLateOrderAllocation()
+    {
+        $hFunction = new \Hfunction();
+        $modelPunishContent = new QcPunishContent();
+        # chi xet khi co ap dung phat
+        if($modelPunishContent->checkApplyMinusMoneyWhenOrderAllocationLate()){
+            #lay thong tin con hoat dong
+            $dataOrderAllocation = $this->selectInfoActivity()->get();
+            if ($hFunction->checkCount($dataOrderAllocation)) {
+                foreach ($dataOrderAllocation as $orderAllocation) {
+                    $this->checkMinusMoneyLate($orderAllocation->allocationId());
+                }
+            }
+        }
+    }
+    # kiem tra ap dung phat khi giao don hang thi cong bi tre
     public function checkMinusMoneyLate($allocationId = null)
     {
         $hFunction = new \Hfunction();
@@ -511,18 +530,18 @@ class QcOrderAllocation extends Model
         $modelMinusMoney = new QcMinusMoney();
         # thoi gian de kiem tra
         $checkDate = $hFunction->carbonNow();
-        # danh muc phat tre don hang
-        $punishId = $modelPunishContent->getPunishIdOfOrderAllocationLate();
+        # danh muc tre don hang duoc ban giao thi cong
+        $punishId = $modelPunishContent->getPunishIdForOrderAllocationLate();
         $allocationId = $this->checkNullId($allocationId);
         $orderAllocation = $this->getInfo($allocationId);
         $receiveDeadline = $orderAllocation->receiveDeadline();
         $dataReceiveStaff = $orderAllocation->receiveStaff;
-        #thong tin lam viec cua NV nhan thi cong
+        #thong tin lam viec cua NV quan ly nhan don hang thi cong
         $dataWork = $dataReceiveStaff->workInfoActivityOfStaff();
         if ($hFunction->checkCount($dataWork)) {
             $workId = $dataWork->workId();
             if ($receiveDeadline < $checkDate) { # tre ngay
-                if (!$modelMinusMoney->checkExistMinusMoneyAllocationLate($allocationId)) { // Neu chua phat thi se phat
+                if (!$modelMinusMoney->checkExistMinusMoneyOrderAllocationLate($allocationId)) { // Neu chua phat thi se phat
                     $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
                     if ($modelMinusMoney->insert($checkDate, 'Quản lý Thi công trễ đơn hàng', $workId, null, $punishId, 0, $allocationId, null, null, null, 0)) {
                         $modelStaffNotify->insert(null, $dataReceiveStaff->staffId(), 'Quản lý thi công trễ đơn hàng', null, null, null, $modelMinusMoney->insertGetId());
@@ -530,24 +549,6 @@ class QcOrderAllocation extends Model
                 }
 
             }
-        }
-    }
-
-    #kiem tra tu dong thi cong don hang don hang - tat ca thong tin ban giao
-    public function autoCheckMinusMoneyLateOrderAllocation()
-    {
-        $hFunction = new \Hfunction();
-        $modelPunishContent = new QcPunishContent();
-        #lay thong tin con hoat dong
-        $dataOrderAllocation = $this->selectInfoActivity()->get();
-        if ($hFunction->checkCount($dataOrderAllocation)) {
-            $punishId = $modelPunishContent->getPunishIdOfOrderAllocationLate();
-            if (!$hFunction->checkEmpty($punishId)) {
-                foreach ($dataOrderAllocation as $orderAllocation) {
-                    $this->checkMinusMoneyLate($orderAllocation->allocationId());
-                }
-            }
-
         }
     }
 }
