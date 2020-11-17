@@ -137,7 +137,7 @@ class QcPunishContent extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcPunishContent::where('punish_id', $objectId)->pluck($column);
+            return QcPunishContent::where('punish_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -234,7 +234,7 @@ class QcPunishContent extends Model
     public function getPunishIdByCode($punishCode)
     {
         $result = QcPunishContent::where('punishCode', $punishCode)->pluck('punish_id');
-        return (count($result) > 0) ? $result : null;
+        return (count($result) > 0) ? $result[0] : null;
     }
 
     # di lam tre khong phep
@@ -319,8 +319,6 @@ class QcPunishContent extends Model
         if ($punishId > 0) { # da co danh muc phat
             return $this->checkApplyStatus($punishId);
         } else {
-            //echo 'chưa ap dung';
-            //dd($punishId);
             return false;
         }
     }

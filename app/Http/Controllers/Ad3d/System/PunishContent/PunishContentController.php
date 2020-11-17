@@ -76,6 +76,7 @@ class PunishContentController extends Controller
 
     }
 
+    # cap nhat thong tin
     public function getEdit($punishId)
     {
         $modelStaff = new QcStaff();
@@ -101,6 +102,14 @@ class PunishContentController extends Controller
 
     }
 
+    # cap nhat trang thai ap dung
+    public function updateApplyStatus($punishId, $applyStatus)
+    {
+        $modelPunishContent = new QcPunishContent();
+        return $modelPunishContent->updateApplyStatus($punishId, $applyStatus);
+    }
+
+    # xoa thong tin
     public function deleteInfo($punishId)
     {
         $modelPunishContent = new QcPunishContent();

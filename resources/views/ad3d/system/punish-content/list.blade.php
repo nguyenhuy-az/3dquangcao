@@ -17,7 +17,8 @@ $dataPunishType = $modelPunishType->getInfo();
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-left: 0;padding-right: 0;">
+                <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                     style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $indexHref !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
@@ -34,22 +35,23 @@ $dataPunishType = $modelPunishType->getInfo();
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr>
-                            <td colspan="4"></td>
                             <td colspan="2" style="padding: 0;">
                                 <a class="qc-link-white-bold btn btn-primary form-control"
-                                   href="{!! route('qc.ad3d.system.punish-content.add.get') !!}">
+                                   href="{!! route('qc.ad3d.system.punish_content.add.get') !!}">
                                     <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
                                     THÊM
                                 </a>
                             </td>
+                            <td colspan="5"></td>
                         </tr>
                         <tr style="background-color: black;color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Mã</th>
-                            <th>Tên</th>
-                            <th style="width: 500px;">Mô tả</th>
-                            <th>Loại tiền phạt</th>
-                            <th class="text-right">Số tiền</th>
+                            <th>MÃ PHẠT</th>
+                            <th>TÊN</th>
+                            <th style="width: 500px;">MÔ TẢ</th>
+                            <th>LOẠI TIỀN PHẠT</th>
+                            <th class="text-right">SỐ TIỀN</th>
+                            <th class="text-center">ÁP DỤNG PHẠT</th>
                         </tr>
                         @if($hFunction->checkCount($dataPunishContent))
                             <?php
@@ -94,10 +96,27 @@ $dataPunishType = $modelPunishType->getInfo();
                                             {!! $hFunction->currencyFormat($punishContent->money()) !!}
                                         </span>
                                     </td>
+                                    <td class="text-center">
+                                        @if ($punishContent->checkApplyStatus())
+                                            <em style="color: brown;">Đang áp dụng</em>
+                                            <span style="color: red;"> | </span>
+                                            <a class="qc_update_apply_status qc-link-green-bold"
+                                               data-href="{!! route('qc.ad3d.system.punish_content.apply_status.update',"$punishId/0") !!}">
+                                                TẮT
+                                            </a>
+                                        @else
+                                            <em style="color: grey;">Đang tắt</em>
+                                            <span style="color: red;"> | </span>
+                                            <a class="qc_update_apply_status qc-link-green-bold"
+                                               data-href="{!! route('qc.ad3d.system.punish_content.apply_status.update',"$punishId/1") !!}">
+                                                MỞ
+                                            </a>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="6">
+                                <td class="text-center" colspan="7">
                                     {!! $hFunction->page($dataPunishContent) !!}
                                 </td>
                             </tr>

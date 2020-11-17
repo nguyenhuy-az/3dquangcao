@@ -218,7 +218,7 @@ class QcMinusMoney extends Model
     {
         $modelPunishContent = new QcPunishContent();
         $punishId = $modelPunishContent->getPunishIdForWorkAllocationLate();
-        return QcMinusMoney::where('orderAllocation_id', $workAllocationId)->where('punish_id', $punishId)->exists();
+        return QcMinusMoney::where('workAllocation_id', $workAllocationId)->where('punish_id', $punishId)->exists();
     }
 
     //---------- ban giao don hang -----------

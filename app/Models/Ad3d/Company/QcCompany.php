@@ -127,18 +127,26 @@ class QcCompany extends Model
         $modelOrderAllocation = new QcOrderAllocation();
         $modelWorkAllocation = new QcWorkAllocation();
         $modelOverTimeRequest = new QcOverTimeRequest();
-        # gio hien tai
-        $currentHours = (int)$hFunction->currentHour();
+
+        // ===== ===== DON HANG - SAN PHAM ====== ======
         # kiem tra thong tin ban giao don hang - cua bo phan thi cong cap quan ly
         $modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
         # kiem tra ap dung phat tr thi cong san pham
         $modelWorkAllocation->autoCheckMinusMoneyLateWorkAllocation();
+
+        // ===== ===== ĐO NGHE ====== ======
         # phan cong kiem tra do nghe
         $modelCompanyStaffWork->checkCompanyStoreOfCurrentDate();
+
+        // ===== ===== CHAM CONG ====== ======
         # kiem tra cham cong
         $modelWork->checkAutoTimekeepingOfActivityWork();
+
         #kiểm tra đầu tháng để cho ra bảng làm việc của tháng mới
         $modelWork->checkEndWorkOfMonth();
+
+        # gio hien tai
+        $currentHours = (int)$hFunction->currentHour();
         # sau 8h sang
         if ($currentHours > 8) {
             # chua kiem tra
@@ -149,7 +157,6 @@ class QcCompany extends Model
                 $this->updateCheckAutoDate();
             }
         }
-        # kiem tra ket thuc bao tang ca
 
     }
 

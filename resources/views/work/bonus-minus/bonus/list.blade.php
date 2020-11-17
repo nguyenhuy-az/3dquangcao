@@ -21,31 +21,33 @@ $hrefIndex = route('qc.work.bonus.get');
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
-                                <th>Ngày</th>
-                                <th>Lý do</th>
-                                <th>Ghi chú</th>
-                                <th class="text-center">Áp dụng</th>
-                                <th class="text-right">Số tiền</th>
+                                <th>NGÀY</th>
+                                <th>SỐ TIỀN - LÝ DO</th>
+                                <th>GHI CHÚ</th>
                             </tr>
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_bonus_month col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_bonus_month col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                            style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả tháng
                                         </option>--}}
                                         @for($m =1;$m<= 12; $m++)
-                                            <option value="{!! $m !!}" @if((int)$monthFilter == $m) selected="selected" @endif>
+                                            <option value="{!! $m !!}"
+                                                    @if((int)$monthFilter == $m) selected="selected" @endif>
                                                 Tháng {!! $m !!}
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_bonus_year col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
+                                    <select class="qc_work_bonus_year col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                            style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả năm
                                         </option>--}}
                                         @for($y =2017;$y<= 2050; $y++)
-                                            <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                            <option value="{!! $y !!}"
+                                                    @if($yearFilter == $y) selected="selected" @endif>
                                                 {!! $y !!}
                                             </option>
                                         @endfor
@@ -53,8 +55,6 @@ $hrefIndex = route('qc.work.bonus.get');
                                 </td>
                                 <td class="text-center"></td>
                                 <td class="text-center"></td>
-                                <td class="text-center"></td>
-                                <td class="text-right"></td>
                             </tr>
                             @if($hFunction->checkCount($dataBonus))
                                 <?php
@@ -80,52 +80,54 @@ $hrefIndex = route('qc.work.bonus.get');
                                             {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
                                         </td>
                                         <td>
-                                            {!! date('d/m/Y', strtotime($bonus->bonusDate())) !!}
-                                        </td>
-                                        <td>
-                                            {!! $bonus->note() !!}
-                                        </td>
-                                        <td>
-                                            @if(!$hFunction->checkEmpty($orderAllocationId))
-                                                <em>Đơn hàng:</em>
-                                                <b style="color: red;">{!! $bonus->orderAllocation->orders->name() !!}</b>
-                                            @endif
-                                            @if(!$hFunction->checkEmpty($orderConstructionId))
-                                                <em>Đơn hàng:</em>
-                                                <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
-                                            @endif
-                                            @if(!$hFunction->checkEmpty($orderPayId))
-                                                <em>Đơn hàng:</em>
-                                                <b style="color: red;">{!! $bonus->orderPay->order->name() !!}</b>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
+                                            <b>{!! date('d/m/Y', strtotime($bonus->bonusDate())) !!} </b>
+                                            <br/>
                                             @if($cancelStatus)
-                                                <em>Đã hủy</em>
+                                                <em style="color: red;">Đã hủy</em>
                                             @else
                                                 @if($bonus->checkEnableApply())
-                                                    <em>Có hiệu lực</em>
+                                                    <em style="color: blue;">Có hiệu lực</em>
                                                 @else
-                                                    <span>Tạm thời</span>
+                                                    <span style="color: brown;">Tạm thời</span>
                                                 @endif
                                             @endif
                                         </td>
-                                        <td class="text-right">
-                                            <span style="color: blue;">
+                                        <td>
+                                            <span style="color: red;">
                                                 {!! $hFunction->currencyFormat($money) !!}
                                             </span>
+                                            <br/>
+                                            <span>{!! $bonus->note() !!}</span>
+                                        </td>
+                                        <td>
+                                            @if(!$hFunction->checkEmpty($orderAllocationId))
+                                                <em>- Đơn hàng:</em>
+                                                <b style="color: red;">{!! $bonus->orderAllocation->orders->name() !!}</b>
+                                            @endif
+                                            @if(!$hFunction->checkEmpty($orderConstructionId))
+                                                <em>- Đơn hàng:</em>
+                                                <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
+                                            @endif
+                                            @if(!$hFunction->checkEmpty($orderPayId))
+                                                <em>- Đơn hàng:</em>
+                                                <b style="color: red;">{!! $bonus->orderPay->order->name() !!}</b>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
-                                <tr>
-                                    <td colspan="5" style="background-color: black;"></td>
-                                    <td class="text-right">
-                                        <b style="color: red;">{!! $hFunction->currencyFormat($totalMoney) !!}</b>
+                                <tr style="background-color: black;">
+                                    <td colspan="2"></td>
+                                    <td>
+                                        <b class="qc-font-size-14" style="color: yellow;">
+                                            {!! $hFunction->currencyFormat($totalMoney) !!}
+                                        </b>
+                                        <b style="color: white;">(Tổng)</b>
                                     </td>
+                                    <td class="text-right" colspan="2"></td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center qc-padding-none" colspan="6">
+                                    <td class="text-center qc-padding-none" colspan="5">
                                         Không có thông tin thưởng
                                     </td>
                                 </tr>

@@ -689,10 +689,13 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::post('edit/{typeId?}', ['as' => 'qc.ad3d.system.punish-content.post.get', 'uses' => 'Ad3d\System\PunishContent\PunishContentController@postEdit']);
 
             //thêm mới
-            Route::get('add', ['as' => 'qc.ad3d.system.punish-content.add.get', 'uses' => 'Ad3d\System\PunishContent\PunishContentController@getAdd']);
-            Route::post('add', ['as' => 'qc.ad3d.system.punish-content.add.post', 'uses' => 'Ad3d\System\PunishContent\PunishContentController@postAdd']);
+            Route::get('add', ['as' => 'qc.ad3d.system.punish_content.add.get', 'uses' => 'Ad3d\System\PunishContent\PunishContentController@getAdd']);
+            Route::post('add', ['as' => 'qc.ad3d.system.punish_content.add.post', 'uses' => 'Ad3d\System\PunishContent\PunishContentController@postAdd']);
 
-            //xóa
+            # cap nhat trang thai ap dụng
+            Route::get('update-apply-status/{punishId?}/{applyStatus?}', ['as' => 'qc.ad3d.system.punish_content.apply_status.update', 'uses' => 'Ad3d\System\PunishContent\PunishContentController@updateApplyStatus']);
+
+            //xao
             Route::get('delete/{typeId?}', ['as' => 'qc.ad3d.system.punish-content.delete', 'uses' => 'Ad3d\System\PunishContent\PunishContentController@deleteInfo']);
 
             Route::get('/{punishTypeId?}', ['as' => 'qc.ad3d.system.punish-content.get', 'uses' => 'Ad3d\System\PunishContent\PunishContentController@index']);
@@ -1192,12 +1195,12 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         # danh sach san pham can sua chưa
         Route::group(['prefix' => 'product-repair'], function () {
             #loc don hang
-           /* Route::group(['prefix' => 'filter'], function () {
-                // loc ten don hang
-                Route::get('order-name/{name?}', ['as' => 'qc.work.work_allocation.manage.filter.order.check.name', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@filterCheckOrderName']);
-                // loc theo ten khach hang
-                Route::get('customer-name/{name?}', ['as' => 'qc.work.work_allocation.manage.filter.customer.check.name', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@filterCheckCustomerName']);
-            });*/
+            /* Route::group(['prefix' => 'filter'], function () {
+                 // loc ten don hang
+                 Route::get('order-name/{name?}', ['as' => 'qc.work.work_allocation.manage.filter.order.check.name', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@filterCheckOrderName']);
+                 // loc theo ten khach hang
+                 Route::get('customer-name/{name?}', ['as' => 'qc.work.work_allocation.manage.filter.customer.check.name', 'uses' => 'Work\WorkAllocation\WorkAllocationManageController@filterCheckCustomerName']);
+             });*/
             # xem thong tin dơn hang
             //Route::get('view/{orderId?}/{notifyId?}', ['as' => 'qc.work.work_allocation.order.view', 'uses' => 'Work\WorkAllocation\Orders\OrderController@viewOrder']);
 

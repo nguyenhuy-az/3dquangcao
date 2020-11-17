@@ -21,7 +21,7 @@ var qc_ad3d_system_punish_content = {
             if (qc_main.check.inputNull(txtMoney, 'Nhập số tiền phạt')) {
                 return false;
             }
-            if(confirm('Bạn đồng ý thêm danh mục phạt này')){
+            if (confirm('Bạn đồng ý thêm danh mục phạt này')) {
                 qc_ad3d_submit.ajaxFormHasReload(form, '', false);
                 qc_main.scrollTop();
             }
@@ -73,7 +73,7 @@ $(document).ready(function () {
     })
 });
 
-//-------------------- add ------------
+//-------------------- them moi ------------
 $(document).ready(function () {
     //lưu
     $('.qc_ad3d_index_content').on('click', '.frmAdd .qc_save', function () {
@@ -81,7 +81,7 @@ $(document).ready(function () {
     })
 });
 
-//-------------------- edit ------------
+//-------------------- cap nhat thong tin ------------
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_edit', function () {
         qc_ad3d_system_punish_content.edit.get($(this).parents('.qc_ad3d_list_object'));
@@ -92,7 +92,14 @@ $(document).ready(function () {
     });
 });
 
-//delete
+// cap nhat trang thai ap dung
+$(document).ready(function () {
+    $('.qc_ad3d_list_object').on('click', '.qc_update_apply_status', function () {
+        qc_ad3d_submit.ajaxHasReload($(this).data('href'), '', false);
+    });
+});
+
+//xoa danh muc phat
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_delete', function () {
         qc_ad3d_system_punish_content.delete($(this).parents('.qc_ad3d_list_object'));

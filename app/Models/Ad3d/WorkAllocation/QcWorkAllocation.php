@@ -483,7 +483,14 @@ class QcWorkAllocation extends Model
     # chon tat cac cac thong tin dang hoat dong
     public function selectInfoActivity()
     {
-        return QcWorkAllocation::where('action', 1);
+        return QcWorkAllocation::where('action', 1)->select('*');
+    }
+
+    # chon tat ca thong tin dang hoat dong se het han trong thang hien tai
+    public function selectInfoActivityDeadlineInCurrentMonth()
+    {
+        $currentMonth = date('Y-m');
+        return QcWorkAllocation::where('action', 1)->where('receiveDeadline', 'like', "%$currentMonth%")->select('*');
     }
 
     //======= ======= KIEM TRA THONG TIN ======== =========
@@ -543,8 +550,8 @@ class QcWorkAllocation extends Model
         $modelPunishContent = new QcPunishContent();
         # chi xet khi co ap dung phat
         if ($modelPunishContent->checkApplyMinusMoneyWhenWorkAllocationLate()) {
-            #lay thong tin con hoat dong
-            $dataWorkAllocation = $this->selectInfoActivity()->get();
+            #lay thong tin con hoat dong se het han trong thang hien tai
+            $dataWorkAllocation = $this->selectInfoActivityDeadlineInCurrentMonth()->get();
             if ($hFunction->checkCount($dataWorkAllocation)) {
                 foreach ($dataWorkAllocation as $workAllocation) {
                     $this->checkMinusMoneyLate($workAllocation->allocationId());
@@ -574,9 +581,9 @@ class QcWorkAllocation extends Model
         if ($hFunction->checkCount($dataWork)) {
             $workId = $dataWork->workId();
             if ($receiveDeadline < $checkDate) { # tre ngay
-                if (!$modelMinusMoney->checkExistMinusMoneyOrderAllocationLate($allocationId)) { // Neu chua phat thi se phat
+                if (!$modelMinusMoney->checkExistMinusMoneyWorkAllocationLate($allocationId)) { // Neu chua phat thi se phat
                     $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
-                    if ($modelMinusMoney->insert($checkDate, 'Thi công sản phảm trễ ', $workId, null, $punishId, 0, null, null, null, $allocationId, 0)) {
+                    if ($modelMinusMoney->insert($checkDate, 'Thi công sản phẩm trễ ', $workId, null, $punishId, 0, null, null, null, $allocationId, 0)) {
                         $modelStaffNotify->insert(null, $dataReceiveStaff->staffId(), 'Thi công sản phẩm', null, null, null, $modelMinusMoney->insertGetId());
                     }
                 }

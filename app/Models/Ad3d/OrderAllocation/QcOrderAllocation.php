@@ -293,8 +293,16 @@ class QcOrderAllocation extends Model
     # chon tat ca ca thong tin dang hoat dong
     public function selectInfoActivity()
     {
-        return QcOrderAllocation::where('action', 1);
+        return QcOrderAllocation::where('action', 1)->select('*');
     }
+
+    # chon tat ca thong tin se het hang trong thang dang hoat dong trong thang hien tai
+    public function selectInfoActivityDeadlineInCurrentMonth()
+    {
+        $currentMonth = date('Y-m');
+        return QcOrderAllocation::where('action', 1)->where('receiveDeadline', 'like', "%$currentMonth%")->select('*');
+    }
+
 
     public function getInfo($allocationId = '', $field = '')
     {
@@ -511,9 +519,9 @@ class QcOrderAllocation extends Model
         $hFunction = new \Hfunction();
         $modelPunishContent = new QcPunishContent();
         # chi xet khi co ap dung phat
-        if($modelPunishContent->checkApplyMinusMoneyWhenOrderAllocationLate()){
-            #lay thong tin con hoat dong
-            $dataOrderAllocation = $this->selectInfoActivity()->get();
+            if($modelPunishContent->checkApplyMinusMoneyWhenOrderAllocationLate()){
+            #lay thong tin con hoat dong se het han trong thang hien tai
+            $dataOrderAllocation = $this->selectInfoActivityDeadlineInCurrentMonth()->get();
             if ($hFunction->checkCount($dataOrderAllocation)) {
                 foreach ($dataOrderAllocation as $orderAllocation) {
                     $this->checkMinusMoneyLate($orderAllocation->allocationId());

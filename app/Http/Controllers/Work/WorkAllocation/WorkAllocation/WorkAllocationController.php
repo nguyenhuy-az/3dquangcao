@@ -19,8 +19,6 @@ class WorkAllocationController extends Controller
     public function index($finishStatus = 100, $monthFilter = 100,$yearFilter = 100)
     {
         $modelStaff = new QcStaff();
-        $modelCompany = new QcCompany();
-        //$modelCompany->checkAutoInfo();
         $dataAccess = [
             'object' => 'workAllocation'
         ];
