@@ -52,15 +52,11 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color:yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th style="width: 150px;">Ngày</th>
-                            <th>Danh mục chi</th>
-                            <th style="width: 400px;">Ghi chú chi</th>
-                            <th>Loại chi phí</th>
-                            <th>Người chi</th>
-                            <th>Người duyệt</th>
-                            <th>Ghi chú duyệt</th>
-                            <th>Xác nhận</th>
-                            <th class="text-right">Số tiền</th>
+                            <th style="width: 150px;">NGÀY</th>
+                            <th>SỐ TIỀN - LÝ DO</th>
+                            <th style="width: 400px;">CHI TIẾT</th>
+                            <th>NGƯỜI CHI</th>
+                            <th>NGƯỜI DUYỆT</th>
                         </tr>
                         <tr>
                             <td class="text-center"></td>
@@ -102,8 +98,9 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                     @endfor
                                 </select>
                             </td>
-                            <td></td>
-                            <td></td>
+                            <td>
+                                <b class="qc-color-red">{!! $hFunction->currencyFormat($totalMoneyPayActivity)  !!}</b>
+                            </td>
                             <td></td>
                             <td style="padding: 0 !important;">
                                 <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
@@ -118,9 +115,6 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                     @endif
                                 </select>
                             </td>
-                            <td></td>
-
-                            <td class="text-center"></td>
                             <td style="padding: 0 !important;">
                                 <select class="cbConfirmStatusFilter form-control" name="cbConfirmStatusFilter"
                                         data-href="{!! $hrefIndex !!}">
@@ -134,9 +128,6 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                     </option>
                                 </select>
                             </td>
-                            <td class="text-right">
-                                <b class="qc-color-red">{!! $hFunction->currencyFormat($totalMoneyPayActivity)  !!}</b>
-                            </td>
                         </tr>
                         @if($hFunction->checkCount($dataPayActivityDetail))
                             <?php $n_o = 0; ?>
@@ -147,15 +138,19 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 $payDate = $payActivityDetail->payDate();
                                 $payImage = $payActivityDetail->payImage();
                                 $confirmStatus = $payActivityDetail->checkConfirm();
+                                $confirmNote = $payActivityDetail->confirmNote();
                                 $payCompanyId = $payActivityDetail->companyId();
+
                                 # thong tin nhan vien
                                 $dataStaffPay = $payActivityDetail->staff;
                                 # anh dai dien
                                 $image = $dataStaffPay->image();
-                                if ($hFunction->checkEmpty($image)) {
-                                    $src = $dataStaffPay->pathDefaultImage();
+                                $src = $dataStaffPay->pathAvatar($image);
+                                # trang thai xac nhan
+                                if ($confirmStatus) {
+                                    $dataConfirmStaff = $payActivityDetail->confirmStaff;
                                 } else {
-                                    $src = $dataStaffPay->pathFullImage($image);
+                                    $dataConfirmStaff = null;
                                 }
                                 ?>
                                 <tr class="qc_ad3d_list_object qc-ad3d-list-object @if($n_o%2) info @endif"
@@ -164,12 +159,41 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         {!! $n_o = $n_o+1 !!}
                                     </td>
                                     <td>
-                                        {!! date('d/m/Y',strtotime($payDate))  !!}
+                                        <b>{!! date('d/m/Y',strtotime($payDate))  !!}</b>
+                                        @if(!$confirmStatus)
+                                            @if($payCompanyId == $companyLoginId)
+                                                <br/>
+                                                <a class="qc_confirm_get qc-font-size-14 qc-link-green-bold"
+                                                   data-href="{!! route('qc.ad3d.finance.pay_activity.confirm.get', $payId) !!}">
+                                                    DUYỆT
+                                                </a>
+                                            @endif
+                                        @else
+                                            @if($payActivityDetail->checkInvalid())
+                                                <br/>
+                                                <em style="color: blue;">- Được duyệt</em>
+                                            @else
+                                                <br/>
+                                                <em style="color: brown;">- Không duyệt</em>
+                                            @endif
+                                        @endif
+                                        @if(!$hFunction->checkEmpty($confirmNote))
+                                            <br/>
+                                            <em class="qc-color-grey">- {!! $confirmNote  !!}</em>
+                                        @endif
                                     </td>
                                     <td>
-                                        {!! $payActivityDetail->payActivityList->name()  !!}
+                                        <b style="color: red;">{!! $hFunction->currencyFormat($money)  !!}</b>
+                                        <br/>
+                                        <em style="color: grey;">
+                                           - {!! $payActivityDetail->payActivityList->name()  !!}
+                                        </em>
                                     </td>
                                     <td>
+                                        <b>
+                                            {!! $payActivityDetail->payActivityList->typeLabel() !!}
+                                        </b>
+                                        <br/>
                                         @if(!empty($payImage))
                                             <img class="qc-link" onclick="qc_main.rotateImage(this);"
                                                  style="width: 150px;"
@@ -177,19 +201,16 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                             <br/>
                                         @endif
                                         @if(!empty($payActivityDetail->note()))
-                                            {!! $payActivityDetail->note()  !!}
+                                            <em style="color: grey;">{!! $payActivityDetail->note()  !!}</em>
                                         @else
                                             <em class="qc-color-grey">---</em>
                                         @endif
                                     </td>
                                     <td style="color: grey;">
-                                        {!! $payActivityDetail->payActivityList->typeLabel() !!}
-                                    </td>
-                                    <td style="color: grey;">
                                         <div class="media">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $src !!}">
                                             </a>
 
@@ -199,50 +220,32 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         </div>
                                     </td>
                                     <td>
-                                        @if($confirmStatus)
-                                            {!! $payActivityDetail->confirmStaff->fullName()  !!}
-                                        @else
-                                            <em>---</em>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if(!empty($payActivityDetail->confirmNote()))
-                                            {!! $payActivityDetail->confirmNote()  !!}
-                                        @else
-                                            <em class="qc-color-grey">---</em>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if(!$confirmStatus)
-                                            @if($payCompanyId == $companyLoginId)
-                                                <a class="qc_confirm_get qc-link-green-bold"
-                                                   data-href="{!! route('qc.ad3d.finance.pay_activity.confirm.get', $payId) !!}">Duyệt</a>
-                                            @else
-                                                <em class="qc-color-grey">Chỉ được duyệt của cty mình</em>
-                                            @endif
-                                        @else
-                                            @if($payActivityDetail->checkInvalid())
-                                                <em class="qc-color-grey">Đã được duyệt</em>
-                                            @else
-                                                <em class="qc-color-grey">Không được duyệt</em>
-                                            @endif
+                                        @if($hFunction->checkCount($dataConfirmStaff))
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object"
+                                                         style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                         src="{!! $dataConfirmStaff->pathAvatar($dataConfirmStaff->image()) !!}">
+                                                </a>
 
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">{!! $dataConfirmStaff->fullName() !!}</h5>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <em>Chưa xác nhận</em>
                                         @endif
                                     </td>
-                                    <td class="text-right" style="color: blue;">
-                                        {!! $hFunction->currencyFormat($money)  !!}
-                                    </td>
-
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="10">
+                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="6">
                                     {!! $hFunction->page($dataPayActivityDetail) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="10">
+                                <td class="text-center" colspan="6">
                                     <em class="qc-color-red">Không có thông chi</em>
                                 </td>
                             </tr>

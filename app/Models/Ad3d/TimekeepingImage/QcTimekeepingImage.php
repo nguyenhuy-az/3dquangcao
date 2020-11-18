@@ -110,6 +110,24 @@ class QcTimekeepingImage extends Model
         return QcTimekeepingImage::where('timekeeping_id', $timekeepingId)->get();
     }
 
+    // lay thong tin hình anh bao cao cua 1 cham cong  cua buoi sang
+    public function infoOfTimekeepingInMorning($timekeepingId)
+    {
+        return QcTimekeepingImage::where('timekeeping_id', $timekeepingId)->where('reportPeriod', 1)->get();
+    }
+
+    // lay thong tin hình anh bao cao cua 1 cham cong  cua buoi sang
+    public function infoOfTimekeepingInAfternoon($timekeepingId)
+    {
+        return QcTimekeepingImage::where('timekeeping_id', $timekeepingId)->where('reportPeriod', 2)->get();
+    }
+
+    // lay thong tin hình anh bao cao cua 1 cham cong  cua buoi sang
+    public function infoOfTimekeepingInEvening($timekeepingId)
+    {
+        return QcTimekeepingImage::where('timekeeping_id', $timekeepingId)->where('reportPeriod', 3)->get();
+    }
+
     #============ =========== ============ GET INFO ============= =========== ==========
     public function getInfo($imageId = '', $field = '')
     {

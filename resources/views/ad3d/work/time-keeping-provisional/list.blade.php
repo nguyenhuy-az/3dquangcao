@@ -54,26 +54,31 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                  data-href-cancel="{!! route('qc.ad3d.work.time-keeping-provisional.cancel.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
+                        <tr>
+                            <td colspan="7" style="background-color: red;">
+                                <span style="color: white;">CHỈ DUYỆT CHẤM CÔNG TRONG THÁNG HIỆN TẠI</span>
+                            </td>
+                        </tr>
                         <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width:20px;">STT</th>
-                            <th>Nhân viên</th>
-                            <th class="text-center">Giờ chấm - Giờ vào - Giờ ra</th>
+                            <th>NHÂN VIÊN</th>
+                            <th class="text-center">GIỜ CHẤM - GIỜ VÀO - GIỜ RA</th>
                             <th>
-                                Báo cáo buổi Sáng
+                                BÁO CÁO BUỔI SÁNG
                                 <br/>
                                 <em style="color: white;">(Trước 13h30)</em>
                             </th>
                             <th>
-                                Báo cáo buổi Chiều
+                                BÁO CÁO BUỔI CHIỀU
                                 <br/>
                                 <em style="color: white;">(Từ 13h30 -> Trước 18h)</em>
                             </th>
                             <th>
-                                Báo cáo tăng ca
+                                BÁO CÁO TĂNG CA
                                 <br/>
                                 <em style="color: white;">(Sau 18h)</em>
                             </th>
-                            <th>Ghi chú</th>
+                            <th>GHI CHÚ</th>
                         </tr>
                         @if($hFunction->checkCount($dataTimekeepingProvisional ))
                             <?php

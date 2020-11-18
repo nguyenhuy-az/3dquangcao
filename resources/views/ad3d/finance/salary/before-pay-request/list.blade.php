@@ -16,7 +16,7 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dang nhap
-$totalNewSalaryBeforePayRequest = $modelStaff->totalNewSalaryBeforePayRequest();
+$totalNewSalaryBeforePayRequest = 0;// $modelStaff->totalNewSalaryBeforePayRequest();
 ?>
 @extends('ad3d.finance.salary.before-pay-request.index')
 @section('qc_ad3d_index_content')

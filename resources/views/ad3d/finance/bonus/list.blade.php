@@ -53,27 +53,13 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Tên</th>
-                            <th style="width: 150px;">Ngày</th>
-                            <th>Nguyên nhân</th>
-                            <th>Ghi chú</th>
-                            <th class="text-center">Áp dụng</th>
-                            <th class="text-right">Thành tiền</th>
+                            <th style="width: 150px;">NGÀY</th>
+                            <th>NHÂN VIÊN</th>
+                            <th>SỐ TIỀN - LÝ DO</th>
                         </tr>
                         <tr>
                             <td></td>
-                            <td class="text-center" style="padding: 0px;">
-                                <div class="input-group">
-                                    <input type="text" class="textFilterName form-control" name="textFilterName"
-                                           placeholder="Tìm theo tên" value="{!! $nameFiler !!}">
-                                      <span class="input-group-btn">
-                                            <button class="btFilterName btn btn-default" type="button"
-                                                    data-href="{!! $hrefIndex !!}">
-                                                <i class="glyphicon glyphicon-search"></i>
-                                            </button>
-                                      </span>
-                                </div>
-                            </td>
+
                             <td style="padding:0 ;">
                                 <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
                                         style="padding: 0; height: 34px;" data-href="{!! $hrefIndex !!}">
@@ -112,10 +98,18 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                 </select>
                             </td>
                             <td class="text-center" style="padding: 0px;">
+                                <div class="input-group">
+                                    <input type="text" class="textFilterName form-control" name="textFilterName"
+                                           placeholder="Tìm theo tên" value="{!! $nameFiler !!}">
+                                      <span class="input-group-btn">
+                                            <button class="btFilterName btn btn-default" type="button"
+                                                    data-href="{!! $hrefIndex !!}">
+                                                <i class="glyphicon glyphicon-search"></i>
+                                            </button>
+                                      </span>
+                                </div>
                             </td>
-                            <td class="text-right"></td>
-                            <td class="text-center"></td>
-                            <td class="text-right">
+                            <td>
                                 <b style="color: red"> {!! $hFunction->currencyFormat($totalBonusMoney)  !!}</b>
                             </td>
                         </tr>
@@ -128,8 +122,13 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                             @foreach($dataBonus as $bonus)
                                 <?php
                                 $bonusId = $bonus->bonusId();
+                                # thi cong - quan ly thi cong
                                 $orderAllocationId = $bonus->orderAllocationId();
+                                # kinh doanh quan ly don hang
                                 $orderConstructionId = $bonus->orderConstructionId();
+                                # thi cong san pham
+                                $workAllocationId = $bonus->workAllocationId();
+                                # thanh toan don hang
                                 $orderPayId = $bonus->orderPayId();
                                 $note = $bonus->note();
                                 $cancelStatus = $bonus->checkCancelStatus();
@@ -150,58 +149,78 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
-                                    <td style="padding: 0;">
-                                        <img style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;"
-                                             src="{!! $dataStaffBonus->pathAvatar($dataStaffBonus->image()) !!}">
-                                        {!! $dataStaffBonus->fullName() !!}
-
-                                    </td>
                                     <td>
-                                        {!! date('d/m/Y', strtotime($bonus->bonusDate())) !!}
-                                    </td>
-                                    <td>
-                                        {!! $bonus->note() !!}
-                                    </td>
-                                    <td>
-                                        @if(!$hFunction->checkEmpty($orderAllocationId))
-                                            <em>Đơn hàng:</em>
-                                            <b style="color: red;">{!! $bonus->orderAllocation->orders->name() !!}</b>
-                                        @endif
-                                        @if(!$hFunction->checkEmpty($orderConstructionId))
-                                            <em>Đơn hàng:</em>
-                                            <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
-                                        @endif
-                                        @if(!$hFunction->checkEmpty($orderPayId))
-                                            <em>Đơn hàng:</em>
-                                            <b style="color: red;">{!! $bonus->orderPay->order->name() !!}</b>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
+                                        <b>
+                                            {!! date('d/m/Y', strtotime($bonus->bonusDate())) !!}
+                                        </b>
                                         @if($cancelStatus)
+                                            <br/>
                                             <em style="color: grey;">Đã hủy</em>
                                         @else
                                             @if($bonus->checkEnableApply())
-                                                <em>Có hiệu lực</em>
+                                                <br/>
+                                                <em style="color: blue;">Có hiệu lực</em>
                                             @else
-                                                <span>Tạm thời</span>
+                                                <br/>
+                                                <em style="color: red;">Tạm thời</em>
                                             @endif
                                             {{--<br/>
                                             <a class="qc_cancel_act qc-link-red">Hủy</a>--}}
                                         @endif
                                     </td>
-                                    <td class="text-right" style="color: red;">
-                                        {!! $hFunction->currencyFormat($money) !!}
+                                    <td >
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $dataStaffBonus->pathAvatar($dataStaffBonus->image()) !!}">
+                                            </a>
+
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataStaffBonus->fullName() !!}</h5>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <b style="color: red;">
+                                            {!! $hFunction->currencyFormat($money) !!}
+                                        </b>
+                                        <br/>
+                                        <em style="color: grey;">- {!! $bonus->note() !!}</em>
+                                        @if(!$hFunction->checkEmpty($workAllocationId))
+                                            <br/>
+                                            <em style="color: grey;">- Sản phẩm:</em>
+                                            <b style="color: blue;">{!! $bonus->workAllocation->product->productType->name() !!}</b>
+                                            <br/>
+                                            <em style="color: grey;">- Đơn hàng:</em>
+                                            <b style="color: deeppink;">{!! $bonus->workAllocation->product->order->name() !!}</b>
+                                        @endif
+                                        @if(!$hFunction->checkEmpty($orderAllocationId))
+                                            <br/>
+                                            <em style="color: grey;">- Đơn hàng:</em>
+                                            <b style="color: blue;">{!! $bonus->orderAllocation->orders->name() !!}</b>
+                                        @endif
+                                        @if(!$hFunction->checkEmpty($orderConstructionId))
+                                            <br/>
+                                            <em style="color: grey;">- Đơn hàng:</em>
+                                            <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
+                                        @endif
+                                        @if(!$hFunction->checkEmpty($orderPayId))
+                                            <br/>
+                                            <em style="color: grey;">- Đơn hàng:</em>
+                                            <b style="color: blue;">{!! $bonus->orderPay->order->name() !!}</b>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="7">
+                                <td class="text-center" colspan="4">
                                     {!! $hFunction->page($dataBonus) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="7">
+                                <td class="text-center" colspan="4">
                                     <em class="qc-color-red">Không tìm thấy thông tin</em>
                                 </td>
                             </tr>

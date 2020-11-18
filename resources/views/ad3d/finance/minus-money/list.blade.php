@@ -16,7 +16,8 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-left: 0;padding-right: 0;">
+                <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                     style="padding-left: 0;padding-right: 0;">
 
                 </div>
             </div>
@@ -29,12 +30,13 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                         <tr>
                             <td colspan="4">
                                 <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
-                                    <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
+                                    <i class="qc-font-size-16 glyphicon glyphicon-refresh"></i>
                                 </a>
-                                <label class="qc-font-size-20">PHẠT</label>
+                                <label class="qc-font-size-16">PHẠT</label>
                             </td>
-                            <td colspan="3" style="padding: 0;">
-                                <select class="cbCompanyFilter form-control" name="cbCompanyFilter" style="height: 34px;"
+                            <td style="padding: 0;">
+                                <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
+                                        style="height: 34px;"
                                         data-href-filter="{!! $hrefIndex !!}">
                                     @if($hFunction->checkCount($dataCompany))
                                         @foreach($dataCompany as $company)
@@ -53,7 +55,8 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                 </select>
                             </td>
                             <td style="padding: 0;">
-                                <a class="qc-link-white-bold form-control btn btn-primary" href="{!! route('qc.ad3d.finance.minus_money.add.get', $companyFilterId) !!}">
+                                <a class="qc-link-white-bold form-control btn btn-primary"
+                                   href="{!! route('qc.ad3d.finance.minus_money.add.get', $companyFilterId) !!}">
                                     <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
                                     <span style="font-size: 16px;">PHẠT</span>
                                 </a>
@@ -61,16 +64,51 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                         </tr>
                         <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Nhân viên</th>
-                            <th style="width: 150px;">Ngày</th>
-                            <th>Nguyên nhân</th>
-                            <th>Ghi chú</th>
-                            <th>Phản hồi</th>
-                            <th class="text-center">Áp dụng</th>
-                            <th class="text-right">Thành tiền</th>
+                            <th style="width: 150px;">NGÀY</th>
+                            <th>NHÂN VIÊN</th>
+                            <th>SỐ TIỀN - GHI CHÚ</th>
+                            <th>PHẢN HỒI</th>
+                            <th>LÝ DO</th>
                         </tr>
                         <tr>
                             <td></td>
+                            <td style="padding:0 ;">
+                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
+                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($d =1;$d<= 31; $d++)
+                                        <option value="{!! $d !!}"
+                                                @if((int)$dayFilter == $d) selected="selected" @endif >
+                                            {!! $d !!}
+                                        </option>
+                                    @endfor
+                                </select>
+                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($m =1;$m<= 12; $m++)
+                                        <option value="{!! $m !!}"
+                                                @if((int)$monthFilter == $m) selected="selected" @endif>
+                                            {!! $m !!}
+                                        </option>
+                                    @endfor
+                                </select>
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
+                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($y =2017;$y<= 2050; $y++)
+                                        <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                            {!! $y !!}
+                                        </option>
+                                    @endfor
+                                </select>
+                            </td>
                             <td class="text-center" style="padding: 0px;">
                                 <div class="input-group">
                                     <input type="text" class="textFilterName form-control" name="textFilterName"
@@ -83,40 +121,10 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                       </span>
                                 </div>
                             </td>
-                            <td style="padding:0 ;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
-                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
-                                        Tất cả
-                                    </option>
-                                    @for($d =1;$d<= 31; $d++)
-                                        <option value="{!! $d !!}"
-                                                @if((int)$dayFilter == $d) selected="selected" @endif >
-                                            {!! $d !!}
-                                        </option>
-                                    @endfor
-                                </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
-                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
-                                        Tất cả
-                                    </option>
-                                    @for($m =1;$m<= 12; $m++)
-                                        <option value="{!! $m !!}"
-                                                @if((int)$monthFilter == $m) selected="selected" @endif>
-                                            {!! $m !!}
-                                        </option>
-                                    @endfor
-                                </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
-                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
-                                        Tất cả
-                                    </option>
-                                    @for($y =2017;$y<= 2050; $y++)
-                                        <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
-                                            {!! $y !!}
-                                        </option>
-                                    @endfor
-                                </select>
+                            <td>
+                                <b> {!! $hFunction->currencyFormat($totalMinusMoney)  !!}</b>
                             </td>
+                            <td style="color: red;"></td>
                             <td class="text-center" style="padding: 0px;">
                                 <select class="form-control cbPunishContentFilter" data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($punishContentFilterId == 0) selected="selected" @endif>
@@ -132,12 +140,6 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                     @endif
                                 </select>
                             </td>
-                            <td class="text-right"></td>
-                            <td></td>
-                            <td class="text-center"></td>
-                            <td style="color: red;">
-                                <b> {!! $hFunction->currencyFormat($totalMinusMoney)  !!}</b>
-                            </td>
                         </tr>
                         @if($hFunction->checkCount($dataMinusMoney))
                             <?php
@@ -149,8 +151,13 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                 <?php
                                 $minusId = $minusMoney->minusId();
                                 $reason = $minusMoney->reason();
+                                # ban giao thi cong don hang
                                 $orderAllocationId = $minusMoney->orderAllocationId();
+                                # quan ly thi cong - quan ly tong
                                 $orderConstructionId = $minusMoney->orderConstructionId();
+                                # thi cong san pham
+                                $workAllocationId = $minusMoney->workAllocationId();
+                                # kiem tra do nghe
                                 $companyStoreCheckReportId = $minusMoney->companyStoreCheckReportId();
                                 $cancelStatus = $minusMoney->checkCancelStatus();
                                 if ($cancelStatus) {
@@ -174,38 +181,62 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
+                                        <b>{!! date('d/m/Y', strtotime($minusMoney->dateMinus())) !!}</b>
+                                        <br/>
+                                        @if($cancelStatus)
+                                            <em style="color: grey;">Đã hủy</em>
+                                        @else
+                                            @if($minusMoney->checkEnableApply())
+                                                <em>Có hiệu lực</em>
+                                            @else
+                                                <em style="color: grey;">Tạm thời</em>
+                                            @endif
+                                            {{--chi hien khi khong co phan hoi--}}
+                                            @if(!$checkMinusMoneyLostToolStatus)
+                                                <br/>
+                                                <a class="qc_cancel_act qc-link-red">HỦY</a>
+                                            @endif
+                                        @endif
+                                    </td>
+                                    <td>
                                         <div class="media">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $dataStaffMinus->pathAvatar($dataStaffMinus->image()) !!}">
                                             </a>
+
                                             <div class="media-body">
                                                 <h5 class="media-heading">{!! $dataStaffMinus->fullName() !!}</h5>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        {!! date('d/m/Y', strtotime($minusMoney->dateMinus())) !!}
-                                    </td>
-                                    <td>
-                                        {!! $minusMoney->punishContent->name() !!}
-                                    </td>
-                                    <td>
-                                        {!! $reason !!}
+                                        <b style="color: red;">
+                                            {!! $hFunction->currencyFormat($money) !!}
+                                        </b>
+                                        @if(!$hFunction->checkEmpty($reason))
+                                            <br/>
+                                            <b>{!! $reason !!}</b>
+                                        @endif
                                         @if(!$hFunction->checkEmpty($orderAllocationId))
                                             <br/>
-                                            <em>Đơn hàng:</em>
-                                            <b style="color: red;">
+                                            <em>- Đơn hàng:</em>
+                                            <a class="qc-link" style="color: blue !important;">
                                                 {!! $minusMoney->orderAllocation->orders->name() !!}
-                                            </b>
+                                            </a>
                                         @endif
-                                        @if(!$hFunction->checkEmpty($orderConstructionId))
+                                        @if(!$hFunction->checkEmpty($workAllocationId))
                                             <br/>
-                                            <em>Đơn hàng:</em>
-                                            <b style="color: red;">
-                                                {!! $minusMoney->orderConstruction->name() !!}
-                                            </b>
+                                            <em>- Sản phẩm:</em>
+                                            <a style="color: blue;">
+                                                {!! $minusMoney->workAllocation->product->productType->name() !!}
+                                            </a>
+                                            <br/>
+                                            <em>- Đơn hàng:</em>
+                                            <a style="color: blue;">
+                                                {!! $minusMoney->workAllocation->product->order->name() !!}
+                                            </a>
                                         @endif
                                         @if(!$hFunction->checkEmpty($companyStoreCheckReportId))
                                             <br/>
@@ -247,35 +278,19 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                             @endif
                                         @endif
                                     </td>
-                                    <td class="text-center">
-                                        @if($cancelStatus)
-                                            <em style="color: grey;">Đã hủy</em>
-                                        @else
-                                            @if($minusMoney->checkEnableApply())
-                                                <em>Có hiệu lực</em>
-                                            @else
-                                                <span>Tạm thời</span>
-                                            @endif
-                                            {{--chi hien khi khong co phan hoi--}}
-                                            @if(!$checkMinusMoneyLostToolStatus)
-                                                <br/>
-                                                <a class="qc_cancel_act qc-link-red">HỦY</a>
-                                            @endif
-                                        @endif
-                                    </td>
-                                    <td class="text-right" style="color: blue;">
-                                        {!! $hFunction->currencyFormat($money) !!}
+                                    <td>
+                                        {!! $minusMoney->punishContent->name() !!}
                                     </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="8">
+                                <td class="text-center" colspan="6">
                                     {!! $hFunction->page($dataMinusMoney) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="8">
+                                <td class="text-center" colspan="6">
                                     <em class="qc-color-red">Không tìm thấy thông tin</em>
                                 </td>
                             </tr>

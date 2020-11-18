@@ -25,7 +25,7 @@ $currentMonth = $hFunction->currentMonth();
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <label class="qc-font-size-20">THÔNG TIN NHẬP</label>
+                    <label class="qc-font-size-20">HÓA ĐƠN MUA</label>
                 </div>
             </div>
         </div>
@@ -35,12 +35,12 @@ $currentMonth = $hFunction->currentMonth();
                     <tr style="background-color: black; color: yellow;">
                         <th class="text-center" style="width:20px;">STT</th>
                         <th>HÓA ĐƠN</th>
-                        <th style="width: 300px;"> Dụng cụ / Vật tư</th>
-                        <th>Nhân viên</th>
-                        <th>Chi chú duyệt</th>
-                        <th>Thanh toán</th>
-                        <th class="text-center">Duyệt</th>
-                        <th class="text-right">Thành tiền</th>
+                        <th style="width: 300px;">
+                            SỐ TIỀN
+                            <br/>
+                            <b style="color: white;">{!! $hFunction->currencyFormat($importTotalMoney) !!}</b>
+                        </th>
+                        <th>NGƯỜI MUA</th>
                     </tr>
                     <tr>
                         <td class="text-center qc-color-red"></td>
@@ -65,21 +65,6 @@ $currentMonth = $hFunction->currentMonth();
                                 @endfor
                             </select>
                         </td>
-                        <td></td>
-                        <td class="text-center" style="padding: 0px; margin: 0;">
-                            <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
-                                <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
-                                    Tất cả
-                                </option>
-                                @if($hFunction->checkCount($dataListStaff))
-                                    @foreach($dataListStaff as $staff)
-                                        <option @if($staff->staffId() == $staffFilterId) selected="selected"
-                                                @endif  value="{!! $staff->staffId() !!}">{!! $staff->fullName() !!}</option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </td>
-                        <td></td>
                         <td class="text-center" style="padding: 0px; margin: 0;">
                             <select class="cbPayStatusFilter form-control" data-href="{!! $hrefIndex !!}">
                                 <option value="4" @if($payStatusFilter == 4) selected="selected" @endif>
@@ -99,9 +84,18 @@ $currentMonth = $hFunction->currentMonth();
                                 </option>
                             </select>
                         </td>
-                        <td></td>
-                        <td class="text-right">
-                            <b style="color: green;">{!! $hFunction->currencyFormat($importTotalMoney) !!}</b>
+                        <td class="text-center" style="padding: 0px; margin: 0;">
+                            <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
+                                <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                    Tất cả
+                                </option>
+                                @if($hFunction->checkCount($dataListStaff))
+                                    @foreach($dataListStaff as $staff)
+                                        <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                                @endif  value="{!! $staff->staffId() !!}">{!! $staff->fullName() !!}</option>
+                                    @endforeach
+                                @endif
+                            </select>
                         </td>
                     </tr>
                     @if($hFunction->checkCount($dataImport))
@@ -117,6 +111,7 @@ $currentMonth = $hFunction->currentMonth();
                             $importDate = $import->importDate();
                             $companyImportId = $import->companyId();
                             $confirmStatus = $import->checkConfirm();
+                            $confirmNote = $import->confirmNote();
                             $dataImportPay = $import->importPayInfo();
                             # thong tin chi tiet nhap
                             $dataImportDetail = $import->infoDetailOfImport();
@@ -147,33 +142,72 @@ $currentMonth = $hFunction->currentMonth();
                                             </div>
                                         </div>
                                         <div class="media-body">
+                                            <b style="color: blue;">{!! date('d-m-Y', strtotime($importDate)) !!}</b>
+                                            <br/>
+                                            @if(!$confirmStatus)
+                                                <a class="qc_confirm_get qc-font-size-14 qc-link-red-bold"
+                                                   data-href="{!! route('qc.work.pay.import.confirm.get',$importId) !!}">
+                                                    DUYỆT
+                                                </a>
+                                            @else
+                                                <i class="glyphicon glyphicon-ok" style="color: green;"></i>
+                                                <em class="qc-color-grey">Đã Duyệt</em>
+                                            @endif
+                                            <br/>
+                                            <em style="color: grey;">- Vật tư:</em>
+                                            @if($hFunction->checkCount($dataImportDetail))
+                                                @foreach($dataImportDetail as $importDetail)
+                                                    <?php
+                                                    $toolId = $importDetail->toolId();
+                                                    $suppliesId = $importDetail->suppliesId();
+                                                    $newName = $importDetail->newName();
+                                                    ?>
+                                                    @if(!$hFunction->checkEmpty($toolId))
+                                                        <span>{!! $importDetail->tool->name() !!} ,</span>
+                                                    @endif
+                                                    @if(!$hFunction->checkEmpty($suppliesId))
+                                                        <span>{!! $importDetail->supplies->name() !!} ,</span>
+                                                    @endif
+                                                    <span>{!! $newName !!},</span>
+                                                @endforeach
+                                            @endif
+                                            <br/>
                                             <a class="qc-link-green"
                                                href="{!! route('qc.work.pay.import.get.view.get',$importId) !!}">
-                                                {!! date('d-m-Y', strtotime($importDate)) !!}
-                                                <br/>
-                                                <i class="glyphicon glyphicon-eye-open"></i>
+                                                <i class="glyphicon glyphicon-minus"></i>
+                                                Xem chi tiết
                                             </a>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    @if($hFunction->checkCount($dataImportDetail))
-                                        @foreach($dataImportDetail as $importDetail)
-                                            <?php
-                                            $toolId = $importDetail->toolId();
-                                            $suppliesId = $importDetail->suppliesId();
-                                            $newName = $importDetail->newName();
-                                            ?>
-                                            @if(!$hFunction->checkEmpty($toolId))
-                                                <span>{!! $importDetail->tool->name() !!} ,</span>
+                                    <b style="color: red;">{!! $hFunction->currencyFormat($import->totalMoneyOfImport()) !!}</b>
+                                    <br/>
+                                    @if($import->checkExactlyStatus())
+                                        @if($import->checkPay())
+                                            @if($import->checkPayConfirmOfImport($importId))
+                                                <i class="glyphicon glyphicon-ok" style="color: green;" title="Đã xác nhận"></i>
+                                                <em>Thanh toán đã xác nhận</em>
+                                            @else
+                                                <i class="glyphicon glyphicon-ok" style="color: blue;" title="Chưa xác nhận"></i>
+                                                <em>Thanh toán chưa xác nhận</em>
                                             @endif
-                                            @if(!$hFunction->checkEmpty($suppliesId))
-                                                <span>{!! $importDetail->supplies->name() !!} ,</span>
+                                        @else
+                                            <em class="qc-color-grey">Chưa thanh toán</em>
+                                            @if($import->checkConfirm())
+                                                <br/>
+                                                <a class="qc-link-green qc_import_pay_get"
+                                                   data-href="{!! route('qc.work.pay.import.pay.get', $importId) !!}">
+                                                    THANH TOÁN
+                                                </a>
                                             @endif
-                                            <span>{!! $newName !!},</span>
-                                        @endforeach
+                                        @endif
                                     @else
-                                        <em style="color: grey;">Không có dữ liệu</em>
+                                        <em class="qc-color-red">Nhập không đúng</em>
+                                    @endif
+                                    @if(!$hFunction->checkEmpty($confirmNote))
+                                        <br/>
+                                        <em style="color: grey;">- {!! $confirmNote !!}</em>
                                     @endif
                                 </td>
                                 <td>
@@ -189,63 +223,17 @@ $currentMonth = $hFunction->currentMonth();
                                         </div>
                                     </div>
                                 </td>
-                                <td>
-                                    <em class="qc-color-grey">{!! $import->confirmNote() !!}</em>
-                                </td>
-                                <td class="text-center">
-                                    @if($import->checkExactlyStatus())
-                                        @if($import->checkPay())
-                                            <em>Đã thanh toán</em>
-                                            @if($import->checkPayConfirmOfImport($importId))
-                                                <br/>
-                                                <i class="glyphicon glyphicon-ok" style="color: green;"
-                                                   title="Đã xác nhận"></i>
-                                            @else
-                                                <br/>
-                                                <i class="glyphicon glyphicon-ok" style="color: red;"
-                                                   title="Chưa xác nhận"></i>
-                                            @endif
-                                        @else
-                                            <em class="qc-color-grey">Chưa thanh toán</em>
-                                            @if($import->checkConfirm())
-                                                <br/>
-                                                <a class="qc-link-green qc_import_pay_get"
-                                                   data-href="{!! route('qc.work.pay.import.pay.get', $importId) !!}">
-                                                    Thanh toán
-                                                </a>
-                                            @endif
-
-                                        @endif
-                                    @else
-                                        <em class="qc-color-red">Nhập không đúng</em>
-                                    @endif
-                                </td>
-                                <td class="text-center">
-                                    @if(!$confirmStatus)
-                                        <a class="qc_confirm_get qc-link-green-bold"
-                                           data-href="{!! route('qc.work.pay.import.confirm.get',$importId) !!}">
-                                            Duyệt
-                                        </a>
-                                    @else
-                                        <em class="qc-color-grey">Đã Duyệt</em>
-                                        <br/>
-                                        <i class="glyphicon glyphicon-ok" style="color: green;"></i>
-                                    @endif
-                                </td>
-                                <td class="text-right" style="color: red;">
-                                    <b>{!! $hFunction->currencyFormat($import->totalMoneyOfImport()) !!}</b>
-                                </td>
                             </tr>
                         @endforeach
                     @else
                         <tr>
-                            <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="8">
+                            <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="4">
                                 <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                             </td>
                         </tr>
                     @endif
                     <tr>
-                        <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="8">
+                        <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="4">
                             <div class="row">
                                 <div class="text-center qc-padding-top-10 qc-padding-bot-10 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     {!! $hFunction->page($dataImport) !!}

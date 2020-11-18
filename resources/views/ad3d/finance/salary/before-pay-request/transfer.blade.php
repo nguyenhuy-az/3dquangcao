@@ -18,7 +18,7 @@ $dateRequest = $dataSalaryBeforePayRequest->dateRequest();
 @extends('ad3d.components.container.container-4')
 @section('qc_ad3d_container_content')
     <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-        <h3>XÁC CHUYỂN TIỀN </h3>
+        <h3>CHUYỂN TIỀN </h3>
     </div>
     <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <form class="qc_ad3d_salary_frm_transfer" role="form" method="post"

@@ -24,21 +24,18 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                         <table class="table table-hover table-bordered">
                             <tr>
                                 <td colspan="2" style="padding: 0;">
-                                    <a class="qc-link-red-bold btn btn-default form-control"
+                                    <a class="qc-link-white-bold btn btn-primary form-control"
                                        href="{!! route('qc.work.pay.salary_before_pay.add.get') !!}">
                                         + ỨNG LƯƠNG
                                     </a>
                                 </td>
-                                <td colspan="4"></td>
+                                <td colspan="2"></td>
                             </tr>
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
-                                <th style="width: 170px;">Ngày</th>
-                                <th>Tên</th>
-                                <th>Ghi chú</th>
-                                <th class="text-center">Xác nhận</th>
-                                <th class="text-right">Tiền ứng</th>
-
+                                <th style="width: 170px;">NGÀY</th>
+                                <th>TIỀN ỨNG</th>
+                                <th>NGƯỜI ỨNG</th>
                             </tr>
                             <tr>
                                 <td></td>
@@ -78,8 +75,6 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                                 </td>
                                 <td></td>
                                 <td></td>
-                                <td></td>
-                                <td></td>
                             </tr>
                             @if($hFunction->checkCount($dataSalaryBeforePay))
                                 <?php
@@ -100,7 +95,29 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                                             {!! $n_o += 1 !!}
                                         </td>
                                         <td>
-                                            {!! date('d/m/Y', strtotime($salaryBeforePay->datePay())) !!}
+                                            <b style="color: blue;">{!! date('d/m/Y', strtotime($salaryBeforePay->datePay())) !!}</b>
+                                            <br/>
+                                            @if(!$salaryBeforePay->checkConfirm())
+                                                <em style="color: grey;">- Chưa xác nhận</em>
+                                                <span>|</span>
+                                                <a class="qc_edit qc-link-green"
+                                                   data-href="{!! route('qc.work.pay.salary_before_pay.edit.get',$payId) !!}">
+                                                    <i class="glyphicon glyphicon-pencil" title="Sửa thông tin ứng"></i>
+                                                </a>
+                                                &nbsp;<span>|</span>&nbsp;
+                                                <a class="qc_delete qc-link-red"
+                                                   data-href="{!! route('qc.work.pay.salary_before_pay.delete',$payId) !!}">
+                                                    <i class="glyphicon glyphicon-trash" title="Hủy ứng lương"></i>
+                                                </a>
+                                            @else
+                                                <em class="qc-color-grey">- Đã xác nhận</em>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <b style="color: red;">{!! $hFunction->currencyFormat($money) !!}</b>
+                                            <p style="color: grey;">
+                                                {!! $salaryBeforePay->description() !!}
+                                            </p>
                                         </td>
                                         <td>
                                             <div class="media">
@@ -115,41 +132,18 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>
-                                            {!! $salaryBeforePay->description() !!}
-                                        </td>
-                                        <td class="text-center">
-                                            @if(!$salaryBeforePay->checkConfirm())
-                                                <em style="color: brown;">Chưa xác nhận</em>
-                                                <span>|</span>
-                                                <a class="qc_edit qc-link-green"
-                                                   data-href="{!! route('qc.work.pay.salary_before_pay.edit.get',$payId) !!}">
-                                                    <i class="glyphicon glyphicon-pencil" title="Sửa thông tin ứng"></i>
-                                                </a>
-                                                &nbsp;<span>|</span>&nbsp;
-                                                <a class="qc_delete qc-link-red"
-                                                   data-href="{!! route('qc.work.pay.salary_before_pay.delete',$payId) !!}">
-                                                    <i class="glyphicon glyphicon-trash" title="Hủy ứng lương"></i>
-                                                </a>
-                                            @else
-                                                <em class="qc-color-grey">Đã xác nhận</em>
-                                            @endif
-                                        </td>
-                                        <td class="text-right">
-                                            {!! $hFunction->currencyFormat($money) !!}
-                                        </td>
-
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td colspan="5" style="background-color: whitesmoke;"></td>
-                                    <td class="text-right">
-                                        <em class="qc-color-red">{!! $hFunction->currencyFormat($totalMoney) !!}</em>
+                                    <td colspan="2" style="background-color: whitesmoke;"></td>
+                                    <td>
+                                        <b class="qc-color-red" style="font-size: 1.5em;">{!! $hFunction->currencyFormat($totalMoney) !!}</b>
                                     </td>
+                                    <td></td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-left qc-padding-top-20 qc-padding-bot-20" colspan="6">
+                                    <td class="text-left qc-padding-top-20 qc-padding-bot-20" colspan="4">
                                         <em class="qc-color-red">Không tìm thấy thông tin</em>
                                     </td>
                                 </tr>

@@ -388,21 +388,24 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                     Đã thanh toán
                                                 </em>
                                             @else
-                                                <a class="qc-link-red"
+                                                <em style="color: red;">
+                                                    Chưa thanh toán xong
+                                                </em>
+                                                {{--<a class="qc-link-red"
                                                    href="{!! route('qc.ad3d.order.order.payment.get',$orderId) !!}">
                                                     THANH TOÁN
                                                     <br/>
                                                     <img alt="icon"
                                                          style="margin-bottom: 3px; border: 1px solid #d7d7d7; width: 30px; height: 30px;"
                                                          src="{!! asset('public/images/icons/paymentIcon.jpg') !!}"/>
-                                                </a>
+                                                </a>--}}
                                             @endif
-                                            @if(!$order->checkConfirmStatus())
+                                            {{--@if(!$order->checkConfirmStatus())
                                                 <span>|</span>
                                                 <a class="qc_confirm qc-link-green">
                                                     Xác nhận
                                                 </a>
-                                            @endif
+                                            @endif--}}
                                         @else
                                             <em style="color: brown;">
                                                 Đã hủy

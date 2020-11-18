@@ -681,6 +681,14 @@ class Hfunction
         return date('Y-m-d H:i:j');
     }
 
+    # thang hien tai cua nam
+    public function currentMonthYear($timeZoneDefault = 'HCM')
+    {
+        $this->defaultTimezone($timeZoneDefault);
+        return date('Y-m');
+    }
+
+    # ngay thang hien tai
     public function currentDate($timeZoneDefault = 'HCM')
     {
         $this->defaultTimezone($timeZoneDefault);

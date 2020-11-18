@@ -35,19 +35,15 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
-                                <th style="width: 150px;">Ngày</th>
-                                <th>Danh mục chi</th>
-                                <th style="width: 400px !important;">Ghi chú</th>
-                                <th class="text-right"></th>
-                                <th>Ghi chú duyệt</th>
-                                <th class="text-right">Số tiền</th>
-                                <th class="text-right">Được duyệt</th>
-                                <th class="text-right">Không được duyệt</th>
+                                <th style="width: 150px;">NGÀY</th>
+                                <th>SỐ TIỀN - LÝ DO</th>
+                                <th style="width: 400px !important;">GHI CHÚ</th>
                             </tr>
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px; padding: 0;"
+                                    <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                            style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="0" @if($dayFilter == null) selected="selected" @endif>
                                             Tất cả
@@ -58,7 +54,8 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3" style="height: 34px; padding: 0;"
+                                    <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                            style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
                                         @for($m = 1; $m <=12; $m++)
                                             <option @if($monthFilter == $m) selected="selected" @endif>
@@ -66,7 +63,8 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px;padding: 0;"
+                                    <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                            style="height: 34px;padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
                                         @for($y = 2017; $y <=2050; $y++)
                                             <option @if($yearFilter == $y) selected="selected" @endif>
@@ -75,8 +73,6 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                         @endfor
                                     </select>
                                 </td>
-                                <td></td>
-                                <td class="text-center"></td>
                                 <td class="text-right" style="padding: 0;">
                                     <select class="cbConfirmStatusFilter form-control"
                                             data-href="{!! route('qc.work.pay.pay_activity.get') !!}">
@@ -91,9 +87,6 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                         </option>
                                     </select>
                                 </td>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
                                 <td class="text-right"></td>
 
                             </tr>
@@ -110,6 +103,8 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                     $money = $payActivityDetail->money();
                                     $payDate = $payActivityDetail->payDate();
                                     $payNote = $payActivityDetail->note();
+                                    $payImage = $payActivityDetail->payImage();
+                                    $confirmNote = $payActivityDetail->confirmNote();
                                     $sumPay = $sumPay + $money;
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
@@ -117,10 +112,27 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                             {!! $n_o = $n_o+ 1 !!}
                                         </td>
                                         <td>
-                                            {!! date('d/m/Y',strtotime($payDate))  !!}
+                                            <b style="color: blue;">{!! date('d/m/Y',strtotime($payDate))  !!}</b>
+                                            <br/>
+                                            @if(!$payActivityDetail->checkConfirm())
+                                                <em class="qc-color-grey">Chờ duyệt</em>
+                                                <span>|</span>
+                                                <a class="qc_delete qc-font-size-14 qc-link-red"
+                                                   data-href="{!! route('qc.work.pay.pay_activity.delete.get',$payId) !!}">
+                                                    HỦY
+                                                </a>
+                                            @else
+                                                <em class="qc-color-grey">- Đã duyệt</em>
+                                                @if(!$hFunction->checkEmpty($confirmNote))
+                                                    <br/>
+                                                    <em class="qc-color-grey">- {!! $payActivityDetail->confirmNote()  !!}</em>
+                                                @endif
+                                            @endif
                                         </td>
                                         <td>
-                                            {!! $payActivityDetail->payActivityList->name()  !!}
+                                            <b style="color: red;">{!! $hFunction->currencyFormat($money)  !!}</b>
+                                            <br/>
+                                            <em style="color: grey;">{!! $payActivityDetail->payActivityList->name()  !!}</em>
                                         </td>
                                         <td>
                                             @if(!empty($payNote))
@@ -128,69 +140,26 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                             @else
                                                 <em class="qc-color-grey">---</em>
                                             @endif
-                                        </td>
-                                        <td>
-                                            @if(!$payActivityDetail->checkConfirm())
-                                                <em class="qc-color-grey">Chờ duyệt</em>
-                                                <span>|</span>
-                                                <a class="qc_delete qc-link-red"
-                                                   data-href="{!! route('qc.work.pay.pay_activity.delete.get',$payId) !!}">
-                                                    Hủy
-                                                </a>
-                                            @else
-                                                <em class="qc-color-grey">Đã duyệt</em>
+                                            @if(!empty($payImage))
+                                                <br/>
+                                                <img class="qc-link" onclick="qc_main.rotateImage(this);"
+                                                     style="width: 150px;"
+                                                     src="{!! $payActivityDetail->pathSmallImage($payImage) !!}">
                                             @endif
                                         </td>
-                                        <td>
-                                            <em class="qc-color-grey">{!! $payActivityDetail->confirmNote()  !!}</em>
-                                        </td>
-                                        <td class="text-right">
-                                            {!! $hFunction->currencyFormat($money)  !!}
-                                        </td>
-
-                                        <td class="text-right">
-                                            @if($payActivityDetail->checkConfirm())
-                                                @if($payActivityDetail->checkInvalid())
-                                                    {!! $hFunction->currencyFormat($money)  !!}
-                                                    <?php $sumPayInvalid = $sumPayInvalid + $money;  ?>
-                                                @else
-                                                    0
-                                                @endif
-                                            @else
-                                                <em>0</em>
-                                            @endif
-                                        </td>
-                                        <td class="text-right">
-                                            @if($payActivityDetail->checkConfirm())
-                                                @if(!$payActivityDetail->checkInvalid())
-                                                    {!! $hFunction->currencyFormat($money)  !!}
-                                                    <?php $sumPayUnInvalid = $sumPayUnInvalid + $money;  ?>
-                                                @else
-                                                    0
-                                                @endif
-                                            @else
-                                                <em>0</em>
-                                            @endif
-                                        </td>
-
                                     </tr>
                                 @endforeach
                                 <tr>
                                     <td class="text-right qc-color-red"
-                                        style="background-color: whitesmoke;" colspan="6"></td>
-                                    <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($sumPay)  !!}
+                                        style="background-color: whitesmoke;" colspan="2"></td>
+                                    <td class="qc-color-red">
+                                        <b>{!! $hFunction->currencyFormat($sumPay)  !!}</b>
                                     </td>
-                                    <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($sumPayInvalid)  !!}
-                                    </td>
-                                    <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($sumPayUnInvalid)  !!}
-                                    </td>
+                                    <td></td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="9">
+                                    <td class="text-center" colspan="4">
                                         <em class="qc-color-red">Không có thông chi</em>
                                     </td>
                                 </tr>

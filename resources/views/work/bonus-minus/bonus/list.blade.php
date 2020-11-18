@@ -106,25 +106,25 @@ $hrefIndex = route('qc.work.bonus.get');
                                             <em style="color: grey;">- {!! $bonus->note() !!}</em>
                                             @if(!$hFunction->checkEmpty($workAllocationId))
                                                 <br/>
-                                                <em>- Sản phẩm:</em>
+                                                <em style="color: grey;">- Sản phẩm:</em>
                                                 <b style="color: blue;">{!! $bonus->workAllocation->product->productType->name() !!}</b>
                                                 <br/>
-                                                <em>- Đơn hàng:</em>
+                                                <em style="color: grey;">- Đơn hàng:</em>
                                                 <b style="color: deeppink;">{!! $bonus->workAllocation->product->order->name() !!}</b>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderAllocationId))
                                                 <br/>
-                                                <em>- Đơn hàng:</em>
+                                                <em style="color: grey;">- Đơn hàng:</em>
                                                 <b style="color: blue;">{!! $bonus->orderAllocation->orders->name() !!}</b>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderConstructionId))
                                                 <br/>
-                                                <em>- Đơn hàng:</em>
+                                                <em style="color: grey;">- Đơn hàng:</em>
                                                 <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderPayId))
                                                 <br/>
-                                                <em>- Đơn hàng:</em>
+                                                <em style="color: grey;">- Đơn hàng:</em>
                                                 <b style="color: blue;">{!! $bonus->orderPay->order->name() !!}</b>
                                             @endif
                                         </td>

@@ -8,7 +8,7 @@
 ?>
 @extends('ad3d.work.index')
 @section('titlePage')
-    Chấm công
+    Chấm công đã duyệt
 @endsection
 @section('qc_ad3d_work_body')
     <div class="qc_ad3d_index_content col-xs-12 col-md-12 col-md-12 col-lg-12">
@@ -17,6 +17,6 @@
 @endsection
 
 @section('qc_js_footer')
-    <script src="{{ url('public/ad3d/work/time-keeping/js/time-keeping.js')}}"></script>
+    <script src="{{ url('public/ad3d/work/time-keeping/js/index.js')}}"></script>
 @endsection
 

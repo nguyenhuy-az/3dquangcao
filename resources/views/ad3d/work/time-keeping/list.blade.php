@@ -49,22 +49,31 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="qc_ad3d_list_content row"
-                 data-href-view="{!! route('qc.ad3d.work.work.view.get') !!}"
-                 data-href-confirm="{!! route('qc.ad3d.work.time-keeping.confirm.get') !!}"
-                 data-href-del="{!! route('qc.ad3d.work.time-keeping.delete') !!}">
+            <div class="qc_ad3d_list_content row">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style=" background-color: black; color: yellow;">
-                            <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Nhân viên</th>
-                            <th class="text-center">Giờ vào</th>
-                            <th class="text-center">Giờ ra</th>
-                            <th>Làm trưa</th>
-                            <th class="text-center">Nghỉ có phép</th>
-                            <th class="text-center">Không phép</th>
-                            <th class="text-center">Ảnh BC</th>
-                            <th>Ghi chú</th>
+                            <th class="text-center" style="width:20px;">STT</th>
+                            <th>NHÂN VIÊN</th>
+                            <th class="text-center">GIỜ CHẤM - GIỜ VÀO - GIỜ RA</th>
+                            <th>NGHỈ CÓ PHÉP</th>
+                            <th>NGHỈ KHÔNG PHÉP</th>
+                            <th>
+                                BÁO CÁO BUỔI SÁNG
+                                <br/>
+                                <em style="color: white;">(Trước 13h30)</em>
+                            </th>
+                            <th>
+                                BÁO CÁO BUỔI CHIỀU
+                                <br/>
+                                <em style="color: white;">(Từ 13h30 -> Trước 18h)</em>
+                            </th>
+                            <th>
+                                BÁO CÁO TĂNG CA
+                                <br/>
+                                <em style="color: white;">(Sau 18h)</em>
+                            </th>
+                            <th>GHI CHÚ</th>
                         </tr>
                         <tr>
                             <td class="text-center"></td>
@@ -146,6 +155,12 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                 $companyStaffWorkId = $dataWork->companyStaffWorkId();
                                 # hinh anh bao cao
                                 $dataTimekeepingImage = $timekeeping->imageOfTimekeeping($timekeepingId);
+                                #anh bao cao buoi sang
+                                $dataTimekeepingImageInMorning = $timekeeping->infoTimekeepingImageInMorning();
+                                #anh bao cao buoi chieu
+                                $dataTimekeepingImageInAfternoon = $timekeeping->infoTimekeepingImageInAfternoon();
+                                #anh bao cao tang ca
+                                $dataTimekeepingImageInEvening = $timekeeping->infoTimekeepingImageInEvening();
                                 if (!empty($companyStaffWorkId)) {
                                     $dataStaffTimekeeping = $dataWork->companyStaffWork->staff;
                                 } else {
@@ -174,42 +189,32 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        @if(!$timekeeping->checkOff())
-                                            @if($hFunction->checkDateIsSunday(date('Y-m-d', strtotime($timeBegin))))
-                                                <span>Chủ nhật - </span>
-                                            @endif
-                                            <span @if($timekeeping->checkWorkLate()) class="qc-color-red" @endif >
+                                        @if(!$hFunction->checkEmpty($timeBegin))
+                                            <span style="color: blue;">
                                                 {!! $hFunction->convertDateDMYFromDatetime($timeBegin) !!}
                                             </span>
-                                            <br/>
-                                            <b>{!! $hFunction->getTimeFromDate($timeBegin) !!}</b>
-                                        @else
-                                            <span>---</span>
+                                            <b>{!! date('H:i', strtotime($timeBegin)) !!}</b>
                                         @endif
-                                    </td>
-                                    <td class="text-center">
-                                        @if(!$timekeeping->checkOff())
-                                            @if($hFunction->checkEmpty($timeEnd))
-                                                Null
+                                        <br/>
+                                        @if($hFunction->checkEmpty($timeEnd))
+                                            @if($hFunction->checkEmpty($timeBegin))
+                                                <em style="color: red;">Nghỉ</em>
                                             @else
-                                                @if($timekeeping->checkAfternoonStatus())
-                                                    <em>Làm trưa - </em>
-                                                @endif
-                                                <span @if($timekeeping->checkOvertime()) class="qc-color-green" @endif >
-                                                    {!! $hFunction->convertDateDMYFromDatetime($timeEnd) !!}
-                                                </span>
-                                                <br/>
-                                                <b>{!! $hFunction->getTimeFromDate($timeEnd) !!}</b>
+                                                <em style="color: grey;">Không báo giờ ra</em>
                                             @endif
                                         @else
-                                            <span>---</span>
+                                            <span style="color: brown;">
+                                                    {!! $hFunction->convertDateDMYFromDatetime($timeEnd) !!}
+                                                </span>
+                                            <b>{!! date('H:i', strtotime($timeEnd)) !!}</b>
+                                            @if($timekeeping->checkAfternoonStatus())
+                                                <br/>
+                                                <em style="color: grey">Có làm trưa</em>
+                                            @endif
                                         @endif
-                                    </td>
-                                    <td class="text-center qc-color-grey">
-                                        @if($timekeeping->checkAfternoonStatus())
-                                            <em>Có</em>
-                                        @else
-                                            <em>Không</em>
+                                        @if($hFunction->checkDateIsSunday(date('Y-m-d', strtotime($timeBegin))))
+                                            <br/>
+                                            <span>Chủ nhật - </span>
                                         @endif
                                     </td>
                                     <td class="text-center">
@@ -227,10 +232,10 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         @endif
                                     </td>
                                     <td style="padding: 3px 0; ">
-                                        @if($hFunction->checkCount($dataTimekeepingImage))
+                                        @if($hFunction->checkCount($dataTimekeepingImageInMorning))
                                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
-                                                @foreach($dataTimekeepingImage as $timekeepingImage)
-                                                    <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                @foreach($dataTimekeepingImageInMorning as $timekeepingImage)
+                                                    <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                         <a class="qc_ad3d_timekeeping_image_view qc-link"
                                                            data-href="{!! route('qc.ad3d.work.time-keeping.image.view.get',$timekeepingImage->imageId()) !!}">
                                                             <img style="max-width: 100%; max-height: 100%;"
@@ -239,9 +244,48 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                                     </div>
                                                 @endforeach
                                             </div>
-
                                         @else
-                                            <span>---</span>
+                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                <em style="color: brown;">- Không có báo cáo</em>
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($hFunction->checkCount($dataTimekeepingImageInAfternoon))
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
+                                                @foreach($dataTimekeepingImageInAfternoon as $timekeepingImage)
+                                                    <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                        <a class="qc_ad3d_timekeeping_image_view qc-link"
+                                                           data-href="{!! route('qc.ad3d.work.time-keeping.image.view.get',$timekeepingImage->imageId()) !!}">
+                                                            <img style="max-width: 100%; max-height: 100%;"
+                                                                 src="{!! $timekeepingImage->pathSmallImage($timekeepingImage->name()) !!}">
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                <em style="color: brown;">- Không có báo cáo</em>
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($hFunction->checkCount($dataTimekeepingImageInEvening))
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
+                                                @foreach($dataTimekeepingImageInEvening as $timekeepingImage)
+                                                    <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                        <a class="qc_ad3d_timekeeping_image_view qc-link"
+                                                           data-href="{!! route('qc.ad3d.work.time-keeping.image.view.get',$timekeepingImage->imageId()) !!}">
+                                                            <img style="max-width: 100%; max-height: 100%;"
+                                                                 src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingImage->name()) !!}">
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                <em style="color: brown;">- Không có báo cáo</em>
+                                            </div>
                                         @endif
                                     </td>
                                     <td>
@@ -251,7 +295,6 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         @endif
                                         @if(!empty($confirmNote))
                                             @if(!empty($note)) <br/> @endif
-                                            <span style="color: brown;">Ghi chú duyệt:</span>
                                             <em class="qc-color-grey">{!! $confirmNote !!}</em>
                                         @endif
                                     </td>

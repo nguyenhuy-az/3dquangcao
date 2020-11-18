@@ -160,24 +160,21 @@ $indexHref = route('qc.ad3d.order.product.get');
                                         {!! $hFunction->convertDateDMYFromDatetime($product->order->deliveryDate()) !!}
                                     </td>
                                     <td class="text-center">
-                                        @if($product->workAllocationActivityOfProduct())
-                                            <i class="qc-color-green glyphicon glyphicon-ok-circle"
-                                               title="Đã phân việc"></i>
-                                        @else
-                                            <i class="qc-color-red glyphicon glyphicon-ok-circle"
-                                               title="Chưa phân việc"></i>
-                                        @endif
-                                        <a class="qc_confirm qc-link-green"
-                                           href="{!! route('qc.ad3d.order.product.work-allocation.add.get',$productId) !!}">
-                                            Phân việc
-                                        </a>
                                         @if($product->checkCancelStatus())
-                                                <span>|</span>
                                             <em class="qc-color-grey">Đã hủy</em>
                                         @else
                                             @if($product->checkFinishStatus())
-                                                <span>|</span>
                                                 <em class="qc-color-grey">Đã hoàn thành</em>
+                                            @else
+                                                @if($product->workAllocationActivityOfProduct())
+                                                    <em style="color: blue;">Đang thi công</em>
+                                                @else
+                                                    <em style="color: red;">Chưa thi công</em>
+                                                @endif
+                                                {{--<a class="qc_confirm qc-link-green"
+                                                   href="{!! route('qc.ad3d.order.product.work-allocation.add.get',$productId) !!}">
+                                                    Phân việc
+                                                </a>--}}
                                             @endif
                                         @endif
                                     </td>

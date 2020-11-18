@@ -45,19 +45,15 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row"
-                 data-href-view="{!! route('qc.ad3d.finance.salary.pay-before.view.get') !!}"
-                 data-href-edit="{!! route('qc.ad3d.finance.salary.pay-before.edit.get') !!}"
-                 data-href-del="{!! route('qc.ad3d.finance.salary.pay-before.delete') !!}">
+                 data-href-view="{!! route('qc.ad3d.finance.salary.pay-before.view.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
                             <th style="width: 20px;">STT</th>
-                            <th style="width: 150px;">Ngày</th>
-                            <th>Người ứng</th>
-                            <th>Ghi chú</th>
-                            <th>Thủ Quỹ</th>
-                            <th class="text-center">Xác nhận</th>
-                            <th class="text-right">Tiền ứng</th>
+                            <th style="width: 150px;">NGÀY</th>
+                            <th>TIỀN ỨNG</th>
+                            <th>NGƯỜI ỨNG</th>
+                            <th>THỦ QUỸ</th>
                         </tr>
                         <tr>
                             <td class="text-center"></td>
@@ -102,6 +98,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                     @endfor
                                 </select>
                             </td>
+                            <td>
+                                <b class="qc-color-red">{!! $hFunction->currencyFormat($totalMoneyBeforePay)  !!}</b>
+                            </td>
                             <td style="padding: 0;">
                                 <div class="input-group">
                                     <input type="text" class="textFilterName form-control" name="textFilterName"
@@ -115,11 +114,6 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </div>
                             </td>
                             <td></td>
-                            <td class="text-right"></td>
-                            <td class="text-right"></td>
-                            <td class="text-right">
-                                <b class="qc-color-red">{!! $hFunction->currencyFormat($totalMoneyBeforePay)  !!}</b>
-                            </td>
                         </tr>
                         @if($hFunction->checkCount($dataSalaryBeforePay))
                             <?php
@@ -142,14 +136,28 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 # thong tin thu quy
                                 $dataStaffPay = $salaryBeforePay->staff;
                                 ?>
-                                <tr class="qc_ad3d_list_object" data-object="{!! $payId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $payId !!}">
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        {!! date('d/m/Y', strtotime($salaryBeforePay->datePay())) !!}
+                                        <b style="color: blue">
+                                            {!! date('d/m/Y', strtotime($salaryBeforePay->datePay())) !!}
+                                        </b>
+                                        <br/>
+                                        @if(!$salaryBeforePay->checkConfirm())
+                                            <em style="color: brown;">- Chưa xác nhận</em>
+                                        @else
+                                            <em class="qc-color-grey">- Đã xác nhận</em>
+                                        @endif
                                     </td>
-
+                                    <td>
+                                        <b style="color: red;">{!! $hFunction->currencyFormat($salaryBeforePay->money()) !!}</b>
+                                        <br/>
+                                        <p style="color: grey;">
+                                            {!! $salaryBeforePay->description() !!}
+                                        </p>
+                                    </td>
                                     <td>
                                         <div class="media">
                                             <a class="pull-left" href="#">
@@ -164,9 +172,6 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         </div>
                                     </td>
                                     <td>
-                                        {!! $salaryBeforePay->description() !!}
-                                    </td>
-                                    <td>
                                         <div class="media">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object"
@@ -178,37 +183,16 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center">
-                                        {{--<a class="qc_view qc-link-green">Chi tiết</a>--}}
-                                        @if(!$salaryBeforePay->checkConfirm())
-                                            <em style="color: brown;">Chưa xác nhận</em>
-                                            {{--@if($salaryBeforePay->checkStaffInput($dataStaffLogin->staffId()))
-                                                &nbsp;<span>|</span>&nbsp;
-                                                <a class="qc_edit qc-link-green">
-                                                    <i class="glyphicon glyphicon-pencil" title="Sửa thông tin ứng"></i>
-                                                </a>
-                                                &nbsp;<span>|</span>&nbsp;
-                                                <a class="qc_delete qc-link-red">
-                                                    <i class="glyphicon glyphicon-trash" title="Hủy ứng lương"></i>
-                                                </a>
-                                            @endif--}}
-                                        @else
-                                            <em class="qc-color-grey">Đã xác nhận</em>
-                                        @endif
-                                    </td>
-                                    <td class="text-right">
-                                        {!! $hFunction->currencyFormat($salaryBeforePay->money()) !!}
-                                    </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="7">
+                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="5">
                                     {!! $hFunction->page($dataSalaryBeforePay) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="qc-padding-top-20 qc-padding-bot-20 text-center" colspan="7">
+                                <td class="qc-padding-top-20 qc-padding-bot-20 text-center" colspan="5">
                                     <em class="qc-color-red">Không tìm thấy thông tin</em>
                                 </td>
                             </tr>

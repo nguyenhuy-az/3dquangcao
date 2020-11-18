@@ -115,7 +115,7 @@ $checkTime = date('m-Y');
                                             </b>
                                             @if(!$hFunction->checkEmpty($reasonMinus))
                                                 <br/>
-                                                <b>{!! $minusMoney->reason() !!}</b>
+                                                <b>{!! $reasonMinus !!}</b>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderAllocationId))
                                                 <br/>

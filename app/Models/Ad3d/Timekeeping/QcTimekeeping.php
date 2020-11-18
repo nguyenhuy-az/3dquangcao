@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class QcTimekeeping extends Model
 {
     protected $table = 'qc_timekeeping';
-    protected $fillable = ['timekeeping_id', 'timeBegin', 'timeEnd', 'dateOff', 'afternoonStatus', 'mainMinute', 'plusMinute', 'minusMinute', 'note','confirmNote', 'lateStatus', 'permissionStatus', 'workStatus', 'created_at', 'staffCheck_id', 'work_id'];
+    protected $fillable = ['timekeeping_id', 'timeBegin', 'timeEnd', 'dateOff', 'afternoonStatus', 'mainMinute', 'plusMinute', 'minusMinute', 'note', 'confirmNote', 'lateStatus', 'permissionStatus', 'workStatus', 'created_at', 'staffCheck_id', 'work_id'];
     protected $primaryKey = 'timekeeping_id';
     public $timestamps = false;
 
@@ -17,7 +17,7 @@ class QcTimekeeping extends Model
 
     //========== ========== ========== INSERT && UPDATE ========== ========== ==========
     //---------- Insert ----------
-    public function insert($timeBegin, $timeEnd, $dateOff, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note,$confirmNote, $lateStatus, $permissionStatus, $workStatus, $staffCheckId, $workId)
+    public function insert($timeBegin, $timeEnd, $dateOff, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $confirmNote, $lateStatus, $permissionStatus, $workStatus, $staffCheckId, $workId)
     {
         $hFunction = new \Hfunction();
         $modelTimekeeping = new QcTimekeeping();
@@ -48,6 +48,11 @@ class QcTimekeeping extends Model
     public function insertGetId()
     {
         return $this->lastId;
+    }
+
+    public function checkNullId($id = null)
+    {
+        return (empty($id)) ? $this->timekeepingId() : $id;
     }
 
     public function confirmWork($timekeepingId, $timeEnd, $mainMinute, $plusMinute, $note, $afternoonStatus = 0)
@@ -81,6 +86,47 @@ class QcTimekeeping extends Model
         return $modelTimekeepingImage->infoOfTimekeeping($timekeepingId);
     }
 
+    # lay thông tin anh bao cao cua buoi sang
+    public function infoTimekeepingImageInMorning($id = null)
+    {
+        $model = new QcTimekeepingImage();
+        return $model->infoOfTimekeepingInMorning($this->checkNullId($id));
+    }
+
+    # kiem tra co ton tại anh bao cao cua buoi sang
+    public function checkExistTimekeepingImageInMorning($id = null)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkCount($this->infoTimekeepingImageInMorning($id))) ? true : false;
+    }
+
+    # lay thông tin anh bao cao cua buoi chieu
+    public function infoTimekeepingImageInAfternoon($id = null)
+    {
+        $model = new QcTimekeepingImage();
+        return $model->infoOfTimekeepingInAfternoon($this->checkNullId($id));
+    }
+
+    # kiem tra co ton tại anh bao cao cua buoi chieu
+    public function checkExistTimekeepingImageInAfternoon($id = null)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkCount($this->infoTimekeepingImageInAfternoon($id))) ? true : false;
+    }
+
+    # lay thông tin anh bao cao tang ca
+    public function infoTimekeepingImageInEvening($id = null)
+    {
+        $model = new QcTimekeepingImage();
+        return $model->infoOfTimekeepingInEvening($this->checkNullId($id));
+    }
+
+    # kiem tra co ton tại anh bao cao cua buoi toi
+    public function checkExistTimekeepingImageInEvening($id = null)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkCount($this->infoTimekeepingImageInEvening($id))) ? true : false;
+    }
 
     //----------- STAFF ------------
     public function staff()
@@ -284,7 +330,8 @@ class QcTimekeeping extends Model
 
     //======= check info =========
     # chon danh sach cham cong theo thoi gian va ma cham cong
-    public function selectInfoByListWorkAndDate($listWorkId, $dateFilter){
+    public function selectInfoByListWorkAndDate($listWorkId, $dateFilter)
+    {
         $query = QcTimekeeping::whereIn('work_id', $listWorkId);
         $query = $query->where(function ($q) use ($dateFilter) {
             $q->orWhere('timeBegin', 'LIKE', '%' . $dateFilter . '%')
@@ -292,6 +339,7 @@ class QcTimekeeping extends Model
         });
         return $query->orderBy('timeBegin', 'DESC')->orderBy('dateOff', 'DESC')->select('*');
     }
+
     public function checkWorking($timekeepingId = null)
     {
         return ($this->workStatus($timekeepingId) == 1) ? true : false;

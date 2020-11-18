@@ -151,8 +151,6 @@ Route::group(['prefix' => 'ad3d'], function () {
         });
 
         Route::group(['prefix' => 'timekeeping'], function () {
-            #xem anh cham cong
-            Route::get('image/{imageId?}', ['as' => 'qc.ad3d.work.time-keeping.image.view.get', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@viewImage']);
 
             #xem chi tiet cham cong
             Route::get('view', ['as' => 'qc.ad3d.work.work.time-keeping.get', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@view']);
@@ -232,25 +230,12 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('over-time-cancel/{requestId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.over_time.cancel', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@cancelOverTime']);
 
             Route::get('old/{companyId?}/{day?}/{month?}/{year?}/{name?}', ['as' => 'qc.ad3d.work.old-time-keeping-provisional.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@indexOld']);
-            Route::get('/{companyId?}/{day?}/{month?}/{year?}/{name?}', ['as' => 'qc.ad3d.work.time-keeping-provisional.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@index']);
+            Route::get('/{companyId?}/{name?}', ['as' => 'qc.ad3d.work.time-keeping-provisional.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@index']);
         });
         //hệ thống chấm công - khi chưa cho nv tự chấm
         Route::group(['prefix' => 'timekeeping'], function () {
-            //add work
-            Route::get('add/{companyLoginId?}/{workId?}', ['as' => 'qc.ad3d.work.time-keeping.add.get', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@getAdd']);
-            Route::post('add', ['as' => 'qc.ad3d.work.time-keeping.add.post', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@postAdd']);
-
-            //confirm
-            Route::get('confirm/{timekeepingId?}', ['as' => 'qc.ad3d.work.time-keeping.confirm.get', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@getConfirm']);
-            Route::post('confirm/{timekeepingId?}', ['as' => 'qc.ad3d.work.time-keeping.confirm.post', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@postConfirm']);
-
-            //off work
-            Route::get('off/add/{companyLoginId?}/{workId?}', ['as' => 'qc.ad3d.work.time-keeping.off.add.get', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@getAddOff']);
-            Route::post('off/add', ['as' => 'qc.ad3d.work.time-keeping.off.add.post', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@postAddOff']);
-
-            //delete
-            Route::get('delete/{timekeepingId?}', ['as' => 'qc.ad3d.work.time-keeping.delete', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@deleteTimekeeping']);
-
+            #xem anh cham cong
+            Route::get('image/{imageId?}', ['as' => 'qc.ad3d.work.time-keeping.image.view.get', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@viewImage']);
             Route::get('/{companyId?}/{day?}/{month?}/{year?}/{name?}', ['as' => 'qc.ad3d.work.time-keeping.get', 'uses' => 'Ad3d\Work\TimeKeeping\TimeKeepingController@index']);
         });
 
@@ -371,16 +356,6 @@ Route::group(['prefix' => 'ad3d'], function () {
             // danh sách ứng lương
             Route::group(['prefix' => 'pay-before'], function () {
                 Route::get('view/{payId?}', ['as' => 'qc.ad3d.finance.salary.pay-before.view.get', 'uses' => 'Ad3d\Finance\Salary\PayBefore\PayBeforeController@view']);
-                //Add
-                Route::get('add/{companyLoginId?}/{workId?}', ['as' => 'qc.ad3d.finance.salary.pay-before.add.get', 'uses' => 'Ad3d\Finance\Salary\PayBefore\PayBeforeController@getAdd']);
-                Route::post('add', ['as' => 'qc.ad3d.finance.salary.pay-before.add.post', 'uses' => 'Ad3d\Finance\Salary\PayBefore\PayBeforeController@postAdd']);
-
-                //edit
-                Route::get('edit/{payId?}', ['as' => 'qc.ad3d.finance.salary.pay-before.edit.get', 'uses' => 'Ad3d\Finance\Salary\PayBefore\PayBeforeController@getEdit']);
-                Route::post('edit/{payId?}', ['as' => 'qc.ad3d.finance.salary.pay-before.edit.post', 'uses' => 'Ad3d\Finance\Salary\PayBefore\PayBeforeController@postEdit']);
-
-                //delete
-                Route::get('delete/{payId?}', ['as' => 'qc.ad3d.finance.salary.pay-before.delete', 'uses' => 'Ad3d\Finance\Salary\PayBefore\PayBeforeController@deleteSalaryBeforePay']);
 
                 Route::get('/{companyId?}/{day?}/{month?}/{year?}/{name?}', ['as' => 'qc.ad3d.finance.salary.pay-before.get', 'uses' => 'Ad3d\Finance\Salary\PayBefore\PayBeforeController@index']);
             });

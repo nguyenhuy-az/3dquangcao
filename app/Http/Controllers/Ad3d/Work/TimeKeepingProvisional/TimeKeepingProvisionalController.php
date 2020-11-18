@@ -22,7 +22,7 @@ use Request;
 
 class TimeKeepingProvisionalController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = null, $monthFilter = null, $yearFilter = null, $nameFiler = null)
+    public function index($companyFilterId = null, $nameFiler = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -41,17 +41,8 @@ class TimeKeepingProvisionalController extends Controller
         $dataAccess = [
             'accessObject' => 'timeKeepingProvisional'
         ];
-        if (empty($dayFilter) && empty($monthFilter) && empty($yearFilter)) {
-            $dateFilter = null;// date('Y-m-d');
-            //$dayFilter = date('d');
-            //$monthFilter = date('m');
-            //$yearFilter = date('Y');
-        } elseif ($dayFilter == 0) { //xem tất cả các ngày trong tháng
-            $dateFilter = null;// date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } else {
-            $dateFilter = null;// date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
-        }
-
+        # lay trong thang hien tai - THANG CU SE DUYET TU DONG
+        $dateFilter = $hFunction->currentMonthYear();
         if (!empty($nameFiler)) {
             $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $modelStaff->listStaffIdByName($nameFiler)));
         } else {
@@ -59,7 +50,7 @@ class TimeKeepingProvisionalController extends Controller
             $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId]));
         }
         $dataTimekeepingProvisional = $modelTimekeepingProvisional->selectInfoUnconfirmedByListWorkAndDate($listWorkId, $dateFilter)->paginate(30);
-        return view('ad3d.work.time-keeping-provisional.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataTimekeepingProvisional', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));
+        return view('ad3d.work.time-keeping-provisional.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataTimekeepingProvisional', 'companyFilterId', 'nameFiler'));
     }
 
     public function indexOld($companyFilterId = null, $dayFilter = null, $monthFilter = null, $yearFilter = null, $nameFiler = null)
