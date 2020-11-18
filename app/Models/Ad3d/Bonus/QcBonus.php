@@ -126,7 +126,7 @@ class QcBonus extends Model
     //---------- thong bao ban giao don hang moi -----------
     public function workAllocation()
     {
-        return $this->belongsTo('App\Models\Ad3d\WorkAllocation\QcWorkAllocation', 'allocation_id', 'workAllocation_id');
+        return $this->belongsTo('App\Models\Ad3d\WorkAllocation\QcWorkAllocation', 'workAllocation_id', 'allocation_id');
     }
 
     public function checkExistBonusWorkOfWorkAllocation($workId, $workAllocationId)

@@ -31,22 +31,8 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered" style="margin-bottom: 100px;">
                             <tr>
-                                <td colspan="4"></td>
-                                <td class="text-center" colspan="2">
-                                    <a class="qc_work_before_pay_request_action qc-link-green-bold"
-                                       href="{!! route('qc.work.orders.add.get') !!}" style="font-size: 1.5em;">
-                                        THÊM ĐƠN HÀNG
-                                    </a>
-                                </td>
-                                <td class="text-center" colspan="2">
-                                    <a class="qc-link-red-bold" style="font-size: 1.5em;" title="Báo giá"
-                                       href="{!! route('qc.work.orders.add.get',0) !!}">
-                                        THÊM BÁO GIÁ
-                                    </a>
-                                </td>
-                                <td colspan="4" style="padding: 0;">
-                                    <select class="qcWorkOrdersStaffFilterId form-control"
-                                            data-href="{!! $hrefIndex !!}">
+                                <td colspan="2" style="padding: 0;">
+                                    <select class="qcWorkOrdersStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
                                         @if($manageStatus)
                                             <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
                                                 Tất cả nhân viên
@@ -59,6 +45,26 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                             @endforeach
                                         @endif
                                     </select>
+                                </td>
+                                <td class="text-center">
+                                    <a class="qc_work_before_pay_request_action qc-link-green-bold"
+                                       href="{!! route('qc.work.orders.add.get') !!}" style="font-size: 1.5em;">
+                                        <i class="glyphicon glyphicon-plus"></i>
+                                        THÊM ĐƠN HÀNG
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a class="qc-link-red-bold" style="font-size: 1.5em;" title="Báo giá"
+                                       href="{!! route('qc.work.orders.add.get',0) !!}">
+                                        <i class="glyphicon glyphicon-plus"></i>
+                                        THÊM BÁO GIÁ
+                                    </a>
+                                </td>
+                                <td colspan="8" style="background-color: red;">
+                                    <span style="font-size: 1.5em;color: yellow;">Mức độ </span>
+                                    <span style="font-size: 1.5em;color: white;">HOÀN THÀNH </span>
+                                    <span style="font-size: 1.5em;color: yellow;">dùng để </span>
+                                    <span style="font-size: 1.5em;color: white;">ĐÁNH GIÁ NĂNG LỰC </span>
                                 </td>
                             </tr>
                             <tr style="background-color: black; color: yellow;">
@@ -263,8 +269,8 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                         <td>
                                             @if(!$cancelStatus)
                                                 @if($finishStatus)
-                                                    <i class="qc-font-size-16 glyphicon glyphicon-ok"
-                                                       style="color: blue;"></i>
+                                                    <i class="qc-font-size-12 glyphicon glyphicon-ok"
+                                                       style="color: green;"></i>
                                                     <em>Đã kết thúc</em>
                                                 @else
                                                     {{--dang duoc phan cong--}}

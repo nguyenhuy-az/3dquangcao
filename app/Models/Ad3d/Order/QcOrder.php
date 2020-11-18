@@ -173,8 +173,8 @@ class QcOrder extends Model
             'staffReportFinish_id' => $staffReportFinishId
         ])
         ) {
-            # ket thuc ban giao cong trinh
-            $modelOrderAllocation->confirmFinishFromFinishOrder($orderId, 1, 1, $staffReportFinishId);
+            # ket thuc ban giao cong trinh thi cong
+            $modelOrderAllocation->confirmFinishFromFinishOrder($orderId, 1, $staffReportFinishId);
 
             # bao ket thuc san pham
             if ($hFunction->checkCount($dataProduct)) {

@@ -218,11 +218,11 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                         @endif
                                                     @else
                                                         <em>Đang thi công</em>
-                                                        <br/>
+                                                        {{--<br/>
                                                         <a class="qc_construction_cancel qc-link-red"
                                                            data-href="{!! route('qc.work.work_allocation.order.construction.delete',$ordersAllocationId) !!}">
                                                             HỦY BÀN GIAO
-                                                        </a>
+                                                        </a>--}}
                                                     @endif
                                                 @endif
                                             </td>

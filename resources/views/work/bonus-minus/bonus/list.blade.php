@@ -10,6 +10,9 @@
 $hFunction = new Hfunction();
 $hrefIndex = route('qc.work.bonus.get');
 ?>
+@section('titlePage')
+    Thưởng
+@endsection
 @extends('work.bonus-minus.bonus.index')
 @section('qc_work_bonus_body')
     <div class="row">
@@ -23,12 +26,11 @@ $hrefIndex = route('qc.work.bonus.get');
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>NGÀY</th>
                                 <th>SỐ TIỀN - LÝ DO</th>
-                                <th>GHI CHÚ</th>
                             </tr>
                             <tr>
                                 <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_bonus_month col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                    <select class="qc_work_bonus_month col-sx-5 col-sm-5 col-md-5 col-lg-5"
                                             style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả tháng
@@ -40,7 +42,7 @@ $hrefIndex = route('qc.work.bonus.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_bonus_year col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                    <select class="qc_work_bonus_year col-sx-7 col-sm-7 col-md-7 col-lg-7"
                                             style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả năm
@@ -54,7 +56,6 @@ $hrefIndex = route('qc.work.bonus.get');
                                     </select>
                                 </td>
                                 <td class="text-center"></td>
-                                <td class="text-center"></td>
                             </tr>
                             @if($hFunction->checkCount($dataBonus))
                                 <?php
@@ -64,8 +65,13 @@ $hrefIndex = route('qc.work.bonus.get');
                                 @foreach($dataBonus as $bonus)
                                     <?php
                                     $bonusId = $bonus->bonusId();
+                                    # thi cong - quan ly thi cong
                                     $orderAllocationId = $bonus->orderAllocationId();
+                                    # kinh doanh quan ly don hang
                                     $orderConstructionId = $bonus->orderConstructionId();
+                                    # thi cong san pham
+                                    $workAllocationId = $bonus->workAllocationId();
+                                    # thanh toan
                                     $orderPayId = $bonus->orderPayId();
                                     $cancelStatus = $bonus->checkCancelStatus();
                                     if ($cancelStatus) {
@@ -93,24 +99,33 @@ $hrefIndex = route('qc.work.bonus.get');
                                             @endif
                                         </td>
                                         <td>
-                                            <span style="color: red;">
+                                            <b style="color: red;">
                                                 {!! $hFunction->currencyFormat($money) !!}
-                                            </span>
+                                            </b>
                                             <br/>
-                                            <span>{!! $bonus->note() !!}</span>
-                                        </td>
-                                        <td>
-                                            @if(!$hFunction->checkEmpty($orderAllocationId))
+                                            <em style="color: grey;">- {!! $bonus->note() !!}</em>
+                                            @if(!$hFunction->checkEmpty($workAllocationId))
+                                                <br/>
+                                                <em>- Sản phẩm:</em>
+                                                <b style="color: blue;">{!! $bonus->workAllocation->product->productType->name() !!}</b>
+                                                <br/>
                                                 <em>- Đơn hàng:</em>
-                                                <b style="color: red;">{!! $bonus->orderAllocation->orders->name() !!}</b>
+                                                <b style="color: deeppink;">{!! $bonus->workAllocation->product->order->name() !!}</b>
+                                            @endif
+                                            @if(!$hFunction->checkEmpty($orderAllocationId))
+                                                <br/>
+                                                <em>- Đơn hàng:</em>
+                                                <b style="color: blue;">{!! $bonus->orderAllocation->orders->name() !!}</b>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderConstructionId))
+                                                <br/>
                                                 <em>- Đơn hàng:</em>
                                                 <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderPayId))
+                                                <br/>
                                                 <em>- Đơn hàng:</em>
-                                                <b style="color: red;">{!! $bonus->orderPay->order->name() !!}</b>
+                                                <b style="color: blue;">{!! $bonus->orderPay->order->name() !!}</b>
                                             @endif
                                         </td>
                                     </tr>
@@ -123,11 +138,10 @@ $hrefIndex = route('qc.work.bonus.get');
                                         </b>
                                         <b style="color: white;">(Tổng)</b>
                                     </td>
-                                    <td class="text-right" colspan="2"></td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center qc-padding-none" colspan="5">
+                                    <td class="text-center qc-padding-none" colspan="3">
                                         Không có thông tin thưởng
                                     </td>
                                 </tr>

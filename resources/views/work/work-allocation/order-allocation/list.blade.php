@@ -43,7 +43,7 @@ $loginStaffId = $dataStaffLogin->staffId();
                     <div class="table-responsive">
                         <table class="table table-bordered" style="border: none;">
                             <tr style="background-color: black;color: yellow;">
-                                <th class="text-center" style="padding-left: 0; padding-right: 0;">HẠN GIAO - HOÀN THÀNH</th>
+                                <th>HẠN GIAO - HOÀN THÀNH</th>
                                 <th>ĐƠN HÀNG</th>
                                 <th>NGÀY NHẬN</th>
                                 <th class="text-center">BÁO CÁO</th>
@@ -121,7 +121,7 @@ $loginStaffId = $dataStaffLogin->staffId();
                                     ?>
                                     <tr class="qc_work_list_content_object @if($n_o%2) info @endif"
                                         data-object="{!! $orderId !!}">
-                                        <td class="text-center">
+                                        <td>
                                             <span style="color: red;">
                                                 {!! date('d-m-Y', strtotime($ordersAllocation->receiveDeadline())) !!}
                                             </span>
@@ -130,7 +130,7 @@ $loginStaffId = $dataStaffLogin->staffId();
                                             </span>
                                             <br/>
                                             @if($ordersAllocation->checkCancelAllocation())
-                                                <em style="color: grey;">Đã hủy</em>
+                                                <em style="color: grey;">- Đã hủy</em>
                                             @else
                                                 @if($ordersAllocation->checkFinish())
                                                     <span style="color: blue;">{!! date('d-m-Y', strtotime($allocationFinishDate)) !!}</span>

@@ -24,7 +24,6 @@ $checkTime = date('m-Y');
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>NGÀY</th>
                                 <th>NGUYÊN NHÂN </th>
-                                <th>GHI CHÚ</th>
                                 <th>PHẢN HỒI</th>
                             </tr>
                             <tr>
@@ -59,7 +58,6 @@ $checkTime = date('m-Y');
                                 </td>
                                 <td class="text-center"></td>
                                 <td class="text-center"></td>
-                                <td class="text-center"></td>
                             </tr>
                             @if($hFunction->checkCount($dataMinusMoney))
                                 <?php
@@ -70,6 +68,7 @@ $checkTime = date('m-Y');
                                     <?php
                                     $minusId = $minusMoney->minusId();
                                     $dateMinus = $minusMoney->dateMinus();
+                                    $reasonMinus = $minusMoney->reason();
                                     # ban giao thi cong don hang
                                     $orderAllocationId = $minusMoney->orderAllocationId();
                                     # quan ly thi cong - quan ly tong
@@ -96,31 +95,32 @@ $checkTime = date('m-Y');
                                         <td>
                                             <b>{!! date('d-m-Y', strtotime($minusMoney->dateMinus())) !!}</b>
                                             <br/>
+                                            <em style="color: grey;">
+                                                - {!! $minusMoney->punishContent->name() !!}
+                                            </em>
+                                            <br/>
                                             @if($cancelStatus)
                                                 <em style="color: red;">Đã hủy</em>
                                             @else
                                                 @if($minusMoney->checkEnableApply())
                                                     <em style="color: blue;">Có hiệu lực</em>
                                                 @else
-                                                    <em style="color: brown;">Tạm thời</em>
+                                                    <em style="color: blue;">Tạm thời</em>
                                                 @endif
                                             @endif
                                         </td>
                                         <td>
-                                            <span style="color: red;">
+                                            <b style="color: red;">
                                                 {!! $hFunction->currencyFormat($money) !!}
-                                            </span>
-                                            <br/>
-                                            <span>
-                                                {!! $minusMoney->punishContent->name() !!}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <b>{!! $minusMoney->reason() !!}</b>
+                                            </b>
+                                            @if(!$hFunction->checkEmpty($reasonMinus))
+                                                <br/>
+                                                <b>{!! $minusMoney->reason() !!}</b>
+                                            @endif
                                             @if(!$hFunction->checkEmpty($orderAllocationId))
                                                 <br/>
                                                 <em>- Đơn hàng:</em>
-                                                <a class="qc-link-red"
+                                                <a class="qc-link" style="color: blue !important;"
                                                    href="{!! route('qc.work.work_allocation.order_allocation.product.get',$orderAllocationId) !!}">
                                                     {!! $minusMoney->orderAllocation->orders->name() !!}
                                                 </a>
@@ -128,19 +128,19 @@ $checkTime = date('m-Y');
                                             @if(!$hFunction->checkEmpty($workAllocationId))
                                                 <br/>
                                                 <em>- Sản phẩm:</em>
-                                                <a class="qc-link-red">
+                                                <a style="color: blue;">
                                                     {!! $minusMoney->workAllocation->product->productType->name() !!}
                                                 </a>
                                                 <br/>
                                                 <em>- Đơn hàng:</em>
-                                                <a class="qc-link-red">
+                                                <a style="color: blue;">
                                                     {!! $minusMoney->workAllocation->product->order->name() !!}
                                                 </a>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderConstructionId))
                                                 <br/>
                                                 <em>- Đơn hàng:</em>
-                                                <a class="qc-link-red"
+                                                <a class="qc-link" style="color: blue !important;"
                                                    href="{!! route('qc.work.work_allocation.order.construction.get',$orderConstructionId) !!}">
                                                     {!! $minusMoney->orderConstruction->name() !!}
                                                 </a>
@@ -203,11 +203,11 @@ $checkTime = date('m-Y');
                                         </b>
                                         <b style="color: white;">(Tổng)</b>
                                     </td>
-                                    <td class="text-right" colspan="2"></td>
+                                    <td class="text-right"></td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td colspan="5">
+                                    <td colspan="4">
                                         <label style="color: red;">Không có thông tin phạt</label>
                                     </td>
                                 </tr>

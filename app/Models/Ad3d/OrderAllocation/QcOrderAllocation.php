@@ -62,11 +62,10 @@ class QcOrderAllocation extends Model
 
 
     //========== ========= DUYET TU BAO CAO BAN GIAO CONG TRINH ========= ==========
-    # bao cao hoan thanh cong trinh
+    # BAO HOAN THANH cong trinh
     public function reportFinishAllocation($allocationId, $reportDate, $finishNote = null, $paymentStatus = 0)
     {
         $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
         $modelStaffNotify = new QcStaffNotify();
         $modelProduct = new QcProduct();
         $modelOrder = new QcOrder();
@@ -84,10 +83,12 @@ class QcOrderAllocation extends Model
                     $modelProduct->confirmFinishFromFinishOrder($product->productId(), $this->receiveStaffId($allocationId)[0]);
                 }
             }
+            ### TAM THOI KHONG CAN NGUOI XAC NHAN - MAC DINH NGUOI XA NHAN LA NGUOI GIAO
+            $this->confirmFinishAllocation($allocationId, 1, $staffNotifyId, 'Tự xác nhận hoàn thành - tạm thời');
         }
     }
 
-    // ket thuc cong viec
+    // XAC NHAN ket thuc cong viec
     public function confirmFinishAllocation($allocationId, $confirmFinish, $confirmStaffId, $confirmNote = null)
     {
         $hFunction = new \Hfunction();
@@ -110,9 +111,6 @@ class QcOrderAllocation extends Model
                 # xac nhan dong y  hoan thanh
                 # thong bao hoan thanh thi cong cho kinh doanh
                 $modelStaffNotify->insert(null, $dataOrder->staffId(), 'Hoàn thành thi công', null, null, null, null, $allocationId);
-            } else {
-                # xac nhan khong hoan thanh thi cong
-                # ap phat khong hoan thanh - PHAT TRIEN SAU
             }
             return true;
         } else {
@@ -121,16 +119,15 @@ class QcOrderAllocation extends Model
 
     }
 
-    //========== ========= DUYET TU DON HANG  ========= ==========
-
-    public function confirmFinishFromFinishOrder($orderId, $finishStatus, $confirmFinish, $staffReportConformId)
+    // DUYET TU DON HANG
+    public function confirmFinishFromFinishOrder($orderId, $confirmFinish, $staffReportConformId)
     {
         $hFunction = new \Hfunction();
         # lay thong tin ban giao thi cong chua xac nhan
         $dataOrderAllocation = QcOrderAllocation::where('order_id', $orderId)->where('confirmStatus', 0)->get();
         if ($hFunction->checkCount($dataOrderAllocation)) {
             foreach ($dataOrderAllocation as $orderAllocation) {
-                $this->confirmFinishAllocation($orderAllocation->allocationId(), $confirmFinish, $staffReportConformId, $confirmNote = 'Kinh doanh báo kết thúc đơn hàng');
+                $this->confirmFinishAllocation($orderAllocation->allocationId(), $confirmFinish, $staffReportConformId, 'Kinh doanh báo kết thúc đơn hàng');
             }
         }
     }

@@ -229,7 +229,7 @@ class OrderController extends Controller
         return redirect()->back();
     }
 
-    # --------- xac nhan hoan thanh don hang ban giao ---------
+    # --------- XAC NHAN hoan thanh don hang ban giao thi cong ---------
     public function getConfirmFinishConstruction($allocationId)
     {
         $hFunction = new \Hfunction();

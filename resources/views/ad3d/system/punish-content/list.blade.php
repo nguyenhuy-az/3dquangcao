@@ -46,12 +46,10 @@ $dataPunishType = $modelPunishType->getInfo();
                         </tr>
                         <tr style="background-color: black;color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th>MÃ PHẠT</th>
                             <th>TÊN</th>
+                            <th>TIỀN PHẠT</th>
                             <th style="width: 500px;">MÔ TẢ</th>
                             <th>LOẠI TIỀN PHẠT</th>
-                            <th class="text-right">SỐ TIỀN</th>
-                            <th class="text-center">ÁP DỤNG PHẠT</th>
                         </tr>
                         @if($hFunction->checkCount($dataPunishContent))
                             <?php
@@ -65,10 +63,13 @@ $dataPunishType = $modelPunishType->getInfo();
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $punishId !!}">
                                     <td class="text-center">
-                                        {!! $n_o += 1 !!}
-                                    </td>
-                                    <td>
-                                        {!! $punishContent->punishCode() !!}
+                                        <b>
+                                            {!! $n_o += 1 !!}
+                                        </b>
+                                        <br/>
+                                        <span style="color: blue;">
+                                            {!! $punishContent->punishCode() !!}
+                                        </span>
                                     </td>
                                     <td>
                                         <label>{!! $punishContent->name() !!}</label>
@@ -86,19 +87,12 @@ $dataPunishType = $modelPunishType->getInfo();
                                         </a>
                                     </td>
                                     <td>
-                                        {!! $punishContent->note() !!}
-                                    </td>
-                                    <td>
-                                        {!! $punishContent->punishType->name() !!}
-                                    </td>
-                                    <td class="text-right">
-                                        <span style="color: blue;">
+                                        <span style="color: red;">
                                             {!! $hFunction->currencyFormat($punishContent->money()) !!}
                                         </span>
-                                    </td>
-                                    <td class="text-center">
+                                        <br/>
                                         @if ($punishContent->checkApplyStatus())
-                                            <em style="color: brown;">Đang áp dụng</em>
+                                            <em style="color: grey;">Đang áp dụng</em>
                                             <span style="color: red;"> | </span>
                                             <a class="qc_update_apply_status qc-link-green-bold"
                                                data-href="{!! route('qc.ad3d.system.punish_content.apply_status.update',"$punishId/0") !!}">
@@ -113,16 +107,23 @@ $dataPunishType = $modelPunishType->getInfo();
                                             </a>
                                         @endif
                                     </td>
+                                    <td>
+                                        {!! $punishContent->note() !!}
+                                    </td>
+                                    <td>
+                                        {!! $punishContent->punishType->name() !!}
+                                    </td>
+
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="7">
+                                <td class="text-center" colspan="5">
                                     {!! $hFunction->page($dataPunishContent) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="6">
+                                <td class="text-center" colspan="7">
                                     <em class="qc-color-red">Không tìm thấy thông tin</em>
                                 </td>
                             </tr>

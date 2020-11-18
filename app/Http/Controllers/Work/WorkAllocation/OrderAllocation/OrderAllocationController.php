@@ -51,7 +51,7 @@ class OrderAllocationController extends Controller
         return view('work.work-allocation.order-allocation.list', compact('dataAccess', 'modelStaff', 'dataOrdersAllocation', 'dateFilter', 'finishStatus', 'monthFilter', 'yearFilter'));
     }
 
-    # bao hoan thanh don hang
+    # bao hoan thanh thi cong don hang
     public function getConstructionReportFinish($allocationId = null)
     {
         $hFunction = new \Hfunction();
