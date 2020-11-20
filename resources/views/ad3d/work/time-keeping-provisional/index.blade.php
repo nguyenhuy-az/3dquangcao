@@ -17,6 +17,6 @@
 @endsection
 
 @section('qc_js_footer')
-    <script src="{{ url('public/ad3d/work/time-keeping-provisional/js/time-keeping-provisional.js')}}"></script>
+    <script src="{{ url('public/ad3d/work/time-keeping-provisional/js/index.js')}}"></script>
 @endsection
 

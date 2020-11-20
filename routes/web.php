@@ -214,14 +214,19 @@ Route::group(['prefix' => 'ad3d'], function () {
 
         // duyệt chấm công - nv tự chấm
         Route::group(['prefix' => 'timekeeping-provisional'], function () {
-            #xem anh cham cong
-            Route::get('image/{imageId?}', ['as' => 'qc.ad3d.work.time-keeping-provisional.view.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@viewProvisionalImage']);
+            # canh bao gio ra
+            Route::get('warning-begin/{timekeepingProvisionalId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.warning_begin.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@getWarningBegin']);
+            Route::post('warning-begin/{timekeepingProvisionalId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.warning_begin.post', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@postWarningBegin']);
 
-            #hủy
-            Route::get('cancel/{timekeepingProvisionalId?}', ['as' => 'qc.ad3d.work.time-keeping-provisional.cancel.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@cancelTimekeepingProvisional']);
+            #huy canh bao
+            Route::get('warning-begin-cancel/{warningId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.warning_begin.cancel', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@cancelWarningBegin']);
+
+            #xem anh cham cong
+            Route::get('image/{imageId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.view.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@viewProvisionalImage']);
+
             #xác nhận
-            Route::get('confirm/{timekeepingProvisionalId?}', ['as' => 'qc.ad3d.work.time-keeping-provisional.confirm.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@getConfirm']);
-            Route::post('confirm/', ['as' => 'qc.ad3d.work.time-keeping-provisional.confirm.post', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@postConfirm']);
+            Route::get('confirm/{timekeepingProvisionalId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.confirm.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@getConfirm']);
+            Route::post('confirm/', ['as' => 'qc.ad3d.work.time_keeping_provisional.confirm.post', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@postConfirm']);
 
             #yeu cau tang ca
             Route::get('over-time/{companyStaffWorkId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.over_time.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@getOverTime']);
@@ -229,8 +234,7 @@ Route::group(['prefix' => 'ad3d'], function () {
             # huy
             Route::get('over-time-cancel/{requestId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.over_time.cancel', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@cancelOverTime']);
 
-            Route::get('old/{companyId?}/{day?}/{month?}/{year?}/{name?}', ['as' => 'qc.ad3d.work.old-time-keeping-provisional.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@indexOld']);
-            Route::get('/{companyId?}/{name?}', ['as' => 'qc.ad3d.work.time-keeping-provisional.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@index']);
+            Route::get('/{companyId?}/{name?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@index']);
         });
         //hệ thống chấm công - khi chưa cho nv tự chấm
         Route::group(['prefix' => 'timekeeping'], function () {

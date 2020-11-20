@@ -10,14 +10,23 @@ var qc_ad3d_work_time_keeping_provisional = {
         qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-view') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
         qc_main.scrollTop();
     },
-    cancel: function (listObject) {
-        if (confirm('Bạn muốn hủy tin này')) {
-            qc_ad3d_submit.ajaxHasReload($(listObject).parents('.qc_ad3d_list_content').data('href-cancel') + '/' + $(listObject).data('object'), '#', false);
-        }
+    warning:{
+        timeBegin:{
+            get: function (href) {
+                qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
+                qc_main.scrollTop();
+            },
+            save: function (frm) {
+                var notifyContent = $(frm).find('.qc_notify');
+                if (confirm('Xác nhận đồng ý gửi cảnh báo này?')) {
+                    qc_ad3d_submit.ajaxFormHasReload(frm, notifyContent, true);
+                    qc_main.scrollTop();
+                }
+            },
+        },
     },
     confirm: {
-        get: function (listObject) {
-            var href = $(listObject).parents('.qc_ad3d_list_content').data('href-confirm') + '/' + $(listObject).data('object');
+        get: function (href) {
             qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
             qc_main.scrollTop();
         },
@@ -74,17 +83,17 @@ $(document).ready(function () {
     });
 })
 
-//-------------------- hủy ------------
+//-------------------- CANH BAO CHAM CONG ------------
 $(document).ready(function () {
-    $('.qc_ad3d_list_object').on('click', '.qc_cancel', function () {
-        qc_ad3d_work_time_keeping_provisional.cancel($(this).parents('.qc_ad3d_list_object'));
+    $('.qc_ad3d_list_object').on('click', '.qc_warning_time_begin', function () {
+        qc_ad3d_work_time_keeping_provisional.warning.timeBegin.get($(this).data('href'));
     });
 });
 
 //-------------------- xac nhan cham cong ------------
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_confirm', function () {
-        qc_ad3d_work_time_keeping_provisional.confirm.get($(this).parents('.qc_ad3d_list_object'));
+        qc_ad3d_work_time_keeping_provisional.confirm.get($(this).data('href'));
     });
     $('body').on('click', '.qc_ad3d_frm_confirm .qc_save', function () {
         qc_ad3d_work_time_keeping_provisional.confirm.save($(this).parents('.qc_ad3d_frm_confirm'));

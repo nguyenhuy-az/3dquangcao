@@ -139,26 +139,26 @@ if ($hFunction->checkCount($dataWork)) {
                                         @if($dataCompanyStaffWork->checkExistOverTimeRequestOfDate($timeBegin))
                                             @if($endCheckStatus)
                                                 <br/>
-                                                <span style="background-color: red; color: yellow; padding: 3px;">Yêu cầu tăng ca</span>
+                                                <span style="background-color: black; color: lime; padding: 3px;">Yêu cầu tăng ca</span>
                                             @else
                                                 <br/>
-                                                <em style="color: brown;">- Có yêu cầu tăng ca</em>
+                                                <em style="color: grey;;">- Có yêu cầu tăng ca</em>
                                             @endif
                                         @endif
                                     </td>
                                     <td>
                                         @if(!$hFunction->checkEmpty($timeEnd))
-                                            <span>
+                                            <b style="color: blue;">
                                                     {!! date('d-m-Y ', strtotime($timeEnd)) !!}
-                                            </span>
-                                            <span class="qc-font-bold" style="color: blue;">
+                                            </b>
+                                            <span class="qc-font-bold" style="color: brown;">
                                                     {!! date('H:i', strtotime($timeEnd)) !!}
                                             </span>
                                             @if($hFunction->checkCount($dataTimekeepingProvisionalWarningTimeEnd))
                                                 @if($dataTimekeepingProvisionalWarningTimeEnd->checkUpdateTimeEnd())
                                                     <br/>
                                                     <em style="color: grey;">
-                                                        - Báo lại: {!! $hFunction->formatDateToDMYHI($dataTimekeepingProvisionalWarningTimeEnd->updateDate()) !!}
+                                                        - Báo lại: {!! date('d-m-Y H:i ', strtotime($dataTimekeepingProvisionalWarningTimeEnd->updateDate())) !!}
                                                     </em>
                                                 @else
                                                     <br/>

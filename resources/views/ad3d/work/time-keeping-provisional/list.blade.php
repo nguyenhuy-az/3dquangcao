@@ -15,7 +15,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-
+$hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
 ?>
 @extends('ad3d.work.time-keeping-provisional.index')
 @section('qc_ad3d_index_content')
@@ -23,14 +23,14 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}">
+                    <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     <label class="qc-font-size-20" style="color: red;">DUYỆT CHẤM CÔNG</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
-                            data-href-filter="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}">
+                            data-href-filter="{!! $hrefIndex !!}">
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -48,19 +48,15 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
             </div>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="qc_ad3d_list_content row "
-                 data-href-view="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}"
-                 data-href-confirm="{!! route('qc.ad3d.work.time-keeping-provisional.confirm.get') !!}"
-                 data-href-cancel="{!! route('qc.ad3d.work.time-keeping-provisional.cancel.get') !!}">
+            <div class="qc_ad3d_list_content row ">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr>
-                            <td colspan="7" style="background-color: red;">
+                            <td colspan="5" style="background-color: red;">
                                 <span style="color: white;">CHỈ DUYỆT CHẤM CÔNG TRONG THÁNG HIỆN TẠI</span>
                             </td>
                         </tr>
                         <tr style="background-color: black; color: yellow;">
-                            <th class="text-center" style="width:20px;">STT</th>
                             <th>NHÂN VIÊN</th>
                             <th class="text-center">GIỜ CHẤM - GIỜ VÀO - GIỜ RA</th>
                             <th>
@@ -78,7 +74,6 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 <br/>
                                 <em style="color: white;">(Sau 18h)</em>
                             </th>
-                            <th>GHI CHÚ</th>
                         </tr>
                         @if($hFunction->checkCount($dataTimekeepingProvisional ))
                             <?php
@@ -120,13 +115,11 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 $dataOverTimeRequest = $dataCompanyStaffWork->overTimeRequestGetInfoInDate($timeBegin);
                                 # lay thong tin canh bao cham cong
                                 $dataTimekeepingProvisionalWarning = $timekeepingProvisional->timekeepingProvisionalWarningGetInfo();
+                                $n_o = $n_o + 1;
                                 ?>
                                 {{--chi lay thong tin chua tinh luong--}}
-                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
+                                <tr class="qc_ad3d_list_object @if($n_o%2 == 0) info @endif"
                                     data-object="{!! $timekeepingProvisionalId !!}">
-                                    <td class="text-center">
-                                        {!! $n_o += 1 !!}
-                                    </td>
                                     <td>
                                         <div class="media">
                                             <a class="pull-left" href="#">
@@ -144,7 +137,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                         @if($timekeepingProvisional->checkConfirmStatus())
                                                             <em style="color: grey;">Đã duyệt</em>
                                                         @else
-                                                            <a class="qc_confirm qc-link-red qc-font-size-14">
+                                                            <a class="qc_confirm qc-link-red qc-font-size-14"
+                                                               data-href="{!! route('qc.ad3d.work.time_keeping_provisional.confirm.get', $timekeepingProvisionalId) !!}">
                                                                 XÁC NHẬN
                                                             </a>
                                                         @endif
@@ -153,16 +147,21 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                     @if(!$timekeepingProvisional->checkConfirmStatus())
                                                         <em style="color: grey;">Không duyệt-</em>
                                                     @endif
-                                                    <span style="color: red;">
-                                                        Đã xuất bảng lương
-                                                    </span>
+                                                @endif
+                                                @if(!$hFunction->checkEmpty($note))
+                                                    <br/>
+                                                    <em class="qc-color-grey">- {!! $note !!}</em>
                                                 @endif
                                             </div>
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <em class="qc-color-grey">{!! $hFunction->getTimeFromDate($createdAt) !!}
-                                            - </em>
+                                        <a class="qc_warning_time_begin qc-link-red-bold" title="Cảnh báo chấm sai" data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_begin.get',$timekeepingProvisionalId) !!}">
+                                            <i class="glyphicon glyphicon-warning-sign qc-font-size-14"></i>
+                                        </a>
+                                        <em class="qc-color-grey">
+                                            {!! $hFunction->getTimeFromDate($createdAt) !!} -
+                                        </em>
                                         <span style="color: brown;">{!! $hFunction->convertDateDMYFromDatetime($timeBegin) !!}</span>
                                         <span class="qc-font-bold">{!! date('H:i', strtotime($timeBegin))!!}</span>
                                         <br/>
@@ -181,8 +180,12 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                                 </a>
                                             @endif
                                         @else
-                                            <em style="color: grey">{!! $hFunction->getTimeFromDate($updatedAt) !!}
-                                                - </em>
+                                            <a class="qc-link-red-bold" title="Cảnh báo chấm sai">
+                                                <i class="glyphicon glyphicon-warning-sign qc-font-size-14"></i>
+                                            </a>
+                                            <em style="color: grey">
+                                                {!! $hFunction->getTimeFromDate($updatedAt) !!} -
+                                            </em>
                                             <span style="color: blue;">{!! $hFunction->convertDateDMYFromDatetime($timeEnd) !!}</span>
                                             <span class="qc-font-bold">{!! date('H:i', strtotime($timeEnd)) !!}</span>
 
@@ -228,7 +231,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInMorning))
                                             @foreach($dataTimekeepingProvisionalImageInMorning as $timekeepingProvisionalImage)
                                                 <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
-                                                   data-href="{!! route('qc.ad3d.work.time-keeping-provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
+                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
                                                     <img style="width: 70px; height: 70px;"
                                                          src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
                                                 </a>
@@ -241,7 +244,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInAfternoon))
                                             @foreach($dataTimekeepingProvisionalImageInAfternoon as $timekeepingProvisionalImage)
                                                 <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
-                                                   data-href="{!! route('qc.ad3d.work.time-keeping-provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
+                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
                                                     <img style="width: 70px; height: 70px;"
                                                          src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
                                                 </a>
@@ -254,7 +257,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInEvening))
                                             @foreach($dataTimekeepingProvisionalImageInEvening as $timekeepingProvisionalImage)
                                                 <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
-                                                   data-href="{!! route('qc.ad3d.work.time-keeping-provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
+                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
                                                     <img style="width: 70px; height: 70px;"
                                                          src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
                                                 </a>
@@ -263,23 +266,16 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                             <em style="color: brown;">- Không có báo cáo</em>
                                         @endif
                                     </td>
-                                    <td>
-                                        @if(!$hFunction->checkEmpty($note))
-                                            <em class="qc-color-grey">{!! $note !!}</em>
-                                        @else
-                                            <em class="qc-color-grey">...</em>
-                                        @endif
-                                    </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="7">
+                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="5">
                                     {!! $hFunction->page($dataTimekeepingProvisional) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="7">
+                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="5">
                                     <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                 </td>
                             </tr>

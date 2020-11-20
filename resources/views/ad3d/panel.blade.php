@@ -69,7 +69,7 @@ $totalReceiveMoneyUnconfirmed = $modelStatistical->sumReceiveMoneyUnconfirmedOfS
                         Thông tin mới
                     </a>
                     <a class="qc-link list-group-item"
-                       href="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}">
+                       href="{!! route('qc.ad3d.work.time_keeping_provisional.get') !!}">
                         <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                              {!! $totalNewTimekeepingProvisional !!}
                         </span>

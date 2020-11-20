@@ -51,7 +51,7 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                 </a>
                             </li>
                             <li @if($accessObject == 'timeKeepingProvisional') class="active" @endif>
-                                <a href="{!! route('qc.ad3d.work.time-keeping-provisional.get') !!}">
+                                <a href="{!! route('qc.ad3d.work.time_keeping_provisional.get') !!}">
                                     Chấm công
                                 </a>
                             </li>

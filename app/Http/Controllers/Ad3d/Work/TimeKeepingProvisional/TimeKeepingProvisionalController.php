@@ -53,48 +53,6 @@ class TimeKeepingProvisionalController extends Controller
         return view('ad3d.work.time-keeping-provisional.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataTimekeepingProvisional', 'companyFilterId', 'nameFiler'));
     }
 
-    public function indexOld($companyFilterId = null, $dayFilter = null, $monthFilter = null, $yearFilter = null, $nameFiler = null)
-    {
-        $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
-        $modelCompany = new QcCompany();
-        $modelWork = new QcWork();
-        $modelTimekeepingProvisional = new QcTimekeepingProvisional();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
-        $dataAccess = [
-            'accessObject' => 'timeKeepingProvisional'
-        ];
-        if (empty($dayFilter) && empty($monthFilter) && empty($yearFilter)) {
-            $dateFilter = null;// date('Y-m-d');
-            //$dayFilter = date('d');
-            //$monthFilter = date('m');
-            //$yearFilter = date('Y');
-        } elseif ($dayFilter == 0) { //xem tất cả các ngày trong tháng
-            $dateFilter = null;// date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } else {
-            $dateFilter = null;// date('Y-m-d', strtotime("$dayFilter-$monthFilter-$yearFilter"));
-        }
-
-        $dataCompany = $modelCompany->getInfo();
-        if (empty($companyFilterId)) {
-            if (!$dataStaffLogin->checkRootManage()) {
-                $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-                $companyFilterId = $dataStaffLogin->companyId();
-            } else {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            }
-        } else {
-            $searchCompanyFilterId = [$companyFilterId];
-        }
-        if (!empty($nameFiler)) {
-            $listStaffId = $modelStaff->listIdOfListCompanyAndName($searchCompanyFilterId, $nameFiler);
-        } else {
-            $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
-        }
-        $listWorkId = $modelWork->listIdOfListStaffId($listStaffId);
-        $dataTimekeepingProvisional = $modelTimekeepingProvisional->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->paginate(30);
-        return view('ad3d.work.time-keeping-provisional.list-old', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataTimekeepingProvisional', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));
-    }
 
     # xem anh bao cao
     public function viewProvisionalImage($imageId)
@@ -158,19 +116,21 @@ class TimeKeepingProvisionalController extends Controller
         }
     }
 
+    #===== canh bao gio vao
+    public function getWarningBegin($timekeepingId)
+    {
+        $hFunction = new \Hfunction();
+        $modelTimekeeping = new QcTimekeepingProvisional();
+        $dataTimekeepingProvisional = $modelTimekeeping->getInfo($timekeepingId);
+        if ($hFunction->checkCount($dataTimekeepingProvisional)) {
+            return view('ad3d.work.time-keeping-provisional.warning-time-begin', compact('dataTimekeepingProvisional'));
+        }
+    }
+
     // huy yeu cau tang ca
     public function cancelOverTime($requestId)
     {
         $modelOverTimeRequest = new QcOverTimeRequest();
         return $modelOverTimeRequest->deleteInfo($requestId);
-    }
-
-    // huy cham cong
-    public function cancelTimekeepingProvisional($timekeepingId)
-    {
-        $modelStaff = new QcStaff();
-        $modelTimekeepingProvisional = new QcTimekeepingProvisional();
-        $staffLoginId = $modelStaff->loginStaffId();
-        $modelTimekeepingProvisional->cancelTimekeepingProvision($timekeepingId, $staffLoginId);
     }
 }

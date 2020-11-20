@@ -31,52 +31,42 @@ if (!empty($companyStaffWorkId)) {
 @extends('ad3d.components.container.container-8')
 @section('qc_ad3d_container_content')
     <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-        <h3>XÁC NHẬN CHẤM CÔNG </h3>
+        <h3 style="color: red;">XÁC NHẬN CHẤM CÔNG </h3>
     </div>
     <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-        <form class="qc_ad3d_frm_confirm form-horizontal" name="qc_ad3d_frm_confirm" role="form" method="post"
-              action="{!! route('qc.ad3d.work.time-keeping-provisional.confirm.post') !!}">
+        <form class="qc_ad3d_frm_confirm form" name="qc_ad3d_frm_confirm" role="form" method="post"
+              action="{!! route('qc.ad3d.work.time_keeping_provisional.confirm.post') !!}">
             @if($timeCheck > $timeDefault)
                 <div class="row">
                     <div class="notifyConfirm qc-color-red text-center col-xs-12 col-sm-12 col-md-12 col-lg-12"></div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="form-group qc-padding-none">
-                            <label class="col-sm-2 control-label">Nhân viên:</label>
-
-                            <div class="col-sm-10">
-                                <input class="form-control" type="text" readonly="true"
-                                       value="{!! $staffName !!}"/>
-                            </div>
+                        <div class="form-group">
+                            <label>Nhân viên:</label>
+                            <input class="form-control" type="text" readonly="true" value="{!! $staffName !!}"/>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="form-group form-group-sm ">
-                            <label class="col-sm-2 control-label">Giờ vào:</label>
-
-                            <div class="col-sm-10">
+                        <div class="form-group">
+                            <label>Giờ vào:</label>
+                            <input class="form-control" readonly="true"
+                                   value="{!! date('d-m-Y H:i', strtotime($timeBegin)) !!}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-group">
+                            <label>Giờ ra:</label>
+                            @if(!$hFunction->checkEmpty($timeEnd))
                                 <input class="form-control" readonly="true"
-                                       value="{!! date('d-m-Y H:i', strtotime($timeBegin)) !!}"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="form-group form-group-sm ">
-                            <label class="col-sm-2 control-label">Giờ ra:</label>
-
-                            <div class="col-sm-10">
-                                @if(!$hFunction->checkEmpty($timeEnd))
-                                    <input class="form-control" readonly="true"
-                                           value="{!! date('d-m-Y H:i', strtotime($timeEnd)) !!}"/>
-                                @else
-                                    <input class="form-control" readonly="true" value="Null"/>
-                                @endif
-                            </div>
+                                       value="{!! date('d-m-Y H:i', strtotime($timeEnd)) !!}"/>
+                            @else
+                                <input class="form-control" readonly="true" value="Null"/>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -84,11 +74,8 @@ if (!empty($companyStaffWorkId)) {
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm ">
-                                <label class="col-sm-2 control-label">Làm trưa:</label>
-
-                                <div class="col-sm-10">
-                                    <em>Có tăng ca làm trưa</em>
-                                </div>
+                                <label>Làm trưa: </label>
+                                <em>Có tăng ca làm trưa</em>
                             </div>
                         </div>
                     </div>
@@ -96,19 +83,16 @@ if (!empty($companyStaffWorkId)) {
                 @if(!empty($note))
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="form-group form-group-sm ">
-                                <label class="col-sm-2 control-label">Ghi chú:</label>
-
-                                <div class="col-sm-10">
-                                    <em>{!! $note !!}</em>
-                                </div>
+                            <div class="form-group">
+                                <label>Ghi chú:</label>
+                                <input class="form-control" readonly="true" value="{!! $note !!}"/>
                             </div>
                         </div>
                     </div>
                 @endif
-                <div class="form-group" style="border-top: 1px dotted grey;">
-                    <div class="col-sm-offset-2 col-sm-10 ">
-                        <div class="radio col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="radio col-xs-6 col-sm-6 col-md-3 col-lg-3">
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="txtPermissionLateStatus"
@@ -117,7 +101,7 @@ if (!empty($companyStaffWorkId)) {
                                 </label>
                             </div>
                         </div>
-                        <div class="radio col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                        <div class="radio col-xs-6 col-sm-6 col-md-3 col-lg-3">
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="txtAccuracyStatus">
@@ -125,9 +109,7 @@ if (!empty($companyStaffWorkId)) {
                                 </label>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <div class="radio col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                        <div class="radio col-xs-6 col-sm-6 col-md-3 col-lg-3">
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="txtApplyTimekeepingStatus">
@@ -135,7 +117,7 @@ if (!empty($companyStaffWorkId)) {
                                 </label>
                             </div>
                         </div>
-                        <div class="radio col-xs-6 col-sm-6 col-md-4 col-lg-4">
+                        <div class="radio col-xs-6 col-sm-6 col-md-3 col-lg-3">
                             <div class="checkbox">
                                 <label>
                                     <input type="checkbox" name="txtApplyRuleStatus" checked>
@@ -147,31 +129,28 @@ if (!empty($companyStaffWorkId)) {
                 </div>
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="form-group form-group-sm ">
-                            <label class="col-sm-2 control-label">Ghi chú:</label>
-
-                            <div class="col-sm-10">
-                                <input class="form-control" type="text" name="txtConfirmNote" value="">
-                            </div>
+                        <div class="form-group">
+                            <label>Ghi chú: </label>
+                            <input class="form-control" type="text" name="txtConfirmNote" value="">
                         </div>
                     </div>
                 </div>
                 @if($hFunction->checkEmpty($timeEnd))
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="text-center form-group form-group-sm ">
+                            <div class="text-center form-group">
                                 <span style="background-color: red; color: yellow; padding: 5px;">NGÀY NÀY CHƯA BÁO GIỜ RA. SẼ KHÔNG ĐƯỢC TÍNH CÔNG</span>
                             </div>
                         </div>
                     </div>
                 @endif
                 <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="form-group form-group-sm text-center">
+                    <div class="form-group text-center">
                         <div class="col-sm-12 col-sm-12 col-md-12 col-lg-12">
                             <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                             <input type="hidden" name="txtTimekeeping" value="{!! $timekeepingId !!}">
-                            <button type="button" class="qc_save btn btn-primary btn-sm">Xác nhận</button>
-                            <button type="button" class="qc_ad3d_container_close btn btn-default btn-sm">Đóng</button>
+                            <button type="button" class="qc_save btn btn-primary btn-sm">XÁC NHẬN</button>
+                            <button type="button" class="qc_ad3d_container_close btn btn-default btn-sm">ĐÓNG</button>
                         </div>
                     </div>
 
@@ -184,7 +163,7 @@ if (!empty($companyStaffWorkId)) {
                 </div>
                 <div class="row">
                     <div class="text-center qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <button type="button" class="qc_ad3d_container_close btn btn-primary btn-sm">Đóng</button>
+                        <button type="button" class="qc_ad3d_container_close btn btn-primary btn-sm">ĐÓNG</button>
                     </div>
                 </div>
             @endif

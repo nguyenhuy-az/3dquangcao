@@ -166,12 +166,24 @@ class QcTimekeepingProvisional extends Model
         $hFunction = new \Hfunction();
         $modelTimekeepingProvisionalWarning = new QcTimekeepingProvisionalWarning();
         $currentDate = $hFunction->carbonNow();
+        $dataTimekeepingProvisional = $this->getInfo($timekeepingId);
+        # neu cap nhat sau khi bi canh bao
+        if ($modelTimekeepingProvisionalWarning->checkExistWarningTimeEndOfTimekeepingProvisional($timekeepingId)) {
+            # cap nhat ngay canh bao
+            $modelTimekeepingProvisionalWarning->updateTimeEndOfTimekeepingProvisional($timekeepingId, $timeEnd);
+            # giu lai thong tin cu - thoi gian bao va thoi gian cham lan 1
+            $updateTimeEnd = $dataTimekeepingProvisional->timeEnd();
+            $updatedAt = $dataTimekeepingProvisional->updatedAt();
+        }else{
+            $updateTimeEnd = $timeEnd;
+            $updatedAt = $currentDate;
+        }
         if (QcTimekeepingProvisional::where(['timekeeping_provisional_id' => $timekeepingId])->update(
             [
-                'timeEnd' => $timeEnd,
+                'timeEnd' => $updateTimeEnd,
                 'afternoonStatus' => $afternoonStatus,
                 'note' => $note,
-                'updated_at' => $currentDate
+                'updated_at' => $updatedAt
             ])
         ) {
             # chuyen ve cung dinh dang de so sanh
@@ -180,10 +192,7 @@ class QcTimekeepingProvisional extends Model
             # bao truoc gio ra
             if ($checkTimeEnd > $checkCurrentDate) {
                 # neu da duoc canh bao => cap nhat ngay canh bao
-                if ($modelTimekeepingProvisionalWarning->checkExistWarningTimeEndOfTimekeepingProvisional($timekeepingId)) {
-                    # cap nhat ngay canh bao
-                    $modelTimekeepingProvisionalWarning->updateTimeEndOfTimekeepingProvisional($timekeepingId, $timeEnd);
-                } else {
+                if (!$modelTimekeepingProvisionalWarning->checkExistWarningTimeEndOfTimekeepingProvisional($timekeepingId)) {
                     # chua duoc canh bao
                     # canh bao gio ra khong dung
                     $modelTimekeepingProvisionalWarning->insert("Báo giờ ra không đúng - giờ chấm: $currentDate - giờ báo: $timeEnd", null, $modelTimekeepingProvisionalWarning->getDefaultWarningTypeTimeEnd(), $timekeepingId, null);
