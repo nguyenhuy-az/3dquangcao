@@ -223,6 +223,7 @@ class QcWork extends Model
         $date = date('Y-m-d', strtotime($date));
         return QcWork::where(['companyStaffWork_id' => $companyStaffWorkId])->where('fromDate', '<=', $date)->where('toDate', '>=', $date)->first();
     }
+
     # lay 1 bang cham cong dang lam viec
     public function infoActivityOfCompanyStaffWork($companyStaffWorkId, $date = null)
     {
@@ -521,7 +522,10 @@ class QcWork extends Model
     }
 
     // kiem tra thong tin lam viec
-    public function checkAutoTimekeepingOfActivityWork()
+    /*
+     * goi trong Qc_comgpany
+     */
+    public function checkAutoTimekeepingProvisionalOfActivityWork()
     {
         $hFunction = new \Hfunction();
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();

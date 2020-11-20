@@ -30,7 +30,7 @@ if ($currentHour < 8) {
         <div class="row">
             <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12"
                  style="margin-bottom: 5px; border-bottom: 1px dashed brown;">
-                <h3 style="color: red;">GIỜ VÀO</h3>
+                <h3 style="color: red;">BÁO GIỜ VÀO</h3>
             </div>
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <form class="frm_time_begin_add form" name="frm_time_begin_add" role="form" method="post"
@@ -88,11 +88,15 @@ if ($currentHour < 8) {
                     </div>
                     <div class="row">
                         <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="text-center form-group form-group-sm">
+                            <div class="text-center form-group">
                                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                                 <input type="hidden" name="txtWork" value="{!! $dataWork->workId() !!}">
-                                <button type="button" class="qc_save btn btn-sm btn-primary">Lưu</button>
-                                <button type="button" class="qc_container_close btn btn-sm btn-default">Đóng</button>
+                                <button type="button" class="qc_save btn btn-sm btn-primary">
+                                    XÁC NHẬN BÁO
+                                </button>
+                                <button type="button" class="qc_container_close btn btn-sm btn-default">
+                                    ĐÓNG
+                                </button>
                             </div>
                         </div>
                     </div>

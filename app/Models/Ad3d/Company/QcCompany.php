@@ -140,7 +140,7 @@ class QcCompany extends Model
 
         // ===== ===== CHAM CONG ====== ======
         # kiem tra cham cong
-        $modelWork->checkAutoTimekeepingOfActivityWork();
+        $modelWork->checkAutoTimekeepingProvisionalOfActivityWork();
 
         #kiểm tra đầu tháng để cho ra bảng làm việc của tháng mới
         $modelWork->checkEndWorkOfMonth();

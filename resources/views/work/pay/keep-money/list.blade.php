@@ -29,12 +29,12 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
                                 <th style="width:20px;">STT</th>
-                                <th style="width: 120px;">Ngày giữ</th>
-                                <th>Nhân viên</th>
+                                <th style="width: 120px;">NGÀY GIỮ  - THÁNG LƯƠNG</th>
+                                <th style="width: 150px;">
+                                    SỐ TIỀN
+                                </th>
+                                <th>NHÂN VIÊN</th>
                                 <th>Ghi chú</th>
-                                <th>Tháng lương giữ</th>
-                                <th class="text-center">Thanh toán</th>
-                                <th class="text-right">Số tiền</th>
                             </tr>
                             <tr>
                                 <td></td>
@@ -60,6 +60,20 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                     </select>
                                 </td>
                                 <td style="padding: 0;">
+                                    <select class="cbPayStatus form-control" name="cbPayStatus"
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="0" @if($payStatus == 0) selected="selected" @endif>
+                                            Tất cả
+                                        </option>
+                                        <option value="1" @if($payStatus == 1) selected="selected" @endif>
+                                            Chưa Thanh toán
+                                        </option>
+                                        <option value="2" @if($payStatus == 2) selected="selected" @endif >
+                                            Đã Thanh toán
+                                        </option>
+                                    </select>
+                                </td>
+                                <td style="padding: 0;">
                                     <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
                                         <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
                                             Tất cả
@@ -74,22 +88,8 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                         @endif
                                     </select>
                                 </td>
-                                <td></td>
-                                <td style="padding: 0;">
-                                    <select class="cbPayStatus form-control" name="cbPayStatus"
-                                            data-href="{!! $hrefIndex !!}">
-                                        <option value="0" @if($payStatus == 0) selected="selected" @endif>
-                                            Tất cả
-                                        </option>
-                                        <option value="1" @if($payStatus == 1) selected="selected" @endif>
-                                            Chưa Thanh toán
-                                        </option>
-                                        <option value="2" @if($payStatus == 2) selected="selected" @endif >
-                                            Đã Thanh toán
-                                        </option>
-                                    </select>
-                                </td>
-                                <td></td>
+
+
                             </tr>
                             @if($hFunction->checkCount($dataKeepMoney))
                                 <?php
@@ -109,34 +109,40 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                             {!! $n_o += 1 !!}
                                         </td>
                                         <td>
-                                            {!! date('d/m/Y', strtotime($keepMoney->keepDate())) !!}
+                                            <b>{!! date('d/m/Y', strtotime($keepMoney->keepDate())) !!}</b>
+                                            <br/>
+                                            <em style="color: grey;">{!! date('m/Y', strtotime($dataWork->fromDate())) !!}</em>
                                         </td>
                                         <td>
-                                            {!! $dataStaffWork->fullName() !!}
+                                            <b style="color: red;">{!! $hFunction->currencyFormat($keepMoney->money()) !!}</b>
+                                            <br/>
+                                            @if($keepMoney->checkPaid($keepMoneyId))
+                                                <em style="color: grey;">- Đã thanh toán</em>
+                                            @else
+                                                <a class="qc-link-green-bold" href="{!! route('qc.work.pay.keep_money.add.get',$dataStaffWork->staffId()) !!}">
+                                                    THANH TOÁN
+                                                </a>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object"
+                                                         style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                         src="{!! $dataStaffWork->pathAvatar($dataStaffWork->image()) !!}">
+                                                </a>
+                                                <div class="media-body">
+                                                    <label class="media-heading">{!! $dataStaffWork->fullName() !!}</label>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             {!! $keepMoney->description() !!}
                                         </td>
-                                        <td>
-                                            {!! date('m/Y', strtotime($dataWork->fromDate())) !!}
-                                        </td>
-                                        <td class="text-center">
-                                            @if($keepMoney->checkPaid($keepMoneyId))
-                                                <span>Đã thanh toán</span>
-                                            @else
-                                                <a href="{!! route('qc.work.pay.keep_money.add.get',$dataStaffWork->staffId()) !!}"
-                                                   style="background-color: red; color: yellow; padding: 3px;">
-                                                    Thanh toán
-                                                </a>
-                                            @endif
-                                        </td>
-                                        <td class="text-right qc-color-red">
-                                            {!! $hFunction->currencyFormat($keepMoney->money()) !!}
-                                        </td>
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-center" colspan="7">
+                                    <td class="text-center" colspan="5">
                                         {!! $hFunction->page($dataKeepMoney) !!}
                                     </td>
                                 </tr>

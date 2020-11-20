@@ -41,7 +41,7 @@ if ($hFunction->checkCount($dataWork)) {
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr>
-                            <td colspan="2" style="padding: 0;">
+                            <td style="padding: 0;">
                                 <a class="qc_time_begin_action form-control qc-link-white-bold btn btn-primary"
                                    data-href="{!! route('qc.work.timekeeping.timeBegin.get') !!}">
                                     BÁO GIỜ VÀO
@@ -74,25 +74,24 @@ if ($hFunction->checkCount($dataWork)) {
                             </td>
                         </tr>
                         <tr style="background-color: black;color: yellow;">
-                            <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Giờ vào</th>
-                            <th>Giờ ra</th>
+                            <th style="width: 150px;">GIỜ VÀO</th>
+                            <th style="width: 150px;">GIỜ RA</th>
                             <th>
-                                Báo cáo buổi Sáng
+                                BÁO CÁO BUỔI SÁNG
                                 <br/>
                                 <em style="color: white;">(Trước 13h30)</em>
                             </th>
                             <th>
-                                Báo cáo buổi Chiều
+                                BÁO CÁO BUỔI CHIỀU
                                 <br/>
                                 <em style="color: white;">(Từ 13h30 -> Trước 18h)</em>
                             </th>
                             <th>
-                                Báo cáo tăng ca
+                                BÁO CÁO TĂNG CA
                                 <br/>
                                 <em style="color: white;">(Sau 18h)</em>
                             </th>
-                            <th>Ghi chú</th>
+                            <th>GHI CHÚ</th>
                         </tr>
                         @if($hFunction->checkCount($dataTimekeepingProvisional))
                             @foreach($dataTimekeepingProvisional as $timekeepingProvisional)
@@ -110,12 +109,19 @@ if ($hFunction->checkCount($dataWork)) {
                                 $checkConfirmStatus = $timekeepingProvisional->checkConfirmStatus($timekeepingProvisionalId);
                                 # xet han bao gio ra
                                 $endCheckStatus = $timekeepingProvisional->checkTimeOutToEndWork();
+                                # lay thong tin canh bao gio ra
+                                $dataTimekeepingProvisionalWarningTimeEnd = $timekeepingProvisional->timekeepingProvisionalWarningGetTimeEnd();
                                 $n_o = (isset($n_o)) ? $n_o + 1 : 1;
                                 ?>
                                 <tr class="qc_timekeeping_provisional_object @if(!($n_o%2)) info @endif"
                                     data-timekeeping-provisional="{!! $timekeepingProvisionalId !!}">
-                                    <td class="text-center qc-padding-none">
-                                        {!! $n_o !!}
+                                    <td>
+                                        <b style="color: blue;">
+                                            {!! date('d-m-Y ', strtotime($timeBegin)) !!}
+                                        </b>
+                                        <span class="qc-font-bold" style="color: brown;">
+                                            {!! date('H:i', strtotime($timeBegin)) !!}
+                                        </span>
                                         @if($hFunction->checkEmpty($timeEnd) && $endCheckStatus)
                                             <br/>
                                             <a class="qc_time_end_cancel qc-link-red-bold">
@@ -125,19 +131,11 @@ if ($hFunction->checkCount($dataWork)) {
                                             @if(!$checkConfirmStatus && $endCheckStatus)
                                                 <br/>
                                                 <a class="qc_time_end_cancel qc-link-red-bold">
-                                                    <i class="glyphicon glyphicon-trash qc-font-size-16"
-                                                       title="Hủy"></i>
+                                                    <span class="qc-font-size-14"
+                                                       title="Hủy">HỦY CHẤM CÔNG</span>
                                                 </a>
                                             @endif
                                         @endif
-                                    </td>
-                                    <td>
-                                        <b>
-                                            {!! date('d-m-Y ', strtotime($timeBegin)) !!}
-                                        </b>
-                                        <span class="qc-font-bold" style="color: blue;">
-                                            {!! date('H:i', strtotime($timeBegin)) !!}
-                                        </span>
                                         @if($dataCompanyStaffWork->checkExistOverTimeRequestOfDate($timeBegin))
                                             @if($endCheckStatus)
                                                 <br/>
@@ -152,22 +150,35 @@ if ($hFunction->checkCount($dataWork)) {
                                         @if(!$hFunction->checkEmpty($timeEnd))
                                             <span>
                                                     {!! date('d-m-Y ', strtotime($timeEnd)) !!}
-                                                </span>
+                                            </span>
                                             <span class="qc-font-bold" style="color: blue;">
                                                     {!! date('H:i', strtotime($timeEnd)) !!}
-                                                </span>
+                                            </span>
+                                            @if($hFunction->checkCount($dataTimekeepingProvisionalWarningTimeEnd))
+                                                @if($dataTimekeepingProvisionalWarningTimeEnd->checkUpdateTimeEnd())
+                                                    <br/>
+                                                    <em style="color: grey;">
+                                                        - Báo lại: {!! $hFunction->formatDateToDMYHI($dataTimekeepingProvisionalWarningTimeEnd->updateDate()) !!}
+                                                    </em>
+                                                @else
+                                                    <br/>
+                                                    <span style="background-color: red;color: yellow; padding: 3px;">
+                                                        {!! $dataTimekeepingProvisionalWarningTimeEnd->note() !!}
+                                                    </span>
+                                                @endif
+
+                                            @endif
                                             @if(!$checkConfirmStatus)
                                                 <br/>
-                                                <a class="qc_time_end_edit_action qc-link-red-bold"
+                                                <a class="qc_time_end_edit_action qc-font-size-14 qc-link-red-bold"
                                                    data-href="{!! route('qc.work.timekeeping.timeEnd.edit.get',$timekeepingProvisionalId) !!}">
-                                                    <i class="glyphicon glyphicon-pencil" title="Sửa thông tin"></i>
+                                                    SỬA
                                                 </a>
                                                 @if($endCheckStatus)
-                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                                        <a class="qc_timekeeping_provisional_image_action qc-link-bold qc-font-size-14">
-                                                            BÁO CÁO TIẾN ĐỘ
-                                                        </a>
-                                                    </div>
+                                                    <br/>
+                                                    <a class="qc_timekeeping_provisional_image_action qc-font-size-14 qc-link-bold">
+                                                        BÁO CÁO TIẾN ĐỘ
+                                                    </a>
                                                 @endif
                                             @else
                                                 <br/>
@@ -178,7 +189,7 @@ if ($hFunction->checkCount($dataWork)) {
                                             @endif
                                         @else
                                             @if($endCheckStatus)
-                                                <a class="qc_time_end_action qc-link-green-bold"
+                                                <a class="qc_time_end_action qc-link-red-bold"
                                                    style="font-size: 1.5em;">
                                                     - BÁO GIỜ RA
                                                 </a>

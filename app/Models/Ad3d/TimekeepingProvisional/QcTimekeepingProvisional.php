@@ -12,6 +12,7 @@ use App\Models\Ad3d\SystemDateOff\QcSystemDateOff;
 use App\Models\Ad3d\Timekeeping\QcTimekeeping;
 use App\Models\Ad3d\TimekeepingImage\QcTimekeepingImage;
 use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
+use App\Models\Ad3d\TimekeepingProvisionalWarning\QcTimekeepingProvisionalWarning;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
 
@@ -51,6 +52,7 @@ class QcTimekeepingProvisional extends Model
         return $this->lastId;
     }
 
+
     public function checkNullId($id)
     {
         return (empty($id)) ? $this->timekeepingProvisionalId() : $id;
@@ -70,6 +72,7 @@ class QcTimekeepingProvisional extends Model
     }
 
     // kiem tra tong tin cham cong lam viec trong ngay - KIEM TRA NGAY TRƯƠC
+    /*goi trong qc_work*/
     public function checkAutoTimekeepingOfWorkAndDate($workId, $checkDate)
     {
         $hFunction = new \Hfunction();
@@ -161,13 +164,35 @@ class QcTimekeepingProvisional extends Model
     public function updateTimeEnd($timekeepingId, $timeEnd, $afternoonStatus, $note)
     {
         $hFunction = new \Hfunction();
-        return QcTimekeepingProvisional::where(['timekeeping_provisional_id' => $timekeepingId])->update(
+        $modelTimekeepingProvisionalWarning = new QcTimekeepingProvisionalWarning();
+        $currentDate = $hFunction->carbonNow();
+        if (QcTimekeepingProvisional::where(['timekeeping_provisional_id' => $timekeepingId])->update(
             [
                 'timeEnd' => $timeEnd,
                 'afternoonStatus' => $afternoonStatus,
                 'note' => $note,
-                'updated_at' => $hFunction->createdAt()
-            ]);
+                'updated_at' => $currentDate
+            ])
+        ) {
+            # chuyen ve cung dinh dang de so sanh
+            $checkTimeEnd = $hFunction->formatDateToYMDHI($timeEnd);
+            $checkCurrentDate = $hFunction->formatDateToYMDHI($currentDate);
+            # bao truoc gio ra
+            if ($checkTimeEnd > $checkCurrentDate) {
+                # neu da duoc canh bao => cap nhat ngay canh bao
+                if ($modelTimekeepingProvisionalWarning->checkExistWarningTimeEndOfTimekeepingProvisional($timekeepingId)) {
+                    # cap nhat ngay canh bao
+                    $modelTimekeepingProvisionalWarning->updateTimeEndOfTimekeepingProvisional($timekeepingId, $timeEnd);
+                } else {
+                    # chua duoc canh bao
+                    # canh bao gio ra khong dung
+                    $modelTimekeepingProvisionalWarning->insert("Báo giờ ra không đúng - giờ chấm: $currentDate - giờ báo: $timeEnd", null, $modelTimekeepingProvisionalWarning->getDefaultWarningTypeTimeEnd(), $timekeepingId, null);
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function confirmWork($id, $staffLoginId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus)
@@ -305,6 +330,7 @@ class QcTimekeepingProvisional extends Model
 
     }
 
+    # huy cham cong
     public function deleteInfo($timekeepingId = null)
     {
         $model = new QcTimekeepingProvisionalImage();
@@ -322,8 +348,7 @@ class QcTimekeepingProvisional extends Model
     //kiển tra người nhập
     public function checkStaffInput($staffId, $timekeepingId = null)
     {
-        $timekeepingId = (empty($timekeepingId)) ? $this->timekeepingId() : $timekeepingId;
-        return (QcTimekeepingProvisional::where('staffCheck_id', $staffId)->where('timekeeping_provisional_id', $timekeepingId)->count() > 0) ? true : false;
+        return QcTimekeepingProvisional::where('staffCheck_id', $staffId)->where('timekeeping_provisional_id', $this->checkNullId($timekeepingId))->exists();
     }
 
     //========== ========== ========== CAC MOI QUAN HE ========== ========== ==========
@@ -422,6 +447,32 @@ class QcTimekeepingProvisional extends Model
     {
         $hFunction = new \Hfunction();
         return ($hFunction->checkCount($this->infoTimekeepingProvisionalImageInEvening($id))) ? true : false;
+    }
+
+    //----------- THONG TIN CANH BAP ------------
+    public function timekeepingProvisionalWarning()
+    {
+        return $this->hasMany('App\Models\Ad3d\TimekeepingProvisionalWarning\QcTimekeepingProvisionalWarning', 'timekeeping_provisional_id', 'timekeeping_provisional_id');
+    }
+
+    # lay thong tin canh bao cham cong - tat ca
+    public function timekeepingProvisionalWarningGetInfo($timekeepingId = null){
+        $modelTimekeepingProvisionalWarning = new QcTimekeepingProvisionalWarning();
+        return $modelTimekeepingProvisionalWarning->infoOfTimekeepingProvisional($this->checkNullId($timekeepingId));
+    }
+
+    #lay thong tin canh bao gio vao
+    public function timekeepingProvisionalWarningGetTimeBegin($timekeepingId = null)
+    {
+        $modelTimekeepingProvisionalWarning = new QcTimekeepingProvisionalWarning();
+        return $modelTimekeepingProvisionalWarning->infoTimeBeginOfTimekeepingProvisional($this->checkNullId($timekeepingId));
+    }
+
+    #lay thong tinn canh bao gio ra
+    public function timekeepingProvisionalWarningGetTimeEnd($timekeepingId = null)
+    {
+        $modelTimekeepingProvisionalWarning = new QcTimekeepingProvisionalWarning();
+        return $modelTimekeepingProvisionalWarning->infoTimeEndOfTimekeepingProvisional($this->checkNullId($timekeepingId));
     }
 
     //============ =========== ============ GET INFO ============= =========== ==========

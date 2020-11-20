@@ -34,8 +34,8 @@ $currentMonth = $hFunction->currentMonth();
                 <table class="table table-hover table-bordered">
                     <tr style="background-color: black; color: yellow;">
                         <th class="text-center" style="width:20px;">STT</th>
-                        <th>HÓA ĐƠN</th>
-                        <th style="width: 300px;">
+                        <th style="width: 300px;">HÓA ĐƠN</th>
+                        <th style="width: 200px;">
                             SỐ TIỀN
                             <br/>
                             <b style="color: white;">{!! $hFunction->currencyFormat($importTotalMoney) !!}</b>

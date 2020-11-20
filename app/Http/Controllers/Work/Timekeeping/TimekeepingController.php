@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Work\Timekeeping;
 
-use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
 use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
-use App\Models\Ad3d\Rule\QcRules;
 use App\Models\Ad3d\Salary\QcSalary;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
@@ -29,12 +27,10 @@ class TimekeepingController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        $modelWork = new QcWork();
         $dataAccess = [
             'object' => 'timekeeping'
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
-        $modelWork->checkAutoTimekeepingOfActivityWork();
         $dateFilter = date('Y-m-d');
         return view('work.timekeeping.timekeeping.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
     }
@@ -243,7 +239,7 @@ class TimekeepingController extends Controller
         }
     }
 
-    //su gio cham cong
+    //----- sua bao gio ra
     public function getEditTimeEnd($timekeepingProvisionalId)
     {
         $modelStaff = new QcStaff();
@@ -270,9 +266,11 @@ class TimekeepingController extends Controller
         $afternoonStatus = ($afternoonStatus) ? 1 : 0;
 
         $timeBegin = $modelTimekeepingProvisional->timeBegin($timekeepingProvisionalId)[0];
+        $timeBegin = $hFunction->formatDateToYMDHI($timeBegin);
         $timeEnd = $hFunction->convertStringToDatetime("$monthEnd/$dayEnd/$yearEnd $hoursEnd:$minuteEnd:00");
-        if (date('Y-m-d H:i', strtotime($timeBegin)) > date('Y-m-d H:i', strtotime($timeEnd))) {
-            return 'Giờ phải lớn hơn giờ vào';
+        $timeEnd = $hFunction->formatDateToYMDHI($timeEnd);
+        if ($timeBegin > $timeEnd) {
+            return "Giờ phải lớn hơn giờ vào $timeBegin === $monthEnd/$dayEnd/$yearEnd $hoursEnd:$minuteEnd";
         } else {
             if (!$modelTimekeepingProvisional->updateTimeEnd($timekeepingProvisionalId, $timeEnd, $afternoonStatus, $note)) {
                 return "Tính năng đang cập nhật";

@@ -74,20 +74,20 @@ $currentDateCheck = $hFunction->carbonNow();
                                 </div>
                                 <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="padding: 0;">
                                     <select class="form-control" name="cbDayEnd">
-                                        @for($i = 1;$i<= 31; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if($dayBegin == $i) selected="selected" @endif>
-                                                {!! $i !!}
+                                        @for($d = 1;$d<= 31; $d++)
+                                            <option value="{!! $d !!}"
+                                                    @if($dayBegin == $d) selected="selected" @endif>
+                                                {!! $d !!}
                                             </option>
                                         @endfor
                                     </select>
                                 </div>
                                 <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2" style="padding: 0;">
                                     <select class="form-control" name="cbMonthEnd" style="padding: 0;">
-                                        @for($i = 1;$i<= 12; $i++)
-                                            <option value="{!! $i !!}"
-                                                    @if($monthBegin == $i) selected="selected" @endif>
-                                                {!! $i !!}
+                                        @for($m = 1;$m<= 12; $m++)
+                                            <option value="{!! $m !!}"
+                                                    @if($monthBegin == $m) selected="selected" @endif>
+                                                {!! $m !!}
                                             </option>
                                         @endfor
                                     </select>
@@ -205,9 +205,10 @@ $currentDateCheck = $hFunction->carbonNow();
                                     <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                                     <input type="hidden" name="txtTimekeepingProvisional"
                                            value="{!! $timekeepingProvisionalId !!}">
-                                    <button type="button" class="qc_save btn btn-sm btn-primary">XÁC NHẬN</button>
+                                    <button type="button" class="qc_save btn btn-sm btn-primary">XÁC NHẬN BÁO</button>
                                     <button type="reset" class="btn btn-sm btn-default">Nhập lại</button>
-                                    <button type="button" class="qc_container_close btn btn-sm btn-default">Đóng
+                                    <button type="button" class="qc_container_close btn btn-sm btn-default">
+                                        ĐÓNG
                                     </button>
                                 </div>
                             </div>

@@ -41,21 +41,12 @@ $loginStaffId = $dataStaffLogin->staffId();
             <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_allocation_construction_list_content row">
                     <div class="table-responsive">
-                        <table class="table table-bordered" style="border: none;">
+                        <table class="table table-bordered">
                             <tr style="background-color: black;color: yellow;">
-                                <th>HẠN GIAO - HOÀN THÀNH</th>
+                                <th style="width: 130px;">HẠN GIAO - HOÀN THÀNH</th>
                                 <th>ĐƠN HÀNG</th>
                                 <th>NGÀY NHẬN</th>
                                 <th class="text-center">BÁO CÁO</th>
-                                <th class="text-right">
-                                    THƯỞNG <br/>
-                                    <em style="color: white;">(Đúng hạn)</em>
-                                </th>
-                                <th class="text-right">
-                                    PHẠT <br/>
-                                    <em style="color: white;">(Trễ hạn)</em>
-                                </th>
-
                             </tr>
                             <tr>
                                 <td></td>
@@ -104,8 +95,6 @@ $loginStaffId = $dataStaffLogin->staffId();
                                         </option>
                                     </select>
                                 </td>
-                                <td></td>
-                                <td></td>
                             </tr>
                             @if($hFunction->checkCount($dataOrdersAllocation))
                                 <?php $n_o = 0; ?>
@@ -116,12 +105,15 @@ $loginStaffId = $dataStaffLogin->staffId();
                                     $orderId = $orders->orderId();
                                     $customerId = $orders->customerId();
                                     $allocationFinishDate = $ordersAllocation->finishDate();
+                                    $finishStatus = $ordersAllocation->checkFinish();
+                                    $cancelStatus = $ordersAllocation->checkCancelAllocation();
                                     # tien thuong va phat
                                     $totalMoneyBonusAndMinus = $orders->getBonusAndMinusMoneyOfConstructionManage();
+                                    $n_o = $n_o + 1;
                                     ?>
-                                    <tr class="qc_work_list_content_object @if($n_o%2) info @endif"
+                                    <tr class="qc_work_list_content_object @if($n_o%2 == 0) info @endif"
                                         data-object="{!! $orderId !!}">
-                                        <td>
+                                        <td @if($cancelStatus || $finishStatus) style="background-color: pink;" @endif>
                                             <span style="color: red;">
                                                 {!! date('d-m-Y', strtotime($ordersAllocation->receiveDeadline())) !!}
                                             </span>
@@ -129,10 +121,10 @@ $loginStaffId = $dataStaffLogin->staffId();
                                                 {!! date('H:i', strtotime($ordersAllocation->receiveDeadline())) !!}
                                             </span>
                                             <br/>
-                                            @if($ordersAllocation->checkCancelAllocation())
+                                            @if($cancelStatus)
                                                 <em style="color: grey;">- Đã hủy</em>
                                             @else
-                                                @if($ordersAllocation->checkFinish())
+                                                @if($finishStatus)
                                                     <span style="color: blue;">{!! date('d-m-Y', strtotime($allocationFinishDate)) !!}</span>
                                                     <span class="qc-font-bold" style="color: brown;">
                                                         {!! date('H:i', strtotime($allocationFinishDate)) !!}
@@ -149,15 +141,29 @@ $loginStaffId = $dataStaffLogin->staffId();
                                             <a class="qc-link-green-bold"
                                                href="{!! route('qc.work.work_allocation.order_allocation.product.get',$allocationId) !!}">
                                                 <i class="glyphicon glyphicon-arrow-right"></i>
-                                                CHI TIẾT THI CÔNG
+                                                CHI TIẾT TC
                                             </a>
                                         </td>
                                         <td>
-                                            <b>{!! $orders->name() !!}</b>
+                                            <b style="background-color: black; color: lime; padding: 3px; font-size: 14px;">
+                                                {!! $orders->name() !!}
+                                            </b>
                                             <br/>
                                             <em style="color: grey;">
-                                                Kh.H: {!! $orders->customer->name() !!}
+                                                - Khách hàng:
                                             </em>
+                                            <span>{!! $orders->customer->name() !!}</span>
+                                            <br/>
+                                            <em style="color: grey;">
+                                                - Mức thưởng/Phạt:
+                                            </em>
+                                            <b style="color: blue;">
+                                                {!! $hFunction->currencyFormat($totalMoneyBonusAndMinus) !!}
+                                            </b>
+                                            <em>/</em>
+                                            <b style="color: red;">
+                                                {!! $hFunction->currencyFormat($totalMoneyBonusAndMinus) !!}
+                                            </b>
                                         </td>
                                         <td>
                                             <b style="color: blue;">
@@ -169,7 +175,7 @@ $loginStaffId = $dataStaffLogin->staffId();
                                         </td>
                                         <td class="text-center">
                                             @if($ordersAllocation->checkActivity())
-                                                @if($ordersAllocation->checkFinish())
+                                                @if($finishStatus)
                                                     <em>---</em>
                                                 @else
                                                     <a class="qc_report_finish_get qc-link-green"
@@ -191,7 +197,6 @@ $loginStaffId = $dataStaffLogin->staffId();
                                                         <em style="background-color: green; color: white; padding: 3px;">
                                                             Chờ duyệt</em>
                                                     @endif
-
                                                 @endif
                                                 @if($ordersAllocation->checkPaymentStatus())
                                                     <br/>
@@ -200,27 +205,16 @@ $loginStaffId = $dataStaffLogin->staffId();
                                                 @endif
                                             @endif
                                         </td>
-                                        <td class="text-right">
-                                            <b style="color: blue;">
-                                                {!! $hFunction->currencyFormat($totalMoneyBonusAndMinus) !!}
-                                            </b>
-                                        </td>
-                                        <td class="text-right">
-                                            <b style="color: red;">
-                                                {!! $hFunction->currencyFormat($totalMoneyBonusAndMinus) !!}
-                                            </b>
-                                        </td>
-
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-center" colspan="6">
+                                    <td class="text-center" colspan="4">
                                         {!! $hFunction->page($dataOrdersAllocation) !!}
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="6">
+                                    <td class="text-center" colspan="4">
                                         <em class="qc-color-red">Không có công trình</em>
                                     </td>
                                 </tr>

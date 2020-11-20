@@ -277,7 +277,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                                         <a class="qc_ad3d_timekeeping_image_view qc-link"
                                                            data-href="{!! route('qc.ad3d.work.time-keeping.image.view.get',$timekeepingImage->imageId()) !!}">
                                                             <img style="max-width: 100%; max-height: 100%;"
-                                                                 src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingImage->name()) !!}">
+                                                                 src="{!! $timekeepingImage->pathSmallImage($timekeepingImage->name()) !!}">
                                                         </a>
                                                     </div>
                                                 @endforeach

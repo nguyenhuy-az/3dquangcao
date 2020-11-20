@@ -21,7 +21,7 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
-                    <div class="text-right qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <a class="qc_work_before_pay_request_action qc-link-red"
                            href="{!! route('qc.work.pay.pay_activity.add.get') !!}">
                             <b style="font-size: 1.5em;">+ THÊM</b>
@@ -34,10 +34,10 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
-                                <th class="text-center" style="width: 20px;">STT</th>
+                                <th class="text-center" style="width: 20px !important;">STT</th>
                                 <th style="width: 150px;">NGÀY</th>
-                                <th>SỐ TIỀN - LÝ DO</th>
-                                <th style="width: 400px !important;">GHI CHÚ</th>
+                                <th style="width: 200px;">SỐ TIỀN - LÝ DO</th>
+                                <th>GHI CHÚ</th>
                             </tr>
                             <tr>
                                 <td class="text-center"></td>
@@ -115,6 +115,7 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                             <b style="color: blue;">{!! date('d/m/Y',strtotime($payDate))  !!}</b>
                                             <br/>
                                             @if(!$payActivityDetail->checkConfirm())
+                                                <i class="glyphicon glyphicon-ok" style="color: red;"></i>
                                                 <em class="qc-color-grey">Chờ duyệt</em>
                                                 <span>|</span>
                                                 <a class="qc_delete qc-font-size-14 qc-link-red"
@@ -122,7 +123,8 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                                     HỦY
                                                 </a>
                                             @else
-                                                <em class="qc-color-grey">- Đã duyệt</em>
+                                                <i class="glyphicon glyphicon-ok" style="color: green;"></i>
+                                                <em class="qc-color-grey"> Đã duyệt</em>
                                                 @if(!$hFunction->checkEmpty($confirmNote))
                                                     <br/>
                                                     <em class="qc-color-grey">- {!! $payActivityDetail->confirmNote()  !!}</em>

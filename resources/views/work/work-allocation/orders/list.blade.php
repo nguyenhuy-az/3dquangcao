@@ -223,10 +223,10 @@ if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dun
                                     ?>
                                     <tr class="qc_ad3d_list_object @if($n_o%2 == 1) info @endif"
                                         data-object="{!! $orderId !!}">
-                                        <td class="text-center">
+                                        <td class="text-center" @if($orderFinishStatus || $cancelStatus) style="background-color: pink;" @endif>
                                             <b>{!! $n_o += 1 !!}</b>
                                         </td>
-                                        <td>
+                                        <td @if($orderFinishStatus || $cancelStatus) style="background-color: pink;" @endif>
                                             @if(!$cancelStatus)
                                                 <a class="qc-link-green" title="Click xem chi tiết thi công"
                                                    href="{!! route('qc.work.work_allocation.order.construction.get',$orderId) !!}">

@@ -34,7 +34,12 @@
 .qc-container-table-border-none table tr td {
     border: none !important;
 }
+
 .qc-staff-mini-avatar {
     width: 40px !important;
     height: 40px !important;
+}
+
+.qc-back-ground-end {
+    background-color: pink !important;
 }

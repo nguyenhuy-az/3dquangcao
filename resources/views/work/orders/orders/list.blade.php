@@ -261,12 +261,12 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                     ?>
                                     <tr class="qc_work_list_content_object @if($checkDateOfSort > $orderReceiveDate) danger @elseif($n_o%2) info @endif"
                                         data-object="{!! $orderId !!}">
-                                        <td class="text-center">
+                                        <td class="text-center" @if($finishStatus || $cancelStatus) style="background-color: pink;" @endif>
                                             <label>{!! $n_o += 1 !!}</label>
                                             <br/>
                                             <span style="color: blue">{!! $orders->orderCode() !!}</span>
                                         </td>
-                                        <td>
+                                        <td @if($finishStatus || $cancelStatus) style="background-color: pink;" @endif>
                                             @if(!$cancelStatus)
                                                 @if($finishStatus)
                                                     <i class="qc-font-size-12 glyphicon glyphicon-ok"

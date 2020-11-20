@@ -34,7 +34,7 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                             <tr style="background-color: black;color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th style="width: 170px;">NGÀY</th>
-                                <th>TIỀN ỨNG</th>
+                                <th style="width: 200px;">TIỀN ỨNG</th>
                                 <th>NGƯỜI ỨNG</th>
                             </tr>
                             <tr>
@@ -98,7 +98,8 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                                             <b style="color: blue;">{!! date('d/m/Y', strtotime($salaryBeforePay->datePay())) !!}</b>
                                             <br/>
                                             @if(!$salaryBeforePay->checkConfirm())
-                                                <em style="color: grey;">- Chưa xác nhận</em>
+                                                <i class="glyphicon glyphicon-ok" style="color: red;"></i>
+                                                <em style="color: grey;">Chưa xác nhận</em>
                                                 <span>|</span>
                                                 <a class="qc_edit qc-link-green"
                                                    data-href="{!! route('qc.work.pay.salary_before_pay.edit.get',$payId) !!}">
@@ -110,7 +111,8 @@ $hrefIndex = route('qc.work.pay.salary_before_pay.get');
                                                     <i class="glyphicon glyphicon-trash" title="Hủy ứng lương"></i>
                                                 </a>
                                             @else
-                                                <em class="qc-color-grey">- Đã xác nhận</em>
+                                                <i class="glyphicon glyphicon-ok" style="color: green;"></i>
+                                                <em class="qc-color-grey">Đã xác nhận</em>
                                             @endif
                                         </td>
                                         <td>

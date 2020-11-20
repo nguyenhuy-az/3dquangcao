@@ -392,6 +392,45 @@ class Hfunction
     }
 
     //========== ========== ========= DATE =========== ========== =========
+    # dinh dang ngay sang datetime Y-m-d H: i
+    public function formatDateToYMDHI($date)
+    {
+        return date('Y-m-d H:i', strtotime($date));
+    }
+
+    # dinh dang ngay sang datetime Y-m-d
+    public function formatDateToYMD($date)
+    {
+        return date('Y-m-d', strtotime($date));
+    }
+
+    # dinh dang ngay sang datetime d/m/Y H: i
+    public function formatDateToDMYHI($date)
+    {
+        return date('d/m/Y H:i', strtotime($date));
+    }
+
+    # dinh dang ngay sang datetime d/m/Y H: i
+    public function formatDateToDMY($date)
+    {
+        return date('d/m/Y', strtotime($date));
+    }
+    # kiem tra ngay nhap vao co phai ngay hien tai khong
+    public function checkTodayOfDate($date)
+    {
+        $date = $this->formatDateToYMD($date);
+        $currentDate = date('Y-m-d');
+        return ($date == $currentDate) ? true : false;
+    }
+
+    # kiem tra ngay nhap vao co phai ngay hien tai khong
+    public function checkPastDateOfDate($date)
+    {
+        $date = $this->formatDateToYMD($date);
+        $currentDate = date('Y-m-d');
+        return ($date < $currentDate) ? true : false;
+    }
+
     # lay so ngay trong thang
     public function totalDayInMonth($month, $year)
     {

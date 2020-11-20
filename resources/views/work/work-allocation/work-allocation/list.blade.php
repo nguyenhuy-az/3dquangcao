@@ -39,13 +39,10 @@ $workId = $dataWork->workId();
                 <div class="row">
                     <div class="table-responsive">
                         <table class="table table-bordered qc-margin-bot-none">
-                            {{--<tr>
-                                <th colspan="7" style="border-top: none;">
-                                    <em style="color: deeppink;">(CÔNG VIỆC ĐƯỢC BÀN GIAO)</em>
-                                </th>
-                            </tr>--}}
                             <tr style="background-color: black;color: yellow;">
-                                <th class="text-center">HẠN GIAO - HOÀN THÀNH</th>
+                                <th class="text-center" style="width: 100px;">
+                                    HẠN GIAO - HOÀN THÀNH
+                                </th>
                                 <th>THI CÔNG SẢN PHẨM</th>
                                 <th>TIẾN ĐỘ</th>
                                 <th>NGÀY NHẬN</th>
@@ -108,6 +105,7 @@ $workId = $dataWork->workId();
                                     $allocationDate = $workAllocation->allocationDate();
                                     $receiveDeadline = $workAllocation->receiveDeadline();
                                     $allocationNote = $workAllocation->noted();
+                                    $cancelStatus = $workAllocation->checkCancel();
                                     //$dataWorkAllocationReport = $workAllocation->workAllocationReportInfo();
                                     # bao cao tien do
                                     $dataWorkAllocationReport = $workAllocation->workAllocationReportInfo($allocationId, 1);
@@ -131,17 +129,15 @@ $workId = $dataWork->workId();
                                     # thong ket thuc phan viec
                                     $dataWorkAllocationFinish = $workAllocation->workAllocationFinishInfo();
                                     ?>
-                                    <tr class="qc_work_allocation_object"
-                                        @if($n_o%2 == 0) style="background-color: whitesmoke;"
-                                        @endif data-work-allocation="{!! $allocationId !!}">
-                                        <td class="text-center" style="padding: 0;">
+                                    <tr class="qc_work_allocation_object @if($n_o%2 == 0) info @endif"  data-work-allocation="{!! $allocationId !!}">
+                                        <td class="text-center" style="padding: 0; @if($dataWorkAllocationFinish || $cancelStatus) background-color: pink; @endif">
                                              <span class="qc-font-bold" style="color: red;">
                                                 {!! date('d-m-Y ', strtotime($receiveDeadline)) !!}
                                             </span>
                                             <span class="qc-font-bold">
                                                 {!! date('H:i', strtotime($receiveDeadline)) !!}
                                             </span>
-                                            @if($workAllocation->checkCancel())
+                                            @if($cancelStatus)
                                                 <br/>
                                                 <em style="color: blue;">Đã hủy</em>
                                             @else
@@ -169,7 +165,7 @@ $workId = $dataWork->workId();
                                             @endif
                                         </td>
                                         <td>
-                                            <b style="background-color: grey; color: blue; padding: 3px;">
+                                            <b style="background-color: black; color: lime; padding: 3px; font-size: 14px;">
                                                 {!! $workAllocation->product->productType->name() !!}
                                             </b>
                                             <br/>

@@ -12,7 +12,7 @@ $objectAccess = $dataAccess['object'];
         <ul class="nav nav-tabs" role="tablist">
             <li @if($objectAccess == 'moneyReceive') class="active " @endif>
                 <a href="{!! route('qc.work.money.receive.get') !!}" @if($objectAccess == 'moneyReceive') style="background-color: whitesmoke; " @endif>
-                    <label>THU TIỀN ĐH</label>
+                    <label>THU TIỀN ĐH CHƯA GIAO</label>
                 </a>
             </li>
             {{--<li @if($objectAccess == 'moneyHistory') class="active" @endif>

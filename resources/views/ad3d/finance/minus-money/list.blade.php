@@ -217,23 +217,23 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                         </b>
                                         @if(!$hFunction->checkEmpty($reason))
                                             <br/>
-                                            <b>{!! $reason !!}</b>
+                                            <span style="color: grey;">{!! $reason !!}</span>
                                         @endif
                                         @if(!$hFunction->checkEmpty($orderAllocationId))
                                             <br/>
-                                            <em>- Đơn hàng:</em>
+                                            <em style="color: grey;">- Đơn hàng:</em>
                                             <a class="qc-link" style="color: blue !important;">
                                                 {!! $minusMoney->orderAllocation->orders->name() !!}
                                             </a>
                                         @endif
                                         @if(!$hFunction->checkEmpty($workAllocationId))
                                             <br/>
-                                            <em>- Sản phẩm:</em>
+                                            <em style="color: grey;">- Sản phẩm:</em>
                                             <a style="color: blue;">
                                                 {!! $minusMoney->workAllocation->product->productType->name() !!}
                                             </a>
                                             <br/>
-                                            <em>- Đơn hàng:</em>
+                                            <em style="color: grey;">- Đơn hàng:</em>
                                             <a style="color: blue;">
                                                 {!! $minusMoney->workAllocation->product->order->name() !!}
                                             </a>
