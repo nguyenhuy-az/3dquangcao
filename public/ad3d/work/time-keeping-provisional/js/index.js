@@ -88,6 +88,9 @@ $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_warning_time_begin', function () {
         qc_ad3d_work_time_keeping_provisional.warning.timeBegin.get($(this).data('href'));
     });
+    $('body').on('click', '.qc_frm_warming_time_begin_add .qc_save', function () {
+        qc_ad3d_work_time_keeping_provisional.warning.timeBegin.save($(this).parents('.qc_frm_warming_time_begin_add'));
+    });
 });
 
 //-------------------- xac nhan cham cong ------------

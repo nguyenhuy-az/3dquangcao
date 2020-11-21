@@ -207,7 +207,10 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                                     @if($timekeepingProvisionalWarning->checkUpdateTimeBegin())
                                                         -----
                                                     @else
-                                                        -----
+                                                        <br/>
+                                                        <em style="color: grey;">Đã gửi cảnh giờ vào</em>
+                                                        <span>|</span>
+                                                        <a class="qc-link-red-bold">HỦY</a>
                                                     @endif
                                                     {{--canh bao gio ra--}}
                                                 @elseif($timekeepingProvisionalWarning->checkWarningTimeEnd())

@@ -7,9 +7,9 @@ use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
 use App\Models\Ad3d\OverTimeRequest\QcOverTimeRequest;
 use App\Models\Ad3d\Staff\QcStaff;
-use App\Models\Ad3d\Timekeeping\QcTimekeeping;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
 use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
+use App\Models\Ad3d\TimekeepingProvisionalWarning\QcTimekeepingProvisionalWarning;
 use App\Models\Ad3d\Work\QcWork;
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -125,6 +125,23 @@ class TimeKeepingProvisionalController extends Controller
         if ($hFunction->checkCount($dataTimekeepingProvisional)) {
             return view('ad3d.work.time-keeping-provisional.warning-time-begin', compact('dataTimekeepingProvisional'));
         }
+    }
+
+    public function postWarningBegin($timekeepingId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelWarning = new QcTimekeepingProvisionalWarning();
+        $txtNote = Request::input('txtWarningNote');
+        $txtWarningImage = Request::file('txtWarningImage');
+        $name_img = null; // mac dinh null
+        if (!empty($txtWarningImage)) {
+            $name_img = stripslashes($_FILES['txtWarningImage']['name']);
+            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $source_img = $_FILES['txtWarningImage']['tmp_name'];
+            $modelWarning->uploadImage($source_img, $name_img);
+        }
+        $modelWarning->insert($txtNote, $name_img, $modelWarning->getDefaultWarningTypeTimeBegin(), $timekeepingId, $modelStaff->loginStaffId());
     }
 
     // huy yeu cau tang ca

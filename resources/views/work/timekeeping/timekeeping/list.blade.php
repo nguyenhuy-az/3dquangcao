@@ -109,6 +109,8 @@ if ($hFunction->checkCount($dataWork)) {
                                 $checkConfirmStatus = $timekeepingProvisional->checkConfirmStatus($timekeepingProvisionalId);
                                 # xet han bao gio ra
                                 $endCheckStatus = $timekeepingProvisional->checkTimeOutToEndWork();
+                                # lay thong tin canh bao gio vao
+                                $dataTimekeepingProvisionalWarningTimeBegin = $timekeepingProvisional->timekeepingProvisionalWarningGetTimeBegin();
                                 # lay thong tin canh bao gio ra
                                 $dataTimekeepingProvisionalWarningTimeEnd = $timekeepingProvisional->timekeepingProvisionalWarningGetTimeEnd();
                                 $n_o = (isset($n_o)) ? $n_o + 1 : 1;
@@ -122,6 +124,26 @@ if ($hFunction->checkCount($dataWork)) {
                                         <span class="qc-font-bold" style="color: brown;">
                                             {!! date('H:i', strtotime($timeBegin)) !!}
                                         </span>
+                                        @if($hFunction->checkCount($dataTimekeepingProvisionalWarningTimeBegin))
+                                            @if($dataTimekeepingProvisionalWarningTimeBegin->checkUpdateTimeEnd())
+                                                <br/>
+                                                <em style="color: grey;">
+                                                    -
+                                                    Báolại: {!! date('d-m-Y H:i ', strtotime($dataTimekeepingProvisionalWarningTimeBegin->updateDate())) !!}
+                                                </em>
+                                            @else
+                                                <br/>
+                                                <span style="background-color: red;color: yellow; padding: 2px 3px;">
+                                                    {!! $dataTimekeepingProvisionalWarningTimeBegin->note() !!}
+                                                </span>
+                                            @endif
+                                            @if(!$checkConfirmStatus)
+                                                <br/>
+                                                <a class="qc-link-red-bold qc-font-size-14">
+                                                    SỬA
+                                                </a>
+                                            @endif
+                                        @endif
                                         @if($hFunction->checkEmpty($timeEnd) && $endCheckStatus)
                                             <br/>
                                             <a class="qc_time_end_cancel qc-link-red-bold">
@@ -132,7 +154,7 @@ if ($hFunction->checkCount($dataWork)) {
                                                 <br/>
                                                 <a class="qc_time_end_cancel qc-link-red-bold">
                                                     <span class="qc-font-size-14"
-                                                       title="Hủy">HỦY CHẤM CÔNG</span>
+                                                          title="Hủy">HỦY CHẤM CÔNG</span>
                                                 </a>
                                             @endif
                                         @endif
@@ -149,7 +171,7 @@ if ($hFunction->checkCount($dataWork)) {
                                     <td>
                                         @if(!$hFunction->checkEmpty($timeEnd))
                                             <b style="color: blue;">
-                                                    {!! date('d-m-Y ', strtotime($timeEnd)) !!}
+                                                {!! date('d-m-Y ', strtotime($timeEnd)) !!}
                                             </b>
                                             <span class="qc-font-bold" style="color: brown;">
                                                     {!! date('H:i', strtotime($timeEnd)) !!}
@@ -158,15 +180,15 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @if($dataTimekeepingProvisionalWarningTimeEnd->checkUpdateTimeEnd())
                                                     <br/>
                                                     <em style="color: grey;">
-                                                        - Báo lại: {!! date('d-m-Y H:i ', strtotime($dataTimekeepingProvisionalWarningTimeEnd->updateDate())) !!}
+                                                        - Báo
+                                                        lại: {!! date('d-m-Y H:i ', strtotime($dataTimekeepingProvisionalWarningTimeEnd->updateDate())) !!}
                                                     </em>
                                                 @else
                                                     <br/>
-                                                    <span style="background-color: red;color: yellow; padding: 3px;">
+                                                    <span style="background-color: red;color: yellow; padding: 2px 3px;">
                                                         {!! $dataTimekeepingProvisionalWarningTimeEnd->note() !!}
                                                     </span>
                                                 @endif
-
                                             @endif
                                             @if(!$checkConfirmStatus)
                                                 <br/>

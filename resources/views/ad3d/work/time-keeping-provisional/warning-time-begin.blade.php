@@ -27,7 +27,7 @@ $dataTimekeepingProvisionalWarning = $dataTimekeepingProvisional->timekeepingPro
                 </div>
             @else
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <form class="qc_frm_warming_add form" name="qc_frm_warming_add" role="form" method="post"
+                    <form class="qc_frm_warming_time_begin_add form" name="qc_frm_warming_time_begin_add" role="form" method="post"
                           enctype="multipart/form-data"
                           action="{!! route('qc.ad3d.work.time_keeping_provisional.warning_begin.post',$timekeepingId) !!}">
                         <div class="row">
@@ -38,14 +38,14 @@ $dataTimekeepingProvisionalWarning = $dataTimekeepingProvisional->timekeepingPro
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <label>Nguyên nhân:</label>
-                                <input class="form-control" type="text" name="txtNote"
-                                       value="Giờ vào thực tế không đúng giờ báo">
+                                <input class="form-control" type="text" name="txtWarningNote"
+                                       value="Giờ vào thực tế KHÔNG ĐÚNG GIỜ BÁO">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <label>Ảnh cảnh báo:</label>
-                                <input type="file" class="txtImage form-control" name="txtImage">
+                                <input type="file" class="txtWarningImage form-control" name="txtWarningImage">
                             </div>
                         </div>
                         <div class="row">
