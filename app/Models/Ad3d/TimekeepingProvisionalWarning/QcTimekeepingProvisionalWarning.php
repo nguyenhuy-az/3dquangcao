@@ -140,9 +140,12 @@ class QcTimekeepingProvisionalWarning extends Model
 
 
     # huy canh bao
-    public function actionDelete($warningId = null)
+    public function deleteWarning($warningId = null)
     {
-        return QcTimekeepingProvisionalWarning::where('warning_id', $this->checkNullId($warningId))->delete();
+        $image = $this->image($warningId);
+        if (QcTimekeepingProvisionalWarning::where('warning_id', $this->checkNullId($warningId))->delete()) {
+            $this->dropImage($image);
+        }
     }
 
     //upload image
@@ -159,8 +162,11 @@ class QcTimekeepingProvisionalWarning extends Model
     //drop image
     public function dropImage($imageName)
     {
-        unlink($this->rootPathSmallImage() . '/' . $imageName);
-        unlink($this->rootPathFullImage() . '/' . $imageName);
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($imageName)) {
+            unlink($this->rootPathSmallImage() . '/' . $imageName);
+            unlink($this->rootPathFullImage() . '/' . $imageName);
+        }
     }
 
     // get path image

@@ -782,6 +782,7 @@ class Hfunction
 
     public function  checkDateIsSunday($date)  //'2018-02-29'
     {
+        $date = date('Y-m-d', strtotime($date));
         $date = strtotime($date);
         $date = date("l", $date);
         $date = strtolower($date);

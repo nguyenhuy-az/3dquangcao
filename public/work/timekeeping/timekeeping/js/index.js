@@ -22,6 +22,14 @@ var qc_work_timekeeping = {
                 qc_main.scrollTop();
             }
         },
+        getEdit: function (href) {
+            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+        },
+        saveEdit: function (frm) {
+            var notifyContent = $(frm).find('.frm_notify');
+            qc_master_submit.ajaxFormHasReload(frm, notifyContent, true);
+            qc_main.scrollTop();
+        },
     },
     timeEnd: {
         getForm: function (href) {
@@ -109,6 +117,14 @@ $(document).ready(function () {
     $('body').on('click', '.frm_time_begin_add .qc_save', function () {
         qc_work_timekeeping.timeBegin.save($(this).parents('.frm_time_begin_add'));
     });
+    /* sua bao gio vao  */
+    $('body').on('click', '.qc_time_begin_edit_action', function () {
+        qc_work_timekeeping.timeBegin.getEdit($(this).data('href'));
+    });
+    $('body').on('click', '.qc_frm_time_begin_edit .qc_save', function () {
+        qc_work_timekeeping.timeBegin.saveEdit($(this).parents('.qc_frm_time_begin_edit'));
+    });
+
     /*hủy chấm công*/
     $('body').on('click', '.qc_time_end_cancel', function () {
         var href = $(this).parents('.qc_timekeeping_contain').data('href-cancel') + '/' + $(this).parents('.qc_timekeeping_provisional_object').data('timekeeping-provisional');
@@ -154,6 +170,7 @@ $(document).ready(function () {
     $('body').on('click', '.qc_frm_time_end_edit .qc_save', function () {
         qc_work_timekeeping.timeEnd.saveEdit($(this).parents('.qc_frm_time_end_edit'));
     });
+
 });
 //============ ============ xin nghỉ ================ ==============
 $(document).ready(function () {

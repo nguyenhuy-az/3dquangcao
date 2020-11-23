@@ -125,21 +125,36 @@ if ($hFunction->checkCount($dataWork)) {
                                             {!! date('H:i', strtotime($timeBegin)) !!}
                                         </span>
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalWarningTimeBegin))
-                                            @if($dataTimekeepingProvisionalWarningTimeBegin->checkUpdateTimeEnd())
+                                            <?php
+                                            $warningNote = $dataTimekeepingProvisionalWarningTimeBegin->note();
+                                            $warningImage = $dataTimekeepingProvisionalWarningTimeBegin->image();
+                                            ?>
+                                            @if($dataTimekeepingProvisionalWarningTimeBegin->checkUpdateTimeBegin())
                                                 <br/>
                                                 <em style="color: grey;">
-                                                    -
-                                                    Báolại: {!! date('d-m-Y H:i ', strtotime($dataTimekeepingProvisionalWarningTimeBegin->updateDate())) !!}
+                                                    - Báo lại:
                                                 </em>
+                                                <b style="color: brown;">
+                                                    {!! date('H:i ', strtotime($dataTimekeepingProvisionalWarningTimeBegin->updateDate())) !!}
+                                                </b>
                                             @else
-                                                <br/>
-                                                <span style="background-color: red;color: yellow; padding: 2px 3px;">
-                                                    {!! $dataTimekeepingProvisionalWarningTimeBegin->note() !!}
-                                                </span>
+                                                @if(!$hFunction->checkEmpty($warningNote))
+                                                    <br/>
+                                                    <span style="background-color: red;color: yellow; padding: 2px 3px;">
+                                                        {!! $warningNote !!}
+                                                    </span>
+                                                @endif
+                                                @if(!$hFunction->checkEmpty($warningImage))
+                                                    <br/>
+                                                    <img style="width: 100%;"
+                                                         src="{!! $dataTimekeepingProvisionalWarningTimeBegin->pathSmallImage($warningImage) !!}"
+                                                         alt="anh_canh_bao">
+                                                @endif
                                             @endif
                                             @if(!$checkConfirmStatus)
                                                 <br/>
-                                                <a class="qc-link-red-bold qc-font-size-14">
+                                                <a class="qc_time_begin_edit_action qc-font-size-14 qc-link-red-bold"
+                                                   data-href="{!! route('qc.work.timekeeping.timeBegin.edit.get',$timekeepingProvisionalId) !!}">
                                                     SỬA
                                                 </a>
                                             @endif
@@ -177,17 +192,29 @@ if ($hFunction->checkCount($dataWork)) {
                                                     {!! date('H:i', strtotime($timeEnd)) !!}
                                             </span>
                                             @if($hFunction->checkCount($dataTimekeepingProvisionalWarningTimeEnd))
+                                                <?php
+                                                $warningNote = $dataTimekeepingProvisionalWarningTimeEnd->note();
+                                                $warningImage = $dataTimekeepingProvisionalWarningTimeEnd->image();
+                                                ?>
                                                 @if($dataTimekeepingProvisionalWarningTimeEnd->checkUpdateTimeEnd())
                                                     <br/>
                                                     <em style="color: grey;">
-                                                        - Báo
-                                                        lại: {!! date('d-m-Y H:i ', strtotime($dataTimekeepingProvisionalWarningTimeEnd->updateDate())) !!}
+                                                        - Báo lại:
                                                     </em>
+                                                    <b style="color: brown;"> {!! date('H:i ', strtotime($dataTimekeepingProvisionalWarningTimeEnd->updateDate())) !!}</b>
                                                 @else
-                                                    <br/>
-                                                    <span style="background-color: red;color: yellow; padding: 2px 3px;">
-                                                        {!! $dataTimekeepingProvisionalWarningTimeEnd->note() !!}
+                                                    @if(!$hFunction->checkEmpty($warningNote))
+                                                        <br/>
+                                                        <span style="background-color: red;color: yellow; padding: 2px 3px;">
+                                                        {!! $warningNote !!}
                                                     </span>
+                                                    @endif
+                                                    @if(!$hFunction->checkEmpty($warningImage))
+                                                        <br/>
+                                                        <img style="width: 100%;"
+                                                             src="{!! $dataTimekeepingProvisionalWarningTimeEnd->pathSmallImage($warningImage) !!}"
+                                                             alt="anh_canh_bao">
+                                                    @endif
                                                 @endif
                                             @endif
                                             @if(!$checkConfirmStatus)

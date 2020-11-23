@@ -10,8 +10,21 @@ var qc_ad3d_work_time_keeping_provisional = {
         qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-view') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
         qc_main.scrollTop();
     },
-    warning:{
-        timeBegin:{
+    warning: {
+        timeBegin: {
+            get: function (href) {
+                qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
+                qc_main.scrollTop();
+            },
+            save: function (frm) {
+                var notifyContent = $(frm).find('.qc_notify');
+                if (confirm('Xác nhận đồng ý gửi cảnh báo này?')) {
+                    qc_ad3d_submit.ajaxFormHasReload(frm, notifyContent, true);
+                    qc_main.scrollTop();
+                }
+            },
+        },
+        timeEnd: {
             get: function (href) {
                 qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
                 qc_main.scrollTop();
@@ -85,11 +98,31 @@ $(document).ready(function () {
 
 //-------------------- CANH BAO CHAM CONG ------------
 $(document).ready(function () {
+    // Canh bao gio vao
     $('.qc_ad3d_list_object').on('click', '.qc_warning_time_begin', function () {
         qc_ad3d_work_time_keeping_provisional.warning.timeBegin.get($(this).data('href'));
     });
     $('body').on('click', '.qc_frm_warming_time_begin_add .qc_save', function () {
         qc_ad3d_work_time_keeping_provisional.warning.timeBegin.save($(this).parents('.qc_frm_warming_time_begin_add'));
+    });
+    // Canh bao gio ra
+    $('.qc_ad3d_list_object').on('click', '.qc_warning_time_end', function () {
+        qc_ad3d_work_time_keeping_provisional.warning.timeEnd.get($(this).data('href'));
+    });
+    $('body').on('click', '.qc_frm_warming_time_end_add .qc_save', function () {
+        qc_ad3d_work_time_keeping_provisional.warning.timeEnd.save($(this).parents('.qc_frm_warming_time_end_add'));
+    });
+    // Huy canh bao gio vao
+    $('body').on('click', '.qc_warning_time_begin_cancel', function () {
+        if (confirm('Xác nhận hủy cảnh báo giờ vào')) {
+            qc_ad3d_submit.ajaxHasReload($(this).data('href'), '', false);
+        }
+    });
+    // Huy canh bao gio ra
+    $('body').on('click', '.qc_warning_time_end_cancel', function () {
+        if (confirm('Xác nhận hủy cảnh báo giờ ra')) {
+            qc_ad3d_submit.ajaxHasReload($(this).data('href'), '', false);
+        }
     });
 });
 

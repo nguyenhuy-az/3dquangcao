@@ -22,12 +22,42 @@ $dataTimekeepingProvisionalWarning = $dataTimekeepingProvisional->timekeepingPro
                 <h3 style="color: red;">CẢNH BÁO GIỜ VÀO KHÔNG ĐÚNG</h3>
             </div>
             @if($hFunction->checkCount($dataTimekeepingProvisionalWarning))
-                <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding: 30px 0 30px 0;">
-                    <span class="qc-color-red">Hết hạn báo giờ ra</span>
+                <?php
+                $warningNote = $dataTimekeepingProvisionalWarning->note();
+                $warningImage = $dataTimekeepingProvisionalWarning->image();
+                ?>
+                <div class="row">
+                    <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <label style="color: blue">ĐÃ GỬI CẢNH BÁO</label>
+                    </div>
+                </div>
+                @if(!$hFunction->checkEmpty($warningNote))
+                    <div class="row">
+                        <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <span style="color: blue;">{!! $warningNote !!}</span>
+                        </div>
+                    </div>
+                @endif
+                @if(!$hFunction->checkEmpty($warningImage))
+                    <div class="row">
+                        <div class=" text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <img style="width: 80%;" src="{!! $dataTimekeepingProvisionalWarning->pathFullImage($warningImage) !!}">
+                        </div>
+                    </div>
+                @endif
+                <div class="row">
+                    <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="text-center form-group form-group-sm">
+                            <button type="button" class="qc_ad3d_container_close btn btn-sm btn-primary">
+                                ĐÓNG
+                            </button>
+                        </div>
+                    </div>
                 </div>
             @else
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <form class="qc_frm_warming_time_begin_add form" name="qc_frm_warming_time_begin_add" role="form" method="post"
+                    <form class="qc_frm_warming_time_begin_add form" name="qc_frm_warming_time_begin_add" role="form"
+                          method="post"
                           enctype="multipart/form-data"
                           action="{!! route('qc.ad3d.work.time_keeping_provisional.warning_begin.post',$timekeepingId) !!}">
                         <div class="row">

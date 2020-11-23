@@ -160,7 +160,21 @@ class QcTimekeepingProvisional extends Model
         return QcTimekeepingProvisional::where('timekeeping_provisional_id', $timekeepingId)->whereNotNull('timeEnd')->exists();
     }
 
-    # cap nhat bao gio ra
+    #===== ====== cap nhat bao gio vao ===== ======
+    /*chi cap nhat gio vao sau khi bi canh bao*/
+    public function updateTimeBegin($timekeepingId, $timeBegin)
+    {
+        $modelTimekeepingProvisionalWarning = new QcTimekeepingProvisionalWarning();
+        # neu da ton tai canh bao
+        if ($modelTimekeepingProvisionalWarning->checkExistWarningTimeBeginOfTimekeepingProvisional($timekeepingId)) {
+            # cap nhat ngay canh bao gio vao
+            return $modelTimekeepingProvisionalWarning->updateTimeBeginOfTimekeepingProvisional($timekeepingId, $timeBegin);
+        }else{
+            return false;
+        }
+    }
+
+    #===== ====== cap nhat bao gio ra ===== ======
     public function updateTimeEnd($timekeepingId, $timeEnd, $afternoonStatus, $note)
     {
         $hFunction = new \Hfunction();
@@ -174,7 +188,7 @@ class QcTimekeepingProvisional extends Model
             # giu lai thong tin cu - thoi gian bao va thoi gian cham lan 1
             $updateTimeEnd = $dataTimekeepingProvisional->timeEnd();
             $updatedAt = $dataTimekeepingProvisional->updatedAt();
-        }else{
+        } else {
             $updateTimeEnd = $timeEnd;
             $updatedAt = $currentDate;
         }
@@ -204,10 +218,12 @@ class QcTimekeepingProvisional extends Model
         }
     }
 
+    //xac nhan cham cong
     public function confirmWork($id, $staffLoginId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
         $modelWork = new QcWork();
         $modelPunishContent = new QcPunishContent();
         $modelMinusMoney = new QcMinusMoney();
@@ -233,15 +249,19 @@ class QcTimekeepingProvisional extends Model
             $dateEnd = $dataTimekeepingProvisional->timeEnd();
             $note = $dataTimekeepingProvisional->note();
             $afternoonStatus = $dataTimekeepingProvisional->afternoonStatus();
-            $dayBegin = date('d', strtotime($dateBegin));
-            $monthBegin = date('m', strtotime($dateBegin));
-            $yearBegin = date('Y', strtotime($dateBegin));
-            $checkDate = date('Y-m-d', strtotime($dateBegin));// "$monthBegin/$dayBegin/$yearBegin";
-            if ($modelTimekeeping->existDateOfWork($workId, $checkDate)) { # da ton tai cham cong
+            //$dayBegin = date('d', strtotime($dateBegin));
+            //$monthBegin = date('m', strtotime($dateBegin));
+            //$yearBegin = date('Y', strtotime($dateBegin));
+            //$checkDate = date('Y-m-d', strtotime($dateBegin));// "$monthBegin/$dayBegin/$yearBegin";
+            if ($modelTimekeeping->existDateOfWork($workId, $dateBegin)) { # da ton tai cham cong
                 return false;
             } else {
-                $defaultBegin = $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 08:00:00");
-                $defaultEnd = $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 17:30:00");//date('Y-m-d 17:30', strtotime($dateBegin));//
+                # mac dinh gio cham cong vao
+                $defaultBegin = $modelCompany->getDefaultTimeBeginToWorkOfDate($dateBegin);
+                // $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 08:00:00");
+                # mac dinh gio cham cong ra
+                $defaultEnd = $modelCompany->getDefaultTimeEndToWorkOfDate($dateBegin);
+                // $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin 17:30:00");
                 $mainMinute = 0;
                 $plusMinute = 0;
                 $minusMinute = 0;
@@ -249,7 +269,7 @@ class QcTimekeepingProvisional extends Model
                 # ----- ap dung noi quy phat  --------
                 if ($applyRuleStatus == 1) {
                     //khong phai ngay chu nhat
-                    if (!$hFunction->checkDateIsSunday(date('Y-m-d', strtotime($dateBegin)))) {
+                    if (!$hFunction->checkDateIsSunday($dateBegin)) {
                         if ($defaultBegin < $dateBegin) { // tính trừ thời gian trễ
                             $staffId = $modelWork->staffId($workId);
                             if ($modelStaff->checkApplyRule($staffId)) { # ap dung noi quy
@@ -465,7 +485,8 @@ class QcTimekeepingProvisional extends Model
     }
 
     # lay thong tin canh bao cham cong - tat ca
-    public function timekeepingProvisionalWarningGetInfo($timekeepingId = null){
+    public function timekeepingProvisionalWarningGetInfo($timekeepingId = null)
+    {
         $modelTimekeepingProvisionalWarning = new QcTimekeepingProvisionalWarning();
         return $modelTimekeepingProvisionalWarning->infoOfTimekeepingProvisional($this->checkNullId($timekeepingId));
     }

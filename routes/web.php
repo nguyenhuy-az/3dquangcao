@@ -214,12 +214,15 @@ Route::group(['prefix' => 'ad3d'], function () {
 
         // duyệt chấm công - nv tự chấm
         Route::group(['prefix' => 'timekeeping-provisional'], function () {
-            # canh bao gio ra
+            # canh bao gio vao
             Route::get('warning-begin/{timekeepingProvisionalId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.warning_begin.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@getWarningBegin']);
             Route::post('warning-begin/{timekeepingProvisionalId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.warning_begin.post', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@postWarningBegin']);
+            # canh bao gio ra
+            Route::get('warning-end/{timekeepingProvisionalId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.warning_end.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@getWarningEnd']);
+            Route::post('warning-end/{timekeepingProvisionalId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.warning_end.post', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@postWarningEnd']);
 
             #huy canh bao
-            Route::get('warning-begin-cancel/{warningId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.warning_begin.cancel', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@cancelWarningBegin']);
+            Route::get('warning-timekeeping-cancel/{warningId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.warning_timekeeping.cancel', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@cancelWarningTimekeeping']);
 
             #xem anh cham cong
             Route::get('image/{imageId?}', ['as' => 'qc.ad3d.work.time_keeping_provisional.view.get', 'uses' => 'Ad3d\Work\TimeKeepingProvisional\TimeKeepingProvisionalController@viewProvisionalImage']);
@@ -1237,6 +1240,9 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         //báo giờ vào
         Route::get('timeBegin/{workId?}', ['as' => 'qc.work.timekeeping.timeBegin.get', 'uses' => 'Work\Timekeeping\TimekeepingController@getTimeBegin']);
         Route::post('timeBegin/', ['as' => 'qc.work.timekeeping.timeBegin.post', 'uses' => 'Work\Timekeeping\TimekeepingController@postTimeBegin']);
+        //sua gio vao
+        Route::get('timeBegin-edit/{timekeepingId?}', ['as' => 'qc.work.timekeeping.timeBegin.edit.get', 'uses' => 'Work\Timekeeping\TimekeepingController@getEditTimeBegin']);
+        Route::post('timeBegin-edit/{timekeepingId?}', ['as' => 'qc.work.timekeeping.timeBegin.edit.post', 'uses' => 'Work\Timekeeping\TimekeepingController@postEditTimeBegin']);
 
         //báo giờ ra
         Route::get('timeEnd/{timekeepingId?}', ['as' => 'qc.work.timekeeping.timeEnd.get', 'uses' => 'Work\Timekeeping\TimekeepingController@getTimeEnd']);

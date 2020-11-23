@@ -144,6 +144,40 @@ class TimeKeepingProvisionalController extends Controller
         $modelWarning->insert($txtNote, $name_img, $modelWarning->getDefaultWarningTypeTimeBegin(), $timekeepingId, $modelStaff->loginStaffId());
     }
 
+    #===== canh bao gio vao
+    public function getWarningEnd($timekeepingId)
+    {
+        $hFunction = new \Hfunction();
+        $modelTimekeeping = new QcTimekeepingProvisional();
+        $dataTimekeepingProvisional = $modelTimekeeping->getInfo($timekeepingId);
+        if ($hFunction->checkCount($dataTimekeepingProvisional)) {
+            return view('ad3d.work.time-keeping-provisional.warning-time-end', compact('dataTimekeepingProvisional'));
+        }
+    }
+
+    public function postWarningEnd($timekeepingId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelWarning = new QcTimekeepingProvisionalWarning();
+        $txtNote = Request::input('txtWarningNote');
+        $txtWarningImage = Request::file('txtWarningImage');
+        $name_img = null; // mac dinh null
+        if (!empty($txtWarningImage)) {
+            $name_img = stripslashes($_FILES['txtWarningImage']['name']);
+            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $source_img = $_FILES['txtWarningImage']['tmp_name'];
+            $modelWarning->uploadImage($source_img, $name_img);
+        }
+        $modelWarning->insert($txtNote, $name_img, $modelWarning->getDefaultWarningTypeTimeEnd(), $timekeepingId, $modelStaff->loginStaffId());
+    }
+    # huy canh bao cham cong
+    public function cancelWarningTimekeeping($warningId)
+    {
+        $modelWarning = new QcTimekeepingProvisionalWarning();
+        return $modelWarning->deleteWarning($warningId);
+    }
+
     // huy yeu cau tang ca
     public function cancelOverTime($requestId)
     {

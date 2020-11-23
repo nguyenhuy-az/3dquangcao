@@ -44,7 +44,7 @@ class TimekeepingController extends Controller
 
     }
 
-    //==== ===== bao gio vao
+    //==== ===== bao gio vao ======= ========
     public function getTimeBegin($workId)
     {
         $modelStaff = new QcStaff();
@@ -95,7 +95,44 @@ class TimekeepingController extends Controller
 
     }
 
-    //==== ===== bao gio ra
+    public function getEditTimeBegin($timekeepingProvisionalId)
+    {
+        $modelStaff = new QcStaff();
+        $modelTimekeeping = new QcTimekeepingProvisional();
+        if ($modelStaff->checkLogin()) {
+            $dataStaff = $modelStaff->loginStaffInfo();
+            $dataTimekeepingProvisional = $modelTimekeeping->getInfo($timekeepingProvisionalId);
+            return view('work.timekeeping.timekeeping.edit-time-begin', compact('modelStaff', 'dataStaff', 'dataTimekeepingProvisional'));
+
+        }
+    }
+
+    public function postEditTimeBegin($timekeepingProvisionalId)
+    {
+        $hFunction = new \Hfunction();
+        $modelTimekeepingProvisional = new QcTimekeepingProvisional();
+        $dayBegin= Request::input('cbDayBegin');
+        $monthBegin = Request::input('cbMonthBegin');
+        $yearBegin = Request::input('cbYearBegin');
+        $hoursBegin = Request::input('cbHoursBegin');
+        $minuteBegin = Request::input('cbMinuteBegin');
+        $timeEnd = $modelTimekeepingProvisional->timeEnd($timekeepingProvisionalId)[0];
+        $timeBegin = $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin $hoursBegin:$minuteBegin:00");
+        if($hFunction->checkEmpty($timeEnd)){
+            $checkTime = $hFunction->carbonNow();
+        }else{
+            $checkTime = $timeEnd;
+        }
+        if ( $timeBegin > $checkTime) {
+            return "Giờ vào phải nhỏ hơn giờ ra";
+        } else {
+            if (!$modelTimekeepingProvisional->updateTimeBegin($timekeepingProvisionalId, $timeBegin)) {
+                return "Tính năng đang cập nhật";
+            }
+        }
+    }
+
+    //==== ===== bao gio ra ========= ==========
     public function getTimeEnd($timekeepingId)
     {
         $hFunction = new \Hfunction();
@@ -229,6 +266,7 @@ class TimekeepingController extends Controller
                                 }
                             }
                         }
+                        return true;
                     } else {
                         return "Hệ thống đang bảo trì";
                     }
@@ -272,9 +310,7 @@ class TimekeepingController extends Controller
         if ($timeBegin > $timeEnd) {
             return "Giờ phải lớn hơn giờ vào $timeBegin === $monthEnd/$dayEnd/$yearEnd $hoursEnd:$minuteEnd";
         } else {
-            if (!$modelTimekeepingProvisional->updateTimeEnd($timekeepingProvisionalId, $timeEnd, $afternoonStatus, $note)) {
-                return "Tính năng đang cập nhật";
-            }
+            $modelTimekeepingProvisional->updateTimeEnd($timekeepingProvisionalId, $timeEnd, $afternoonStatus, $note);
         }
     }
 

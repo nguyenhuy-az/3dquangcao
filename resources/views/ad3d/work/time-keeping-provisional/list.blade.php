@@ -156,7 +156,8 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <a class="qc_warning_time_begin qc-link-red-bold" title="Cảnh báo chấm sai" data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_begin.get',$timekeepingProvisionalId) !!}">
+                                        <a class="qc_warning_time_begin qc-link-red-bold" title="Cảnh báo chấm sai"
+                                           data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_begin.get',$timekeepingProvisionalId) !!}">
                                             <i class="glyphicon glyphicon-warning-sign qc-font-size-14"></i>
                                         </a>
                                         <em class="qc-color-grey">
@@ -180,7 +181,8 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                                 </a>
                                             @endif
                                         @else
-                                            <a class="qc-link-red-bold" title="Cảnh báo chấm sai">
+                                            <a class="qc_warning_time_end qc-link-red-bold" title="Cảnh báo chấm sai"
+                                               data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_end.get',$timekeepingProvisionalId) !!}">
                                                 <i class="glyphicon glyphicon-warning-sign qc-font-size-14"></i>
                                             </a>
                                             <em style="color: grey">
@@ -202,29 +204,42 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                             <br/>
                                             <span style="background-color: black; color: lime;">Bị cảnh báo</span>
                                             @foreach($dataTimekeepingProvisionalWarning as $timekeepingProvisionalWarning)
+                                                <?php
+                                                $warningId = $timekeepingProvisionalWarning->warningId();
+                                                $warningUpdate = $timekeepingProvisionalWarning->updateDate();
+                                                ?>
                                                 {{--canh bao gio vao--}}
                                                 @if($timekeepingProvisionalWarning->checkWarningTimeBegin())
                                                     @if($timekeepingProvisionalWarning->checkUpdateTimeBegin())
-                                                        -----
-                                                    @else
                                                         <br/>
-                                                        <em style="color: grey;">Đã gửi cảnh giờ vào</em>
-                                                        <span>|</span>
-                                                        <a class="qc-link-red-bold">HỦY</a>
-                                                    @endif
-                                                    {{--canh bao gio ra--}}
-                                                @elseif($timekeepingProvisionalWarning->checkWarningTimeEnd())
-                                                    @if($timekeepingProvisionalWarning->checkUpdateTimeEnd())
-                                                        <?php $warningUpdate = $timekeepingProvisionalWarning->updateDate(); ?>
-                                                        <br/>
-                                                        <em style="color: grey;">Báo lại:</em>
+                                                        <em style="color: grey;">Báo lại VÀO:</em>
                                                         <span style="color: blue;">{!! $hFunction->convertDateDMYFromDatetime($warningUpdate) !!}</span>
                                                         <span class="qc-font-bold">{!! date('H:i', strtotime($warningUpdate)) !!}</span>
                                                     @else
                                                         <br/>
-                                                        <em style="color: grey;">Đã gửi cảnh báo ra</em>
+                                                        <em style="color: grey;">Đã gửi CẢNH BÁO GIỜ VÀO</em>
                                                         <span>|</span>
-                                                        <a class="qc-link-red-bold">HỦY</a>
+                                                        <a class="qc_warning_time_begin_cancel qc-link-red-bold qc-font-size-14"
+                                                           data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_timekeeping.cancel',$warningId) !!}">
+                                                            HỦY
+                                                        </a>
+                                                    @endif
+                                                    {{--canh bao gio ra--}}
+                                                @endif
+                                                @if($timekeepingProvisionalWarning->checkWarningTimeEnd())
+                                                    @if($timekeepingProvisionalWarning->checkUpdateTimeEnd())
+                                                        <br/>
+                                                        <em style="color: grey;">Báo lại giờ ra:</em>
+                                                        <span style="color: blue;">{!! $hFunction->convertDateDMYFromDatetime($warningUpdate) !!}</span>
+                                                        <span class="qc-font-bold">{!! date('H:i', strtotime($warningUpdate)) !!}</span>
+                                                    @else
+                                                        <br/>
+                                                        <em style="color: grey;">Đã gửi CẢNH BÁO RA</em>
+                                                        <span>|</span>
+                                                        <a class="qc_warning_time_end_cancel qc-link-red-bold qc-font-size-14"
+                                                           data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_timekeeping.cancel',$warningId) !!}">
+                                                            HỦY
+                                                        </a>
                                                     @endif
                                                 @endif
                                             @endforeach

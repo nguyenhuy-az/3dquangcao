@@ -27,6 +27,10 @@ if (!empty($companyStaffWorkId)) {
 } else {
     $staffName = $dataWork->staff->fullName();
 }
+# lay thong tin canh bao gio vao
+$dataTimekeepingProvisionalWarningTimeBegin = $dataTimekeepingProvisional->timekeepingProvisionalWarningGetTimeBegin();
+# lay thong tin canh bao gio ra
+$dataTimekeepingProvisionalWarningTimeEnd = $dataTimekeepingProvisional->timekeepingProvisionalWarningGetTimeEnd();
 ?>
 @extends('ad3d.components.container.container-8')
 @section('qc_ad3d_container_content')
@@ -56,6 +60,21 @@ if (!empty($companyStaffWorkId)) {
                                    value="{!! date('d-m-Y H:i', strtotime($timeBegin)) !!}"/>
                         </div>
                     </div>
+                    @if($hFunction->checkCount($dataTimekeepingProvisionalWarningTimeBegin))
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group" style="background-color: red; padding-top: 5px; padding-bottom: 5px;">
+                                @if($dataTimekeepingProvisionalWarningTimeBegin->checkUpdateTimeBegin())
+                                    <em style="color: yellow;">Báo lại giờ vào:</em>
+                                    <b class="qc-font-bold"
+                                       style="color: white; font-size: 1.5em;">{!! date('H:i', strtotime($dataTimekeepingProvisionalWarningTimeBegin->updateDate())) !!}</b>
+                                @else
+                                    <em style="color: yellow;">Báo sai giờ vào</em>
+                                    <b class="qc-font-bold"
+                                       style="color: white; font-size: 1.5em;"> - CHƯA BÁO LẠI</b>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -69,6 +88,21 @@ if (!empty($companyStaffWorkId)) {
                             @endif
                         </div>
                     </div>
+                    @if($hFunction->checkCount($dataTimekeepingProvisionalWarningTimeEnd))
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group" style="background-color: red; padding-top: 5px; padding-bottom: 5px;">
+                                @if($dataTimekeepingProvisionalWarningTimeEnd->checkUpdateTimeEnd())
+                                    <em style="color: yellow;">Báo lại giờ ra:</em>
+                                    <b class="qc-font-bold"
+                                       style="color: white; font-size: 1.5em;">{!! date('H:i', strtotime($dataTimekeepingProvisionalWarningTimeEnd->updateDate())) !!}</b>
+                                @else
+                                    <em style="color: yellow;">Báo sai giờ ra</em>
+                                    <b class="qc-font-bold"
+                                       style="color: white; font-size: 1.5em;"> - CHƯA BÁO LẠI</b>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 @if($dataTimekeepingProvisional->checkAfternoonWork($timekeepingId))
                     <div class="row">
