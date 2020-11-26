@@ -57,7 +57,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                         </tr>
                         <tr>
                             <td style="padding:0 ;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0; height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -69,7 +69,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -81,7 +81,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -96,17 +96,18 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                             <td>
                                 <b style="color: red"> {!! $hFunction->currencyFormat($totalBonusMoney)  !!}</b>
                             </td>
-                            <td class="text-center" style="padding: 0px;">
-                                <div class="input-group">
-                                    <input type="text" class="textFilterName form-control" name="textFilterName"
-                                           placeholder="Tìm theo tên" value="{!! $nameFiler !!}">
-                                      <span class="input-group-btn">
-                                            <button class="btFilterName btn btn-default" type="button"
-                                                    data-href="{!! $hrefIndex !!}">
-                                                <i class="glyphicon glyphicon-search"></i>
-                                            </button>
-                                      </span>
-                                </div>
+                            <td style="padding: 0 !important;">
+                                <select class="cbStaffFilter form-control" data-href="{!! $hrefIndex !!}">
+                                    <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                        Tất cả
+                                    </option>
+                                    @if($hFunction->checkCount($dataStaffFilter))
+                                        @foreach($dataStaffFilter as $staff)
+                                            <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                                    @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
                             </td>
                         </tr>
                         @if($hFunction->checkCount($dataBonus))
@@ -214,14 +215,14 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                             </a>
 
                                             <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataStaffBonus->fullName() !!}</h5>
+                                                <h5 class="media-heading">{!! $dataStaffBonus->lastName() !!}</h5>
                                             </div>
                                         </div>
                                     </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="3">
+                                <td colspan="3" style="border-left: 5px solid blue;">
                                     {!! $hFunction->page($dataBonus) !!}
                                 </td>
                             </tr>

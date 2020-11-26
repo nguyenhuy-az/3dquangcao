@@ -17,7 +17,7 @@ use Request;
 
 class BonusController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $nameFiler = null)
+    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $staffFilterId = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -56,33 +56,16 @@ class BonusController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-
-        /*$dataCompany = $modelCompany->getInfo();
-        if (empty($companyFilterId)) {
-            if (!$dataStaffLogin->checkRootManage()) {
-                $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-                $companyFilterId = $dataStaffLogin->companyId();
-            } else {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            }
-        } else {
-            if($companyFilterId == 1000){
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            }else{
-                $searchCompanyFilterId = [$companyFilterId];
-            }
-        }*/
-
         if ($monthFilter < 8 && $yearFilter <= 2019) { # du lieu phien ban cu
-            if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listIdOfListCompanyAndName([$companyFilterId], $nameFiler);
+            if ($staffFilterId > 0) {
+                $listStaffId = [$staffFilterId];
             } else {
                 $listStaffId = $modelStaff->listIdOfListCompany([$companyFilterId]);
             }
             $listWorkId = $modelWork->listIdOfListStaffId($listStaffId);
         } else {
-            if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listStaffIdByName($nameFiler);
+            if ($staffFilterId > 0) {
+                $listStaffId = [$staffFilterId];
                 $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $listStaffId);
             } else {
                 $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], null);
@@ -91,7 +74,9 @@ class BonusController extends Controller
         }
         $dataBonus = $modelBonus->selectInfoHasFilter($listWorkId, $dateFilter)->paginate(30);
         $totalBonusMoney = $modelBonus->totalMoneyHasFilter($listWorkId, $dateFilter);
-        return view('ad3d.finance.bonus.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataBonus', 'totalBonusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));
+        //danh sach NV
+        $dataStaffFilter = $modelCompany->staffInfoActivityOfListCompanyId([$companyFilterId]);
+        return view('ad3d.finance.bonus.list', compact('modelStaff','dataStaffFilter', 'dataCompany', 'dataAccess', 'dataBonus', 'totalBonusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'staffFilterId'));
 
     }
 

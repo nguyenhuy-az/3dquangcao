@@ -71,6 +71,8 @@ $hrefIndex = route('qc.work.bonus.get');
                                     $workAllocationId = $bonus->workAllocationId();
                                     # thanh toan
                                     $orderPayId = $bonus->orderPayId();
+                                    $cancelNote = $bonus->cancelNote();
+                                    $cancelImage = $bonus->cancelImage();
                                     $cancelStatus = $bonus->checkCancelStatus();
                                     if ($cancelStatus) {
                                         $money = 0;
@@ -85,7 +87,16 @@ $hrefIndex = route('qc.work.bonus.get');
                                             <b style="color: blue;">{!! date('d/m/Y', strtotime($bonus->bonusDate())) !!} </b>
                                             <br/>
                                             @if($cancelStatus)
-                                                <em style="color: grey;">Đã hủy</em>
+                                                <em style="color: brown;">Đã hủy</em>
+                                                @if(!$hFunction->checkEmpty($cancelNote))
+                                                    <br/>
+                                                    <em style="color: grey;">- {!! $cancelNote !!}</em>
+                                                @endif
+                                                @if(!$hFunction->checkEmpty($cancelImage))
+                                                    <br/>
+                                                    <img alt="huy_thuong" style="border: 1px solid grey; width: 70px;"
+                                                         src="{!! $bonus->pathSmallImage($cancelImage) !!}">
+                                                @endif
                                             @else
                                                 @if($bonus->checkEnableApply())
                                                     <em style="color: grey;">Có hiệu lực</em>

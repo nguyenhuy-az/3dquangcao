@@ -24,26 +24,14 @@ if (count($dataWorkSelect) > 0) {
             </a>
         </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-            <h3>PHẠT</h3>
+            <h3 style="color: red;">PHẠT</h3>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
             <form id="frmAdd" class="frmAdd" role="form" method="post"
                   action="{!! route('qc.ad3d.finance.minus_money.add.post') !!}">
-                <div class="row">
-                    <div class="qc-padding-top-20 col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                        @if (Session::has('notifyAdd'))
-                            <div class="form-group form-group-sm text-center qc-color-red">
-                                {!! Session::get('notifyAdd') !!}
-                                <?php
-                                Session::forget('notifyAdd');
-                                ?>
-                            </div>
-                        @endif
-                    </div>
-                </div>
                 {{-- thông tin khách hàng --}}
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="form-group form-group-sm">
                             <label>
                                 Công ty (<em style="color: red">tên cty của nhân viên đăng nhập</em>):
@@ -55,7 +43,7 @@ if (count($dataWorkSelect) > 0) {
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="form-group form-group-sm">
                             <label>Nhân viên: <i
                                         class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -83,7 +71,7 @@ if (count($dataWorkSelect) > 0) {
                 @if(!empty($workSelectId))
                     <?php $fromDate = $dataWorkSelect->fromDate(); ?>
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm">
                                 <label>Lý do:</label>
                                 <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
@@ -110,7 +98,7 @@ if (count($dataWorkSelect) > 0) {
                     </div>
                     @if(!empty($dataPunishContentSelected))
                         <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="form-group form-group-sm">
                                     <label>Số tiền:</label>
                                     <input type="text" class="form-control" name="txtMoney" readonly
@@ -120,12 +108,12 @@ if (count($dataWorkSelect) > 0) {
                         </div>
                     @endif
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <label>Ngày: <i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm">
                                 <select name="cbDay" style="margin-top: 5px; height: 25px;">
                                     <option value="">Ngày</option>
@@ -147,7 +135,7 @@ if (count($dataWorkSelect) > 0) {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group qc-padding-none">
                                 <label>Ghi chú:</label>
                                 <input type="text" class="form-control" name="txtDescription" value="">
@@ -156,15 +144,25 @@ if (count($dataWorkSelect) > 0) {
                     </div>
 
                 @endif
-
+                @if (Session::has('notifyAdd'))
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group" style="background-color: red;">
+                                <span style="color: yellow; font-size: 1.5em;">
+                                    {!! Session::get('notifyAdd') !!}
+                                </span>
+                                <?php
+                                Session::forget('notifyAdd');
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="row">
                     <div class="qc-padding-top-20 qc-padding-bot-20  qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                         <button type="button" class="qc_save btn btn-primary btn-sm">ÁP DỤNG PHẠT</button>
                         <button type="reset" class="btn btn-default btn-sm">Nhập lại</button>
-                        {{--<a href="{!! route('qc.ad3d.finance.minus-money.get') !!}">
-                            <button type="button" class="btn btn-default btn-sm">Đóng</button>
-                        </a>--}}
                     </div>
                 </div>
             </form>

@@ -29,35 +29,25 @@ $(document).ready(function () {
             href = href + '/' + companyId + '/' + dateFilter;
         }
         qc_main.url_replace(href);
-    })
+    });
 
     //khi tìm theo tên ..
-    $('body').on('click', '.btFilterName', function () {
-        var name = $('.textFilterName').val();
+    $('body').on('change', '.cbStaffFilter', function () {
         var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val();
-        if (name.length == 0) {
-            alert('Bạn phải nhập thông tin tìm kiếm');
-            $('.textFilterName').focus();
-            return false;
-        } else {
-            qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + name);
-        }
-    })
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $(this).val());
+    });
     // theo ngay tháng ...
     $('body').on('change', '.cbDayFilter', function () {
-        var name = $('.textFilterName').val();
         var dateFilter = $(this).val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + name);
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbStaffFilter').val());
     })
     $('body').on('change', '.cbMonthFilter', function () {
-        var name = $('.textFilterName').val();
         var dateFilter = $('.cbDayFilter').val() + '/' + $(this).val() + '/' + $('.cbYearFilter').val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + name);
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbStaffFilter').val());
     })
     $('body').on('change', '.cbYearFilter', function () {
-        var name = $('.textFilterName').val();
         var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $(this).val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + name);
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + $('.cbStaffFilter').val());
     })
 });
 

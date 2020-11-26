@@ -22,7 +22,7 @@ use Request;
 
 class MinusMoneyController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $punishContentFilterId = 0, $nameFiler = null)
+    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $punishContentFilterId = 0, $staffFilterId = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -64,15 +64,15 @@ class MinusMoneyController extends Controller
         }
 
         if ($monthFilter < 8 && $yearFilter <= 2019) { # du lieu phien ban cu
-            if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listIdOfListCompanyAndName([$companyFilterId], $nameFiler);
+            if ($staffFilterId > 0) {
+                $listStaffId = [$staffFilterId];
             } else {
                 $listStaffId = $modelStaff->listIdOfListCompany([$companyFilterId]);
             }
             $listWorkId = $modelWork->listIdOfListStaffId($listStaffId);
         } else {
-            if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listStaffIdByName($nameFiler);
+            if ($staffFilterId > 0) {
+                $listStaffId = [$staffFilterId];
                 $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $listStaffId);
             } else {
                 $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], null);
@@ -84,7 +84,9 @@ class MinusMoneyController extends Controller
         $totalMinusMoney = $modelMinus->totalMoneyHasFilter($listWorkId, $punishContentFilterId, $dateFilter);
         # danh muc phat cua cong ty
         $dataPunishContent = $modelPunishContent->getInfo();
-        return view('ad3d.finance.minus-money.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataPunishContent', 'dataMinusMoney', 'totalMinusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'punishContentFilterId', 'nameFiler'));
+        //danh sach NV
+        $dataStaffFilter = $modelCompany->staffInfoActivityOfListCompanyId([$companyFilterId]);
+        return view('ad3d.finance.minus-money.list', compact('modelStaff','dataStaffFilter', 'dataCompany', 'dataAccess', 'dataPunishContent', 'dataMinusMoney', 'totalMinusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'punishContentFilterId', 'staffFilterId'));
 
     }
 

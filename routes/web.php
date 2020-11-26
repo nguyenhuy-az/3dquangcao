@@ -336,7 +336,7 @@ Route::group(['prefix' => 'ad3d'], function () {
             //huy
             Route::get('cancel/{minusId?}', ['as' => 'qc.ad3d.finance.minus-money.cancel', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@cancelMinusMoney']);
 
-            Route::get('/{companyId?}/{day?}/{month?}/{year?}/{punishContentId?}/{name?}', ['as' => 'qc.ad3d.finance.minus-money.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@index']);
+            Route::get('/{companyId?}/{day?}/{month?}/{year?}/{punishContentId?}/{staffFilterId?}', ['as' => 'qc.ad3d.finance.minus-money.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@index']);
         });
 
         # thong tin thuong
