@@ -583,7 +583,7 @@ class QcWorkAllocation extends Model
             if ($receiveDeadline < $checkDate) { # tre ngay
                 if (!$modelMinusMoney->checkExistMinusMoneyWorkAllocationLate($allocationId)) { // Neu chua phat thi se phat
                     $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
-                    if ($modelMinusMoney->insert($checkDate, 'Thi công sản phẩm trễ ', $workId, null, $punishId, 0, null, null, null, $allocationId, 0)) {
+                    if ($modelMinusMoney->insert($checkDate, '', $workId, null, $punishId, 0, null, null, null, $allocationId, 0)) {
                         $modelStaffNotify->insert(null, $dataReceiveStaff->staffId(), 'Thi công sản phẩm', null, null, null, $modelMinusMoney->insertGetId());
                     }
                 }

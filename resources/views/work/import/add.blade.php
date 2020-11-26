@@ -21,7 +21,7 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                   action="{!! route('qc.work.import.add.post') !!}">
                 <div class="row" style="padding-top: 20px;">
                     @if (Session::has('notifyAddImport'))
-                        <div class="form-group text-center qc-color-red">
+                        <div class="form-group qc-font-size-14 qc-color-red">
                             {!! Session::get('notifyAddImport') !!}
                             <?php
                             Session::forget('notifyAddImport');
@@ -100,7 +100,7 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10" style="overflow: hidden;">
                                 <label>Chọn ảnh:</label>
-                                <input class="txtImportImage"onclick="$(this).click();" type="file" name="txtImportImage" >
+                                <input class="txtImportImage"onclick="$(this).click();" type="file" name="txtImportImage" value="">
                             </div>
                             <div class="text-right col-xs-12 col-sm-12 col-md-2 col-lg-2">
                                 <a class="qc_delete qc-link-red" data-href="">
@@ -111,21 +111,21 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                     </div>
                 </div>
                 <div class="row">
-                    <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                         <a href="#">
                             <button type="button" class="qc_work_import_save btn btn-sm btn-primary">
-                                Thêm
+                                LƯU HÓA ĐƠN
                             </button>
                         </a>
                         <a href="#">
                             <button type="reset" class="qc_work_import_reset btn btn-sm btn-default">
-                                Nhập lại
+                                NHẬP LẠI
                             </button>
                         </a>
                         <a href="{!! route('qc.work.import.get') !!}">
                             <button type="button" class="qc_ad3d_container_close btn btn-sm btn-default">
-                                Đóng
+                                <d>ĐÓNG</d>
                             </button>
                         </a>
                     </div>

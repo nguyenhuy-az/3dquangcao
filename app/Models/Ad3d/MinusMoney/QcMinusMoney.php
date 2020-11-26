@@ -22,6 +22,11 @@ class QcMinusMoney extends Model
     private $lastId;
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
+    # lay gia tri mac dinh cua ly do phat
+    public function getDefaultReason()
+    {
+        return null;
+    }
     #---------- Insert ----------
     /*
 `   $orderAllocationId : quan ly thi cong don hang
@@ -40,8 +45,10 @@ class QcMinusMoney extends Model
         $modelMinusMoney = new QcMinusMoney();
         $modelCompanyStore = new QcCompanyStore();
         $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
+        # $money == 0 - phat theo so tien quy dinh san - $money > 0 - nhap truc tiep
         if ($money == 0) {
-            if (empty($orderAllocationId) && empty($orderConstructionId) && empty($companyStoreCheckReportId) && empty($workAllocationId)) {  # phat theo noi quy
+            # phat theo noi quy
+            if (empty($orderAllocationId) && empty($orderConstructionId) && empty($companyStoreCheckReportId) && empty($workAllocationId)) {
                 # tien phat
                 $money = $modelPunishContent->money($punishId);
             } else {

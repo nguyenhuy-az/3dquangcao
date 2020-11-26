@@ -548,7 +548,7 @@ class QcOrderAllocation extends Model
             if ($receiveDeadline < $checkDate) { # tre ngay
                 if (!$modelMinusMoney->checkExistMinusMoneyOrderAllocationLate($allocationId)) { // Neu chua phat thi se phat
                     $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
-                    if ($modelMinusMoney->insert($checkDate, 'Quản lý Thi công trễ đơn hàng', $workId, null, $punishId, 0, $allocationId, null, null, null, 0)) {
+                    if ($modelMinusMoney->insert($checkDate, null, $workId, null, $punishId, 0, $allocationId, null, null, null, 0)) {
                         $modelStaffNotify->insert(null, $dataReceiveStaff->staffId(), 'Quản lý thi công trễ đơn hàng', null, null, null, $modelMinusMoney->insertGetId());
                     }
                 }

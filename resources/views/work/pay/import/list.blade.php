@@ -33,7 +33,6 @@ $currentMonth = $hFunction->currentMonth();
             <div class="table-responsive">
                 <table class="table table-hover table-bordered">
                     <tr style="background-color: black; color: yellow;">
-                        <th class="text-center" style="width:20px;">STT</th>
                         <th style="width: 300px;">HÓA ĐƠN</th>
                         <th style="width: 200px;">
                             SỐ TIỀN
@@ -43,7 +42,6 @@ $currentMonth = $hFunction->currentMonth();
                         <th>NGƯỜI MUA</th>
                     </tr>
                     <tr>
-                        <td class="text-center qc-color-red"></td>
                         <td style="padding: 0;">
                             <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                     style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
@@ -122,9 +120,6 @@ $currentMonth = $hFunction->currentMonth();
                             ?>
                             <tr class="@if(!$import->checkExactlyStatus()) danger  @else @if($n_o%2 == 1) info @endif @endif "
                                 data-object="{!! $importId !!}">
-                                <td class="text-center">
-                                    {!! $n_o += 1 !!}
-                                </td>
                                 <td style="padding: 0;">
                                     <div class="media">
                                         <div class="pull-left" href="#">

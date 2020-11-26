@@ -21,13 +21,11 @@ $checkTime = date('m-Y');
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
-                                <th class="text-center" style="width: 20px;">STT</th>
-                                <th>NGÀY</th>
-                                <th>NGUYÊN NHÂN </th>
+                                <th style="width: 150px;">NGÀY</th>
+                                <th style="width: 200px;">NGUYÊN NHÂN</th>
                                 <th>PHẢN HỒI</th>
                             </tr>
                             <tr>
-                                <td class="text-center"></td>
                                 <td style="padding: 0;">
                                     <select class="qc_work_minus_money_month col-sx-5 col-sm-5 col-md-5 col-lg-5"
                                             style="height: 34px; padding: 0;"
@@ -87,25 +85,23 @@ $checkTime = date('m-Y');
                                     $actionStatus = ($checkTime == date('m-Y', strtotime($dateMinus))) ? true : false;
                                     # thong tin phan
                                     $dataMinusMoneyFeedback = $minusMoney->infoMinusMoneyFeedback();
+                                    $n_o = $n_o + 1;
                                     ?>
                                     <tr @if($n_o%2) class="info" @endif>
-                                        <td class="text-center">
-                                            {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
-                                        </td>
                                         <td>
-                                            <b>{!! date('d-m-Y', strtotime($minusMoney->dateMinus())) !!}</b>
+                                            <b style="color: blue;">{!! date('d-m-Y', strtotime($minusMoney->dateMinus())) !!}</b>
                                             <br/>
-                                            <em style="color: grey;">
+                                            <b style="color: grey;">
                                                 - {!! $minusMoney->punishContent->name() !!}
-                                            </em>
+                                            </b>
                                             <br/>
                                             @if($cancelStatus)
                                                 <em style="color: red;">Đã hủy</em>
                                             @else
                                                 @if($minusMoney->checkEnableApply())
-                                                    <em style="color: blue;">Có hiệu lực</em>
+                                                    <em style="color: grey;">Có hiệu lực</em>
                                                 @else
-                                                    <em style="color: blue;">Tạm thời</em>
+                                                    <em style="color: red;">Tạm thời</em>
                                                 @endif
                                             @endif
                                         </td>
@@ -115,11 +111,11 @@ $checkTime = date('m-Y');
                                             </b>
                                             @if(!$hFunction->checkEmpty($reasonMinus))
                                                 <br/>
-                                                <b>{!! $reasonMinus !!}</b>
+                                                <em style="color: grey;">** {!! $reasonMinus !!}</em>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderAllocationId))
                                                 <br/>
-                                                <em>- Đơn hàng:</em>
+                                                <em style="color: grey;">- Đơn hàng:</em>
                                                 <a class="qc-link" style="color: blue !important;"
                                                    href="{!! route('qc.work.work_allocation.order_allocation.product.get',$orderAllocationId) !!}">
                                                     {!! $minusMoney->orderAllocation->orders->name() !!}
@@ -127,19 +123,19 @@ $checkTime = date('m-Y');
                                             @endif
                                             @if(!$hFunction->checkEmpty($workAllocationId))
                                                 <br/>
-                                                <em>- Sản phẩm:</em>
+                                                <em style="color: grey;">- Sản phẩm:</em>
                                                 <a style="color: blue;">
                                                     {!! $minusMoney->workAllocation->product->productType->name() !!}
                                                 </a>
                                                 <br/>
-                                                <em>- Đơn hàng:</em>
+                                                <em style="color: grey;">- Đơn hàng:</em>
                                                 <a style="color: blue;">
                                                     {!! $minusMoney->workAllocation->product->order->name() !!}
                                                 </a>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderConstructionId))
                                                 <br/>
-                                                <em>- Đơn hàng:</em>
+                                                <em style="color: grey;">- Đơn hàng:</em>
                                                 <a class="qc-link" style="color: blue !important;"
                                                    href="{!! route('qc.work.work_allocation.order.construction.get',$orderConstructionId) !!}">
                                                     {!! $minusMoney->orderConstruction->name() !!}
@@ -184,7 +180,7 @@ $checkTime = date('m-Y');
                                                 @endif
                                             @else
                                                 @if($actionStatus)
-                                                    <a class="qc_minus_money_feedback qc-link-green-bold"
+                                                    <a class="qc_minus_money_feedback qc-link-green-bold qc-font-size-14"
                                                        data-href="{!! route('qc.work.minus_money.feedback.get',$minusId) !!}">
                                                         GỬI PHẢN HỒI
                                                     </a>
@@ -196,7 +192,7 @@ $checkTime = date('m-Y');
                                     </tr>
                                 @endforeach
                                 <tr style="background-color: black;">
-                                    <td colspan="2"></td>
+                                    <td></td>
                                     <td>
                                         <b class="qc-font-size-14" style="color: yellow;">
                                             {!! $hFunction->currencyFormat($totalMoney) !!}
@@ -207,7 +203,7 @@ $checkTime = date('m-Y');
                                 </tr>
                             @else
                                 <tr>
-                                    <td colspan="4">
+                                    <td colspan="3">
                                         <label style="color: red;">Không có thông tin phạt</label>
                                     </td>
                                 </tr>

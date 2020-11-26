@@ -23,12 +23,10 @@ $hrefIndex = route('qc.work.bonus.get');
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
-                                <th class="text-center" style="width: 20px;">STT</th>
-                                <th>NGÀY</th>
+                                <th style="width: 150px;">NGÀY</th>
                                 <th>SỐ TIỀN - LÝ DO</th>
                             </tr>
                             <tr>
-                                <td class="text-center"></td>
                                 <td style="padding: 0;">
                                     <select class="qc_work_bonus_month col-sx-5 col-sm-5 col-md-5 col-lg-5"
                                             style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
@@ -80,21 +78,19 @@ $hrefIndex = route('qc.work.bonus.get');
                                         $money = $bonus->money();
                                     }
                                     $totalMoney = $totalMoney + $money;
+                                    $n_o = $n_o + 1;
                                     ?>
-                                    <tr @if($n_o%2) class="info" @endif>
-                                        <td class="text-center">
-                                            {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
-                                        </td>
+                                    <tr @if($n_o%2 == 0) class="info" @endif>
                                         <td>
-                                            <b>{!! date('d/m/Y', strtotime($bonus->bonusDate())) !!} </b>
+                                            <b style="color: blue;">{!! date('d/m/Y', strtotime($bonus->bonusDate())) !!} </b>
                                             <br/>
                                             @if($cancelStatus)
-                                                <em style="color: red;">Đã hủy</em>
+                                                <em style="color: grey;">Đã hủy</em>
                                             @else
                                                 @if($bonus->checkEnableApply())
-                                                    <em style="color: blue;">Có hiệu lực</em>
+                                                    <em style="color: grey;">Có hiệu lực</em>
                                                 @else
-                                                    <span style="color: brown;">Tạm thời</span>
+                                                    <span style="color: red;">Tạm thời</span>
                                                 @endif
                                             @endif
                                         </td>
@@ -131,7 +127,7 @@ $hrefIndex = route('qc.work.bonus.get');
                                     </tr>
                                 @endforeach
                                 <tr style="background-color: black;">
-                                    <td colspan="2"></td>
+                                    <td></td>
                                     <td>
                                         <b class="qc-font-size-14" style="color: yellow;">
                                             {!! $hFunction->currencyFormat($totalMoney) !!}

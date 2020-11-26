@@ -12,8 +12,14 @@ var qc_work_import = {
         addObject: function (href) {
             qc_master_submit.ajaxNotReloadNoScrollTop(href, '#qc_work_import_add_object_wrap', false);
         },
-        save: function (form) {
-            qc_work_import.add.checkInput();
+        save: function (frm) {
+            var img = $(frm).find('.txtImportImage');
+            if (qc_main.check.inputNull(img, 'PHẢI CÓ ẢNH HÓA ĐƠN')) {
+                img.focus();
+                return false;
+            } else {
+                qc_work_import.add.checkInput();
+            }
             //qc_master_submit.normalForm(form);
         },
         checkInput: function () {

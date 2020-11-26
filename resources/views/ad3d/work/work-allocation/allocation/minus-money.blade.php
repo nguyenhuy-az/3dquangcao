@@ -63,9 +63,9 @@ $dataProduct = $dataWorkAllocation->product;
                                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                                 <input type="hidden" name="txtAllocationId"
                                        value="{!! $dataWorkAllocation->allocationId() !!}">
-                                <button type="button" class="qc_save btn btn-sm btn-primary">GỬI</button>
-                                <button type="reset" class="btn btn-sm btn-default">Nhập lại</button>
-                                <button type="button" class="qc_ad3d_container_close btn btn-sm btn-default">Đóng</button>
+                                <button type="button" class="qc_save btn btn-sm btn-primary">XÁC NHẬN PHẠT</button>
+                                <button type="reset" class="btn btn-sm btn-default">NHẬP LẠI</button>
+                                <button type="button" class="qc_ad3d_container_close btn btn-sm btn-default">ĐÓNG</button>
                             </div>
                         </div>
                     </div>

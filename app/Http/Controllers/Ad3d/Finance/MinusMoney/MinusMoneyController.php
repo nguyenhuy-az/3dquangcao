@@ -159,6 +159,7 @@ class MinusMoneyController extends Controller
         }
     }
 
+    # phat truc tiep
     public function getAdd($companyLoginId, $workId = null, $punishId = null)
     {
         $modelStaff = new QcStaff();
@@ -191,7 +192,6 @@ class MinusMoneyController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelMinusMoney = new QcMinusMoney();
-        $modelPunishContent = new QcPunishContent();
         $workId = Request::input('cbWork');
         $cbDay = Request::input('cbDay');
         $cbMonth = Request::input('cbMonth');
@@ -200,7 +200,7 @@ class MinusMoneyController extends Controller
         $reason = Request::input('txtDescription');
         $staffId = $modelStaff->loginStaffId();
         $dateMinus = $hFunction->convertStringToDatetime("$cbMonth/$cbDay/$cbYear 00:00:00");
-        if ($modelMinusMoney->insert($dateMinus, $reason, $workId, $staffId, $cbPunishContentId)) {
+        if ($modelMinusMoney->insert($dateMinus, $reason, $workId, $staffId, $cbPunishContentId, 1, null, null, null, null, 0)) {
             return Session::put('notifyAdd', 'Thêm thành công, chọn thông tin và tiếp tục');
         } else {
             return Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');

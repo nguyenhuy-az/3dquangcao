@@ -44,19 +44,18 @@ $currentMonth = $hFunction->currentMonth();
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
-                                <th class="text-center" style="width: 20px;">STT</th>
-                                <th>NHÂN VIÊN</th>
-                                <th class="text-right">
+                                <th style="width: 200px;">NHÂN VIÊN</th>
+                                <th style="width: 120px;">
                                     CHƯA THANH TOÁN
                                 </th>
-                                <th class="text-right">LÃNH THỰC</th>
-                                <th class="text-right">
+                                <th style="width: 120px;">LÃNH THỰC</th>
+                                <th style="width: 120px;">
                                     MUA VẬT TƯ <br/>
                                     <em>(Đã duyệt chưa TT)</em>
                                 </th>
-                                <th class="text-right">CỘNG THÊM</th>
-                                <th class="text-right">ĐÃ THANH TOÁN</th>
-                                <th class="text-right">GIỮ LẠI</th>
+                                <th style="width: 120px;">CỘNG THÊM</th>
+                                <th style="width: 120px;">ĐÃ THANH TOÁN</th>
+                                <th >GIỮ LẠI</th>
                             </tr>
                             @if($hFunction->checkCount($dataSalary))
                                 <?php
@@ -101,9 +100,6 @@ $currentMonth = $hFunction->currentMonth();
                                     $n_o = isset($n_o) ? $n_o + 1 : 1;
                                     ?>
                                     <tr class="@if($n_o%2 == 0) info @endif">
-                                        <td class="text-center">
-                                            {!! $n_o !!}
-                                        </td>
                                         <td>
                                             <div class="media">
                                                 <a class="pull-left" href="#">
@@ -112,7 +108,7 @@ $currentMonth = $hFunction->currentMonth();
                                                          src="{!! $dataStaffDetail->pathAvatar($dataStaffDetail->image()) !!}">
                                                 </a>
                                                 <div class="media-body">
-                                                    <label class="media-heading">{!! $dataStaffDetail->fullName() !!}</label>
+                                                    <label class="media-heading">{!! $dataStaffDetail->lastName() !!}</label>
                                                     @if(!empty($bankAccount))
                                                         <br/>
                                                         <em style="color: grey;">Số TK:</em>
@@ -129,7 +125,7 @@ $currentMonth = $hFunction->currentMonth();
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             <b style="color: red;">{!! $hFunction->currencyFormat($salaryUnpaid) !!}</b>
                                             <br/>
                                             @if(!$salary->checkPaid())
@@ -141,7 +137,7 @@ $currentMonth = $hFunction->currentMonth();
                                                 <em class="qc-color-grey">Đã Thanh toán</em>
                                             @endif
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             <b style="color: blue;">{!! $hFunction->currencyFormat($salaryPay) !!}</b>
                                             <br/>
                                             <a class="qc-link-green"
@@ -149,20 +145,20 @@ $currentMonth = $hFunction->currentMonth();
                                                 XEM CHI TIẾT
                                             </a>
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             <b style="color: red;">
                                                 {!! $hFunction->currencyFormat($benefitMoney) !!}
                                             </b>
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             <b style="color: green;">
                                                 {!! $hFunction->currencyFormat($totalPaid) !!}
                                             </b>
                                         </td>
-                                        <td class="text-right">
+                                        <td >
                                             <a style="color: red;">
                                                 {!! $hFunction->currencyFormat($totalKeepMoney) !!}
                                             </a>
@@ -170,30 +166,29 @@ $currentMonth = $hFunction->currentMonth();
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-right qc-color-red" style="background-color: whitesmoke;"
-                                        colspan="2"></td>
-                                    <td class="text-right qc-color-red">
+                                    <td class="qc-color-red" style="background-color: whitesmoke;"></td>
+                                    <td class="qc-color-red">
                                         {!! $hFunction->currencyFormat($sumSalaryUnpaid)  !!}
                                     </td>
-                                    <td class="text-right qc-color-red">
+                                    <td class="qc-color-red">
                                         {!! $hFunction->currencyFormat($sumSalary)  !!}
                                     </td>
-                                    <td class="text-right qc-color-red">
+                                    <td class="qc-color-red">
                                         {!! $hFunction->currencyFormat($sumMoneyImportOfStaff)  !!}
                                     </td>
-                                    <td class="text-right qc-color-red">
+                                    <td class="qc-color-red">
                                         {!! $hFunction->currencyFormat($sumSalaryBenefit)  !!}
                                     </td>
-                                    <td class="text-right qc-color-red">
+                                    <td class="qc-color-red">
                                         {!! $hFunction->currencyFormat($sumSalaryPaid)  !!}
                                     </td>
-                                    <td class="text-right">
+                                    <td>
                                         {!! $hFunction->currencyFormat($sumKeepMoney)  !!}
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="8">
+                                    <td class="text-center" colspan="7">
                                         <em class="qc-color-red">Không có bảng lương</em>
                                     </td>
                                 </tr>

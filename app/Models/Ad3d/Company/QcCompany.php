@@ -119,6 +119,7 @@ class QcCompany extends Model
     #========== ========== ========== TU DONG KIEM TRA DU LIEU CUA HE THONG ========== ========== ==========
     # KIEM TRA DU LIEU TU DONG
     /*DUOC GOI TRONG FUNCTION "LOGIN" MODEL NHAN VIEN*/
+
     public function checkAutoInfo()
     {
         $hFunction = new \Hfunction();

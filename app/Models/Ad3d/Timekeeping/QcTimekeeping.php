@@ -186,37 +186,37 @@ class QcTimekeeping extends Model
         return (count($result) > 0) ? true : false;
     }
 
-    //tong gio lam chinh
+    #tong gio lam chinh
     public function sumMainMinuteOfWork($workId)
     {
         return QcTimekeeping::where('work_id', $workId)->sum('mainMinute');
     }
 
-    //tong gio tang ca
+    # tong gio tang ca
     public function sumPlusMinuteOfWork($workId)
     {
         return QcTimekeeping::where('work_id', $workId)->sum('plusMinute');
     }
 
-    //tong gio tru
+    # tong so gio tru
     public function sumMinusMinuteOfWork($workId)
     {
         return QcTimekeeping::where('work_id', $workId)->sum('minusMinute');
     }
 
-    //t?ng s? ng�y ngh?
+    # tong so ngay nghi
     public function sumOffWork($workId)
     {
         return QcTimekeeping::where('work_id', $workId)->whereNotNull('dateOff')->count();
     }
 
-    //t?ng s? ng�y ngh? c� ph�p
+    # tong so ngay nghi co phep
     public function sumOffWorkTrue($workId)
     {
         return QcTimekeeping::where(['work_id' => $workId, 'permissionStatus' => 1])->whereNotNull('dateOff')->count();
     }
 
-    //t?ng s? ng�y ngh? kh�ng ph�p
+    //tong so ngay nghi khong phe
     public function sumOffWorkFalse($workId)
     {
         return QcTimekeeping::where(['work_id' => $workId, 'permissionStatus' => 0])->whereNotNull('dateOff')->count();

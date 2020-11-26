@@ -94,11 +94,27 @@ class BonusController extends Controller
         return view('ad3d.finance.bonus.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataBonus', 'totalBonusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));
 
     }
-    public function cancelBonus($minusId)
+
+    public function getCancelBonus($bonusId)
     {
         $modelBonus = new QcBonus();
-        $modelBonus->cancelBonus($minusId);
+        $dataBonus = $modelBonus->getInfo($bonusId);
+        return view('ad3d.finance.bonus.cancel-bonus', compact('dataBonus'));
     }
 
-
+    public function postCancelBonus($bonusId)
+    {
+        $hFunction = new \Hfunction();
+        $modelBonus = new QcBonus();
+        $txtNote = Request::input('txtCancelNote');
+        $txtWarningImage = Request::file('txtCancelImage');
+        $name_img = null; // mac dinh null
+        if (!empty($txtWarningImage)) {
+            $name_img = stripslashes($_FILES['txtCancelImage']['name']);
+            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $source_img = $_FILES['txtCancelImage']['tmp_name'];
+            $modelBonus->uploadImage($source_img, $name_img);
+        }
+        $modelBonus->cancelBonus($bonusId, $txtNote, $name_img);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Work\Timekeeping;
 
+use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
@@ -31,11 +32,11 @@ class TimekeepingController extends Controller
             'object' => 'timekeeping'
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
-        $dateFilter = date('Y-m-d');
+        $dateFilter = $hFunction->currentDate();
         return view('work.timekeeping.timekeeping.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
     }
 
-    //xem anh bao cao
+    # xem anh bao cao
     public function viewTimekeepingProvisionalImage($imageId)
     {
         $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
@@ -198,7 +199,7 @@ class TimekeepingController extends Controller
 
         $timeBegin = $modelTimekeepingProvisional->timeBegin($timekeepingProvisionalId)[0];
         $timeEnd = $hFunction->convertStringToDatetime("$monthEnd/$dayEnd/$yearEnd $hoursEnd:$minuteEnd:00");
-        if (date('Y-m-d H:i', strtotime($timeBegin)) > date('Y-m-d H:i', strtotime($timeEnd))) {
+        if ($hFunction->formatDateToDMYHI($timeBegin) > $hFunction->formatDateToDMYHI($timeEnd)) {
             return 'Giờ ra phải lớn hơn giờ vào';
         } else {
             # co anh bao cao
@@ -207,8 +208,9 @@ class TimekeepingController extends Controller
             } else {
                 # kiem tra da bao gio ra hay chu
                 if ($modelTimekeepingProvisional->checkReportedTimeEnd($timekeepingProvisionalId)) {
-                    return "Ngày này đã báo giờ gia";
+                    return "Ngày này đã báo giờ ra";
                 } else {
+                   // echo "$timekeepingProvisionalId - $timeEnd - $afternoonStatus - $note";
                     if ($modelTimekeepingProvisional->updateTimeEnd($timekeepingProvisionalId, $timeEnd, $afternoonStatus, $note)) {
                         # anh bao cao 1
                         if (!empty($txtTimekeepingImage_1)) {
@@ -266,7 +268,6 @@ class TimekeepingController extends Controller
                                 }
                             }
                         }
-                        return true;
                     } else {
                         return "Hệ thống đang bảo trì";
                     }

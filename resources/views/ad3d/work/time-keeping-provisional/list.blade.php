@@ -35,7 +35,8 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
                                     <option value="{!! $company->companyId() !!}"
-                                            @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
+                                            @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}
+                                    </option>
                                 @else
                                     @if($companyFilterId == $company->companyId())
                                         <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
@@ -53,12 +54,18 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                     <table class="table table-hover table-bordered">
                         <tr>
                             <td colspan="5" style="background-color: red;">
-                                <span style="color: white;">CHỈ DUYỆT CHẤM CÔNG TRONG THÁNG HIỆN TẠI</span>
+                                <b style="color: white;">
+                                    - Chấm công bị cảnh báo mà không cập nhật sẽ không được tính công.
+                                </b>
+                                <br/>
+                                <b style="color: yellow;">
+                                    - Nếu không duyệt Cuối tháng duyệt tự động mặc đinh là đồng Ý.
+                                </b>
                             </td>
                         </tr>
                         <tr style="background-color: black; color: yellow;">
-                            <th>NHÂN VIÊN</th>
-                            <th class="text-center">GIỜ CHẤM - GIỜ VÀO - GIỜ RA</th>
+                            <th style="width: 220px;">NHÂN VIÊN</th>
+                            <th class="text-center" style="width: 200px;">GIỜ CHẤM - GIỜ VÀO - GIỜ RA</th>
                             <th>
                                 BÁO CÁO BUỔI SÁNG
                                 <br/>
@@ -129,7 +136,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                             </a>
 
                                             <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataStaffTimekeepingProvisional->fullName() !!}</h5>
+                                                <h5 class="media-heading">{!! $dataStaffTimekeepingProvisional->lastName() !!}</h5>
                                                 @if(!$timekeepingProvisional->work->checkSalaryStatus())
                                                     @if($hFunction->checkEmpty($timeEnd))
                                                         <em style="color: blue;">Chưa báo giờ ra</em>
@@ -156,7 +163,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <a class="qc_warning_time_begin qc-link-red-bold" title="Cảnh báo chấm sai"
+                                        <a class="qc_warning_time_begin qc-link-red" title="Cảnh báo chấm sai"
                                            data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_begin.get',$timekeepingProvisionalId) !!}">
                                             <i class="glyphicon glyphicon-warning-sign qc-font-size-14"></i>
                                         </a>
@@ -181,7 +188,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                                 </a>
                                             @endif
                                         @else
-                                            <a class="qc_warning_time_end qc-link-red-bold" title="Cảnh báo chấm sai"
+                                            <a class="qc_warning_time_end qc-link-red" title="Cảnh báo chấm sai"
                                                data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_end.get',$timekeepingProvisionalId) !!}">
                                                 <i class="glyphicon glyphicon-warning-sign qc-font-size-14"></i>
                                             </a>
@@ -219,7 +226,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                                         <br/>
                                                         <em style="color: grey;">Đã gửi CẢNH BÁO GIỜ VÀO</em>
                                                         <span>|</span>
-                                                        <a class="qc_warning_time_begin_cancel qc-link-red-bold qc-font-size-14"
+                                                        <a class="qc_warning_time_begin_cancel qc-link-red qc-font-size-14"
                                                            data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_timekeeping.cancel',$warningId) !!}">
                                                             HỦY
                                                         </a>
@@ -236,7 +243,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                                         <br/>
                                                         <em style="color: grey;">Đã gửi CẢNH BÁO RA</em>
                                                         <span>|</span>
-                                                        <a class="qc_warning_time_end_cancel qc-link-red-bold qc-font-size-14"
+                                                        <a class="qc_warning_time_end_cancel qc-link-red qc-font-size-14"
                                                            data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_timekeeping.cancel',$warningId) !!}">
                                                             HỦY
                                                         </a>

@@ -53,15 +53,16 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black;color: yellow;">
-                            <th class="text-center"></th>
                             <th style="width: 150px;">NGÀY THU</th>
-                            <th>ĐƠN HÀNG</th>
-                            <th>THỦ QUỸ</th>
-                            <th class="text-center">GIAO TIỀN</th>
-                            <th class="text-right">SỐ TIỀN</th>
+                            <th style="width: 200px;">
+                                SỐ TIỀN - ĐƠN HÀNG
+                                <br/>
+                                <b style="color: white;">{!! $hFunction->dotNumber($totalOrderPay) !!}</b>
+                            </th>
+                            <th style="width: 200px;">THỦ QUỸ</th>
+                            <th>GIAO TIỀN</th>
                         </tr>
                         <tr>
-                            <td class="text-center"></td>
                             <td style="padding: 0;">
                                 <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
                                         style="padding: 0;height: 34px;"
@@ -135,9 +136,6 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                     </option>
                                 </select>
                             </td>
-                            <td class="text-right qc-color-red">
-                                <b>{!! $hFunction->dotNumber($totalOrderPay) !!}</b>
-                            </td>
                         </tr>
                         @if($hFunction->checkCount($dataOrderPay))
                             <?php
@@ -157,22 +155,23 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                 } else {
                                     $src = $dataStaffReceive->pathFullImage($image);
                                 }
+                                $n_o = $n_o + 1;
                                 ?>
-                                <tr class="qc_ad3d_list_object  @if($n_o%2 == 1) info @endif"
+                                <tr class="qc_ad3d_list_object  @if($n_o%2 == 0) info @endif"
                                     data-object="{!! $payId !!}">
-                                    <td class="text-center">
-                                        <b>{!! $n_o += 1 !!}</b>
-                                    </td>
                                     <td>
+                                        <b style="color: blue;">{!! date('d/m/Y', strtotime($orderPay->datePay())) !!}</b>
+                                        <br/>
                                         <a class="qc_view qc-link-green" href="#">
-                                            {!! date('d/m/Y', strtotime($orderPay->datePay())) !!} &nbsp;
-                                            <i class="glyphicon glyphicon-eye-open"></i>
+                                            CHI TIẾT
                                         </a>
                                     </td>
                                     <td>
-                                        {!! $orderPay->order->name() !!}
+                                        <b style="color: red;">{!! $hFunction->currencyFormat($orderPay->money()) !!}</b>
                                         <br/>
-                                        <em style="color: grey;">Mã: {!! $orderPay->order->orderCode() !!}</em>
+                                        <span style="color: grey;">
+                                            {!! $orderPay->order->name() !!}
+                                        </span>
                                     </td>
                                     <td>
                                         <div class="media">
@@ -183,30 +182,29 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                             </a>
 
                                             <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataStaffReceive->fullName() !!}</h5>
+                                                <h5 class="media-heading">{!! $dataStaffReceive->lastName() !!}</h5>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center qc-color-grey">
+                                    <td class="qc-color-grey">
                                         @if($orderPay->checkExistTransfersDetail())
-                                            <i class="glyphicon glyphicon-ok-circle qc-color-green" title="Đã giao"></i>
+                                            <i class="glyphicon glyphicon-ok qc-color-green" title="Đã giao"></i>
+                                            <em>Đã bàn giao</em>
                                         @else
-                                            <i class="glyphicon glyphicon-ok-circle qc-color-red" title="Chưa giao"></i>
+                                            <i class="glyphicon glyphicon-ok  qc-color-red" title="Chưa giao"></i>
+                                            <em>Chưa giao</em>
                                         @endif
-                                    </td>
-                                    <td class="text-right">
-                                        <b>{!! $hFunction->currencyFormat($orderPay->money()) !!}</b>
                                     </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="7">
+                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="4">
                                     {!! $hFunction->page($dataOrderPay) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-right qc-color-red" colspan="7">
+                                <td class="text-right qc-color-red" colspan="4">
                                     <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                 </td>
                             </tr>

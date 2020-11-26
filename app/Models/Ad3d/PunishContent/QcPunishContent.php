@@ -15,6 +15,17 @@ class QcPunishContent extends Model
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
+    # trang thai ap dung mac dinh
+    public function getDefaultHasApplyStatus()
+    {
+        return 1;
+    }
+
+    # trang thai khong ap dun
+    public function getDefaultNotApplyStatus()
+    {
+        return 0;
+    }
 
     // insert
     public function insert($name, $money, $note, $typeId)
@@ -85,13 +96,19 @@ class QcPunishContent extends Model
     # lay danh muc phat truc tiep - co qui dinh muc phat truc tiep
     public function getInfoForDirectMinusMoney()
     {
-        return QcPunishContent::where('money', '>', 0)->orderBy('name', 'ASC')->get();
+        return QcPunishContent::where('money', '>', 0)->where('applyStatus', $this->getDefaultHasApplyStatus())->orderBy('name', 'ASC')->get();
     }
 
     # lay tat ca thong tin
     public function selectInfoAll()
     {
         return QcPunishContent::orderBy('name', 'ASC')->select('*');
+    }
+
+    # lay thong tin dang ap dung phat
+    public function selectInfoHasApplyStatus()
+    {
+        return QcPunishContent::where('applyStatus', $this->getDefaultHasApplyStatus())->orderBy('name', 'ASC')->select('*');
     }
 
     public function selectInfoByPunishType($punishTypeId)
@@ -238,21 +255,21 @@ class QcPunishContent extends Model
     }
 
     # di lam tre khong phep
-    public function punishIdOfLateWork()
+    public function getPunishIdForLateWork()
     {
-        return QcPunishContent::where('punishCode', 'ĐLTKP')->pluck('punish_id');
+        return $this->getPunishIdByCode('ĐLTKP');
     }
 
-    # nghi lam khong phep
-    public function punishIdOfOffWork()
+    # ma phat nghi lam khong phep
+    public function getPunishIdForOffWork()
     {
-        return QcPunishContent::where('punishCode', 'NLKP')->pluck('punish_id');
+        return $this->getPunishIdByCode('NLKP');
     }
 
-    # bao gio khong dung
-    public function punishIdOfTimekeepingAccuracy()
+    # ma phat bao gio khong dung
+    public function getPunishIdForTimekeepingAccuracy()
     {
-        return QcPunishContent::where('punishCode', 'BGKĐ')->pluck('punish_id');
+        return $this->getPunishIdByCode('BGKĐ');
     }
 
     # quan ly thi cong don hang tre - bo phan thi cong

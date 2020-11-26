@@ -2,11 +2,20 @@
  * Created by HUY on 12/29/2017.
  */
 var qc_ad3d_finance_bonus = {
-    cancel: function (listObject) {
-        if (confirm('Khi Hủy Thưởng sẽ KHÔNG THỂ PHỤC HỒI , đồng ý hủy')) {
-           qc_ad3d_submit.ajaxHasReload($(listObject).parents('.qc_ad3d_list_content').data('href-cancel') + '/' + $(listObject).data('object'), '', false);
+    cancel: {
+        get: function (href) {
+            qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
+        },
+        save: function (frm) {
+            var notifyContent = $(frm).find('.qc_notify');
+            if (confirm('Khi Hủy Thưởng sẽ KHÔNG THỂ PHỤC HỒI , đồng ý hủy')) {
+                qc_ad3d_submit.ajaxFormHasReload(frm, notifyContent, true);
+                qc_main.scrollTop();
+            }
         }
+
     }
+
 }
 
 //-------------------- filter ------------
@@ -55,6 +64,9 @@ $(document).ready(function () {
 //cancel
 $(document).ready(function () {
     $('.qc_ad3d_list_object').on('click', '.qc_cancel_act', function () {
-        qc_ad3d_finance_bonus.cancel($(this).parents('.qc_ad3d_list_object'));
+        qc_ad3d_finance_bonus.cancel.get($(this).data('href'));
+    });
+    $('body').on('click', '.qc_frm_bonus_cancel .qc_save', function () {
+        qc_ad3d_finance_bonus.cancel.save($(this).parents('.qc_frm_bonus_cancel'));
     });
 });

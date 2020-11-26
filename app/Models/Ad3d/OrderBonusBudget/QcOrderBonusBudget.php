@@ -160,7 +160,7 @@ class QcOrderBonusBudget extends Model
                     if ($hFunction->checkCount($dataWork)) {
                         $workId = $dataWork->workId();
                         if (!$modelBonus->checkExistBonusWorkOfOrderAllocation($workId, $allocationId)) { # chua ap dung thuong
-                            if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý thi công đơn hàng', 1, $workId, $allocationId, null, null, null)) {
+                            if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý thi công đơn hàng', $modelBonus->getNotApplyStatus(), $workId, $allocationId, null, null, null)) {
                                 $bonusId = $modelBonus->insertGetId();
                                 $allocationStaffId = $dataReceiveStaff->staffId();
                                 $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
@@ -207,7 +207,7 @@ class QcOrderBonusBudget extends Model
                                 if ($hFunction->checkCount($dataWork)) {
                                     $workId = $dataWork->workId();
                                     if (!$modelBonus->checkExistBonusWorkOfWorkAllocation($workId, $allocationId)) { # chua ap dung thuong
-                                        if ($modelBonus->insert($bonusMoneyOfEachPerson, $hFunction->carbonNow(), 'Thi công sản phẩm', 1, $workId, null, null, null, $allocationId)) {
+                                        if ($modelBonus->insert($bonusMoneyOfEachPerson, $hFunction->carbonNow(), 'Thi công sản phẩm', $modelBonus->getNotApplyStatus(), $workId, null, null, null, $allocationId)) {
                                             $bonusId = $modelBonus->insertGetId();
                                             $allocationStaffId = $dataReceiveStaff->staffId();
                                             $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];

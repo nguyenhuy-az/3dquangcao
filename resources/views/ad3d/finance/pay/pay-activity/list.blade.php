@@ -51,15 +51,13 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color:yellow;">
-                            <th class="text-center" style="width: 20px;">STT</th>
                             <th style="width: 150px;">NGÀY</th>
-                            <th>SỐ TIỀN - LÝ DO</th>
-                            <th style="width: 400px;">CHI TIẾT</th>
-                            <th>NGƯỜI CHI</th>
+                            <th style="width: 150px;">SỐ TIỀN - LÝ DO</th>
+                            <th style="width: 300px;">CHI TIẾT</th>
+                            <th style="width: 150px;">NGƯỜI CHI</th>
                             <th>NGƯỜI DUYỆT</th>
                         </tr>
                         <tr>
-                            <td class="text-center"></td>
                             <td style="padding: 0 !important;">
                                 <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
                                         style="padding: 0;height: 34px;"
@@ -152,14 +150,12 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 } else {
                                     $dataConfirmStaff = null;
                                 }
+                                $n_o = $n_o + 1;
                                 ?>
                                 <tr class="qc_ad3d_list_object qc-ad3d-list-object @if($n_o%2) info @endif"
                                     data-object="{!! $payId !!}">
-                                    <td class="text-center">
-                                        {!! $n_o = $n_o+1 !!}
-                                    </td>
                                     <td>
-                                        <b>{!! date('d/m/Y',strtotime($payDate))  !!}</b>
+                                        <b style="color: blue;">{!! date('d/m/Y',strtotime($payDate))  !!}</b>
                                         @if(!$confirmStatus)
                                             @if($payCompanyId == $companyLoginId)
                                                 <br/>
@@ -171,10 +167,10 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         @else
                                             @if($payActivityDetail->checkInvalid())
                                                 <br/>
-                                                <em style="color: blue;">- Được duyệt</em>
+                                                <em style="color: grey;">- Được duyệt</em>
                                             @else
                                                 <br/>
-                                                <em style="color: brown;">- Không duyệt</em>
+                                                <em style="color: grey;">- Không duyệt</em>
                                             @endif
                                         @endif
                                         @if(!$hFunction->checkEmpty($confirmNote))
@@ -186,7 +182,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         <b style="color: red;">{!! $hFunction->currencyFormat($money)  !!}</b>
                                         <br/>
                                         <em style="color: grey;">
-                                           - {!! $payActivityDetail->payActivityList->name()  !!}
+                                            - {!! $payActivityDetail->payActivityList->name()  !!}
                                         </em>
                                     </td>
                                     <td>
@@ -215,7 +211,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                             </a>
 
                                             <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataStaffPay->fullName() !!}</h5>
+                                                <h5 class="media-heading">{!! $dataStaffPay->lastName() !!}</h5>
                                             </div>
                                         </div>
                                     </td>
@@ -229,7 +225,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                                 </a>
 
                                                 <div class="media-body">
-                                                    <h5 class="media-heading">{!! $dataConfirmStaff->fullName() !!}</h5>
+                                                    <h5 class="media-heading">{!! $dataConfirmStaff->lastName() !!}</h5>
                                                 </div>
                                             </div>
                                         @else
@@ -239,13 +235,13 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="6">
+                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="5">
                                     {!! $hFunction->page($dataPayActivityDetail) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="6">
+                                <td class="text-center" colspan="5">
                                     <em class="qc-color-red">Không có thông chi</em>
                                 </td>
                             </tr>

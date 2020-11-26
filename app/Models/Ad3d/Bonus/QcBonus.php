@@ -8,12 +8,24 @@ use Illuminate\Database\Eloquent\Model;
 class QcBonus extends Model
 {
     protected $table = 'qc_bonus';
-    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus', 'action', 'created_at', 'work_id', 'orderAllocation_id', 'orderConstruction_id', 'orderPay_id', 'workAllocation_id'];
+    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus','cancelImage', 'cancelNote', 'action', 'created_at', 'work_id', 'orderAllocation_id', 'orderConstruction_id', 'orderPay_id', 'workAllocation_id'];
     protected $primaryKey = 'bonus_id';
     public $timestamps = false;
     private $lastId;
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
+    # trang thai mac dinh ap dung thuong
+    public function getHasApplyStatus()
+    {
+        return 1;
+    }
+
+    # trang thai mac dinh ap dung thuong
+    public function getNotApplyStatus()
+    {
+        return 0;
+    }
+
     #---------- Insert ----------
     public function insert($money, $bonusDate, $note, $applyStatus, $workId, $orderAllocationId = null, $orderConstructionId = null, $orderPayId = null, $workAllocationId = null)
     {
@@ -47,9 +59,63 @@ class QcBonus extends Model
         return (empty($bonusId)) ? $this->payId() : $bonusId;
     }
 
-    public function cancelBonus($bonusId = null)
+    public function rootPathFullImage()
     {
-        return QcBonus::where('bonus_id', $bonusId)->update(['cancelStatus' => 1, 'action' => 0]);
+        return 'public/images/bonus/cancel/full';
+    }
+
+    public function rootPathSmallImage()
+    {
+        return 'public/images/bonus/cancel/small';
+    }
+
+    //upload image
+    public function uploadImage($source_img, $imageName, $resize = 500)
+    {
+        $hFunction = new \Hfunction();
+        $pathSmallImage = $this->rootPathSmallImage();
+        $pathFullImage = $this->rootPathFullImage();
+        if (!is_dir($pathFullImage)) mkdir($pathFullImage);
+        if (!is_dir($pathSmallImage)) mkdir($pathSmallImage);
+        return $hFunction->uploadSaveByFileName($source_img, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $resize);
+    }
+
+    //drop image
+    public function dropImage($imageName)
+    {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($imageName)) {
+            unlink($this->rootPathSmallImage() . '/' . $imageName);
+            unlink($this->rootPathFullImage() . '/' . $imageName);
+        }
+    }
+
+    // get path image
+    public function pathSmallImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathSmallImage() . '/' . $image);
+        }
+    }
+
+    public function pathFullImage($image)
+    {
+        if (empty($image)) {
+            return null;
+        } else {
+            return asset($this->rootPathFullImage() . '/' . $image);
+        }
+    }
+    public function cancelBonus($bonusId, $cancelNote, $image)
+    {
+        return QcBonus::where('bonus_id', $bonusId)->update([
+            'cancelStatus' => 1,
+            'cancelNote' => $cancelNote,
+            'cancelImage' => $image,
+            'action' => 0
+        ]);
     }
 
     # ---------- Thanh toan dơn hNG -----------------
@@ -133,6 +199,7 @@ class QcBonus extends Model
     {
         return QcBonus::where('work_id', $workId)->where('workAllocation_id', $workAllocationId)->exists();
     }
+
     //---------- thong bao ban giao don hang moi -----------
     public function staffNotify()
     {
@@ -215,6 +282,16 @@ class QcBonus extends Model
     public function cancelStatus($bonusId = null)
     {
         return $this->pluck('cancelStatus', $bonusId);
+    }
+
+    public function cancelNote($bonusId = null)
+    {
+        return $this->pluck('cancelNote', $bonusId);
+    }
+
+    public function cancelImage($bonusId = null)
+    {
+        return $this->pluck('cancelImage', $bonusId);
     }
 
     public function action($bonusId = null)

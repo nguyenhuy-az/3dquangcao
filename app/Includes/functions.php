@@ -415,6 +415,7 @@ class Hfunction
     {
         return date('d/m/Y', strtotime($date));
     }
+
     # kiem tra ngay nhap vao co phai ngay hien tai khong
     public function checkTodayOfDate($date)
     {
@@ -685,6 +686,8 @@ class Hfunction
     }
 
     // -------- plus year\month\day\ for current date time--------
+
+
     #dinh dang ngay viet nam
     function convertDateDMYFromDatetime($dateTime)
     {
@@ -758,11 +761,21 @@ class Hfunction
         return date('H');
     }
 
-    public function firstDateOfMonthFromDate($date_Ymd = null)
+    # lay ngay dau tien trong thang thu ngay thang nhap vao
+    public function getFirstDateFromDate($date)
     {
-        return (empty($date_Ymd)) ? date('Y-m-01') : date("Y-m-01", strtotime($date_Ymd));
+        return date('Y-m-01', strtotime($date));
+    }
+    public function firstDateOfMonthFromDate($date = null)
+    {
+        return (empty($date_Ymd)) ? date('Y-m-01') : date("Y-m-01", strtotime($date));
     }
 
+    # lay cuoi thang tu ngay thang nhap vao
+    public function getLastDateFromDate($date)
+    {
+        return date('Y-m-t', strtotime($date));
+    }
     public function lastDateOfMonthFromDate($date_Ymd = null)
     {
         return (empty($date_Ymd)) ? date('Y-m-t') : date("Y-m-t", strtotime($date_Ymd));

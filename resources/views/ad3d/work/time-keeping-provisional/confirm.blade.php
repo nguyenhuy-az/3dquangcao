@@ -16,9 +16,10 @@ $timeBegin = $dataTimekeepingProvisional->timeBegin();
 $timeEnd = $dataTimekeepingProvisional->timeEnd();
 $note = $dataTimekeepingProvisional->note();
 $lateStatus = ($modelLicenseLateWork->checkDateLateWork($timeBegin)) ? 1 : 0;
+
 # kiem tra thoi gian xac nhan
-$timeDefault = date('Y-m-d 17:30', strtotime($timeBegin)); # chi xac nhan khi het ngay lam viec
-$timeCheck = date('Y-m-d H:i');
+//$timeDefault = date('Y-m-d 17:30', strtotime($timeBegin)); # chi xac nhan khi het ngay lam viec
+//$timeCheck = date('Y-m-d H:i');
 #bang cham com
 $dataWork = $dataTimekeepingProvisional->work;
 $companyStaffWorkId = $dataWork->companyStaffWorkId();
@@ -40,7 +41,7 @@ $dataTimekeepingProvisionalWarningTimeEnd = $dataTimekeepingProvisional->timekee
     <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <form class="qc_ad3d_frm_confirm form" name="qc_ad3d_frm_confirm" role="form" method="post"
               action="{!! route('qc.ad3d.work.time_keeping_provisional.confirm.post') !!}">
-            @if($timeCheck > $timeDefault)
+            @if($dataTimekeepingProvisional->checkToConfirmOfDate($timeBegin))
                 <div class="row">
                     <div class="notifyConfirm qc-color-red text-center col-xs-12 col-sm-12 col-md-12 col-lg-12"></div>
                 </div>
@@ -62,7 +63,8 @@ $dataTimekeepingProvisionalWarningTimeEnd = $dataTimekeepingProvisional->timekee
                     </div>
                     @if($hFunction->checkCount($dataTimekeepingProvisionalWarningTimeBegin))
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="form-group" style="background-color: red; padding-top: 5px; padding-bottom: 5px;">
+                            <div class="form-group"
+                                 style="background-color: red; padding-top: 5px; padding-bottom: 5px;">
                                 @if($dataTimekeepingProvisionalWarningTimeBegin->checkUpdateTimeBegin())
                                     <em style="color: yellow;">Báo lại giờ vào:</em>
                                     <b class="qc-font-bold"
@@ -90,7 +92,8 @@ $dataTimekeepingProvisionalWarningTimeEnd = $dataTimekeepingProvisional->timekee
                     </div>
                     @if($hFunction->checkCount($dataTimekeepingProvisionalWarningTimeEnd))
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="form-group" style="background-color: red; padding-top: 5px; padding-bottom: 5px;">
+                            <div class="form-group"
+                                 style="background-color: red; padding-top: 5px; padding-bottom: 5px;">
                                 @if($dataTimekeepingProvisionalWarningTimeEnd->checkUpdateTimeEnd())
                                     <em style="color: yellow;">Báo lại giờ ra:</em>
                                     <b class="qc-font-bold"
@@ -192,7 +195,7 @@ $dataTimekeepingProvisionalWarningTimeEnd = $dataTimekeepingProvisional->timekee
             @else
                 <div class="row">
                     <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <span style="color: red; font-size: 2em;">CHỈ XÁC NHẬN SAU NGÀY LÀM VIỆC</span>
+                        <span style="color: blue; font-size: 2em;">CHỈ XÁC NHẬN SAU NGÀY LÀM VIỆC</span>
                     </div>
                 </div>
                 <div class="row">

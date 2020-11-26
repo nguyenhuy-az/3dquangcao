@@ -39,7 +39,7 @@ $mobileStatus = $mobile->isMobile();
                             <label>Rộng<em>(mm)</em>:
                                 <i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                             <input class="txtWidth form-control" type="text" onkeyup="qc_main.showNumberInput(this);"
-                                   name="txtWidth[]" style="height: 25px;" placeholder="Chiều rộng sản phẩm" value="">
+                                   name="txtWidth[]" placeholder="Chiều rộng sản phẩm" value="">
                         </div>
                     </div>
                     <div class="col-xs-6 col-sm-12 col-md-2 col-lg-2">
@@ -47,7 +47,7 @@ $mobileStatus = $mobile->isMobile();
                             <label>Cao<em>(mm)</em>: <i
                                         class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                             <input class="txtHeight form-control" type="text" name="txtHeight[]"
-                                   onkeyup="qc_main.showNumberInput(this);" style="height: 25px;"
+                                   onkeyup="qc_main.showNumberInput(this);"
                                    placeholder="Chiều cao sản phẩm" value="">
                         </div>
                     </div>
@@ -56,7 +56,7 @@ $mobileStatus = $mobile->isMobile();
                             <label>
                                 Đơn vị tính:
                             </label>
-                            <input class="txtUnit form-control" type="text" name="txtUnit[]" style="height: 25px;"
+                            <input class="txtUnit form-control" type="text" name="txtUnit[]"
                                    placeholder="Đơn vị tính" value="">
                         </div>
                     </div>
@@ -64,7 +64,7 @@ $mobileStatus = $mobile->isMobile();
                         <div class="form-group form-group-sm qc-margin-none">
                             <label>Số lượng: <i
                                         class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
-                            <input class="txtAmount form-control" type="text" name="txtAmount[]" style="height: 25px;"
+                            <input class="txtAmount form-control" type="text" name="txtAmount[]"
                                    placeholder="Số lượng sản phẩm" value="1">
                         </div>
                     </div>

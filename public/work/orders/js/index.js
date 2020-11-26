@@ -235,7 +235,7 @@ var qc_work_orders = {
                 var orderType = $('#frmWorkOrdersAdd').find("input[name='orderType']");
                 var txtOrderName = $('#frmWorkOrdersAdd').find("input[name='txtOrderName']");
                 var txtDateReceive = $('#frmWorkOrdersAdd').find("input[name='txtDateReceive']");
-                var txtDateDelivery = $('#frmWorkOrdersAdd').find("input[name='txtDateDelivery']");
+                var cbDayDelivery = $('#frmWorkOrdersAdd').find("select[name='cbDayDelivery']");
                 var txtTotalPricePay = $('#frmWorkOrdersAdd').find("input[name='txtTotalPricePay']");
                 var txtBeforePay = $('#frmWorkOrdersAdd').find("input[name='txtBeforePay']");
                 var beforePay = parseInt(qc_main.getNumberInput(txtBeforePay.val()));
@@ -257,19 +257,21 @@ var qc_work_orders = {
                         txtDateReceive.focus();
                         return false;
                     }
-                    if (qc_main.check.inputNull(txtDateDelivery, 'Nhập ngày giao')) {
-                        txtDateDelivery.focus();
+                    if (qc_main.check.inputNull(cbDayDelivery, 'Chọn ngày giao')) {
+                        cbDayDelivery.focus();
                         return false;
                     } else {
-                        if (txtDateReceive.val() < txtDateDelivery.val()) {
-                            if (confirm('Thông tin đã đúng và tạo đơn hàng ?')) {
-                                qc_master_submit.normalForm('#frmWorkOrdersAdd');
-                                qc_main.scrollTop();
-                            }
-                        } else {
-                            alert('Ngày giao phải lớn hơn ngày nhận');
-                            txtDateDelivery.focus();
-                            return false;
+                       /* var cbDay = cbDayDelivery.val();
+                        var cbMonth = $('#frmWorkOrdersAdd').find("select[name='cbMonthDelivery']").val();
+                        var cbYear = $('#frmWorkOrdersAdd').find("select[name='cbYearDelivery']").val();
+                        var cbHours = $('#frmWorkOrdersAdd').find("select[name='cbHoursDelivery']").val();
+                        var cbMinute = $('#frmWorkOrdersAdd').find("select[name='cbMinuteDelivery']").val();
+                        var strDate = cbYear +'-' + cbMonth +'-' + cbDay +'-' + cbHours +'-' + cbMinute;
+                        var dateDelivery = new Date(strDate);
+                        alert(txtDateReceive.val() + '-----' + dateDelivery.toDateString());*/
+                        if (confirm('Thông tin đã đúng và tạo đơn hàng ?')) {
+                            qc_master_submit.normalForm('#frmWorkOrdersAdd');
+                            qc_main.scrollTop();
                         }
                     }
                 } else { //dơn hang tam

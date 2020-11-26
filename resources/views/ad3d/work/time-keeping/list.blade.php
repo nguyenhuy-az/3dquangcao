@@ -53,8 +53,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style=" background-color: black; color: yellow;">
-                            <th class="text-center" style="width:20px;">STT</th>
-                            <th>NHÂN VIÊN</th>
+                            <th style="width: 150px;">NHÂN VIÊN</th>
                             <th class="text-center">GIỜ CHẤM - GIỜ VÀO - GIỜ RA</th>
                             <th>NGHỈ CÓ PHÉP</th>
                             <th>NGHỈ KHÔNG PHÉP</th>
@@ -76,7 +75,6 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                             <th>GHI CHÚ</th>
                         </tr>
                         <tr>
-                            <td class="text-center"></td>
                             <td style="padding: 0px !important; ">
                                 <div class="input-group">
                                     <input type="text" class="textFilterName form-control" name="textFilterName"
@@ -169,22 +167,20 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                 # anh dai dien
                                 $image = $dataStaffTimekeeping->image();
                                 $src = $dataStaffTimekeeping->pathAvatar($image);
+                                $n_o = $n_o + 1;
                                 ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
+                                <tr class="qc_ad3d_list_object @if($n_o%2 == 0) info @endif"
                                     data-object="{!! $timekeepingId !!}">
-                                    <td class="text-center">
-                                        {!! $n_o += 1 !!}
-                                    </td>
                                     <td>
                                         <div class="media">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $src !!}">
                                             </a>
 
                                             <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataStaffTimekeeping->fullName() !!}</h5>
+                                                <h5 class="media-heading">{!! $dataStaffTimekeeping->lastName() !!}</h5>
                                             </div>
                                         </div>
                                     </td>
@@ -303,7 +299,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                             @endforeach
                         @else
                             <tr>
-                                <td class="text-center" colspan="9">
+                                <td class="text-center" colspan="8">
                                     Không có thông tin
                                 </td>
                             </tr>

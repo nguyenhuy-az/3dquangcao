@@ -34,13 +34,11 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
-                                <th class="text-center" style="width: 20px !important;">STT</th>
                                 <th style="width: 150px;">NGÀY</th>
-                                <th style="width: 200px;">SỐ TIỀN - LÝ DO</th>
+                                <th style="width: 150px;">SỐ TIỀN - LÝ DO</th>
                                 <th>GHI CHÚ</th>
                             </tr>
                             <tr>
-                                <td class="text-center"></td>
                                 <td style="padding: 0;">
                                     <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
                                             style="height: 34px; padding: 0;"
@@ -108,9 +106,6 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                     $sumPay = $sumPay + $money;
                                     ?>
                                     <tr class="@if($n_o%2) info @endif">
-                                        <td class="text-center">
-                                            {!! $n_o = $n_o+ 1 !!}
-                                        </td>
                                         <td>
                                             <b style="color: blue;">{!! date('d/m/Y',strtotime($payDate))  !!}</b>
                                             <br/>
@@ -153,7 +148,7 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                 @endforeach
                                 <tr>
                                     <td class="text-right qc-color-red"
-                                        style="background-color: whitesmoke;" colspan="2"></td>
+                                        style="background-color: whitesmoke;"></td>
                                     <td class="qc-color-red">
                                         <b>{!! $hFunction->currencyFormat($sumPay)  !!}</b>
                                     </td>
@@ -161,7 +156,7 @@ $hrefIndex = route('qc.work.pay.pay_activity.get');
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="4">
+                                    <td class="text-center" colspan="3">
                                         <em class="qc-color-red">Không có thông chi</em>
                                     </td>
                                 </tr>

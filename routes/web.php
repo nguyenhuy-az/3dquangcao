@@ -342,7 +342,8 @@ Route::group(['prefix' => 'ad3d'], function () {
         # thong tin thuong
         Route::group(['prefix' => 'bonus'], function () {
             //huy
-            Route::get('cancel/{bonusId?}', ['as' => 'qc.ad3d.finance.bonus.cancel', 'uses' => 'Ad3d\Finance\Bonus\BonusController@cancelBonus']);
+            Route::get('cancel/{bonusId?}', ['as' => 'qc.ad3d.finance.bonus.cancel.get', 'uses' => 'Ad3d\Finance\Bonus\BonusController@getCancelBonus']);
+            Route::post('cancel/{bonusId?}', ['as' => 'qc.ad3d.finance.bonus.cancel.post', 'uses' => 'Ad3d\Finance\Bonus\BonusController@postCancelBonus']);
 
             Route::get('/{companyId?}/{day?}/{month?}/{year?}/{name?}', ['as' => 'qc.ad3d.finance.bonus.get', 'uses' => 'Ad3d\Finance\Bonus\BonusController@index']);
         });

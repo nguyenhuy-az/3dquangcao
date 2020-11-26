@@ -378,98 +378,107 @@ class OrdersController extends Controller
         $txtBeforePay = $request->input('txtBeforePay');
         $txtBeforePay = $hFunction->convertCurrencyToInt($txtBeforePay);
         $txtDateReceive = $hFunction->carbonNow();//Request::input('txtDateReceive');
-        $txtDateDelivery = $request->input('txtDateDelivery');
         $cbDiscount = $request->input('cbDiscount');
         $cbVat = $request->input('cbVat');
+        # ngay  giao
+        $cbHoursDelivery = $request->input('cbHoursDelivery');
+        $cbMinuteDelivery = $request->input('cbMinuteDelivery');
+        $cbDayDelivery = $request->input('cbDayDelivery');
+        $cbMonthDelivery = $request->input('cbMonthDelivery');
+        $cbYearDelivery = $request->input('cbYearDelivery');
+        $txtDateDelivery = $hFunction->convertStringToDatetime("$cbMonthDelivery/$cbDayDelivery/$cbYearDelivery $cbHoursDelivery:$cbMinuteDelivery:00");
         $oldCustomerId = null;
         $dataCustomer = null;
-        if (!empty($txtPhone)) {
-            #lay thong tin khach hang tu so dien thoai di dong
-            $dataCustomer = $modelCustomer->infoFromPhone($txtPhone);
-        }
-        if (!empty($txtZalo) && count($dataCustomer) <= 0) {
-            # lay thong tin khach hang tu so zalo
-            $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
-        }
-
-        if ($hFunction->checkCount($dataCustomer)) {
-            # ton tai khach hang - khach hang cu
-            $customerId = $dataCustomer->customerId();
-            $customerName = $dataCustomer->name();
+        if ($hFunction->formatDateToDMYHI($txtDateReceive) > $hFunction->formatDateToDMYHI($txtDateDelivery)) {
+            return "Ngày giao phải lớn hơn ngày nhận <br/> <a style='color: red;' onclick='history.back();'>Quay lại</a>";
         } else {
-            # khach hang moi
-            if ($modelCustomer->insert($txtCustomerName, null, null, $txtAddress, $txtPhone, $txtZalo)) {
-                $customerId = $modelCustomer->insertGetId();
-                $customerName = $txtCustomerName;
+            if (!empty($txtPhone)) {
+                #lay thong tin khach hang tu so dien thoai di dong
+                $dataCustomer = $modelCustomer->infoFromPhone($txtPhone);
             }
-        }
-        if (!empty($customerId) && !empty($staffLoginId)) {
-            #cap nhat thong tin khach hang neu co thay doi dia chi
-            $modelCustomer->updateInfo($customerId, $customerName, null, null, $txtAddress, $txtPhone, $txtZalo);
-            # them don hang
-            $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
-            $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
-            $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
-            if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 1, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 1, null, 1)) {
-                $orderId = $modelOrder->insertGetId();
-                # xet them vao ngan sach thuong
-                $modelOrder->checkAddBonusBudget($orderId);
-                # thong bao them don hang
-                $listStaffReceiveNotify = $modelStaff->infoStaffReceiveNotifyNewOrder($dataStaff->companyId());
-                if ($hFunction->checkCount($listStaffReceiveNotify)) {
-                    foreach ($listStaffReceiveNotify as $staff) {
-                        $modelStaffNotify->insert($orderId, $staff->staffId(), null);
-                    }
-                }
+            if (!empty($txtZalo) && count($dataCustomer) <= 0) {
+                # lay thong tin khach hang tu so zalo
+                $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
+            }
 
-                # them san pham
-                if ($hFunction->checkCount($productType)) {
-                    foreach ($productType as $key => $value) {
-                        $warrantyTime = (int)$txtWarrantyTime[$key];
-                        $dataProductType = $modelProductType->infoFromExactlyName($value);
-                        if ($hFunction->checkCount($dataProductType)) {
-                            $productTypeId = $dataProductType->typeId();
-                        } else {
-                            $unit = $txtUnit[$key];
-                            if ($modelProductType->insert($value, null, $unit, 0, 0, $warrantyTime)) {
-                                $productTypeId = $modelProductType->insertGetId();
+            if ($hFunction->checkCount($dataCustomer)) {
+                # ton tai khach hang - khach hang cu
+                $customerId = $dataCustomer->customerId();
+                $customerName = $dataCustomer->name();
+            } else {
+                # khach hang moi
+                if ($modelCustomer->insert($txtCustomerName, null, null, $txtAddress, $txtPhone, $txtZalo)) {
+                    $customerId = $modelCustomer->insertGetId();
+                    $customerName = $txtCustomerName;
+                }
+            }
+            if (!empty($customerId) && !empty($staffLoginId)) {
+                #cap nhat thong tin khach hang neu co thay doi dia chi
+                $modelCustomer->updateInfo($customerId, $customerName, null, null, $txtAddress, $txtPhone, $txtZalo);
+                # them don hang
+                $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
+                $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
+                $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
+                if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 1, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 1, null, 1)) {
+                    $orderId = $modelOrder->insertGetId();
+                    # xet them vao ngan sach thuong
+                    $modelOrder->checkAddBonusBudget($orderId);
+                    # thong bao them don hang
+                    $listStaffReceiveNotify = $modelStaff->infoStaffReceiveNotifyNewOrder($dataStaff->companyId());
+                    if ($hFunction->checkCount($listStaffReceiveNotify)) {
+                        foreach ($listStaffReceiveNotify as $staff) {
+                            $modelStaffNotify->insert($orderId, $staff->staffId(), null);
+                        }
+                    }
+
+                    # them san pham
+                    if ($hFunction->checkCount($productType)) {
+                        foreach ($productType as $key => $value) {
+                            $warrantyTime = (int)$txtWarrantyTime[$key];
+                            $dataProductType = $modelProductType->infoFromExactlyName($value);
+                            if ($hFunction->checkCount($dataProductType)) {
+                                $productTypeId = $dataProductType->typeId();
                             } else {
-                                $productTypeId = null;
+                                $unit = $txtUnit[$key];
+                                if ($modelProductType->insert($value, null, $unit, 0, 0, $warrantyTime)) {
+                                    $productTypeId = $modelProductType->insertGetId();
+                                } else {
+                                    $productTypeId = null;
+                                }
+                            }
+                            if (!empty($productTypeId)) {
+                                $width = $txtWidth[$key];
+                                $height = $txtHeight[$key];
+                                $depth = 0;
+                                $amount = $txtAmount[$key];
+                                $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
+                                $description = $txtDescription[$key];
+                                $modelProduct = new QcProduct();
+                                $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, null, $warrantyTime);
                             }
                         }
-                        if (!empty($productTypeId)) {
-                            $width = $txtWidth[$key];
-                            $height = $txtHeight[$key];
-                            $depth = 0;
-                            $amount = $txtAmount[$key];
-                            $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
-                            $description = $txtDescription[$key];
-                            $modelProduct = new QcProduct();
-                            $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, null, $warrantyTime);
-                        }
                     }
-                }
-                # thanh toan
-                if ($txtBeforePay > 0) {
-                    # thanh toan don hang
-                    $modelOrderPay->insert($txtBeforePay, 'Thu nhận đơn hàng', $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone);
-                }
-                # bàn giao don hang = cong trinh
-                if ($modelStaff->checkConstructionDepartment($staffLoginId)) {
-                    # neu thuoc bo thi cong -> ban giao quan ly thi cong
-                    $modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
-                }
+                    # thanh toan
+                    if ($txtBeforePay > 0) {
+                        # thanh toan don hang
+                        $modelOrderPay->insert($txtBeforePay, 'Thu nhận đơn hàng', $txtDateReceive, $orderId, $staffLoginId, $txtCustomerName, $txtPhone);
+                    }
+                    # bàn giao don hang = cong trinh
+                    if ($modelStaff->checkConstructionDepartment($staffLoginId)) {
+                        # neu thuoc bo thi cong -> ban giao quan ly thi cong
+                        $modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
+                    }
 
-                return redirect()->route('qc.work.orders.print.get', $orderId);
+                    return redirect()->route('qc.work.orders.print.get', $orderId);
+                } else {
+                    Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
+                    return redirect()->back();
+                }
             } else {
                 Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
                 return redirect()->back();
             }
-        } else {
-            Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
-            return redirect()->back();
         }
-
     }
 
     // them don hang tam

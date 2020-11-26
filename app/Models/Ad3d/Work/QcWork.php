@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models\Ad3d\Work;
 
 use App\Models\Ad3d\Bonus\QcBonus;
@@ -61,6 +60,25 @@ class QcWork extends Model
         $workId = $this->checkIdNull($workId);
         $modelWork->disableWord($workId);
     }
+
+    # lay thong tin thuong khi xuat bang luong cuoi thang - tu dong
+    public function getBenefitAutoMakeSalary()
+    {
+        return 0;
+    }
+
+    # lay trang thai mac đinh dang lam viec
+    public function getDefaultHasWorkStatus()
+    {
+        return 1;
+    }
+
+    # lay trang thai mac đinh khong lam viec
+    public function getDefaultNotWorkStatus()
+    {
+        return 0;
+    }
+
 
     // xuat bang luong bang luong cho nv
     public function makeSalaryOfWork($workId, $benefit, $workStatus)
@@ -533,18 +551,21 @@ class QcWork extends Model
         $currentDay = (int)$hFunction->currentDay();
         $currentHour = (int)$hFunction->currentHour();// gio hien ta
         # danh sach bang cham cong
-        $dataWork = QcWork::where('action', 1)->get();
+        $dataWork = $this->getAllInfoActivity();
         if ($hFunction->checkCount($dataWork)) {
             foreach ($dataWork as $work) {
                 $workId = $work->workId();
                 $dateBegin = $work->fromDate();
                 $dayBegin = (int)date('d', strtotime($dateBegin));
                 $dateEnd = $work->toDate();
-                $dayEnd = date('d', strtotime($dateEnd));
-                $dateCheck = date('Y-m-d', strtotime($dateBegin)); # chuyen datetime -> date // tranh xet cung ngay
-                if ($dateCheck < $currentDate && $currentHour > 8) { # ngay kiem tra nho hon ngay hien tai - KIEM TRA NGAY TRƯƠC DO - va sau 8h ngay hom sau
+                //$dayEnd = date('d', strtotime($dateEnd));
+                $dateCheck = date('Y-m-d', strtotime($dateBegin));
+                # chuyen datetime -> date // tranh xet cung ngay
+                if ($dateCheck < $currentDate && $currentHour > 8) {
+                    # ngay kiem tra nho hon ngay hien tai - KIEM TRA NGAY TRƯƠC DO - va sau 8h ngay hom sau
                     for ($i = $dayBegin; $i < $currentDay; $i++) {
                         $modelTimekeepingProvisional->checkAutoTimekeepingOfWorkAndDate($workId, $dateCheck);
+                        # ngay hom sau
                         $dateCheck = date('Y-m-d', strtotime($hFunction->datetimePlusDay($dateCheck, 1)));
                     }
                 }
@@ -603,11 +624,6 @@ class QcWork extends Model
     public function totalCurrentSalary($workId = null)
     {
         return $this->totalSalaryBasicOfWorkInMonth($this->checkIdNull($workId));
-        /*$dataWork = $this->getInfo($workId);
-        $salaryBasic = $dataWork->staff->salaryBasicOfStaff();
-        $priceHours = $salaryBasic / 26 / 8;
-        $totalMinutePay = $dataWork->sumMainMinute() + ($this->sumPlusMinute() * 1.5) - $dataWork->sumMinusMinute();
-        return (int)(($totalMinutePay / 60) * $priceHours);*/
     }
 
     public function limitBeforePay($workId = null)
@@ -620,29 +636,6 @@ class QcWork extends Model
     }
 
     //============ =========== ============ GET INFO ============= =========== ==========
-    public function getInfo($workId = '', $field = '')
-    {
-        if (empty($workId)) {
-            return QcWork::where('action', 1)->get();
-        } else {
-            $result = QcWork::where('work_id', $workId)->first();
-            if (empty($field)) {
-                return $result;
-            } else {
-                return $result->$field;
-            }
-        }
-    }
-
-    public function pluck($column, $objectId = null)
-    {
-        if (empty($objectId)) {
-            return $this->$column;
-        } else {
-            return QcWork::where('work_id', $objectId)->pluck($column);
-        }
-    }
-
     //----------- GET INFO -------------
     public function workId()
     {
@@ -698,27 +691,59 @@ class QcWork extends Model
         return $this->pluck('created_at', $workId);
     }
 
+    public function getInfo($workId = '', $field = '')
+    {
+        if (empty($workId)) {
+            return QcWork::where('action', 1)->get();
+        } else {
+            $result = QcWork::where('work_id', $workId)->first();
+            if (empty($field)) {
+                return $result;
+            } else {
+                return $result->$field;
+            }
+        }
+    }
+
+    public function pluck($column, $objectId = null)
+    {
+        if (empty($objectId)) {
+            return $this->$column;
+        } else {
+            return QcWork::where('work_id', $objectId)->pluck($column);
+        }
+    }
+
+    # lay tat ca cac thong tin dang lam viec
+    public function getAllInfoActivity()
+    {
+        return QcWork::where('action', 1)->get();
+    }
     //----------- Kiểm tra thông tin -------------
+    /*
+    kiem tra xuat bang luong cuong thang - goi tu dong
+    goi trong function checkAutoInfo cua Qc_company
+    */
     public function checkEndWorkOfMonth()
     {
         $hFunction = new \Hfunction();
-        $hFunction->dateDefaultHCM();
-        $currentDate = date('Y-m-d');
+        $currentDate = $hFunction->currentDate();
         # lay ngay dau thang
-        $firstDateOfMonth = $hFunction->firstDateOfMonthFromDate($currentDate);
-        //$lastDateOfMonth = $hFunction->lastDateOfMonthFromDate($currentDate); # lay ngay cuoi thang
+        $firstDateOfMonth = $hFunction->getFirstDateFromDate($currentDate);
         # lay nhung bang cham cong dang lam
-        $dataWorkActivity = QcWork::where('action', 1)->get();
+        $dataWorkActivity = $this->getAllInfoActivity();
         if ($hFunction->checkCount($dataWorkActivity)) {
             foreach ($dataWorkActivity as $work) {
-                $workId = $work['work_id'];
-                $firstDateOfWork = date('Y-m-01', strtotime($work['fromDate']));
+                $workId = $work->workId();// $work['work_id'];
+                $firstDateOfWork = $hFunction->getFirstDateFromDate($work->fromDate());
                 # phien ban moi - nv lam nhieu cty
-                if ($firstDateOfMonth > $firstDateOfWork) { // qua thang moi
+                if ($firstDateOfMonth > $firstDateOfWork) {
+                    // qua thang moi
                     # vo hieu hoa bang cham cong cu
                     $this->disableWord($workId);
                     # xuat bang luong cho NV
-                    $this->makeSalaryOfWork($workId, 0, 1);
+                    # mac dinh la tiep tuc lam viec
+                    $this->makeSalaryOfWork($workId, $this->getBenefitAutoMakeSalary(), $this->getDefaultHasWorkStatus());
 
                 }
 
@@ -726,11 +751,13 @@ class QcWork extends Model
         }
     }
 
+    # bang cham cong con hoat dong khong
     public function checkActivity($workId = null)
     {
         return ($this->action($workId) == 0) ? false : true;
     }
 
+    # xuat bang luong hay chua
     public function checkSalaryStatus($workId = null)
     {
         return ($this->salaryStatus($workId) == 0) ? false : true;

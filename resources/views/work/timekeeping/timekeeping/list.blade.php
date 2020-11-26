@@ -75,7 +75,7 @@ if ($hFunction->checkCount($dataWork)) {
                         </tr>
                         <tr style="background-color: black;color: yellow;">
                             <th style="width: 150px;">GIỜ VÀO</th>
-                            <th style="width: 150px;">GIỜ RA</th>
+                            <th style="width: 170px;">GIỜ RA</th>
                             <th>
                                 BÁO CÁO BUỔI SÁNG
                                 <br/>
@@ -146,9 +146,8 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @endif
                                                 @if(!$hFunction->checkEmpty($warningImage))
                                                     <br/>
-                                                    <img style="width: 100%;"
-                                                         src="{!! $dataTimekeepingProvisionalWarningTimeBegin->pathSmallImage($warningImage) !!}"
-                                                         alt="anh_canh_bao">
+                                                    <img style="width: 100%;" alt="anh_canh_bao"
+                                                         src="{!! $dataTimekeepingProvisionalWarningTimeBegin->pathSmallImage($warningImage) !!}">
                                                 @endif
                                             @endif
                                             @if(!$checkConfirmStatus)
@@ -162,7 +161,9 @@ if ($hFunction->checkCount($dataWork)) {
                                         @if($hFunction->checkEmpty($timeEnd) && $endCheckStatus)
                                             <br/>
                                             <a class="qc_time_end_cancel qc-link-red-bold">
-                                                <i class="glyphicon glyphicon-trash qc-font-size-14" title="Hủy"></i>
+                                                <span class="qc-font-size-14" title="Hủy">
+                                                    HỦY CHẤM CÔNG
+                                                </span>
                                             </a>
                                         @else
                                             @if(!$checkConfirmStatus && $endCheckStatus)
@@ -201,6 +202,7 @@ if ($hFunction->checkCount($dataWork)) {
                                                     <em style="color: grey;">
                                                         - Báo lại:
                                                     </em>
+                                                    <b style="color: grey;"> {!! date('d-m-Y ', strtotime($dataTimekeepingProvisionalWarningTimeEnd->updateDate())) !!}</b>
                                                     <b style="color: brown;"> {!! date('H:i ', strtotime($dataTimekeepingProvisionalWarningTimeEnd->updateDate())) !!}</b>
                                                 @else
                                                     @if(!$hFunction->checkEmpty($warningNote))
@@ -231,7 +233,7 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @endif
                                             @else
                                                 <br/>
-                                                <em style="color: brown;">Đã duyệt</em>
+                                                <em style="color: grey;">Đã duyệt</em>
                                             @endif
                                             @if($timekeepingProvisional->checkAfternoonWork($timekeepingProvisionalId))
                                                 <em class="qc-color-grey"> - Có làm trưa</em>

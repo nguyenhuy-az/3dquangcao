@@ -28,7 +28,6 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
-                                <th style="width:20px;">STT</th>
                                 <th style="width: 120px;">NGÀY GIỮ  - THÁNG LƯƠNG</th>
                                 <th style="width: 150px;">
                                     SỐ TIỀN
@@ -37,7 +36,6 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                 <th>Ghi chú</th>
                             </tr>
                             <tr>
-                                <td></td>
                                 <td style="padding: 0;">
                                     <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4" style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
@@ -105,11 +103,8 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                     ?>
                                     <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
                                         data-object="{!! $keepMoneyId !!}">
-                                        <td class="text-center">
-                                            {!! $n_o += 1 !!}
-                                        </td>
                                         <td>
-                                            <b>{!! date('d/m/Y', strtotime($keepMoney->keepDate())) !!}</b>
+                                            <b style="color: blue;">{!! date('d/m/Y', strtotime($keepMoney->keepDate())) !!}</b>
                                             <br/>
                                             <em style="color: grey;">{!! date('m/Y', strtotime($dataWork->fromDate())) !!}</em>
                                         </td>
@@ -142,13 +137,13 @@ $hrefIndex = route('qc.work.pay.keep_money.get');
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-center" colspan="5">
+                                    <td class="text-center" colspan="4">
                                         {!! $hFunction->page($dataKeepMoney) !!}
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="7">
+                                    <td class="text-center" colspan="4">
                                         <em class="qc-color-red">Không tìm thấy thông tin</em>
                                     </td>
                                 </tr>
