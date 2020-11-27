@@ -86,7 +86,7 @@ class MinusMoneyController extends Controller
         $dataPunishContent = $modelPunishContent->getInfo();
         //danh sach NV
         $dataStaffFilter = $modelCompany->staffInfoActivityOfListCompanyId([$companyFilterId]);
-        return view('ad3d.finance.minus-money.list', compact('modelStaff','dataStaffFilter', 'dataCompany', 'dataAccess', 'dataPunishContent', 'dataMinusMoney', 'totalMinusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'punishContentFilterId', 'staffFilterId'));
+        return view('ad3d.finance.minus-money.list', compact('modelStaff', 'dataStaffFilter', 'dataCompany', 'dataAccess', 'dataPunishContent', 'dataMinusMoney', 'totalMinusMoney', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'punishContentFilterId', 'staffFilterId'));
 
     }
 
@@ -97,12 +97,19 @@ class MinusMoneyController extends Controller
         $modelMinus->cancelMinus($minusId);
     }
 
+    # xem anh phat
+    public function viewImage($minusId){
+        $modelMinus = new QcMinusMoney();
+        $dataMinusMoney = $modelMinus->getInfo($minusId);
+        return view('ad3d.finance.minus-money.view-image', compact('dataMinusMoney'));
+    }
+
     # xem anh phan hoi
-    public function viewImage($feedbackId)
+    public function viewFeedbackImage($feedbackId)
     {
         $modelMinusMoneyFeedback = new QcMinusMoneyFeedback();
         $dataMinusMoneyFeedback = $modelMinusMoneyFeedback->getInfo($feedbackId);
-        return view('ad3d.finance.minus-money.view-image', compact('dataMinusMoneyFeedback'));
+        return view('ad3d.finance.minus-money.view-feedback-image', compact('dataMinusMoneyFeedback'));
     }
 
     # Xac nhan phan hoi
@@ -195,14 +202,17 @@ class MinusMoneyController extends Controller
         $modelStaff = new QcStaff();
         $modelMinusMoney = new QcMinusMoney();
         $workId = Request::input('cbWork');
-        $cbDay = Request::input('cbDay');
-        $cbMonth = Request::input('cbMonth');
-        $cbYear = Request::input('cbYear');
         $cbPunishContentId = Request::input('cbPunishContent');
         $reason = Request::input('txtDescription');
-        $staffId = $modelStaff->loginStaffId();
-        $dateMinus = $hFunction->convertStringToDatetime("$cbMonth/$cbDay/$cbYear 00:00:00");
-        if ($modelMinusMoney->insert($dateMinus, $reason, $workId, $staffId, $cbPunishContentId, 1, null, null, null, null, 0)) {
+        $txtReasonImage = Request::file('txtReasonImage');
+        $name_img = null; // mac dinh null
+        if (!empty($txtReasonImage)) {
+            $name_img = stripslashes($_FILES['txtReasonImage']['name']);
+            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $source_img = $_FILES['txtReasonImage']['tmp_name'];
+            $modelMinusMoney->uploadImage($source_img, $name_img);
+        }
+        if ($modelMinusMoney->insert($hFunction->carbonNow(), $reason, $workId, $modelStaff->loginStaffId(), $cbPunishContentId, $modelMinusMoney->getDefaultHasApplyStatus(), null, null, null, null, 0, $name_img)) {
             return Session::put('notifyAdd', 'Thêm thành công, chọn thông tin và tiếp tục');
         } else {
             return Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');

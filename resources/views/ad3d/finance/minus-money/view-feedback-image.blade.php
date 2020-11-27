@@ -14,10 +14,10 @@ $hFunction = new Hfunction();
 @section('qc_ad3d_container_content')
     <div class="text-center qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <a class="qc-link-red-bold qc_ad3d_container_close btn btn-sm btn-default"
-                style="position: absolute; top: 0; right: 0;">
+           style="position: absolute; top: 0; right: 0;">
             <i class="glyphicon glyphicon-remove" style="font-size: 1.5em;"></i>
         </a>
         <img class="qc-link qc-margin-top-10" onclick="qc_main.rotateImage(this);" style="max-width: 100%; min-height: 500px;" alt="..."
-             src="{!! $dataMinusMoney->pathFullImage($dataMinusMoney->reasonImage())  !!}">
+             src="{!! $dataMinusMoneyFeedback->pathFullImage($dataMinusMoneyFeedback->image())  !!}">
     </div>
 @endsection

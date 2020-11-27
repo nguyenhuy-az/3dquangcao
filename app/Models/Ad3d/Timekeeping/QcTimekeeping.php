@@ -16,6 +16,59 @@ class QcTimekeeping extends Model
     private $lastId;
 
     //========== ========== ========== INSERT && UPDATE ========== ========== ==========
+    # lay trang thai co phep mac dinh
+    public function getDefaultHasPermissionStatus()
+    {
+        return 1;
+    }
+    # lay trang thai khong co phep mac dinh
+    public function getDefaultNotPermissionStatus()
+    {
+        return 0;
+    }
+    # lay trang thai bao gio chinh xac mac dinh
+    public function getDefaultHasAccuracyStatus()
+    {
+        return 1;
+    }
+    # lay trang thai bao gio chinh xac mac dinh
+    public function getDefaultNotAccuracyStatus()
+    {
+        return 0;
+    }
+
+    # lay trang thai co tre nhan dinh
+    public function getDefaultHasLateStatus()
+    {
+        return 1;
+    }
+    # lay trang thai khong tre mac dinh
+    public function getDefaultNotLateStatus()
+    {
+        return 0;
+    }
+
+    # lay trang thai co lam trua mac dinh
+    public function getDefaultHasAfternoonStatus()
+    {
+        return 1;
+    }
+    # lay trang thai khong co lam trua mac dinh
+    public function getDefaultNotAfternoonStatus()
+    {
+        return 0;
+    }
+
+    # lay trang thai co lam viec mac dinh
+    public function getDefaultHasWorkStatus()
+    {
+        return 1;
+    }
+    # lay trang thai khong con lam viec mac dinh
+    public function getDefaultNotWorkStatus()
+    {
+        return 0;
+    }
     //---------- Insert ----------
     public function insert($timeBegin, $timeEnd, $dateOff, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $confirmNote, $lateStatus, $permissionStatus, $workStatus, $staffCheckId, $workId)
     {

@@ -8,6 +8,7 @@
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $hFunction = new Hfunction();
+$currentDay = $hFunction->currentDay();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 if (count($dataWorkSelect) > 0) {
     $workSelectId = $dataWorkSelect->workId();
@@ -69,7 +70,6 @@ if (count($dataWorkSelect) > 0) {
                     </div>
                 </div>
                 @if(!empty($workSelectId))
-                    <?php $fromDate = $dataWorkSelect->fromDate(); ?>
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm">
@@ -109,40 +109,18 @@ if (count($dataWorkSelect) > 0) {
                     @endif
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <label>Ngày: <i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm">
-                                <select name="cbDay" style="margin-top: 5px; height: 25px;">
-                                    <option value="">Ngày</option>
-                                    @for($i = $hFunction->getDayFromDate($fromDate);$i<= 31; $i++)
-                                        <option value="{!! $i !!}">{!! $i !!}</option>
-                                    @endfor
-                                </select>
-                                <span>/</span>
-                                <select name="cbMonth" style="margin-top: 5px; height: 25px;">
-                                    {{--<option name="cbMonthIn" value="">Tháng</option>--}}
-                                    <option value="{!! (int)$hFunction->getMonthFromDate($fromDate) !!}">{!! (int)$hFunction->getMonthFromDate($fromDate) !!}</option>
-                                </select>
-                                <span>/</span>
-                                <select name="cbYear" style="margin-top: 5px; height: 25px;">
-                                    {{--<option value="">Năm</option>--}}
-                                    <option value="{!! $hFunction->getYearFromDate($fromDate) !!}">{!! $hFunction->getYearFromDate($fromDate) !!}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="form-group qc-padding-none">
                                 <label>Ghi chú:</label>
                                 <input type="text" class="form-control" name="txtDescription" value="">
                             </div>
                         </div>
                     </div>
-
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label>Ảnh ghi chú:</label>
+                            <input type="file" class="txtReasonImage form-control" name="txtReasonImage">
+                        </div>
+                    </div>
                 @endif
                 @if (Session::has('notifyAdd'))
                     <div class="row">

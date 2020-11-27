@@ -539,7 +539,7 @@ class QcWork extends Model
         return $modelTimekeepingProvisional->getInfoOfWorkAndDate($workId, $date);
     }
 
-    // kiem tra thong tin lam viec
+    // kiem tra thong tin lam viec theo ngay
     /*
      * goi trong Qc_comgpany
      */
@@ -550,15 +550,13 @@ class QcWork extends Model
         $currentDate = $hFunction->currentDate();// lay ngay hien tai
         $currentDay = (int)$hFunction->currentDay();
         $currentHour = (int)$hFunction->currentHour();// gio hien ta
-        # danh sach bang cham cong
+        # danh sach bang cham cong cua toan he thong
         $dataWork = $this->getAllInfoActivity();
         if ($hFunction->checkCount($dataWork)) {
             foreach ($dataWork as $work) {
                 $workId = $work->workId();
                 $dateBegin = $work->fromDate();
                 $dayBegin = (int)date('d', strtotime($dateBegin));
-                $dateEnd = $work->toDate();
-                //$dayEnd = date('d', strtotime($dateEnd));
                 $dateCheck = date('Y-m-d', strtotime($dateBegin));
                 # chuyen datetime -> date // tranh xet cung ngay
                 if ($dateCheck < $currentDate && $currentHour > 8) {

@@ -324,8 +324,10 @@ Route::group(['prefix' => 'ad3d'], function () {
                 Route::get('confirm/{feedbackId?}', ['as' => 'qc.ad3d.finance.minus-money.feedback.confirm.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getConfirmFeedback']);
                 Route::post('confirm/{feedbackId?}', ['as' => 'qc.ad3d.finance.minus-money.feedback.confirm.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postConfirmFeedback']);
                 # xem anh phan hoi
-                Route::get('view-feed-image/{feedbackId?}', ['as' => 'qc.ad3d.finance.minus-money.view_image.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@viewImage']);
+                Route::get('view-feedback-image/{feedbackId?}', ['as' => 'qc.ad3d.finance.minus_money.feedback.image.view', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@viewFeedbackImage']);
             });
+            # xem anh phat
+            Route::get('view-image/{minusId?}', ['as' => 'qc.ad3d.finance.minus_money.image.view', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@viewImage']);
             #them - cu
             Route::get('add/{companyLoginId?}/{workId?}/{punishId?}', ['as' => 'qc.ad3d.finance.minus_money.add.get', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@getAdd']);
             Route::post('add', ['as' => 'qc.ad3d.finance.minus_money.add.post', 'uses' => 'Ad3d\Finance\MinusMoney\MinusMoneyController@postAdd']);

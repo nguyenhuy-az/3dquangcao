@@ -92,7 +92,7 @@ class MinusMoneyController extends Controller
         //$dataMinusMoney = $modelMinusMoney->getInfo($txtMinusId);
         if (!empty($txtFeedbackImage)) {
             $name_img = stripslashes($_FILES['txtFeedbackImage']['name']);
-            $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
+            $name_img = 'fb_'.$hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtFeedbackImage']['tmp_name'];
             if (!$modelMinusMoneyFeedback->uploadImage($source_img, $name_img, 500)) {
                 $name_img = null;

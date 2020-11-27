@@ -43,7 +43,7 @@ $workId = $dataWork->workId();
                                 <th class="text-center" style="width: 100px;">
                                     HẠN GIAO - HOÀN THÀNH
                                 </th>
-                                <th>THI CÔNG SẢN PHẨM</th>
+                                <th style="width: 300px;">THI CÔNG SẢN PHẨM</th>
                                 <th>TIẾN ĐỘ</th>
                                 <th>NGÀY NHẬN</th>
                             </tr>

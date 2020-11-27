@@ -29,12 +29,8 @@ var qc_ad3d_finance_minus_money = {
     add: {
         save: function (frm) {
             var cbWork = $(frm).find("select[name='cbWork']");
-            var cbDay = $(frm).find("select[name='cbDay']");
             var cbPunishContent = $(frm).find("select[name='cbPunishContent']");
             if (qc_main.check.inputNull(cbWork, 'Chọn nhân viên')) {
-                return false;
-            }
-            if (qc_main.check.inputNull(cbDay, 'Chọn ngày phạt')) {
                 return false;
             }
             if (qc_main.check.inputNull(cbPunishContent, 'Chọn lý do phạt')) {

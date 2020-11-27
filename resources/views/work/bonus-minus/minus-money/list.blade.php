@@ -67,6 +67,7 @@ $checkTime = date('m-Y');
                                     $minusId = $minusMoney->minusId();
                                     $dateMinus = $minusMoney->dateMinus();
                                     $reasonMinus = $minusMoney->reason();
+                                    $reasonImage = $minusMoney->reasonImage();
                                     # ban giao thi cong don hang
                                     $orderAllocationId = $minusMoney->orderAllocationId();
                                     # quan ly thi cong - quan ly tong
@@ -113,6 +114,13 @@ $checkTime = date('m-Y');
                                                 <br/>
                                                 <em style="color: grey;">** {!! $reasonMinus !!}</em>
                                             @endif
+                                            @if(!$hFunction->checkEmpty($reasonImage))
+                                                <br/>
+                                                <a class="qc-link">
+                                                    <img style="height: 70px; border: 1px solid #d7d7d7;" alt="..."
+                                                         src="{!! $minusMoney ->pathSmallImage($reasonImage) !!}">
+                                                </a>
+                                            @endif
                                             @if(!$hFunction->checkEmpty($orderAllocationId))
                                                 <br/>
                                                 <em style="color: grey;">- Đơn hàng:</em>
@@ -155,7 +163,7 @@ $checkTime = date('m-Y');
                                                     <br/>
                                                     <a class="qc_view_image qc-link"
                                                        data-href="{!! route('qc.work.minus_money.feedback.view_image.get',$feedbackId) !!}">
-                                                        <img style="height: 70px;" alt="..."
+                                                        <img style="height: 70px; border: 1px solid #d7d7d7;" alt="..."
                                                              src="{!! $dataMinusMoneyFeedback->pathSmallImage($feedbackImage) !!}">
                                                     </a>
                                                 @endif

@@ -18,10 +18,14 @@ $amount = $hFunction->getCount($dataOverTimeRequest);
         <span style="color: yellow;">YÊU CẦU TĂNG CA NGÀY: </span>
         @foreach($dataOverTimeRequest as $overTimeRequest)
             <?php $n_o = $n_o + 1; ?>
-            <em style="color: white">{!! date('d/m/Y', strtotime($overTimeRequest->requestDate())) !!}</em>
+            <span style="color: white; font-size: 1.5em;">{!! date('d/m/Y', strtotime($overTimeRequest->requestDate())) !!}</span>
             @if($amount > 1 && $n_o <= $amount)
                 <i class="glyphicon glyphicon-minus" style="color: yellow;"></i>
             @endif
         @endforeach
+       {{-- <br/>
+        <span style="color: yellow;">Thời gian Ăn uống: </span>
+        <span style="color: white; font-size: 1.5em;">30 Phút</span>
+        <span style="color: yellow;"> Vẫn tính công tăng ca</span>--}}
     </div>
 </div>
