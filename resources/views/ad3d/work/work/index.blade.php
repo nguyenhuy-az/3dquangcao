@@ -14,6 +14,6 @@
 @endsection
 
 @section('qc_js_footer')
-    <script src="{{ url('public/ad3d/work/work/js/work.js')}}"></script>
+    <script src="{{ url('public/ad3d/work/work/js/index.js')}}"></script>
 @endsection
 

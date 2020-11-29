@@ -28,27 +28,49 @@ class QcMinusMoney extends Model
         return null;
     }
 
-    # trang thai co ap dung mat dinh
+    # mac dinh anh phat
+    public function getDefaultReasonImage()
+    {
+        return null;
+    }
+
+    #  mac dinh co ap dung phat
     public function getDefaultHasApplyStatus()
     {
         return 1;
     }
 
-    # trang thai co ap dung mac dinh
+    #  mac dinh co ap dung
     public function getDefaultNotApplyStatus()
     {
         return 0;
     }
-    # trang thai huy mac dinh
+
+    # mac dinh da huy
     public function getDefaultHasCancelStatus()
     {
         return 1;
     }
 
-    # trang thai chua huy mat dinh
+    # mac dinh chua huy
     public function getDefaultNotCancelStatus()
     {
         return 0;
+    }
+    # mac dinh don hang duoc phan cong cong
+    public function getDefaultOrderAllocation()
+    {
+        return null;
+    }
+    # mac dinh don hang thi cong
+    public function getDefaultOrderConstruction()
+    {
+        return null;
+    }
+    # mac dinh tien phat
+    public function getDefaultMoney()
+    {
+        return 0;# $money == 0 - phat theo so tien quy dinh san - $money > 0 - nhap truc tiep
     }
     #---------- Insert ----------
     /*
@@ -61,6 +83,7 @@ class QcMinusMoney extends Model
                            $orderConstructionId = null, $companyStoreCheckReportId = null, $workAllocationId = null, $money = 0, $reasonImage = null)
     {
         $hFunction = new \Hfunction();
+        $modelOrder = new QcOrder();
         $modelOrderBonusBudget = new QcOrderBonusBudget();
         $modelOrderAllocation = new QcOrderAllocation();
         $modelWorkAllocation = new QcWorkAllocation();
@@ -69,7 +92,7 @@ class QcMinusMoney extends Model
         $modelCompanyStore = new QcCompanyStore();
         $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
         # $money == 0 - phat theo so tien quy dinh san - $money > 0 - nhap truc tiep
-        if ($money == 0) {
+        if ($money == $this->getDefaultMoney()) {
             # phat theo noi quy
             if (empty($orderAllocationId) && empty($orderConstructionId) && empty($companyStoreCheckReportId) && empty($workAllocationId)) {
                 # tien phat
@@ -87,7 +110,7 @@ class QcMinusMoney extends Model
                     $money = (int)$modelOrderBonusBudget->totalBudgetMoneyEachPersonOfConstructionStaffOfProduct($productId);
                 } elseif (!empty($orderConstructionId)) {
                     # kinh doanh tre don hang giao khach
-                    $money = 0;// (int)$modelOrder->getBonusAndMinusMoneyOfConstructionManage($orderConstructionId);  - chua phat kinh doanh
+                    $money = (int)$modelOrderBonusBudget->totalBudgetMoneyOfConstructionStaff($orderConstructionId);//  - chua phat kinh doanh
                 } elseif (!empty($companyStoreCheckReportId)) {
                     $punishIdLostTool = $modelPunishContent->getPunishIdLostPublicTool();
                     $punishIdLostTool = (is_int($punishIdLostTool)) ? $punishIdLostTool : $punishIdLostTool[0];
@@ -102,7 +125,7 @@ class QcMinusMoney extends Model
 
             }
         }
-        $modelMinusMoney->money = (is_int($money)) ? $money : $money[0];
+        $modelMinusMoney->money = (is_array($money)) ? $money[0] : $money;
         $modelMinusMoney->dateMinus = $dateMinus;
         $modelMinusMoney->reason = $reason;
         $modelMinusMoney->reasonImage = $reasonImage;

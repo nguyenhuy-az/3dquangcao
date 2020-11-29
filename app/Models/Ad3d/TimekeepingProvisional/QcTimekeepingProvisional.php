@@ -26,31 +26,43 @@ class QcTimekeepingProvisional extends Model
     private $lastId;
 
     //========== ========== ========== them  && cap nhat ========== ========== ==========
-    # lay trang thai bao gio chinh xac mac dinh
+    # mac dinh cham cong tre
+    public function getDefaultHasLateTimekeeping()
+    {
+        return 1;
+    }
+
+    # mac dinh cham cong khong tre
+    public function getDefaultNotLateTimekeeping()
+    {
+        return 0;
+    }
+
+    # mac dinh bao gio chinh xac
     public function getDefaultHasAccuracyStatus()
     {
         return 1;
     }
 
-    # lay trang thai bao gio chinh xac mac dinh
+    # xac mac dinh bao gio khong chinh
     public function getDefaultNotAccuracyStatus()
     {
         return 0;
     }
 
-    # lay trang thai co xac nhan dinh
+    # mac dinh co xac nhan
     public function getDefaultHasConfirmStatus()
     {
         return 1;
     }
 
-    # lay trang thai khong xac nhan mac dinh
+    # mac dinh khong xac nhan
     public function getDefaultNotConfirmStatus()
     {
         return 0;
     }
 
-    # lay trang thai co lam trua mac dinh
+    # mac dinh co lam trua
     public function getDefaultHasAfternoonStatus()
     {
         return 1;
@@ -72,6 +84,48 @@ class QcTimekeepingProvisional extends Model
     public function getDefaultNotWorkStatus()
     {
         return 0;
+    }
+
+    # mac dinh  tre co khong phep
+    public function getDefaultHasPermissionStatus()
+    {
+        return 1;
+    }
+
+    #mac dinh tre khong phep
+    public function getDefaultNotPermissionStatus()
+    {
+        return 0;
+    }
+
+    # mac dinh co tinh cong
+    public function getDefaultHasTimekeeping()
+    {
+        return 1;
+    }
+
+    # mac dinh khong tinh cong
+    public function getDefaultNotTimekeeping()
+    {
+        return 0;
+    }
+
+    # trang thai mac dinh co ap dung noi quy
+    public function getDefaultHasApplyRule()
+    {
+        return 1;
+    }
+
+    # trang thai mac dinh khong ap dung noi quy
+    public function getDefaultNotApplyRule()
+    {
+        return 0;
+    }
+
+    # mac dinh nguoi duyet
+    public function getDefaultConfirmStaff()
+    {
+        return null; # null -> duyet tu dong
     }
 
     //---------- them ----------workStatus
@@ -106,21 +160,25 @@ class QcTimekeepingProvisional extends Model
         return (empty($id)) ? $this->timekeepingProvisionalId() : $id;
     }
 
-
-    public function cancelTimekeepingProvision($id, $staffLoginId)
+    # cap nhat xac nhan
+    public function updateConfirm($timekeepingProvisionalId, $confirmNote, $accuracyStatus, $staffConfirmId)
     {
         $hFunction = new \Hfunction();
-        return QcTimekeepingProvisional::where(['timekeeping_provisional_id' => $id])->update(
+        return QcTimekeepingProvisional::where(['timekeeping_provisional_id' => $timekeepingProvisionalId])->update(
             [
-                'accuracyStatus' => $this->getDefaultNotAccuracyStatus(),
-                'staffConfirm_id' => $staffLoginId,
+                'accuracyStatus' => $accuracyStatus,
+                'staffConfirm_id' => $staffConfirmId,
+                'confirmNote' => $confirmNote,
                 'confirmStatus' => $this->getDefaultHasConfirmStatus(),
                 'confirmDate' => $hFunction->createdAt(),
             ]);
     }
 
     // kiem tra tong tin cham cong lam viec trong ngay - KIEM TRA NGAY TRƯƠC - theo bang cham cong
-    /*goi trong qc_work*/
+    /*
+     * goi trong qc_work
+     * kiem tra theo tung ngay
+     * */
     public function checkAutoTimekeepingOfWorkAndDate($workId, $checkDate)
     {
         $hFunction = new \Hfunction();
@@ -136,16 +194,9 @@ class QcTimekeepingProvisional extends Model
         if ($hFunction->checkCount($dataTimeKeepingProvisional)) { # co bao gio vao
             $timeBegin = $dataTimeKeepingProvisional->timeBegin();
             $timeEnd = $dataTimeKeepingProvisional->timeEnd();
-            if (empty($timeEnd)) { # co bao gio ra
-                if (QcTimekeepingProvisional::where(['timekeeping_provisional_id' => $dataTimeKeepingProvisional->timekeepingProvisionalId()])->update(
-                    [
-                        'accuracyStatus' => $this->getDefaultNotAccuracyStatus(),
-                        'staffConfirm_id' => null,
-                        'confirmNote' => 'Không báo giờ ra',
-                        'confirmStatus' => $this->getDefaultHasConfirmStatus(),
-                        'confirmDate' => $hFunction->createdAt(),
-                    ])
-                ) {
+            if (empty($timeEnd)) { # khong co bao gio ra
+                if ($this->updateConfirm($dataTimeKeepingProvisional->timekeepingProvisionalId(), 'Không báo giờ ra', $this->getDefaultNotAccuracyStatus(), $this->getDefaultConfirmStaff())) {
+                    # chua ton tai trong bang cham con chinh thuc
                     if (!$modelTimekeeping->existDateOfWork($workId, $checkDate)) {
                         $timekeepingAfternoonStatus = $modelTimekeeping->getDefaultNotAfternoonStatus();
                         $timekeepingLateStatus = $modelTimekeeping->getDefaultNotLateStatus();
@@ -155,7 +206,8 @@ class QcTimekeepingProvisional extends Model
                     }
                 }
             }
-        } else { // khong bao cham cong
+        } else {
+            // khong bao cham cong
             if (!$hFunction->checkDateIsSunday($checkDate)) { # khong phai la ngay chu nhat
                 $companyId = $modelWork->companyIdOfWork($workId);
                 if (!$modelSystemDateOff->checkExistsDateOfCompany($companyId, $checkDate)) { # khong phai ngay nghi cua he thong ==> nghi khong phép
@@ -169,7 +221,6 @@ class QcTimekeepingProvisional extends Model
                     $timekeepingLateStatus = $modelTimekeeping->getDefaultNotLateStatus();
                     $timekeepingWorkStatus = $modelTimekeeping->getDefaultNotWorkStatus();
                     if ($hFunction->checkCount($dataLicenseOffWork)) {
-
                         # duoc duyet nghi
                         if ($dataLicenseOffWork->checkAgreeStatus()) {
                             # them thong tin vao ngay cham cong
@@ -330,8 +381,38 @@ class QcTimekeepingProvisional extends Model
         return ($timeCheck > $timeDefault) ? true : false;
     }
 
-    //xac nhan cham cong
-    public function confirmWork($id, $staffLoginId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus)
+    //===== XAC NHAN CHAM CONG ===== ===
+    # duyet cham cong tu dong khi xuat bang luong - xac nhan tu
+    /*
+     * goi trong xuat bang luong qc_work
+     * */
+    public function autoConfirmForMakeSalaryOfWork($workId)
+    {
+        $hFunction = new \Hfunction();
+        $dataTimekeeping = $this->getInfoUnconfirmed($workId);
+        if ($hFunction->checkCount($dataTimekeeping)) {
+            foreach ($dataTimekeeping as $timekeeping) {
+                $timekeepingId = $timekeeping->timekeepingProvisionalId();
+                $confirmNote = "Duyệt tự động cuối tháng";
+                $permissionLateStatus = $this->getDefaultNotPermissionStatus(); # mac dinh tre khong phep
+                $accuracyStatus = $this->getDefaultHasAccuracyStatus();# mac dinh chinh xac
+                $applyTimekeepingStatus = $this->getDefaultHasTimekeeping();# mac dinh duoc tin cong
+                $applyRuleStatus = $this->getDefaultHasApplyRule();
+                $staffConfirmId = $this->getDefaultConfirmStaff(); # duyet tu dong
+                $this->confirmWork($timekeepingId, $staffConfirmId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus);
+            }
+        }
+
+    }
+
+    /*
+     * duyet khi co gio ra
+     * $staffConfirmId = NULL  -> duyet tu dong
+     * goi khi quan lý duyet cham cong  -> timekeepingProvisionalController
+     * duyet tu dong cuoi thang -> this function
+     *
+     * */
+    public function confirmWork($timekeepingProvisionalId, $staffConfirmId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -343,19 +424,12 @@ class QcTimekeepingProvisional extends Model
         $modelTimekeepingImage = new QcTimekeepingImage();
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $model = new QcTimekeepingProvisionalImage();
-        if ($accuracyStatus == 0) $confirmNote = $confirmNote . " - Báo giờ không chính xác";
-        if ($applyTimekeepingStatus == 0) $confirmNote = $confirmNote . " - Không tính công ngày này";
-        if ($applyRuleStatus == 0) $confirmNote = $confirmNote . " - Không áp dụng nội quy phạt";
-        if (QcTimekeepingProvisional::where(['timekeeping_provisional_id' => $id])->update(
-            [
-                'accuracyStatus' => $accuracyStatus,
-                'staffConfirm_id' => $staffLoginId,
-                'confirmNote' => $confirmNote,
-                'confirmStatus' => 1,
-                'confirmDate' => $hFunction->createdAt(),
-            ])
-        ) {
-            $dataTimekeepingProvisional = $modelTimekeepingProvisional->getInfo($id);
+        if ($accuracyStatus == $this->getDefaultNotAccuracyStatus()) $confirmNote = $confirmNote . " - Báo giờ không chính xác";
+        if ($applyTimekeepingStatus == $this->getDefaultNotTimekeeping()) $confirmNote = $confirmNote . " - Không tính công ngày này";
+        if ($applyRuleStatus == $this->getDefaultNotApplyRule()) $confirmNote = $confirmNote . " - Không áp dụng nội quy phạt";
+        # cap nhat thong tin
+        if ($this->updateConfirm($timekeepingProvisionalId, $confirmNote, $accuracyStatus, $staffConfirmId)) {
+            $dataTimekeepingProvisional = $modelTimekeepingProvisional->getInfo($timekeepingProvisionalId);
             $workId = $dataTimekeepingProvisional->workId();
             $note = $dataTimekeepingProvisional->note();
             $afternoonStatus = $dataTimekeepingProvisional->afternoonStatus();
@@ -375,27 +449,33 @@ class QcTimekeepingProvisional extends Model
                 $minusMinute = 0;
                 $lateStatus = 1;
                 # ----- ap dung noi quy phat  --------
-                if ($applyRuleStatus == 1) {
+                if ($applyRuleStatus == $this->getDefaultHasApplyRule()) {
                     //khong phai ngay chu nhat
                     if (!$hFunction->checkDateIsSunday($dateBegin)) {
-                        if ($hFunction->formatDateToDMYHI($defaultBegin) < $hFunction->formatDateToDMYHI($dateBegin)) { // tính trừ thời gian trễ
+                        if ($hFunction->formatDateToYMDHI($defaultBegin) < $hFunction->formatDateToYMDHI($dateBegin)) { # tính trừ thời gian trễ
                             $staffId = $modelWork->staffId($workId);
                             if ($modelStaff->checkApplyRule($staffId)) { # ap dung noi quy
+                                # anh phat mac dinh
+                                $minusReasonImage = $modelMinusMoney->getDefaultReasonImage();
+                                # ly do
+                                $minusReason = $modelMinusMoney->getDefaultReason();
+                                $minusApplyStatus = $modelMinusMoney->getDefaultNotApplyStatus();
+                                $minusMoney = $modelMinusMoney->getDefaultMoney();
                                 # tre khong phep
-                                if ($permissionLateStatus == 0) {
+                                if ($permissionLateStatus == $this->getDefaultNotPermissionStatus()) {
                                     $punishId = $modelPunishContent->getPunishIdForLateWork();
                                     $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
                                     if (!empty($punishId)) {
-                                        $modelMinusMoney->insert($dateBegin, null, $workId, $staffLoginId, $punishId, 0, null, null, null, null, 0);
+                                        $modelMinusMoney->insert($dateBegin, $minusReason, $workId, $staffConfirmId, $punishId, $minusApplyStatus, null, null, null, null, $minusMoney, $minusReasonImage);
                                     }
                                     $lateStatus = 0;
                                 }
                                 # bao gio khong chinh xac
-                                if ($accuracyStatus == 0) {
+                                if ($accuracyStatus == $this->getDefaultNotAccuracyStatus()) {
                                     $punishIdOfTimekeepingAccuracy = $modelPunishContent->getPunishIdForTimekeepingAccuracy();
                                     $punishIdOfTimekeepingAccuracy = (is_int($punishIdOfTimekeepingAccuracy)) ? $punishIdOfTimekeepingAccuracy : $punishIdOfTimekeepingAccuracy[0];
                                     if (!empty($punishIdOfTimekeepingAccuracy)) {
-                                        $modelMinusMoney->insert($dateBegin, null, $workId, $staffLoginId, $punishIdOfTimekeepingAccuracy, 0, null, null, null, null, 0);
+                                        $modelMinusMoney->insert($dateBegin, $minusReason, $workId, $staffConfirmId, $punishIdOfTimekeepingAccuracy, $minusApplyStatus, null, null, null, null, $minusMoney, $minusReasonImage);
                                     }
                                 }
                             }
@@ -403,18 +483,18 @@ class QcTimekeepingProvisional extends Model
                     }
                 }
                 # ------ co tinh cong ngay lam --------
-                if ($applyTimekeepingStatus == 1) {
+                if ($applyTimekeepingStatus == $this->getDefaultHasTimekeeping()) {
                     # co bao gio ra
                     if (!$hFunction->checkEmpty($dateEnd)) {
                         $diffLate = abs(strtotime($dateEnd) - strtotime($dateBegin));
                         $totalWorkMinute = $diffLate / 60; //số phút làm việc
                         //lam luon buoi trua
-                        if ($modelTimekeepingProvisional->checkAfternoonWork($id)) $plusMinute = 60;// cộng 1h buổi trưa
+                        if ($modelTimekeepingProvisional->checkAfternoonWork($timekeepingProvisionalId)) $plusMinute = 60;// cộng 1h buổi trưa
                         # ngay chu nhat
                         if ($hFunction->checkDateIsSunday($dateBegin)) {
                             # gio lam ngay chu nhat tinh tang ca
                             if (360 < $totalWorkMinute) { // làm hơn 6 tiếng từ sáng
-                                if ($dataTimekeepingProvisional->checkAfternoonWork($id)) {
+                                if ($dataTimekeepingProvisional->checkAfternoonWork($timekeepingProvisionalId)) {
                                     $plusMinute = $totalWorkMinute - 30; //(trừ 1h30 nghĩ trưa)
                                 } else {
                                     $plusMinute = $totalWorkMinute - 90; //(trừ 1h30 nghĩ trưa)
@@ -441,9 +521,9 @@ class QcTimekeepingProvisional extends Model
                     }
                 }
                 #------- them thong tin cham cong chinh thuc --------
-                if ($modelTimekeeping->insert($dateBegin, $dateEnd, null, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $confirmNote, $lateStatus, $permissionLateStatus, 0, $staffLoginId, $workId)) {
+                if ($modelTimekeeping->insert($dateBegin, $dateEnd, null, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $confirmNote, $lateStatus, $permissionLateStatus, $modelTimekeeping->getDefaultNotWorkStatus(), $staffConfirmId, $workId)) {
                     $newTimekeepingId = $modelTimekeeping->insertGetId();
-                    $dataTimekeepingProvisionalImage = $modelTimekeepingProvisional->imageOfTimekeepingProvisional($id);
+                    $dataTimekeepingProvisionalImage = $modelTimekeepingProvisional->imageOfTimekeepingProvisional($timekeepingProvisionalId);
                     //thêm hình ảnh vào bảng chấm công chính
                     if ($hFunction->checkCount($dataTimekeepingProvisionalImage)) { // tồn tại ảnh xác nhận
                         foreach ($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage) {
@@ -467,7 +547,7 @@ class QcTimekeepingProvisional extends Model
 
     }
 
-    # huy cham cong
+    # xoa cham cong
     public function deleteInfo($timekeepingId = null)
     {
         $model = new QcTimekeepingProvisionalImage();
@@ -512,17 +592,24 @@ class QcTimekeepingProvisional extends Model
         return QcTimekeepingProvisional::where(['work_id' => $workId, 'workStatus' => 1])->first();
     }
 
+    # lay tat ca thong tin bao cham cong cua bang cham cong
     public function infoOfWork($workId, $orderBy = null)
     {
         $orderBy = (empty($orderBy)) ? 'DESC' : $orderBy;
         return QcTimekeepingProvisional::where(['work_id' => $workId])->orderBy('timeBegin', "$orderBy")->get();
     }
 
+    # lay thong tin bao cong chua xac nhan bang cham cong
+    public function getInfoUnconfirmed($workId)
+    {
+        return QcTimekeepingProvisional::where(['work_id' => $workId])->orderBy('confirmStatus', $this->getDefaultNotConfirmStatus())->get();
+    }
+
+    # kiem tra ton tai ngay da bao cham cong
     public function existDateOfWork($workId, $dateYmd)
     {
         $dateYmd = date('Y-m-d', strtotime($dateYmd));
-        $result = QcTimekeepingProvisional::where('work_id', $workId)->where('timeBegin', 'like', "%$dateYmd%")->count();
-        return ($result > 0) ? true : false;
+        return QcTimekeepingProvisional::where('work_id', $workId)->where('timeBegin', 'like', "%$dateYmd%")->exists();
     }
 
     public function getInfoOfWorkAndDate($workId, $dateYmd)
@@ -761,7 +848,7 @@ class QcTimekeepingProvisional extends Model
     # kiem tra co lam trua hay khong
     public function checkAfternoonWork($timekeepingId = null)
     {
-        return ($this->afternoonStatus($timekeepingId)[0] == 0) ? false : true;
+        return ($this->afternoonStatus($timekeepingId)[0] == $this->getDefaultNotAfternoonStatus()) ? false : true;
     }
 
     # kiem tra thong tin co xac nhan chua
@@ -769,13 +856,13 @@ class QcTimekeepingProvisional extends Model
     {
         $result = $this->confirmStatus($timekeepingId);
         $result = (is_int($result)) ? $result : $result[0];
-        return ($result == 0) ? false : true;
+        return ($result == $this->getDefaultNotConfirmStatus()) ? false : true;
     }
 
     # kiem tra bao gio co chinh xac hay khong
     public function checkAccuracyStatus($timekeepingId = null)
     {
-        return ($this->accuracyStatus($timekeepingId)[0] == 0) ? false : true;
+        return ($this->accuracyStatus($timekeepingId)[0] == $this->getDefaultNotAccuracyStatus()) ? false : true;
     }
 
     //======= thống kê =========
@@ -783,11 +870,12 @@ class QcTimekeepingProvisional extends Model
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
+        $notConfirmStatus = $this->getDefaultNotConfirmStatus();
         if (empty($companyId)) {
-            return QcTimekeepingProvisional::where('confirmStatus', 0)->count();
+            return QcTimekeepingProvisional::where('confirmStatus', $notConfirmStatus)->count();
         } else {
             $listWorkId = $modelWork->listIdOfListCompanyStaffId($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyId]));
-            return QcTimekeepingProvisional::whereIn('work_id', $listWorkId)->where('confirmStatus', 0)->count();
+            return QcTimekeepingProvisional::whereIn('work_id', $listWorkId)->where('confirmStatus', $notConfirmStatus)->count();
         }
 
     }
@@ -799,6 +887,6 @@ class QcTimekeepingProvisional extends Model
         $modelWork = new QcWork();
         $date = date('Y-m');
         $listWorkId = $modelWork->listIdOfListCompanyStaffId($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyId]));
-        return QcTimekeepingProvisional::whereIn('work_id', $listWorkId)->where('timeBegin', 'like', "%$date%")->where('confirmStatus', 0)->count();
+        return QcTimekeepingProvisional::whereIn('work_id', $listWorkId)->where('timeBegin', 'like', "%$date%")->where('confirmStatus', $this->getDefaultNotConfirmStatus())->count();
     }
 }

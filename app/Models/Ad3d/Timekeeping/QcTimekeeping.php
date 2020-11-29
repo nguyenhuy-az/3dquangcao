@@ -37,34 +37,34 @@ class QcTimekeeping extends Model
         return 0;
     }
 
-    # lay trang thai co tre nhan dinh
+    # nhan dinh co tre
     public function getDefaultHasLateStatus()
     {
         return 1;
     }
-    # lay trang thai khong tre mac dinh
+    # mac dinh khong tre
     public function getDefaultNotLateStatus()
     {
         return 0;
     }
 
-    # lay trang thai co lam trua mac dinh
+    # mac dinh co lam trua
     public function getDefaultHasAfternoonStatus()
     {
         return 1;
     }
-    # lay trang thai khong co lam trua mac dinh
+    # mac dinh khong co lam trua
     public function getDefaultNotAfternoonStatus()
     {
         return 0;
     }
 
-    # lay trang thai co lam viec mac dinh
+    # mac dinh co lam viec
     public function getDefaultHasWorkStatus()
     {
         return 1;
     }
-    # lay trang thai khong con lam viec mac dinh
+    # mac dinh khong con lam viec
     public function getDefaultNotWorkStatus()
     {
         return 0;

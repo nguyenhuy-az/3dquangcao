@@ -389,7 +389,7 @@ class OrdersController extends Controller
         $txtDateDelivery = $hFunction->convertStringToDatetime("$cbMonthDelivery/$cbDayDelivery/$cbYearDelivery $cbHoursDelivery:$cbMinuteDelivery:00");
         $oldCustomerId = null;
         $dataCustomer = null;
-        if ($hFunction->formatDateToDMYHI($txtDateReceive) > $hFunction->formatDateToDMYHI($txtDateDelivery)) {
+        if ($hFunction->formatDateToYMDHI($txtDateReceive) > $hFunction->formatDateToYMDHI($txtDateDelivery)) {
             return "Ngày giao phải lớn hơn ngày nhận <br/> <a style='color: red;' onclick='history.back();'>Quay lại</a>";
         } else {
             if (!empty($txtPhone)) {
@@ -400,7 +400,6 @@ class OrdersController extends Controller
                 # lay thong tin khach hang tu so zalo
                 $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
             }
-
             if ($hFunction->checkCount($dataCustomer)) {
                 # ton tai khach hang - khach hang cu
                 $customerId = $dataCustomer->customerId();
@@ -430,7 +429,6 @@ class OrdersController extends Controller
                             $modelStaffNotify->insert($orderId, $staff->staffId(), null);
                         }
                     }
-
                     # them san pham
                     if ($hFunction->checkCount($productType)) {
                         foreach ($productType as $key => $value) {
@@ -468,7 +466,6 @@ class OrdersController extends Controller
                         # neu thuoc bo thi cong -> ban giao quan ly thi cong
                         $modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
                     }
-
                     return redirect()->route('qc.work.orders.print.get', $orderId);
                 } else {
                     Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');

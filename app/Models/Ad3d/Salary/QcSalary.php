@@ -12,13 +12,29 @@ use Illuminate\Database\Eloquent\Model;
 class QcSalary extends Model
 {
     protected $table = 'qc_salary';
-    protected $fillable = ['salary_id', 'mainMinute', 'plusMinute', 'minusMinute', 'beforePay', 'minusMoney', 'benefitMoney', 'benefitDescription', 'overtimeMoney', 'kpiMoney', 'salary', 'payStatus', 'created_at', 'work_id', 'workSalary_id', 'salaryBasic_id'];
+    protected $fillable = ['salary_id', 'mainMinute', 'plusMinute', 'minusMinute', 'beforePay','bonusMoney', 'minusMoney', 'benefitMoney', 'benefitDescription', 'overtimeMoney', 'kpiMoney', 'salary', 'payStatus', 'created_at', 'work_id', 'workSalary_id', 'salaryBasic_id'];
     protected $primaryKey = 'salary_id';
     public $timestamps = false;
 
     private $lastId;
 
     //========== ========== ========== THEM && VA CAP NHAT ========== ========== ==========
+    # mac dinh tien con them
+    public function getDefaultBenefitMoney()
+    {
+        return 0;
+    }
+    # mac dinh tien tru
+    public function getDefaultMinusMoney()
+    {
+        return 0;
+    }
+    # mac dinh tien thuong
+    public function getDefaultBonusMoney()
+    {
+        return 0;
+    }
+
     //---------- them bang luong ----------
     public function insert($mainMinute, $plusMinute, $minusMute, $beforePay, $minusMoney, $benefitMoney, $overtimeMoney, $salary, $payStatus, $workId, $workSalaryId = null, $salaryBasicId = null, $benefitDescription = null, $kpiMoney = 0, $bonusMoney = 0)
     {
@@ -74,6 +90,7 @@ class QcSalary extends Model
     {
         return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => 1]);
     }
+
     public function updateUnFinishPay($salaryId)
     {
         return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => 0]);

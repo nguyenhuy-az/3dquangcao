@@ -140,10 +140,10 @@ class QcCompany extends Model
         $modelCompanyStaffWork->checkCompanyStoreOfCurrentDate();
 
         // ===== ===== CHAM CONG ====== ======
-        # kiem tra cham cong
+        # kiem tra cham cong theo ngay
         $modelWork->checkAutoTimekeepingProvisionalOfActivityWork();
 
-        #kiểm tra đầu tháng để cho ra bảng làm việc của tháng mới
+        #kiểm tra đầu tháng để cho ra bang luong làm việc của tháng mới
         $modelWork->checkEndWorkOfMonth();
 
         # gio hien tai

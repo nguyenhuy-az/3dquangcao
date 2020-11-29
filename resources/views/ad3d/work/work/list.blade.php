@@ -9,7 +9,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$indexHref = route('qc.ad3d.work.work.get');
+$hrefIndex = route('qc.ad3d.work.work.get');
 ?>
 @extends('ad3d.work.work.index')
 @section('qc_ad3d_index_content')
@@ -17,14 +17,14 @@ $indexHref = route('qc.ad3d.work.work.get');
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! $indexHref !!}">
+                    <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     <label class="qc-font-size-20" style="color: red;">THÔNG TIN LÀM VIỆC</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
-                            data-href-filter="{!! $indexHref !!}">
+                            data-href-filter="{!! $hrefIndex !!}">
                         @if($hFunction->checkCount($dataCompany)> 0)
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -48,31 +48,27 @@ $indexHref = route('qc.ad3d.work.work.get');
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
-                            <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Nhân viên</th>
-                            <th style="width: 120px;">Từ ngày</th>
-                            <th style="width: 120px;">Đến ngày</th>
-                            <th class="text-center">Giờ chính(h)</th>
-                            <th class="text-center">Tăng ca (h)</th>
-                            <th></th>
+                            <th style="width: 200px !important;">NHÂN VIÊN</th>
+                            <th style="width: 120px;">THÁNG</th>
+                            <th>GIỜ CHÍNH - TĂNG CA</th>
                         </tr>
                         <tr>
-                            <td class="text-center"></td>
-                            <td style="padding: 0;">
-                                <div class="input-group">
-                                    <input type="text" class="textFilterName form-control" name="textFilterName"
-                                           placeholder="Tìm theo tên" value="{!! $nameFiler !!}">
-                                      <span class="input-group-btn">
-                                            <button class="btFilterName btn btn-default" type="button"
-                                                    data-href="{!! $indexHref !!}">
-                                                <i class="glyphicon glyphicon-search"></i>
-                                            </button>
-                                      </span>
-                                </div>
+                            <td style="padding: 0 !important;">
+                                <select class="cbStaffFilter form-control" data-href="{!! $hrefIndex !!}" name="cbStaffFilter">
+                                    <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                        Tất cả
+                                    </option>
+                                    @if($hFunction->checkCount($dataStaffFilter))
+                                        @foreach($dataStaffFilter as $staff)
+                                            <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                                    @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
                             </td>
                             <td class="text-center" style="padding: 0;">
                                 <select class="cbMonthFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
-                                        style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
+                                        style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                     @for($m =1;$m<= 12; $m++)
                                         <option value="{!! $m !!}"
                                                 @if((int)$monthFilter == $m) selected="selected" @endif>
@@ -81,7 +77,7 @@ $indexHref = route('qc.ad3d.work.work.get');
                                     @endfor
                                 </select>
                                 <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
-                                        style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
+                                        style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                     @for($y =2019;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
                                                 @if($yearFilter == $y) selected="selected" @endif>
@@ -90,10 +86,7 @@ $indexHref = route('qc.ad3d.work.work.get');
                                     @endfor
                                 </select>
                             </td>
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                            <td class="text-center"></td>
-                            <td></td>
+                            <td ></td>
                         </tr>
                         @if($hFunction->checkCount($dataWork))
                             <?php
@@ -111,64 +104,54 @@ $indexHref = route('qc.ad3d.work.work.get');
                                 } else {
                                     $dataStaffWork = $work->staff;
                                 }
-
+                                    $n_o = $n_o + 1;
                                 ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $workId !!}">
-                                    <td class="text-center">
-                                        {!! $n_o += 1 !!}
-                                    </td>
+                                <tr class="qc_ad3d_list_object @if($n_o%2 == 0) info @endif" data-object="{!! $workId !!}">
                                     <td>
                                         <div class="media">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $dataStaffWork->pathAvatar($dataStaffWork->image()) !!}">
                                             </a>
                                             <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataStaffWork->fullName() !!}</h5>
+                                                <h5 class="media-heading">{!! $dataStaffWork->lastName() !!}</h5>
+                                                @if(!$work->checkSalaryStatus())
+                                                    <span class="qc_end qc-link-red-bold">
+                                                        TÍNH LƯƠNG
+                                                    </span>
+                                                @else
+                                                    <em class="qc-color-grey">
+                                                        Đã Tính lương
+                                                    </em>
+                                                @endif
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        {!! $hFunction->convertDateDMYFromDatetime($work->fromDate()) !!}
+                                        <span>{!! $hFunction->getMonthYearFromDate($work->fromDate()) !!}</span>
+                                        <br/>
+                                        <span class="qc_view qc-link-green-bold">CHI TIẾT</span>
                                     </td>
                                     <td>
-                                        {!! $hFunction->convertDateDMYFromDatetime($work->toDate()) !!}
-                                    </td>
-                                    <td class="text-center">
-                                        {!! floor(($work->sumMainMinute()- $work->sumMainMinute()%60)/60) !!}
-                                        <b>h</b>{!! $work->sumMainMinute()%60 !!}
-                                    </td>
-                                    <td class="text-center">
-                                        {!! floor($work->sumPlusMinute()/60) !!}
-                                        <b>h</b>{!! $work->sumPlusMinute()%60 !!}
-                                    </td>
-                                    <td class="text-right">
-                                        <span class="qc_view qc-link-green">Chi tiết</span>
-                                        @if(!$work->checkActivity())
-                                            <span>&nbsp;|&nbsp;</span>
-                                            <span class="qc-color-grey">
-                                                Hết hạn
-                                            </span>
-                                        @endif
-                                        @if(!$work->checkSalaryStatus())
-                                            <span>&nbsp;|&nbsp;</span>
-                                            <span class="qc_end qc-link-green">
-                                                Tính lương
-                                            </span>
-                                        @else
-                                            <span>&nbsp;|&nbsp;</span>
-                                            <span class="qc-color-grey">
-                                                Đã Tính lương
-                                            </span>
-                                        @endif
+                                        <span>{!! floor(($work->sumMainMinute()- $work->sumMainMinute()%60)/60) !!}</span>
+                                        <b>h</b>
+                                        <span>{!! $work->sumMainMinute()%60 !!}</span>
+                                        <br/>
+                                        <span style="color: blue;">{!! floor($work->sumPlusMinute()/60) !!}</span>
+                                        <b style="color: blue;">h</b>
+                                        <span style="color: blue;">{!! $work->sumPlusMinute()%60 !!}</span>
                                     </td>
                                 </tr>
                             @endforeach
+                            <tr>
+                                <td colspan="3" style="border-left: 5px solid blue;">
+                                    {!! $hFunction->page($dataWork) !!}
+                                </td>
+                            </tr>
                         @else
                             <tr>
-                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                                    colspan="7">
+                                <td colspan="3">
                                     <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                 </td>
                             </tr>
@@ -176,11 +159,6 @@ $indexHref = route('qc.ad3d.work.work.get');
                     </table>
                 </div>
 
-            </div>
-            <div class="row">
-                <div class="text-center qc-padding-top-20 qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    {!! $hFunction->page($dataWork) !!}
-                </div>
             </div>
         </div>
     </div>

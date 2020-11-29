@@ -1453,7 +1453,7 @@ class QcOrder extends Model
     public function checkUpdatePaymentStatus()
     {
         $hFunction = new \Hfunction();
-        $dataOrder = $this->get();
+        $dataOrder = $this->getInfo();
         if ($hFunction->checkCount($dataOrder)) {
             foreach ($dataOrder as $order) {
                 if ($order->checkFinishPayment()) {

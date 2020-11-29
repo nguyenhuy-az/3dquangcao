@@ -24,6 +24,7 @@ class QcWork extends Model
     private $lastId;
 
     //========== ========== ========== INSERT && UPDATE ========== ========== ==========
+
     //---------- them bang cham cong moi ----------
     public function insert($fromDate, $toDate, $companyStaffWorkId)
     {
@@ -87,11 +88,14 @@ class QcWork extends Model
         $modelStaff = new QcStaff();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaffWorkSalary = new QcStaffWorkSalary();
+        $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $modelSalary = new QcSalary();
         $modelBonus = new QcBonus();
         $modelMinusMoney = new QcMinusMoney();
         # kiem tra da tinh luong chưa
         if (!$modelSalary->checkExistInfoOfWork($workId)) { # chưa tinh luong
+            # duyet tu dong bang cham cong tam - cham cong hang ngay
+            $modelTimekeepingProvisional->autoConfirmForMakeSalaryOfWork($workId);
             #duyet tu dong thong tin thuong
             $modelBonus->autoCheckApplyBonusEndWork($workId);
             #duyet tu dong thong tin phat
@@ -285,6 +289,7 @@ class QcWork extends Model
         return QcWork::whereIn('staff_id', $listStaffId)->get();
     }
 
+    # lay thong tin theo danh sach nhan vien - dang hoat dong
     public function infoActivityOfListStaff($listStaffId)
     {
         return QcWork::where('action', 1)->whereIn('staff_id', $listStaffId)->get();
@@ -547,9 +552,9 @@ class QcWork extends Model
     {
         $hFunction = new \Hfunction();
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
-        $currentDate = $hFunction->currentDate();// lay ngay hien tai
+        $currentDate = $hFunction->currentDate();   // lay ngay hien tai
         $currentDay = (int)$hFunction->currentDay();
-        $currentHour = (int)$hFunction->currentHour();// gio hien ta
+        $currentHour = (int)$hFunction->currentHour();  // gio hien ta
         # danh sach bang cham cong cua toan he thong
         $dataWork = $this->getAllInfoActivity();
         if ($hFunction->checkCount($dataWork)) {
@@ -726,17 +731,18 @@ class QcWork extends Model
     {
         $hFunction = new \Hfunction();
         $currentDate = $hFunction->currentDate();
-        # lay ngay dau thang
+        # lay ngay dau thang hien tai
         $firstDateOfMonth = $hFunction->getFirstDateFromDate($currentDate);
         # lay nhung bang cham cong dang lam
         $dataWorkActivity = $this->getAllInfoActivity();
         if ($hFunction->checkCount($dataWorkActivity)) {
             foreach ($dataWorkActivity as $work) {
                 $workId = $work->workId();// $work['work_id'];
+                # lay ngay dau thang cua bang cham cong
                 $firstDateOfWork = $hFunction->getFirstDateFromDate($work->fromDate());
                 # phien ban moi - nv lam nhieu cty
                 if ($firstDateOfMonth > $firstDateOfWork) {
-                    // qua thang moi
+                    # qua thang moi
                     # vo hieu hoa bang cham cong cu
                     $this->disableWord($workId);
                     # xuat bang luong cho NV
