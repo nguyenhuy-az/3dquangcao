@@ -17,6 +17,6 @@
 @endsection
 
 @section('qc_js_footer')
-    <script src="{{ url('public/ad3d/finance/salary/payment/js/payment.js')}}"></script>
+    <script src="{{ url('public/ad3d/finance/salary/payment/js/index.js')}}"></script>
 @endsection
 

@@ -7,20 +7,69 @@ use Illuminate\Database\Eloquent\Model;
 class QcProductDesign extends Model
 {
     protected $table = 'qc_product_design';
-    protected $fillable = ['design_id', 'image', 'description', 'applyStatus', 'confirmStatus', 'confirmDate', 'action', 'created_at', 'product_id', 'staff_id', 'confirmStaff_id'];
+    protected $fillable = ['design_id', 'image', 'description', 'designType', 'applyStatus', 'confirmStatus', 'confirmDate', 'action', 'created_at', 'product_id', 'staff_id', 'confirmStaff_id'];
     protected $primaryKey = 'design_id';
     public $timestamps = false;
 
     private $lastId;
 
     #========== ========== ========== THEM  - SỬA ========== ========== ==========
+    # mac dinh thiet ke san pham
+    public function getDefaultDesignTypeProduct()
+    {
+        return 1;
+    }
+
+    # mac dinh thiet ke san pham
+    public function getDefaultDesignTypeConstruction()
+    {
+        return 2;
+    }
+
+    #mac dinh su dung
+    public function getDefaultHasApply()
+    {
+        return 1;
+    }
+
+    #mac dinh khong su dung
+    public function getDefaultNotApply()
+    {
+        return 0;
+    }
+
+    #mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    #mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    #mac dinh co xac nha
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    #mac dinh khong xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
+
     #---------- Them ----------
-    public function insert($image, $description, $productId, $staffId)
+    public function insert($image, $description, $productId, $staffId, $designType = 1)
     {
         $hFunction = new \Hfunction();
         $modelProductDesign = new QcProductDesign();
         $modelProductDesign->image = $image;
         $modelProductDesign->description = $description;
+        $modelProductDesign->designType = $designType;
         $modelProductDesign->product_id = $productId;
         $modelProductDesign->staff_id = $staffId;
         $modelProductDesign->created_at = $hFunction->createdAt();
@@ -38,7 +87,7 @@ class QcProductDesign extends Model
         return $this->lastId;
     }
 
-//kiem tra ID
+    //kiem tra ID
     public function checkIdNull($id = null)
     {
         return (empty($id)) ? $this->designId() : $id;
@@ -55,11 +104,11 @@ class QcProductDesign extends Model
         return 'public/images/product-design/small';
     }
 
-    # xoa
+    # xoa thiet ke
     public function actionDelete($designId = null)
     {
         $designId = (empty($designId)) ? $this->imageId() : $designId;
-        $imageName = $this->image($designId)[0];
+        $imageName = $this->image($designId);
         if (QcProductDesign::where('design_id', $designId)->delete()) {
             $this->dropImage($imageName); # xoa anh
         }
@@ -76,11 +125,11 @@ class QcProductDesign extends Model
         return $hFunction->uploadSaveByFileName($file, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $size);
     }
 
-    // xac nhan su dung
+    // xac nhan su dung TK san pham
     public function confirmApplyStatus($designId, $applyStatus, $confirmStatus, $confirmStaffId)
     {
         $hFunction = new \Hfunction();
-        # thiet ke dang ap dung
+        # thiet ke sap dang ap dung
         $dataApplyStatusActivity = $this->infoApplyStatusActivityOfProduct($this->productId($designId));
         if (QcProductDesign::where('design_id', $designId)->update(
             [
@@ -90,17 +139,22 @@ class QcProductDesign extends Model
                 'confirmStaff_id' => $confirmStaffId
             ])
         ) {
-            if ($applyStatus == 1) { # su dung thiet ke
-                if (count($dataApplyStatusActivity) > 0) { # ton tai thiet ke dang app dung
-                    $this->disableApplyStatus($dataApplyStatusActivity->designId()); # vo hieu design cu
+            # chi xet vo hieu khi up anh thiet ke sap pham - CHI DUOC TON 1 THIET KE SAN PHAM DANG HOẠT DONG
+            if ($this->checkIsDesignProduct($this->designType($designId))) {
+                if ($applyStatus == $this->getDefaultHasApply()) { # su dung thiet ke
+                    if ($hFunction->checkCount($dataApplyStatusActivity)) { # ton tai thiet ke dang app dung
+                        # vo hieu design cu
+                        $this->disableApplyStatus($dataApplyStatusActivity->designId());
+                    }
                 }
             }
         }
     }
 
+    # vo hieu a thiet ke
     public function disableApplyStatus($designId = null)
     {
-        return QcProductDesign::where('design_id', $this->checkIdNull($designId))->update(['applyStatus' => 0]);
+        return QcProductDesign::where('design_id', $this->checkIdNull($designId))->update(['applyStatus' => $this->getDefaultNotApply()]);
     }
 
     //xoa anh thiet ke
@@ -134,25 +188,51 @@ class QcProductDesign extends Model
     {
         return $this->belongsTo('App\Models\Ad3d\Product\QcProduct', 'product_id', 'product_id');
     }
-
+    #====> THIET KE SAN PHAM
+    # tat cac thong tin thiet ke san pham - khong bao gom thiet ke thi cong
     public function infoAllOfProduct($productId)
     {
-        return QcProductDesign::where('product_id', $productId)->orderBy('design_id', 'DESC')->get();
+        $designType = $this->getDefaultDesignTypeProduct();
+        return QcProductDesign::where('product_id', $productId)->where('designType', $designType)->orderBy('design_id', 'DESC')->get();
     }
 
+    # thiet ke san pham sau cung cua 1 san pham
     public function infoLastOfProduct($productId)
     {
-        return QcProductDesign::where('product_id', $productId)->orderBy('product_id', 'DESC')->first();
+        $designType = $this->getDefaultDesignTypeProduct();
+        return QcProductDesign::where('product_id', $productId)->where('designType', $designType)->orderBy('product_id', 'DESC')->first();
     }
 
+    # thong tin thiet ke san pham dang ap dung
     public function infoApplyStatusActivityOfProduct($productId)
     {
-        return QcProductDesign::where('product_id', $productId)->where('applyStatus', 1)->where('action', 1)->first();
+        $designType = $this->getDefaultDesignTypeProduct();
+        $applyStatus = $this->getDefaultHasApply();
+        $action = $this->getDefaultHasAction();
+        return QcProductDesign::where('product_id', $productId)->where('designType', $designType)->where('applyStatus', $applyStatus)->where('action', $action)->first();
     }
 
+    # tong thiet ke san pham dang ap dung
     public function totalDesignOfProduct($productId)
     {
-        return QcProductDesign::where('product_id', $productId)->count();
+        $designType = $this->getDefaultDesignTypeProduct();
+        return QcProductDesign::where('product_id', $productId)->where('designType', $designType)->count();
+    }
+
+    # THIET KE THI CONG
+    # tat ca thiet ke thi cong - khong bao gom thiet ke san pham
+    public function infoAllConstructionOfProduct($productId)
+    {
+        $designType = $this->getDefaultDesignTypeConstruction();
+        return QcProductDesign::where('product_id', $productId)->where('designType', $designType)->orderBy('design_id', 'DESC')->get();
+    }
+
+    # tat ca thiet ke thi cong  - dang ap dung
+    public function infoConstructionHasApplyOfProduct($productId)
+    {
+        $designType = $this->getDefaultDesignTypeConstruction();
+        $applyStatus = $this->getDefaultHasApply();
+        return QcProductDesign::where('product_id', $productId)->where('designType', $designType)->where('applyStatus', $applyStatus)->orderBy('design_id', 'DESC')->get();
     }
 
     //---------- Nhan vien thiet ke -----------
@@ -160,10 +240,12 @@ class QcProductDesign extends Model
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
     }
+
     public function confirmStaff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'confirmStaff_id', 'staff_id');
     }
+
     #============ =========== ============ LAY THONG TIN ============= =========== ==========
 
     public function getInfo($designId = '', $field = '')
@@ -185,14 +267,14 @@ class QcProductDesign extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcProductDesign::where('design_id', $objectId)->pluck($column);
+            return QcProductDesign::where('design_id', $objectId)->pluck($column)[0];
         }
     }
 
     #----------- DEPARTMENT INFO -------------
-    public function checkApplyStatus($designId=null)
+    public function checkApplyStatus($designId = null)
     {
-        return ($this->applyStatus($designId) == 1) ? true : false;
+        return ($this->applyStatus($designId) == $this->getDefaultHasApply()) ? true : false;
     }
 
     public function designId()
@@ -208,6 +290,11 @@ class QcProductDesign extends Model
     public function description($designId = null)
     {
         return $this->pluck('description', $designId);
+    }
+
+    public function designType($designId = null)
+    {
+        return $this->pluck('designType', $designId);
     }
 
     public function applyStatus($designId = null)
@@ -248,5 +335,17 @@ class QcProductDesign extends Model
     public function action($designId = null)
     {
         return $this->pluck('action', $designId);
+    }
+    # ======== kiem tra thong tin ============
+    # kiem tra co phai thiet ke san pham khong
+    public function checkIsDesignProduct($designType)
+    {
+        return ($designType == $this->getDefaultDesignTypeProduct()) ? true : false;
+    }
+
+    # kiem tra co phai thiet ke thi cong
+    public function checkIsDesignConstruction($designType)
+    {
+        return ($designType == $this->getDefaultDesignTypeConstruction()) ? true : false;
     }
 }

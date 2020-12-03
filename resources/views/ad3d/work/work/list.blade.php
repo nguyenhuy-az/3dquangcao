@@ -117,9 +117,9 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                                             <div class="media-body">
                                                 <h5 class="media-heading">{!! $dataStaffWork->lastName() !!}</h5>
                                                 @if(!$work->checkSalaryStatus())
-                                                    <span class="qc_end qc-link-red-bold">
+                                                    <a class="qc_end qc-link-red-bold" style="color: red;">
                                                         TÍNH LƯƠNG
-                                                    </span>
+                                                    </a>
                                                 @else
                                                     <em class="qc-color-grey">
                                                         Đã Tính lương
@@ -145,7 +145,7 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                                 </tr>
                             @endforeach
                             <tr>
-                                <td colspan="3" style="border-left: 5px solid blue;">
+                                <td colspan="3" style="border-left: 5px solid blue; padding-top: 0px;padding-bottom: 0;">
                                     {!! $hFunction->page($dataWork) !!}
                                 </td>
                             </tr>

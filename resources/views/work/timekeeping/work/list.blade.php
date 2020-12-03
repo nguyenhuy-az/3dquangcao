@@ -315,13 +315,13 @@ if ($hFunction->checkCount($dataWork)) {
                                                 </td>
                                                 <td class="text-right">
                                                     <b>
-                                                        + {!! $hFunction->currencyFormat($totalMoneyOvertimeHour) !!}</b>
+                                                        + {!! $hFunction->currencyFormat($totalMoneyOvertimeHour) !!}
+                                                    </b>
                                                 </td>
                                             </tr>
                                             <tr style="color: brown;">
                                                 <td>
-                                                    <span>Thưởng:</span>
-                                                    <em class="qc-color-grey"> - (Tạm thời)</em>
+                                                    <span>Thưởng: </span>
                                                 </td>
                                                 <td class="text-right">
                                                     <b>+ {!! $hFunction->currencyFormat($totalMoneyBonus) !!}</b>
@@ -340,8 +340,7 @@ if ($hFunction->checkCount($dataWork)) {
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <span>Phạt</span>
-                                                    <em class="qc-color-grey"> - (Tạm thời)</em>
+                                                    <span>Phạt: </span>
                                                 </td>
                                                 <td class="text-right">
                                                     <a class="qc-link" href="{!! route('qc.work.minus_money.get') !!}">

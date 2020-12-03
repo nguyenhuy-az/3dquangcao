@@ -294,7 +294,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="5">
+                                <td class="text-center" colspan="5">
                                     {!! $hFunction->page($dataTimekeepingProvisional) !!}
                                 </td>
                             </tr>

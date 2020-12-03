@@ -17,7 +17,7 @@ use Request;
 
 class PaymentController extends Controller
 {
-    public function index($companyFilterId = null, $monthFilter = null, $yearFilter = null, $nameFiler = null)
+    public function index($companyFilterId = null, $monthFilter = null, $yearFilter = null, $staffFilterId = 0)
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
@@ -44,27 +44,16 @@ class PaymentController extends Controller
         } else {
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
-        /*if ($dataStaffLogin->checkRootManage()) {
-            if (empty($companyFilterId)) {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-            } else {
-                $searchCompanyFilterId = [$companyFilterId];
-            }
-        } else {
-            $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-            $companyFilterId = $dataStaffLogin->companyId();
-        }*/
-
         if($monthFilter < 8 && $yearFilter <= 2019){ # du lieu cu phien ban cu --  loc theo staff_id
-            if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listIdOfListCompanyAndName([$companyFilterId], $nameFiler);
+            if ($staffFilterId > 0) {
+                $listStaffId = [$staffFilterId];
             } else {
                 $listStaffId = $modelStaff->listIdOfListCompany([$companyFilterId]);
             }
             $listWorkId = $modelWork->listIdOfListStaffInBeginDate($listStaffId, $dateFilter);
         }else{ # du lieu phien ban moi - loc theo thong tin lam viec tai cty (companyStaffWork)
-            if (!empty($nameFiler)) {
-                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $modelStaff->listStaffIdByName($nameFiler));
+            if ($staffFilterId > 0) {
+                $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], [$staffFilterId]);
             } else {
                 $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId]);
             }
@@ -74,7 +63,9 @@ class PaymentController extends Controller
 
 
         $dataSalary = $modelSalary->selectInfoByListWork($listWorkId)->paginate(30);
-        return view('ad3d.finance.salary.payment.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataSalary', 'companyFilterId', 'monthFilter', 'yearFilter', 'nameFiler'));
+        //danh sach NV
+        $dataStaffFilter = $modelCompany->staffInfoActivityOfListCompanyId([$companyFilterId]);
+        return view('ad3d.finance.salary.payment.list', compact('modelStaff','dataStaffFilter', 'dataCompany', 'dataAccess', 'dataSalary', 'companyFilterId', 'monthFilter', 'yearFilter', 'staffFilterId'));
 
 
     }

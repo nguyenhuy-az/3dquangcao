@@ -10,34 +10,19 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dang nhap
+$hrefIndex = route('qc.ad3d.finance.salary.payment.get');
 ?>
 @extends('ad3d.finance.salary.payment.index')
 @section('qc_ad3d_index_content')
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">
+                <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                     style="padding-left: 0;padding-right: 0;">
+                    <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     <label class="qc-font-size-20">BẢNG LƯƠNG</label>
-                </div>
-                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
-                            data-href-filter="{!! route('qc.ad3d.finance.salary.payment.get') !!}">
-                        @if($hFunction->checkCount($dataCompany))
-                            @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
-                                    <option value="{!! $company->companyId() !!}"
-                                            @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
-                                @else
-                                    @if($companyFilterId == $company->companyId())
-                                        <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
-                                    @endif
-                                @endif
-                            @endforeach
-                        @endif
-                    </select>
                 </div>
             </div>
         </div>
@@ -47,57 +32,91 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                  data-href-add="{!! route('qc.ad3d.finance.salary.payment.add.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr style="background-color: black;color: yellow;">
-                            <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Tên</th>
-                            <th style="width: 100px;">Tháng -năm</th>
-                            <th class="text-right">Tổng lương</th>
-                            <th class="text-right">
-                                Mua vật tư <br/>
-                                <em>(Đã duyệt chưa TT)</em>
-                            </th>
-                            <th class="text-right">Ứng</th>
-                            <th class="text-right">Phạt</th>
-                            <th class="text-right">Tổng lãnh</th>
-                            <th class="text-right">Đã thanh toán</th>
-                            <th class="text-right">Chưa thanh toán</th>
-                        </tr>
                         <tr>
-                            <td class="text-center"></td>
-                            <td style="padding: 0px;">
-                                <div class="input-group">
-                                    <input type="text" class="textFilterName form-control" name="textFilterName"
-                                           placeholder="Tìm theo tên" value="{!! $nameFiler !!}">
-                                      <span class="input-group-btn">
-                                            <button class="btFilterName btn btn-default" type="button"
-                                                    data-href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">Tìm
-                                            </button>
-                                      </span>
-                                </div>
-                            </td>
-                            <td style="padding: 0;">
-                                <select class="cbMonthFilter col-sx-5 col-sm-5 col-md-5 col-lg-5"
-                                        style="padding: 0; height: 34px;"
-                                        data-href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">
+                            <td colspan="2" style="padding: 0;">
+                                <select class="cbMonthFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="padding: 0; height: 34px; color: red;" data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
                                         Tất cả
                                     </option>
                                     @for($m =1;$m<= 12; $m++)
                                         <option value="{!! $m !!}"
                                                 @if((int)$monthFilter == $m) selected="selected" @endif>
-                                            {!! $m !!}
+                                            Tháng {!! $m !!}
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-7 col-sm-7 col-md-7 col-lg-7"
-                                        style="padding: 0; height: 34px;"
-                                        data-href="{!! route('qc.ad3d.finance.salary.payment.get') !!}">
+                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="padding: 0; height: 34px; color: red;" data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
                                                 @if($yearFilter == $y) selected="selected" @endif>{!! $y !!}</option>
                                     @endfor
                                 </select>
                             </td>
+                            <td colspan="3" style="padding: 0;">
+                                <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
+                                        data-href-filter="{!! $hrefIndex !!}">
+                                    @if($hFunction->checkCount($dataCompany))
+                                        @foreach($dataCompany as $company)
+                                            @if($dataStaffLogin->checkRootManage())
+                                                <option value="{!! $company->companyId() !!}"
+                                                        @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
+                                            @else
+                                                @if($companyFilterId == $company->companyId())
+                                                    <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
+                                                @endif
+                                            @endif
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </td>
+                            <td colspan="6"></td>
+                        </tr>
+                        <tr style="background-color: black;color: yellow;">
+                            <th style="width: 150px;">Nhân viên</th>
+                            <th>
+                                Chưa thanh toán
+                                <br/>
+                                <em style="color: white;">(Có tiền vật tư)</em>
+                            </th>
+                            <th>
+                                Tổng lương lãnh
+                                <br/>
+                                <em style="color: white;">(Không tiền vật tư)</em>
+                            </th>
+                            <th>
+                                Tổng lương cơ bản
+                            </th>
+                            <th>Thưởng</th>
+                            <th>Công thêm</th>
+                            <th>
+                                Mua vật tư
+                                <br/>
+                                <em style="color: white;">(Đã duyệt chưa TT)</em>
+                            </th>
+                            <th>Ứng</th>
+                            <th>Phạt</th>
+                            <th>Đã thanh toán</th>
+                            <th>Tiền giữ</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0 !important;">
+                                <select class="cbStaffFilter form-control" data-href="{!! $hrefIndex !!}"
+                                        name="cbStaffFilter">
+                                    <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                        Tất cả
+                                    </option>
+                                    @if($hFunction->checkCount($dataStaffFilter))
+                                        @foreach($dataStaffFilter as $staff)
+                                            <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                                    @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </td>
+                            <td></td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -116,17 +135,30 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                             @foreach($dataSalary as $salary)
                                 <?php
                                 $salaryId = $salary->salaryId();
+                                $benefitMoney = $salary->benefitMoney();
+                                $bonusMoney = $salary->bonusMoney();
+                                $minusMoney = $salary->minusMoney();
                                 $salaryPay = $salary->salary();
+                                # tien da thanh toan
                                 $totalPaid = $salary->totalPaid();
+                                # tong tien giu
+                                $totalKeepMoney = $salary->totalKeepMoney();
+                                # thong tin lam viec
                                 $dataWork = $salary->work;
-
-                                $workCompanyId = $dataWork->companyIdOfWork();
-                                $workCompanyId = (count($workCompanyId) > 0) ? $workCompanyId[0] : $workCompanyId;
-                                //dd($workCompanyId);
-                                $totalSalary = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
+                                # tong luong co ban
+                                $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
+                                # tien thuong
+                                $totalBonusMoney = $dataWork->totalMoneyBonusApplied();
                                 //2 tong tien mua vat tu xac nhan chưa thanh toan
                                 $fromDate = $dataWork->fromDate();
                                 $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataWork->companyStaffWork->staff->staffId(), date('Y-m', strtotime($fromDate)), 2);
+
+                                # luong da ung
+                                $totalMoneyConfirmedBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
+                                # tong tien nhan
+                                $totalSalaryReceive = $totalSalaryBasic + $benefitMoney + $bonusMoney;
+                                # tong can thanh toan
+                                $totalUnpaid = $totalSalaryReceive + $totalMoneyImportOfStaff - $totalMoneyConfirmedBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
 
                                 # thong tin nhan vien
                                 if (!empty($dataWork->companyStaffWorkId())) {
@@ -136,64 +168,83 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 }
                                 $image = $dataStaffSalary->image();
                                 $src = $dataStaffSalary->pathAvatar($image);
+                                $n_o += 1;
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $salaryId !!}">
-                                    <td class="text-center">
-                                        {!! $n_o += 1 !!}
-                                    </td>
                                     <td style="padding: 0;">
                                         <div class="media" style="margin: 3px;">
                                             <a class="pull-left" href="#">
-                                                <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
-                                                     src="{!! $src !!}">
+                                                <img class="media-object" src="{!! $src !!}"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;">
                                             </a>
-
                                             <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataStaffSalary->fullName() !!}</h5>
+                                                <h5 class="media-heading">{!! $dataStaffSalary->lastName() !!}</h5>
+                                                <em style="color: blue;">{!! date('m-Y',strtotime($dataWork->fromDate())) !!}</em>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        <a class="qc_view qc-link-green">
-                                            <span>{!! date('m-Y',strtotime($dataWork->fromDate())) !!}</span>
-                                            &nbsp;
-                                            <i class="glyphicon glyphicon-eye-open"></i>
-                                        </a>
+                                        <b style="color: red;">
+                                            {!! $hFunction->currencyFormat($totalUnpaid) !!}
+                                        </b>
                                     </td>
-                                    <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($totalSalary) !!}
+                                    <td>
+                                        <b style="color: blue;">
+                                            {!! $hFunction->currencyFormat($totalSalaryReceive) !!}
+                                        </b>
                                     </td>
-                                    <td class="text-right">
+                                    <td>
+                                        <b style="color: red;">
+                                            {!! $hFunction->currencyFormat($totalSalaryBasic) !!}
+                                        </b>
+                                    </td>
+                                    <td>
+                                        <b style="color: blue;">{!! $hFunction->currencyFormat($totalBonusMoney) !!}</b>
+                                    </td>
+                                    <td>
+                                        <b style="color: red;">
+                                            {!! $hFunction->currencyFormat($benefitMoney) !!}
+                                        </b>
+                                    </td>
+                                    <td>
                                         {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
                                     </td>
-                                    <td class="text-right">
-                                        {!! $hFunction->currencyFormat($dataWork->totalMoneyBeforePay()) !!}
+                                    <td>
+                                        <b style="color: blue;">
+                                            {!! $hFunction->currencyFormat($dataWork->totalMoneyBeforePay()) !!}
+                                        </b>
                                     </td>
-                                    <td class="text-right">
-                                        {!! $hFunction->currencyFormat($dataWork->totalMoneyMinus()) !!}
+                                    <td>
+                                        <b>
+                                            {!! $hFunction->currencyFormat($minusMoney) !!}
+                                        </b>
                                     </td>
-                                    <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($salary->salary() + $totalMoneyImportOfStaff) !!}
+                                    <td>
+                                        <b style="color: red;">
+                                            {!! $hFunction->currencyFormat($totalPaid) !!}
+                                        </b>
+                                        <br/>
+                                        <a class="qc_view qc-link-green-bold">
+                                            - XEM
+                                        </a>
                                     </td>
-                                    <td class="text-right">
-                                        {!! $hFunction->currencyFormat($totalPaid) !!}
+                                    <td>
+                                        <b style="color: blue;">
+                                            {!! $hFunction->currencyFormat($totalKeepMoney) !!}
+                                        </b>
                                     </td>
-                                    <td class="text-right qc-color-red">
-                                        {!! $hFunction->dotNumber($salaryPay + $totalMoneyImportOfStaff -$totalPaid) !!}
-                                    </td>
-
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center qc-padding-top-20 qc-padding-bot-20" colspan="10">
+                                <td colspan="11"
+                                    style="border-left: 5px solid brown; padding-top: 0; padding-bottom: 0;">
                                     {!! $hFunction->page($dataSalary) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="qc-padding-top-20 qc-padding-bot-20 text-center" colspan="10">
-                                    <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
+                                <td colspan="10">
+                                    <em class="qc-color-red">Không tìm thấy thông tin</em>
                                 </td>
                             </tr>
                         @endif

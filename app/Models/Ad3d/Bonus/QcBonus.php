@@ -167,18 +167,19 @@ class QcBonus extends Model
     {
         return QcBonus::where('work_id', $workId)->where('applyStatus', 0)->sum('money');
     }
-
+    # tong tien da ap dung phat
     public function totalMoneyAppliedOfWork($workId)
     {
         return QcBonus::where('work_id', $workId)->where('applyStatus', 1)->where('cancelStatus', 0)->where('action', 0)->sum('money');
     }
 
+    # neu khong huy thi se mac dinh la dong y
     public function autoCheckApplyBonusEndWork($workId)
     {
         return QcBonus::where('work_id', $workId)->where('cancelStatus', 0)->where('action', 1)->update(['applyStatus' => 1, 'action' => 0]);
     }
 
-    //---------- thong bao ban giao don hang moi -----------
+    //---------- thong bao ban giao don hang moi ----------- -------
     public function orderAllocation()
     {
         return $this->belongsTo('App\Models\Ad3d\OrderAllocation\QcOrderAllocation', 'orderAllocation_id', 'allocation_id');

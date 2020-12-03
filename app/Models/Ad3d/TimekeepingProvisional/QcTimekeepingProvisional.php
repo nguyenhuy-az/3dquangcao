@@ -161,13 +161,13 @@ class QcTimekeepingProvisional extends Model
     }
 
     # cap nhat xac nhan
-    public function updateConfirm($timekeepingProvisionalId, $confirmNote, $accuracyStatus, $staffConfirmId)
+    public function updateConfirm($timekeepingProvisionalId, $confirmNote, $accuracyStatus, $confirmStaffId)
     {
         $hFunction = new \Hfunction();
         return QcTimekeepingProvisional::where(['timekeeping_provisional_id' => $timekeepingProvisionalId])->update(
             [
                 'accuracyStatus' => $accuracyStatus,
-                'staffConfirm_id' => $staffConfirmId,
+                'staffConfirm_id' => $confirmStaffId,
                 'confirmNote' => $confirmNote,
                 'confirmStatus' => $this->getDefaultHasConfirmStatus(),
                 'confirmDate' => $hFunction->createdAt(),
@@ -381,8 +381,14 @@ class QcTimekeepingProvisional extends Model
         return ($timeCheck > $timeDefault) ? true : false;
     }
 
-    //===== XAC NHAN CHAM CONG ===== ===
-    # duyet cham cong tu dong khi xuat bang luong - xac nhan tu
+    //===== ===== XAC NHAN CHAM CONG ===== ======= ======
+    # kiem tra duyet tu dong hay duyet tay
+    public function checkIsAutoConfirm($confirmStaffId)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($confirmStaffId)) ? true : false;
+    }
+    # duyet cham cong tu dong khi xuat bang luong - xac nhan tu dong
     /*
      * goi trong xuat bang luong qc_work
      * */
@@ -398,8 +404,8 @@ class QcTimekeepingProvisional extends Model
                 $accuracyStatus = $this->getDefaultHasAccuracyStatus();# mac dinh chinh xac
                 $applyTimekeepingStatus = $this->getDefaultHasTimekeeping();# mac dinh duoc tin cong
                 $applyRuleStatus = $this->getDefaultHasApplyRule();
-                $staffConfirmId = $this->getDefaultConfirmStaff(); # duyet tu dong
-                $this->confirmWork($timekeepingId, $staffConfirmId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus);
+                $confirmStaffId = $this->getDefaultConfirmStaff(); # duyet tu dong
+                $this->confirmWork($timekeepingId, $confirmStaffId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus);
             }
         }
 
@@ -407,12 +413,12 @@ class QcTimekeepingProvisional extends Model
 
     /*
      * duyet khi co gio ra
-     * $staffConfirmId = NULL  -> duyet tu dong
+     * $confirmStaffId = NULL  -> duyet tu dong
      * goi khi quan lý duyet cham cong  -> timekeepingProvisionalController
      * duyet tu dong cuoi thang -> this function
      *
      * */
-    public function confirmWork($timekeepingProvisionalId, $staffConfirmId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus)
+    public function confirmWork($timekeepingProvisionalId, $confirmStaffId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -424,11 +430,17 @@ class QcTimekeepingProvisional extends Model
         $modelTimekeepingImage = new QcTimekeepingImage();
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $model = new QcTimekeepingProvisionalImage();
+        # kiem tra co cap nhat khi canh bao neu co
+        if(!$modelTimekeepingProvisional->checkUpdateTimekeepingProvisionalWaring($timekeepingProvisionalId)){ # khong cap nhat
+            # khong tinh cong neu khong cap nhat
+            $applyTimekeepingStatus = $this->getDefaultNotTimekeeping();
+            $confirmNote = $confirmNote . " - Không báo lại khi bị cảnh báo sai";
+        }
         if ($accuracyStatus == $this->getDefaultNotAccuracyStatus()) $confirmNote = $confirmNote . " - Báo giờ không chính xác";
         if ($applyTimekeepingStatus == $this->getDefaultNotTimekeeping()) $confirmNote = $confirmNote . " - Không tính công ngày này";
         if ($applyRuleStatus == $this->getDefaultNotApplyRule()) $confirmNote = $confirmNote . " - Không áp dụng nội quy phạt";
         # cap nhat thong tin
-        if ($this->updateConfirm($timekeepingProvisionalId, $confirmNote, $accuracyStatus, $staffConfirmId)) {
+        if ($this->updateConfirm($timekeepingProvisionalId, $confirmNote, $accuracyStatus, $confirmStaffId)) {
             $dataTimekeepingProvisional = $modelTimekeepingProvisional->getInfo($timekeepingProvisionalId);
             $workId = $dataTimekeepingProvisional->workId();
             $note = $dataTimekeepingProvisional->note();
@@ -466,7 +478,7 @@ class QcTimekeepingProvisional extends Model
                                     $punishId = $modelPunishContent->getPunishIdForLateWork();
                                     $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
                                     if (!empty($punishId)) {
-                                        $modelMinusMoney->insert($dateBegin, $minusReason, $workId, $staffConfirmId, $punishId, $minusApplyStatus, null, null, null, null, $minusMoney, $minusReasonImage);
+                                        $modelMinusMoney->insert($dateBegin, $minusReason, $workId, $confirmStaffId, $punishId, $minusApplyStatus, null, null, null, null, $minusMoney, $minusReasonImage);
                                     }
                                     $lateStatus = 0;
                                 }
@@ -475,7 +487,7 @@ class QcTimekeepingProvisional extends Model
                                     $punishIdOfTimekeepingAccuracy = $modelPunishContent->getPunishIdForTimekeepingAccuracy();
                                     $punishIdOfTimekeepingAccuracy = (is_int($punishIdOfTimekeepingAccuracy)) ? $punishIdOfTimekeepingAccuracy : $punishIdOfTimekeepingAccuracy[0];
                                     if (!empty($punishIdOfTimekeepingAccuracy)) {
-                                        $modelMinusMoney->insert($dateBegin, $minusReason, $workId, $staffConfirmId, $punishIdOfTimekeepingAccuracy, $minusApplyStatus, null, null, null, null, $minusMoney, $minusReasonImage);
+                                        $modelMinusMoney->insert($dateBegin, $minusReason, $workId, $confirmStaffId, $punishIdOfTimekeepingAccuracy, $minusApplyStatus, null, null, null, null, $minusMoney, $minusReasonImage);
                                     }
                                 }
                             }
@@ -516,12 +528,11 @@ class QcTimekeepingProvisional extends Model
                             } else {
                                 $mainMinute = $totalMainWorkMinute;
                             }
-
                         }
                     }
                 }
                 #------- them thong tin cham cong chinh thuc --------
-                if ($modelTimekeeping->insert($dateBegin, $dateEnd, null, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $confirmNote, $lateStatus, $permissionLateStatus, $modelTimekeeping->getDefaultNotWorkStatus(), $staffConfirmId, $workId)) {
+                if ($modelTimekeeping->insert($dateBegin, $dateEnd, null, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $confirmNote, $lateStatus, $permissionLateStatus, $modelTimekeeping->getDefaultNotWorkStatus(), $confirmStaffId, $workId)) {
                     $newTimekeepingId = $modelTimekeeping->insertGetId();
                     $dataTimekeepingProvisionalImage = $modelTimekeepingProvisional->imageOfTimekeepingProvisional($timekeepingProvisionalId);
                     //thêm hình ảnh vào bảng chấm công chính
@@ -534,17 +545,14 @@ class QcTimekeepingProvisional extends Model
                                     $modelTimekeepingImage->insert($imageName, $newTimekeepingId, $reportPeriod);
                                 }
                             }
-
                         }
                     }
                 }
                 return true;
             }
-
         } else {
             return false;
         }
-
     }
 
     # xoa cham cong
@@ -700,11 +708,25 @@ class QcTimekeepingProvisional extends Model
         return $modelTimekeepingProvisionalWarning->infoTimeEndOfTimekeepingProvisional($this->checkNullId($timekeepingId));
     }
 
+    # kiem tra co cap nhat cham cong khi co canh bao hay chua
+    public function checkUpdateTimekeepingProvisionalWaring($timekeepingId = null)
+    {
+        $hFunction = new \Hfunction();
+        $result = true; # mac dinh da cap nhat
+        $dataWarning = $this->timekeepingProvisionalWarningGetInfo($timekeepingId);
+        if ($hFunction->checkCount($dataWarning)) { # co canh bao
+            foreach ($dataWarning as $warning) {
+                if ($hFunction->checkEmpty($warning->updateDate())) $result = false; # khong co cap nhat gio vao hoac gio ra
+            }
+        }
+        return $result;
+    }
+
     //============ =========== ============ GET INFO ============= =========== ==========
     public function getInfo($timekeepingId = '', $field = '')
     {
         if (empty($timekeepingId)) {
-            return QcTimekeepingProvisional::where('workStatus', 1)->get();
+            return QcTimekeepingProvisional::where('workStatus', $this->getDefaultHasWorkStatus())->get();
         } else {
             $result = QcTimekeepingProvisional::where('timekeeping_provisional_id', $timekeepingId)->first();
             if (empty($field)) {

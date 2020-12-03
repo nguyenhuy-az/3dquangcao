@@ -23,12 +23,12 @@ $hrefIndex = route('qc.work.bonus.get');
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
-                                <th style="width: 150px;">NGÀY</th>
+                                <th style="width: 120px;">NGÀY THÁNG</th>
                                 <th>SỐ TIỀN - LÝ DO</th>
                             </tr>
                             <tr>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_bonus_month col-sx-5 col-sm-5 col-md-5 col-lg-5"
+                                    <select class="qc_work_bonus_month col-sx-6 col-sm-6 col-md-6 col-lg-6"
                                             style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                             Tất cả tháng
@@ -36,11 +36,11 @@ $hrefIndex = route('qc.work.bonus.get');
                                         @for($m =1;$m<= 12; $m++)
                                             <option value="{!! $m !!}"
                                                     @if((int)$monthFilter == $m) selected="selected" @endif>
-                                                Tháng {!! $m !!}
+                                                {!! $m !!}
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_bonus_year col-sx-7 col-sm-7 col-md-7 col-lg-7"
+                                    <select class="qc_work_bonus_year col-sx-6 col-sm-6 col-md-6 col-lg-6"
                                             style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                             Tất cả năm
@@ -97,12 +97,6 @@ $hrefIndex = route('qc.work.bonus.get');
                                                     <img alt="huy_thuong" style="border: 1px solid grey; width: 70px;"
                                                          src="{!! $bonus->pathSmallImage($cancelImage) !!}">
                                                 @endif
-                                            @else
-                                                @if($bonus->checkEnableApply())
-                                                    <em style="color: grey;">Có hiệu lực</em>
-                                                @else
-                                                    <span style="color: red;">Tạm thời</span>
-                                                @endif
                                             @endif
                                         </td>
                                         <td>
@@ -113,25 +107,25 @@ $hrefIndex = route('qc.work.bonus.get');
                                             <em style="color: grey;">- {!! $bonus->note() !!}</em>
                                             @if(!$hFunction->checkEmpty($workAllocationId))
                                                 <br/>
-                                                <em style="color: grey;">- Sản phẩm:</em>
+                                                <em style="color: grey;">- SP:</em>
                                                 <b style="color: blue;">{!! $bonus->workAllocation->product->productType->name() !!}</b>
                                                 <br/>
-                                                <em style="color: grey;">- Đơn hàng:</em>
+                                                <em style="color: grey;">- ĐH:</em>
                                                 <b style="color: deeppink;">{!! $bonus->workAllocation->product->order->name() !!}</b>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderAllocationId))
                                                 <br/>
-                                                <em style="color: grey;">- Đơn hàng:</em>
+                                                <em style="color: grey;">- ĐH:</em>
                                                 <b style="color: blue;">{!! $bonus->orderAllocation->orders->name() !!}</b>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderConstructionId))
                                                 <br/>
-                                                <em style="color: grey;">- Đơn hàng:</em>
+                                                <em style="color: grey;">- ĐH:</em>
                                                 <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
                                             @endif
                                             @if(!$hFunction->checkEmpty($orderPayId))
                                                 <br/>
-                                                <em style="color: grey;">- Đơn hàng:</em>
+                                                <em style="color: grey;">- ĐH:</em>
                                                 <b style="color: blue;">{!! $bonus->orderPay->order->name() !!}</b>
                                             @endif
                                         </td>

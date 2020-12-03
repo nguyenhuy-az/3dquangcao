@@ -179,7 +179,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                                 <em style="color: grey;">Tạm thời </em>
                                             @endif
                                             {{--chi hien khi khong co phan hoi--}}
-                                            @if(!$checkMinusMoneyLostToolStatus)
+                                            @if(!$checkMinusMoneyLostToolStatus && $minusMoney->checkHasAction()))
                                                 <span> | </span>
                                                 <a class="qc_cancel_act qc-link-red-bold">HỦY</a>
                                             @endif

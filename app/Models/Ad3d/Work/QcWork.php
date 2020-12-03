@@ -127,9 +127,9 @@ class QcWork extends Model
                 $overtimeHour = $dataStaffWorkSalary->overtimeHour($workSalaryId);
                 $overtimeHour = (is_int($overtimeHour)) ? $overtimeHour : $overtimeHour[0];
 
-                $totalUnpaidSalary = (int)($this->totalSalaryBasicOfWorkInMonth($workId) - $totalBeforePay + $totalBonusMoney - $totalMinusMoney);
+                $totalSalary = (int)($this->totalSalaryBasicOfWorkInMonth($workId) + $totalBonusMoney - $totalBeforePay  - $totalMinusMoney);
                 $overtimeMoney = ($plusMinute / 60) * $overtimeHour;
-                if ($modelSalary->insert($mainMinute, $plusMinute, $minusMinute, $totalBeforePay, $totalMinusMoney, $benefit, $overtimeMoney, $totalUnpaidSalary, 0, $workId, $workSalaryId, null, null, 0, $totalBonusMoney)) {
+                if ($modelSalary->insert($mainMinute, $plusMinute, $minusMinute, $totalBeforePay, $totalMinusMoney, $benefit, $overtimeMoney, $totalSalary, 0, $workId, $workSalaryId, null, null, 0, $totalBonusMoney)) {
                     # vo hieu hoa bang cam cong cu
                     $this->endWork($workId);
                     if ($this->confirmExportSalary($workId)) {
@@ -161,9 +161,14 @@ class QcWork extends Model
     }
 
     # tong luong duoc nhan chua tinh cac chi phi khac
+    /*
+     * tien lam chinh
+     * Tien tang ca
+     * phu cap tang ca
+     * dien thoai
+     */
     public function totalSalaryBasicOfWorkInMonth($workId = null)
     {
-        $modelStaff = new QcStaff();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaffWorkSalary = new QcStaffWorkSalary();
         $workId = $this->checkIdNull($workId);
@@ -275,7 +280,7 @@ class QcWork extends Model
     # chon sanh sach cham cong trong thang theo thoi gian
     public function selectInfoOfListCompanyStaffWorkAndDate($listCompanyStaffWorkId, $dateFilter)
     {
-        return QcWork::where('fromDate', 'like', "%$dateFilter%")->whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('fromDate', 'DESC')->select('*');
+        return QcWork::where('fromDate', 'like', "%$dateFilter%")->whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('created_at', 'DESC')->select('*');
     }
 
     //----------- NHAN VIEN ------------

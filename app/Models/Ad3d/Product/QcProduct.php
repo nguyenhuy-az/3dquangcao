@@ -214,6 +214,19 @@ class QcProduct extends Model
         $modelProductDesign = new QcProductDesign();
         return $modelProductDesign->totalDesignOfProduct($this->checkIdNull($productId));
     }
+    # ==> THIET KE THI CONG
+    #tat ca thiet ke thi cong
+    public function productDesignInfoConstruction($productId = null)
+    {
+        $modelProductDesign = new QcProductDesign();
+        return $modelProductDesign->infoAllConstructionOfProduct($this->checkIdNull($productId));
+    }
+    #lay thiet ke thi cong dang ap dung
+    public function productDesignInfoConstructionHasApply($productId = null)
+    {
+        $modelProductDesign = new QcProductDesign();
+        return $modelProductDesign->infoConstructionHasApplyOfProduct($this->checkIdNull($productId));
+    }
 
     //---------- mua vat tu -----------
     public function importDetail()

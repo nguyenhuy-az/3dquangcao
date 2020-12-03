@@ -112,19 +112,19 @@ class TimekeepingController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
-        $dayBegin= Request::input('cbDayBegin');
+        $dayBegin = Request::input('cbDayBegin');
         $monthBegin = Request::input('cbMonthBegin');
         $yearBegin = Request::input('cbYearBegin');
         $hoursBegin = Request::input('cbHoursBegin');
         $minuteBegin = Request::input('cbMinuteBegin');
-        $timeEnd = $modelTimekeepingProvisional->timeEnd($timekeepingProvisionalId)[0];
+        $timeEnd = $modelTimekeepingProvisional->timeEnd($timekeepingProvisionalId);
         $timeBegin = $hFunction->convertStringToDatetime("$monthBegin/$dayBegin/$yearBegin $hoursBegin:$minuteBegin:00");
-        if($hFunction->checkEmpty($timeEnd)){
+        if ($hFunction->checkEmpty($timeEnd)) {
             $checkTime = $hFunction->carbonNow();
-        }else{
+        } else {
             $checkTime = $timeEnd;
         }
-        if ( $timeBegin > $checkTime) {
+        if ($hFunction->formatDateToYMDHI($timeBegin)  > $hFunction->formatDateToYMDHI($checkTime)) {
             return "Giờ vào phải nhỏ hơn giờ ra";
         } else {
             if (!$modelTimekeepingProvisional->updateTimeBegin($timekeepingProvisionalId, $timeBegin)) {
@@ -176,6 +176,7 @@ class TimekeepingController extends Controller
     public function postTimeEnd()
     {
         $hFunction = new \Hfunction();
+        $modelCompany = new QcCompany();
         $modelWorkAllocationReport = new QcWorkAllocationReport();
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
@@ -197,84 +198,88 @@ class TimekeepingController extends Controller
         $afternoonStatus = Request::input('txtAfternoonStatus');
         $afternoonStatus = ($afternoonStatus) ? 1 : 0;
 
-        $timeBegin = $modelTimekeepingProvisional->timeBegin($timekeepingProvisionalId)[0];
+        $timeBegin = $modelTimekeepingProvisional->timeBegin($timekeepingProvisionalId);
         $timeEnd = $hFunction->convertStringToDatetime("$monthEnd/$dayEnd/$yearEnd $hoursEnd:$minuteEnd:00");
-        if ($hFunction->formatDateToDMYHI($timeBegin) > $hFunction->formatDateToDMYHI($timeEnd)) {
-            return 'Giờ ra phải lớn hơn giờ vào';
+        if ($hFunction->formatDateToYMDHI($timeBegin) > $hFunction->formatDateToYMDHI($timeEnd)) {
+            return 'GIỜ RA PHẢI LỚN HƠN GIỜ VÀO';
         } else {
-            # co anh bao cao
-            if (empty($txtTimekeepingImage_1) && empty($txtTimekeepingImage_2) && empty($txtTimekeepingImage_3)) {
-                return "PHẢI CÓ ẢNH BÁO CÁO";
+            # kiem tra vuot gioi han bao gio ra
+            if ($hFunction->formatDateToYMDHI($timeEnd) > $hFunction->formatDateToYMDHI($modelCompany->getReportLimitTimeEndOfDate($timeBegin))) {
+                return 'GIỜ RA KHÔNG ĐÚNG';
             } else {
-                # kiem tra da bao gio ra hay chu
-                if ($modelTimekeepingProvisional->checkReportedTimeEnd($timekeepingProvisionalId)) {
-                    return "Ngày này đã báo giờ ra";
+                # co anh bao cao
+                if (empty($txtTimekeepingImage_1) && empty($txtTimekeepingImage_2) && empty($txtTimekeepingImage_3)) {
+                    return "PHẢI CÓ ẢNH BÁO CÁO";
                 } else {
-                   // echo "$timekeepingProvisionalId - $timeEnd - $afternoonStatus - $note";
-                    if ($modelTimekeepingProvisional->updateTimeEnd($timekeepingProvisionalId, $timeEnd, $afternoonStatus, $note)) {
-                        # anh bao cao 1
-                        if (!empty($txtTimekeepingImage_1)) {
-                            $newReportId_1 = null; # mặc định null
-                            if ($cbWorkAllocation_1 > 0) { # anh bao cao thuoc cong trinh
-                                # them bao cao
-                                if ($modelWorkAllocationReport->insert($hFunction->carbonNow(), 'Báo cáo tiến độ', $cbWorkAllocation_1)) {
-                                    $newReportId_1 = $modelWorkAllocationReport->insertGetId();
-                                }
-                            }
-                            # them anh bao cao trong ngay
-                            $name_img_1 = stripslashes($_FILES['txtTimekeepingImage_1']['name']);
-                            $name_img_1 = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_1);
-                            $source_img = $_FILES['txtTimekeepingImage_1']['tmp_name'];
-                            if (!$modelTimekeepingProvisionalImage->checkExistName($name_img_1)) { # khong ton tai hinh anh
-                                if ($modelTimekeepingProvisionalImage->uploadImage($source_img, $name_img_1, 500)) {
-                                    $modelTimekeepingProvisionalImage->insert($name_img_1, $timekeepingProvisionalId, $newReportId_1);
-                                }
-                            }
-                        }
-                        # anh bao cao 2
-                        if (!empty($txtTimekeepingImage_2)) {
-                            $newReportId_2 = null; # mặc định null
-                            if ($cbWorkAllocation_2 > 0) { # anh bao cao thuoc cong trinh
-                                # them bao cao
-                                if ($modelWorkAllocationReport->insert($hFunction->carbonNow(), 'Báo cáo tiến độ', $cbWorkAllocation_2)) {
-                                    $newReportId_2 = $modelWorkAllocationReport->insertGetId();
-                                }
-                            }
-                            $name_img_2 = stripslashes($_FILES['txtTimekeepingImage_2']['name']);
-                            $name_img_2 = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_2);
-                            $source_img = $_FILES['txtTimekeepingImage_2']['tmp_name'];
-                            if (!$modelTimekeepingProvisionalImage->checkExistName($name_img_2)) {
-                                if ($modelTimekeepingProvisionalImage->uploadImage($source_img, $name_img_2, 500)) {
-                                    $modelTimekeepingProvisionalImage->insert($name_img_2, $timekeepingProvisionalId, $newReportId_2);
-                                }
-                            }
-                        }
-
-                        # anh bao cao 3
-                        if (!empty($txtTimekeepingImage_3)) {
-                            $newReportId_3 = null; # mặc định null
-                            if ($cbWorkAllocation_3 > 0) { # anh bao cao thuoc cong trinh
-                                # them bao cao
-                                if ($modelWorkAllocationReport->insert($hFunction->carbonNow(), 'Báo cáo tiến độ', $cbWorkAllocation_3)) {
-                                    $newReportId_3 = $modelWorkAllocationReport->insertGetId();
-                                }
-                            }
-                            $name_img_3 = stripslashes($_FILES['txtTimekeepingImage_3']['name']);
-                            $name_img_3 = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_3);
-                            $source_img = $_FILES['txtTimekeepingImage_3']['tmp_name'];
-                            if (!$modelTimekeepingProvisionalImage->checkExistName($name_img_3)) {
-                                if ($modelTimekeepingProvisionalImage->uploadImage($source_img, $name_img_3, 500)) {
-                                    $modelTimekeepingProvisionalImage->insert($name_img_3, $timekeepingProvisionalId, $newReportId_3);
-                                }
-                            }
-                        }
+                    # kiem tra da bao gio ra hay chu
+                    if ($modelTimekeepingProvisional->checkReportedTimeEnd($timekeepingProvisionalId)) {
+                        return "Ngày này đã báo giờ ra";
                     } else {
-                        return "Hệ thống đang bảo trì";
+                        // echo "$timekeepingProvisionalId - $timeEnd - $afternoonStatus - $note";
+                        if ($modelTimekeepingProvisional->updateTimeEnd($timekeepingProvisionalId, $timeEnd, $afternoonStatus, $note)) {
+                            # anh bao cao 1
+                            if (!empty($txtTimekeepingImage_1)) {
+                                $newReportId_1 = null; # mặc định null
+                                if ($cbWorkAllocation_1 > 0) { # anh bao cao thuoc cong trinh
+                                    # them bao cao
+                                    if ($modelWorkAllocationReport->insert($hFunction->carbonNow(), 'Báo cáo tiến độ', $cbWorkAllocation_1)) {
+                                        $newReportId_1 = $modelWorkAllocationReport->insertGetId();
+                                    }
+                                }
+                                # them anh bao cao trong ngay
+                                $name_img_1 = stripslashes($_FILES['txtTimekeepingImage_1']['name']);
+                                $name_img_1 = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_1);
+                                $source_img = $_FILES['txtTimekeepingImage_1']['tmp_name'];
+                                if (!$modelTimekeepingProvisionalImage->checkExistName($name_img_1)) { # khong ton tai hinh anh
+                                    if ($modelTimekeepingProvisionalImage->uploadImage($source_img, $name_img_1, 500)) {
+                                        $modelTimekeepingProvisionalImage->insert($name_img_1, $timekeepingProvisionalId, $newReportId_1);
+                                    }
+                                }
+                            }
+                            # anh bao cao 2
+                            if (!empty($txtTimekeepingImage_2)) {
+                                $newReportId_2 = null; # mặc định null
+                                if ($cbWorkAllocation_2 > 0) { # anh bao cao thuoc cong trinh
+                                    # them bao cao
+                                    if ($modelWorkAllocationReport->insert($hFunction->carbonNow(), 'Báo cáo tiến độ', $cbWorkAllocation_2)) {
+                                        $newReportId_2 = $modelWorkAllocationReport->insertGetId();
+                                    }
+                                }
+                                $name_img_2 = stripslashes($_FILES['txtTimekeepingImage_2']['name']);
+                                $name_img_2 = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_2);
+                                $source_img = $_FILES['txtTimekeepingImage_2']['tmp_name'];
+                                if (!$modelTimekeepingProvisionalImage->checkExistName($name_img_2)) {
+                                    if ($modelTimekeepingProvisionalImage->uploadImage($source_img, $name_img_2, 500)) {
+                                        $modelTimekeepingProvisionalImage->insert($name_img_2, $timekeepingProvisionalId, $newReportId_2);
+                                    }
+                                }
+                            }
+
+                            # anh bao cao 3
+                            if (!empty($txtTimekeepingImage_3)) {
+                                $newReportId_3 = null; # mặc định null
+                                if ($cbWorkAllocation_3 > 0) { # anh bao cao thuoc cong trinh
+                                    # them bao cao
+                                    if ($modelWorkAllocationReport->insert($hFunction->carbonNow(), 'Báo cáo tiến độ', $cbWorkAllocation_3)) {
+                                        $newReportId_3 = $modelWorkAllocationReport->insertGetId();
+                                    }
+                                }
+                                $name_img_3 = stripslashes($_FILES['txtTimekeepingImage_3']['name']);
+                                $name_img_3 = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_3);
+                                $source_img = $_FILES['txtTimekeepingImage_3']['tmp_name'];
+                                if (!$modelTimekeepingProvisionalImage->checkExistName($name_img_3)) {
+                                    if ($modelTimekeepingProvisionalImage->uploadImage($source_img, $name_img_3, 500)) {
+                                        $modelTimekeepingProvisionalImage->insert($name_img_3, $timekeepingProvisionalId, $newReportId_3);
+                                    }
+                                }
+                            }
+                        } else {
+                            return "Hệ thống đang bảo trì";
+                        }
                     }
                 }
-
-
             }
+
         }
     }
 

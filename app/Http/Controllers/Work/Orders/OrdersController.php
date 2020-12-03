@@ -882,7 +882,8 @@ class OrdersController extends Controller
         }
     }
     // them thiet ke tong the
-    #-------- them anh thiet ke -------
+    #-------- THEM ANH THIET KE -------
+    # thiet ke tong the
     public function getAddDesign($orderId = null)
     {
         $hFunction = new \Hfunction();
@@ -1020,18 +1021,36 @@ class OrdersController extends Controller
     {
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
+        $dataAccess = [
+            'object' => 'orders'
+        ];
         $dataProduct = $modelProduct->getInfo($productId);
-        return view('work.orders.orders.product.design', compact('modelStaff', 'dataProduct'));
+        return view('work.orders.orders.product.design', compact('modelStaff', 'dataAccess', 'dataProduct'));
     }
 
-    #them anh thiet ke
+    #them anh thiet ke san pham
     public function getProductDesign($productId = null)
     {
         $hFunction = new \Hfunction();
         $modelProduct = new QcProduct();
+        $modelProductDesign = new QcProductDesign();
         $dataProduct = $modelProduct->getInfo($productId);
         if ($hFunction->checkCount($dataProduct)) {
-            return view('work.orders.orders.product.add-design', compact('dataProduct'));
+            $designType = $modelProductDesign->getDefaultDesignTypeProduct();
+            return view('work.orders.orders.product.add-design', compact('modelProductDesign', 'dataProduct', 'designType'));
+        }
+    }
+
+    # them anh thiet ke thi cong
+    public function  getProductDesignConstruction($productId)
+    {
+        $hFunction = new \Hfunction();
+        $modelProduct = new QcProduct();
+        $modelProductDesign = new QcProductDesign();
+        $dataProduct = $modelProduct->getInfo($productId);
+        if ($hFunction->checkCount($dataProduct)) {
+            $designType = $modelProductDesign->getDefaultDesignTypeConstruction();
+            return view('work.orders.orders.product.add-design', compact('modelProductDesign', 'dataProduct', 'designType'));
         }
     }
 
@@ -1043,6 +1062,7 @@ class OrdersController extends Controller
         $modelProductDesign = new QcProductDesign();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $txtDesignImage = $request->file('txtDesignImage');
+        $txtDesignType = $request->input('txtDesignType');
         $loginStaffId = $dataStaffLogin->staffId();
         $dataProduct = $modelProduct->getInfo($productId);
         if ($hFunction->getCount($txtDesignImage) > 0) {
@@ -1050,11 +1070,11 @@ class OrdersController extends Controller
             $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtDesignImage']['tmp_name'];
             if ($modelProductDesign->uploadImage($source_img, $name_img)) {
-                if ($modelProductDesign->insert($name_img, null, $productId, $dataStaffLogin->staffId())) {
+                if ($modelProductDesign->insert($name_img, null, $productId, $dataStaffLogin->staffId(), $txtDesignType)) {
                     $newId = $modelProductDesign->insertGetId();
                     # nguoi quan ly don hang up thiet ke ===> Ap dụng
                     if ($loginStaffId == $dataProduct->order->staffReceiveId()) {
-                        $modelProductDesign->confirmApplyStatus($newId, 1, 1, $dataStaffLogin->staffId());
+                        $modelProductDesign->confirmApplyStatus($newId, $modelProductDesign->getDefaultHasApply(), $modelProductDesign->getDefaultHasConfirm(), $dataStaffLogin->staffId());
                     }
 
                 } else {

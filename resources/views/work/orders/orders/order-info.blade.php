@@ -1,4 +1,4 @@
-<?php
+\<?php
 /**
  * Created by PhpStorm.
  * User: HUY
@@ -423,7 +423,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
             {{-- thong tin san pham --}}
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                 <div class="row">
-                    <div class=" col-xs-12 col-sm-12 col-dm-12 col-lg-12" style="border-bottom: 1px solid black;">
+                    <div class=" col-xs-12 col-sm-12 col-dm-12 col-lg-12">
                         <i class="qc-font-size-16 glyphicon glyphicon-shopping-cart"></i>
                         <label class="qc-color-red qc-font-size-16">SẢM PHẨM</label>
                         @if(!$dataOrder->checkCancelStatus())
@@ -444,19 +444,12 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                         <div class="table-responsive">
                             <table class="table table-bordered" style="margin-bottom: 0px;">
                                 <tr style="background-color: black; color: yellow;">
-                                    <th class="text-center" style="width: 20px;">STT</th>
-                                    <th>Ngày đặt</th>
-                                    <th>Tên SP</th>
-                                    <th>Chú thích</th>
-                                    <th>Thiết kê</th>
-                                    <th class="text-right">Thi công</th>
-                                    <th class="text-center">Dài(m)</th>
-                                    <th class="text-center">Rộng(m)</th>
-                                    <th class="text-center">Đơn vị</th>
-                                    <th class="text-center">Số lượng</th>
-                                    <th class="text-right">
-                                        Giá/SP(VNĐ)
+                                    <th style="width: 200px;">SẢN PHẨM</th>
+                                    <th>
+                                        GIÁ/SP(VNĐ)
                                     </th>
+                                    <th>TK SP</th>
+                                    <th>TK THI CÔNG</th>
                                 </tr>
                                 @if($hFunction->checkCount($dataProduct))
                                     <?php
@@ -465,28 +458,59 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                     @foreach($dataProduct as $product)
                                         <?php
                                         $productId = $product->productId();
-                                        $designImage = $product->designImage();
-                                        # thiet ke dang ap dung
+                                        $productWidth = $product->width();
+                                        $productHeight = $product->height();
+                                        $description = $product->description();
+                                        $productAmount = $product->amount();
+                                        # thiet ke san pham dang ap dung dang ap dung
                                         $dataProductDesign = $product->productDesignInfoApplyActivity();
-                                        if ($hFunction->getCountFromData($dataProductDesign) == 0) {
-                                            # thiet ke sau cung
-                                            $dataProductDesign = $product->productDesignInfoLast();
-                                        }
+                                        # thiet ke san pham thi cong
+                                        $dataProductDesignConstruction = $product->productDesignInfoConstructionHasApply();
                                         ?>
                                         <tr>
-                                            <td class="text-center">
-                                                {!! $n_o+=1  !!}
+                                            <td>
+                                                <b>{!! $product->productType->name()  !!}</b>
+                                                <br/>
+                                                <em>{!! $hFunction->convertDateDMYFromDatetime($product->createdAt()) !!}</em>
+                                                <br/>
+                                                <em>- Ngang: </em>
+                                                <span> {!! $productWidth !!} mm</span>
+                                                <em>- Cao: </em>
+                                                <span>{!! $productHeight !!} mm</span>
+                                                <em>- Số lượng: </em>
+                                                <span style="color: red;">{!! $productAmount !!}</span>
+                                                @if(!$hFunction->checkEmpty($description))
+                                                    <br/>
+                                                    <em>- Ghi chú: </em>
+                                                    <em style="color: grey;">- {!! $description !!}</em>
+                                                @endif
+                                                @if(!$product->checkCancelStatus())
+                                                    @if($product->checkFinishStatus())
+                                                        <em style="color: grey;">Đã hoàn thành</em>
+                                                    @else
+                                                        <br/>
+                                                        <a class="qc_work_orders_product_edit_act qc-link-green-bold"
+                                                           title="Sửa thông tin sản phẩm"
+                                                           data-href="{!! route('qc.work.orders.orders.product.info.edit.get',$productId) !!}">
+                                                            SỬA
+                                                        </a>
+                                                        <span>&nbsp;|&nbsp;</span>
+                                                        <a class="qc_work_orders_product_cancel_act qc-link-red"
+                                                           title="Hủy sản phẩm"
+                                                           data-href="{!! route('qc.work.orders.orders.product_cancel.get',$productId) !!}">
+                                                            HỦY
+                                                        </a>
+                                                    @endif
+                                                @else
+                                                    <em style="color: grey;">Đã hủy</em>
+                                                @endif
                                             </td>
                                             <td>
-                                                <b>{!! $hFunction->convertDateDMYFromDatetime($product->createdAt()) !!}</b>
+                                                <b style="color: blue;">
+                                                    {!! $hFunction->currencyFormat($product->price()) !!}
+                                                </b>
                                             </td>
-                                            <td>
-                                                {!! $product->productType->name()  !!}
-                                            </td>
-                                            <td>
-                                                {!! $product->description()  !!}
-                                            </td>
-                                            <td class="text-center" style="padding-top: 5px !important;">
+                                            <td style="padding-top: 5px !important;">
                                                 @if($hFunction->checkCount($dataProductDesign))
                                                     @if($dataProductDesign->checkApplyStatus())
                                                         <a class="qc_work_order_product_design_image_view qc-link"
@@ -495,99 +519,61 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                                  title="Đang áp dụng"
                                                                  src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                         </a>
-                                                        <br/>
-                                                    @else
-                                                        <a class="qc_work_order_product_design_image_view qc-link"
-                                                           data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
-                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px;"
-                                                                 title="Không được áp dụng"
-                                                                 src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
-                                                        </a>
-                                                        <br/>
                                                     @endif
                                                 @else
-                                                    @if(!$hFunction->checkEmpty($designImage))
-                                                        <a title="HÌNH ẢNH TỪ PHIÊN BẢNG CŨ - KHÔNG XEM FULL">
-                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px; "
-                                                                 src="{!! $product->pathSmallDesignImage($designImage) !!}">
-                                                        </a>
-                                                        <br/>
-                                                    @endif
+                                                    <span style="background-color: black; color: lime;">Chưa có thiết kế</span>
                                                 @endif
                                                 @if(!$product->checkCancelStatus())
                                                     @if(!$product->checkFinishStatus())
-                                                        <a class="qc_work_order_product_design_image_add qc-link-red"
+                                                        <br/>
+                                                        <a class="qc_work_order_product_design_image_add qc-link-red qc-font-size-14"
                                                            data-href="{!! route('qc.work.orders.product.design.add.get',$productId) !!}">
-                                                            <i class="qc-font-size-14 glyphicon glyphicon-plus"
-                                                               title="Thêm thiết kế"></i>
+                                                            THÊM
                                                         </a>
                                                         &nbsp;|&nbsp;
                                                     @endif
                                                 @endif
-                                                <a class="qc-link"
+                                                <a class="qc-link-green qc-font-size-14"
                                                    href="{!! route('qc.work.orders.product.design.get',$productId) !!}">
-                                                    <i class="qc-font-size-14 glyphicon glyphicon-list-alt"
-                                                       title="Quản lý thiết kế"></i>
+                                                    CHI TIẾT
                                                     <em title="Số mẫu thiết kế">
                                                         ({!! $product->totalProductDesign() !!})
                                                     </em>
                                                 </a>
-
                                             </td>
-                                            <td class="text-right">
+                                            <td>
+                                                @if($hFunction->checkCount($dataProductDesignConstruction))
+                                                    @foreach($dataProductDesignConstruction as $productDesignConstruction)
+                                                        <a class="qc_work_order_product_design_image_view qc-link"
+                                                           data-href="{!! route('qc.work.orders.product_design.view.get', $productDesignConstruction->designId()) !!}">
+                                                            <img style="width: 70px; height: auto; margin-bottom: 5px;"
+                                                                 title="Đang áp dụng"
+                                                                 src="{!! $productDesignConstruction->pathSmallImage($productDesignConstruction->image()) !!}">
+                                                        </a>
+                                                    @endforeach
+                                                @else
+                                                    <span style="background-color: black; color: lime;">Chưa có TK thi công </span>
+                                                @endif
                                                 @if(!$product->checkCancelStatus())
-                                                    @if($product->checkFinishStatus())
-                                                        <em>Đã hoàn thành</em>
-                                                    @else
-                                                        <a class="qc_work_orders_product_confirm_act qc-link-green"
-                                                           data-href="{!! route('qc.work.orders.product.confirm.get',$productId) !!}">
-                                                            BÁO HOÀN THÀNH
-                                                        </a>
+                                                    @if(!$product->checkFinishStatus())
                                                         <br/>
-                                                        <a class="qc_work_orders_product_edit_act qc-link"
-                                                           title="Sửa thông tin sản phẩm"
-                                                           data-href="{!! route('qc.work.orders.orders.product.info.edit.get',$productId) !!}">
-                                                            <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                                        <a class="qc_work_order_product_design_image_add qc-link-red qc-font-size-14"
+                                                           data-href="{!! route('qc.work.orders.product.design_construction.add.get',$productId) !!}">
+                                                            THÊM
                                                         </a>
-                                                        <span>&nbsp;|&nbsp;</span>
-                                                        <a class="qc_work_orders_product_cancel_act qc-link-red"
-                                                           title="Hủy sản phẩm"
-                                                           data-href="{!! route('qc.work.orders.orders.product_cancel.get',$productId) !!}">
-                                                            <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
-                                                        </a>
+                                                        &nbsp;|&nbsp;
                                                     @endif
-                                                @else
-                                                    <em class="qc-color-red">Đã hủy</em>
                                                 @endif
+                                                <a class="qc-link-green qc-font-size-14"
+                                                   href="{!! route('qc.work.orders.product.design.get',$productId) !!}">
+                                                    CHI TIẾT
+                                                </a>
                                             </td>
-                                            <td class="text-center">
-                                                {!! $product->width()/1000 !!}
-                                            </td>
-                                            <td class="text-center">
-                                                {!! $product->height()/1000 !!}
-                                            </td>
-                                            <td class="text-center">
-                                                @if(!$hFunction->checkEmpty($product->productType->unit()))
-                                                    {!! $product->productType->unit()  !!}
-                                                @else
-                                                    <em class="qc-color-grey">...</em>
-                                                @endif
-                                            </td>
-                                            <td class="text-center">
-                                                {!! $product->amount() !!}
-                                            </td>
-
-                                            <td class="text-right">
-                                                <b style="color: blue;">
-                                                    {!! $hFunction->currencyFormat($product->price()) !!}
-                                                </b>
-                                            </td>
-
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td class="text-center" colspan="11">
+                                        <td class="text-center" colspan="4">
                                             Không có sản phẩm
                                         </td>
                                     </tr>
@@ -599,11 +585,50 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
 
             </div>
 
+            @if($cancelStatus)
+                @if($hFunction->checkCount($dataOrderCancel))
+                    {{-- thong tin huy --}}
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12"
+                                 style="border-bottom: 1px solid black;">
+                                <i class="qc-font-size-16 glyphicon glyphicon-trash"></i>
+                                <label class="qc-color-red">HỦY ĐƠN HÀNG</label>
+                            </div>
+                        </div>
+                        <div id="qc_work_order_info_payment_show" class="row">
+                            <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                                 style="padding-top: 20px;">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" style="margin-bottom: 0px;">
+                                        <tr>
+                                            <th>Ngày</th>
+                                            <th>Lý do hủy</th>
+                                            <th class="text-right">Hoàn tiền</th>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                {!! $hFunction->convertDateDMYFromDatetime($dataOrderCancel->cancelDate())  !!}
+                                            </td>
+                                            <td>
+                                                {!! $dataOrderCancel->reason() !!}
+                                            </td>
+                                            <td class="text-right">
+                                                {!! $hFunction->currencyFormat($dataOrderCancel->payment()) !!}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @endif
             @if(!$checkProvisionUnConfirmed)
                 {{-- thong tin thanh toan --}}
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                     <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12" style="border-bottom: 1px solid black;">
+                        <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12">
                             <i class="qc-font-size-16 glyphicon glyphicon-credit-card"></i>
                             <label class="qc-color-red qc-font-size-16">THANH TOÁN</label>
                         </div>
@@ -700,46 +725,6 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                     </div>
                 </div>
             @endif
-
-            @if($cancelStatus)
-                @if($hFunction->checkCount($dataOrderCancel))
-                    {{-- thong tin huy --}}
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12"
-                                 style="border-bottom: 1px solid black;">
-                                <i class="qc-font-size-16 glyphicon glyphicon-trash"></i>
-                                <label class="qc-color-red">HỦY ĐƠN HÀNG</label>
-                            </div>
-                        </div>
-                        <div id="qc_work_order_info_payment_show" class="row">
-                            <div class="qc-container-table col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                 style="padding-top: 20px;">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" style="margin-bottom: 0px;">
-                                        <tr>
-                                            <th>Ngày</th>
-                                            <th>Lý do hủy</th>
-                                            <th class="text-right">Hoàn tiền</th>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                {!! $hFunction->convertDateDMYFromDatetime($dataOrderCancel->cancelDate())  !!}
-                                            </td>
-                                            <td>
-                                                {!! $dataOrderCancel->reason() !!}
-                                            </td>
-                                            <td class="text-right">
-                                                {!! $hFunction->currencyFormat($dataOrderCancel->payment()) !!}
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-            @endif
             <div class="row">
                 <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="pull-right col-xs-12 col-sm-12 col-dm-6 col-lg-4">
@@ -805,11 +790,11 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                         <table class="table table-bordered" style="margin-bottom: 0px;">
                             @if(!$finishStatus)
                                 <tr>
-                                    <td colspan="2">
-                                        <a class="qc_work_order_design_image_add qc-link-red-bold"
+                                    <td>
+                                        <a class="qc_work_order_design_image_add qc-link-green-bold"
                                            data-href="{!! route('qc.work.orders.info.design.add.get',$orderId) !!}">
                                             <i class="glyphicon glyphicon-plus"></i>
-                                            THÊM THIẾT KẾ TỔNG THỂ
+                                            <span class="qc-font-size-14">THÊM THIẾT KẾ TỔNG THỂ</span>
                                         </a>
                                     </td>
                                 </tr>
@@ -817,19 +802,17 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                             @if($hFunction->checkCount($dataOrderImage))
                                 @foreach($dataOrderImage as $orderImage)
                                     <tr>
-                                        <td class="text-center" style="padding-top: 5px !important;">
+                                        <td style="padding-top: 5px !important;">
+                                            <a class="qc_work_order_design_image_delete qc-link-red-bold qc-font-size-14"
+                                               data-href="{!! route('qc.work.orders.info.design.delete',$orderImage->imageId()) !!}">
+                                                HỦY
+                                            </a>
+                                            <br/>
                                             <a class="qc-link">
                                                 <img style="width: 100%; margin-bottom: 5px;" title="Thiết kế tổng quát"
                                                      src="{!! $orderImage->pathFullImage($orderImage->image()) !!}">
                                             </a>
                                         </td>
-                                        <td class="text-center" style="width:20px;">
-                                            <a class="qc_work_order_design_image_delete qc-link-red-bold"
-                                               data-href="{!! route('qc.work.orders.info.design.delete',$orderImage->imageId()) !!}">
-                                                <i class="qc-font-size-16 glyphicon glyphicon-trash"></i>
-                                            </a>
-                                        </td>
-
                                     </tr>
                                 @endforeach
                             @endif
@@ -837,7 +820,6 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 @endsection

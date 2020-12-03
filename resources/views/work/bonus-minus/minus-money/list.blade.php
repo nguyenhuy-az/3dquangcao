@@ -21,18 +21,15 @@ $checkTime = date('m-Y');
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
-                                <th style="width: 150px;">NGÀY</th>
+                                <th style="width: 150px;">NGÀY THÁNG</th>
                                 <th style="width: 200px;">NGUYÊN NHÂN</th>
                                 <th>PHẢN HỒI</th>
                             </tr>
                             <tr>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_minus_money_month col-sx-5 col-sm-5 col-md-5 col-lg-5"
+                                    <select class="qc_work_minus_money_month col-sx-6 col-sm-6 col-md-6 col-lg-6"
                                             style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
-                                        {{--<option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
-                                            Tất cả tháng
-                                        </option>--}}
                                         @for($m =1;$m<= 12; $m++)
                                             <option value="{!! $m !!}"
                                                     @if((int)$monthFilter == $m) selected="selected" @endif>
@@ -40,7 +37,7 @@ $checkTime = date('m-Y');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_minus_money_year col-sx-7 col-sm-7 col-md-7 col-lg-7"
+                                    <select class="qc_work_minus_money_year col-sx-6 col-sm-6 col-md-6 col-lg-6"
                                             style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
@@ -92,18 +89,12 @@ $checkTime = date('m-Y');
                                         <td>
                                             <b style="color: blue;">{!! date('d-m-Y', strtotime($minusMoney->dateMinus())) !!}</b>
                                             <br/>
-                                            <b style="color: grey;">
+                                            <em style="color: grey;">
                                                 - {!! $minusMoney->punishContent->name() !!}
-                                            </b>
+                                            </em>
                                             <br/>
                                             @if($cancelStatus)
                                                 <em style="color: red;">Đã hủy</em>
-                                            @else
-                                                @if($minusMoney->checkEnableApply())
-                                                    <em style="color: grey;">Có hiệu lực</em>
-                                                @else
-                                                    <em style="color: red;">Tạm thời</em>
-                                                @endif
                                             @endif
                                         </td>
                                         <td>
@@ -131,12 +122,12 @@ $checkTime = date('m-Y');
                                             @endif
                                             @if(!$hFunction->checkEmpty($workAllocationId))
                                                 <br/>
-                                                <em style="color: grey;">- Sản phẩm:</em>
+                                                <em style="color: grey;">- SP:</em>
                                                 <a style="color: blue;">
                                                     {!! $minusMoney->workAllocation->product->productType->name() !!}
                                                 </a>
                                                 <br/>
-                                                <em style="color: grey;">- Đơn hàng:</em>
+                                                <em style="color: grey;">- ĐH:</em>
                                                 <a style="color: blue;">
                                                     {!! $minusMoney->workAllocation->product->order->name() !!}
                                                 </a>

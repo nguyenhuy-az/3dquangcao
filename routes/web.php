@@ -914,8 +914,10 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
                 # du lieu moi
                 Route::get('view/{designId?}', ['as' => 'qc.work.orders.product_design.view.get', 'uses' => 'Work\Orders\OrdersController@viewProductDesign']);
 
-                #them thiet ke
+                #them thiet ke san pham
                 Route::get('design/{productId?}', ['as' => 'qc.work.orders.product.design.add.get', 'uses' => 'Work\Orders\OrdersController@getProductDesign']);
+                # them thiet ke thi cong
+                Route::get('design-construction/{productId?}', ['as' => 'qc.work.orders.product.design_construction.add.get', 'uses' => 'Work\Orders\OrdersController@getProductDesignConstruction']);
                 Route::post('design/{productId?}', ['as' => 'qc.work.orders.product.design.add.post', 'uses' => 'Work\Orders\OrdersController@postProductDesign']);
 
                 #xac nhan su dung thiet ke

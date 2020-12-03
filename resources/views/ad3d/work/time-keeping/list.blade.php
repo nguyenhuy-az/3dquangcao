@@ -15,7 +15,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$indexHref = route('qc.ad3d.work.time-keeping.get');
+$hrefIndex = route('qc.ad3d.work.time-keeping.get');
 
 ?>
 @extends('ad3d.work.time-keeping.index')
@@ -24,14 +24,14 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <a class="qc-link-green-bold" href="{!! $indexHref !!}">
+                    <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     <label class="qc-font-size-20" style="color: red;">CHẤM CÔNG ĐÃ DUYỆT</label>
                 </div>
                 <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-right: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
-                            data-href-filter="{!! $indexHref !!}">
+                            data-href-filter="{!! $hrefIndex !!}">
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -54,9 +54,7 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                     <table class="table table-hover table-bordered">
                         <tr style=" background-color: black; color: yellow;">
                             <th style="width: 150px;">NHÂN VIÊN</th>
-                            <th class="text-center">GIỜ CHẤM - GIỜ VÀO - GIỜ RA</th>
-                            <th>NGHỈ CÓ PHÉP</th>
-                            <th>NGHỈ KHÔNG PHÉP</th>
+                            <th class="text-left" style="width: 150px">GIỜ VÀO - GIỜ RA</th>
                             <th>
                                 BÁO CÁO BUỔI SÁNG
                                 <br/>
@@ -75,22 +73,24 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                             <th>GHI CHÚ</th>
                         </tr>
                         <tr>
-                            <td style="padding: 0px !important; ">
-                                <div class="input-group">
-                                    <input type="text" class="textFilterName form-control" name="textFilterName"
-                                           placeholder="Tìm theo tên" value="{!! $nameFiler !!}">
-                                      <span class="input-group-btn">
-                                            <button class="btFilterName btn btn-default" type="button"
-                                                    data-href="{!! $indexHref !!}">
-                                                <i class="glyphicon glyphicon-search"></i>
-                                            </button>
-                                      </span>
-                                </div>
+                            <td style="padding: 0 !important;">
+                                <select class="cbStaffFilter form-control" data-href="{!! $hrefIndex !!}"
+                                        name="cbStaffFilter">
+                                    <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                        Tất cả
+                                    </option>
+                                    @if($hFunction->checkCount($dataStaffFilter))
+                                        @foreach($dataStaffFilter as $staff)
+                                            <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                                    @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
                             </td>
                             <td class="text-center" style="padding: 0;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="height: 34px; padding: 0;"
-                                        data-href="{!! $indexHref !!}">
+                                        data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -101,9 +101,9 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="height: 34px; padding: 0;"
-                                        data-href="{!! $indexHref !!}">
+                                        data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -114,9 +114,9 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="height: 34px; padding: 0;"
-                                        data-href="{!! $indexHref !!}">
+                                        data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -128,8 +128,6 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                     @endfor
                                 </select>
                             </td>
-                            <td class="text-center"></td>
-                            <td></td>
                             <td class="text-center"></td>
                             <td class="text-center"></td>
                             <td class="text-center"></td>
@@ -184,47 +182,34 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-center">
-                                        @if(!$hFunction->checkEmpty($timeBegin))
-                                            <span style="color: blue;">
-                                                {!! $hFunction->convertDateDMYFromDatetime($timeBegin) !!}
-                                            </span>
-                                            <b>{!! date('H:i', strtotime($timeBegin)) !!}</b>
-                                        @endif
-                                        <br/>
-                                        @if($hFunction->checkEmpty($timeEnd))
-                                            @if($hFunction->checkEmpty($timeBegin))
-                                                <em style="color: red;">Nghỉ</em>
-                                            @else
-                                                <em style="color: grey;">Không báo giờ ra</em>
-                                            @endif
-                                        @else
-                                            <span style="color: brown;">
-                                                    {!! $hFunction->convertDateDMYFromDatetime($timeEnd) !!}
-                                                </span>
-                                            <b>{!! date('H:i', strtotime($timeEnd)) !!}</b>
-                                            @if($timekeeping->checkAfternoonStatus())
+                                    <td class="text-left">
+                                        @if(!$timekeeping->checkOff())
+                                            <span style="color: blue;">{!! date('d-m-Y',strtotime($timeBegin)) !!}</span>
+                                            <b>
+                                                {!! date('H:i',strtotime($timeBegin)) !!}
+                                            </b>
+                                            @if(!empty($timeEnd))
                                                 <br/>
-                                                <em style="color: grey">Có làm trưa</em>
+                                                <span style="color: brown;">{!! date('d-m-Y',strtotime($timeEnd)) !!}</span>
+                                                <b> {!! date('H:i',strtotime($timeEnd   )) !!}</b>
+                                                <br/>
+                                                @if($timekeeping->checkAfternoonStatus())
+                                                    <em style="color: grey;">Có làm trưa</em>
+                                                @endif
+                                            @else
+                                                <br/>
+                                                <em style="color: grey;">Không có giờ ra</em>
                                             @endif
-                                        @endif
-                                        @if($hFunction->checkDateIsSunday(date('Y-m-d', strtotime($timeBegin))))
-                                            <br/>
-                                            <span>Chủ nhật - </span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        @if($timekeeping->checkOff() && $timekeeping->checkPermissionStatus())
-                                            <b class="qc-color-red">{!! $hFunction->convertDateDMYFromDatetime($timekeeping->dateOff()) !!} </b>
                                         @else
-                                            <span>---</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        @if($timekeeping->checkOff() && !$timekeeping->checkPermissionStatus())
-                                            <b class="qc-color-red">{!! $hFunction->convertDateDMYFromDatetime($timekeeping->dateOff()) !!} </b>
-                                        @else
-                                            <span>---</span>
+                                            @if($timekeeping->checkPermissionStatus())
+                                                <b>{!! date('d-m-Y', strtotime($timekeeping->dateOff())) !!}</b>
+                                                <br/>
+                                                <em style="color: grey;">Nghỉ có phép</em>
+                                            @else
+                                                <b style="color: red;">{!! date('d-m-Y', strtotime($timekeeping->dateOff())) !!}</b>
+                                                <br/>
+                                                <em style="color: grey;">Nghỉ không phép</em>
+                                            @endif
                                         @endif
                                     </td>
                                     <td style="padding: 3px 0; ">
@@ -297,9 +282,15 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
 
                                 </tr>
                             @endforeach
+                            <tr>
+                                <td colspan="6"
+                                    style="border-left: 5px solid blue; padding-top: 0px;padding-bottom: 0;">
+                                    {!! $hFunction->page($dataTimekeeping) !!}
+                                </td>
+                            </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="8">
+                                <td class="text-center" colspan="6">
                                     Không có thông tin
                                 </td>
                             </tr>
@@ -307,11 +298,6 @@ $indexHref = route('qc.ad3d.work.time-keeping.get');
                     </table>
                 </div>
 
-            </div>
-            <div class="row">
-                <div class="text-center qc-padding-top-20 qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    {!! $hFunction->page($dataTimekeeping) !!}
-                </div>
             </div>
         </div>
     </div>

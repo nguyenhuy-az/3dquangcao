@@ -79,14 +79,6 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="table-responsive">
                     <table class="table table-hover qc-margin-bot-none">
-                        {{--<tr style="border-bottom: 1px solid #d7d7d7;">
-                            <td>
-                                <em class="qc-color-grey">Tổng Tiền:</em>
-                            </td>
-                            <td class="text-right">
-                                    <b class="qc-color-red">{!! $hFunction->currencyFormat($totalSalary) !!}</b>
-                            </td>
-                        </tr>--}}
                         <tr>
                             <td>
                                 <i class="glyphicon glyphicon-plus"></i>
@@ -146,8 +138,7 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
                         <tr>
                             <td>
                                 <i class="glyphicon glyphicon-plus"></i>
-                                <span>Thưởng Nóng </span>
-                                <em class="qc-color-grey">- (Tạm thời):</em>
+                                <span>Thưởng :</span>
                             </td>
                             <td class="text-right">
                                 <a class="qc-color-red" href="{!! route('qc.work.bonus.get') !!}">
@@ -177,7 +168,7 @@ $totalSalaryAvailability = $totalSalary - $totalMoneyImportPaidOfStaff - $totalM
                         <tr>
                             <td>
                                 <i class="glyphicon glyphicon-minus"></i>
-                                <span>Tiền phạt </span><em class="qc-color-grey"> - (Tạm thời):</em>
+                                <span>Tiền phạt: </span>
                             </td>
                             <td class="text-right">
                                 <a href="{!! route('qc.work.minus_money.get') !!}">

@@ -22,82 +22,103 @@ $hFunction = new Hfunction();
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
-                                <th class="text-center" style="width: 20px;">STT</th>
-                                <th class="text-center">Từ ngày</th>
-                                <th class="text-center">Đến ngày</th>
-                                <th class="text-center">TT xác nhận</th>
-                                <th class="text-center">TT thanh toán</th>
-                                <th class="text-right">Lương cơ bản</th>
-                                <th class="text-right">
+                                <th style="width: 120px;">NGÀY THÁNG</th>
+                                <th style="width: 130px;">
+                                    Chưa thanh toán
+                                    <br/>
+                                    <em style="color: white;">(Có tính vật tư)</em>
+                                </th>
+                                <th style="width: 120px;">
+                                    Tổng lương nhận
+                                    <br/>
+                                    <em style="color: white;">(Không tính vật tư)</em>
+                                </th>
+                                <th style="width: 120px;">Lương cơ bản</th>
+                                <th style="width: 120px;">Thưởng</th>
+                                <th>Cộng thêm</th>
+                                <th>
                                     Mua vật tư
                                     <br/>
-                                    <em>(Đã duyệt chưa TT)</em>
+                                    <em style="color: white;">(Đã duyệt chưa TT)</em>
                                 </th>
-                                <th class="text-right">Cộng thêm</th>
-                                <th class="text-right">Thưởng</th>
-                                <th class="text-right">Phạt</th>
-                                <th class="text-right">Ứng</th>
-                                <th class="text-right">Đã thanh toán</th>
-                                <th class="text-right">Chưa thanh toán</th>
-                                <th class="text-right">Giữ tiền lại</th>
-                                <th class="text-right"></th>
+                                <th>Phạt</th>
+                                <th>Ứng</th>
+                                <th>Đã thanh toán</th>
+                                <th>Giữ tiền lại</th>
                             </tr>
                             @if($hFunction->checkCount($dataSalary))
                                 @foreach($dataSalary as $salary)
                                     <?php
                                     $salaryId = $salary->salaryId();
-                                    $salaryBenefit = $salary->benefitMoney();
+                                    $benefitMoney = $salary->benefitMoney();
+                                    $bonusMoney = $salary->bonusMoney();
+                                    $minusMoney = $salary->minusMoney();
                                     $salaryPay = $salary->salary();
+                                    # tong tien giu
+                                    $totalKeepMoney = $salary->totalKeepMoney();
+
+                                    # tien thuong da ap dung
+                                    $totalBonusMoney = $salary->bonusMoney();
                                     $dataSalaryPayInfo = $salary->infoSalaryPay();
+                                    # thong tin lam viec
                                     $dataWork = $salary->work;
                                     # tong luong co ban
-                                    $totalSalary = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
-                                    # thong tin lam viec
+                                    $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
 
                                     $fromDate = $dataWork->fromDate();
                                     $monthOfFromDate = date('m', strtotime($fromDate));
                                     $yearOfFromDate = date('Y', strtotime($fromDate));
                                     // 2 = tong tien mua vat tu da duyet chua thanh toan
                                     $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataStaff->staffId(), date('Y-m', strtotime($fromDate)), 2);
-                                    # tien thuong da ap dung
-                                    $totalBonusMoney = $salary->bonusMoney();
-                                    # tien phat da ap dung
-                                    $totalMinusMoney = $salary->minusMoney();
                                     # luong da thanh toan
                                     $totalPaid = $salary->totalPaid();//totalPayConfirmed();
                                     # luong da ung
                                     $totalMoneyConfirmedBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
-                                    # tong tien giu
-                                    $totalKeepMoney = $salary->totalKeepMoney();
-                                    # tong luong con lai chua thanh toan
-                                    $totalSalaryUnPaid = $totalSalary + $totalMoneyImportOfStaff + $salaryBenefit + $totalBonusMoney - $totalKeepMoney - $totalMinusMoney - $totalMoneyConfirmedBeforePay - $totalPaid;
+                                    # tong tien nhan
+                                    $totalSalaryReceive = $totalSalaryBasic + $benefitMoney + $bonusMoney;
+                                    # tong can thanh toan
+                                    $totalUnpaid = $totalSalaryReceive + $totalMoneyImportOfStaff - $totalMoneyConfirmedBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
 
                                     ?>
                                     <tr>
-                                        <td class="text-center">
-                                            {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
+                                        <td>
+                                            <b style="color: blue;">
+                                                {!! date('m-Y', strtotime($fromDate)) !!}
+                                            </b>
+                                            <br/>
+                                            <a class="qc-link-green-bold qc-font-size-12"
+                                               href="{!! route('qc.work.salary.salary.detail',$salaryId) !!}">
+                                                CHI TIẾT
+                                            </a>
                                         </td>
-                                        <td class="text-center">
-                                            {!! date('d/m/Y', strtotime($fromDate)) !!}
-                                        </td>
-                                        <td class="text-center">
-                                            {!! date('d/m/Y', strtotime($dataWork->toDate())) !!}
-                                        </td>
-                                        <td class="text-center">
+                                        <td>
+                                            <b style="color: red;">
+                                                {!! $hFunction->currencyFormat($totalUnpaid) !!}
+                                            </b>
+                                            @if(!$salary->checkPaid())
+                                                <br/>
+                                                <em class="qc-color-grey">-Chưa Thanh toán hết</em>
+                                            @else
+                                                <br/>
+                                                <i class="glyphicon glyphicon-ok" style="color: green;"></i>
+                                                <em style="color: grey;">Đã Thanh toán</em>
+                                            @endif
                                             @if(!$salary->checkPaid())
                                                 @if($salary->salaryPayCheckExistUnConfirm())
+                                                    <br/>
                                                     <a class="qc_salary_pay_confirm_get qc-link"
                                                        style="background-color: red; padding: 3px; color: yellow !important;"
                                                        data-href="{!! route('qc.work.salary.salary.confirm.get',$salaryId) !!}">
                                                         Xác nhận đã nhận tiền
                                                     </a>
-                                                @else
-                                                    <em class="qc-color-grey">---</em>
                                                 @endif
                                             @else
                                                 @if(!$salary->salaryPayCheckExistUnConfirm())
+                                                    <br/>
+                                                    <i class="glyphicon glyphicon-ok" style="color: green;"></i>
                                                     <em class="qc-color-grey">Đã xác nhận</em>
                                                 @else
+                                                    <br/>
                                                     <a class="qc_salary_pay_confirm_get qc-link"
                                                        style="background-color: red; padding: 3px; color: yellow !important;"
                                                        data-href="{!! route('qc.work.salary.salary.confirm.get',$salaryId) !!}">
@@ -106,57 +127,61 @@ $hFunction = new Hfunction();
                                                 @endif
                                             @endif
                                         </td>
-                                        <td class="text-center">
-                                            @if(!$salary->checkPaid())
-                                                <em class="qc-color-grey">Chưa Thanh toán hết</em>
-                                            @else
-                                                <span>Đã Thanh toán</span>
-                                            @endif
+                                        <td>
+                                            <b style="color: blue;">{!! $hFunction->currencyFormat($totalSalaryReceive) !!}</b>
                                         </td>
-                                        <td class="text-right qc-color-red">
-                                            {!! $hFunction->currencyFormat($totalSalary) !!}
+                                        <td>
+                                            <b style="color: red;">{!! $hFunction->currencyFormat($totalSalaryBasic) !!}</b>
                                         </td>
-                                        <td class="text-right qc-color-red">
+                                        <td>
+                                            <b style="color: blue;">
+                                                {!! $hFunction->currencyFormat($bonusMoney) !!}
+                                            </b>
+                                        </td>
+                                        <td class="qc-color-red">
+                                            + {!! $hFunction->currencyFormat($benefitMoney) !!}
+                                        </td>
+                                        <td>
                                             + {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
                                         </td>
-                                        <td class="text-right qc-color-red">
-                                            + {!! $hFunction->currencyFormat($salaryBenefit) !!}
-                                        </td>
-                                        <td class="text-right qc-color-red">
-                                            {!! $hFunction->currencyFormat($totalBonusMoney) !!}
-                                        </td>
-                                        <td class="text-right">
-                                            <a href="{!! route('qc.work.minus_money.get', "$monthOfFromDate/$yearOfFromDate") !!}">
-                                                - {!! $hFunction->currencyFormat($totalMinusMoney) !!}
+                                        <td>
+                                            <span>
+                                                - {!! $hFunction->currencyFormat($minusMoney) !!}
+                                            </span>
+                                            <br/>
+                                            <a class="qc-link-green qc-font-12" href="{!! route('qc.work.minus_money.get', "$monthOfFromDate/$yearOfFromDate") !!}">
+                                                XEM
                                             </a>
                                         </td>
-                                        <td class="text-right">
-                                            <a href="{!! route('qc.work.salary.before_pay.get', "$monthOfFromDate/$yearOfFromDate") !!}">
+                                        <td>
+                                            <span>
                                                 - {!! $hFunction->currencyFormat($totalMoneyConfirmedBeforePay) !!}
+                                            </span>
+                                            <br/>
+                                            <a class="qc-link-green qc-font-12" href="{!! route('qc.work.salary.before_pay.get', "$monthOfFromDate/$yearOfFromDate") !!}">
+                                                XEM
                                             </a>
                                         </td>
-                                        <td class="text-right">
+                                        <td>
                                             - {!! $hFunction->currencyFormat($totalPaid) !!}
                                         </td>
-                                        <td class="text-right qc-color-red">
-                                            {!! $hFunction->currencyFormat($totalSalaryUnPaid) !!}
-                                        </td>
-                                        <td class="text-right qc-color-red">
-                                            <a class="qc-link-green-bold" href="{!! route('qc.work.salary.keep_money.get') !!}" title="Click xem chi tiết">
+
+                                        <td class="qc-color-red">
+                                            <span>
                                                 {!! $hFunction->currencyFormat($totalKeepMoney) !!}
-                                            </a>
-                                        </td>
-                                        <td class="text-right">
-                                            <a class="qc_work_salary_view"
-                                               href="{!! route('qc.work.salary.salary.detail',$salaryId) !!}">
-                                                Xem Chi tiết
+                                            </span>
+                                            <br/>
+                                            <a class="qc-link-green qc-font-size-12"
+                                               href="{!! route('qc.work.salary.keep_money.get') !!}"
+                                               title="Click xem chi tiết">
+                                                XEM
                                             </a>
                                         </td>
                                     </tr>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="15">
+                                    <td class="text-center" colspan="11">
                                         <em class="qc-color-red">Chưa có bảng lương</em>
                                     </td>
                                 </tr>

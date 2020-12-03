@@ -230,19 +230,26 @@ class QcCompany extends Model
         return date('Y-m-d 08:00', strtotime($date));
     }
 
-    # thoi gian vao lam viec mac dinh cua ngay hien tai
+    # thoi gian lam viec ra mac dinh cua ngay hien tai
     public function getDefaultTimeEndToWorkOfCurrentDate() //return Y-m-d H:i
     {
         $hFunction = new \Hfunction();
         return $this->getDefaultTimeEndToWorkOfDate($hFunction->carbonNow());
     }
 
-    # thoi gian vao lam viec mac dinh theo ngay
+    # thoi gian lam viec ra mac dinh theo ngay
     public function getDefaultTimeEndToWorkOfDate($date) //return Y-m-d H:i
     {
         return date('Y-m-d 17:30', strtotime($date));
     }
 
+    # gioi han bao cao gio ra cua ngay lam viec
+    public function getReportLimitTimeEndOfDate($date)
+    {
+        $hFunction = new \Hfunction();
+        # mac dinh la 8h sang ngay hom sau
+        return date('Y-m-d 08:00', strtotime($hFunction->datetimePlusDay($date, 1)));
+    }
     #----------- cập nhật ----------
     public function updateInfo($companyId, $companyCode, $name, $nameCode, $address, $phone, $email, $website, $companyType, $logo)
     {

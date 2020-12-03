@@ -9,6 +9,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$staffLoginId = $dataStaffLogin->staffId();
 $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
 ?>
 @extends('ad3d.finance.transfers.transfers.index')
@@ -22,8 +23,14 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr>
-                            <td colspan="4"></td>
-                            <td colspan="3" style="padding: 0;">
+                            <td style="padding: 0;">
+                                <a class="qc-link-white-bold btn btn-primary form-control"
+                                   href="{!! route('qc.ad3d.finance.transfers.transfers.add.get') !!}">
+                                    <i class="glyphicon glyphicon-plus"></i>
+                                    <span style="font-size: 16px;">CHUYỂN</span>
+                                </a>
+                            </td>
+                            <td colspan="2" style="padding: 0;">
                                 <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                                         style="height: 34px;"
                                         data-href-filter="{!! $hrefIndex !!}">
@@ -41,28 +48,19 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                     @endif
                                 </select>
                             </td>
-                            <td style="padding: 0;">
-                                <a class="qc-link-white-bold btn btn-primary form-control"
-                                   href="{!! route('qc.ad3d.finance.transfers.transfers.add.get') !!}">
-                                    <i class="glyphicon glyphicon-plus"></i>
-                                    <span style="font-size: 16px;">CHUYỂN</span>
-                                </a>
-                            </td>
+                            <td ></td>
                         </tr>
                         <tr style="background-color: black; color: yellow;">
-                            <th style="width:20px;">STT</th>
-                            <th style="width: 150px;">Ngày</th>
-                            <th>NGƯỜI CHUYỂN</th>
+                            <th style="width: 150px;">NGÀY</th>
+                            <th style="width: 200px;">
+                                SỐ TIỀN
+                            </th>
+                            <th style="width: 170px;">NGƯỜI CHUYỂN</th>
                             <th>NGƯỜI NHẬN</th>
-                            <th>Hình thức chuyển</th>
-                            <th>Ghi chú</th>
-                            <th class="text-center">Xác nhận</th>
-                            <th class="text-right">Số tiền</th>
                         </tr>
                         <tr>
-                            <td></td>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
@@ -73,7 +71,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                                 @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
@@ -86,7 +84,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     @for($i =2017;$i<= 2050; $i++)
@@ -97,23 +95,6 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                     @endfor
                                 </select>
                             </td>
-
-                            <td class="text-center" style="padding: 0px;">
-                                <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
-                                    <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
-                                        Tất cả
-                                    </option>
-                                    @if($hFunction->checkCount($dataStaff))
-                                        @foreach($dataStaff as $staff)
-                                            <option @if($staff->staffId() == $staffFilterId) selected="selected"
-                                                    @endif  value="{!! $staff->staffId() !!}">
-                                                {!! $staff->lastName() !!}
-                                            </option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </td>
-                            <td></td>
                             <td style="padding: 0;">
                                 <select class="cbTransfersType form-control" name="cbTransfersType"
                                         data-href="{!! $hrefIndex !!}">
@@ -131,10 +112,20 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                     </option>
                                 </select>
                             </td>
-                            <td></td>
-                            <td></td>
-                            <td class="text-right" style="color: red;">
-                                {!! $hFunction->currencyFormat($totalMoneyTransfers) !!}
+                            <td class="text-center" style="padding: 0px;">
+                                <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
+                                    <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                        Tất cả
+                                    </option>
+                                    @if($hFunction->checkCount($dataStaff))
+                                        @foreach($dataStaff as $staff)
+                                            <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                                    @endif  value="{!! $staff->staffId() !!}">
+                                                {!! $staff->lastName() !!}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
                             </td>
                         </tr>
                         @if($hFunction->checkCount($dataTransfers))
@@ -146,32 +137,60 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                             @foreach($dataTransfers as $transfers)
                                 <?php
                                 $transfersId = $transfers->transfersId();
+                                $transfersReason = $transfers->reason();
                                 # thong tin nguoi chuyen
                                 $dataTransfersStaff = $transfers->transfersStaff;
+                                $transfersStaffId = $dataTransfersStaff->staffId();
                                 # thong tin nguoi nha
                                 $dataReceiveStaff = $transfers->receiveStaff;
+                                $n_o += 1;
                                 ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
+                                <tr class="qc_ad3d_list_object @if($n_o%2 == 0) info @endif"
                                     data-object="{!! $transfersId !!}">
-                                    <td class="text-center">
-                                        {!! $n_o += 1 !!}
-                                    </td>
                                     <td>
                                         <a class="qc_view qc-link-green">
-                                            {!! date('d/m/Y', strtotime($transfers->transfersDate())) !!}
-                                            {{-- &nbsp;
-                                             <i class="glyphicon glyphicon-eye-open"></i>--}}
+                                            <b style="color: blue;">{!! date('d/m/Y', strtotime($transfers->transfersDate())) !!} </b>
                                         </a>
+                                        <br/>
+                                        @if($transfers->checkConfirmReceive())
+                                            <em class="qc-color-grey">- Đã xác nhận</em>
+                                        @else
+                                            <em style="color: brown;">- Chờ xác nhận</em>
+                                            @if($transfersStaffId == $staffLoginId)
+                                                <br/>
+                                                <a class="qc_edit qc-link-red qc-font-size-14"
+                                                   data-href="{!! route('qc.ad3d.finance.transfers.transfers.edit.get',$transfersId) !!}">
+                                                    SỬA
+                                                </a>
+                                                |
+                                                <a class="qc_delete qc-link-red qc-font-size-14"
+                                                   data-href="{!! route('qc.ad3d.finance.transfers.transfers.delete',$transfersId) !!}">
+                                                    HỦY
+                                                </a>
+                                            @endif
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <b style="color:red;">
+                                            {!! $hFunction->currencyFormat($transfers->money()) !!}
+                                        </b>
+                                        <br/>
+                                        <span style="color: grey;">{!! $transfers->transferTypeLabel($transfers->transferType()) !!}</span>
+                                        @if(!$hFunction->checkEmpty($transfersReason))
+                                            <br/>
+                                            <em style="color: grey;">- {!! $transfersReason !!}</em>
+                                        @endif
                                     </td>
                                     <td style="padding: 3px;">
                                         <div class="media">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $dataTransfersStaff->pathAvatar($dataTransfersStaff->image()) !!}">
                                             </a>
+
                                             <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataTransfersStaff->fullName() !!}</h5>
+                                                <h5 class="media-heading">{!! $dataTransfersStaff->lastName() !!}</h5>
                                             </div>
                                         </div>
                                     </td>
@@ -179,51 +198,27 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                         <div class="media">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $dataReceiveStaff->pathAvatar($dataReceiveStaff->image()) !!}">
                                             </a>
 
                                             <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataReceiveStaff->fullName() !!}</h5>
+                                                <h5 class="media-heading">{!! $dataReceiveStaff->lastName() !!}</h5>
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        {!! $transfers->transferTypeLabel($transfers->transferType()) !!}
-                                    </td>
-                                    <td>
-                                        <em>{!! $transfers->reason() !!}</em>
-                                    </td>
-                                    <td class="text-center">
-                                        @if($transfers->checkConfirmReceive())
-                                            <em class="qc-color-grey">Đã xác nhận</em>
-                                        @else
-                                            <em style="color: red;">Chờ xác nhận</em>
-                                            <br/>
-                                            <a class="qc_edit qc-link-green-bold"
-                                               data-href="{!! route('qc.ad3d.finance.transfers.transfers.edit.get',$transfersId) !!}">
-                                                <i class="glyphicon glyphicon-pencil" style="font-size: 16px;"></i>
-                                            </a>
-                                            |
-                                            <a class="qc_delete qc-link-green-bold"
-                                               data-href="{!! route('qc.ad3d.finance.transfers.transfers.delete',$transfersId) !!}">
-                                                <i class="glyphicon glyphicon-trash" style="font-size: 16px;"></i>
-                                            </a>
-                                        @endif
-                                    </td>
-                                    <td class="text-right" style="color: blue;">
-                                        {!! $hFunction->currencyFormat($transfers->money()) !!}
-                                    </td>
+
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="8">
+                                <td colspan="4"
+                                    style="border-left: 5px solid brown; padding-top: 0; padding-bottom: 0;">
                                     {!! $hFunction->page($dataTransfers) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="8">
+                                <td colspan="4">
                                     <em class="qc-color-red">Không tìm thấy thông tin</em>
                                 </td>
                             </tr>

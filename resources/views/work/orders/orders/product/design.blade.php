@@ -9,21 +9,14 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataProductDesign = $dataProduct->productDesignInfoAll();
-
 $dataOrder = $dataProduct->order;
 ?>
-@extends('work.orders.index')
+@extends('work.orders.orders.index')
 @section('titlePage')
-    Thông tin thiết kế
+    Thiết kế sản phẩm
 @endsection
-@section('qc_work_order_body')
+@section('qc_work_order_order_body')
     <div class="qc-padding-top-20 qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-10">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <a class=" qc-link-red" href="{!! $hFunction->getUrlReferer() !!}">
-                <i class="qc-font-size-14 glyphicon glyphicon-backward"></i>
-                <span class="qc-font-size-16" style="color: blue;">Trởlại</span>
-            </a>
-        </div>
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <em>SẢN PHẨM:</em>
             <label class="qc-font-size-20">{!! $dataProduct->productType->name()  !!}</label>
@@ -34,16 +27,15 @@ $dataOrder = $dataProduct->order;
         {{-- chi tiết thiết kế --}}
         <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row qc-padding-top-10">
-                <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">
                         <table class="table table-bordered" style="margin-bottom: 0;">
-                            <tr style="background-color: whitesmoke;">
-                                <th colspan="10">
-                                    <i class="qc-font-size-16 glyphicon glyphicon-pencil"></i>
-                                    <b class="qc-color-red">DANH SÁCH THIẾT KẾ</b>
+                            <tr>
+                                <th colspan="5" style="padding-top: 0; padding-bottom: 0;">
+                                    <h5 class="qc-color-red">DANH SÁCH THIẾT KẾ SẢN PHẨM</h5>
                                 </th>
                             </tr>
-                            <tr>
+                            <tr style="background-color: black; color: yellow;">
                                 <th class="text-center" style="width: 20px;">STT</th>
                                 <th>Thiết kế</th>
                                 <th class="text-center">Nhân viên</th>
@@ -62,8 +54,7 @@ $dataOrder = $dataProduct->order;
                                         <td>
                                             <a class="qc_work_order_product_design_image_view qc-link"
                                                data-href="{!! route('qc.work.orders.product_design.view.get', $designId) !!}">
-                                                <img style="margin: 10px; width: 70px; height: auto;"
-                                                     title="Đang áp dụng"
+                                                <img style="width: 70px; height: auto;" title="Đang áp dụng"
                                                      src="{!! $productDesign->pathSmallImage($productDesign->image()) !!}">
                                             </a>
                                         </td>
@@ -76,16 +67,20 @@ $dataOrder = $dataProduct->order;
                                         <td class="text-center">
                                             @if($dataOrder->checkStaffInput($modelStaff->loginStaffId()))
                                                 @if($productDesign->checkApplyStatus())
+                                                    <em style="color: grey;">Đang dùng</em>
+                                                    <span>&nbsp;|&nbsp;</span>
                                                     <a class="qc_orders_product_design_apply_act qc-link-red"
                                                        title="Không sử dụng"
                                                        data-href="{!! route('qc.work.orders.product.design.apply.get',"$designId/0") !!}">
-                                                        Vô hiệu
+                                                        VÔ HIỆU
                                                     </a>
                                                 @else
+                                                    <em style="color: grey;">Đang tắt</em>
+                                                    <span>&nbsp;|&nbsp;</span>
                                                     <a class="qc_orders_product_design_apply_act qc-link-green"
                                                        title="Sử dụng thiết kế"
                                                        data-href="{!! route('qc.work.orders.product.design.apply.get',"$designId/1") !!}">
-                                                        Áp dụng
+                                                        ÁP DỤNG
                                                     </a>
                                                 @endif
                                             @else

@@ -25,7 +25,7 @@ use Request;
 
 class TimeKeepingController extends Controller
 {
-    public function index($companyFilterId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $nameFiler = null)
+    public function index($companyFilterId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $staffFilterId = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -46,8 +46,9 @@ class TimeKeepingController extends Controller
         ];
         $dateFilter = null;
         if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+            $monthFilter = date('m');
             $yearFilter = date('Y');
-            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+            $dateFilter = date('Y-m');
         } elseif ($dayFilter == 0 && $monthFilter == 0 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } elseif ($dayFilter == 0 && $monthFilter > 0 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
@@ -61,15 +62,15 @@ class TimeKeepingController extends Controller
             $yearFilter = date('Y');
         }
         if ($monthFilter < 8 && $yearFilter <= 2019) { # du lieu phien ban cu
-            if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listIdOfListCompanyAndName([$companyFilterId], $nameFiler);
+            if ($staffFilterId > 0) {
+                $listStaffId = [$staffFilterId];
             } else {
                 $listStaffId = $modelStaff->listIdOfListCompany([$companyFilterId]);
             }
             $listWorkId = $modelWork->listIdOfListStaffId($listStaffId);
         } else {
-            if (!empty($nameFiler)) {
-                $listStaffId = $modelStaff->listStaffIdByName($nameFiler);
+            if ($staffFilterId > 0) {
+                $listStaffId = [$staffFilterId];
                 $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $listStaffId);
             } else {
                 $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], null);
@@ -77,7 +78,9 @@ class TimeKeepingController extends Controller
             $listWorkId = $modelWork->listIdOfListCompanyStaffWork($listCompanyStaffWorkId);
         }
         $dataTimekeeping = $modelTimekeeping->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->paginate(30);
-        return view('ad3d.work.time-keeping.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataTimekeeping', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));
+        //danh sach NV
+        $dataStaffFilter = $modelCompany->staffInfoActivityOfListCompanyId([$companyFilterId]);
+        return view('ad3d.work.time-keeping.list', compact('modelStaff', 'dataStaffFilter','dataCompany', 'dataAccess', 'dataTimekeeping', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'staffFilterId'));
 
     }
 

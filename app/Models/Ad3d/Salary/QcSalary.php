@@ -36,6 +36,9 @@ class QcSalary extends Model
     }
 
     //---------- them bang luong ----------
+    /*
+     *  salary = tien luong co ban lam viec + thuong -tien ung - phat (khong bao gom tien giu va cong them)
+     * */
     public function insert($mainMinute, $plusMinute, $minusMute, $beforePay, $minusMoney, $benefitMoney, $overtimeMoney, $salary, $payStatus, $workId, $workSalaryId = null, $salaryBasicId = null, $benefitDescription = null, $kpiMoney = 0, $bonusMoney = 0)
     {
         $hFunction = new \Hfunction();

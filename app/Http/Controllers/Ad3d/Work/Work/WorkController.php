@@ -59,36 +59,25 @@ class WorkController extends Controller
 
     public function view($workId = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelWork = new QcWork();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $dataWork = $modelWork->getInfo($workId);
-        if (count($dataWork) > 0) {
-            $dataTimekeeping = $modelWork->infoTimekeeping($workId);
-            return view('ad3d.work.work.view', compact('modelStaff', 'modelCompanyStaffWork', 'dataWork', 'dataTimekeeping'));
-        }
-    }
-
-    public function viewOld($workId = null)
-    {
-        $modelStaff = new QcStaff();
-        $modelWork = new QcWork();
-        $dataWork = $modelWork->getInfo($workId);
-        if (count($dataWork) > 0) {
-            $dataTimekeeping = $modelWork->infoTimekeeping($workId);
-            return view('ad3d.work.work.view-old', compact('modelStaff', 'dataWork', 'dataTimekeeping'));
+        if ($hFunction->checkCount($dataWork)) {
+            return view('ad3d.work.work.view', compact('modelStaff', 'modelCompanyStaffWork', 'dataWork'));
         }
     }
 
     public function getMakeSalaryWork($workId = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelWork = new QcWork();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelTimekeeping = new QcTimekeeping();
         $dataWork = $modelWork->getInfo($workId);
-        if (count($dataWork) > 0) {
-            return view('ad3d.work.work.make-salary-work', compact('modelStaff', 'modelCompanyStaffWork', 'dataWork', 'modelTimekeeping'));
+        if ($hFunction->checkCount($dataWork)) {
+            return view('ad3d.work.work.make-salary-work', compact('modelStaff', 'modelCompanyStaffWork', 'dataWork'));
         }
     }
 
