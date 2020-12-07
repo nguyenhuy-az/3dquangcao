@@ -14,6 +14,9 @@ $dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
 $hrefIndex = route('qc.work.import.get');
 $currentMonth = $hFunction->currentMonth();
+# lay trang thai thanh toan mac dinh
+$getDefaultNotPay = $modelImport->getDefaultNotPay(); // chua thanh toan
+$getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
 ?>
 @extends('work.import.index')
 @section('qc_work_import_body')
@@ -31,7 +34,7 @@ $currentMonth = $hFunction->currentMonth();
                             </tr>
                             <tr>
                                 <td style="padding: 0 !important;">
-                                    <select class="qc_work_import_day_filter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                    <select class="qc_work_import_day_filter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                             style="padding: 0; height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if($dayFilter == null) selected="selected" @endif>
@@ -43,7 +46,7 @@ $currentMonth = $hFunction->currentMonth();
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_import_month_filter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                    <select class="qc_work_import_month_filter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                             style="padding: 0; height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
@@ -56,7 +59,7 @@ $currentMonth = $hFunction->currentMonth();
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_import_year_filter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                    <select class="qc_work_import_year_filter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                             style="padding: 0; height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
@@ -77,10 +80,12 @@ $currentMonth = $hFunction->currentMonth();
                                         <option value="3" @if($loginPayStatus == 3) selected="selected" @endif>
                                             Tất cả
                                         </option>
-                                        <option value="0" @if($loginPayStatus == 0) selected="selected" @endif>
+                                        <option value="{!! $getDefaultNotPay !!}"
+                                                @if($loginPayStatus == $getDefaultNotPay) selected="selected" @endif>
                                             Chưa thanh toán
                                         </option>
-                                        <option value="1" @if($loginPayStatus == 1) selected="selected" @endif>
+                                        <option value="{!! $getDefaultHasPay !!}"
+                                                @if($loginPayStatus == $getDefaultHasPay) selected="selected" @endif>
                                             Đã thanh toán
                                         </option>
                                     </select>
@@ -101,9 +106,16 @@ $currentMonth = $hFunction->currentMonth();
                                     $image = $import->image();
                                     $confirmNote = $import->confirmNote();
                                     $importDate = $import->importDate();
+                                    # tong tien hoa don
                                     $totalMoneyOfImport = $import->totalMoneyOfImport();
                                     $sumMoney = $sumMoney + $totalMoneyOfImport;
-                                    if ($import->checkPay()) { # da thanh toan
+                                    # trang thai duyet
+                                    $checkHasConfirmStatus = $import->checkHasConfirm();
+                                    # kiem tra nhap chinh xac khong
+                                    $checkHasExactlyStatus = $import->checkHasExactlyStatus();
+                                    # kiem tra da thanh toan chua
+                                    $checkHasPayStatus = $import->checkHasPay();
+                                    if ($checkHasPayStatus) { # da thanh toan
                                         $moneyPaid = $totalMoneyOfImport;
                                         $sumPaid = $sumPaid + $moneyPaid;
                                         $moneyUnPaid = 0;
@@ -112,12 +124,11 @@ $currentMonth = $hFunction->currentMonth();
                                         $moneyUnPaid = $totalMoneyOfImport;
                                         $sumUnPaid = $sumUnPaid + $moneyUnPaid;
                                     }
-                                    # trang thai duyet
-                                    $checkConfirmStatus = $import->checkConfirm();
+
                                     # thong tin chi tiet nhap
-                                    $dataImportDetail = $import->infoDetailOfImport();
+                                    $dataImportDetail = $import->importDetailGetInfo();
                                     ?>
-                                    <tr class="@if(!$import->checkExactlyStatus()) danger  @else @if($n_o%2 == 1) info @endif @endif">
+                                    <tr class="@if(!$checkHasExactlyStatus) danger  @else @if($n_o%2 == 1) info @endif @endif">
                                         <td style="padding-left: 0;">
                                             <div class="media" style="width: 250px;">
                                                 <div class="pull-left" href="#">
@@ -129,7 +140,7 @@ $currentMonth = $hFunction->currentMonth();
                                                         @else
                                                             <b style="color: red;">KHÔNG CÓ ẢNH HĐ</b>
                                                         @endif
-                                                        @if(!$checkConfirmStatus)
+                                                        @if(!$checkHasConfirmStatus)
                                                             <br/>
                                                             <a class="qc_work_import_update_image_get qc-link-red-bold"
                                                                data-href="{!! route('qc.work.import.image.update.get',$importId) !!}">
@@ -140,7 +151,7 @@ $currentMonth = $hFunction->currentMonth();
                                                 </div>
                                                 <div class="media-body">
                                                     <b style="color: blue;">{!! date('d-m-Y', strtotime($importDate)) !!}</b>
-                                                    @if(!$checkConfirmStatus)
+                                                    @if(!$checkHasConfirmStatus)
                                                         <span>&nbsp | &nbsp</span>
                                                         <a class="qc_work_import_delete qc-link-red-bold"
                                                            data-href="{!! route('qc.work.import.delete.get',$importId) !!}">
@@ -148,7 +159,7 @@ $currentMonth = $hFunction->currentMonth();
                                                         </a>
                                                     @endif
                                                     <br/>
-                                                    @if(!$checkConfirmStatus)
+                                                    @if(!$checkHasConfirmStatus)
                                                         <b style="color: red;">CHƯA DUYỆT</b>
                                                     @else
                                                         <i class="glyphicon glyphicon-ok" style="color: green;"></i>
@@ -191,9 +202,9 @@ $currentMonth = $hFunction->currentMonth();
                                                 {!! $hFunction->currencyFormat($totalMoneyOfImport) !!}
                                             </b>
                                             <br/>
-                                            @if($import->checkExactlyStatus())
-                                                @if($import->checkPay())
-                                                    @if($import->checkPayConfirmOfImport($importId))
+                                            @if($checkHasExactlyStatus)
+                                                @if($checkHasPayStatus)
+                                                    @if($import->importPayCheckHasConfirm($importId))
                                                         <em class="qc-color-grey">Đã Nhận tiền</em>
                                                     @else
                                                         <a class="qc_work_import_confirm_pay_act qc-link"

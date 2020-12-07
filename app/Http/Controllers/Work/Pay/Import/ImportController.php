@@ -11,7 +11,6 @@ use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\Supplies\QcSupplies;
 use App\Models\Ad3d\Tool\QcTool;
-use App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation;
 use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -22,7 +21,7 @@ use Request;
 
 class ImportController extends Controller
 {
-    public function index($monthFilter = 0, $yearFilter = 0, $payStatusFilter = 4, $staffFilterId = null)
+    public function index($monthFilter = 0, $yearFilter = 0, $payStatusFilter = 3, $staffFilterId = null)
     {
         $hFunction = new \Hfunction();
         $modelCompany = new QcCompany();
@@ -33,11 +32,11 @@ class ImportController extends Controller
             'object' => 'payImport',
             'subObjectLabel' => 'Mua vật tư'
         ];
-        $searchCompanyFilterId = [$dataStaffLogin->companyId()];
+        $companyId = $dataStaffLogin->companyId();
         if ($staffFilterId > 0) {
             $listStaffId = [$staffFilterId];
         } else {
-            $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
+            $listStaffId = $modelStaff->listIdOfCompany($companyId);//listIdOfListCompany($searchCompanyFilterId);
         }
 
         if ($monthFilter == 100 && $yearFilter == 100) {//xem tất cả đơn hang
@@ -57,12 +56,16 @@ class ImportController extends Controller
         } else {
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
-        $dataImportAll = $modelImport->getInfoHaveFilter($listStaffId, $searchCompanyFilterId, $dateFilter, $payStatusFilter, 'DESC');
+        if ($payStatusFilter == 3) { # chon tat ca
+            $dataImportAll = $modelImport->selectAllInfoOfListStaffId($companyId, $listStaffId, $dateFilter);
+        } else { # chon theo trang thai thanh toan
+            $dataImportAll = $modelImport->selectInfoOfListStaffIdAndPayStatus($companyId, $listStaffId, $payStatusFilter, $dateFilter);
+        }
         $dataImport = $dataImportAll->paginate(30);
         $importTotalMoney = $modelImport->totalMoneyOfListImport($dataImportAll->get());
         //danh sach NV
-        $dataListStaff = $modelCompany->staffInfoActivityOfListCompanyId($searchCompanyFilterId);
-        return view('work.pay.import.list', compact('dataAccess', 'modelStaff', 'dataListStaff', 'dataImport', 'importTotalMoney', 'dayFilter', 'monthFilter', 'yearFilter', 'payStatusFilter', 'staffFilterId'));
+        $dataListStaff = $modelCompany->staffInfoActivityOfCompanyId($companyId);//staffInfoActivityOfListCompanyId([$companyId]);
+        return view('work.pay.import.list', compact('dataAccess', 'modelStaff', 'modelImport', 'dataListStaff', 'dataImport', 'importTotalMoney', 'dayFilter', 'monthFilter', 'yearFilter', 'payStatusFilter', 'staffFilterId'));
 
     }
 
@@ -81,7 +84,7 @@ class ImportController extends Controller
         $modelStaff = new QcStaff();
         $modelImport = new QcImport();
         $dataImport = $modelImport->getInfo($importId);
-        return view('work.pay.import.confirm', compact('modelStaff', 'dataImport'));
+        return view('work.pay.import.confirm', compact('modelStaff','modelImport', 'dataImport'));
     }
 
     public function postConfirm($importId)
@@ -95,45 +98,40 @@ class ImportController extends Controller
         $modelImportDetail = new QcImportDetail();
         $modelImportPay = new QcImportPay();
         $modelCompanyStore = new QcCompanyStore();
-        $modelToolAllocation = new QcToolPackageAllocation();
         $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
-        $currentDate = $hFunction->carbonNow();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $loginStaffId = $dataStaffLogin->staffId();
-        $importCompanyId = $modelImport->companyId($importId)[0];
-        $importStaffId = $modelImport->importStaffId($importId)[0];
+        $importCompanyId = $modelImport->companyId($importId);
+        $importStaffId = $modelImport->importStaffId($importId);
         # lay thong tin dang lam viec tai cong ty cua 1 nhan vien
         $dataCompanyStaffWork = $modelCompanyStaffWork->infoActivityOfStaff($importStaffId);
-        # lay ma lam viec tai cty NV nhap hoa don
-        $importStaffWorkId = $dataCompanyStaffWork->workId();//$modelCompanyStaffWork->workIdActivityOfStaff($importStaffId);
-        $importStaffWorkId = (is_int($importStaffWorkId)) ? $importStaffWorkId : $importStaffWorkId[0];
 
+        # lay trang thai thanh toan mac dinh
+        $getDefaultNotPay = $modelImport->getDefaultNotPay(); // chua thanh toan
+        $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
         $confirmDetailId = Request::input('txtDetail');
         $confirmNewSuppliesTool = Request::input('cbNewSuppliesTool');
         $unit = Request::input('txtUnit');
         $allocationStatus = Request::input('cbAllocationStatus');
         $confirmPayStatus = Request::input('cbPayStatus');
         $confirmNote = Request::input('txtConfirmNote');
-
-        # thong tin dang lam viec
-        $confirmPayStatus = (empty($confirmPayStatus)) ? 0 : $confirmPayStatus;
-        if ($confirmPayStatus == 2) { # nhap khong dung
-            $exactlyStatus = 0;  # ko chinh xac
-            $confirmPayStatus = 0; # khong thanh toan
+        if ($confirmPayStatus == $getDefaultNotPay || $confirmPayStatus == $getDefaultHasPay) { # duyet va chua thanh toan |duyet va thanh toan
+            # nhap chinh xac mac dinh
+            $exactlyStatus = $modelImport->getDefaultHasExactly();
         } else {
-            $exactlyStatus = 1; # nhan chinh xac
+            # khong duyet - nhap khong chính xac
+            $exactlyStatus = $modelImport->getDefaultNotExactly();
         }
         # chi tiet hoa don mua
         $dataImportDetail = $modelImportDetail->infoOfImport($importId);
         # xac nhan hoa don
         if ($modelImport->confirmImport($importId, $confirmPayStatus, $exactlyStatus, $loginStaffId, $confirmNote)) {
             # nhap chinh xac - dươc duỵet
-            if ($modelImport->checkExactlyStatus($importId)) {
+            if ($modelImport->checkHasExactlyStatus($importId)) {
                 //co thanh toan cho nguoi mua
                 if ($confirmPayStatus == 1) {
                     $modelImportPay->insert($modelImport->totalMoneyOfImport($importId), $importId, $loginStaffId);
                 }
-
                 //cap nhat chi tiet
                 foreach ($dataImportDetail as $key => $importDetail) {
                     $detailId = $importDetail->detailId();

@@ -915,16 +915,21 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
                 Route::get('view/{designId?}', ['as' => 'qc.work.orders.product_design.view.get', 'uses' => 'Work\Orders\OrdersController@viewProductDesign']);
 
                 #them thiet ke san pham
-                Route::get('design/{productId?}', ['as' => 'qc.work.orders.product.design.add.get', 'uses' => 'Work\Orders\OrdersController@getProductDesign']);
+                Route::get('add/{productId?}', ['as' => 'qc.work.orders.product.design.add.get', 'uses' => 'Work\Orders\OrdersController@getAddProductDesign']);
                 # them thiet ke thi cong
-                Route::get('design-construction/{productId?}', ['as' => 'qc.work.orders.product.design_construction.add.get', 'uses' => 'Work\Orders\OrdersController@getProductDesignConstruction']);
-                Route::post('design/{productId?}', ['as' => 'qc.work.orders.product.design.add.post', 'uses' => 'Work\Orders\OrdersController@postProductDesign']);
+                Route::get('add/construction/{productId?}', ['as' => 'qc.work.orders.product.design_construction.add.get', 'uses' => 'Work\Orders\OrdersController@getAddProductDesignConstruction']);
+                Route::post('add/{productId?}', ['as' => 'qc.work.orders.product.design.add.post', 'uses' => 'Work\Orders\OrdersController@postAddProductDesign']);
 
                 #xac nhan su dung thiet ke
                 Route::get('confirm-apply/{designId?}/{applyStatus?}', ['as' => 'qc.work.orders.product.design.apply.get', 'uses' => 'Work\Orders\OrdersController@getConfirmApplyDesign']);
                 Route::post('confirm-apply/{designId?}/{applyStatus?}', ['as' => 'qc.work.orders.product.design.apply.post', 'uses' => 'Work\Orders\OrdersController@postConfirmApplyDesign']);
 
-                #thiet ke
+                # huy thiet ke
+                Route::get('cancel/{designId?}', ['as' => 'qc.work.orders.product.design.cancel', 'uses' => 'Work\Orders\OrdersController@cancelProductDesign']);
+                #thiet ke thi cong
+                Route::get('construction/{productId?}', ['as' => 'qc.work.orders.product.design_construction.get', 'uses' => 'Work\Orders\OrdersController@getDesignConstruction']);
+
+                #thiet ke san pham
                 Route::get('/{productId?}', ['as' => 'qc.work.orders.product.design.get', 'uses' => 'Work\Orders\OrdersController@getDesign']);
             });
 
@@ -1220,7 +1225,7 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             #xem anh bao cao truc tiep
             Route::get('report-image-direct/{imageId?}', ['as' => 'qc.work.work_allocation.work_allocation.report_image_direct.view', 'uses' => 'Work\WorkAllocation\WorkAllocation\WorkAllocationController@viewReportImageDirect']);
             #xem anh bao cao qua cham cong
-            Route::get('report-image/{imageId?}', ['as' => 'qc.work.work_allocation.work_allocation.report_image.view', 'uses' => 'Work\WorkAllocation\WorkAllocation\WorkAllocationController@viewReportImage']);
+            Route::get('report-image-timekeeping/{imageId?}', ['as' => 'qc.work.work_allocation.work_allocation.report_image_timekeeping.view', 'uses' => 'Work\WorkAllocation\WorkAllocation\WorkAllocationController@viewReportImage']);
             # xoa anh bap cao
             Route::get('report-image-delete/{imageId?}', ['as' => 'qc.work.work_allocation.work_allocation.report.image.delete', 'uses' => 'Work\WorkAllocation\WorkAllocation\WorkAllocationController@deleteReportImage']);
             #Hủy báo cáo

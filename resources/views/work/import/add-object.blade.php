@@ -73,8 +73,8 @@ $dataProduct = $dataStaffLogin->getInfoProductOfWorkAllocationOf();
         </div>
         <div class="text-right col-xs-12 col-sm-12 col-md-1 col-lg-1">
             <div class="form-group form-group-sm qc-margin-none">
-                <a class="qc_delete qc-link-red" data-href="">
-                    <i class="qc-font-size-20 glyphicon glyphicon-remove"></i>
+                <a class="qc_delete qc-link-red qc-font-size-16" data-href="">
+                    HỦY
                 </a>
             </div>
         </div>

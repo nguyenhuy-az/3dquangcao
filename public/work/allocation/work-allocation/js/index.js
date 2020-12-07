@@ -30,7 +30,25 @@ var qc_work_allocation_work_allocation = {
         qc_master_submit.ajaxNotReload(href, '#qc_master', false);
     }
 }
-
+//------------ ---------- xem hinh anh ----------- ---------
+// anh bao cao
+$(document).ready(function () {
+    $('.qc_work_allocation_wrap').on('click', '.qc_work_allocation_report_image_view', function () {
+        qc_work_allocation_work_allocation.viewReportImage($(this).data('href'));
+    });
+    $('.qc_work_allocation_wrap').on('click', '.qc_work_allocation_design_image_view', function () {
+        qc_work_allocation_work_allocation.viewProductDesign($(this).data('href'));
+    });
+    // tu trang chi tiet
+    //xem anh bao cao chi tiet
+    $('body').on('click', '.qc_work_allocation_work_allocation_detail_wrap .qc_image_view', function () {
+        qc_work_allocation_work_allocation.viewReportImage($(this).data('href'));
+    });
+    //xem anh thiet chi tiet
+    $('body').on('click', '.qc_work_allocation_work_allocation_detail_wrap .qc_design_image_view', function () {
+        qc_work_allocation_work_allocation.viewProductDesign($(this).data('href'));
+    });
+});
 //------------ ---------- quan ly phan viec ----------- ---------
 $(document).ready(function () {
     //Theo trạng thái hoàn thành
@@ -46,7 +64,7 @@ $(document).ready(function () {
     });
     //form bao cao
     $('body').on('click', '.qc_work_allocation_report_act', function () {
-        qc_work_allocation_work_allocation.getReport($(this).data('href') );
+        qc_work_allocation_work_allocation.getReport($(this).data('href'));
     });
     //luu bao cao
     $('body').on('click', '.qc_frm_Work_allocation_report .qc_save', function () {
@@ -60,12 +78,5 @@ $(document).ready(function () {
     $('body').on('click', '.qc_work_allocation_work_allocation_detail_wrap .qc_delete_report_action', function () {
         qc_work_allocation_work_allocation.deleteReport($(this).data('href'));
     });
-    //xem anh bao cao chi tiet
-    $('body').on('click', '.qc_work_allocation_work_allocation_detail_wrap .qc_image_view', function () {
-        qc_work_allocation_work_allocation.viewReportImage($(this).data('href'));
-    });
-    //xem anh thiet chi tiet
-    $('body').on('click', '.qc_work_allocation_work_allocation_detail_wrap .qc_design_image_view', function () {
-        qc_work_allocation_work_allocation.viewProductDesign($(this).data('href'));
-    });
+
 });

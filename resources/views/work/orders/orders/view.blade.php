@@ -9,6 +9,10 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $orderId = $dataOrders->orderId();
+# thong tin san pham
+$dataProduct = $dataOrders->productActivityOfOrder();
+#anh thiet ke tong quat
+$dataOrderImage = $dataOrders->orderImageInfoActivity();
 ?>
 @extends('work.orders.index')
 @section('titlePage')
@@ -16,6 +20,11 @@ $orderId = $dataOrders->orderId();
 @endsection
 @section('qc_work_order_body')
     <div class="row">
+        <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
+                Về trang trước
+            </a>
+        </div>
         <div class="qc-padding-top-20 qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <h3>{!! $dataOrders->name() !!}</h3>
@@ -117,115 +126,109 @@ $orderId = $dataOrders->orderId();
                 </div>
             </div>
 
-            {{-- chi tiết sản phẩm --}}
-            <div class=" col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="row qc-padding-top-10">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            {{-- thong tin san pham --}}
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                <div class="row">
+                    <div class=" col-xs-12 col-sm-12 col-dm-12 col-lg-12">
+                        <i class="qc-font-size-16 glyphicon glyphicon-shopping-cart"></i>
+                        <label class="qc-color-red qc-font-size-16">SẢM PHẨM</label>
+                        @if($dataOrders->checkCancelStatus())
+                            <span class="qc-color-red pull-right">Đã hủy</span>
+                        @endif
+                    </div>
+                </div>
+                <div id="qc_work_order_info_product_show" class="row">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
-                            <table class="table table-bordered" style="margin-bottom: 0;">
-                                <tr style="background-color: whitesmoke;">
-                                    <th colspan="10">
-                                        <i class="qc-font-size-16 glyphicon glyphicon-shopping-cart"></i>
-                                        <b class="qc-color-red">DANH SÁCH SẢN PHẨM</b>
-                                    </th>
-                                </tr>
+                            <table class="table table-bordered" style="margin-bottom: 0px;">
                                 <tr style="background-color: black; color: yellow;">
-                                    <th class="text-center" style="width: 20px;">STT</th>
-                                    <th>Tên SP</th>
-                                    <th>Thiết kế</th>
-                                    <th>Chú thích</th>
-                                    <th class="text-center">Dài<br/>(m)</th>
-                                    <th class="text-center">Rộng<br/>(m)</th>
-                                    <th class="text-center">Đơn vị</th>
-                                    <th class="text-center">Số lượng</th>
-                                    <th class="text-right">Giá/SP</th>
-                                    <th class="text-right">Thành tiền</th>
+                                    <th style="width: 300px;">SẢN PHẨM</th>
+                                    <th>
+                                        GIÁ/SP(VNĐ)
+                                    </th>
+                                    <th>TK SP</th>
+                                    <th>TK THI CÔNG</th>
                                 </tr>
-                                <?php
-                                $dataProduct = $dataOrders->allProductOfOrder();
-                                $n_o = 0;
-                                ?>
                                 @if($hFunction->checkCount($dataProduct))
+                                    <?php
+                                    $n_o = 0;
+                                    ?>
                                     @foreach($dataProduct as $product)
                                         <?php
                                         $productId = $product->productId();
-                                        $designImage = $product->designImage();
-                                        # thiet ke dang ap dung
+                                        $productWidth = $product->width();
+                                        $productHeight = $product->height();
+                                        $description = $product->description();
+                                        $productAmount = $product->amount();
+                                        # thiet ke san pham dang ap dung dang ap dung
                                         $dataProductDesign = $product->productDesignInfoApplyActivity();
-                                        if ($hFunction->getCountFromData($dataProductDesign) == 0) {
-                                            # thiet ke sau cung
-                                            $dataProductDesign = $product->productDesignInfoLast();
-                                        }
+                                        # thiet ke san pham thi cong
+                                        $dataProductDesignConstruction = $product->productDesignInfoConstructionHasApply();
                                         ?>
                                         <tr>
-                                            <td class="text-center">
-                                                {!! $n_o+=1  !!}
+                                            <td>
+                                                <b>{!! $product->productType->name()  !!}</b>
+                                                <br/>
+                                                <em>{!! $hFunction->convertDateDMYFromDatetime($product->createdAt()) !!}</em>
+                                                <br/>
+                                                <em>- Ngang: </em>
+                                                <span> {!! $productWidth !!} mm</span>
+                                                <em>- Cao: </em>
+                                                <span>{!! $productHeight !!} mm</span>
+                                                <em>- Số lượng: </em>
+                                                <span style="color: red;">{!! $productAmount !!}</span>
+                                                @if(!$hFunction->checkEmpty($description))
+                                                    <br/>
+                                                    <em>- Ghi chú: </em>
+                                                    <em style="color: grey;">- {!! $description !!}</em>
+                                                @endif
+                                                @if(!$product->checkCancelStatus())
+                                                    @if($product->checkFinishStatus())
+                                                        <em style="color: grey;">Đã hoàn thành</em>
+                                                    @endif
+                                                @else
+                                                    <em style="color: grey;">Đã hủy</em>
+                                                @endif
                                             </td>
                                             <td>
-                                                {!! $product->productType->name()  !!}
+                                                <b style="color: blue;">
+                                                    {!! $hFunction->currencyFormat($product->price()) !!}
+                                                </b>
                                             </td>
-                                            <td>
+                                            <td style="padding-top: 5px !important;">
                                                 @if($hFunction->checkCount($dataProductDesign))
                                                     @if($dataProductDesign->checkApplyStatus())
                                                         <a class="qc_work_order_product_design_image_view qc-link"
                                                            data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
-                                                            <img style="width: 70px; height: auto; margin-bottom: 5px; border: 2px solid green;"
+                                                            <img style="width: 70px; height: auto; margin-bottom: 5px;"
                                                                  title="Đang áp dụng"
                                                                  src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
                                                         </a>
-                                                        <br/>
-                                                    @else
-                                                        <a class="qc_work_order_product_design_image_view qc-link"
-                                                           data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
-                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px; border: 2px solid red;"
-                                                                 title="Không được áp dụng"
-                                                                 src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
-                                                        </a>
-                                                        <br/>
                                                     @endif
                                                 @else
-                                                    @if(!$hFunction->checkEmpty($designImage))
-                                                        <a title="HÌNH ẢNH TỪ PHIÊN BẢNG CŨ - KHÔNG XEM FULL">
-                                                            <img style="width: 70px; height: 70px; margin-bottom: 5px; "
-                                                                 src="{!! $product->pathSmallDesignImage($designImage) !!}">
-                                                        </a>
-                                                        <br/>
-                                                    @else
-                                                        <em class="qc-color-grey">Gửi thiết kế sau</em>
-                                                    @endif
+                                                    <span style="background-color: black; color: lime;">Chưa có thiết kế</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                {!! $product->description()  !!}
-                                            </td>
-                                            <td class="text-center">
-                                                {!! $product->width()/1000 !!}
-                                            </td>
-                                            <td class="text-center">
-                                                {!! $product->height()/1000 !!}
-                                            </td>
-                                            <td class="text-center">
-                                                @if(!$hFunction->checkEmpty($product->productType->unit()))
-                                                    {!! $product->productType->unit()  !!}
+                                                @if($hFunction->checkCount($dataProductDesignConstruction))
+                                                    @foreach($dataProductDesignConstruction as $productDesignConstruction)
+                                                        <a class="qc_work_order_product_design_image_view qc-link"
+                                                           data-href="{!! route('qc.work.orders.product_design.view.get', $productDesignConstruction->designId()) !!}">
+                                                            <img style="width: 70px; height: auto; margin-bottom: 5px; border: 1px solid grey;"
+                                                                 title="Đang áp dụng"
+                                                                 src="{!! $productDesignConstruction->pathSmallImage($productDesignConstruction->image()) !!}">
+                                                        </a>
+                                                    @endforeach
                                                 @else
-                                                    <em class="qc-color-grey">...</em>
+                                                    <span style="background-color: black; color: lime;">Chưa có TK thi công </span>
                                                 @endif
-                                            </td>
-                                            <td class="text-center">
-                                                {!! $product->amount() !!}
-                                            </td>
-                                            <td class="text-right">
-                                                {!! $hFunction->currencyFormat($product->price()) !!}
-                                            </td>
-                                            <td class="text-right">
-                                                {!! $hFunction->currencyFormat($product->price()*$product->amount()) !!}
                                             </td>
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td class="qc-padding-top-10 text-center" colspan="10">
-                                            <em class="qc-color-red">Không có sản phẩm</em>
+                                        <td class="text-center" colspan="4">
+                                            Không có sản phẩm
                                         </td>
                                     </tr>
                                 @endif
@@ -233,71 +236,85 @@ $orderId = $dataOrders->orderId();
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {{-- chi tiết Thanh toán --}}
-            <div class="qc-padding-top-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="row qc-padding-top-10">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            </div>
+            {{-- thong tin thanh toan --}}
+            <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12">
+                        <i class="qc-font-size-16 glyphicon glyphicon-credit-card"></i>
+                        <label class="qc-color-red qc-font-size-16">THANH TOÁN</label>
+                    </div>
+                </div>
+                <div id="qc_work_order_info_payment_show" class="row">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="table-responsive">
-                            <table class="table table-bordered" style="margin-bottom: 0;">
-                                <tr style="background-color: whitesmoke;">
-                                    <th colspan="5">
-                                        <i class="qc-font-size-16 glyphicon glyphicon-credit-card"></i>
-                                        <b class="qc-color-red">CHI TIẾT THANH TOÁN</b>
-                                    </th>
-                                </tr>
+                            <table class="table table-bordered" style="margin-bottom: 0px;">
                                 <tr style="background-color: black; color: yellow;">
-                                    <th class="text-center" style="width: 20px;">STT</th>
                                     <th>Ngày</th>
+                                    <th>Số tiền</th>
                                     <th>Người thu</th>
-                                    <th>Người nộp</th>
-                                    <th>Điện thoại</th>
-                                    <th class="text-right">Số tiền</th>
+                                    <th>Tên người nộp</th>
                                 </tr>
                                 <?php
-                                $dataOrdersPay = $dataOrders->infoOrderPayOfOrder();
-                                $n_o = 0;
+                                $dataOrderPay = $dataOrders->infoOrderPayOfOrder();
                                 ?>
-                                @if($hFunction->checkCount($dataOrdersPay))
-                                    @foreach($dataOrdersPay as $orderPay)
+                                @if($hFunction->checkCount($dataOrderPay))
+                                    @foreach($dataOrderPay as $orderPay)
+                                        <?php
+                                        $payId = $orderPay->payId();
+                                        $payNote = $orderPay->note();
+                                        # Thong tin nhan vien nha
+                                        $dataReceiveStaff = $orderPay->staff;
+                                        ?>
                                         <tr>
-                                            <td class="text-center">
-                                                {!! $n_o+=1  !!}
-                                            </td>
                                             <td>
                                                 {!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}
                                             </td>
                                             <td>
-                                                {!! $orderPay->staff->fullName() !!}
+                                                <label style="color: blue;">{!! $hFunction->currencyFormat($orderPay->money()) !!}</label>
+                                                @if($hFunction->checkEmpty($payNote))
+                                                    <br/>
+                                                    <em style="color: red;">{!! $payNote  !!}</em>
+                                                @endif
                                             </td>
                                             <td>
-                                                @if(!$hFunction->checkEmpty($orderPay->payerName()))
+                                                <div class="media">
+                                                    <a class="pull-left" href="#">
+                                                        <img class="media-object"
+                                                             style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                             src="{!! $dataReceiveStaff->pathAvatar($dataReceiveStaff->image()) !!}">
+                                                    </a>
+
+                                                    <div class="media-body">
+                                                        <h5 class="media-heading">{!! $dataReceiveStaff->fullName() !!}</h5>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if(!empty($orderPay->payerName()))
                                                     <span>{!! $orderPay->payerName() !!}</span>
+                                                    @if(!empty($orderPay->payerPhone()))
+                                                        <br/>
+                                                        <em style="color: grey;">ĐT:</em>
+                                                        <span> {!! $orderPay->payerPhone() !!}</span>
+                                                    @endif
                                                 @else
                                                     <span>{!! $orderPay->order->customer->name() !!}</span>
+                                                    @if(empty($orderPay->payerPhone()))
+                                                        <br/>
+                                                        <em style="color: grey;">ĐT:</em>
+                                                        <span>{!! $orderPay->order->customer->phone() !!}</span>
+                                                    @endif
                                                 @endif
-                                            </td>
-                                            <td>
-                                                @if(!$hFunction->checkEmpty($orderPay->payerPhone()))
-                                                    <span>{!! $orderPay->payerPhone() !!}</span>
-                                                @else
-                                                    <span>{!! $orderPay->order->customer->phone() !!}</span>
-                                                @endif
-                                            </td>
-                                            <td class="text-right">
-                                                {!! $hFunction->currencyFormat($orderPay->money()) !!}
+
                                             </td>
                                         </tr>
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td class="qc-padding-top-10" colspan="6">
-                                            @if($dataOrders->discount()== 100)
-                                                <em class="qc-color-red">Giảm 100%</em>
-                                            @else
-                                                <em style="color: brown;">Chưa thanh toán</em>
-                                            @endif
+                                        <td class="text-center" colspan="4">
+                                            Không có thông tin thanh toán
                                         </td>
                                     </tr>
                                 @endif
@@ -306,11 +323,9 @@ $orderId = $dataOrders->orderId();
                     </div>
                 </div>
             </div>
-
-            {{-- Thông tin thanh toán --}}
-            <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
                 <div class="row">
-                    <div class="pull-right col-sx-12 col-sm-12 col-md-12 col-lg-6">
+                    <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover qc-margin-bot-none">
                                 <tr>
@@ -326,7 +341,7 @@ $orderId = $dataOrders->orderId();
                                         <em class="qc-color-grey">Giảm {!! $dataOrders->discount() !!}%:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b>{!! $hFunction->currencyFormat($dataOrders->totalMoneyDiscount()) !!}</b>
+                                        <b>- {!! $hFunction->currencyFormat($dataOrders->totalMoneyDiscount()) !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -334,7 +349,7 @@ $orderId = $dataOrders->orderId();
                                         <em class="qc-color-grey">VAT {!! $dataOrders->vat() !!}%:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b>{!! $hFunction->currencyFormat($dataOrders->totalMoneyOfVat()) !!}</b>
+                                        <b>+ {!! $hFunction->currencyFormat($dataOrders->totalMoneyOfVat()) !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -347,10 +362,10 @@ $orderId = $dataOrders->orderId();
                                 </tr>
                                 <tr>
                                     <td>
-                                        <em class="qc-color-grey">Đã thanh tóa:</em>
+                                        <em class="qc-color-grey">Đã thanh toán:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b>{!! $hFunction->currencyFormat($dataOrders->totalPaid()) !!}</b>
+                                        <b>- {!! $hFunction->currencyFormat($dataOrders->totalPaid()) !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -366,13 +381,26 @@ $orderId = $dataOrders->orderId();
                     </div>
                 </div>
             </div>
-            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                    Về trang trước
-                </a>
-                <a class="btn btn-sm btn-default" href="{!! route('qc.work.orders.get') !!}">
-                    Về Danh mục ĐH
-                </a>
+            {{-- thiet ke tong the --}}
+            <div class="row">
+                <div class="qc-container-table-border-none col-xs-12 col-sm-12 col-dm-12 col-lg-12">
+                    <div class="table-responsive" style="margin: 0;">
+                        <table class="table table-bordered" style="margin-bottom: 0px;">
+                            @if($hFunction->checkCount($dataOrderImage))
+                                @foreach($dataOrderImage as $orderImage)
+                                    <tr>
+                                        <td style="padding-top: 5px !important;">
+                                            <a class="qc-link">
+                                                <img style="width: 100%; margin-bottom: 5px;" title="Thiết kế tổng quát"
+                                                     src="{!! $orderImage->pathFullImage($orderImage->image()) !!}">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

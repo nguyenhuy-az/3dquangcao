@@ -23,8 +23,6 @@ class SalaryController extends Controller
     public function index()
     {
         $modelStaff = new QcStaff();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelWork = new QcWork();
         $modelSalary = new QcSalary();
         $dataAccess = [
             'object' => 'salary'

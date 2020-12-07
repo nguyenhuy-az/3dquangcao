@@ -51,6 +51,42 @@ class QcStaff extends Model
     {
 
     }
+
+    # mac dinh dang lam viec
+    public function getDefaultHasWorkStatus()
+    {
+        return 1;
+    }
+
+    # mac dinh khong con lam
+    public function getDefaultNotWorkStatus()
+    {
+        return 0;
+    }
+
+    # mac dinh tai khoan root
+    public function getDefaultHasRootStatus()
+    {
+        return 1;
+    }
+
+    # mac dinh tai khoan root
+    public function getDefaultNotRootStatus()
+    {
+        return 0;
+    }
+
+    #mac dinh co xac nhan
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    #mac dinh co xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
     //---------- Insert ----------
     //tạo mật khẩu cho người dùng
     public function createStaffPass($password, $nameCode)
@@ -122,6 +158,7 @@ class QcStaff extends Model
     {
         return (empty($staffId)) ? $this->staffId() : $staffId;
     }
+
     public function staffId()
     {
         return $this->staff_id;
@@ -993,13 +1030,14 @@ class QcStaff extends Model
     {
         return $this->hasMany('App\Models\Ad3d\Order\QcOrder', 'staff_id', 'importStaff_id');
     }
-
-    public function importInfoOfStaff($staffId = null, $payStatus = 3, $date = null)
+    # tat ca thong tin mua vat tu cua 1 nhan vie
+    public function importInfoOfStaff($staffId = null, $date = null)
     {
         $modelImport = new QcImport();
-        return $modelImport->infoOfStaff($this->checkIdNull($staffId), $date, $payStatus);
+        return $modelImport->selectAllInfoOfStaff($this->checkIdNull($staffId), $date)->get();
     }
 
+    # tong tien mua vat tu cua nhan vien
     public function totalMoneyImportOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan / 2 da duyet chua thanh toan
     {
         $modelImport = new QcImport();
@@ -1460,7 +1498,7 @@ class QcStaff extends Model
 
     public function checkWorkStatus($staffId = null)
     {
-        return ($this->workStatus($staffId) == 1) ? true : false;
+        return ($this->workStatus($staffId) == $this->getDefaultHasWorkStatus()) ? true : false;
     }
 
     // exist of account
@@ -1471,7 +1509,7 @@ class QcStaff extends Model
 
     public function checkRootStatus($staffId = null)
     {
-        return ($this->rootStatus($staffId) == 1) ? true : false;
+        return ($this->rootStatus($staffId) == $this->getDefaultHasRootStatus()) ? true : false;
     }
 
     public function checkRootManage($staffId = null)

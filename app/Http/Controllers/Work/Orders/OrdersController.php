@@ -1016,7 +1016,7 @@ class OrdersController extends Controller
     }
 
     #---- ---  THIET KE SAN PHAM ---- -----
-    #chi tiet thiet ke
+    #chi tiet thiet ke san pham
     public function getDesign($productId)
     {
         $modelStaff = new QcStaff();
@@ -1025,11 +1025,25 @@ class OrdersController extends Controller
             'object' => 'orders'
         ];
         $dataProduct = $modelProduct->getInfo($productId);
-        return view('work.orders.orders.product.design', compact('modelStaff', 'dataAccess', 'dataProduct'));
+        $dataProductDesign = $dataProduct->productDesignInfoAll();
+        return view('work.orders.orders.product.design', compact('modelStaff', 'dataAccess', 'dataProduct', 'dataProductDesign'));
+    }
+
+    #chi tiet thiet ke san pham
+    public function getDesignConstruction($productId)
+    {
+        $modelStaff = new QcStaff();
+        $modelProduct = new QcProduct();
+        $dataAccess = [
+            'object' => 'orders'
+        ];
+        $dataProduct = $modelProduct->getInfo($productId);
+        $dataProductDesign = $dataProduct->productDesignInfoConstruction();
+        return view('work.orders.orders.product.design-construction', compact('modelStaff', 'dataAccess', 'dataProduct', 'dataProductDesign'));
     }
 
     #them anh thiet ke san pham
-    public function getProductDesign($productId = null)
+    public function getAddProductDesign($productId = null)
     {
         $hFunction = new \Hfunction();
         $modelProduct = new QcProduct();
@@ -1042,7 +1056,7 @@ class OrdersController extends Controller
     }
 
     # them anh thiet ke thi cong
-    public function  getProductDesignConstruction($productId)
+    public function  getAddProductDesignConstruction($productId)
     {
         $hFunction = new \Hfunction();
         $modelProduct = new QcProduct();
@@ -1054,7 +1068,7 @@ class OrdersController extends Controller
         }
     }
 
-    public function postProductDesign(Request $request, $productId = null)
+    public function postAddProductDesign(Request $request, $productId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -1114,4 +1128,10 @@ class OrdersController extends Controller
         }
     }
 
+    # huy thiet ke san pham hoac thi cong
+    public function cancelProductDesign($designId)
+    {
+        $modelProductDesign = new QcProductDesign();
+        return $modelProductDesign->cancelProductDesign($designId);
+    }
 }

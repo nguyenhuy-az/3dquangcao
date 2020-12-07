@@ -27,7 +27,7 @@ $currentMonth = $hFunction->currentMonth();
                         <table class="table table-hover table-bordered">
                             <tr>
                                 <td class="text-left" style="padding: 0;">
-                                    <select class="qc_work_pay_salary_month_filter text-right col-xs-4 col-sm-4 col-md-4 col-lg-4"
+                                    <select class="qc_work_pay_salary_month_filter text-right col-xs-6 col-sm-6 col-md-6 col-lg-6"
                                             style="height: 34px; color: red; padding: 0;"
                                             data-href="{!! route('qc.work.pay.pay_salary.get') !!}">
                                         @for($m = 1; $m <=12; $m++)
@@ -37,13 +37,13 @@ $currentMonth = $hFunction->currentMonth();
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_pay_salary_year_filter text-right col-xs-8 col-sm-8 col-md-8 col-lg-8 "
+                                    <select class="qc_work_pay_salary_year_filter text-right col-xs-6 col-sm-6 col-md-6 col-lg-6"
                                             style=" height: 34px; color: red; padding: 0;"
                                             data-href="{!! route('qc.work.pay.pay_salary.get') !!}">
                                         @for($y = 2017; $y <=2050; $y++)
                                             <option @if($filterYear == $y) selected="selected"
                                                     @endif value="{!! $y !!}">
-                                                Năm {!! $y !!}
+                                                 {!! $y !!}
                                             </option>
                                         @endfor
                                     </select>
@@ -198,12 +198,12 @@ $currentMonth = $hFunction->currentMonth();
                                             <b style="color: blue;">{!! $hFunction->currencyFormat($totalBonusMoney) !!}</b>
                                         </td>
                                         <td>
-                                            {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
-                                        </td>
-                                        <td>
                                             <b style="color: red;">
                                                 {!! $hFunction->currencyFormat($benefitMoney) !!}
                                             </b>
+                                        </td>
+                                        <td>
+                                            {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
                                         </td>
                                         <td>
                                             <b style="color: red;">
@@ -251,12 +251,12 @@ $currentMonth = $hFunction->currentMonth();
                                     </td>
                                     <td class="qc-color-red">
                                         <b style="font-size: 14px; color: red;">
-                                            {!! $hFunction->currencyFormat($sumMoneyImportOfStaff)  !!}
+                                            {!! $hFunction->currencyFormat($sumSalaryBenefit)  !!}
                                         </b>
                                     </td>
                                     <td class="qc-color-red">
                                         <b style="font-size: 14px; color: red;">
-                                            {!! $hFunction->currencyFormat($sumSalaryBenefit)  !!}
+                                            {!! $hFunction->currencyFormat($sumMoneyImportOfStaff)  !!}
                                         </b>
                                     </td>
                                     <td class="qc-color-red">

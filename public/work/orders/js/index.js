@@ -261,14 +261,14 @@ var qc_work_orders = {
                         cbDayDelivery.focus();
                         return false;
                     } else {
-                       /* var cbDay = cbDayDelivery.val();
-                        var cbMonth = $('#frmWorkOrdersAdd').find("select[name='cbMonthDelivery']").val();
-                        var cbYear = $('#frmWorkOrdersAdd').find("select[name='cbYearDelivery']").val();
-                        var cbHours = $('#frmWorkOrdersAdd').find("select[name='cbHoursDelivery']").val();
-                        var cbMinute = $('#frmWorkOrdersAdd').find("select[name='cbMinuteDelivery']").val();
-                        var strDate = cbYear +'-' + cbMonth +'-' + cbDay +'-' + cbHours +'-' + cbMinute;
-                        var dateDelivery = new Date(strDate);
-                        alert(txtDateReceive.val() + '-----' + dateDelivery.toDateString());*/
+                        /* var cbDay = cbDayDelivery.val();
+                         var cbMonth = $('#frmWorkOrdersAdd').find("select[name='cbMonthDelivery']").val();
+                         var cbYear = $('#frmWorkOrdersAdd').find("select[name='cbYearDelivery']").val();
+                         var cbHours = $('#frmWorkOrdersAdd').find("select[name='cbHoursDelivery']").val();
+                         var cbMinute = $('#frmWorkOrdersAdd').find("select[name='cbMinuteDelivery']").val();
+                         var strDate = cbYear +'-' + cbMonth +'-' + cbDay +'-' + cbHours +'-' + cbMinute;
+                         var dateDelivery = new Date(strDate);
+                         alert(txtDateReceive.val() + '-----' + dateDelivery.toDateString());*/
                         if (confirm('Thông tin đã đúng và tạo đơn hàng ?')) {
                             qc_master_submit.normalForm('#frmWorkOrdersAdd');
                             qc_main.scrollTop();
@@ -1304,6 +1304,7 @@ $(document).ready(function () {
 });
 /* ---------- QL SAN PHAM DON HANG + BAO GIA  -----------------*/
 $(document).ready(function () {
+
     /*xem anh thiet ke chi tiet*/
     $('body').on('click', '.qc_work_order_product_design_image_view', function () {
         qc_work_orders.product.viewDesign($(this).data('href'));
@@ -1318,11 +1319,20 @@ $(document).ready(function () {
     });
 
     /*------- ------ xac nhan ap dung thiet ke ----- ---- */
+    // tat / mo thiet ke
     $('body').on('click', '.qc_orders_product_design_apply_act', function () {
         qc_work_orders.product.design.getApply($(this).data('href'));
     });
     $('body').on('click', '.frmWorkOrderProductDesignApplyConfirm .qc_save', function () {
         qc_work_orders.product.design.saveApply($(this).parents('.frmWorkOrderProductDesignApplyConfirm'));
+    });
+
+    /* ----- ------ huy thiet ke cua san pham --- ------ ---- */
+
+    $('body').on('click', '.qc_orders_product_design_cancel_act', function () {
+        if (confirm('Sau khi hủy thiết kế sẽ KHÔNG ĐƯỢC PHỤC HỒI, đồng ý hủy?')) {
+            qc_master_submit.ajaxHasReload($(this).data('href'), '', false);
+        }
     });
 
     /* ----- ------ huy san pham --- ------ ---- */

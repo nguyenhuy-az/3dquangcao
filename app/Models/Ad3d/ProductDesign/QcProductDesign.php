@@ -157,6 +157,16 @@ class QcProductDesign extends Model
         return QcProductDesign::where('design_id', $this->checkIdNull($designId))->update(['applyStatus' => $this->getDefaultNotApply()]);
     }
 
+    # huy thiet ke
+    public function cancelProductDesign($designId = null)
+    {
+        return QcProductDesign::where('design_id', $this->checkIdNull($designId))->update(
+            [
+                //'applyStatus' => $this->getDefaultNotApply(),
+                'action' => $this->getDefaultNotAction()
+            ]);
+    }
+
     //xoa anh thiet ke
     public function dropImage($imageName)
     {
@@ -232,7 +242,8 @@ class QcProductDesign extends Model
     {
         $designType = $this->getDefaultDesignTypeConstruction();
         $applyStatus = $this->getDefaultHasApply();
-        return QcProductDesign::where('product_id', $productId)->where('designType', $designType)->where('applyStatus', $applyStatus)->orderBy('design_id', 'DESC')->get();
+        $action = $this->getDefaultHasAction();
+        return QcProductDesign::where('product_id', $productId)->where('designType', $designType)->where('applyStatus', $applyStatus)->where('action', $action)->orderBy('design_id', 'DESC')->get();
     }
 
     //---------- Nhan vien thiet ke -----------
@@ -272,9 +283,16 @@ class QcProductDesign extends Model
     }
 
     #----------- DEPARTMENT INFO -------------
+    # kiem tra co ap dung
     public function checkApplyStatus($designId = null)
     {
         return ($this->applyStatus($designId) == $this->getDefaultHasApply()) ? true : false;
+    }
+
+    # kiem tra con hoat dong
+    public function checkHasAction($designId = null)
+    {
+        return ($this->action($designId) == $this->getDefaultHasAction()) ? true : false;
     }
 
     public function designId()

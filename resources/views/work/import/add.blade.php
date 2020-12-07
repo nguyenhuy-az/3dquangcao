@@ -11,7 +11,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $loginStaffId = $dataStaff->staffId();
-$currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
+$currentDate = $hFunction->formatDateToDMY($hFunction->currentDate())
 ?>
 @extends('work.import.index')
 @section('qc_work_import_body')
@@ -20,14 +20,6 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
             <form id="frm_work_import_add" role="form" method="post" enctype="multipart/form-data"
                   action="{!! route('qc.work.import.add.post') !!}">
                 <div class="row" style="padding-top: 20px;">
-                    @if (Session::has('notifyAddImport'))
-                        <div class="form-group qc-font-size-14 qc-color-red">
-                            {!! Session::get('notifyAddImport') !!}
-                            <?php
-                            Session::forget('notifyAddImport');
-                            ?>
-                        </div>
-                    @endif
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
                         <div class="row" style="margin-bottom: 10px;">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
@@ -39,13 +31,9 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                         <div class="row">
                             <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
                                 <div class="form-group form-group-sm qc-margin-none">
-                                    <label>Ngày mua:<i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
+                                    <label>Ngày nhập (Mặc định ngày hiện tại):</label>
                                     <input id="txtImportDate" type="text" name="txtImportDate" class="form-control"
-                                           value="{!! $currentDate !!}"
-                                           placeholder="Ngày mua">
-                                    <script type="text/javascript">
-                                        qc_main.setDatepicker('#txtImportDate');
-                                    </script>
+                                           disabled="disabled" value="{!! $currentDate !!}" placeholder="Ngày mua">
                                 </div>
                             </div>
                         </div>
@@ -63,12 +51,6 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                     </div>
                     {{-- Vật tư / dụng cu --}}
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
-                        {{--<div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="color: red;">
-                                <i class="glyphicon glyphicon-pencil qc-color-green"></i>
-                                <span class="qc-font-size-16">Vật Tư / Dụng cụ</span>
-                            </div>
-                        </div>--}}
                         <div class="row">
                             <div id="qc_work_import_add_object_wrap" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 @include('work.import.add-object')
@@ -100,16 +82,24 @@ $currentDate = date('Y-m-d', strtotime($hFunction->carbonNow()));
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10" style="overflow: hidden;">
                                 <label>Chọn ảnh:</label>
-                                <input class="txtImportImage"onclick="$(this).click();" type="file" name="txtImportImage" value="">
-                            </div>
-                            <div class="text-right col-xs-12 col-sm-12 col-md-2 col-lg-2">
-                                <a class="qc_delete qc-link-red" data-href="">
-                                    <i class="qc-font-size-20 glyphicon glyphicon-remove"></i>
-                                </a>
+                                <input class="txtImportImage" onclick="$(this).click();" type="file"
+                                       name="txtImportImage" value="">
                             </div>
                         </div>
                     </div>
                 </div>
+                @if (Session::has('notifyAddImport'))
+                    <div class="row">
+                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group qc-font-size-14 qc-color-red">
+                                {!! Session::get('notifyAddImport') !!}
+                                <?php
+                                Session::forget('notifyAddImport');
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="row">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <input type="hidden" name="_token" value="{!! csrf_token() !!}">

@@ -11,6 +11,7 @@ $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dang nhap
 $hrefIndex = route('qc.ad3d.finance.salary.payment.get');
+       // dd($dataSalary);
 ?>
 @extends('ad3d.finance.salary.payment.index')
 @section('qc_ad3d_index_content')
@@ -139,19 +140,26 @@ $hrefIndex = route('qc.ad3d.finance.salary.payment.get');
                                 $bonusMoney = $salary->bonusMoney();
                                 $minusMoney = $salary->minusMoney();
                                 $salaryPay = $salary->salary();
+                                $workSalaryId = $salary->workSalaryId();
                                 # tien da thanh toan
                                 $totalPaid = $salary->totalPaid();
                                 # tong tien giu
                                 $totalKeepMoney = $salary->totalKeepMoney();
                                 # thong tin lam viec
                                 $dataWork = $salary->work;
+                                # thong tin nhan vien
+                                if (!empty($dataWork->companyStaffWorkId())) {
+                                    $dataStaffSalary = $dataWork->companyStaffWork->staff;
+                                } else {
+                                    $dataStaffSalary = $dataWork->staff; // phien ban cu
+                                }
                                 # tong luong co ban
                                 $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
                                 # tien thuong
                                 $totalBonusMoney = $dataWork->totalMoneyBonusApplied();
                                 //2 tong tien mua vat tu xac nhan chưa thanh toan
                                 $fromDate = $dataWork->fromDate();
-                                $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataWork->companyStaffWork->staff->staffId(), date('Y-m', strtotime($fromDate)), 2);
+                                $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataStaffSalary->staffId(), date('Y-m', strtotime($fromDate)), 2);
 
                                 # luong da ung
                                 $totalMoneyConfirmedBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
@@ -160,23 +168,19 @@ $hrefIndex = route('qc.ad3d.finance.salary.payment.get');
                                 # tong can thanh toan
                                 $totalUnpaid = $totalSalaryReceive + $totalMoneyImportOfStaff - $totalMoneyConfirmedBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
 
-                                # thong tin nhan vien
-                                if (!empty($dataWork->companyStaffWorkId())) {
-                                    $dataStaffSalary = $dataWork->companyStaffWork->staff;
-                                } else {
-                                    $dataStaffSalary = $dataWork->staff; // phien ban cu
-                                }
                                 $image = $dataStaffSalary->image();
                                 $src = $dataStaffSalary->pathAvatar($image);
                                 $n_o += 1;
                                 ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $salaryId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
+                                    data-object="{!! $salaryId !!}">
                                     <td style="padding: 0;">
                                         <div class="media" style="margin: 3px;">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object" src="{!! $src !!}"
                                                      style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;">
                                             </a>
+
                                             <div class="media-body">
                                                 <h5 class="media-heading">{!! $dataStaffSalary->lastName() !!}</h5>
                                                 <em style="color: blue;">{!! date('m-Y',strtotime($dataWork->fromDate())) !!}</em>

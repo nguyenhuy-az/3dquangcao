@@ -17,6 +17,18 @@ class QcSalaryPay extends Model
     private $lastId;
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
+    # mac dinh co xac nhan
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    # mac dinh co xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
+
     #---------- Insert ----------
     public function insert($money, $datePay, $salaryId, $staffPayId)
     {
@@ -32,6 +44,19 @@ class QcSalaryPay extends Model
             return true;
         } else {
             return false;
+        }
+    }
+
+    # xu ly say khi thanh toan
+    public function handleAfterPay($payId)
+    {
+        $dataSalaryPay = $this->getInfo($payId);
+        $dataWork = $dataSalaryPay->salary->work;
+        $dataStaff = $dataWork->staffInfoOfWork();
+        # khong con lam
+        if (!$dataStaff->checkWorkStatus()) {
+            # tu dong xac nhan da nhan luong
+            //$this->confirmReceiveOfSalary($payId);
         }
     }
 

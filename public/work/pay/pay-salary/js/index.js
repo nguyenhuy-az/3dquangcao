@@ -38,15 +38,33 @@ var qc_work_pay_salary = {
         var txtKeepMoney = $(frm).find("input[name='txtKeepMoney']");
         var txtBenefitMoneyVal = txtBenefitMoney.val();
         if (txtBenefitMoneyVal == '') txtBenefitMoneyVal = '0';
-        $(frm).find('.qc_showBenefitMoney').text(txtBenefitMoneyVal);
         var numberBenefitMoneyVal = parseInt(qc_main.getNumberInput(txtBenefitMoneyVal)); //chuyen sang kieu so
         var txtKeepMoneyVal = txtKeepMoney.val();
         if (txtKeepMoneyVal == '') txtKeepMoneyVal = '0';
-        $(frm).find('.qc_showKeepMoney').text(txtKeepMoneyVal);
         var numberKeepMoneyVal = parseInt(qc_main.getNumberInput(txtKeepMoneyVal)); //chuyen sang kieu so
-        var showTotalMoneyPay = txtSalaryVal + txtImportVal + txtKPIVal + numberBenefitMoneyVal - numberKeepMoneyVal;
-        $(frm).find('.qc_salary_showTotalMoneyPay').val(qc_main.formatCurrency(String(showTotalMoneyPay)));
+        var totalMoneyPay = txtSalaryVal + txtImportVal + txtKPIVal + numberBenefitMoneyVal - numberKeepMoneyVal;
+        $(frm).find('.qc_totalMoneyPay').val(qc_main.formatCurrency(String(totalMoneyPay)));
+        $(frm).find('.qc_moneyPay').val(qc_main.formatCurrency(String(totalMoneyPay)));
 
+    },
+    savePay: function (frm) {
+        if (confirm('Khi thanh toán sẽ không được thay đổi, Bạn đồng ý thanh toán?')) {
+            qc_master_submit.ajaxFormHasReload('#frm_work_pay_salary_pay', '', false);
+        }
+        /*
+        var totalMoneyPay = $(frm).find("input[name='txtTotalMoneyPay']");
+        var totalMoneyPayVal = totalMoneyPay.val();
+        var numberTotalMoneyPayVal = parseInt(qc_main.getNumberInput(totalMoneyPayVal)); //chuyen sang kieu so
+        var moneyPay = $(frm).find("input[name='txtMoneyPay']");
+        var moneyPayVal = moneyPay.val();
+        var numberMoneyPayVal = parseInt(qc_main.getNumberInput(moneyPayVal)); //chuyen sang kieu so
+        if (numberMoneyPayVal > numberTotalMoneyPayVal) {
+            alert('Tiền thanh toán không được lớn hơn TỔNG TIỀN CẦN THANH TOÁN.');
+            moneyPay.focus();
+            return false;
+        } else {
+
+        }*/
     },
     deletePay: function (href) {
         if (confirm('Khi hủy sẽ không được phục hồi, Bạn đồng ý xóa?')) {
@@ -67,8 +85,8 @@ $(document).ready(function () {
     })
     //theo trang thai thanh toan
     /*$('body').on('change', '.qc_work_pay_salary_pay_status_filter', function () {
-        qc_work_pay_salary.filter($(this).data('href') + '/' + $('.qc_work_pay_salary_month_filter').val() + '/' + $('.qc_work_pay_salary_year_filter').val() + '/' + $(this).val());
-    });*/
+     qc_work_pay_salary.filter($(this).data('href') + '/' + $('.qc_work_pay_salary_month_filter').val() + '/' + $('.qc_work_pay_salary_year_filter').val() + '/' + $(this).val());
+     });*/
 
     //--------------- THANH TOAN LUONG ----------------
     $('body').on('keyup', '#frm_work_pay_salary_pay .txtBenefitMoney', function () {
@@ -79,9 +97,7 @@ $(document).ready(function () {
     });
 
     $('body').on('click', '#frm_work_pay_salary_pay .qc_save', function () {
-        if (confirm('Khi thanh toán sẽ không được thay đổi, Bạn đồng ý thanh toán?')) {
-            qc_master_submit.ajaxFormHasReload('#frm_work_pay_salary_pay', '', false);
-        }
+        qc_work_pay_salary.savePay($(this).parents('#frm_work_pay_salary_pay'));
     });
     //--------------- huy thanh toan ----------------
     $('.qc_work_pay_salary_wrap').on('click', '.qc_salary_pay_del', function () {

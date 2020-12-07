@@ -14,6 +14,9 @@ $dataStaff = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaff->staffId();
 $hrefIndex = route('qc.work.pay.import.get');
 $currentMonth = $hFunction->currentMonth();
+# lay trang thai thanh toan mac dinh
+$getDefaultNotPay = $modelImport->getDefaultNotPay(); // chua thanh toan
+$getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
 ?>
 @extends('work.pay.import.index')
 @section('qc_work_pay_import_body')
@@ -42,8 +45,8 @@ $currentMonth = $hFunction->currentMonth();
                         <th>NGƯỜI MUA</th>
                     </tr>
                     <tr>
-                        <td style="padding: 0;">
-                            <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                        <td style="padding: 0;  color: red;">
+                            <select class="cbMonthFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
                                     style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                 <option value="100" @if($monthFilter == 100) selected="selected" @endif>Tất cả</option>
                                 @for($m =1;$m<= 12; $m++)
@@ -53,7 +56,7 @@ $currentMonth = $hFunction->currentMonth();
                                     </option>
                                 @endfor
                             </select>
-                            <select class="cbYearFilter col-sx-8 col-sm-8 col-md-8 col-lg-8"
+                            <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
                                     style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                 <option value="100" @if($yearFilter == 100) selected="selected" @endif>Tất cả</option>
                                 @for($y =2017;$y<= 2050; $y++)
@@ -65,20 +68,16 @@ $currentMonth = $hFunction->currentMonth();
                         </td>
                         <td class="text-center" style="padding: 0px; margin: 0;">
                             <select class="cbPayStatusFilter form-control" data-href="{!! $hrefIndex !!}">
-                                <option value="4" @if($payStatusFilter == 4) selected="selected" @endif>
+                                <option value="3" @if($payStatusFilter == 3) selected="selected" @endif>
                                     Tất cả
                                 </option>
-                                <option value="0" @if($payStatusFilter == 0) selected="selected" @endif>
+                                <option value="{!! $getDefaultNotPay !!}"
+                                        @if($payStatusFilter == $getDefaultNotPay) selected="selected" @endif>
                                     Chưa thanh toán
                                 </option>
-                                <option value="1" @if($payStatusFilter == 1) selected="selected" @endif>
+                                <option value="{!! $getDefaultHasPay !!}"
+                                        @if($payStatusFilter == $getDefaultHasPay) selected="selected" @endif>
                                     Đã thanh toán
-                                </option>
-                                <option value="2" @if($payStatusFilter == 2) selected="selected" @endif>
-                                    Thanh toán - Chưa xác nhận
-                                </option>
-                                <option value="3" @if($payStatusFilter == 3) selected="selected" @endif>
-                                    Thanh toán - Đã xác nhận
                                 </option>
                             </select>
                         </td>
@@ -108,17 +107,21 @@ $currentMonth = $hFunction->currentMonth();
                             $image = $import->image();
                             $importDate = $import->importDate();
                             $companyImportId = $import->companyId();
-                            $confirmStatus = $import->checkConfirm();
                             $confirmNote = $import->confirmNote();
-                            $dataImportPay = $import->importPayInfo();
+                            # kiem tra da thanh toan chua
+                            $checkHasPayStatus = $import->checkHasPay();
+                            # trang thai duyet
+                            $checkHasConfirmStatus = $import->checkHasConfirm();
+                            # kiem tra nhap chinh xac khong
+                            $checkHasExactlyStatus = $import->checkHasExactlyStatus();
+                            # thong tin thanh toan
+                            $dataImportPay = $import->importPayGetInfo();
                             # thong tin chi tiet nhap
-                            $dataImportDetail = $import->infoDetailOfImport();
-                            #anh hoa don
-                            $dataImportImage = $import->importImageInfoOfImport();
+                            $dataImportDetail = $import->importDetailGetInfo();
                             # nguoi nhap
                             $dataImportStaff = $import->staffImport;
                             ?>
-                            <tr class="@if(!$import->checkExactlyStatus()) danger  @else @if($n_o%2 == 1) info @endif @endif "
+                            <tr class="@if(!$checkHasExactlyStatus) danger  @else @if($n_o%2 == 1) info @endif @endif "
                                 data-object="{!! $importId !!}">
                                 <td style="padding: 0;">
                                     <div class="media">
@@ -139,7 +142,7 @@ $currentMonth = $hFunction->currentMonth();
                                         <div class="media-body">
                                             <b style="color: blue;">{!! date('d-m-Y', strtotime($importDate)) !!}</b>
                                             <br/>
-                                            @if(!$confirmStatus)
+                                            @if(!$checkHasConfirmStatus)
                                                 <a class="qc_confirm_get qc-font-size-14 qc-link-red-bold"
                                                    data-href="{!! route('qc.work.pay.import.confirm.get',$importId) !!}">
                                                     DUYỆT
@@ -178,18 +181,20 @@ $currentMonth = $hFunction->currentMonth();
                                 <td>
                                     <b style="color: red;">{!! $hFunction->currencyFormat($import->totalMoneyOfImport()) !!}</b>
                                     <br/>
-                                    @if($import->checkExactlyStatus())
-                                        @if($import->checkPay())
-                                            @if($import->checkPayConfirmOfImport($importId))
-                                                <i class="glyphicon glyphicon-ok" style="color: green;" title="Đã xác nhận"></i>
+                                    @if($checkHasExactlyStatus)
+                                        @if($checkHasPayStatus)
+                                            @if($import->importPayCheckHasConfirm($importId))
+                                                <i class="glyphicon glyphicon-ok" style="color: green;"
+                                                   title="Đã xác nhận"></i>
                                                 <em>Thanh toán đã xác nhận</em>
                                             @else
-                                                <i class="glyphicon glyphicon-ok" style="color: blue;" title="Chưa xác nhận"></i>
+                                                <i class="glyphicon glyphicon-ok" style="color: blue;"
+                                                   title="Chưa xác nhận"></i>
                                                 <em>Thanh toán chưa xác nhận</em>
                                             @endif
                                         @else
                                             <em class="qc-color-grey">Chưa thanh toán</em>
-                                            @if($import->checkConfirm())
+                                            @if($checkHasConfirmStatus)
                                                 <br/>
                                                 <a class="qc-link-green qc_import_pay_get"
                                                    data-href="{!! route('qc.work.pay.import.pay.get', $importId) !!}">
@@ -214,7 +219,7 @@ $currentMonth = $hFunction->currentMonth();
                                         </a>
 
                                         <div class="media-body">
-                                            <h5 class="media-heading">{!! $dataImportStaff->fullName() !!}</h5>
+                                            <h5 class="media-heading">{!! $dataImportStaff->lastName() !!}</h5>
                                         </div>
                                     </div>
                                 </td>

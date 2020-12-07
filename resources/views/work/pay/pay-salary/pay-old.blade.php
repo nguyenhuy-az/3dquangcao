@@ -42,7 +42,7 @@ $totalMoneyAllPay = $totalSalaryUnpaid + $totalMoneyImportUnpaid + $totalKPIMone
             <h3 style="color: red;">THANH TOÁN LƯƠNG</h3>
         </div>
         @if (Session::has('notifySalaryPay'))
-            <div class="text-center col-sx-12 col-sm-12 col-md-6 col-lg-6 qc-color-red" style="padding: 20px;">
+            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12 qc-color-red" style="padding: 20px;">
                 {!! Session::get('notifySalaryPay') !!}
                 <?php
                 Session::forget('notifySalaryPay');
@@ -51,60 +51,84 @@ $totalMoneyAllPay = $totalSalaryUnpaid + $totalMoneyImportUnpaid + $totalKPIMone
                 <a type="button" class="btn btn-sm btn-primary" href="{!! $urlReferer !!}">Đóng</a>
             </div>
         @else
-            <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <form id="frm_work_pay_salary_pay" role="form" method="post"
                       action="{!! route('qc.work.pay.pay_salary.pay.post', $dataSalary->salaryId()) !!}">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr>
-                                <th>
-                                    <div class="media">
-                                        <a class="pull-left" href="#">
-                                            <img class="media-object"
-                                                 style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
-                                                 src="{!! $dataStaffSalary->pathAvatar($dataStaffSalary->image()) !!}">
-                                        </a>
-
-                                        <div class="media-body">
-                                            <h5 class="media-heading">{!! $dataStaffSalary->fullName() !!}</h5>
-                                            <em>Từ: </em>
-                                        <span class="qc-color-red qc-font-bold">
-                                            {!! date('d-m-Y', strtotime($dataWork->fromDate())) !!}
-                                        </span>
-                                            <em>Đến: </em>
-                                        <span class="qc-color-red qc-font-bold">
-                                           {!! date('d-m-Y', strtotime($dataWork->toDate())) !!}
-                                        </span>
-                                        </div>
-                                    </div>
+                                <th colspan="3">
+                                    <img style="width: 40px; height: 40px; border: 1px solid #d7d7d7;"
+                                         src="{!! $dataStaffSalary->pathAvatar($dataStaffSalary->image())    !!}">
+                                    <label>{!! $dataStaffSalary->fullName() !!}</label>
+                                </th>
+                                <th class="text-right">
+                                    <em>Từ: </em>
+                                    <span class="qc-color-red qc-font-bold">
+                                        {!! date('d-m-Y', strtotime($dataWork->fromDate())) !!}
+                                    </span>
+                                    <br/>
+                                    <em>Đến: </em>
+                                    <span class="qc-color-red qc-font-bold">
+                                       {!! date('d-m-Y', strtotime($dataWork->toDate())) !!}
+                                    </span>
                                 </th>
                             </tr>
+                            {{--<tr>
+                                <th style="width: 30px;"></th>
+                                <th colspan="3">
+                                    <b class="qc-color-red">Được thanh toán</b>
+                                </th>
+                            </tr>--}}
                             <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" checked="checked" disabled="true" name="cbSalary">
+                                </td>
                                 <td>
-                                    <b style="color: red;"> {!! $hFunction->currencyFormat($totalSalaryUnpaid) !!}</b>
-                                    <input type="hidden" name="txtSalary" value="{!! $totalSalaryUnpaid !!}">
-                                    <br/>
+                                    Tiền lương
+                                </td>
+                                <td>
                                     <em class="qc-color-grey">Tổng tiền lương sau khi trừ ỨNG và PHẠT và THANH TOÁN</em>
                                 </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left">
-                                    <b style="color: red;"> {!! $hFunction->currencyFormat($totalMoneyImportUnpaid) !!}</b>
-                                    <input type="hidden" name="txtImport" value="{!! $totalMoneyImportUnpaid !!}">
-                                    <br/>
-                                    <em class="qc-color-grey">- Tiền mua vật tư ĐÃ DUYỆT và chưa được thanh toán</em>
+                                <td class="text-right">
+                                    <b> {!! $hFunction->currencyFormat($totalSalaryUnpaid) !!}</b>
+                                    <input type="hidden" name="txtSalary" value="{!! $totalSalaryUnpaid !!}">
                                 </td>
                             </tr>
                             <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" checked="checked" disabled="true" name="cbImport">
+                                </td>
                                 <td>
-                                    <b class="showKPIMoney"
-                                       style="color: red;"> {!! $hFunction->currencyFormat($totalKPIMoney) !!}</b>
-                                    <input type="hidden" name="txtKPI" value="{!! $totalKPIMoney !!}">
-                                    <br/>
-                                    <em class="qc-color-grey">- Thưởng đạt doanh số KPI</em>
+                                    Mua vật tư
+                                </td>
+                                <td>
+                                    <em class="qc-color-grey">Tiền mua vật tư ĐÃ DUYỆT và chưa được thanh toán</em>
+                                </td>
+                                <td class="text-right">
+                                    <b> {!! $hFunction->currencyFormat($totalMoneyImportUnpaid) !!}</b>
+                                    <input type="hidden" name="txtImport" value="{!! $totalMoneyImportUnpaid !!}">
                                 </td>
                             </tr>
                             <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" checked="checked" disabled="true" name="cbKPI">
+                                </td>
+                                <td>
+                                    Thưởng KPI
+                                </td>
+                                <td>
+                                    <em class="qc-color-grey">Đạt doanh số KPI</em>
+                                </td>
+                                <td class="text-right">
+                                    <b class="showKPIMoney"> {!! $hFunction->currencyFormat($totalKPIMoney) !!}</b>
+                                    <input type="hidden" name="txtKPI" value="{!! $totalKPIMoney !!}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-center">
+
+                                </td>
                                 <td>
                                     <div class="form-group form-group-sm">
                                         <label style="color: blue;">Tiền cộng thêm (Thưởng...)</label>
@@ -113,17 +137,27 @@ $totalMoneyAllPay = $totalSalaryUnpaid + $totalMoneyImportUnpaid + $totalKPIMone
                                                value="{!! $hFunction->currencyFormat($benefitMoney) !!}"
                                                onkeyup="qc_main.showFormatCurrency(this);">
                                     </div>
+                                </td>
+                                <td>
                                     <div class="form-group form-group-sm">
                                         <label style="color: blue;">Lý do cộng:</label>
                                         <input type="text" class="form-control" name="txtBenefitMoneyDescription"
                                                placeholder="Nhập lý do cộng" value="">
                                     </div>
                                 </td>
-                                {{--<td class="text-right" style="color: blue;">
+                                <td class="text-right" style="color: blue;">
                                     <b class="qc_showBenefitMoney"> {!! $hFunction->currencyFormat($benefitMoney) !!}</b>
-                                </td>--}}
+                                </td>
                             </tr>
+
+                            {{--<tr>
+                                <th style="width: 30px;"></th>
+                                <th colspan="3">
+                                    <b class="qc-color-red">Cần thanh toán</b>
+                                </th>
+                            </tr>--}}
                             <tr>
+                                <td class="text-center"></td>
                                 <td>
                                     <div class="form-group form-group-sm">
                                         <label style="color: red;">Tiền Giữ lại:</label>
@@ -132,39 +166,43 @@ $totalMoneyAllPay = $totalSalaryUnpaid + $totalMoneyImportUnpaid + $totalKPIMone
                                                value="{!! $hFunction->currencyFormat($keepMoney) !!}"
                                                onkeyup="qc_main.showFormatCurrency(this);">
                                     </div>
+                                </td>
+                                <td>
                                     <div class="form-group form-group-sm">
                                         <label style="color: red;">Lý do giữ tiền:</label>
                                         <input type="text" class="form-control" name="txtKeepMoneyDescription"
                                                placeholder="Nhập lý do giữ" value="">
                                     </div>
                                 </td>
+                                <td class="text-right" style="color: red;">
+                                    <b class="qc_showKeepMoney"> {!! $hFunction->currencyFormat($keepMoney) !!}</b>
+                                </td>
                             </tr>
 
                             <tr>
-                                <td>
-                                    <label>Tổng thanh toán:</label>
-                                    <input type="text" class="qc_totalMoneyPay qc-color-red form-control"
-                                           name="txtTotalMoneyPay" disabled="true"
+                                <td class="text-right qc-color-red" colspan="3">
+                                    TỔNG THANH TOÁN
+                                </td>
+                                <td class="text-right qc-color-red" style="padding: 0;">
+                                    {{--<b class="showTotalMoneyPay"> {!! $hFunction->currencyFormat($totalMoneyAllPay) !!}</b>--}}
+                                    <input type="text"
+                                           class="qc_salary_showTotalMoneyPay text-right qc-color-red form-control"
+                                           name="showTotalMoneyPay" disabled="true"
                                            value="{!! $hFunction->currencyFormat($totalMoneyAllPay) !!}">
                                 </td>
                             </tr>
                             <tr>
-                                <td>
-                                    <span style="color: grey;">Tài khoản Ngân hàng:</span>&nbsp;
+                                <td class="text-right" colspan="3">
+                                    <span>Tài khoản Ngân hàng:</span>&nbsp;
                                     @if(!empty($bankAccount))
                                         Số TK : <span>{!! $bankAccount !!}</span> - <span>{!! $bankName !!}</span>
                                     @else
-                                        <em>Không có</em>
+                                        <em style="color: grey;">Không có</em>
                                     @endif
                                 </td>
-                            </tr>
-                            <tr>
                                 <td style="padding: 0;">
                                     <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                                    <button type="button" class="qc_save btn btn-sm btn-primary" style="width: 100%;">
-                                        THANH TOÁN
-                                    </button>
-                                    {{--<button type="reset" class="btn btn-sm btn-default">NHẬP LẠI</button>--}}
+                                    <button type="button" class="qc_save btn btn-sm btn-primary" style="width: 100%;">THANH TOÁN</button>
                                 </td>
                             </tr>
                         </table>

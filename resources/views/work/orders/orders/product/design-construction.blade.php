@@ -12,7 +12,7 @@ $dataOrder = $dataProduct->order;
 ?>
 @extends('work.orders.orders.index')
 @section('titlePage')
-    Thiết kế sản phẩm
+    Thiết kế thi công
 @endsection
 @section('qc_work_order_order_body')
     <div class="qc-padding-top-20 qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-10">
@@ -31,7 +31,7 @@ $dataOrder = $dataProduct->order;
                         <table class="table table-bordered" style="margin-bottom: 0;">
                             <tr>
                                 <th colspan="5" style="padding-top: 0; padding-bottom: 0;">
-                                    <h5 class="qc-color-red">THIẾT KẾ SẢN PHẨM</h5>
+                                    <h5 class="qc-color-red">THIẾT KẾ THI CÔNG</h5>
                                 </th>
                             </tr>
                             <tr style="background-color: black; color: yellow;">
@@ -64,28 +64,19 @@ $dataOrder = $dataProduct->order;
                                             {!! $hFunction->convertDateDMYFromDatetime($productDesign->createdAt()) !!}
                                         </td>
                                         <td class="text-center">
-                                            @if($dataOrder->checkStaffInput($modelStaff->loginStaffId()))
-                                                @if($productDesign->checkApplyStatus())
-                                                    <em style="color: grey;">Đang dùng</em>
-                                                    <span>&nbsp;|&nbsp;</span>
-                                                    <a class="qc_orders_product_design_apply_act qc-link-red"
-                                                       title="Không sử dụng"
-                                                       data-href="{!! route('qc.work.orders.product.design.apply.get',"$designId/0") !!}">
-                                                        VÔ HIỆU
-                                                    </a>
-                                                @else
-                                                    <em style="color: grey;">Đang tắt</em>
-                                                    <span>&nbsp;|&nbsp;</span>
-                                                    <a class="qc_orders_product_design_apply_act qc-link-green"
-                                                       title="Sử dụng thiết kế"
-                                                       data-href="{!! route('qc.work.orders.product.design.apply.get',"$designId/1") !!}">
-                                                        ÁP DỤNG
+                                            @if($productDesign->checkHasAction())
+                                                <em class="qc-color-grey">Đang áp dụng</em>
+                                                <span>&nbsp;|&nbsp;</span>
+                                                @if($dataOrder->checkStaffInput($modelStaff->loginStaffId()))
+                                                    <a class="qc_orders_product_design_cancel_act qc-link-red"
+                                                       title="Hủy bỏ ảnh thiết kế"
+                                                       data-href="{!! route('qc.work.orders.product.design.cancel',$designId) !!}">
+                                                        HỦY
                                                     </a>
                                                 @endif
                                             @else
-                                                <em class="qc-color-grey" >---</em>
+                                                <em style="color: grey;">Đã hủy</em>
                                             @endif
-
                                         </td>
                                     </tr>
                                 @endforeach

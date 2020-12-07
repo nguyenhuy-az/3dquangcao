@@ -10,10 +10,14 @@
 $hFunction = new Hfunction();
 $importId = $dataImport->importId();
 $image = $dataImport->image();
-$totalMoney = $dataImport->totalMoneyOfImport();
 $importDate = $dataImport->importDate();
-$dataImportDetail = $dataImport->infoDetailOfImport();
-$dataImportImage = $dataImport->importImageInfoOfImport();
+# tong tien nhap
+$totalMoney = $dataImport->totalMoneyOfImport();
+# chi tiet nhap
+$dataImportDetail = $dataImport->importDetailGetInfo();
+# lay trang thai thanh toan mac dinh
+$getDefaultNotPay = $modelImport->getDefaultNotPay(); // chua thanh toan
+$getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
 ?>
 @extends('components.container.container-10')
 @section('qc_container_content')
@@ -23,33 +27,31 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                   action="{!! route('qc.work.pay.import.confirm.post', $importId) !!}">
                 <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed #C2C2C2;">
-                        <h3>DUYỆT HÓA ĐƠN</h3>
-                        <b class="qc-color-red" style="font-size: 1.5em;" >{!! $dataImport->staffImport->lastName() !!}</b>
-                        <b class="qc-color-red" style="font-size: 1.5em;"> -- {!! date('d/m/Y', strtotime($importDate)) !!}</b>
+                        <h4 style="color: red;">DUYỆT HÓA ĐƠN</h4>
+                        <em class="qc-color-grey">Người mua: </em>
+                        <b style="color: blue;">{!! $dataImport->staffImport->lastName() !!}</b>
+                        <em style="color: grey;">Ngày </em>
+                        <b style="color: blue;">{!! date('d/m/Y', strtotime($importDate)) !!}</b>
                     </div>
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                        @if(!$hFunction->checkEmpty($image))
-                            <img class="media-object qc-link" alt="..." onclick="qc_main.rotateImage(this);"
-                                 style="max-width: 30%; border: 1px solid #d7d7d7;"  title="Click xoay hình"
-                                 src="{!! $dataImport->pathFullImage($image) !!}">
 
-                        @else
-                            Không có Ảnh HĐ
-                        @endif
-                    </div>
+                    @if(!$hFunction->checkEmpty($image))
+                        <div class="col-sx-12 col-sm-4 col-md-4 col-lg-4">
+                            <img class="media-object qc-link" alt="..." onclick="qc_main.rotateImage(this);"
+                                 style="width: 100%; border: 1px solid #d7d7d7;" title="Click xoay hình"
+                                 src="{!! $dataImport->pathFullImage($image) !!}">
+                        </div>
+                    @endif
+
                     {{-- chi tiêt --}}
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-sx-12 col-sm-8 col-md-8 col-lg-8">
                         <div class="table-responsive">
                             <table class="table table-hover table-bordered">
                                 <tr style="background-color: black; color: yellow;">
-                                    <th class="text-center" style="width: 20px;">STT</th>
-                                    <th >Tên VT/DC</th>
-                                    <th>Làm sản phẩm</th>
+                                    <th>Tên VT/DC</th>
+                                    <th class="text-right">Thành tiền</th>
                                     <th>Phân loại</th>
                                     <th>Cấp phát (Dụng cụ)</th>
-                                    <th class="text-center">Số lượng</th>
-                                    <th>Đơn vị tính</th>
-                                    <th class="text-right">Thành tiền</th>
+                                    <th>Đơn vị</th>
                                 </tr>
                                 @if($hFunction->checkCount($dataImportDetail))
                                     @foreach($dataImportDetail as $importDetail)
@@ -60,33 +62,35 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                                         $toolId = $importDetail->toolId();
                                         $productId = $importDetail->productId();
                                         ?>
-                                        <tr class="@if($n_o%2) info @endif">
-                                            <td class="text-center">
-                                                {!! $n_o !!}
-                                            </td>
+                                        <tr class="@if($n_o%2 == 0) info @endif">
                                             <td>
+                                                <em>{!! $n_o !!}) </em>
                                                 @if(empty($suppliesId) && empty($toolId))
-                                                    {!! $importDetail->newName() !!}
+                                                    <b style="color: blue;">{!! $importDetail->newName() !!}</b>
                                                 @else
                                                     @if(!empty($suppliesId))
-                                                        {!! $importDetail->supplies->name() !!}
+                                                        <b style="color: blue;">{!! $importDetail->supplies->name() !!}</b>
                                                     @else
-                                                        {!! $importDetail->tool->name() !!}
+                                                        <b style="color: blue;">{!! $importDetail->tool->name() !!}</b>
                                                     @endif
                                                 @endif
                                                 <input type="hidden" name="txtDetail[]" value="{!! $detailId !!}">
-                                            </td>
-                                            <td >
                                                 @if(!empty($productId))
-                                                    {!! $importDetail->product->productType->name() !!}
-                                                    <em style="color: brown;">({!! $importDetail->product->order->name() !!}
+                                                    <br/>
+                                                    <em style="color: grey;">{!! $importDetail->product->productType->name() !!}</em>
+                                                    <br/>
+                                                    <em style="color: grey;">({!! $importDetail->product->order->name() !!}
                                                         )</em>
-                                                @else
-                                                    <em>---</em>
                                                 @endif
                                             </td>
+                                            <td>
+                                                <b style="color: red;">{!! $hFunction->currencyFormat($importDetail->totalMoney()) !!}</b>
+                                                <br/>
+                                                <em style="color: grey;">SL: {!! $importDetail->amount() !!}</em>
+                                            </td>
                                             <td style="padding: 0;">
-                                                <select class="cbNewSuppliesTool form-control" name="cbNewSuppliesTool[]"
+                                                <select class="cbNewSuppliesTool form-control"
+                                                        name="cbNewSuppliesTool[]"
                                                         style="border: none;">
                                                     @if(empty($suppliesId) && empty($toolId))
                                                         <option value="">Chọn phân loại</option>
@@ -104,53 +108,52 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                                                 </select>
                                             </td>
                                             <td style="padding: 0;">
-                                                <select class="cbAllocationStatus form-control" name="cbAllocationStatus[]">
+                                                <select class="cbAllocationStatus form-control"
+                                                        name="cbAllocationStatus[]">
                                                     <option value="2" selected="selected">Dùng cấp phát</option>
                                                     <option value="1">Dùng chung</option>
                                                 </select>
                                             </td>
-                                            <td class="text-center qc-color-red">
-                                                {!! $importDetail->amount() !!}
-                                            </td>
                                             <td class="text-center qc-color-red" style="padding: 0;">
                                                 @if(empty($suppliesId) && empty($toolId))
                                                     <input class="txtUnit form-control" type="text" name="txtUnit[]"
-                                                           placeholder="Đơn vị tính" value="{!! $importDetail->newUnit() !!}">
+                                                           placeholder="Đơn vị tính"
+                                                           value="{!! $importDetail->newUnit() !!}">
                                                 @else
                                                     @if(!empty($suppliesId))
-                                                        <input class="txtUnit form-control" type="text" name="txtUnit[]" readonly
+                                                        <input class="txtUnit form-control" type="text" name="txtUnit[]"
+                                                               readonly
                                                                value="{!! $importDetail->supplies->unit() !!}"
                                                                style="border: 0;">
                                                     @else
-                                                        <input class="txtUnit form-control" type="text" name="txtUnit[]" readonly
+                                                        <input class="txtUnit form-control" type="text" name="txtUnit[]"
+                                                               readonly
                                                                value="{!! $importDetail->tool->unit() !!}"
                                                                style="border: 0;">
                                                     @endif
                                                 @endif
                                             </td>
-                                            <td class="text-right qc-color-red">
-                                                {!! $hFunction->currencyFormat($importDetail->totalMoney()) !!}
-                                            </td>
                                         </tr>
                                     @endforeach
                                     <tr class="qc-color-red" style="border-top: 2px solid brown;">
-                                        <td class="text-right" colspan="7">
+                                        <td>
                                             Tổng thanh toán
                                         </td>
-                                        <td class="text-right" colspan="1">
+                                        <td>
                                             <b>{!! $hFunction->currencyFormat($totalMoney) !!}</b>
                                         </td>
+                                        <td colspan="3"></td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3">
+                                        <td colspan="2">
                                             <label style="color: red;">THANH TOÁN:</label>
                                             <select class="cbPayStatus form-control" name="cbPayStatus">
-                                                <option value="1">Duyệt và thanh toán</option>
-                                                <option value="0">Duyệt và chưa thanh toán</option>
-                                                <option value="2">Không hợp lệ</option>
+                                                <option value="{!! $getDefaultHasPay !!}">Duyệt và thanh toán</option>
+                                                <option value="{!! $getDefaultNotPay !!}">Duyệt và chưa thanh toán</option>
+                                                <option value="2">KHÔNG DUYỆT</option>
                                             </select>
                                         </td>
-                                        <td colspan="6">
+                                        <td colspan="3">
                                             <div class="form-group form-group-sm">
                                                 <label>Ghi chú:</label>
                                                 <input type="text" class="form-control" name="txtConfirmNote"
@@ -160,26 +163,26 @@ $dataImportImage = $dataImport->importImageInfoOfImport();
                                     </tr>
                                 @else
                                     <tr>
-                                        <td class="text-center qc-color-red">
+                                        <td colspan="5">
                                             <em class="qc-color-red">Không có thông tin</em>
                                         </td>
                                     </tr>
                                 @endif
                             </table>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                            <span style="color: red;">Dụng cụ dùng chung sẽ không cấp phát cho người mua</span>
+                        <div class="row">
+                            <div class="qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                <span style="color: red;">Dụng cụ dùng chung sẽ không cấp phát cho người mua</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="qc-padding-top-10 qc-padding-bot-10 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                            <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                            <button type="button" class="qc_save btn btn-sm btn-primary">
-                                Xác nhận
-                            </button>
-                            <a type="button" class="qc_container_close btn btn-sm btn-default">Đóng</a>
+                        <div class="row">
+                            <div class="qc-padding-top-10 qc-padding-bot-10 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                <input type="hidden" name="_token" value="{!! csrf_token() !!}">
+                                <button type="button" class="qc_save btn btn-sm btn-primary">
+                                    XÁC NHẬN
+                                </button>
+                                <a type="button" class="qc_container_close btn btn-sm btn-default">ĐÓNG</a>
+                            </div>
                         </div>
                     </div>
                 </div>

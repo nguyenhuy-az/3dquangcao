@@ -189,10 +189,9 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                                                 <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
                                                             </td>
                                                             <td class="text-center">
-                                                                <a class="qc_delete_report_action qc-link-red-bold"
+                                                                <a class="qc_delete_report_action qc-link-red-bold qc-font-size-14"
                                                                    data-href="{!! route('qc.work.work_allocation.work_allocation.report.cancel.get', $workAllocationReport->reportId()) !!}">
-                                                                    <i class="glyphicon glyphicon-trash qc-font-size-14"
-                                                                       title="Xóa báo cáo"></i>
+                                                                    HỦY
                                                                 </a>
                                                             </td>
                                                         </tr>
@@ -207,7 +206,7 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                                                 @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
                                                                     <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                                         <a class="qc_image_view qc-link"
-                                                                           data-href="{!! route('qc.work.work_allocation.work_allocation.report_image.view', $timekeepingProvisionalImage->imageId()) !!}">
+                                                                           data-href="{!! route('qc.work.work_allocation.work_allocation.report_image_timekeeping.view', $timekeepingProvisionalImage->imageId()) !!}">
                                                                             <img style="max-width: 100%; max-height: 100%;"
                                                                                  src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
                                                                         </a>
@@ -218,10 +217,9 @@ $dataWorkAllocationFinish = $dataWorkAllocation->workAllocationFinishInfo();
                                                                 <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
                                                             </td>
                                                             <td class="text-center">
-                                                                <a class="qc_delete_report_action qc-link-red-bold"
+                                                                <a class="qc_delete_report_action qc-link-red-bold qc-font-size-14"
                                                                    data-href="{!! route('qc.work.work_allocation.work_allocation.report.cancel.get', $workAllocationReport->reportId()) !!}">
-                                                                    <i class="glyphicon glyphicon-trash qc-font-size-14"
-                                                                       title="Xóa báo cáo"></i>
+                                                                    HỦY
                                                                 </a>
                                                             </td>
                                                         </tr>

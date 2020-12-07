@@ -114,14 +114,10 @@ $workId = $dataWork->workId();
                                     $productHeight = $dataProduct->height();
                                     $productAmount = $dataProduct->amount();
                                     $productDescription = $dataProduct->description();
+                                    # thiet ke san pham
                                     $dataProductDesign = $dataProduct->productDesignInfoApplyActivity();
-                                    if ($hFunction->getCountFromData($dataProductDesign) == 0) {
-                                        # thiet ke sau cung
-                                        $dataProductDesign = $dataProduct->productDesignInfoLast();
-                                    }
-                                    ///$productDesignImage = $dataProduct->designImage();
-                                    # thiet ke dang ap dung
-                                    //$productDesignImage = $dataProduct->productDesignInfoApplyActivity();
+                                    # thiet ke san pham thi cong
+                                    $dataProductDesignConstruction = $dataProduct->productDesignInfoConstructionHasApply();
 
                                     # lay danh sach cung thi cong san pham lien quan khong bi huy
                                     $dataWorkAllocationRelation = $dataProduct->workAllocationInfoNotCancelOfProduct();
@@ -129,8 +125,10 @@ $workId = $dataWork->workId();
                                     # thong ket thuc phan viec
                                     $dataWorkAllocationFinish = $workAllocation->workAllocationFinishInfo();
                                     ?>
-                                    <tr class="qc_work_allocation_object @if($n_o%2 == 0) info @endif"  data-work-allocation="{!! $allocationId !!}">
-                                        <td class="text-center" style="padding: 0; @if($dataWorkAllocationFinish || $cancelStatus) background-color: pink; @endif">
+                                    <tr class="qc_work_allocation_object @if($n_o%2 == 0) info @endif"
+                                        data-work-allocation="{!! $allocationId !!}">
+                                        <td class="text-center"
+                                            style="padding: 0; @if($dataWorkAllocationFinish || $cancelStatus) background-color: pink; @endif">
                                              <span class="qc-font-bold" style="color: red;">
                                                 {!! date('d-m-Y ', strtotime($receiveDeadline)) !!}
                                             </span>
@@ -163,6 +161,20 @@ $workId = $dataWork->workId();
                                                     <span style="color: white; padding: 3px; background-color: red;">TRỄ</span>
                                                 @endif
                                             @endif
+                                            <br/>
+                                            <em>
+                                                - Thiết kế SP:
+                                            </em>
+                                            @if($hFunction->checkCount($dataProductDesign))
+                                                <a class="qc-link qc_work_allocation_design_image_view"
+                                                   data-href="{!! route('qc.work.work_allocation.work_allocation.design_image.view',$dataProductDesign->designId()) !!}">
+                                                    <img style="width: 70px; height: auto; margin-right: 5px; border: 1px solid grey;"
+                                                         title="Đang áp dụng"
+                                                         src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                                                </a>
+                                            @else
+                                                <em class="qc-color-grey">Không có thiết kế</em>
+                                            @endif
                                         </td>
                                         <td>
                                             <b style="background-color: black; color: lime; padding: 3px; font-size: 14px;">
@@ -190,20 +202,22 @@ $workId = $dataWork->workId();
                                                     Không có
                                                 @endif
                                             </span>
+
                                             <br/>
                                             <em>
-                                                - Thiết kế SP:
+                                                - Thiết kế Thi công:
                                             </em>
-                                            @if($hFunction->checkCount($dataProductDesign))
-                                                @if($dataProductDesign->checkApplyStatus())
-                                                    <img style="width: 70px; height: auto; margin-right: 5px;"
-                                                         title="Đang áp dụng"
-                                                         src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
-                                                @else
-                                                    <em class="qc-color-grey">Chưa có thiết kế</em>
-                                                @endif
+                                            @if($hFunction->checkCount($dataProductDesignConstruction))
+                                                @foreach($dataProductDesignConstruction as $productDesignConstruction)
+                                                    <a class="qc-link qc_work_allocation_design_image_view"
+                                                       data-href="{!! route('qc.work.work_allocation.work_allocation.design_image.view',$productDesignConstruction->designId()) !!}">
+                                                        <img style="width: 70px; height: auto; margin-right: 5px; border: 1px solid grey;"
+                                                             title="Đang áp dụng"
+                                                             src="{!! $productDesignConstruction->pathSmallImage($productDesignConstruction->image()) !!}">
+                                                    </a>
+                                                @endforeach
                                             @else
-                                                <em class="qc-color-grey">Chưa có thiết kế</em>
+                                                <em class="qc-color-grey">Không có thiết kế</em>
                                             @endif
                                             <br/>
                                             <em style="color: blue;">
@@ -235,25 +249,42 @@ $workId = $dataWork->workId();
                                             @if($hFunction->checkCount($dataWorkAllocationReport))
                                                 @foreach($dataWorkAllocationReport as $workAllocationReport)
                                                     <?php
+                                                    # bao cao truc tiep
                                                     $dataWorkAllocationReportImage = $workAllocationReport->workAllocationReportImageInfo();
                                                     #bao cao khi bao gio ra
                                                     $dataTimekeepingProvisionalImage = $workAllocationReport->timekeepingProvisionalImageInfo();
                                                     ?>
-                                                    @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
-                                                        <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
-                                                            <a class="qc_work_allocation_report_image_view qc-link"
-                                                               title="Click xem chi tiết hình ảnh"
-                                                               data-href="{!! route('qc.work.work_allocation.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
-                                                                <img style="max-width: 100%; max-height: 100%;"
-                                                                     src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
-                                                            </a>
+                                                    <div class="media">
+                                                        @if($hFunction->checkCount($dataWorkAllocationReportImage))
+                                                            @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
+                                                                <a class="pull-left qc_work_allocation_report_image_view qc-link"
+                                                                   title="Click xem chi tiết hình ảnh"
+                                                                   data-href="{!! route('qc.work.work_allocation.work_allocation.report_image_direct.view', $workAllocationReportImage->imageId()) !!}">
+                                                                    <img class="media-object"
+                                                                         style="width: 70px; max-height: 100%; border: 1px solid grey;"
+                                                                         src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
+                                                                </a>
+                                                            @endforeach
+                                                        @endif
+                                                        @if($hFunction->checkCount($dataTimekeepingProvisionalImage))
+                                                            @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
+                                                                <a class="pull-left qc_work_allocation_report_image_view qc-link"
+                                                                   title="Click xem chi tiết hình ảnh"
+                                                                   data-href="{!! route('qc.work.work_allocation.work_allocation.report_image_timekeeping.view', $timekeepingProvisionalImage->imageId()) !!}">
+                                                                    <img class="media-object"
+                                                                         style="width: 70px; max-height: 100%; border: 1px solid grey;"
+                                                                         src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
+                                                                </a>
+                                                            @endforeach
+                                                        @endif
+                                                        <div class="media-body">
+                                                            <i class="glyphicon glyphicon-calendar"></i>
+                                                            &nbsp;
+                                                            <b>{!! $hFunction->convertDateDMYHISFromDatetime($workAllocationReport->reportDate()) !!}</b>
+                                                            <br/>
+                                                            <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
                                                         </div>
-                                                    @endforeach
-                                                    <i class="glyphicon glyphicon-calendar"></i>
-                                                    &nbsp;
-                                                    <b>{!! $hFunction->convertDateDMYHISFromDatetime($workAllocationReport->reportDate()) !!}</b>
-                                                    <br/>
-                                                    <em class="qc-color-grey">- {!! $workAllocationReport->content() !!}</em>
+                                                    </div>
                                                 @endforeach
                                             @else
                                                 <em class="qc-color-grey">Không có báo cáo</em>

@@ -115,6 +115,7 @@ class PaySalaryController extends Controller
         ];
         $dataSalary = $modelSalary->getInfo($salaryId);
         $dataWork = $dataSalary->work;
+        $fromDate = $dataWork->fromDate();
         $dataStaff = $dataWork->staffInfoOfWork();
         $staffId = $dataStaff->staffId();
         // danh sach mua vat tu dc xac nhan va chua thanh toan

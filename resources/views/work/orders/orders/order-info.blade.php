@@ -72,7 +72,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                 </a>
             </div>
             {{-- thong tin don hang --}}
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+            <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
                 <div class="row">
                     <div class="col-sx-8 col-sm-8 col-md-8 col-lg-8">
                         @if($checkProvisionUnConfirmed)
@@ -310,7 +310,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                 </form>
             </div>
             {{-- thong tin khach hang --}}
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+            <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12" style="border-bottom: 1px solid black;">
                         <i class="qc-font-size-16 glyphicon glyphicon-user"></i>
@@ -324,7 +324,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                     </div>
                 </div>
                 <div id="qc_work_order_info_customer_show" class="row">
-                    <div class="qc-container-table qc-container-table-border-none qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-6">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-6">
                         <div class="table-responsive">
                             <table class="table table-hover qc-margin-bot-none">
                                 <tr>
@@ -346,7 +346,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                             </table>
                         </div>
                     </div>
-                    <div class="qc-container-table qc-container-table-border-none qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-6">
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-6">
                         <div class="table-responsive">
                             <table class="table table-hover qc-margin-bot-none">
                                 <tr>
@@ -444,7 +444,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                         <div class="table-responsive">
                             <table class="table table-bordered" style="margin-bottom: 0px;">
                                 <tr style="background-color: black; color: yellow;">
-                                    <th style="width: 200px;">SẢN PHẨM</th>
+                                    <th style="width: 300px;">SẢN PHẨM</th>
                                     <th>
                                         GIÁ/SP(VNĐ)
                                     </th>
@@ -523,14 +523,14 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                 @else
                                                     <span style="background-color: black; color: lime;">Chưa có thiết kế</span>
                                                 @endif
+                                                <br/>
                                                 @if(!$product->checkCancelStatus())
                                                     @if(!$product->checkFinishStatus())
-                                                        <br/>
                                                         <a class="qc_work_order_product_design_image_add qc-link-red qc-font-size-14"
                                                            data-href="{!! route('qc.work.orders.product.design.add.get',$productId) !!}">
                                                             THÊM
                                                         </a>
-                                                        &nbsp;|&nbsp;
+                                                        <span>&nbsp;|&nbsp;</span>
                                                     @endif
                                                 @endif
                                                 <a class="qc-link-green qc-font-size-14"
@@ -546,7 +546,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                     @foreach($dataProductDesignConstruction as $productDesignConstruction)
                                                         <a class="qc_work_order_product_design_image_view qc-link"
                                                            data-href="{!! route('qc.work.orders.product_design.view.get', $productDesignConstruction->designId()) !!}">
-                                                            <img style="width: 70px; height: auto; margin-bottom: 5px;"
+                                                            <img style="width: 70px; height: auto; margin-bottom: 5px; border: 1px solid grey;"
                                                                  title="Đang áp dụng"
                                                                  src="{!! $productDesignConstruction->pathSmallImage($productDesignConstruction->image()) !!}">
                                                         </a>
@@ -554,9 +554,9 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                 @else
                                                     <span style="background-color: black; color: lime;">Chưa có TK thi công </span>
                                                 @endif
+                                                <br/>
                                                 @if(!$product->checkCancelStatus())
                                                     @if(!$product->checkFinishStatus())
-                                                        <br/>
                                                         <a class="qc_work_order_product_design_image_add qc-link-red qc-font-size-14"
                                                            data-href="{!! route('qc.work.orders.product.design_construction.add.get',$productId) !!}">
                                                             THÊM
@@ -565,7 +565,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                     @endif
                                                 @endif
                                                 <a class="qc-link-green qc-font-size-14"
-                                                   href="{!! route('qc.work.orders.product.design.get',$productId) !!}">
+                                                   href="{!! route('qc.work.orders.product.design_construction.get',$productId) !!}">
                                                     CHI TIẾT
                                                 </a>
                                             </td>
@@ -626,7 +626,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
             @endif
             @if(!$checkProvisionUnConfirmed)
                 {{-- thong tin thanh toan --}}
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12">
                             <i class="qc-font-size-16 glyphicon glyphicon-credit-card"></i>
@@ -638,12 +638,10 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                             <div class="table-responsive">
                                 <table class="table table-bordered" style="margin-bottom: 0px;">
                                     <tr style="background-color: black; color: yellow;">
-                                        <th class="text-center" style="width: 20px;">STT</th>
                                         <th>Ngày</th>
+                                        <th>Số tiền</th>
                                         <th>Người thu</th>
                                         <th>Tên người nộp</th>
-                                        <th>Ghi chú</th>
-                                        <th class="text-right">Số tiền</th>
                                     </tr>
                                     <?php
                                     $dataOrderPay = $dataOrder->infoOrderPayOfOrder();
@@ -652,15 +650,30 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                         @foreach($dataOrderPay as $orderPay)
                                             <?php
                                             $payId = $orderPay->payId();
+                                            $payNote = $orderPay->note();
                                             # Thong tin nhan vien nha
                                             $dataReceiveStaff = $orderPay->staff;
                                             ?>
                                             <tr>
-                                                <td class="text-center">
-                                                    {!! $n_o_pay =(isset($n_o_pay)?$n_o_pay+1: 1) !!}
-                                                </td>
                                                 <td>
                                                     {!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}
+                                                    @if(!$cancelStatus && !$finishStatus)
+                                                        @if($orderPay->checkOwnerStatusOfStaff($loginStaffId,$payId))
+                                                            <br/>
+                                                            <a class="qc_work_order_info_payment_edit_act qc-link-red qc-font-size-14"
+                                                               data-href="{!! route('qc.work.orders.info.pay.edit.post',$payId) !!}"
+                                                               title="Sửa thanh toán">
+                                                                SỬA
+                                                            </a>
+                                                        @endif
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <label style="color: blue;">{!! $hFunction->currencyFormat($orderPay->money()) !!}</label>
+                                                    @if($hFunction->checkEmpty($payNote))
+                                                        <br/>
+                                                        <em style="color: red;">{!! $payNote  !!}</em>
+                                                    @endif
                                                 </td>
                                                 <td>
                                                     <div class="media">
@@ -693,28 +706,11 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                                                     @endif
 
                                                 </td>
-                                                <td>
-                                                    {!! $orderPay->note()  !!}
-                                                </td>
-                                                <td class="text-right">
-                                                    <label style="color: blue;">{!! $hFunction->currencyFormat($orderPay->money()) !!}</label>
-                                                    @if(!$cancelStatus && !$finishStatus)
-                                                        @if($orderPay->checkOwnerStatusOfStaff($loginStaffId,$payId))
-                                                            <br/>
-                                                            <a class="qc_work_order_info_payment_edit_act qc-link-red"
-                                                               data-href="{!! route('qc.work.orders.info.pay.edit.post',$payId) !!}"
-                                                               title="Sửa thanh toán">
-                                                                <i class=" glyphicon glyphicon-pencil qc-font-size-16"></i>
-                                                            </a>
-                                                        @endif
-                                                    @endif
-                                                </td>
-
                                             </tr>
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td class="text-center" colspan="6">
+                                            <td class="text-center" colspan="4">
                                                 Không có thông tin thanh toán
                                             </td>
                                         </tr>
@@ -725,9 +721,9 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                     </div>
                 </div>
             @endif
-            <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="pull-right col-xs-12 col-sm-12 col-dm-6 col-lg-4">
+            <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover qc-margin-bot-none">
                                 <tr>
@@ -783,7 +779,7 @@ $dataOrderImage = $dataOrder->orderImageInfoActivity();
                     </div>
                 </div>
             </div>
-
+            {{-- thiet ke tong the --}}
             <div class="row">
                 <div class="qc-container-table-border-none col-xs-12 col-sm-12 col-dm-12 col-lg-12">
                     <div class="table-responsive" style="margin: 0;">

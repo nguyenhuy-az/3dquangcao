@@ -187,6 +187,7 @@ class QcProduct extends Model
         return $this->hasMany('App\Models\Ad3d\ProductDesign\QcProductDesign', 'product_id', 'product_id');
     }
 
+    # tat ca thiet ke san pham
     public function productDesignInfoAll($productId = null)
     {
         $modelProductDesign = new QcProductDesign();

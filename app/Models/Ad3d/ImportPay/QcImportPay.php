@@ -15,6 +15,18 @@ class QcImportPay extends Model
     private $lastId;
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
+    # mac dinh co xac nhan
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    # mac dinh co xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
+
     #---------- Insert ----------
     public function insert($money, $importId, $payStaffId)
     {
@@ -64,16 +76,16 @@ class QcImportPay extends Model
         return QcImportPay::whereIn('import_id', $listImportId)->where('confirmStatus', 0)->get();
     }
 
-    public function checkPayOfImport($importId)
+    # kien tra da xac nhan thanh toan
+    public function checkHasConfirmOfImport($importId)
     {
-        $result = QcImportPay::where('import_id', $importId)->where('confirmStatus', 1)->get();
-        return (count($result) > 0) ? true : false;
+        return QcImportPay::where('import_id', $importId)->where('confirmStatus', $this->getDefaultHasConfirm())->exists();
     }
 
     public function updateConfirmPayOfImport($importId)
     {
         $hFunction = new \Hfunction();
-        return QcImportPay::where('import_id', $importId)->update(['confirmStatus' => 1, 'confirmDate' => $hFunction->createdAt()]);
+        return QcImportPay::where('import_id', $importId)->update(['confirmStatus' => $this->getDefaultHasConfirm(), 'confirmDate' => $hFunction->createdAt()]);
     }
 
     public function totalMoneyOfImportStaffAndDate($staffId, $date)

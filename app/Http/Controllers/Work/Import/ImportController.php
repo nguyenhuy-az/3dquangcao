@@ -27,7 +27,8 @@ class ImportController extends Controller
             'subObjectLabel' => 'Mua vật tư'
         ];
         $loginStaffId = $dataStaff->staffId();
-        $dataStaff = $modelStaff->loginStaffInfo();
+        $companyId = $dataStaff->companyId();
+        //$dataStaff = $modelStaff->loginStaffInfo();
         $dateFilter = null;
         $currentMonth = $hFunction->currentMonth();
         $currentYear = $hFunction->currentYear();
@@ -52,8 +53,13 @@ class ImportController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        $dataImport = $dataStaff->importInfoOfStaff($loginStaffId, $loginPayStatus, $dateFilter);
-        return view('work.import.list', compact('dataAccess', 'modelStaff', 'dataImport', 'dayFilter', 'monthFilter', 'yearFilter', 'loginPayStatus'));
+
+        if ($loginPayStatus == 3) { // lay tat ca thong tin
+            $dataImport = $modelImport->getInfoOfStaff($companyId, $loginStaffId, $dateFilter);
+        } else { # theo trang thai thanh toan
+            $dataImport = $modelImport->getInfoOfStaffAndPayStatus($companyId, $loginStaffId, $loginPayStatus, $dateFilter);
+        }
+        return view('work.import.list', compact('dataAccess', 'modelStaff', 'modelImport', 'dataImport', 'dayFilter', 'monthFilter', 'yearFilter', 'loginPayStatus'));
 
     }
 
@@ -141,13 +147,11 @@ class ImportController extends Controller
         $hFunction = new \Hfunction();
         $modelImport = new QcImport();
         $modelImportDetail = new QcImportDetail();
-        //$modelImportImage = new QcImportImage();
         $modelSupplies = new QcSupplies();
         $modelTool = new QcTool();
 
         $staffLoginId = $modelStaff->loginStaffId();
-
-        $txtImportDate = Request::input('txtImportDate');
+        $txtImportDate = $hFunction->carbonNow();
         //hinh anh
         $txtImportImage = Request::file('txtImportImage');
         //thong tin mua
@@ -231,7 +235,7 @@ class ImportController extends Controller
     public function getConfirmPay($importId)
     {
         $modelImport = new QcImport();
-        $modelImport->updateConfirmPayOfImport($importId);
+        $modelImport->confirmPayment($importId);
     }
 
     #

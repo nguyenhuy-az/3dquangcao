@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcSalary extends Model
 {
     protected $table = 'qc_salary';
-    protected $fillable = ['salary_id', 'mainMinute', 'plusMinute', 'minusMinute', 'beforePay','bonusMoney', 'minusMoney', 'benefitMoney', 'benefitDescription', 'overtimeMoney', 'kpiMoney', 'salary', 'payStatus', 'created_at', 'work_id', 'workSalary_id', 'salaryBasic_id'];
+    protected $fillable = ['salary_id', 'mainMinute', 'plusMinute', 'minusMinute', 'beforePay','bonusMoney', 'minusMoney', 'benefitMoney', 'benefitDescription', 'overtimeMoney', 'kpiMoney', 'salary', 'payStatus', 'created_at', 'work_id', 'workSalary_id','salaryBasic_id'];
     protected $primaryKey = 'salary_id';
     public $timestamps = false;
 
@@ -39,7 +39,7 @@ class QcSalary extends Model
     /*
      *  salary = tien luong co ban lam viec + thuong -tien ung - phat (khong bao gom tien giu va cong them)
      * */
-    public function insert($mainMinute, $plusMinute, $minusMute, $beforePay, $minusMoney, $benefitMoney, $overtimeMoney, $salary, $payStatus, $workId, $workSalaryId = null, $salaryBasicId = null, $benefitDescription = null, $kpiMoney = 0, $bonusMoney = 0)
+    public function insert($mainMinute, $plusMinute, $minusMute, $beforePay, $minusMoney, $benefitMoney, $overtimeMoney, $salary, $payStatus, $workId, $workSalaryId = null,$benefitDescription = null, $kpiMoney = 0, $bonusMoney = 0)
     {
         $hFunction = new \Hfunction();
         $modelSalary = new QcSalary();
@@ -63,7 +63,7 @@ class QcSalary extends Model
         $modelSalary->payStatus = $payStatus;
         $modelSalary->work_id = $workId;
         $modelSalary->workSalary_id = $workSalaryId;
-        $modelSalary->salaryBasic_id = $salaryBasicId;
+        $modelSalary->salaryBasic_id = null;// phien ban cu - xoa
         $modelSalary->created_at = $hFunction->createdAt();
         if ($modelSalary->save()) {
             $this->lastId = $modelSalary->salary_id;
@@ -118,12 +118,13 @@ class QcSalary extends Model
     }
 
     //-----------  luong co ban   ------------ phien ban cu
+    # phien ban cu - xoa
     public function salaryBasic()
     {
         return $this->belongsTo('App\Models\Ad3d\StaffSalaryBasic\QcStaffSalaryBasic', 'salaryBasic_id', 'salaryBasic_id');
     }
 
-//-----------   luong co ban lam tai cty  ------------
+    //-----------   luong co ban lam tai cty  ------------
     public function staffWorkSalary()
     {
         return $this->belongsTo('App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary', 'workSalary_id', 'workSalary_id');
@@ -301,6 +302,12 @@ class QcSalary extends Model
         return $this->pluck('work_id', $salaryId);
     }
 
+    public function workSalaryId($salaryId = null)
+    {
+        return $this->pluck('work_id', $salaryId);
+    }
+
+    # phien ban cu - xoa
     public function salaryBasicId($salaryId = null)
     {
         return $this->pluck('salaryBasic_id', $salaryId);
