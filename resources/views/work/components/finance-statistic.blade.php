@@ -10,6 +10,7 @@
 $hFunction = new Hfunction();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $loginStaffId = $dataStaffLogin->staffId();
+$companyId = $dataStaffLogin->companyId();
 $currentMonth = $hFunction->currentMonth();
 $currentYear = $hFunction->currentYear();
 $dateFilter = date('Y-m');
@@ -49,15 +50,16 @@ $totalMoneyMainWork = ($sumMainMinute / 60) * $salaryOneHour;
 $totalMoneyOvertimeWork = ($sumPlusMinute_1_5 / 60) * $salaryOneHour;
 # phu cap an uong tang ca
 $totalMoneyAllowanceOvertime = ($sumPlusMinute / 60) * $overtimeHour;
-# tong tien mua vat tu
-$totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($loginStaffId, $dateFilter, 3);
-
+# tong tien mua vat tu cua 1 NV da xac nhan dung
+$totalMoneyImportOfStaff = $modelStaff->importTotalMoneyHasConfirmHasExactly($companyId, $loginStaffId, $dateFilter);
 # chi ung luong
 //$totalMoneyPaidSalaryBeforePayOfStaffAndDate = $modelStaff->totalMoneyPaidSalaryBeforePayOfStaffAndDate($loginStaffId, $dateFilter);
 
 
 # --- ---- CHI ---------
-$totalMoneyImportPaidOfStaff = $modelStaff->totalMoneyImportOfStaff($loginStaffId, $dateFilter, 1); // tong tien mua vat tu da thanh toan
+# tong tien mua vat tu da thanh toan - da xac nhan
+$totalMoneyImportPaidOfStaff = $modelStaff->importTotalMoneyHasConfirmPay($companyId, $loginStaffId, $dateFilter);
+        //dd($totalMoneyImportPaidOfStaff);
 # hoan tra huy don hang
 //$totalPaidOrderCancelOfStaffAndDate = $modelStaff->totalPaidOrderCancelOfStaffAndDate($loginStaffId, $dateFilter);
 

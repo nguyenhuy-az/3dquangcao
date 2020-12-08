@@ -212,61 +212,43 @@ $hrefIndex = route('qc.ad3d.work.time-keeping.get');
                                             @endif
                                         @endif
                                     </td>
-                                    <td style="padding: 3px 0; ">
+                                    <td>
                                         @if($hFunction->checkCount($dataTimekeepingImageInMorning))
-                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
-                                                @foreach($dataTimekeepingImageInMorning as $timekeepingImage)
-                                                    <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
-                                                        <a class="qc_ad3d_timekeeping_image_view qc-link"
-                                                           data-href="{!! route('qc.ad3d.work.time-keeping.image.view.get',$timekeepingImage->imageId()) !!}">
-                                                            <img style="max-width: 100%; max-height: 100%;"
-                                                                 src="{!! $timekeepingImage->pathSmallImage($timekeepingImage->name()) !!}">
-                                                        </a>
-                                                    </div>
-                                                @endforeach
-                                            </div>
+                                            @foreach($dataTimekeepingImageInMorning as $timekeepingImage)
+                                                <a class="qc_ad3d_timekeeping_image_view qc-link"
+                                                   data-href="{!! route('qc.ad3d.work.time-keeping.image.view.get',$timekeepingImage->imageId()) !!}">
+                                                    <img style="background-color: white;border: 1px solid grey; width: 70px; max-height: 100%;"
+                                                         src="{!! $timekeepingImage->pathSmallImage($timekeepingImage->name()) !!}">
+                                                </a>
+                                            @endforeach
                                         @else
-                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                                <em style="color: brown;">- Không có báo cáo</em>
-                                            </div>
+                                            <em style="color: brown;">- Không có báo cáo</em>
                                         @endif
                                     </td>
                                     <td>
                                         @if($hFunction->checkCount($dataTimekeepingImageInAfternoon))
-                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
-                                                @foreach($dataTimekeepingImageInAfternoon as $timekeepingImage)
-                                                    <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
-                                                        <a class="qc_ad3d_timekeeping_image_view qc-link"
-                                                           data-href="{!! route('qc.ad3d.work.time-keeping.image.view.get',$timekeepingImage->imageId()) !!}">
-                                                            <img style="max-width: 100%; max-height: 100%;"
-                                                                 src="{!! $timekeepingImage->pathSmallImage($timekeepingImage->name()) !!}">
-                                                        </a>
-                                                    </div>
-                                                @endforeach
-                                            </div>
+                                            @foreach($dataTimekeepingImageInAfternoon as $timekeepingImage)
+                                                <a class="qc_ad3d_timekeeping_image_view qc-link"
+                                                   data-href="{!! route('qc.ad3d.work.time-keeping.image.view.get',$timekeepingImage->imageId()) !!}">
+                                                    <img style="background-color: white;border: 1px solid grey; width: 70px; max-height: 100%;"
+                                                         src="{!! $timekeepingImage->pathSmallImage($timekeepingImage->name()) !!}">
+                                                </a>
+                                            @endforeach
                                         @else
-                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                                <em style="color: brown;">- Không có báo cáo</em>
-                                            </div>
+                                            <em style="color: brown;">- Không có báo cáo</em>
                                         @endif
                                     </td>
                                     <td>
                                         @if($hFunction->checkCount($dataTimekeepingImageInEvening))
-                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
-                                                @foreach($dataTimekeepingImageInEvening as $timekeepingImage)
-                                                    <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
-                                                        <a class="qc_ad3d_timekeeping_image_view qc-link"
-                                                           data-href="{!! route('qc.ad3d.work.time-keeping.image.view.get',$timekeepingImage->imageId()) !!}">
-                                                            <img style="max-width: 100%; max-height: 100%;"
-                                                                 src="{!! $timekeepingImage->pathSmallImage($timekeepingImage->name()) !!}">
-                                                        </a>
-                                                    </div>
-                                                @endforeach
-                                            </div>
+                                            @foreach($dataTimekeepingImageInEvening as $timekeepingImage)
+                                                <a class="qc_ad3d_timekeeping_image_view qc-link"
+                                                   data-href="{!! route('qc.ad3d.work.time-keeping.image.view.get',$timekeepingImage->imageId()) !!}">
+                                                    <img style="background-color: white;border: 1px solid grey; width: 70px; max-height: 100%;"
+                                                         src="{!! $timekeepingImage->pathSmallImage($timekeepingImage->name()) !!}">
+                                                </a>
+                                            @endforeach
                                         @else
-                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                                <em style="color: brown;">- Không có báo cáo</em>
-                                            </div>
+                                            <em style="color: brown;">- Không có báo cáo</em>
                                         @endif
                                     </td>
                                     <td>

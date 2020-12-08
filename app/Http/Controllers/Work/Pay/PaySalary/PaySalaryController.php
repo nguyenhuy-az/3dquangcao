@@ -118,13 +118,10 @@ class PaySalaryController extends Controller
         $fromDate = $dataWork->fromDate();
         $dataStaff = $dataWork->staffInfoOfWork();
         $staffId = $dataStaff->staffId();
+        # ma cong ty
+        $companyId = $dataWork->companyStaffWork->companyId();
         // danh sach mua vat tu dc xac nhan va chua thanh toan
-        $dataImport = $modelImport->selectInfoOfStaffAndConfirmedAndUnpaid($staffId)->get();
-        if (count($dataImport) > 0) {
-            $totalMoneyImportUnpaid = $modelImport->totalMoneyOfListImport($dataImport);
-        } else {
-            $totalMoneyImportUnpaid = 0;
-        }
+        $totalMoneyImportUnpaid = $dataStaff->importTotalMoneyHasConfirmNotPay($companyId, $staffId, date('Y-m', strtotime($fromDate)));
         $totalKPIMoney = 0;
         return view('work.pay.pay-salary.pay', compact('modelStaff', 'dataAccess', 'dataSalary', 'totalMoneyImportUnpaid', 'totalKPIMoney'));
     }
@@ -141,6 +138,9 @@ class PaySalaryController extends Controller
         $staffLoginId = $modelStaff->loginStaffId();
         $dataSalary = $modelSalary->getInfo($salaryId);
         $dataWork = $dataSalary->work;
+        $fromDate = $dataWork->fromDate();
+        # ma cong ty
+        $companyId = $dataWork->companyStaffWork->companyId();
         $salaryPay = $dataSalary->salary();
         $totalPaid = $dataSalary->totalPaid();
         # tong tien luong can thanh toán
@@ -169,9 +169,9 @@ class PaySalaryController extends Controller
         # thanh toan nhap vat tu
         $dataStaff = $dataWork->staffInfoOfWork();
         $staffId = $dataStaff->staffId();
-        // danh sach mua vat tu dc xac nhan va chua thanh toan
-        $dataImport = $modelImport->selectInfoOfStaffAndConfirmedAndUnpaid($staffId)->get();
-        if (count($dataImport) > 0) {
+        #danh sach mua vat tu dc xac nhan va chua thanh toan
+        $dataImport = $modelImport->selectInfoOfListStaffIdAndHasConfirmNotPay($companyId, [$staffId], date('Y-m', strtotime($fromDate)))->get();
+        if ($hFunction->checkCount($dataImport)) {
             foreach ($dataImport as $key => $import) {
                 $importId = $import->importId();
                 $totalImportPay = $import->totalMoneyOfImport();

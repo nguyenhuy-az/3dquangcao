@@ -14,9 +14,6 @@ $staffLoginId = $dataStaffLogin->staffId();
 $companyLoginId = $dataStaffLogin->companyId($dataStaffLogin->staffId());
 $dataCompany = $modelStaff->companyInfoActivity($dataStaffLogin->staffId());
 $staffLevel = $dataStaffLogin->level();
-# thong tin chi mua vat tu chua dc duyet cua cty
-$totalImportNotConfirmOfCompany = $dataCompany->totalImportNotConfirmOfCompany($companyLoginId);
-$totalImportNotConfirmOfCompany = (empty($totalImportNotConfirmOfCompany)) ? 0 : $totalImportNotConfirmOfCompany;
 # thong tin chi hoat dong chua duyet cua cong ty
 $totalPayActivityNotConfirmOfCompany = $dataCompany->totalPayActivityNotConfirmOfCompany($companyLoginId);
 $totalPayActivityNotConfirmOfCompany = (empty($totalPayActivityNotConfirmOfCompany)) ? 0 : $totalPayActivityNotConfirmOfCompany;
@@ -80,12 +77,6 @@ $totalReceiveMoneyUnconfirmed = $modelStatistical->sumReceiveMoneyUnconfirmedOfS
                             </em>
                         @endif
                     </a>
-                    {{--<a class="qc-link list-group-item" href="{!! route('qc.ad3d.store.import.get') !!}">
-                        <span class="qc-color-red badge" style="background:none;">
-                            [ {!! $totalImportNotConfirmOfCompany !!} ]
-                        </span>
-                        Duyệt chi vật tư
-                    </a>--}}
                     <a class="qc-link list-group-item" href="{!! route('qc.ad3d.finance.pay_activity.get') !!}">
                         <span class="qc-color-red badge qc-font-size-16" style="background:none;">
                             {!! $totalPayActivityNotConfirmOfCompany !!}

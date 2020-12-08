@@ -97,12 +97,12 @@ $dataImportDetail = $dataImport->importDetailGetInfo();
                                                 </td>
                                             </tr>
                                         @endforeach
-                                        <tr class="qc-color-red" style="border-top: 2px solid brown;">
+                                        <tr style="border-top: 2px solid brown;">
                                             <td class="text-right">
-                                                Tổng thanh toán
+                                                <b>Tổng thanh toán</b>
                                             </td>
-                                            <td class="text-right">
-                                                <b>{!! $hFunction->currencyFormat($totalMoney) !!}</b>
+                                            <td>
+                                                <b style="color: red;">{!! $hFunction->currencyFormat($totalMoney) !!}</b>
                                             </td>
                                             <td></td>
                                         </tr>

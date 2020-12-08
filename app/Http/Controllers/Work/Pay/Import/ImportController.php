@@ -74,8 +74,12 @@ class ImportController extends Controller
     {
         $modelStaff = new QcStaff();
         $modelImport = new QcImport();
+        $dataAccess = [
+            'object' => 'payImport',
+            'subObjectLabel' => 'Mua vật tư'
+        ];
         $dataImport = $modelImport->getInfo($importId);
-        return view('work.pay.import.view', compact('modelStaff', 'dataImport'));
+        return view('work.pay.import.view', compact('modelStaff','dataAccess', 'dataImport'));
     }
 
     # ======== ====== xac nhan hoa don mua ========= ========
@@ -267,11 +271,12 @@ class ImportController extends Controller
 
     public function postPay($importId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelImport = new QcImport();
         $modelImportPay = new QcImportPay();
         $dataImport = $modelImport->getInfo($importId);
-        if (count($dataImport) > 0) {
+        if ($hFunction->checkCount($dataImport)) {
             $totalPay = $dataImport->totalMoneyOfImport();
             if ($modelImportPay->insert($totalPay, $importId, $modelStaff->loginStaffId())) {
                 $modelImport->confirmPaid($importId);

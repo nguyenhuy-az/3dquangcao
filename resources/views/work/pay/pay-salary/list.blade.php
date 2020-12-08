@@ -43,7 +43,7 @@ $currentMonth = $hFunction->currentMonth();
                                         @for($y = 2017; $y <=2050; $y++)
                                             <option @if($filterYear == $y) selected="selected"
                                                     @endif value="{!! $y !!}">
-                                                 {!! $y !!}
+                                                {!! $y !!}
                                             </option>
                                         @endfor
                                     </select>
@@ -118,171 +118,188 @@ $currentMonth = $hFunction->currentMonth();
 
                                     $dataWork = $salary->work;
                                     $fromDate = $dataWork->fromDate();
-                                    # tong luong co ban
-                                    $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
-                                    # thong tin nhan vien
-                                    if (!$hFunction->checkEmpty($dataWork->companyStaffWorkId())) {
+                                    $dataCompanyStaffWork = $dataWork->companyStaffWork;
+                                    if ($hFunction->checkCount($dataCompanyStaffWork)) { # du lieu moi - 1 NV lam nhieu cty
+                                        $dataOld = false;
+                                        # tong luong co ban
+                                        $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
+                                        # thong tin nhan vien
                                         $dataStaffDetail = $dataWork->companyStaffWork->staff;
+                                        # tong tien mua vat tu xac nhan chưa thanh toan
+                                        $totalMoneyImportOfStaff = $modelStaff->importTotalMoneyHasConfirmNotPay($dataCompanyStaffWork->companyId(), $dataStaffDetail->staffId(), date('Y-m', strtotime($fromDate)));
+                                        $sumMoneyImportOfStaff = $sumMoneyImportOfStaff + $totalMoneyImportOfStaff;
+                                        # luong da ung
+                                        $totalMoneyConfirmedBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
+                                        $sumBeforePay = $sumBeforePay + $totalMoneyConfirmedBeforePay;
+                                        # tong luong nhan duoc
+                                        $totalSalaryReceive = $totalSalaryBasic + $benefitMoney + $bonusMoney;
+                                        $sumSalaryReceive = $totalSalaryReceive + $sumSalaryReceive;
+
+                                        # chua thanh toan
+                                        $totalUnpaid = $totalSalaryReceive + $totalMoneyImportOfStaff - $totalMoneyConfirmedBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
+                                        $sumSalaryUnpaid = $sumSalaryUnpaid + $totalUnpaid;
+
+                                        $bankAccount = $dataStaffDetail->bankAccount();
+                                        $bankName = $dataStaffDetail->bankName();
                                     } else {
-                                        $dataStaffDetail = $salary->work->staff;
+                                        $dataOld = true; // du lieu cu
                                     }
-                                    # tong tien mua vat tu xac nhan chưa thanh toan
-                                    $totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($dataStaffDetail->staffId(), date('Y-m', strtotime($fromDate)), 2);
-                                    $sumMoneyImportOfStaff = $sumMoneyImportOfStaff + $totalMoneyImportOfStaff;
-                                    # luong da ung
-                                    $totalMoneyConfirmedBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
-                                    $sumBeforePay = $sumBeforePay + $totalMoneyConfirmedBeforePay;
-                                    # tong luong nhan duoc
-                                    $totalSalaryReceive = $totalSalaryBasic + $benefitMoney + $bonusMoney;
-                                    $sumSalaryReceive = $totalSalaryReceive + $sumSalaryReceive;
-
-                                    # chua thanh toan
-                                    $totalUnpaid = $totalSalaryReceive + $totalMoneyImportOfStaff - $totalMoneyConfirmedBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
-                                    $sumSalaryUnpaid = $sumSalaryUnpaid + $totalUnpaid;
-
-                                    $bankAccount = $dataStaffDetail->bankAccount();
-                                    $bankName = $dataStaffDetail->bankName();
                                     $n_o = isset($n_o) ? $n_o + 1 : 1;
+
                                     ?>
-                                    <tr class="@if($n_o%2 == 0) info @endif">
-                                        <td>
-                                            <div class="media">
-                                                <a class="pull-left" href="#">
-                                                    <img class="media-object"
-                                                         style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
-                                                         src="{!! $dataStaffDetail->pathAvatar($dataStaffDetail->image()) !!}">
-                                                </a>
+                                    @if($dataOld)
+                                        <tr>
+                                            <td colspan="11">
+                                                <em class="qc-color-red">Dữ liệu cũ 1 người chỉ làm 1 cty - HỦY</em>
+                                            </td>
+                                        </tr>
+                                    @else
+                                        <tr class="@if($n_o%2 == 0) info @endif">
+                                            <td>
+                                                <div class="media">
+                                                    <a class="pull-left" href="#">
+                                                        <img class="media-object"
+                                                             style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                             src="{!! $dataStaffDetail->pathAvatar($dataStaffDetail->image()) !!}">
+                                                    </a>
 
-                                                <div class="media-body">
-                                                    <label class="media-heading">{!! $dataStaffDetail->lastName() !!}</label>
-                                                    @if(!empty($bankAccount))
-                                                        <br/>
-                                                        <em style="color: grey;">Số TK:</em>
-                                                        <span>{!! $bankAccount !!}</span>
-                                                        <br/>
-                                                        <em style="color: grey;">Ngân hàng:</em>
-                                                        <span>{!! $bankName !!}</span>
-                                                    @else
-                                                        <br/>
-                                                        <em style="color: grey;">TK ngân hàng:</em>
-                                                        <span style="color: grey;">Không có</span>
-                                                    @endif
+                                                    <div class="media-body">
+                                                        <label class="media-heading">{!! $dataStaffDetail->lastName() !!}</label>
+                                                        @if(!empty($bankAccount))
+                                                            <br/>
+                                                            <em style="color: grey;">Số TK:</em>
+                                                            <span>{!! $bankAccount !!}</span>
+                                                            <br/>
+                                                            <em style="color: grey;">Ngân hàng:</em>
+                                                            <span>{!! $bankName !!}</span>
+                                                        @else
+                                                            <br/>
+                                                            <em style="color: grey;">TK ngân hàng:</em>
+                                                            <span style="color: grey;">Không có</span>
+                                                        @endif
 
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <b style="color: red;">{!! $hFunction->currencyFormat($totalUnpaid) !!}</b>
-                                            <br/>
-                                            @if(!$salary->checkPaid())
-                                                <a class="qc-link-green-bold"
-                                                   href="{!! route('qc.work.pay.pay_salary.pay.get',$salaryId) !!}">
-                                                    THANH TOÁN
+                                            </td>
+                                            <td>
+                                                <b style="color: red;">{!! $hFunction->currencyFormat($totalUnpaid) !!}</b>
+                                                <br/>
+                                                @if(!$salary->checkPaid())
+                                                    <a class="qc-link-green-bold"
+                                                       href="{!! route('qc.work.pay.pay_salary.pay.get',$salaryId) !!}">
+                                                        THANH TOÁN
+                                                    </a>
+                                                    @if($totalUnpaid > 0)
+                                                        <span>|</span>
+                                                        <a class="qc-link-red">ỨNG</a>
+                                                    @endif
+                                                @else
+                                                    <em class="qc-color-grey">Đã Thanh toán</em>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <b style="color: blue;">{!! $hFunction->currencyFormat($totalSalaryReceive) !!}</b>
+                                                <br/>
+                                                <a class="qc-link-green"
+                                                   href="{!! route('qc.work.salary.salary.detail',$salaryId) !!}">
+                                                    - Xem chi tiết
                                                 </a>
-                                            @else
-                                                <em class="qc-color-grey">Đã Thanh toán</em>
-                                            @endif
+                                            </td>
+                                            <td>
+                                                <b style="color: red;">{!! $hFunction->currencyFormat($totalSalaryBasic) !!}</b>
+                                            </td>
+                                            <td>
+                                                <b style="color: blue;">{!! $hFunction->currencyFormat($totalBonusMoney) !!}</b>
+                                            </td>
+                                            <td>
+                                                <b style="color: red;">
+                                                    {!! $hFunction->currencyFormat($benefitMoney) !!}
+                                                </b>
+                                            </td>
+                                            <td>
+                                                {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
+                                            </td>
+                                            <td>
+                                                <b style="color: red;">
+                                                    {!! $hFunction->currencyFormat($totalMoneyConfirmedBeforePay) !!}
+                                                </b>
+                                            </td>
+                                            <td>
+                                                <b>
+                                                    {!! $hFunction->currencyFormat($minusMoney) !!}
+                                                </b>
+                                            </td>
+                                            <td>
+                                                <b style="color: green;">
+                                                    {!! $hFunction->currencyFormat($totalPaid) !!}
+                                                </b>
+                                            </td>
+                                            <td>
+                                                <a style="color: red;">
+                                                    {!! $hFunction->currencyFormat($totalKeepMoney) !!}
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                                @if(!$dataOld)
+                                    <tr>
+                                        <td class="qc-color-red" style="background-color: whitesmoke;"></td>
+                                        <td class="qc-color-red">
+                                            <b style="font-size: 14px; color: red;">
+                                                {!! $hFunction->currencyFormat($sumSalaryUnpaid)  !!}
+                                            </b>
                                         </td>
-                                        <td>
-                                            <b style="color: blue;">{!! $hFunction->currencyFormat($totalSalaryReceive) !!}</b>
-                                            <br/>
-                                            <a class="qc-link-green"
-                                               href="{!! route('qc.work.salary.salary.detail',$salaryId) !!}">
-                                                - Xem chi tiết
-                                            </a>
+                                        <td style="width: 120px;">
+                                            <b style="font-size: 14px; color: blue;">
+                                                {!! $hFunction->currencyFormat($sumSalaryReceive) !!}
+                                            </b>
                                         </td>
-                                        <td>
-                                            <b style="color: red;">{!! $hFunction->currencyFormat($totalSalaryBasic) !!}</b>
-                                        </td>
-                                        <td>
-                                            <b style="color: blue;">{!! $hFunction->currencyFormat($totalBonusMoney) !!}</b>
-                                        </td>
-                                        <td>
-                                            <b style="color: red;">
-                                                {!! $hFunction->currencyFormat($benefitMoney) !!}
+                                        <td class="qc-color-red">
+                                            <b style="font-size: 14px; color: red;">
+                                                {!! $hFunction->currencyFormat($sumSalary)  !!}
                                             </b>
                                         </td>
                                         <td>
-                                            {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
-                                        </td>
-                                        <td>
-                                            <b style="color: red;">
-                                                {!! $hFunction->currencyFormat($totalMoneyConfirmedBeforePay) !!}
+                                            <b style="font-size: 14px; color: blue;">
+                                                {!! $hFunction->currencyFormat($sumBonus) !!}
                                             </b>
                                         </td>
-                                        <td>
+                                        <td class="qc-color-red">
+                                            <b style="font-size: 14px; color: red;">
+                                                {!! $hFunction->currencyFormat($sumSalaryBenefit)  !!}
+                                            </b>
+                                        </td>
+                                        <td class="qc-color-red">
+                                            <b style="font-size: 14px; color: red;">
+                                                {!! $hFunction->currencyFormat($sumMoneyImportOfStaff)  !!}
+                                            </b>
+                                        </td>
+                                        <td class="qc-color-red">
+                                            <b style="font-size: 14px; color: red;">
+                                                {!! $hFunction->currencyFormat($sumBeforePay)  !!}
+                                            </b>
+                                        </td>
+                                        <td class="qc-color-red">
+                                            <b style="font-size: 14px; color: red;">
+                                                {!! $hFunction->currencyFormat($sumMinus)  !!}
+                                            </b>
+                                        </td>
+                                        <td class="qc-color-red">
                                             <b>
-                                                {!! $hFunction->currencyFormat($minusMoney) !!}
+                                                {!! $hFunction->currencyFormat($sumSalaryPaid)  !!}
                                             </b>
                                         </td>
                                         <td>
-                                            <b style="color: green;">
-                                                {!! $hFunction->currencyFormat($totalPaid) !!}
+                                            <b style="font-size: 14px; color: blue;">
+                                                {!! $hFunction->currencyFormat($sumKeepMoney)  !!}
                                             </b>
-                                        </td>
-                                        <td>
-                                            <a style="color: red;">
-                                                {!! $hFunction->currencyFormat($totalKeepMoney) !!}
-                                            </a>
                                         </td>
                                     </tr>
-                                @endforeach
-                                <tr>
-                                    <td class="qc-color-red" style="background-color: whitesmoke;"></td>
-                                    <td class="qc-color-red">
-                                        <b style="font-size: 14px; color: red;">
-                                            {!! $hFunction->currencyFormat($sumSalaryUnpaid)  !!}
-                                        </b>
-                                    </td>
-                                    <td style="width: 120px;">
-                                        <b style="font-size: 14px; color: blue;">
-                                            {!! $hFunction->currencyFormat($sumSalaryReceive) !!}
-                                        </b>
-                                    </td>
-                                    <td class="qc-color-red">
-                                        <b style="font-size: 14px; color: red;">
-                                            {!! $hFunction->currencyFormat($sumSalary)  !!}
-                                        </b>
-                                    </td>
-                                    <td>
-                                        <b style="font-size: 14px; color: blue;">
-                                            {!! $hFunction->currencyFormat($sumBonus) !!}
-                                        </b>
-                                    </td>
-                                    <td class="qc-color-red">
-                                        <b style="font-size: 14px; color: red;">
-                                            {!! $hFunction->currencyFormat($sumSalaryBenefit)  !!}
-                                        </b>
-                                    </td>
-                                    <td class="qc-color-red">
-                                        <b style="font-size: 14px; color: red;">
-                                            {!! $hFunction->currencyFormat($sumMoneyImportOfStaff)  !!}
-                                        </b>
-                                    </td>
-                                    <td class="qc-color-red">
-                                        <b style="font-size: 14px; color: red;">
-                                            {!! $hFunction->currencyFormat($sumBeforePay)  !!}
-                                        </b>
-                                    </td>
-                                    <td class="qc-color-red">
-                                        <b style="font-size: 14px; color: red;">
-                                            {!! $hFunction->currencyFormat($sumMinus)  !!}
-                                        </b>
-                                    </td>
-                                    <td class="qc-color-red">
-                                        <b>
-                                            {!! $hFunction->currencyFormat($sumSalaryPaid)  !!}
-                                        </b>
-                                    </td>
-                                    <td>
-                                        <b style="font-size: 14px; color: blue;">
-                                            {!! $hFunction->currencyFormat($sumKeepMoney)  !!}
-                                        </b>
-                                    </td>
-                                </tr>
+                                @endif
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="8">
+                                    <td class="text-center" colspan="11">
                                         <em class="qc-color-red">Không có bảng lương</em>
                                     </td>
                                 </tr>
@@ -299,84 +316,78 @@ $currentMonth = $hFunction->currentMonth();
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
-                                <th style="width: 20px;"></th>
-                                <th>Ngày thanh toán</th>
+                                <th style="width: 120px;">Ngày thanh toán</th>
+                                <th style="width: 120px;">Số tiền</th>
                                 <th>Người nhận</th>
-                                <th class="text-center">Bảng lương</th>
-                                <th class="text-right">Tiền chưa xác nhận</th>
-                                <th class="text-right">Tiền đã xác nhận</th>
                             </tr>
                             @if($hFunction->checkCount($dataSalaryPay))
                                 <?php
                                 $n_o = 0;
-                                $totalMoneyConfirmed = 0;
-                                $totalMoneyNoConfirm = 0;
+                                $totalMoneyPaid = 0;
                                 ?>
                                 @foreach($dataSalaryPay as $salaryPay)
                                     <?php
                                     $payId = $salaryPay->payId();
                                     $money = $salaryPay->money();
+                                    $totalMoneyPaid = $totalMoneyPaid + $money;
+                                    # trang thai xac nhan
                                     $confirmStatus = $salaryPay->checkConfirmed();
-                                    if ($confirmStatus) { #da xac nhan
-                                        $totalMoneyConfirmed = $totalMoneyConfirmed + $money;
-                                    } else { # chua xac nhan
-                                        $totalMoneyNoConfirm = $totalMoneyNoConfirm + $money;
-                                    }
+                                    # bang cham cong
                                     $dataWork = $salaryPay->salary->work;
+                                    $dataStaffReceive = $dataWork->companyStaffWork->staff;
+                                    $n_o = $n_o + 1;
                                     ?>
-                                    <tr class="@if($n_o%2) info @endif">
-                                        <td class="text-center">
-                                            {!! $n_o = $n_o + 1 !!}
-                                        </td>
+                                    <tr class="@if($n_o%2 == 0) info @endif">
                                         <td>
-                                            {!! date('d/m/Y',strtotime($salaryPay->datePay()))  !!}
+                                            <b style="color: blue;">{!! date('d-m-Y',strtotime($salaryPay->datePay()))  !!}</b>
                                             @if(!$confirmStatus)
                                                 <br/>
-                                                <a class="qc_salary_pay_del qc-link-red"
+                                                <i class="glyphicon glyphicon-ok qc-font-size-14"
+                                                   style="color: red;"></i>
+                                                <em>Chưa xác nhận</em>
+                                                <br/>
+                                                <a class="qc_salary_pay_del qc-link-green-bold qc-font-size-14"
                                                    data-href="{!! route('qc.work.pay.pay_salary.delete.get', $payId) !!}">
-                                                    <i class="glyphicon glyphicon-trash" style="font-size: 1.5em;"></i>
+                                                    HỦY
                                                 </a>
+                                            @else
+                                                <br/>
+                                                <i class="glyphicon glyphicon-ok qc-font-size-14"
+                                                   style="color: green;"></i>
+                                                <em>Đã xác nhận</em>
                                             @endif
                                         </td>
                                         <td>
-                                            <span>{!! $dataWork->companyStaffWork->staff->fullName() !!}</span>
+                                            <b style="color: red;">{!! $hFunction->currencyFormat($money) !!}</b>
+                                            <br/>
+                                            <em style="color: grey;">
+                                                - Lương {!! date('m-Y', strtotime($dataWork->fromDate())) !!}
+                                            </em>
                                         </td>
-                                        <td class="text-center">
-                                                <span>
-                                                    Tháng
-                                                    {!! date('m-Y', strtotime($dataWork->fromDate())) !!}
-                                                </span>
-                                        </td>
-                                        <td class="text-right">
-                                            @if (!$salaryPay->checkConfirmed())
-                                                {!! $hFunction->currencyFormat($money) !!}
-                                            @else
-                                                <span>0</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-right">
-                                            @if ($salaryPay->checkConfirmed())
-                                                {!! $hFunction->currencyFormat($money) !!}
-                                            @else
-                                                <span>0</span>
-                                            @endif
+                                        <td>
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object"
+                                                         style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                         src="{!! $dataStaffReceive->pathAvatar($dataStaffReceive->image()) !!}">
+                                                </a>
+                                                <div class="media-body">
+                                                    <label class="media-heading">{!! $dataStaffReceive->lastName() !!}</label>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
                                 <tr style="border-top: 2px solid brown;">
-                                    <td class="text-right qc-color-red"
-                                        style="background-color: whitesmoke;" colspan="4">
+                                    <td></td>
+                                    <td>
+                                        <b style="color: red;">{!! $hFunction->currencyFormat($totalMoneyPaid) !!}</b>
                                     </td>
-                                    <td class="text-right qc-color-red">
-                                        <b>{!! $hFunction->currencyFormat($totalMoneyNoConfirm) !!}</b>
-                                    </td>
-                                    <td class="text-right qc-color-red">
-                                        <b>{!! $hFunction->currencyFormat($totalMoneyConfirmed) !!}</b>
-                                    </td>
+                                    <td></td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="6">
+                                    <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="3">
                                         <em class="qc-color-red">Không có thông tin thanh toán</em>
                                     </td>
                                 </tr>

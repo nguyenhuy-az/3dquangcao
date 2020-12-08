@@ -193,6 +193,7 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                                 <em>Thanh toán chưa xác nhận</em>
                                             @endif
                                         @else
+                                            <i class="glyphicon glyphicon-ok" style="color: red;"></i>
                                             <em class="qc-color-grey">Chưa thanh toán</em>
                                             @if($checkHasConfirmStatus)
                                                 <br/>

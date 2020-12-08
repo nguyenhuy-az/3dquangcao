@@ -1030,20 +1030,48 @@ class QcStaff extends Model
     {
         return $this->hasMany('App\Models\Ad3d\Order\QcOrder', 'staff_id', 'importStaff_id');
     }
+
     # tat ca thong tin mua vat tu cua 1 nhan vie
-    public function importInfoOfStaff($staffId = null, $date = null)
+    public function importGetInfo($companyId, $staffId = null, $date = null)
     {
         $modelImport = new QcImport();
-        return $modelImport->selectAllInfoOfStaff($this->checkIdNull($staffId), $date)->get();
+        return $modelImport->getInfoOfStaff($companyId, $this->checkIdNull($staffId), $date);
     }
 
-    # tong tien mua vat tu cua nhan vien
-    public function totalMoneyImportOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan / 2 da duyet chua thanh toan
+    # tong tien mua vat tu cua nhan vien - ta ca hoa don nhap
+    public function importTotalMoney($companyId, $staffId, $date = null)
     {
         $modelImport = new QcImport();
-        return $modelImport->totalMoneyImportOfStaff($staffId, $date, $payStatus);
+        return $modelImport->totalMoneyImportOfStaff($companyId, $staffId, $date);
     }
 
+    # tong tien mua vat tu cua nhan vien - da xac nhan dong y
+    public function importTotalMoneyHasConfirmHasExactly($companyId, $staffId, $date = null)
+    {
+        $modelImport = new QcImport();
+        return $modelImport->totalMoneyImportOfStaffHasConfirmHasExactly($companyId, $staffId, $date);
+    }
+
+    # tong tien mua vat tu thanh toan da xac nhan
+    public function importTotalMoneyHasConfirmPay($companyId, $staffId, $date = null)
+    {
+        $modelImport = new QcImport();
+        return $modelImport->totalMoneyImportOfStaffHasConfirmPay($companyId, $staffId, $date);
+    }
+
+    # tong tien mua vat tu thanh toan chua xac nhan
+    public function importTotalMoneyNotConfirmPay($companyId, $staffId, $date = null)
+    {
+        $modelImport = new QcImport();
+        return $modelImport->totalMoneyImportOfStaffNotConfirmPay($companyId, $staffId, $date);
+    }
+    # tong tien mua vat tu da duyet chua thanh toan
+    public function importTotalMoneyHasConfirmNotPay($companyId, $staffId, $date = null)
+    {
+        $modelImport = new QcImport();
+        return $modelImport->totalMoneyImportOfStaffHasConfirmNotPay($companyId, $staffId, $date);
+    }
+    //---------- ngươi xac nhan -----------
     public function confirmStaff()
     {
         return $this->hasMany('App\Models\Ad3d\Order\QcOrder', 'staff_id', 'importStaff_id');

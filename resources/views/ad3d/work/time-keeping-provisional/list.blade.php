@@ -257,7 +257,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                             @foreach($dataTimekeepingProvisionalImageInMorning as $timekeepingProvisionalImage)
                                                 <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
                                                    data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
-                                                    <img style="width: 70px; height: 70px;"
+                                                    <img style="background-color: white;border: 1px solid grey; width: 70px; max-height: 100%;"
                                                          src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
                                                 </a>
                                             @endforeach
@@ -270,7 +270,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                             @foreach($dataTimekeepingProvisionalImageInAfternoon as $timekeepingProvisionalImage)
                                                 <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
                                                    data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
-                                                    <img style="width: 70px; height: 70px;"
+                                                    <img style="background-color: white;border: 1px solid grey; width: 70px; max-height: 100%;"
                                                          src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
                                                 </a>
                                             @endforeach
@@ -283,7 +283,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                             @foreach($dataTimekeepingProvisionalImageInEvening as $timekeepingProvisionalImage)
                                                 <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
                                                    data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
-                                                    <img style="width: 70px; height: 70px;"
+                                                    <img style="background-color: white;border: 1px solid grey; width: 70px; max-height: 100%;"
                                                          src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
                                                 </a>
                                             @endforeach

@@ -48,6 +48,92 @@ class QcStaffWorkSalary extends Model
         return (empty($workSalaryId)) ? $this->workSalaryId() : $workSalaryId;
     }
 
+    //============ =========== ============ LAY THONG TIN ============= =========== ==========
+
+    public function getInfo($workSalaryId = '', $field = '')
+    {
+        if (empty($workSalaryId)) {
+            return QcStaffWorkSalary::where('action', 1)->get();
+        } else {
+            $result = QcStaffWorkSalary::where('workSalary_id', $workSalaryId)->first();
+            if (empty($field)) {
+                return $result;
+            } else {
+                return $result->$field;
+            }
+        }
+    }
+
+    public function pluck($column, $objectId = null)
+    {
+        if (empty($objectId)) {
+            return $this->$column;
+        } else {
+            return QcStaffWorkSalary::where('workSalary_id', $objectId)->pluck($column);
+        }
+    }
+
+    //----------- GET INFO -------------
+    public function workSalaryId()
+    {
+        return $this->workSalary_id;
+    }
+
+    public function totalSalary($workSalaryId = null)
+    {
+        return $this->pluck('totalSalary', $workSalaryId);
+    }
+
+    public function salary($workSalaryId = null)
+    {
+        return $this->pluck('salary', $workSalaryId);
+    }
+
+    public function responsibility($workSalaryId = null)
+    {
+        return $this->pluck('responsibility', $workSalaryId);
+    }
+
+    public function usePhone($workSalaryId = null)
+    {
+        return $this->pluck('usePhone', $workSalaryId);
+    }
+
+    public function insurance($workSalaryId = null)
+    {
+        return $this->pluck('insurance', $workSalaryId);
+    }
+
+    public function fuel($workSalaryId = null)
+    {
+        return $this->pluck('fuel', $workSalaryId);
+    }
+
+    public function dateOff($workSalaryId = null)
+    {
+        return $this->pluck('dateOff', $workSalaryId);
+    }
+
+    public function overtimeHour($workSalaryId = null)
+    {
+        return $this->pluck('overtimeHour', $workSalaryId);
+    }
+
+    public function action($workSalaryId = null)
+    {
+        return $this->pluck('action', $workSalaryId);
+    }
+
+    public function workId($workSalaryId = null)
+    {
+        return $this->pluck('work_id', $workSalaryId);
+    }
+
+    public function createdAt($workSalaryId = null)
+    {
+        return $this->pluck('created_at', $workSalaryId);
+    }
+
     // vo hieu bang luong
     public function disableOfWork($workId)
     {
@@ -111,151 +197,76 @@ class QcStaffWorkSalary extends Model
         return $this->totalSalary($workSalaryId);
     }
 
-    public function salaryOnHour($workSalaryId = null) # tien luong tin tren 1 gio
+    # tien luong tin tren 1 gio
+    public function salaryOnHour($workSalaryId = null)
     {
         return $this->totalSalaryBasic($workSalaryId) / 208;
     }
 
-    public function totalSalaryOnHour($workSalaryId = null) # tien luong tin tren 1 gio
+    # tong tien luong tinh tren 1 gio
+    public function totalSalaryOnHour($workSalaryId = null)
     {
         return $this->totalSalaryInMonthOfWork($this->workId($workSalaryId)) / 208;
     }
 
+    # tong tien bao hiem
     public function totalMoneyInsurance($workSalaryId = null)
     {
         return ($this->salary($workSalaryId) * $this->insurance($workSalaryId)) / 100;
     }
 
-    public function salaryOneDateOff($workSalaryId = null) # tien phu cap trong 1 ngay
+    # tien luong 1 ngay
+    public function salaryOneDateOff($workSalaryId = null)
     {
         return $this->totalSalary($workSalaryId) / 26;
     }
 
-    public function totalSalaryDateOff($workSalaryId = null) # tong tien phu cap ngay nghi
+    # tong tien phu cap ngay nghi
+    public function totalSalaryDateOff($workSalaryId = null)
     {
         return $this->dateOff($workSalaryId) * $this->salaryOneDateOff($workSalaryId);
     }
 
-    public function totalMoneyOvertimeHour($workSalaryId, $hour) # tong tien phu cap tang ca trong thang
+    # tong tien phu cap tang ca trong thang
+    public function totalMoneyOvertimeHour($workSalaryId, $hour)
     {
         return $this->overtimeHour($workSalaryId) * $hour;
     }
 
 
     // ------------------------ of work ---------------------
-    public function totalSalaryBasicOfWork($workId) # tong tien luong co ban dc lanh
+    # tong tien luong co ban dc lanh
+    public function totalSalaryBasicOfWork($workId)
     {
         $dataSalary = $this->infoActivityOfWork($workId);
         return $this->totalSalaryBasic($dataSalary->workSalaryId());
     }
 
-    public function totalSalaryDateOffOfWork($workId) # tong tien phu cap ngay nghi
+    # tong tien phu cap ngay nghi
+    public function totalSalaryDateOffOfWork($workId)
     {
         $dataSalary = $this->infoActivityOfWork($workId);
         return $dataSalary->dateOff() * $this->salaryOneDateOff($workId);
     }
 
-    public function totalMoneyOvertimeHourOfWork($workId, $hour) # tong tien phu cap tang ca trong thang
+    # tong tien phu cap tang ca trong thang
+    public function totalMoneyOvertimeHourOfWork($workId, $hour)
     {
         $dataSalary = $this->infoActivityOfWork($workId);
         return $dataSalary->overtimeHour() * $hour;
     }
 
-    public function totalSalaryInMonthOfWork($workId) # tien luong tin tren 1  thang
+    # tien luong tin tren 1  thang
+    public function totalSalaryInMonthOfWork($workId)
     {
         return $this->totalSalaryBasicOfWork($workId) + $this->totalSalaryDateOff($workId);
     }
 
-//----------- tinh luong ------------
+    //----------- tinh luong ------------
     public function salaryWork()
     {
         return $this->hasMany('App\Models\Ad3d\Salary\QcSalary', 'workSalary_id', 'workSalary_id');
     }
 
 
-//============ =========== ============ LAY THONG TIN ============= =========== ==========
-
-    public function getInfo($workSalaryId = '', $field = '')
-    {
-        if (empty($workSalaryId)) {
-            return QcStaffWorkSalary::where('action', 1)->get();
-        } else {
-            $result = QcStaffWorkSalary::where('workSalary_id', $workSalaryId)->first();
-            if (empty($field)) {
-                return $result;
-            } else {
-                return $result->$field;
-            }
-        }
-    }
-
-    public function pluck($column, $objectId = null)
-    {
-        if (empty($objectId)) {
-            return $this->$column;
-        } else {
-            return QcStaffWorkSalary::where('workSalary_id', $objectId)->pluck($column);
-        }
-    }
-
-//----------- GET INFO -------------
-    public function workSalaryId()
-    {
-        return $this->workSalary_id;
-    }
-
-    public function totalSalary($workSalaryId = null)
-    {
-        return $this->pluck('totalSalary', $workSalaryId);
-    }
-
-    public function salary($workSalaryId = null)
-    {
-        return $this->pluck('salary', $workSalaryId);
-    }
-
-    public function responsibility($workSalaryId = null)
-    {
-        return $this->pluck('responsibility', $workSalaryId);
-    }
-
-    public function usePhone($workSalaryId = null)
-    {
-        return $this->pluck('usePhone', $workSalaryId);
-    }
-
-    public function insurance($workSalaryId = null)
-    {
-        return $this->pluck('insurance', $workSalaryId);
-    }
-
-    public function fuel($workSalaryId = null)
-    {
-        return $this->pluck('fuel', $workSalaryId);
-    }
-
-    public function dateOff($workSalaryId = null)
-    {
-        return $this->pluck('dateOff', $workSalaryId);
-    }
-
-    public function overtimeHour($workSalaryId = null)
-    {
-        return $this->pluck('overtimeHour', $workSalaryId);
-    }
-
-    public function action($workSalaryId = null)
-    {
-        return $this->pluck('action', $workSalaryId);
-    }
-
-    public function workId($workSalaryId = null)
-    {
-        return $this->pluck('work_id', $workSalaryId);
-    }
-
-    public function createdAt($workSalaryId = null)
-    {
-        return $this->pluck('created_at', $workSalaryId);
-    }
 }

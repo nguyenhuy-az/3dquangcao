@@ -16,8 +16,8 @@ $mobileStatus = $mobile->isMobile();
 @section('qc_container_content')
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
-            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-                <h3>XÁC NHẬN ĐÃ NHẬN TIỀN  </h3>
+            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <h3 style="color: red;">XÁC NHẬN ĐÃ NHẬN TIỀN </h3>
             </div>
         </div>
         <div class="row">
@@ -31,35 +31,51 @@ $mobileStatus = $mobile->isMobile();
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
-                                    <tr class="qc-color-red">
-                                        <th class="qc-padding-none" colspan="7">Chi tiết thanh toán lương</th>
+                                    <tr style="background-color: black; color: yellow;">
+                                        <th style="width: 130px;">Số tiền</th>
+                                        <th>Thủ quỹ</th>
                                     </tr>
-                                    <tr style="background-color: whitesmoke;">
-                                        <th class="text-center"  style="width: 20px;">STT</th>
-                                        <th class="text-center">Ngày</th>
-                                        <th class="text-center">Thủ quỹ</th>
-                                        <th class="text-right">Số tiền</th>
-                                    </tr>
-                                    @if(count($dataSalaryPay) > 0)
+                                    @if($hFunction->checkCount($dataSalaryPay))
                                         @foreach($dataSalaryPay as $salaryPay)
+                                            <?php
+                                            $money = $salaryPay->money();
+                                            $dataStaffPay = $salaryPay->staff;
+                                            $totalMoney = (isset($totalMoney)) ? $totalMoney + $money : $money;
+                                            ?>
                                             <tr>
-                                                <td class="text-center">
-                                                    {!! $n_o_pay = (isset($n_o_pay)) ? $n_o_pay + 1 : 1 !!}
+                                                <td>
+                                                    <b style="color: red;">{!! $hFunction->currencyFormat($money) !!} </b>
+                                                    <br/>
+                                                    <em style="color: blue;">{!!  date('d-m-Y',strtotime($salaryPay->datePay())) !!}</em>
                                                 </td>
-                                                <td class="text-center">
-                                                    {!!  date('d/m/Y',strtotime($salaryPay->datePay())) !!}
-                                                </td>
-                                                <td class="text-center">
-                                                    {!! $salaryPay->staff->fullName()  !!}
-                                                </td>
-                                                <td class="text-right qc-color-red">
-                                                    {!! $hFunction->currencyFormat($salaryPay->money()) !!}
+                                                <td>
+                                                    <div class="media">
+                                                        <a class="pull-left" href="#">
+                                                            <img class="media-object"
+                                                                 style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                                 src="{!! $dataStaffPay->pathAvatar($dataStaffPay->image()) !!}">
+                                                        </a>
+
+                                                        <div class="media-body">
+                                                            <h5 class="media-heading">{!! $dataStaffPay->lastName() !!}</h5>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
+                                        <tr>
+                                            <td>
+                                                <b style="color: red; font-size: 1.5em;">
+                                                    {!! $hFunction->currencyFormat($totalMoney) !!}
+                                                </b>
+                                            </td>
+                                            <td>
+                                                <em><= Tổng nhận</em>
+                                            </td>
+                                        </tr>
                                     @else
                                         <tr>
-                                            <td class="" colspan="5">
+                                            <td colspan="2">
                                                 Không có thông tin thanh toán
                                             </td>
                                         </tr>
@@ -71,8 +87,8 @@ $mobileStatus = $mobile->isMobile();
                     <div class="row">
                         <div class="text-center qc-padding-top-20 qc-padding-bot-20  qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                            <button type="button" class="qc_save btn btn-sm btn-primary">Xác nhận</button>
-                            <button type="button" class="qc_container_close btn btn-sm btn-default">Đóng</button>
+                            <button type="button" class="qc_save btn btn-sm btn-primary">XÁC NHẬN</button>
+                            <button type="button" class="qc_container_close btn btn-sm btn-default">ĐÓNG</button>
                         </div>
                     </div>
                 </form>

@@ -266,6 +266,35 @@ class QcImport extends Model
         }
     }
 
+    # tong tien mua cua danh sanh hoa don - tat ca
+    public function totalMoneyOfListImport($dataImport)
+    {
+        $hFunction = new \Hfunction();
+        $totalMoney = 0;
+        if ($hFunction->checkCount($dataImport)) {
+            foreach ($dataImport as $import) {
+                $totalMoney = $totalMoney + $import->totalMoneyOfImport();
+            }
+        }
+        return $totalMoney;
+    }
+
+    # tong tien mua cua danh sanh hoa don - da xac nhan thanh toan
+    public function totalMoneyOfListImportHasConfirmPay($dataImport)
+    {
+        $hFunction = new \Hfunction();
+        $totalMoney = 0;
+        if ($hFunction->checkCount($dataImport)) {
+            foreach ($dataImport as $import) {
+                # da xac nhan
+                if ($this->importPayCheckHasConfirm($import->importId())) {
+                    $totalMoney = $totalMoney + $import->totalMoneyOfImport();
+                }
+
+            }
+        }
+        return $totalMoney;
+    }
     //------------------- kiểm tra thông tin -------------------//
     # kiem tra da thanh toan
     public function checkHasPay($importId = null)
@@ -273,7 +302,7 @@ class QcImport extends Model
         return ($this->payStatus($importId) == $this->getDefaultHasPay()) ? true : false;
     }
 
-    #  kiem tra da xac nha
+    #  kiem tra da xac nhan
     public function checkHasConfirm($importId = null)
     {
         return ($this->confirmStatus($importId) == $this->getDefaultHasConfirm()) ? true : false;
@@ -284,17 +313,7 @@ class QcImport extends Model
     {
         return ($this->exactlyStatus($importId) == $this->getDefaultHasExactly()) ? true : false;
     }
-    # tong tien mua cua danh sanh hoa don
-    public function totalMoneyOfListImport($dataImport)
-    {
-        $totalMoney = 0;
-        if (count($dataImport) > 0) {
-            foreach ($dataImport as $import) {
-                $totalMoney = $totalMoney + $import->totalMoneyOfImport();
-            }
-        }
-        return $totalMoney;
-    }
+
 
     //========== ========= ========= RELATION ========== ========= =========='
     //---------- nhap kho -----------
@@ -331,6 +350,52 @@ class QcImport extends Model
         }
     }
 
+    #chon thong tin hoa don theo danh sach ma NV da xac nhan dong y va chua thanh toan
+    public function selectInfoOfListStaffIdAndHasConfirmNotPay($companyId, $listStaffId, $date = null, $order = 'DESC')
+    {
+        $hFunction = new \Hfunction();
+        # chua thanh toan
+        $payStatus = $this->getDefaultNotPay();
+        # da xac nhan
+        $confirmStatus = $this->getDefaultHasConfirm();
+        # nhap dung - dong y duyet
+        $exactlyStatus = $this->getDefaultHasExactly();
+        if ($hFunction->checkEmpty($date)) {
+            return QcImport::where('company_id', $companyId)->whereIn('importStaff_id', $listStaffId)->where([
+                'payStatus' => $payStatus,
+                'confirmStatus' => $confirmStatus,
+                'exactlyStatus' => $exactlyStatus
+            ])->orderBy('importDate', $order)->select('*');
+        } else {
+            return QcImport::where('company_id', $companyId)->whereIn('importStaff_id', $listStaffId)->where([
+                'payStatus' => $payStatus,
+                'confirmStatus' => $confirmStatus,
+                'exactlyStatus' => $exactlyStatus
+            ])->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->select('*');
+        }
+    }
+
+    #chon thong tin hoa don theo danh sach ma NV da xac nhan dong y
+    public function selectInfoOfListStaffIdAndHasConfirmHasExactly($companyId, $listStaffId, $date = null, $order = 'DESC')
+    {
+        $hFunction = new \Hfunction();
+        # da xac nhan
+        $confirmStatus = $this->getDefaultHasConfirm();
+        # nhap dung - dong y duyet
+        $exactlyStatus = $this->getDefaultHasExactly();
+        if ($hFunction->checkEmpty($date)) {
+            return QcImport::where('company_id', $companyId)->whereIn('importStaff_id', $listStaffId)->where([
+                'confirmStatus' => $confirmStatus,
+                'exactlyStatus' => $exactlyStatus
+            ])->orderBy('importDate', $order)->select('*');
+        } else {
+            return QcImport::where('company_id', $companyId)->whereIn('importStaff_id', $listStaffId)->where([
+                'confirmStatus' => $confirmStatus,
+                'exactlyStatus' => $exactlyStatus
+            ])->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->select('*');
+        }
+    }
+
     # chon tat ca hoa don mua cua 1 nhan vien - cua 1 cong ty
     public function selectAllInfoOfStaff($companyId, $staffId, $date = null, $order = 'DESC')
     {
@@ -348,6 +413,7 @@ class QcImport extends Model
     {
         return $this->selectAllInfoOfStaff($companyId, $staffId, $date, $orderBy)->get();
     }
+
     #lay thong tin hoa don cua 1 nhan vien theo tang thai thanh toan
     public function getInfoOfStaffAndPayStatus($companyId, $staffId, $payStatus, $date = null, $orderBy = 'DESC')
     {
@@ -361,9 +427,40 @@ class QcImport extends Model
     }*/
 
     # thong tin hoa don mua da thanh toan
-    /*public function getInfoHastPayOffStaff($companyId, $staffId, $date = null, $order = 'DESC')
+    public function getInfoHastPayOffStaff($companyId, $staffId, $date = null, $order = 'DESC')
     {
         return $this->getInfoOfStaffAndPayStatus($companyId, $staffId, $this->getDefaultHasPay(), $date, $order);
+    }
+
+    # tong tien tat ca don hang mua vat tu cua 1 nhan vien
+    public function totalMoneyImportOfStaff($companyId, $staffId, $date = null)
+    {
+        return $this->totalMoneyOfListImport( $this->getInfoOfStaff($companyId, $staffId, $date));
+    }
+
+    # tong tien hang mua vat tu cua 1 nhan vien - da xac nhan thanh toan
+    public function totalMoneyImportOfStaffHasConfirmPay($companyId, $staffId, $date = null)
+    {
+        return $this->totalMoneyOfListImportHasConfirmPay($this->getInfoHastPayOffStaff($companyId, $staffId, $date));
+    }
+
+    # tong tien hang mua vat tu cua 1 nhan vien - da xac nhan va chu thanh toan
+    public function totalMoneyImportOfStaffHasConfirmNotPay($companyId, $staffId, $date = null)
+    {
+        return $this->totalMoneyOfListImport($this->selectInfoOfListStaffIdAndHasConfirmNotPay($companyId, [$staffId], $date)->get());
+    }
+
+    # tong tien hang mua vat tu cua 1 nhan vien - da xac nhan va dong y
+    public function totalMoneyImportOfStaffHasConfirmHasExactly($companyId, $staffId, $date = null)
+    {
+        return $this->totalMoneyOfListImport($this->selectInfoOfListStaffIdAndHasConfirmHasExactly($companyId, [$staffId], $date)->get());
+    }
+
+    # tong tien hang mua vat tu cua 1 nhan vien - chua xac nhan thanh toan
+    /*public function totalMoneyImportOfStaffNotConfirmPay($companyId, $staffId, $date = null)
+    {
+        $dataImport = $this->getInfoHastPayOffStaff($companyId, $staffId, $date);
+        return $this->totalMoneyOfListImportHasConfirmPay($dataImport);
     }*/
 
     //---------- chi tiết nhập -----------
@@ -406,24 +503,33 @@ class QcImport extends Model
         $modelImportPay = new QcImportPay();
         return $modelImportPay->checkHasConfirmOfImport($this->checkIdNull($importId));
     }
+
     # xac nhan da nhan tien
     public function confirmPayment($importId = null)
     {
         $modelImportPay = new QcImportPay();
         return $modelImportPay->updateConfirmPayOfImport($this->checkIdNull($importId));
     }
+    //---------- công ty -----------
+    public function company()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
+    }
 
+    public function listIdOfListCompany($listCompanyId)
+    {
+        return QcImport::whereIn('company_id', $listCompanyId)->pluck('import_id');
+    }
 
+    public function listIdOfListCompanyAndImportDate($companyId, $importDate)
+    {
+        return QcImport::where('importDate', 'like', "%$importDate%")->whereIn('company_id', $companyId)->pluck('import_id');
+    }
 
-
-
-
-
-
-
-
-
-
+    public function totalImportNotConfirmOfCompany($companyId)
+    {
+        return QcImport::where('confirmStatus', $this->getDefaultNotConfirm())->where('company_id', $companyId)->count('import_id');
+    }
 
 
     /*
@@ -572,26 +678,7 @@ class QcImport extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'confirmStaff_id', 'staff_id');
     }
 
-    //---------- công ty -----------
-    public function company()
-    {
-        return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
-    }
 
-    public function listIdOfListCompany($listCompanyId)
-    {
-        return QcImport::whereIn('company_id', $listCompanyId)->pluck('import_id');
-    }
-
-    public function listIdOfListCompanyAndImportDate($companyId, $importDate)
-    {
-        return QcImport::where('importDate', 'like', "%$importDate%")->whereIn('company_id', $companyId)->pluck('import_id');
-    }
-
-    public function totalImportNotConfirmOfCompany($companyId)
-    {
-        return QcImport::where('confirmStatus', 0)->where('company_id', $companyId)->count('import_id');
-    }
 
     // --------------- hình ảnh ------------
     public function importImage()

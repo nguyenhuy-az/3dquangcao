@@ -9,12 +9,14 @@
  */
 $hFunction = new Hfunction();
 $dataWork = $dataSalary->work;
+$dataCompanyStaffWork = $dataWork->companyStaffWork;
 # bang luong co ban
 $dataStaffWorkSalary = $dataSalary->staffWorkSalary;
 $benefitMoney = $dataSalary->benefitMoney();
 
 $workId = $dataWork->workId();
-$companyStaffWorkId = $dataWork->companyStaffWorkId();
+$companyStaffWorkId = $dataCompanyStaffWork->workId();// $dataWork->companyStaffWorkId();
+$companyId = $dataCompanyStaffWork->companyId();
 $staffId = $dataWork->staffId();
 # tien thuong
 $totalMoneyBonus = $dataWork->totalMoneyBonusApplied();
@@ -52,7 +54,7 @@ if ($hFunction->checkCount($dataStaffWorkSalary)) { # da co ban luong co ban cua
     $oldVersion = true;
 }
 // 2 = tong tien mua vat tu da duyet chua thanh toan
-$totalMoneyImportOfStaff = $modelStaff->totalMoneyImportOfStaff($staffId, date('Y-m', strtotime($dataWork->fromDate())), 2);
+$totalMoneyImportOfStaff = $modelStaff->importTotalMoneyHasConfirmNotPay($companyId,$staffId, date('Y-m', strtotime($dataWork->fromDate())));
 #thong tin thanh toan
 $dataSalaryPayInfo = $dataSalary->infoSalaryPay();
 $totalPaid = $dataSalary->totalPaid();
