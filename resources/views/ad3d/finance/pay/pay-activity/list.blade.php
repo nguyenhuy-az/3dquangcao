@@ -59,7 +59,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                         </tr>
                         <tr>
                             <td style="padding: 0 !important;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
@@ -72,7 +72,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($monthFilter == 0) selected="selected" @endif>
@@ -85,7 +85,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
@@ -118,11 +118,13 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="3" @if($confirmStatusFilter == 3) selected="selected" @endif>Tất cả
                                     </option>
-                                    <option value="0" @if($confirmStatusFilter == 0) selected="selected" @endif>Chưa xác
-                                        nhận
+                                    <option value="{!! $modelPayActivityDetail->getDefaultNotConfirm() !!}"
+                                            @if($confirmStatusFilter == $modelPayActivityDetail->getDefaultNotConfirm()) selected="selected" @endif>
+                                        Chưa xác nhận
                                     </option>
-                                    <option value="1" @if($confirmStatusFilter == 1) selected="selected" @endif>Đã xác
-                                        nhận
+                                    <option value="{!! $modelPayActivityDetail->getDefaultHasConfirm() !!}"
+                                            @if($confirmStatusFilter == $modelPayActivityDetail->getDefaultHasConfirm()) selected="selected" @endif>
+                                        Đã xác nhận
                                     </option>
                                 </select>
                             </td>
@@ -155,11 +157,11 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                 <tr class="qc_ad3d_list_object qc-ad3d-list-object @if($n_o%2) info @endif"
                                     data-object="{!! $payId !!}">
                                     <td>
-                                        <b style="color: blue;">{!! date('d/m/Y',strtotime($payDate))  !!}</b>
+                                        <b style="color: blue;">{!! date('d-m-Y',strtotime($payDate))  !!}</b>
                                         @if(!$confirmStatus)
                                             @if($payCompanyId == $companyLoginId)
                                                 <br/>
-                                                <a class="qc_confirm_get qc-font-size-14 qc-link-green-bold"
+                                                <a class="qc_confirm_get qc-font-size-14 qc-link-red-bold"
                                                    data-href="{!! route('qc.ad3d.finance.pay_activity.confirm.get', $payId) !!}">
                                                     DUYỆT
                                                 </a>
@@ -167,10 +169,14 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         @else
                                             @if($payActivityDetail->checkInvalid())
                                                 <br/>
-                                                <em style="color: grey;">- Được duyệt</em>
+                                                <i class="glyphicon glyphicon-ok qc-font-size-12"
+                                                   style="color: green;"></i>
+                                                <em style="color: grey;">Được duyệt</em>
                                             @else
                                                 <br/>
-                                                <em style="color: grey;">- Không duyệt</em>
+                                                <i class="glyphicon glyphicon-ok qc-font-size-12"
+                                                   style="color: red;"></i>
+                                                <em style="color: grey;">Không duyệt</em>
                                             @endif
                                         @endif
                                         @if(!$hFunction->checkEmpty($confirmNote))
@@ -198,8 +204,6 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         @endif
                                         @if(!empty($payActivityDetail->note()))
                                             <em style="color: grey;">{!! $payActivityDetail->note()  !!}</em>
-                                        @else
-                                            <em class="qc-color-grey">---</em>
                                         @endif
                                     </td>
                                     <td style="color: grey;">
@@ -229,6 +233,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                                 </div>
                                             </div>
                                         @else
+                                            <i class="glyphicon glyphicon-ok qc-font-size-12" style="color: red;"></i>
                                             <em>Chưa xác nhận</em>
                                         @endif
                                     </td>

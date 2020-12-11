@@ -79,7 +79,11 @@ $currentMonth = $hFunction->currentMonth();
                                     Phạt
                                 </td>
                                 <th>Đã thanh toán</th>
-                                <th>Giữ lại</th>
+                                <th>
+                                    Giữ lại
+                                    <br/>
+                                    <em style="color: white;">(Lương cơ bản)</em>
+                                </th>
                             </tr>
                             @if($hFunction->checkCount($dataSalary))
                                 <?php
@@ -145,7 +149,6 @@ $currentMonth = $hFunction->currentMonth();
                                         $dataOld = true; // du lieu cu
                                     }
                                     $n_o = isset($n_o) ? $n_o + 1 : 1;
-
                                     ?>
                                     @if($dataOld)
                                         <tr>
@@ -183,18 +186,20 @@ $currentMonth = $hFunction->currentMonth();
                                             </td>
                                             <td>
                                                 <b style="color: red;">{!! $hFunction->currencyFormat($totalUnpaid) !!}</b>
-                                                <br/>
-                                                @if(!$salary->checkPaid())
-                                                    <a class="qc-link-green-bold"
-                                                       href="{!! route('qc.work.pay.pay_salary.pay.get',$salaryId) !!}">
-                                                        THANH TOÁN
-                                                    </a>
-                                                    @if($totalUnpaid > 0)
-                                                        <span>|</span>
-                                                        <a class="qc-link-red">ỨNG</a>
-                                                    @endif
+                                                @if($totalUnpaid < 0)
+                                                    <br/>
+                                                    <b style="background-color: red; color: yellow; padding: 2px;">Âm
+                                                        lương</b>
                                                 @else
-                                                    <em class="qc-color-grey">Đã Thanh toán</em>
+                                                    <br/>
+                                                    @if(!$salary->checkPaid())
+                                                        <a class="qc-link-green-bold qc-font-size-12"
+                                                           href="{!! route('qc.work.pay.pay_salary.pay.get',$salaryId) !!}">
+                                                            THANH TOÁN
+                                                        </a>
+                                                    @else
+                                                        <em class="qc-color-grey">Đã Thanh toán</em>
+                                                    @endif
                                                 @endif
                                             </td>
                                             <td>
@@ -215,6 +220,20 @@ $currentMonth = $hFunction->currentMonth();
                                                 <b style="color: red;">
                                                     {!! $hFunction->currencyFormat($benefitMoney) !!}
                                                 </b>
+                                                @if($salary->checkExistBenefit())
+                                                    <br/>
+                                                    <i class="glyphicon glyphicon-ok" style="color: green;"></i>
+                                                    <em style="color: grey;">Đã cộng thêm</em>
+                                                @else
+                                                    @if(!$salary->checkPaid())
+                                                        <br/>
+                                                        <a class="qc_salary_benefit_money_get qc-link-green-bold qc-font-size-12"
+                                                           data-href="{!! route('qc.work.pay.pay_salary.benefit_add.get',$salaryId) !!}">
+                                                            <i class="glyphicon glyphicon-plus"></i>
+                                                            THÊM
+                                                        </a>
+                                                    @endif
+                                                @endif
                                             </td>
                                             <td>
                                                 {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}
@@ -238,6 +257,14 @@ $currentMonth = $hFunction->currentMonth();
                                                 <a style="color: red;">
                                                     {!! $hFunction->currencyFormat($totalKeepMoney) !!}
                                                 </a>
+                                                @if(!$salary->checkPaid())
+                                                    <br/>
+                                                    <a class="qc_salay_keep_money_get qc-link-green-bold qc-font-size-12"
+                                                       data-href="{!! route('qc.work.pay.pay_salary.pay.get',$salaryId) !!}">
+                                                        <i class="glyphicon glyphicon-plus"></i>
+                                                        GIỮ LẠI
+                                                    </a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endif
@@ -371,6 +398,7 @@ $currentMonth = $hFunction->currentMonth();
                                                          style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                          src="{!! $dataStaffReceive->pathAvatar($dataStaffReceive->image()) !!}">
                                                 </a>
+
                                                 <div class="media-body">
                                                     <label class="media-heading">{!! $dataStaffReceive->lastName() !!}</label>
                                                 </div>

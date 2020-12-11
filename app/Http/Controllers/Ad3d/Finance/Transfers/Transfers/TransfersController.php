@@ -20,8 +20,6 @@ class TransfersController extends Controller
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelTransfers = new QcTransfers();
-        $currentMonth = $hFunction->currentMonth();
-        $currentYear = $hFunction->currentYear();
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
         $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
@@ -60,7 +58,7 @@ class TransfersController extends Controller
         $selectTransfers = $modelTransfers->selectInfoByListTransfersStaffAndDate($listStaffId, $companyFilterId, $dateFilter, $transfersType);
         $dataTransfers = $selectTransfers->paginate(30);
         $totalMoneyTransfers = $modelTransfers->totalMoneyByListInfo($selectTransfers->get());
-        return view('ad3d.finance.transfers.transfers.list', compact('modelStaff', 'dataCompany', 'dataStaff', 'dataAccess', 'dataTransfers', 'totalMoneyTransfers', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'transfersType', 'staffFilterId', 'totalMoneyTransfers'));
+        return view('ad3d.finance.transfers.transfers.list', compact('modelStaff','modelTransfers', 'dataCompany', 'dataStaff', 'dataAccess', 'dataTransfers', 'totalMoneyTransfers', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'transfersType', 'staffFilterId', 'totalMoneyTransfers'));
 
     }
 

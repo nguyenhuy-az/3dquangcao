@@ -146,9 +146,16 @@ class QcTimekeepingProvisionalImage extends Model
         return $this->belongsTo('App\Models\Ad3d\WorkAllocationReport\QcWorkAllocationReport', 'report_id', 'report_id');
     }
 
+    # lay tat ca anh bao cao
     public function infoOfWorkAllocationReport($reportId)
     {
         return QcTimekeepingProvisionalImage::where('report_id', $reportId)->get();
+    }
+
+    # lay anh bao cao sau cung
+    public function lastInfoOfWorkAllocationReport($reportId)
+    {
+        return QcTimekeepingProvisionalImage::where('report_id', $reportId)->orderBy('image_id', 'DESC')->first();
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========

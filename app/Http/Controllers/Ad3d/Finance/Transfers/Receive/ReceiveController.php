@@ -63,7 +63,7 @@ class ReceiveController extends Controller
         $selectTransfers = $modelTransfers->selectInfoByListReceiveStaffAndDate($listStaffId, $companyFilterId, $dateFilter, $transfersType);
         $dataTransfers = $selectTransfers->paginate(30);
         $totalMoneyTransfers = $modelTransfers->totalMoneyByListInfo($selectTransfers->get());
-        return view('ad3d.finance.transfers.receive.list', compact('modelStaff', 'dataCompany', 'dataStaff', 'dataAccess', 'dataTransfers', 'totalMoneyTransfers', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'transfersType', 'staffFilterId', 'totalMoneyTransfers'));
+        return view('ad3d.finance.transfers.receive.list', compact('modelStaff','modelTransfers', 'dataCompany', 'dataStaff', 'dataAccess', 'dataTransfers', 'totalMoneyTransfers', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'transfersType', 'staffFilterId', 'totalMoneyTransfers'));
 
     }
 

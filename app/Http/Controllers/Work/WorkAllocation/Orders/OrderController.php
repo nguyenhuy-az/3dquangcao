@@ -7,8 +7,10 @@ use App\Models\Ad3d\Customer\QcCustomer;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
+use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use App\Models\Ad3d\WorkAllocationReportImage\QcWorkAllocationReportImage;
 use Illuminate\Http\Request;
@@ -434,14 +436,29 @@ class OrderController extends Controller
         }
     }
 
-    #xem anh ban cao thi cong san pham
-    public function viewReportImage($imageId)
+    #xem chi tiet hinh anh thiet ke
+    public function viewProductDesignImage($designId)
     {
         $hFunction = new \Hfunction();
+        $modelProductDesign = new QcProductDesign();
+        $dataProductDesign = $modelProductDesign->getInfo($designId);
+        if ($hFunction->checkCount($dataProductDesign)) {
+            return view('work.work-allocation.orders.product.view-design-image', compact('dataProductDesign'));
+        }
+    }
+    #xem anh bao cao truc tiep
+    public function viewReportImageDirect($imageId)
+    {
         $modelWorkAllocationReportImage = new QcWorkAllocationReportImage();
         $dataWorkAllocationReportImage = $modelWorkAllocationReportImage->getInfo($imageId);
-        if ($hFunction->checkCount($dataWorkAllocationReportImage)) {
-            //return view('ad3d.order.order.view-construction-report-image', compact('dataWorkAllocationReportImage'));
-        }
+        return view('work.work-allocation.orders.product.view-report-image-direct', compact('dataWorkAllocationReportImage'));
+    }
+
+    # xem anh bao cao qua cham cong
+    public function viewReportImageTimekeeping($imageId)
+    {
+        $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
+        $dataTimekeepingProvisionalImage = $modelTimekeepingProvisionalImage->getInfo($imageId);
+        return view('work.work-allocation.orders.product.view-report-image', compact('dataTimekeepingProvisionalImage'));
     }
 }

@@ -324,9 +324,13 @@ $(document).ready(function () {
         qc_main.scrollTop();
     });
 
+    // xem anh thiet ke -
+    $('body').on('click', '.qc_work_order_allocation_product_design_image_view', function () {
+        qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
+    });
     //------ xem chi tiet anh bao cao -------
-    $('#qc_work_allocation_order_construction_wrap').on('click', '.qc_work_allocation_orders_report_image_view', function () {
-        //qc_ad3d_order_order.viewAllocationReportImage($(this).data('href'));
+    $('body').on('click', '.qc_work_order_allocation_product_report_image_view', function () {
+        qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
     });
 
     //------ in don hang -------

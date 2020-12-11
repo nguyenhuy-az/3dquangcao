@@ -40,7 +40,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.receive.get');
                                     @endif
                                 </select>
                             </td>
-                            <td ></td>
+                            <td></td>
                         </tr>
                         <tr style="background-color: black; color: yellow;">
                             <th style="width: 150px;">NGÀY</th>
@@ -93,11 +93,17 @@ $hrefIndex = route('qc.ad3d.finance.transfers.receive.get');
                                     <option value="0" @if($transfersType == 0) selected="selected" @endif>
                                         Tất cả
                                     </option>
-                                    <option value="1" @if($transfersType == 1) selected="selected" @endif>
+                                    <option value="{!! $modelTransfers->getDefaultTransferTypeOfBusiness() !!}"
+                                            @if($transfersType == $modelTransfers->getDefaultTransferTypeOfBusiness()) selected="selected" @endif>
                                         Chuyển doanh thu
                                     </option>
-                                    <option value="2 " @if($transfersType == 2) selected="selected" @endif >
+                                    <option value="{!! $modelTransfers->getDefaultTransferTypeOfInvestment() !!}"
+                                            @if($transfersType == $modelTransfers->getDefaultTransferTypeOfInvestment()) selected="selected" @endif >
                                         Chuyển đầu tư
+                                    </option>
+                                    <option value="{!! $modelTransfers->getDefaultTransferTypeOfTreasurer() !!}"
+                                            @if($transfersType == $modelTransfers->getDefaultTransferTypeOfTreasurer()) selected="selected" @endif >
+                                        Chuyển nộp lên cty
                                     </option>
                                 </select>
                             </td>
@@ -144,10 +150,12 @@ $hrefIndex = route('qc.ad3d.finance.transfers.receive.get');
                                         </a>
                                         @if($transfers->checkConfirmReceive())
                                             <br/>
-                                            <em class="qc-color-grey">- Đã xác nhận</em>
+                                            <i class="glyphicon glyphicon-ok qc-font-size-12" style="color: green;"></i>
+                                            <em class="qc-color-grey">Đã xác nhận</em>
                                         @else
                                             <br/>
-                                            <em style="color: brown;">- Chờ xác nhận</em>
+                                            <i class="glyphicon glyphicon-ok qc-font-size-12" style="color: red;"></i>
+                                            <em style="color: brown;">Chờ xác nhận</em>
                                             @if($dataStaffLogin->staffId() == $transfers->receiveStaffId())
                                                 <br/>
                                                 <a class="qc_ad3d_transfer_confirm_receive_act qc-link-red qc-font-size-14"
@@ -172,7 +180,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.receive.get');
                                         <div class="media">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $dataReceiveStaff->pathAvatar($dataReceiveStaff->image()) !!}">
                                             </a>
 
@@ -185,7 +193,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.receive.get');
                                         <div class="media">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $dataTransfersStaff->pathAvatar($dataTransfersStaff->image()) !!}">
                                             </a>
 

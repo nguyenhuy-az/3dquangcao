@@ -948,7 +948,12 @@ $(document).ready(function () {
         qc_work_orders.payment.save('.qc_frm_work_orders_payment');
     });
 });
-
+/* ---------- ------- THONG TIN THI CONG -------- ------ */
+$(document).ready(function(){
+    $('#qc_order_order_construction_wrap').on('click', '.qc_work_order_allocation_construction_report_image_view', function(){
+        qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
+    });
+});
 /* ---------  THIET KE TONG THE --------------- */
 $(document).ready(function () {
     /*------- ------ them anh thiet ke ----- ---- */

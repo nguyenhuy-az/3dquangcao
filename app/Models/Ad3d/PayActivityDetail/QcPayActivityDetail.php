@@ -14,6 +14,29 @@ class QcPayActivityDetail extends Model
     private $lastId;
 
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
+    #mac dinh co xac nhan
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    #mac dinh khong xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
+
+    #mac dinh nhap dung
+    public function getDefaultHasInvalid()
+    {
+        return 1;
+    }
+
+    #mac dinh nhap sai
+    public function getDefaultNotInvalid()
+    {
+        return 0;
+    }
     //---------- Insert ----------
 
     // insert
@@ -47,6 +70,12 @@ class QcPayActivityDetail extends Model
         return $this->lastId;
     }
 
+    # kiem tra id
+    public function checkNullId($id = null)
+    {
+        return (empty($id)) ? $this->paymentId() : $id;
+    }
+
     // cap nhat thong tin
     public function updateInfo($payId, $money, $payDate, $note, $payListId, $companyId)
     {
@@ -65,7 +94,7 @@ class QcPayActivityDetail extends Model
         $hFunction = new \Hfunction();
         return QcPayActivityDetail::where('pay_id', $payId)->update([
             'invalidStatus' => $invalidStatus,
-            'confirmStatus' => 1,
+            'confirmStatus' => $this->getDefaultHasConfirm(),
             'confirmNote' => $confirmNote,
             'confirmDate' => $hFunction->carbonNow(),
             'confirmStaff_id' => $confirmStaffId,
@@ -74,10 +103,10 @@ class QcPayActivityDetail extends Model
 
     public function deletePay($payId = null)
     {
-        $payId = (empty($payId)) ? $this->paymentId() : $payId;
+        $payId = $this->checkNullId($payId);
         $image = $this->payImage($payId);
         if (QcPayActivityDetail::where('pay_id', $payId)->delete()) {
-            //$this->dropImage($image);
+            $this->dropImage($image);
         }
     }
 
@@ -156,10 +185,14 @@ class QcPayActivityDetail extends Model
     // tong tien da duoc duyet va hop le
     public function totalMoneyConfirmedAndInvalidOfStaffAndDate($staffId, $date = null)
     {
+        # co xac nhan
+        $hasConfirm = $this->getDefaultHasConfirm();
+        # nhap dung
+        $hasInvalid = $this->getDefaultHasInvalid();
         if (!empty($date)) {
-            return QcPayActivityDetail::where('staff_id', $staffId)->where('confirmStatus', 1)->where('invalidStatus', 1)->where('payDate', 'like', "%$date%")->sum('money');
+            return QcPayActivityDetail::where('staff_id', $staffId)->where('confirmStatus', $hasConfirm)->where('invalidStatus', $hasInvalid)->where('payDate', 'like', "%$date%")->sum('money');
         } else {
-            return QcPayActivityDetail::where('staff_id', $staffId)->where('confirmStatus', 1)->where('invalidStatus', 1)->sum('money');
+            return QcPayActivityDetail::where('staff_id', $staffId)->where('confirmStatus', $hasConfirm)->where('invalidStatus', $hasInvalid)->sum('money');
         }
 
     }
@@ -173,12 +206,15 @@ class QcPayActivityDetail extends Model
         }
 
     }
+
     public function totalMoneyConfirmedOfListStaffAndDate($listStaffId, $date)
     {
+        # co xac nhan
+        $hasConfirm = $this->getDefaultHasConfirm();
         if (!empty($date)) {
-            return QcPayActivityDetail::whereIn('staff_id', $listStaffId)->where('confirmStatus', 1)->where('payDate', 'like', "%$date%")->sum('money');
+            return QcPayActivityDetail::whereIn('staff_id', $listStaffId)->where('confirmStatus', $hasConfirm)->where('payDate', 'like', "%$date%")->sum('money');
         } else {
-            return QcPayActivityDetail::whereIn('staff_id', $listStaffId)->where('confirmStatus', 1)->sum('money');
+            return QcPayActivityDetail::whereIn('staff_id', $listStaffId)->where('confirmStatus', $hasConfirm)->sum('money');
         }
 
     }
@@ -192,8 +228,7 @@ class QcPayActivityDetail extends Model
     #kiem nhan vien nhan vien chi
     public function checkStaffPay($staffId, $payId = null)
     {
-        $payId = (empty($payId)) ? $this->paymentId() : $payId;
-        return (QcPayActivityDetail::where('staff_id', $staffId)->where('pay_id', $payId)->count() > 0) ? true : false;
+        return QcPayActivityDetail::where('staff_id', $staffId)->where('pay_id', $this->checkNullId($payId))->exists();
     }
 
     public function infoOfStaff($staffId, $date = null, $confirmStatus = 3, $order = 'DESC')#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
@@ -213,22 +248,29 @@ class QcPayActivityDetail extends Model
         }
     }
 
+    # lay thong in nhap dung va da xac nhan cua 1 nhan vien
     public function infoConfirmAndInvalidOfStaffAndDate($staffId, $date = null, $order = 'DESC')
     {
+        # nhap dung
+        $hasInvalid = $this->getDefaultHasInvalid();
         if (empty($date)) {
-            return QcPayActivityDetail::where('Staff_id', $staffId)->where('invalidStatus', 1)->orderBy('payDate', $order)->get();
+            return QcPayActivityDetail::where('Staff_id', $staffId)->where('invalidStatus', $hasInvalid)->orderBy('payDate', $order)->get();
         } else {
-            return QcPayActivityDetail::where('Staff_id', $staffId)->where('invalidStatus', 1)->where('payDate', 'like', "%$date%")->orderBy('payDate', $order)->get();
+            return QcPayActivityDetail::where('Staff_id', $staffId)->where('invalidStatus', $hasInvalid)->where('payDate', 'like', "%$date%")->orderBy('payDate', $order)->get();
         }
     }
 
     # thong tin da xac nhan va hop le
     public function infoConfirmedAndInvalidOfStaffAndDate($staffId, $date = null, $order = 'DESC')
     {
+        # da xac nhan
+        $hasConfirm = $this->getDefaultHasConfirm();
+        # nhap dung
+        $hasInvalid = $this->getDefaultHasInvalid();
         if (empty($date)) {
-            return QcPayActivityDetail::where('Staff_id', $staffId)->where('confirmStatus', 1)->where('invalidStatus', 1)->orderBy('payDate', $order)->get();
+            return QcPayActivityDetail::where('Staff_id', $staffId)->where('confirmStatus', $hasConfirm)->where('invalidStatus', $hasInvalid)->orderBy('payDate', $order)->get();
         } else {
-            return QcPayActivityDetail::where('Staff_id', $staffId)->where('confirmStatus', 1)->where('invalidStatus', 1)->where('payDate', 'like', "%$date%")->orderBy('payDate', $order)->get();
+            return QcPayActivityDetail::where('Staff_id', $staffId)->where('confirmStatus', $hasConfirm)->where('invalidStatus', $hasInvalid)->where('payDate', 'like', "%$date%")->orderBy('payDate', $order)->get();
         }
     }
 
@@ -268,8 +310,9 @@ class QcPayActivityDetail extends Model
 
     public function totalMoneyOfListPayActivity($dataPayActivityDetail)
     {
+        $hFunction = new \Hfunction();
         $totalMoney = 0;
-        if (count($dataPayActivityDetail) > 0) {
+        if ($hFunction->checkCount($dataPayActivityDetail)) {
             foreach ($dataPayActivityDetail as $value) {
                 $totalMoney = $totalMoney + $value->money();
             }
@@ -283,9 +326,10 @@ class QcPayActivityDetail extends Model
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
     }
 
+    # tong thong tin chi chua xac nhan
     public function totalPayActivityNotConfirmOfCompany($companyId)
     {
-        return QcPayActivityDetail::where('company_id', $companyId)->where('confirmStatus', 0)->count('pay_id');
+        return QcPayActivityDetail::where('company_id', $companyId)->where('confirmStatus', $this->getDefaultNotConfirm())->count('pay_id');
     }
 
     //========= ========== ========== LAY THONG TIN========== ========== ==========
@@ -417,12 +461,12 @@ class QcPayActivityDetail extends Model
 
     public function checkConfirm($payId = null)
     {
-        return ($this->confirmStatus($payId) == 0) ? false : true;
+        return ($this->confirmStatus($payId) == $this->getDefaultNotConfirm()) ? false : true;
     }
 
     public function checkInvalid($payId = null)
     {
-        return ($this->invalidStatus($payId) == 0) ? false : true;
+        return ($this->invalidStatus($payId) == $this->getDefaultNotInvalid()) ? false : true;
     }
 
     #============ =========== ============ THONG KE ============= =========== ==========
@@ -455,7 +499,7 @@ class QcPayActivityDetail extends Model
 
     }
 
-
+    # lay ma nhan vien chi theo danh sach ma cty
     public function infoStaffPay($listCompanyId, $dateFilter = null)
     {
         if (empty($dateFilter)) {

@@ -64,7 +64,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                         </tr>
                         <tr>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
@@ -77,7 +77,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     @for($m =1;$m<= 12; $m++)
                                         <option value="{!! $m !!}"
@@ -86,7 +86,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
@@ -160,7 +160,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                 <tr class="qc_ad3d_list_object  @if($n_o%2 == 0) info @endif"
                                     data-object="{!! $payId !!}">
                                     <td>
-                                        <b style="color: blue;">{!! date('d/m/Y', strtotime($orderPay->datePay())) !!}</b>
+                                        <b style="color: blue;">{!! date('d-m-Y', strtotime($orderPay->datePay())) !!}</b>
                                         <br/>
                                         <a class="qc_view qc-link-green" href="#">
                                             CHI TIẾT
@@ -169,15 +169,15 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                     <td>
                                         <b style="color: red;">{!! $hFunction->currencyFormat($orderPay->money()) !!}</b>
                                         <br/>
-                                        <span style="color: grey;">
-                                            {!! $orderPay->order->name() !!}
-                                        </span>
+                                        <em style="color: grey;">
+                                            - {!! $orderPay->order->name() !!}
+                                        </em>
                                     </td>
                                     <td>
                                         <div class="media">
                                             <a class="pull-left" href="#">
                                                 <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $src !!}">
                                             </a>
 

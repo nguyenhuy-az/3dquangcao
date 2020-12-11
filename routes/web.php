@@ -884,6 +884,14 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     Route::group(['prefix' => 'orders'], function () {
         # chi tiet thi cong don hang
         Route::group(['prefix' => 'construction-detail'], function () {
+            #chi tiet thi cong
+            Route::get('detail/{allocationId?}', ['as' => 'qc.work.orders.construction.detail.report.view', 'uses' => 'Work\Orders\OrdersController@getDetailAllocation']);
+
+            #xem anh bao cao truc tiep
+            Route::get('report-image-direct/{imageId?}', ['as' => 'qc.work.orders.construction.detail.report_image_direct.view', 'uses' => 'Work\Orders\OrdersController@viewReportImageDirect']);
+            #xem anh bao cao qua cham cong
+            Route::get('report-image-timekeeping/{imageId?}', ['as' => 'qc.work.orders.construction.detail.report_image_timekeeping.view', 'uses' => 'Work\Orders\OrdersController@viewReportImageTimekeeping']);
+
             # bao sua chua san pham
             Route::get('repair/{productId?}', ['as' => 'qc.work.orders.construction.detail.repair.get', 'uses' => 'Work\Orders\OrdersController@getRepairProduct']);
             Route::post('repair/{productId?}', ['as' => 'qc.work.orders.construction.detail.repair.post', 'uses' => 'Work\Orders\OrdersController@postRepairProduct']);
@@ -1120,6 +1128,8 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::group(['prefix' => 'orders'], function () {
             # phan viec tren san pham
             Route::group(['prefix' => 'product'], function () {
+                # xem anh thiet ke
+                Route::get('view-design-image/{imageId?}', ['as' => 'qc.work.work_allocation.order.allocation.product.design_image.view', 'uses' => 'Work\WorkAllocation\Orders\OrderController@viewProductDesignImage']);
                 # phan viec
                 Route::get('allocation/add/staff/{productId?}', ['as' => 'qc.work.work_allocation.order.product.work-allocation.staff.get', 'uses' => 'Work\WorkAllocation\Orders\OrderController@getAddStaff']);
                 Route::get('allocation/add/{productId?}', ['as' => 'qc.work.work_allocation.order.product.work-allocation.add.get', 'uses' => 'Work\WorkAllocation\Orders\OrderController@getAddWorkAllocation']);
@@ -1129,10 +1139,12 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
                 Route::get('allocation/cancel/{allocationId?}', ['as' => 'qc.work.work_allocation.order.product.work-allocation.cancel.get', 'uses' => 'Work\WorkAllocation\Orders\OrderController@cancelWorkAllocationProduct']);
 
                 # xem chi tiet thi cong
-                Route::get('view-work-allocation/{allocationId?}', ['as' => 'qc.work.work_allocation.order.work_allocation.get', 'uses' => 'Work\WorkAllocation\Orders\OrderController@viewWorkAllocation']);
+                Route::get('view-work-allocation/{allocationId?}', ['as' => 'qc.work.work_allocation.order.work_allocation.report.get', 'uses' => 'Work\WorkAllocation\Orders\OrderController@viewWorkAllocation']);
 
-                # xem chi tiết ảnh báo cáo
-                Route::get('view-report-image/{imageId?}', ['as' => 'qc.work.work_allocation.order.allocation.report_image.get', 'uses' => 'Work\WorkAllocation\Orders\OrderController@viewReportImage']);
+                #xem anh bao cao truc tiep
+                Route::get('report-image-direct/{imageId?}', ['as' => 'qc.work.work_allocation.order.allocation.product.report_image_direct.view', 'uses' => 'Work\WorkAllocation\Orders\OrderController@viewReportImageDirect']);
+                #xem anh bao cao qua cham cong
+                Route::get('report-image-timekeeping/{imageId?}', ['as' => 'qc.work.work_allocation.order.allocation.product.report_image_timekeeping.view', 'uses' => 'Work\WorkAllocation\Orders\OrderController@viewReportImage']);
             });
 
             #loc don hang
@@ -1145,6 +1157,8 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             # xem thong tin dơn hang
             Route::get('view/{orderId?}/{notifyId?}', ['as' => 'qc.work.work_allocation.order.view', 'uses' => 'Work\WorkAllocation\Orders\OrderController@viewOrder']);
 
+            # xem chi tiet thi cong
+            Route::get('view-report-work-allocation/{allocationId?}', ['as' => 'qc.work.work_allocation.order.report.get', 'uses' => 'Work\WorkAllocation\Orders\OrderController@viewWorkAllocation']);
             # in don hang
             Route::get('print/{orderId?}', ['as' => 'qc.work.work_allocation.order.print.get', 'uses' => 'Work\WorkAllocation\Orders\OrderController@printOrder']);
 
@@ -1170,6 +1184,11 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
             Route::group(['prefix' => 'product'], function () {
                 // xem thiet ke
                 Route::get('design-view/{designId?}', ['as' => 'qc.work.work_allocation.order_allocation.product.design.view', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@viewProductDesign']);
+                #xem anh bao cao truc tiep
+                Route::get('report-image-direct/{imageId?}', ['as' => 'qc.work.work_allocation.order_allocation.product.report_image_direct.view', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@viewReportImageDirect']);
+                #xem anh bao cao qua cham cong
+                Route::get('report-image-timekeeping/{imageId?}', ['as' => 'qc.work.work_allocation.order_allocation.product.report_image_timekeeping.view', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@viewReportImageTimekeeping']);
+
                 # xac nhan hoan thanh sp
                 Route::get('confirm/{productId?}', ['as' => 'qc.work.work_allocation.order_allocation.product.confirm.get', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@getConstructionProductConfirm']);
                 Route::post('confirm/{productId?}', ['as' => 'qc.work.work_allocation.order_allocation.product.confirm.post', 'uses' => 'Work\WorkAllocation\OrderAllocation\OrderAllocationController@postConstructionProductConfirm']);
@@ -1366,13 +1385,15 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         # thanh toan luong
         Route::group(['prefix' => 'pay-salary'], function () {
             Route::get('detail/{payId?}', ['as' => 'qc.work.pay.pay_salary.detail.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@detailPay']);
+            # cong tien them
+            Route::get('add-benefit/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.benefit_add.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getAddBenefit']);
+            Route::post('add-benefit/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.benefit_add.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postAddBenefit']);
 
-            Route::get('add/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.add.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getAdd']);
-            Route::post('add/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.add.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postAdd']);
-
+            # thanh toan luong
             Route::get('pay/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.pay.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getPay']);
             Route::post('pay/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.pay.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postPay']);
-            // huy thanh toan luong
+
+            # huy thanh toan luong
             Route::get('delete/{payId?}', ['as' => 'qc.work.pay.pay_salary.delete.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@deletePay']);
 
             Route::get('/{loginMonth?}/{loginYear?}/{payStatus?}', ['as' => 'qc.work.pay.pay_salary.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@index']);

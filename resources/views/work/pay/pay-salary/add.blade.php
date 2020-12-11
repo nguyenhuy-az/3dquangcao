@@ -9,11 +9,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataWork = $dataSalary->work;
-if(!empty($dataWork->companyStaffWorkId())){
-    $staffName = $dataWork->companyStaffWork->staff->fullName();
-}else{
-    $staffName = $dataSalary->work->staff->fullName();
-}
+$staffName = $dataWork->companyStaffWork->staff->fullName();
 ?>
 @extends('components.container.container-6')
 @section('qc_container_content')
@@ -74,8 +70,8 @@ if(!empty($dataWork->companyStaffWorkId())){
                         <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm">
                                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                                <button type="button" class="qc_save btn btn-sm btn-primary">Lưu</button>
-                                <button type="button" class="qc_container_close btn btn-sm btn-default">Đóng</button>
+                                <button type="button" class="qc_save btn btn-sm btn-primary">LƯU</button>
+                                <button type="button" class="qc_container_close btn btn-sm btn-default">ĐÓNG</button>
                             </div>
 
                         </div>

@@ -40,8 +40,18 @@ $(document).ready(function () {
     // xem báo cáo
     //-------- San pham --------
     //xem anh thiet chi tiet
-    $('.qc_work_allocation_construction_product_wrap').on('click', '.qc_work_allocation_construct_product_design_image_view', function () {
-        qc_work_allocation_order_allocation.viewProductDesign($(this).data('href'));
+    $('.qc_work_allocation_construction_product_wrap').on('click', '.qc_work_order_product_design_image_view', function () {
+        qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
+    });
+    //------ xem chi tiet anh bao cao -------
+    $('.qc_work_allocation_construction_product_wrap').on('click', '.qc_work_order_allocation_product_report_image_view', function () {
+        qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
+    });
+
+    // xem bao cao
+    $('.qc_work_allocation_construction_product_wrap').on('click', '.qc_work_order_allocation_product_report_view', function () {
+        qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
+        qc_main.scrollTop();
     });
 
     // xac nhan hoan thanh san pham

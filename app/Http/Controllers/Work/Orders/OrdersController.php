@@ -14,6 +14,8 @@ use App\Models\Ad3d\ProductRepair\QcProductRepair;
 use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
+use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
+use App\Models\Ad3d\WorkAllocationReportImage\QcWorkAllocationReportImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use File;
@@ -1133,5 +1135,32 @@ class OrdersController extends Controller
     {
         $modelProductDesign = new QcProductDesign();
         return $modelProductDesign->cancelProductDesign($designId);
+    }
+
+    # chi tiet thi cong
+    public function viewWorkAllocation($allocationId)
+    {
+        $hFunction = new \Hfunction();
+        $modelWorkAllocation = new QcWorkAllocation();
+        $dataWorkAllocation = $modelWorkAllocation->getInfo($allocationId);
+        if ($hFunction->checkCount($dataWorkAllocation)) {
+            return view('work.orders.orders.product.view-report-work-allocation', compact('dataWorkAllocation'));
+        }
+    }
+
+    #xem anh bao cao truc tiep
+    public function viewReportImageDirect($imageId)
+    {
+        $modelWorkAllocationReportImage = new QcWorkAllocationReportImage();
+        $dataWorkAllocationReportImage = $modelWorkAllocationReportImage->getInfo($imageId);
+        return view('work.orders.orders.product.view-report-image-direct', compact('dataWorkAllocationReportImage'));
+    }
+
+    # xem anh bao cao qua cham cong
+    public function viewReportImageTimekeeping($imageId)
+    {
+        $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
+        $dataTimekeepingProvisionalImage = $modelTimekeepingProvisionalImage->getInfo($imageId);
+        return view('work.orders.orders.product.view-report-timekeeping-image', compact('dataTimekeepingProvisionalImage'));
     }
 }

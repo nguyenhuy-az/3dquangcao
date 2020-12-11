@@ -66,42 +66,21 @@ class PaySalaryController extends Controller
         return view('work.pay.pay-salary.detail', compact('dataSalary'));
     }
 
-    public function getAdd($salaryId)
+    public function getAddBenefit($salaryId)
     {
         $modelSalary = new QcSalary();
-        $dataAccess = [
-            'object' => 'paySalary',
-            'subObjectLabel' => 'Thanh toán lương'
-        ];
         $dataSalary = $modelSalary->getInfo($salaryId);
-        return view('work.pay.pay-salary.add', compact('dataAccess', 'dataSalary'));
+        return view('work.pay.pay-salary.add-benefit', compact('dataAccess', 'dataSalary'));
     }
 
-    public function postAdd($salaryId)
+    public function postAddBenefit($salaryId)
     {
         $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
         $modelSalary = new QcSalary();
-        $modelSalaryPay = new QcSalaryPay();
-        $staffLoginId = $modelStaff->loginStaffId();
-        $dataSalary = $modelSalary->getInfo($salaryId);
-        $salaryPay = $dataSalary->salary();
-        $totalPaid = $dataSalary->totalPaid();
-
-        $upPaid = $salaryPay - $totalPaid;
-        $txtMoney = Request::input('txtMoney');
-        $txtMoney = $hFunction->convertCurrencyToInt($txtMoney);
-        /*if ($txtMoney > ($salaryPay - $totalPaid)) {
-            echo "Số tiền không quá $upPaid";
-        } else {
-            if ($modelSalaryPay->insert($txtMoney, $hFunction->carbonNow(), $salaryId, $staffLoginId)) {
-                if ($txtMoney == $upPaid) {
-                    $modelSalary->updateFinishPay($salaryId);
-                }
-            } else {
-                echo "Ngày thanh toán phải lớn hơn ngày tính lương";
-            }
-        }*/
+        $txtBenefitMoney = Request::input('txtBenefitMoney');
+        $txtBenefitMoney = $hFunction->convertCurrencyToInt($txtBenefitMoney);
+        $txtBenefitMoneyDescription = Request::input('txtBenefitMoneyDescription');
+        return $modelSalary->updateBenefitMoney($salaryId, $txtBenefitMoney, $txtBenefitMoneyDescription);
     }
 
     public function getPay($salaryId)
@@ -154,10 +133,10 @@ class PaySalaryController extends Controller
         $txtKeepMoneyDescription = Request::input('txtKeepMoneyDescription');
         $txtSalaryMoney = $txtSalaryMoney - $txtKeepMoney;
         # cap nhat thuong
-        if ($txtBenefitMoney > 0) {
+        /*if ($txtBenefitMoney > 0) {
             $modelSalary->updateBenefitMoney($salaryId, $txtBenefitMoney, $txtBenefitMoneyDescription);# thuong them
             $txtSalaryMoney = $txtSalaryMoney + $txtBenefitMoney;
-        }
+        }*/
         # thanh toan luong
         if ($modelSalaryPay->insert($txtSalaryMoney, $hFunction->carbonNow(), $salaryId, $staffLoginId)) {
             $modelSalary->updateFinishPay($salaryId);

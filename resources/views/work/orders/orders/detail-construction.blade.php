@@ -104,7 +104,10 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                     @foreach($dataProduct as $product)
                         <?php
                         $productId = $product->productId();
-                        $description = $product->description();
+                        $productWidth = $product->width();
+                        $productHeight = $product->height();
+                        $productAmount = $product->amount();
+                        $productDescription = $product->description();
                         $dataWorkAllocation = $product->workAllocationInfoOfProduct();
                         $designImage = $product->designImage();
                         # thiet ke dang ap dung
@@ -118,7 +121,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" style="border: 1px solid grey;">
-                                        <tr style="background-color: white;">
+                                        <tr style="background-color: whitesmoke;">
                                             <td class="text-center" style="width: 100px;">
                                                 <b style="color: red; font-size: 1.5em;">
                                                     SP {!! $sp_n_o = (isset($sp_n_o))?$sp_n_o+1:1 !!}
@@ -139,6 +142,18 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                             <td style="width: 300px;">
                                                 <label style="font-size: 1.5em;">{!! ucwords($product->productType->name()) !!}</label>
                                                 <br/>
+                                                <em>- Ngang: </em>
+                                                <span> {!! $productWidth !!} mm</span>
+                                                <em>- Cao: </em>
+                                                <span>{!! $productHeight !!} mm</span>
+                                                <em>- Số lượng: </em>
+                                                <span style="color: red;">{!! $productAmount !!}</span>
+                                                @if(!$hFunction->checkEmpty($productDescription))
+                                                    <br/>
+                                                    <em>- Ghi chú: </em>
+                                                    <em style="color: grey;">- {!! $productDescription !!}</em>
+                                                @endif
+                                                <br/>
                                                 @if(!$checkFinishStatus)
                                                     <span style="color: blue;">Đang làm</span>
                                                 @else
@@ -152,10 +167,6 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                             BÁO SỬA CHỮA
                                                         </a>
                                                     @endif
-                                                @endif
-                                                @if($hFunction->checkCount($description))
-                                                    <br/>
-                                                    <em>{!! $description !!}</em>
                                                 @endif
                                             </td>
                                             <td>
@@ -194,7 +205,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                 $dataWorkAllocationReport = $workAllocation->workAllocationReportInfo($allocationId, 1);
                                                                 ?>
                                                                 <tr>
-                                                                    <td>
+                                                                    <td style="width: 170px;">
                                                                         <div class="media">
                                                                             <a class="pull-left" href="#">
                                                                                 <img class="media-object"
@@ -214,14 +225,19 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                             </div>
                                                                         </div>
                                                                     </td>
-                                                                    <td>
+                                                                    <td style="width: 100px;">
                                                                         @if($constructionNumber > 1)
-                                                                            <span>Thi công lần {!! $constructionNumber !!}
-                                                                                :</span>
+                                                                            <span>
+                                                                                Thi công lần {!! $constructionNumber !!}
+                                                                                :
+                                                                            </span>
+                                                                            <br/>
                                                                             <em style="color: red">sửa chữa</em>
                                                                         @else
-                                                                            <em>Thi công lần {!! $constructionNumber !!}
-                                                                                :</em>
+                                                                            <em>
+                                                                                Thi công lần {!! $constructionNumber !!}:
+                                                                            </em>
+                                                                            <br/>
                                                                             <em style="color: red">Sản xuất</em>
                                                                         @endif
                                                                     </td>
@@ -231,11 +247,11 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                                 <?php
                                                                                 $dataWorkAllocationReportImage = $workAllocationReport->workAllocationReportImageInfo();
                                                                                 #bao cao khi bao gio ra
-                                                                                $dataTimekeepingProvisionalImage = $workAllocationReport->timekeepingProvisionalImageInfo();
+                                                                                $dataTimekeepingProvisionalImage = $workAllocationReport->timekeepingProvisionalImageLastInfo();
                                                                                 ?>
                                                                                 @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
                                                                                     <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
-                                                                                        <a class="qc_work_allocation_report_image_view qc-link"
+                                                                                        <a class="qc_work_order_allocation_construction_report_image_view qc-link"
                                                                                            title="Click xem chi tiết hình ảnh"
                                                                                            data-href="{!! route('qc.work.work_allocation.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
                                                                                             <img style="max-width: 100%; max-height: 100%;"
@@ -243,6 +259,14 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                                         </a>
                                                                                     </div>
                                                                                 @endforeach
+                                                                                @if($hFunction->checkCount($dataTimekeepingProvisionalImage))
+                                                                                    <a class="pull-left qc_work_order_allocation_construction_report_image_view qc-link"
+                                                                                       title="Click xem chi tiết hình ảnh" style="margin-right: 5px;"
+                                                                                       data-href="{!! route('qc.work.work_allocation.work_allocation.report_image_timekeeping.view', $dataTimekeepingProvisionalImage->imageId()) !!}">
+                                                                                        <img class="media-object" style="width: 70px; border: 1px solid grey;"
+                                                                                             src="{!! $dataTimekeepingProvisionalImage->pathSmallImage($dataTimekeepingProvisionalImage->name()) !!}">
+                                                                                    </a>
+                                                                                @endif
                                                                                 <i class="glyphicon glyphicon-calendar"></i>
                                                                                 &nbsp;
                                                                                 <b>{!! $hFunction->convertDateDMYHISFromDatetime($workAllocationReport->reportDate()) !!}</b>

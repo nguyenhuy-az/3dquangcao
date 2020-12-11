@@ -149,10 +149,11 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                     data-object="{!! $bonusId !!}">
                                     <td>
                                         <b style="color: blue">
-                                            {!! date('d/m/Y', strtotime($bonus->bonusDate())) !!}
+                                            {!! date('d-m-Y', strtotime($bonus->bonusDate())) !!}
                                         </b>
                                         @if($cancelStatus)
                                             <br/>
+                                            <i class="glyphicon glyphicon-ok qc-font-size-12" style="color: green;"></i>
                                             <em style="color: grey;">Đã hủy</em>
                                             @if(!$hFunction->checkEmpty($cancelNote))
                                                 <br/>
@@ -163,17 +164,10 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                                 <img alt="huy_thuong" style="border: 1px solid grey; width: 70px;" src="{!! $bonus->pathSmallImage($cancelImage) !!}">
                                             @endif
                                         @else
-                                            @if($bonus->checkEnableApply())
-                                                <br/>
-                                                <em style="color: grey;">Có hiệu lực</em>
-                                            @else
-                                                <br/>
-                                                <em style="color: brown;">Tạm thời</em>
-                                                <span> | </span>
-                                                <a class="qc_cancel_act qc-link-red-bold" data-href="{!! route('qc.ad3d.finance.bonus.cancel.get',$bonusId) !!}">
-                                                    HỦY
-                                                </a>
-                                            @endif
+                                            <br/>
+                                            <a class="qc_cancel_act qc-font-size-12 qc-link-red-bold" data-href="{!! route('qc.ad3d.finance.bonus.cancel.get',$bonusId) !!}">
+                                                HỦY
+                                            </a>
                                         @endif
                                     </td>
                                     <td>
@@ -184,25 +178,25 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                         <em style="color: grey;">- {!! $bonus->note() !!}</em>
                                         @if(!$hFunction->checkEmpty($workAllocationId))
                                             <br/>
-                                            <em style="color: grey;">- Sản phẩm:</em>
+                                            <em style="color: grey;">- SP:</em>
                                             <b style="color: blue;">{!! $bonus->workAllocation->product->productType->name() !!}</b>
                                             <br/>
-                                            <em style="color: grey;">- Đơn hàng:</em>
+                                            <em style="color: grey;">- ĐH:</em>
                                             <b style="color: deeppink;">{!! $bonus->workAllocation->product->order->name() !!}</b>
                                         @endif
                                         @if(!$hFunction->checkEmpty($orderAllocationId))
                                             <br/>
-                                            <em style="color: grey;">- Đơn hàng:</em>
+                                            <em style="color: grey;">- ĐH:</em>
                                             <b style="color: blue;">{!! $bonus->orderAllocation->orders->name() !!}</b>
                                         @endif
                                         @if(!$hFunction->checkEmpty($orderConstructionId))
                                             <br/>
-                                            <em style="color: grey;">- Đơn hàng:</em>
+                                            <em style="color: grey;">- ĐH:</em>
                                             <b style="color: red;">{!! $bonus->orderConstruction->name() !!}</b>
                                         @endif
                                         @if(!$hFunction->checkEmpty($orderPayId))
                                             <br/>
-                                            <em style="color: grey;">- Đơn hàng:</em>
+                                            <em style="color: grey;">- ĐH:</em>
                                             <b style="color: blue;">{!! $bonus->orderPay->order->name() !!}</b>
                                         @endif
                                     </td>

@@ -34,20 +34,6 @@ class PayActivityController extends Controller
         }
         # lay thong tin cong ty cung he thong
         $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
-       // $dataCompany = $modelCompany->getInfo();
-        //$dataPaymentType = $modelPaymentType->getInfo();
-
-        /*if ($dataStaffLogin->checkRootManage()) {
-            if (empty($companyFilterId)) {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-                $companyFilterId = $dataStaffLogin->companyId();
-            } else {
-                $searchCompanyFilterId = [$companyFilterId];
-            }
-        } else {
-            $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-            $companyFilterId = $dataStaffLogin->companyId();
-        }*/
         if(empty($dayFilter) && empty($monthFilter) && empty($yearFilter)){
             $monthFilter = date('m');
             $yearFilter = date('Y');
@@ -84,7 +70,7 @@ class PayActivityController extends Controller
         $totalMoneyPayActivity = $modelPayActivityDetail->totalMoneyOfListPayActivity($selectPayActivity->get());
         //danh sach NV
         $dataStaff = $modelCompany->staffInfoActivityOfListCompanyId([$companyFilterId]);
-        return view('ad3d.finance.pay.pay-activity.list', compact('modelStaff', 'dataCompany', 'dataPayActivityDetail', 'dataAccess', 'dataStaff', 'totalMoneyPayActivity', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'confirmStatusFilter', 'staffFilterId'));
+        return view('ad3d.finance.pay.pay-activity.list', compact('modelStaff','modelPayActivityDetail', 'dataCompany', 'dataPayActivityDetail', 'dataAccess', 'dataStaff', 'totalMoneyPayActivity', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'confirmStatusFilter', 'staffFilterId'));
 
     }
 

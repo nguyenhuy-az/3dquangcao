@@ -169,7 +169,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                     </div>
                                 </td>
                                 <td style="padding: 0;">
-                                    <select class="qcWorkOrderMonthFilter col-xs-5 col-sm-5 col-md-5 col-lg-5"
+                                    <select class="qcWorkOrderMonthFilter col-xs-6 col-sm-6 col-md-6 col-lg-6"
                                             style="height: 34px; padding: 0"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if($monthFilter == 100) selected="selected" @endif>
@@ -182,7 +182,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qcWorkOrderYearFilter col-xs-7 col-sm-7 col-md-7 col-lg-7"
+                                    <select class="qcWorkOrderYearFilter col-xs-6 col-sm-6 col-md-6 col-lg-6"
                                             style="height: 34px; padding: 0"
                                             data-href="{!! $hrefIndex !!}">
                                         {{--<option value="100" @if($yearFilter == 100) selected="selected" @endif>

@@ -12,34 +12,47 @@ use Illuminate\Database\Eloquent\Model;
 class QcSalary extends Model
 {
     protected $table = 'qc_salary';
-    protected $fillable = ['salary_id', 'mainMinute', 'plusMinute', 'minusMinute', 'beforePay','bonusMoney', 'minusMoney', 'benefitMoney', 'benefitDescription', 'overtimeMoney', 'kpiMoney', 'salary', 'payStatus', 'created_at', 'work_id', 'workSalary_id','salaryBasic_id'];
+    protected $fillable = ['salary_id', 'mainMinute', 'plusMinute', 'minusMinute', 'beforePay', 'bonusMoney', 'minusMoney', 'benefitMoney', 'benefitDescription', 'overtimeMoney', 'kpiMoney', 'salary', 'payStatus', 'created_at', 'work_id', 'workSalary_id', 'salaryBasic_id'];
     protected $primaryKey = 'salary_id';
     public $timestamps = false;
 
     private $lastId;
 
     //========== ========== ========== THEM && VA CAP NHAT ========== ========== ==========
-    # mac dinh tien con them
+    # mac dinh tien cong them
     public function getDefaultBenefitMoney()
     {
         return 0;
     }
+
     # mac dinh tien tru
     public function getDefaultMinusMoney()
     {
         return 0;
     }
+
     # mac dinh tien thuong
     public function getDefaultBonusMoney()
     {
         return 0;
     }
 
+    #mac tinh da thanh toan
+    public function getDefaultHasPay()
+    {
+        return 1;
+    }
+
+    #mac tinh chua thanh toan
+    public function getDefaultNotPay()
+    {
+        return 0;
+    }
     //---------- them bang luong ----------
     /*
      *  salary = tien luong co ban lam viec + thuong -tien ung - phat (khong bao gom tien giu va cong them)
      * */
-    public function insert($mainMinute, $plusMinute, $minusMute, $beforePay, $minusMoney, $benefitMoney, $overtimeMoney, $salary, $payStatus, $workId, $workSalaryId = null,$benefitDescription = null, $kpiMoney = 0, $bonusMoney = 0)
+    public function insert($mainMinute, $plusMinute, $minusMute, $beforePay, $minusMoney, $benefitMoney, $overtimeMoney, $salary, $payStatus, $workId, $workSalaryId = null, $benefitDescription = null, $kpiMoney = 0, $bonusMoney = 0)
     {
         $hFunction = new \Hfunction();
         $modelSalary = new QcSalary();
@@ -86,17 +99,17 @@ class QcSalary extends Model
 
     public function updatePayStatus($salaryId)
     {
-        return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => 1]);
+        return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => $this->getDefaultHasPay()]);
     }
 
     public function updateFinishPay($salaryId)
     {
-        return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => 1]);
+        return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => $this->getDefaultHasPay()]);
     }
 
     public function updateUnFinishPay($salaryId)
     {
-        return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => 0]);
+        return QcSalary::where('salary_id', $salaryId)->update(['payStatus' => $this->getDefaultNotPay()]);
     }
 
     public function updateBenefitMoney($salaryId, $benefitMoney, $benefitDescription = null)
@@ -136,16 +149,19 @@ class QcSalary extends Model
         return $this->belongsTo('App\Models\Ad3d\Work\QcWork', 'work_id', 'work_id');
     }
 
+    # thong tin bang luong cua bang cham cong
     public function infoOfListWorkId($listWorkId)
     {
         return QcSalary::whereIn('work_id', $listWorkId)->orderBy('salary_id', 'DESC')->get();
     }
 
+    # danh sach ma bang luong tu 1 danh sach bang cham cong
     public function listIdOfListWorkId($listWorkId)
     {
         return QcSalary::whereIn('work_id', $listWorkId)->orderBy('salary_id', 'DESC')->pluck('salary_id');
     }
 
+    # kiem tra ton tai bang cham cong da xuat bang luong
     public function checkExistInfoOfWork($workId)
     {
         return QcSalary::where('work_id', $workId)->exists();
@@ -157,31 +173,36 @@ class QcSalary extends Model
         return $this->hasMany('App\Models\Ad3d\SalaryPay\QcSalaryPay', 'salary_id', 'salary_id');
     }
 
+    # ton tai thanh toan luong chua xac nhan
     public function salaryPayCheckExistUnConfirm($salaryId = null)
     {
         $modelSalaryPay = new QcSalaryPay();
-        return $modelSalaryPay->checkExistUnConfirmOfSalary((empty($salaryId)) ? $this->salaryId() : $salaryId);
+        return $modelSalaryPay->checkExistUnConfirmOfSalary($this->checkIdNull($salaryId));
     }
 
+    # tong tien da thanh toan
     public function totalPaid($salaryId = null)
     {
         $modelSalaryPay = new QcSalaryPay();
-        return $modelSalaryPay->totalPayOfSalary((empty($salaryId)) ? $this->salaryId() : $salaryId);
+        return $modelSalaryPay->totalPayOfSalary($this->checkIdNull($salaryId));
     }
 
+    # tong  tien thanh toan da xac nhan
     public function totalPayConfirmed($salaryId = null)
     {
         $modelSalaryPay = new QcSalaryPay();
-        return $modelSalaryPay->totalPayConfirmedOfSalary((empty($salaryId)) ? $this->salaryId() : $salaryId);
+        return $modelSalaryPay->totalPayConfirmedOfSalary($this->checkIdNull($salaryId));
     }
 
+    #lay thong tin thanh toan
     public function infoSalaryPay($salaryId = null)
     {
         $modelSalaryPay = new QcSalaryPay();
-        return $modelSalaryPay->infoOfSalary((empty($salaryId)) ? $this->salaryId() : $salaryId);
+        return $modelSalaryPay->infoOfSalary($this->checkIdNull($salaryId));
     }
 
     //============ =========== ============ LAY THONG TIN ============= =========== ==========
+    # chon thong tin bang luong theo danh sach ma cty
     public function selectInfoOfListCompany($listCompanyId, $dateFilter = null, $payStatus = 3)
     {
         $modelStaff = new QcStaff();
@@ -318,8 +339,28 @@ class QcSalary extends Model
         return $this->pluck('created_at', $salaryId);
     }
 
+    # kiem tra bang luong da duoc thanh toan
     public function checkPaid($salaryId = null)
     {
-        return ($this->payStatus($salaryId) == 1) ? true : false;
+        return ($this->payStatus($salaryId) == $this->getDefaultHasPay()) ? true : false;
+    }
+
+    # kiem tra bang luong co duoc cong tien them hay chua
+    public function checkExistBenefit($salaryId = null)
+    {
+        return ($this->benefitMoney($salaryId) > 0) ? true : false;
+    }
+
+    # kiem tra co du dieu kien giu tien hay khong
+    /*
+     * chi duoc giu tien khi luong co ban duong va chua thanh toan
+     * */
+    public function checkLicenseKeepMoney($salaryId)
+    {
+        $dataSalary = $this->getInfo($salaryId);
+        $dataWork = $dataSalary->work;
+        # tong luong co ban
+        $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
+        return ;
     }
 }

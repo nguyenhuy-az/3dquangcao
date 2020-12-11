@@ -48,7 +48,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                     @endif
                                 </select>
                             </td>
-                            <td ></td>
+                            <td></td>
                         </tr>
                         <tr style="background-color: black; color: yellow;">
                             <th style="width: 150px;">NGÀY</th>
@@ -101,13 +101,16 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                     <option value="0" @if($transfersType == 0) selected="selected" @endif>
                                         Tất cả
                                     </option>
-                                    <option value="1" @if($transfersType == 1) selected="selected" @endif>
+                                    <option value="{!! $modelTransfers->getDefaultTransferTypeOfBusiness() !!}"
+                                            @if($transfersType == $modelTransfers->getDefaultTransferTypeOfBusiness()) selected="selected" @endif>
                                         Chuyển doanh thu
                                     </option>
-                                    <option value="2" @if($transfersType == 2) selected="selected" @endif >
+                                    <option value="{!! $modelTransfers->getDefaultTransferTypeOfInvestment() !!}"
+                                            @if($transfersType == $modelTransfers->getDefaultTransferTypeOfInvestment()) selected="selected" @endif >
                                         Chuyển đầu tư
                                     </option>
-                                    <option value="3" @if($transfersType == 3) selected="selected" @endif >
+                                    <option value="{!! $modelTransfers->getDefaultTransferTypeOfTreasurer() !!}"
+                                            @if($transfersType == $modelTransfers->getDefaultTransferTypeOfTreasurer()) selected="selected" @endif >
                                         Chuyển nộp lên cty
                                     </option>
                                 </select>
@@ -151,22 +154,30 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                         <a class="qc_view qc-link-green">
                                             <b style="color: blue;">{!! date('d/m/Y', strtotime($transfers->transfersDate())) !!} </b>
                                         </a>
-                                        <br/>
                                         @if($transfers->checkConfirmReceive())
-                                            <em class="qc-color-grey">- Đã xác nhận</em>
+                                            <br/>
+                                            <i class="glyphicon glyphicon-ok qc-font-size-12" style="color: green;"></i>
+                                            <em class="qc-color-grey"> Đã xác nhận</em>
                                         @else
-                                            <em style="color: brown;">- Chờ xác nhận</em>
+                                            <br/>
+                                            <i class="glyphicon glyphicon-ok qc-font-size-12" style="color: red;"></i>
+                                            <em style="color: brown;">Chờ xác nhận</em>
                                             @if($transfersStaffId == $staffLoginId)
-                                                <br/>
-                                                <a class="qc_edit qc-link-red qc-font-size-14"
-                                                   data-href="{!! route('qc.ad3d.finance.transfers.transfers.edit.get',$transfersId) !!}">
-                                                    SỬA
-                                                </a>
-                                                |
-                                                <a class="qc_delete qc-link-red qc-font-size-14"
-                                                   data-href="{!! route('qc.ad3d.finance.transfers.transfers.delete',$transfersId) !!}">
-                                                    HỦY
-                                                </a>
+                                                {{--chuyen dau tu--}}
+                                                @if($transfers->checkTransferInvestment())
+                                                    <span> | </span>
+                                                    <a class="qc_delete qc-link-red qc-font-size-14"
+                                                       data-href="{!! route('qc.ad3d.finance.transfers.transfers.delete',$transfersId) !!}">
+                                                        HỦY
+                                                    </a>
+                                                @endif
+                                                {{-- <br/>
+                                                 <a class="qc_edit qc-link-red qc-font-size-14"
+                                                    data-href="{!! route('qc.ad3d.finance.transfers.transfers.edit.get',$transfersId) !!}">
+                                                     SỬA
+                                                 </a>
+                                                 |
+                                                 --}}
                                             @endif
                                         @endif
                                     </td>

@@ -174,5 +174,4 @@ $totalMoneyAllPay = $totalSalaryUnpaid + $totalMoneyImportUnpaid + $totalKPIMone
         @endif
 
     </div>
-    </div>
 @endsection

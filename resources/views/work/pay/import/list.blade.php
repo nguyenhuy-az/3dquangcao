@@ -130,7 +130,7 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                                 @if(!$hFunction->checkEmpty($image))
                                                     <a href="{!! route('qc.work.pay.import.get.view.get',$importId) !!}">
                                                         <img class="media-object qc-link" alt="..."
-                                                             style="width: 150px;"
+                                                             style="border: 1px solid #d7d7d7; width: 150px;"
                                                              src="{!! $import->pathFullImage($image) !!}">
                                                     </a>
 
@@ -186,9 +186,9 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                             @if($import->importPayCheckHasConfirm($importId))
                                                 <i class="glyphicon glyphicon-ok" style="color: green;"
                                                    title="Đã xác nhận"></i>
-                                                <em>Thanh toán đã xác nhận</em>
+                                                <em style="color: grey;">Thanh toán đã xác nhận</em>
                                             @else
-                                                <i class="glyphicon glyphicon-ok" style="color: blue;"
+                                                <i class="glyphicon glyphicon-ok" style="color: red;"
                                                    title="Chưa xác nhận"></i>
                                                 <em>Thanh toán chưa xác nhận</em>
                                             @endif

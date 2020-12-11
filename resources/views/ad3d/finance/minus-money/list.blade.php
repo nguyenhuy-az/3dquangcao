@@ -171,16 +171,11 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                         <b style="color: blue;">{!! date('d/m/Y', strtotime($minusMoney->dateMinus())) !!}</b>
                                         <br/>
                                         @if($cancelStatus)
+                                            <i class="glyphicon glyphicon-ok qc-font-size-12" style="color: green;"></i>
                                             <em style="color: grey;">Đã hủy</em>
                                         @else
-                                            @if($minusMoney->checkEnableApply())
-                                                <em style="color: grey;">Có hiệu lực</em>
-                                            @else
-                                                <em style="color: grey;">Tạm thời </em>
-                                            @endif
                                             {{--chi hien khi khong co phan hoi--}}
-                                            @if(!$checkMinusMoneyLostToolStatus && $minusMoney->checkHasAction()))
-                                                <span> | </span>
+                                            @if(!$checkMinusMoneyLostToolStatus && $minusMoney->checkHasAction())
                                                 <a class="qc_cancel_act qc-link-red-bold">HỦY</a>
                                             @endif
                                         @endif

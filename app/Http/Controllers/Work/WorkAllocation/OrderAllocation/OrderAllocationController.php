@@ -10,6 +10,9 @@ use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 
+use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
+use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
+use App\Models\Ad3d\WorkAllocationReportImage\QcWorkAllocationReportImage;
 use App\Models\Ad3d\WorkAllocationReportImage\QcWorkAllocationReportImageImage;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;
@@ -74,6 +77,17 @@ class OrderAllocationController extends Controller
 
     }
 
+    # chi tiet thi cong
+    public function viewWorkAllocation($allocationId)
+    {
+        $hFunction = new \Hfunction();
+        $modelWorkAllocation = new QcWorkAllocation();
+        $dataWorkAllocation = $modelWorkAllocation->getInfo($allocationId);
+        if ($hFunction->checkCount($dataWorkAllocation)) {
+            return view('work.work-allocation.order-allocation.product.view-report', compact('dataWorkAllocation'));
+        }
+    }
+
     // SAN PHAM
     #xem chi tiet hinh anh thiet ke
     public function viewProductDesign($designId)
@@ -84,6 +98,22 @@ class OrderAllocationController extends Controller
         if ($hFunction->checkCount($dataProductDesign)) {
             return view('work.work-allocation.order-allocation.product.view-design-image', compact('dataProductDesign'));
         }
+    }
+
+    #xem anh bao cao truc tiep
+    public function viewReportImageDirect($imageId)
+    {
+        $modelWorkAllocationReportImage = new QcWorkAllocationReportImage();
+        $dataWorkAllocationReportImage = $modelWorkAllocationReportImage->getInfo($imageId);
+        return view('work.work-allocation.order-allocation.product.view-report-image-direct', compact('dataWorkAllocationReportImage'));
+    }
+
+    # xem anh bao cao qua cham cong
+    public function viewReportImageTimekeeping($imageId)
+    {
+        $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
+        $dataTimekeepingProvisionalImage = $modelTimekeepingProvisionalImage->getInfo($imageId);
+        return view('work.work-allocation.order-allocation.product.view-report-image', compact('dataTimekeepingProvisionalImage'));
     }
 
     //quan ly san pham

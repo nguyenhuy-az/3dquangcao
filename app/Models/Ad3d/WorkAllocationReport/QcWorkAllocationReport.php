@@ -73,7 +73,7 @@ class QcWorkAllocationReport extends Model
     public function workAllocationReportImageInfo($reportId = null)
     {
         $modelReportImage = new QcWorkAllocationReportImage();
-        return $modelReportImage->infoOfReport((empty($reportId)) ? $this->reportId() : $reportId);
+        return $modelReportImage->infoOfReport($this->checkIdNull($reportId));
     }
 
     //---------- hinh bao cao khi bao gio ra -----------
@@ -86,7 +86,14 @@ class QcWorkAllocationReport extends Model
     public function timekeepingProvisionalImageInfo($reportId = null)
     {
         $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
-        return $modelTimekeepingProvisionalImage->infoOfWorkAllocationReport((empty($reportId)) ? $this->reportId() : $reportId);
+        return $modelTimekeepingProvisionalImage->infoOfWorkAllocationReport($this->checkIdNull($reportId));
+    }
+
+    # anh bao cao sau cung thong qua bao gio ra trong ngay
+    public function timekeepingProvisionalImageLastInfo($reportId = null)
+    {
+        $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
+        return $modelTimekeepingProvisionalImage->lastInfoOfWorkAllocationReport($this->checkIdNull($reportId));
     }
 
     //---------- bao cao thi con của don hang -----------

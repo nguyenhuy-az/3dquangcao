@@ -128,39 +128,39 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                 <tr class="qc_ad3d_list_object @if($n_o%2 == 0) info @endif"
                                     data-object="{!! $timekeepingProvisionalId !!}">
                                     <td>
-                                        <div class="media">
-                                            <a class="pull-left" href="#">
-                                                <img class="media-object"
-                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
-                                                     src="{!! $src !!}">
-                                            </a>
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object"
+                                                         style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                         src="{!! $src !!}">
+                                                </a>
 
-                                            <div class="media-body">
-                                                <h5 class="media-heading">{!! $dataStaffTimekeepingProvisional->lastName() !!}</h5>
-                                                @if(!$timekeepingProvisional->work->checkSalaryStatus())
-                                                    @if($hFunction->checkEmpty($timeEnd))
-                                                        <em style="color: blue;">Chưa báo giờ ra</em>
-                                                    @else
-                                                        @if($timekeepingProvisional->checkConfirmStatus())
-                                                            <em style="color: grey;">Đã duyệt</em>
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">{!! $dataStaffTimekeepingProvisional->lastName() !!}</h5>
+                                                    @if(!$timekeepingProvisional->work->checkSalaryStatus())
+                                                        @if($hFunction->checkEmpty($timeEnd))
+                                                            <em style="color: blue;">Chưa báo giờ ra</em>
                                                         @else
-                                                            <a class="qc_confirm qc-link-red qc-font-size-14"
-                                                               data-href="{!! route('qc.ad3d.work.time_keeping_provisional.confirm.get', $timekeepingProvisionalId) !!}">
-                                                                XÁC NHẬN
-                                                            </a>
+                                                            @if($timekeepingProvisional->checkConfirmStatus())
+                                                                <em style="color: grey;">Đã duyệt</em>
+                                                            @else
+                                                                <a class="qc_confirm qc-link-red qc-font-size-14"
+                                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.confirm.get', $timekeepingProvisionalId) !!}">
+                                                                    XÁC NHẬN
+                                                                </a>
+                                                            @endif
+                                                        @endif
+                                                    @else
+                                                        @if(!$timekeepingProvisional->checkConfirmStatus())
+                                                            <em style="color: grey;">Không duyệt-</em>
                                                         @endif
                                                     @endif
-                                                @else
-                                                    @if(!$timekeepingProvisional->checkConfirmStatus())
-                                                        <em style="color: grey;">Không duyệt-</em>
+                                                    @if(!$hFunction->checkEmpty($note))
+                                                        <br/>
+                                                        <em class="qc-color-grey">- {!! $note !!}</em>
                                                     @endif
-                                                @endif
-                                                @if(!$hFunction->checkEmpty($note))
-                                                    <br/>
-                                                    <em class="qc-color-grey">- {!! $note !!}</em>
-                                                @endif
+                                                </div>
                                             </div>
-                                        </div>
                                     </td>
                                     <td class="text-center">
                                         <a class="qc_warning_time_begin qc-link-red" title="Cảnh báo chấm sai"
