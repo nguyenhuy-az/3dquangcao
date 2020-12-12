@@ -5,6 +5,8 @@ class   imageResize
     var $image;
     var $image_type;
 
+
+
     public function  load($filename)
     {
         $image_info = getimagesize($filename);

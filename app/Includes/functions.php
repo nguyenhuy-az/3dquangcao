@@ -766,6 +766,7 @@ class Hfunction
     {
         return date('Y-m-01', strtotime($date));
     }
+
     public function firstDateOfMonthFromDate($date = null)
     {
         return (empty($date_Ymd)) ? date('Y-m-01') : date("Y-m-01", strtotime($date));
@@ -776,6 +777,7 @@ class Hfunction
     {
         return date('Y-m-t', strtotime($date));
     }
+
     public function lastDateOfMonthFromDate($date_Ymd = null)
     {
         return (empty($date_Ymd)) ? date('Y-m-t') : date("Y-m-t", strtotime($date_Ymd));
@@ -814,7 +816,107 @@ class Hfunction
         return $d && $d->format($format) === $date;
     }
 
-    // ========== ========== ========== upload image file ========== ========== ==========
+    // ========== ========== ========== UP LOAD HINH ANH ========== ========== ==========
+    # kiem tra to tai file
+    public function checkExistsFile($file)
+    {
+        //@fopen($file, "r");
+        //dd($file);
+        //return is_file($file) && file_exists($file);
+        if (file_exists($file)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    # thong tin hinh anh
+    /*
+    tra ve 1 mang
+    */
+    # lay tat ca thong tin hinh anh
+    public function detailImage($imagePath)
+    {
+
+        // Check if the variable is set and if the file itself exists before continuing
+        if (file_exists($imagePath)) {
+            //dd($imagePath);
+            // There are 2 arrays which contains the information we are after, so it's easier to state them both
+            $exif_ifd0 = exif_read_data($imagePath, "FILE,COMPUTED,ANY_TAG,IFD0,THUMBNAIL,COMMENT,EXIF", true);//read_exif_data($imagePath, 'IFD0', 0);
+            $exif_exif = exif_read_data($imagePath, "FILE,COMPUTED,ANY_TAG,IFD0,THUMBNAIL,COMMENT,EXIF", true);//read_exif_data($imagePath, 'EXIF', 0);
+
+            //error control
+            $notFound = "Unavailable";
+
+            // Make
+            if (@array_key_exists('Make', $exif_ifd0)) {
+                $camMake = $exif_ifd0['Make'];
+            } else {
+                $camMake = $notFound;
+            }
+
+            // Model
+            if (@array_key_exists('Model', $exif_ifd0)) {
+                $camModel = $exif_ifd0['Model'];
+            } else {
+                $camModel = $notFound;
+            }
+
+            // Exposure
+            if (@array_key_exists('ExposureTime', $exif_ifd0)) {
+                $camExposure = $exif_ifd0['ExposureTime'];
+            } else {
+                $camExposure = $notFound;
+            }
+
+            // Aperture
+            if (@array_key_exists('ApertureFNumber', $exif_ifd0['COMPUTED'])) {
+                $camAperture = $exif_ifd0['COMPUTED']['ApertureFNumber'];
+            } else {
+                $camAperture = $notFound;
+            }
+
+            // Date
+            if (@array_key_exists('DateTime', $exif_ifd0)) {
+                $camDate = $exif_ifd0['DateTime'];
+            } else {
+                $camDate = $notFound;
+            }
+
+            // ISO
+            if (@array_key_exists('ISOSpeedRatings', $exif_exif)) {
+                $camIso = $exif_exif['ISOSpeedRatings'];
+            } else {
+                $camIso = $notFound;
+            }
+
+            $return = array();
+            $return['make'] = $camMake;
+            $return['model'] = $camModel;
+            $return['exposure'] = $camExposure;
+            $return['aperture'] = $camAperture;
+            $return['date'] = $camDate;
+            $return['iso'] = $camIso;
+            return $return;
+
+        } else {
+
+            return false;
+        }
+    }
+
+    # lay ngay tao hinh anh
+    public function createdDateImage($imagePath)
+    {
+        /*if ($this->checkExistsFile($imagePath)) {
+            return 'yessssssssss';
+        } else {
+            return 'Nooooooooo';
+        }*/
+        //$result = $this->detailImage($imagePath);
+        //dd($result);
+        return $this->detailImage($imagePath)['date'];
+    }
+
     public function getCountFromData($data)
     {
         return (empty($data)) ? 0 : count($data);

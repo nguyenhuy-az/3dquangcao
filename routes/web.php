@@ -1386,12 +1386,16 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         Route::group(['prefix' => 'pay-salary'], function () {
             Route::get('detail/{payId?}', ['as' => 'qc.work.pay.pay_salary.detail.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@detailPay']);
             # cong tien them
-            Route::get('add-benefit/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.benefit_add.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getAddBenefit']);
-            Route::post('add-benefit/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.benefit_add.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postAddBenefit']);
+            Route::get('add-benefit/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.benefit.add.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getAddBenefit']);
+            Route::post('add-benefit/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.benefit.add.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postAddBenefit']);
+
+            # giu tien
+            Route::get('add-keep-money/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.keep_money.add.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getAddKeepMoney']);
+            Route::post('add-keep-money/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.keep_money.add.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postAddKeepMoney']);
 
             # thanh toan luong
-            Route::get('pay/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.pay.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getPay']);
-            Route::post('pay/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.pay.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postPay']);
+            Route::get('add-payment/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.payment.add.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@getAddPayment']);
+            Route::post('add-payment/{salaryId?}', ['as' => 'qc.work.pay.pay_salary.payment.add.post', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@postAddPayment']);
 
             # huy thanh toan luong
             Route::get('delete/{payId?}', ['as' => 'qc.work.pay.pay_salary.delete.get', 'uses' => 'Work\Pay\PaySalary\PaySalaryController@deletePay']);

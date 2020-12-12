@@ -66,6 +66,7 @@ class PaySalaryController extends Controller
         return view('work.pay.pay-salary.detail', compact('dataSalary'));
     }
 
+    #====== ======= cong tien them
     public function getAddBenefit($salaryId)
     {
         $modelSalary = new QcSalary();
@@ -83,15 +84,30 @@ class PaySalaryController extends Controller
         return $modelSalary->updateBenefitMoney($salaryId, $txtBenefitMoney, $txtBenefitMoneyDescription);
     }
 
-    public function getPay($salaryId)
+    #======== ====== giu tien
+    public function getAddKeepMoney($salaryId)
+    {
+        $modelSalary = new QcSalary();
+        $dataSalary = $modelSalary->getInfo($salaryId);
+        return view('work.pay.pay-salary.add-keep-money', compact('dataAccess', 'dataSalary'));
+    }
+
+    public function postAddKeepMoney($salaryId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaff = new QcStaff();
+        $modelKeepMoney = new QcKeepMoney();
+        $txtKeepMoney = Request::input('txtKeepMoney');
+        $txtKeepMoney = $hFunction->convertCurrencyToInt($txtKeepMoney);
+        $txtKeepMoneyDescription = Request::input('txtKeepMoneyDescription');
+        $modelKeepMoney->insert($txtKeepMoney, $txtKeepMoneyDescription, $salaryId, $modelStaff->loginStaffId());
+    }
+
+    #====== ====== thanh toán =====
+    public function getAddPayment($salaryId)
     {
         $modelStaff = new QcStaff();
         $modelSalary = new QcSalary();
-        $modelImport = new QcImport();
-        $dataAccess = [
-            'object' => 'paySalary',
-            'subObjectLabel' => 'Thanh toán lương'
-        ];
         $dataSalary = $modelSalary->getInfo($salaryId);
         $dataWork = $dataSalary->work;
         $fromDate = $dataWork->fromDate();
@@ -101,11 +117,10 @@ class PaySalaryController extends Controller
         $companyId = $dataWork->companyStaffWork->companyId();
         // danh sach mua vat tu dc xac nhan va chua thanh toan
         $totalMoneyImportUnpaid = $dataStaff->importTotalMoneyHasConfirmNotPay($companyId, $staffId, date('Y-m', strtotime($fromDate)));
-        $totalKPIMoney = 0;
-        return view('work.pay.pay-salary.pay', compact('modelStaff', 'dataAccess', 'dataSalary', 'totalMoneyImportUnpaid', 'totalKPIMoney'));
+        return view('work.pay.pay-salary.add-payment', compact('modelStaff', 'dataSalary', 'totalMoneyImportUnpaid'));
     }
 
-    public function postPay($salaryId)
+    public function postAddPayment($salaryId)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -113,60 +128,37 @@ class PaySalaryController extends Controller
         $modelSalaryPay = new QcSalaryPay();
         $modelImport = new QcImport();
         $modelImportPay = new QcImportPay();
-        $modelKeepMoney = new QcKeepMoney();
         $staffLoginId = $modelStaff->loginStaffId();
         $dataSalary = $modelSalary->getInfo($salaryId);
         $dataWork = $dataSalary->work;
         $fromDate = $dataWork->fromDate();
-        # ma cong ty
-        $companyId = $dataWork->companyStaffWork->companyId();
-        $salaryPay = $dataSalary->salary();
-        $totalPaid = $dataSalary->totalPaid();
-        # tong tien luong can thanh toán
-        $txtSalaryMoney = $salaryPay - $totalPaid;
-        //$txtImport = Request::input('txtImport');
-        $txtBenefitMoney = Request::input('txtBenefitMoney');
-        $txtBenefitMoney = $hFunction->convertCurrencyToInt($txtBenefitMoney);
-        $txtBenefitMoneyDescription = Request::input('txtBenefitMoneyDescription');
-        $txtKeepMoney = Request::input('txtKeepMoney');
-        $txtKeepMoney = $hFunction->convertCurrencyToInt($txtKeepMoney);
-        $txtKeepMoneyDescription = Request::input('txtKeepMoneyDescription');
-        $txtSalaryMoney = $txtSalaryMoney - $txtKeepMoney;
-        # cap nhat thuong
-        /*if ($txtBenefitMoney > 0) {
-            $modelSalary->updateBenefitMoney($salaryId, $txtBenefitMoney, $txtBenefitMoneyDescription);# thuong them
-            $txtSalaryMoney = $txtSalaryMoney + $txtBenefitMoney;
-        }*/
-        # thanh toan luong
-        if ($modelSalaryPay->insert($txtSalaryMoney, $hFunction->carbonNow(), $salaryId, $staffLoginId)) {
-            $modelSalary->updateFinishPay($salaryId);
-        }
-        # giu tien
-        if ($txtKeepMoney > 0) { # giu  lại tien
-            $modelKeepMoney->insert($txtKeepMoney, $txtKeepMoneyDescription, $salaryId, $staffLoginId);
-        }
-        # thanh toan nhap vat tu
         $dataStaff = $dataWork->staffInfoOfWork();
         $staffId = $dataStaff->staffId();
-        #danh sach mua vat tu dc xac nhan va chua thanh toan
-        $dataImport = $modelImport->selectInfoOfListStaffIdAndHasConfirmNotPay($companyId, [$staffId], date('Y-m', strtotime($fromDate)))->get();
-        if ($hFunction->checkCount($dataImport)) {
-            foreach ($dataImport as $key => $import) {
-                $importId = $import->importId();
-                $totalImportPay = $import->totalMoneyOfImport();
-                if ($modelImportPay->insert($totalImportPay, $importId, $staffLoginId)) {
-                    $modelImport->confirmPaid($importId);
+        # ma cong ty
+        $companyId = $dataWork->companyStaffWork->companyId();
+        $totalPayment = $dataSalary->totalSalaryUnpaid();
+        # thanh toan luong
+        if ($modelSalaryPay->insert($totalPayment, $hFunction->carbonNow(), $salaryId, $staffLoginId)) {
+            $modelSalary->updateFinishPay($salaryId);
+        }
+
+        # mua vat tu da duyet chua thanh toán
+        $totalMoneyImportUnpaid = $dataStaff->importTotalMoneyHasConfirmNotPay($companyId, $staffId, date('Y-m', strtotime($fromDate)));
+        if ($totalMoneyImportUnpaid > 0) {
+            # thanh toan nhap vat tu
+            # danh sach mua vat tu dc xac nhan va chua thanh toan
+            $dataImport = $modelImport->selectInfoOfListStaffIdAndHasConfirmNotPay($companyId, [$staffId], date('Y-m', strtotime($fromDate)))->get();
+            if ($hFunction->checkCount($dataImport)) {
+                foreach ($dataImport as $key => $import) {
+                    $importId = $import->importId();
+                    $totalImportPay = $import->totalMoneyOfImport();
+                    if ($modelImportPay->insert($totalImportPay, $importId, $staffLoginId)) {
+                        $modelImport->confirmPaid($importId);
+                    }
                 }
             }
         }
-        Session::put('notifySalaryPay', "Đã thanh toán thành công");
     }
-    // xác nhận thanh toán
-    /*public function getConfirmPay($importId)
-    {
-        $modelImport = new QcImport();
-        $modelImport->updateConfirmPayOfImport($importId);
-    }*/
 
     //huy thong tin thanh toan
     public function deletePay($payId)

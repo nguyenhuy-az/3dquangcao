@@ -274,8 +274,12 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @endforeach
                                             </div>
                                         @else
-                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                                <em style="color: brown;">- Không có báo cáo</em>
+                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
+                                                <i class="glyphicon glyphicon-warning-sign" style="color: red; font-size: 1.5em;"></i>
+                                                <br/>
+                                                <em style="background-color: black; color: lime; padding: 3px;">
+                                                    Không có báo cáo SẼ KHÔNG DUYỆT
+                                                </em>
                                             </div>
                                         @endif
                                     </td>
@@ -299,8 +303,12 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @endforeach
                                             </div>
                                         @else
-                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                                <em style="color: brown;">- Không có báo cáo</em>
+                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
+                                                <i class="glyphicon glyphicon-warning-sign" style="color: red; font-size: 1.5em;"></i>
+                                                <br/>
+                                                <em style="background-color: black; color: lime; padding: 3px;">
+                                                    Không có báo cáo SẼ KHÔNG DUYỆT
+                                                </em>
                                             </div>
                                         @endif
                                     </td>
@@ -324,8 +332,13 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @endforeach
                                             </div>
                                         @else
-                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                                <em style="color: brown;">- Không có báo cáo</em>
+                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
+                                                <i class="glyphicon glyphicon-warning-sign" style="color: red; font-size: 1.5em;"></i>
+                                                <em style="color: red;">Nếu có tăng ca</em>
+                                                <br/>
+                                                <em style="background-color: black; color: lime; padding: 3px;">
+                                                    Không có báo cáo SẼ KHÔNG DUYỆT
+                                                </em>
                                             </div>
                                         @endif
                                     </td>

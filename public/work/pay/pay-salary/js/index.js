@@ -71,7 +71,19 @@ var qc_work_pay_salary = {
             qc_master_submit.ajaxHasReload(href, '', false);
         }
     },
-    benefit: {
+    payment: {
+        get: function (href) {
+            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+        },
+        save: function (frm) {
+            var qc_notify = $(frm).find('.qc_notify');
+            if (confirm('Sau khi thanh toán KHÔNG ĐƯỢC THAY ĐỔI, đồng ý thanh toán?')) {
+                qc_master_submit.ajaxFormHasReload(frm, qc_notify, false);
+            }
+
+        }
+    },
+    benefitMoney: {
         get: function (href) {
             qc_master_submit.ajaxNotReload(href, '#qc_master', false);
         },
@@ -91,6 +103,36 @@ var qc_work_pay_salary = {
             }
             if (qc_main.check.inputNull(txtBenefitMoneyDescription, 'Phải nhập lý do cộng tiền')) {
                 $(txtBenefitMoneyDescription).focus();
+                return false;
+            } else {
+                if (confirm('Nếu thêm rồi sẽ KHÔNG ĐƯỢC THAY ĐỔI, đồng ý thêm?')) {
+                    qc_master_submit.ajaxFormHasReload(frm, '', false);
+                }
+            }
+
+        }
+    },
+    keepMoney: {
+        get: function (href) {
+            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+        },
+        save: function (frm) {
+            var txtKeepMoney = $(frm).find("input[name='txtKeepMoney']");
+            var txtKeepMoneyVal = parseInt(qc_main.getNumberInput(txtKeepMoney.val()));
+            var txtKeepMoneyDescription = $(frm).find("input[name='txtKeepMoneyDescription']");
+            if (qc_main.check.inputNull(txtKeepMoney, 'Phải nhập số tiền giữ')) {
+                $(txtKeepMoney).focus();
+                return false;
+            } else {
+                var limitKeep = $(txtKeepMoney).data('limit');
+                if (txtKeepMoneyVal > limitKeep) {
+                    alert('Giới hạn giữ không quá: ' + limitKeep);
+                    $(txtKeepMoney).focus();
+                    return false;
+                }
+            }
+            if (qc_main.check.inputNull(txtKeepMoneyDescription, 'Phải nhập lý do GIỮ TIỀN')) {
+                $(txtKeepMoneyDescription).focus();
                 return false;
             } else {
                 if (confirm('Nếu thêm rồi sẽ KHÔNG ĐƯỢC THAY ĐỔI, đồng ý thêm?')) {
@@ -136,9 +178,27 @@ $(document).ready(function () {
 //============ ======== CONG TIEN THEM ============ ===========
 $(document).ready(function () {
     $('.qc_work_pay_salary_wrap').on('click', '.qc_salary_benefit_money_get', function () {
-        qc_work_pay_salary.benefit.get($(this).data('href'));
+        qc_work_pay_salary.benefitMoney.get($(this).data('href'));
     });
     $('body').on('click', '#frm_work_pay_salary_benefit_add .qc_save', function () {
-        qc_work_pay_salary.benefit.save($(this).parents('#frm_work_pay_salary_benefit_add'));
+        qc_work_pay_salary.benefitMoney.save($(this).parents('#frm_work_pay_salary_benefit_add'));
+    });
+});
+//============ ======== GIU TIEN ============ ===========
+$(document).ready(function () {
+    $('.qc_work_pay_salary_wrap').on('click', '.qc_salary_keep_money_get', function () {
+        qc_work_pay_salary.keepMoney.get($(this).data('href'));
+    });
+    $('body').on('click', '#frm_work_pay_salary_keep_money_add .qc_save', function () {
+        qc_work_pay_salary.keepMoney.save($(this).parents('#frm_work_pay_salary_keep_money_add'));
+    });
+});
+//============ ======== THANH TOAN ============ ===========
+$(document).ready(function () {
+    $('.qc_work_pay_salary_wrap').on('click', '.qc_salary_payment_get', function () {
+        qc_work_pay_salary.payment.get($(this).data('href'));
+    });
+    $('body').on('click', '#frm_work_pay_salary_payment_add .qc_save', function () {
+        qc_work_pay_salary.payment.save($(this).parents('#frm_work_pay_salary_payment_add'));
     });
 });

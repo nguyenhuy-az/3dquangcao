@@ -351,16 +351,92 @@ class QcSalary extends Model
         return ($this->benefitMoney($salaryId) > 0) ? true : false;
     }
 
+    #luong co ban cua 1 bang luong
+    # tinh theo bang luong khi xuat bang luong
+    public function totalSalaryBasic($salaryId = null)
+    {
+        $dataSalary = $this->getInfo($this->checkIdNull($salaryId));
+        $mainMinute = $dataSalary->mainMinute();
+        $plusMinute = $dataSalary->plusMinute();
+        $dataStaffWorkSalary = $dataSalary->staffWorkSalary;
+        if (!empty($dataStaffWorkSalary)) {
+            $overtime = $dataStaffWorkSalary->overtimeHour($dataStaffWorkSalary->workSalaryId());
+            $totalSalaryOnHour = $dataStaffWorkSalary->salaryOnHour(); # lương lam trong 1 gio
+        } else {
+            $overtime = 0;
+            $totalSalaryOnHour = 0;
+        }
+
+        $overtime = (is_int($overtime)) ? $overtime : $overtime[0];
+        $moneyOfMainMinute = ($mainMinute / 60) * $totalSalaryOnHour;  # tong luong trong gio lam chinh
+        $moneyOfPlusMinute = ($plusMinute / 60) * 1.5 * $totalSalaryOnHour; # tang ca nhan 1.5  - tong luong cua gio tang ca
+        $allowanceOvertime = ($plusMinute / 60) * $overtime; # tien phu cap tang ca
+        return (int)($moneyOfMainMinute + $moneyOfPlusMinute + $allowanceOvertime);
+    }
     # kiem tra co du dieu kien giu tien hay khong
     /*
      * chi duoc giu tien khi luong co ban duong va chua thanh toan
      * */
-    public function checkLicenseKeepMoney($salaryId)
+    public function checkLicenseKeepMoney($salaryId = null)
     {
-        $dataSalary = $this->getInfo($salaryId);
+        $result = true;
+        $dataSalary = $this->getInfo($this->checkIdNull($salaryId));
+        if ($dataSalary->checkPaid()) {
+            $result = false;
+        } else {
+            if ($this->getLimitKeepMoney($salaryId) <= 0) $result = false;
+        }
+        return $result;
+    }
+
+    # gioi han tien giu tren mot bang luong
+    public function getLimitKeepMoney($salaryId = null)
+    {
+        $dataSalary = $this->getInfo($this->checkIdNull($salaryId));
         $dataWork = $dataSalary->work;
         # tong luong co ban
         $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
-        return ;
+        # tong tien da giu
+        $totalKeepMoney = $dataSalary->totalKeepMoney();
+        return $totalSalaryBasic - $totalKeepMoney;
+    }
+
+    # tong luong nhan cua 1 bang luong
+    /*
+     * khong tinh tien vat tu chua thanh toan
+     * tong luong co ban + tien cong them + tien thuong
+     * */
+    public function totalSalaryReceive($salaryId = null)
+    {
+        $dataSalary = $this->getInfo($this->checkIdNull($salaryId));
+        # cong them
+        $benefitMoney = $dataSalary->benefitMoney();
+        # tien thuong da ap dung
+        $bonusMoney = $dataSalary->bonusMoney();
+        $dataWork = $dataSalary->work;
+        # tong luong co ban
+        $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
+        return $totalSalaryBasic + $benefitMoney + $bonusMoney;
+    }
+    # tong tien luong chua thanh toan cua 1 bang luong
+    /*
+     * khong tinh tien vat tu chua thanh toan
+     *
+     * */
+    public function totalSalaryUnpaid($salaryId = null)
+    {
+        $dataSalary = $this->getInfo($this->checkIdNull($salaryId));
+        # tien ung
+        $totalBeforePay = $dataSalary->beforePay();
+        # tien phat
+        $minusMoney = $dataSalary->minusMoney();
+        # tong tien nhan trong thang
+        $totalSalaryReceive = $dataSalary->totalSalaryReceive();
+        # tong tien giu trong thang
+        $totalKeepMoney = $dataSalary->totalKeepMoney();
+        # tien da thanh toan
+        $totalPaid = $dataSalary->totalPaid();
+
+        return $totalSalaryReceive + $totalBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
     }
 }

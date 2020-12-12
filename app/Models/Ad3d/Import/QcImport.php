@@ -3,9 +3,7 @@
 namespace App\Models\Ad3d\Import;
 
 use App\Models\Ad3d\ImportDetail\QcImportDetail;
-use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\ImportPay\QcImportPay;
-use App\Models\Ad3d\Staff\QcStaff;
 use Illuminate\Database\Eloquent\Model;
 
 class QcImport extends Model
