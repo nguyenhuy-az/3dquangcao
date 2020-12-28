@@ -529,50 +529,11 @@ class QcImport extends Model
         return QcImport::where('confirmStatus', $this->getDefaultNotConfirm())->where('company_id', $companyId)->count('import_id');
     }
 
-
-    /*
     # lay danh sach mua vat tu da thanh toan cua 1 nhan vien nhap
     public function listImportIdPaidOfStaffImport($staffId)
     {
         return $this->listIdOfStaff($staffId, null, $this->getDefaultHasPay());
     }
-
-    # thong tin tat ca hoa don mua vat tu cua 1 nhan vien
-    public function infoOfStaff($staffId, $date = null, $payStatus = null, $order = 'DESC')#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
-    {
-        $modelImportPay = new QcImportPay();
-        if ($payStatus < 3) $listImportId = $modelImportPay->listImportId();
-        if (!empty($date)) {
-            if ($payStatus == 0) {
-                # chua thanh toan
-                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
-            } elseif ($payStatus == 1) {
-                # da thanh toan
-                return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
-            } else {
-                return QcImport::where(['importStaff_id' => $staffId])->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
-            }
-        } else {
-            if ($payStatus == 0) {
-                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->orderBy('importDate', $order)->get();
-            } elseif ($payStatus == 1) {
-                return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->orderBy('importDate', $order)->get();
-            } else {
-                return QcImport::where(['importStaff_id' => $staffId])->orderBy('importDate', $order)->get();
-            }
-        }
-    }
-
-
-    # chon thong tin da xac nhan chua thanh toan cua 1 nhan vien
-    public function selectInfoOfStaffAndConfirmedAndUnpaid($staffId, $order = 'DESC')
-        #  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
-    {
-        $modelImportPay = new QcImportPay();
-        $listImportId = $modelImportPay->listImportId();
-        return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->whereNotIn('import_id', $listImportId)->orderBy('importDate', $order)->select('*');
-    }
-
     public function listIdOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan / 2_da xac nhan chua thanh toan
     {
         $modelImportPay = new QcImportPay();
@@ -599,141 +560,179 @@ class QcImport extends Model
             }
         }
     }
-
-    # tong tien tat ca don hang mua vat tu cua 1 nhan vien
-    public function totalMoneyImportOfStaff($staffId, $date = null, $payStatus = 3)
-    {
-        $modelImportDetail = new QcImportDetail();
-        return $modelImportDetail->totalMoneyOfListImport($this->listIdOfStaff($staffId, $date, $payStatus));
-    }
-
-    public function listIdConfirmedAndAgreeOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
-    {
-        $modelImportPay = new QcImportPay();
-        if ($payStatus < 3) $listImportId = $modelImportPay->listImportId();
-        if (!empty($date)) {
-            if ($payStatus == 0) {# chua thanh toan
-                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->pluck('import_id');
-            } elseif ($payStatus == 1) { # da thanh toan
-                return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->pluck('import_id');
+    /*
+        # thong tin tat ca hoa don mua vat tu cua 1 nhan vien
+        public function infoOfStaff($staffId, $date = null, $payStatus = null, $order = 'DESC')#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
+        {
+            $modelImportPay = new QcImportPay();
+            if ($payStatus < 3) $listImportId = $modelImportPay->listImportId();
+            if (!empty($date)) {
+                if ($payStatus == 0) {
+                    # chua thanh toan
+                    return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
+                } elseif ($payStatus == 1) {
+                    # da thanh toan
+                    return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
+                } else {
+                    return QcImport::where(['importStaff_id' => $staffId])->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
+                }
             } else {
-                return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->pluck('import_id');
-            }
-        } else {
-            if ($payStatus == 0) {
-                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->pluck('import_id');
-            } elseif ($payStatus == 1) {
-                return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->pluck('import_id');
-            } else {
-                return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->pluck('import_id');
+                if ($payStatus == 0) {
+                    return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->orderBy('importDate', $order)->get();
+                } elseif ($payStatus == 1) {
+                    return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->orderBy('importDate', $order)->get();
+                } else {
+                    return QcImport::where(['importStaff_id' => $staffId])->orderBy('importDate', $order)->get();
+                }
             }
         }
-    }
 
 
-    public function infoConfirmedAndAgreeOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
-    {
-        $modelImportPay = new QcImportPay();
-        if ($payStatus < 3) $listImportId = $modelImportPay->listImportId();
-        if (!empty($date)) {
-            if ($payStatus == 0) {# chua thanh toan
-                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->get();
-            } elseif ($payStatus == 1) { # da thanh toan
-                return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->get();
+        # chon thong tin da xac nhan chua thanh toan cua 1 nhan vien
+        public function selectInfoOfStaffAndConfirmedAndUnpaid($staffId, $order = 'DESC')
+            #  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
+        {
+            $modelImportPay = new QcImportPay();
+            $listImportId = $modelImportPay->listImportId();
+            return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->whereNotIn('import_id', $listImportId)->orderBy('importDate', $order)->select('*');
+        }
+
+
+
+        # tong tien tat ca don hang mua vat tu cua 1 nhan vien
+        public function totalMoneyImportOfStaff($staffId, $date = null, $payStatus = 3)
+        {
+            $modelImportDetail = new QcImportDetail();
+            return $modelImportDetail->totalMoneyOfListImport($this->listIdOfStaff($staffId, $date, $payStatus));
+        }
+
+        public function listIdConfirmedAndAgreeOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
+        {
+            $modelImportPay = new QcImportPay();
+            if ($payStatus < 3) $listImportId = $modelImportPay->listImportId();
+            if (!empty($date)) {
+                if ($payStatus == 0) {# chua thanh toan
+                    return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->pluck('import_id');
+                } elseif ($payStatus == 1) { # da thanh toan
+                    return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->pluck('import_id');
+                } else {
+                    return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->pluck('import_id');
+                }
             } else {
-                return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->get();
-            }
-        } else {
-            if ($payStatus == 0) {
-                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->get();
-            } elseif ($payStatus == 1) {
-                return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->get();
-            } else {
-                return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->get();
+                if ($payStatus == 0) {
+                    return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->pluck('import_id');
+                } elseif ($payStatus == 1) {
+                    return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->pluck('import_id');
+                } else {
+                    return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->pluck('import_id');
+                }
             }
         }
-    }
-
-    public function totalMoneyOfListImportId($listImportId)
-    {
-        $modelImportDetail = new QcImportDetail();
-        return $modelImportDetail->totalMoneyOfListImport($listImportId);
-    }
-
-    public function totalMoneyImportConfirmedAndAgreeOfStaff($staffId, $date = null, $payStatus = 3)
-    {
-        return $this->totalMoneyOfListImportId($this->listIdConfirmedAndAgreeOfStaff($staffId, $date, $payStatus));
-    }
-
-    public function infoNoPayOfStaff($staffId = null, $date = null, $order = 'DESC')
-    {
-
-    }
-
-    //---------- nhân viên xác nhận -----------
-    public function staffConfirm()
-    {
-        return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'confirmStaff_id', 'staff_id');
-    }
 
 
-
-    // --------------- hình ảnh ------------
-    public function importImage()
-    {
-        return $this->hasMany('App\Models\Ad3d\ImportImage\QcImportImage', 'import_id', 'import_id');
-    }
-
-    # lay tat ca anh
-    public function importImageInfoOfImport($importId = null)
-    {
-        $modelImportImage = new QcImportImage();
-        return $modelImportImage->infoOfImport($this->checkIdNull($importId));
-    }
-
-    # lay 1 hinh anh - tat tinh nang cho up nhieu anh hoa don
-    public function getOneImportImage($importId = null)
-    {
-        $modelImportImage = new QcImportImage();
-        return $modelImportImage->oneInfoOfImport($this->checkIdNull($importId));
-    }
-
-
-
-    public function infoDetailOfImport($importId = null)
-    {
-        $modelImportDetail = new QcImportDetail();
-        return $modelImportDetail->infoOfImport($this->checkIdNull($importId));
-    }
-
-
-    //---------- chi tiết thanh toán -----------
-    public function importPay()
-    {
-        return $this->hasMany('App\Models\Ad3d\ImportPay\QcImportPay', 'import_id', 'import_id');
-    }
-
-    public function importPayInfo($importId = null)
-    {
-        $modelImportPay = new QcImportPay();
-        return $modelImportPay->infoOfImport($this->checkIdNull($importId));
-    }
-
-    //========= ========== ========== GET INFO ========== ========== ==========
-    public function getInfoHaveFilter($listStaffId, $searchCompanyFilterId, $dateFilter, $payStatus = 3, $orderBy = 'DESC')
-    {
-        $modelImportPay = new QcImportPay();
-        # $payStatus: 0 - chua thanh toan | 1 - da thanh toan | 2 - da thanh toan chua xac nhan | 3 - da thanh da xac nhan
-        if ($payStatus == 4) {
-            return QcImport::whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
-        } elseif ($payStatus == 3) {
-            return QcImport::whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->whereIn('import_id', $modelImportPay->listImportIdConfirmed())->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
-        } elseif ($payStatus == 2) {
-            return QcImport::whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->whereIn('import_id', $modelImportPay->listImportIdUnconfirmed())->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
-        } else {
-            return QcImport::where('payStatus', $payStatus)->whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
+        public function infoConfirmedAndAgreeOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
+        {
+            $modelImportPay = new QcImportPay();
+            if ($payStatus < 3) $listImportId = $modelImportPay->listImportId();
+            if (!empty($date)) {
+                if ($payStatus == 0) {# chua thanh toan
+                    return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->get();
+                } elseif ($payStatus == 1) { # da thanh toan
+                    return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->get();
+                } else {
+                    return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->where('importDate', 'like', "%$date%")->get();
+                }
+            } else {
+                if ($payStatus == 0) {
+                    return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->get();
+                } elseif ($payStatus == 1) {
+                    return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('confirmStatus', 1)->where('exactlyStatus', 1)->get();
+                } else {
+                    return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->get();
+                }
+            }
         }
-    }
-    */
+
+        public function totalMoneyOfListImportId($listImportId)
+        {
+            $modelImportDetail = new QcImportDetail();
+            return $modelImportDetail->totalMoneyOfListImport($listImportId);
+        }
+
+        public function totalMoneyImportConfirmedAndAgreeOfStaff($staffId, $date = null, $payStatus = 3)
+        {
+            return $this->totalMoneyOfListImportId($this->listIdConfirmedAndAgreeOfStaff($staffId, $date, $payStatus));
+        }
+
+        public function infoNoPayOfStaff($staffId = null, $date = null, $order = 'DESC')
+        {
+
+        }
+
+        //---------- nhân viên xác nhận -----------
+        public function staffConfirm()
+        {
+            return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'confirmStaff_id', 'staff_id');
+        }
+
+
+
+        // --------------- hình ảnh ------------
+        public function importImage()
+        {
+            return $this->hasMany('App\Models\Ad3d\ImportImage\QcImportImage', 'import_id', 'import_id');
+        }
+
+        # lay tat ca anh
+        public function importImageInfoOfImport($importId = null)
+        {
+            $modelImportImage = new QcImportImage();
+            return $modelImportImage->infoOfImport($this->checkIdNull($importId));
+        }
+
+        # lay 1 hinh anh - tat tinh nang cho up nhieu anh hoa don
+        public function getOneImportImage($importId = null)
+        {
+            $modelImportImage = new QcImportImage();
+            return $modelImportImage->oneInfoOfImport($this->checkIdNull($importId));
+        }
+
+
+
+        public function infoDetailOfImport($importId = null)
+        {
+            $modelImportDetail = new QcImportDetail();
+            return $modelImportDetail->infoOfImport($this->checkIdNull($importId));
+        }
+
+
+        //---------- chi tiết thanh toán -----------
+        public function importPay()
+        {
+            return $this->hasMany('App\Models\Ad3d\ImportPay\QcImportPay', 'import_id', 'import_id');
+        }
+
+        public function importPayInfo($importId = null)
+        {
+            $modelImportPay = new QcImportPay();
+            return $modelImportPay->infoOfImport($this->checkIdNull($importId));
+        }
+
+        //========= ========== ========== GET INFO ========== ========== ==========
+        public function getInfoHaveFilter($listStaffId, $searchCompanyFilterId, $dateFilter, $payStatus = 3, $orderBy = 'DESC')
+        {
+            $modelImportPay = new QcImportPay();
+            # $payStatus: 0 - chua thanh toan | 1 - da thanh toan | 2 - da thanh toan chua xac nhan | 3 - da thanh da xac nhan
+            if ($payStatus == 4) {
+                return QcImport::whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
+            } elseif ($payStatus == 3) {
+                return QcImport::whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->whereIn('import_id', $modelImportPay->listImportIdConfirmed())->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
+            } elseif ($payStatus == 2) {
+                return QcImport::whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->whereIn('import_id', $modelImportPay->listImportIdUnconfirmed())->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
+            } else {
+                return QcImport::where('payStatus', $payStatus)->whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
+            }
+        }
+        */
 
 }

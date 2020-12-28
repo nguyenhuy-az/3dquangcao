@@ -546,19 +546,20 @@ Route::group(['prefix' => 'ad3d'], function () {
         Route::group(['prefix' => 'staff'], function () {
             #---------- --------- da nghi --------- ---------
             #---------- --------- dang lam --------- ---------
-            Route::get('view/{staffId?}', ['as' => 'qc.ad3d.system.staff.view.get', 'uses' => 'Ad3d\System\Staff\StaffController@view']);
+            # thong ke
+            Route::get('statistical/{companyStaffWorkId?}', ['as' => 'qc.ad3d.system.staff.statistical.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatistical']);
 
-            //them moi
+            #them moi
             Route::get('add', ['as' => 'qc.ad3d.system.staff.add.get', 'uses' => 'Ad3d\System\Staff\StaffController@getAdd']);
             Route::get('add/department', ['as' => 'qc.ad3d.system.staff.department.add', 'uses' => 'Ad3d\System\Staff\StaffController@getAddDepartment']);
             Route::post('add', ['as' => 'qc.ad3d.system.staff.add.post', 'uses' => 'Ad3d\System\Staff\StaffController@postAdd']);
 
-            //mo cham cong
+            #mo cham cong
             Route::get('open-work/{companyStaffWorkId?}', ['as' => 'qc.ad3d.system.staff.open_work.get', 'uses' => 'Ad3d\System\Staff\StaffController@openWork']);
 
-            // phuc hoi lại vi tri làm viec
+            #phuc hoi lại vi tri làm viec
             Route::get('restore-work/{companyStaffWorkId?}', ['as' => 'qc.ad3d.system.staff.restore_work.get', 'uses' => 'Ad3d\System\Staff\StaffController@restoreWork']);
-            //sửa
+            # thong tin chi tiet
             Route::get('info/{staffId?}', ['as' => 'qc.ad3d.system.staff.info.get', 'uses' => 'Ad3d\System\Staff\StaffController@getInfo']);
             #thong tin co ban
             Route::get('edit/basic/{staffId?}', ['as' => 'qc.ad3d.system.staff.info_basic.edit.get', 'uses' => 'Ad3d\System\Staff\StaffController@getInfoBasicEdit']);
@@ -1098,8 +1099,12 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
                 Route::get('view/{transferId?}', ['as' => 'qc.work.money.transfer.transfer.view', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferView']);
                 # thong tin chuyen
                 Route::get('info/{transferId?}', ['as' => 'qc.work.money.transfer.transfer.info.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferInfo']);
-                # huy chuyen
+
+                # huy chuyen 1 chi tiet giao dich
                 Route::get('info-delete/{detailId?}', ['as' => 'qc.work.money.transfer.transfer.info.delete', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferDetailDelete']);
+
+                # huy 1 giao dich
+                Route::get('cancel/{transferId?}', ['as' => 'qc.work.money.transfer.transfer.cancel.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferCancel']);
 
                 Route::get('/{loginDay?}/{loginMonth?}/{loginYear?}', ['as' => 'qc.work.money.transfer.transfer.get', 'uses' => 'Work\Money\Transfer\MoneyTransferController@transferIndex']);
             });

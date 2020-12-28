@@ -37,7 +37,16 @@ $(document).ready(function () {
 
     });
 });
-// huy 1 thong tin chuyen tien
+// huy 1 giao dich  chuyen tien
+$(document).ready(function () {
+    $('.qc_work_money_transfer_wrap').on('click', '.qc_transfer_cancel', function () {
+        if (confirm('Sau khi hủy KHÔNG ĐƯỢC PHỤC HỔI, đồng ý hủy?')) {
+            qc_master_submit.ajaxHasReload($(this).data('href'), '', false);
+        }
+
+    });
+});
+// huy 1 thong tin chi tiet chuyen tien
 $(document).ready(function () {
     $('.qc_work_money_transfer_transfer_info').on('click', '.qc_transfer_detail_del', function () {
         qc_work_money_transfer.info.delete($(this).data('href'));

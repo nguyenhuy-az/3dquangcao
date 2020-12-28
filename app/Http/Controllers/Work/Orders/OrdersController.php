@@ -338,7 +338,7 @@ class OrdersController extends Controller
         }
     }
 
-    // them don hang thuc
+    # THEM DON HANG THUC
     public function postAdd(Request $request)
     {
         date_default_timezone_set('Asia/Ho_Chi_Minh');
@@ -389,6 +389,8 @@ class OrdersController extends Controller
         $cbMonthDelivery = $request->input('cbMonthDelivery');
         $cbYearDelivery = $request->input('cbYearDelivery');
         $txtDateDelivery = $hFunction->convertStringToDatetime("$cbMonthDelivery/$cbDayDelivery/$cbYearDelivery $cbHoursDelivery:$cbMinuteDelivery:00");
+        # trang thai thi cong
+        $txtConstructionStatus = $request->input('txtConstructionStatus');
         $oldCustomerId = null;
         $dataCustomer = null;
         if ($hFunction->formatDateToYMDHI($txtDateReceive) > $hFunction->formatDateToYMDHI($txtDateDelivery)) {
@@ -436,9 +438,11 @@ class OrdersController extends Controller
                         foreach ($productType as $key => $value) {
                             $warrantyTime = (int)$txtWarrantyTime[$key];
                             $dataProductType = $modelProductType->infoFromExactlyName($value);
+                            # loai san pham da ton tai
                             if ($hFunction->checkCount($dataProductType)) {
                                 $productTypeId = $dataProductType->typeId();
                             } else {
+                                # chu ton tai - them moi
                                 $unit = $txtUnit[$key];
                                 if ($modelProductType->insert($value, null, $unit, 0, 0, $warrantyTime)) {
                                     $productTypeId = $modelProductType->insertGetId();
@@ -453,8 +457,15 @@ class OrdersController extends Controller
                                 $amount = $txtAmount[$key];
                                 $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
                                 $description = $txtDescription[$key];
+                                $constructionStatus = $txtConstructionStatus[$key];
                                 $modelProduct = new QcProduct();
-                                $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, null, $warrantyTime);
+                                if ($modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, null, $warrantyTime)) {
+                                    $newProductId = $modelProduct->insertGetId();
+                                    # co thi cong
+                                    if ($constructionStatus) {
+                                        # phan cong tu dong
+                                    }
+                                }
                             }
                         }
                     }

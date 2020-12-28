@@ -366,7 +366,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                             @if($workAllocation->checkRoleMain())
                                                                                 <em class="qc-color-red">Làm chính</em>
                                                                             @else
-                                                                                <em style="color: brown;">Làm phụ</em>
+                                                                                <em style="color: grey;">Làm phụ</em>
                                                                             @endif
                                                                             @if($workAllocation->checkActivity())
                                                                                 <span> | </span>
@@ -389,11 +389,11 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                 </td>
                                                                 <td style="width: 200px;">
                                                                     <em>TG nhận:</em>
-                                                                    <span>
+                                                                    <span style="color: blue;">
                                                                         {!! $hFunction->convertDateDMYFromDatetime($workAllocation->allocationDate()) !!}
                                                                     </span>
                                                                     &nbsp;
-                                                                    <span>
+                                                                    <span style="color: blue;">
                                                                         {!! $hFunction->getTimeFromDate($workAllocation->allocationDate()) !!}
                                                                     </span>
                                                                     <br/>
@@ -453,7 +453,6 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                     @endif
                                                                 </td>
                                                             </tr>
-
                                                         @endforeach
                                                     @else
                                                         <tr>

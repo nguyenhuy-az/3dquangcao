@@ -5,6 +5,7 @@ namespace App\Models\Ad3d\Product;
 use App\Models\Ad3d\ProductCancel\QcProductCancel;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\ProductRepair\QcProductRepair;
+use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use Illuminate\Database\Eloquent\Model;
 
@@ -222,6 +223,7 @@ class QcProduct extends Model
         $modelProductDesign = new QcProductDesign();
         return $modelProductDesign->infoAllConstructionOfProduct($this->checkIdNull($productId));
     }
+
     #lay thiet ke thi cong dang ap dung
     public function productDesignInfoConstructionHasApply($productId = null)
     {
@@ -370,7 +372,7 @@ class QcProduct extends Model
     }
 
     # thong tin phan viec - KHONG BI HUY
-    public function workAllocationInfoNotCancelOfProduct($productId=null)
+    public function workAllocationInfoNotCancelOfProduct($productId = null)
     {
         $modelWorkAllocation = new QcWorkAllocation();
         return $modelWorkAllocation->infoNotCancelOfProduct($this->checkIdNull($productId));
@@ -592,5 +594,32 @@ class QcProduct extends Model
                 return false; // het bao hanh
             }
         }
+    }
+    // ======== ======== TRIEN KHAI THI CONG ======== ========
+    # phan cong tu dong
+    /*
+        goi sau khi them don hang -> them san pham
+    */
+    public function autoAllocation($productId)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+    }
+
+    # phan viec cho 1 NV
+    public function allocationForStaff($productId,$receiveStaffId, $allocationDate, $receiveDeadline, $noted, $allocationStaffId, $role, $constructionNumber, $productRepairId)
+    {
+        $hFunction = new \Hfunction();
+        $modelWorkAllocation = new QcWorkAllocation();
+        $modelStaffNotify = new QcStaffNotify();
+        # mac dinh co xac nha - phai nhan
+        $confirmStatus = $modelWorkAllocation->getDefaultHasConfirmStatus();
+        $confirmDate = $hFunction->carbonNow();
+        # mac dinh phai nhan - bat buoc
+        $receiveStatus = $modelWorkAllocation->getDefaultHasReceiveStatus();
+        if ($modelWorkAllocation->insert($allocationDate, $receiveStatus, $receiveDeadline, $confirmStatus, $confirmDate, $noted, $productId, $allocationStaffId, $receiveStaffId, $role, $constructionNumber, $productRepairId)) {
+            $newWorkAllocationId = $modelWorkAllocation->insertGetId();
+            $modelStaffNotify->insert(null, $receiveStaffId, 'Giao thi công sản phẩm', null, $newWorkAllocationId);
+        }
+
     }
 }

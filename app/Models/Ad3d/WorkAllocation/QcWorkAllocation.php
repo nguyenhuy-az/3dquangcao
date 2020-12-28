@@ -19,6 +19,77 @@ class QcWorkAllocation extends Model
 
     private $lastId;
 
+    # mac dinh co nhan
+    public function getDefaultHasReceiveStatus()
+    {
+        return 1;
+    }
+
+    # mac dinh khong nhan
+    public function getDefaultNotReceiveStatus()
+    {
+        return 0;
+    }
+
+    # mac dinh co xac nhan
+    public function getDefaultHasConfirmStatus()
+    {
+        return 1;
+    }
+
+    # mac dinh khong xac nhan
+    public function getDefaultNotConfirmStatus()
+    {
+        return 0;
+    }
+
+    # mac dinh lam chinh
+    public function getDefaultHasRole()
+    {
+        return 1;
+    }
+
+    # mac dinh lam phu
+    public function getDefaultNotRole()
+    {
+        return 0;
+    }
+
+    # mac dinh co huy
+    public function getDefaultHasCancelStatus()
+    {
+        return 1;
+    }
+
+    # mac dinh khong huy
+    public function getDefaultNotCancelStatus()
+    {
+        return 0;
+    }
+
+    # mac dinh co dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh thi cong la lan 1
+    public function getDefaultFirstConstructionNumber()
+    {
+        return 1;
+    }
+
+    # mac dinh sua san pham
+    public function getDefaultProductRepairId()
+    {
+        return null;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- them moi ----------
     public function insert($allocationDate, $receiveStatus, $receiveDeadline, $confirmStatus, $confirmDate, $noted, $productId, $allocationStaffId, $receiveStaffId, $role = 0, $constructionNumber = 1, $productRepairId = null)

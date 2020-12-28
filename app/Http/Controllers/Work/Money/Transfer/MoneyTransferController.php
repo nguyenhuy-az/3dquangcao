@@ -59,8 +59,10 @@ class MoneyTransferController extends Controller
         return view('work.money.transfer.transfer-view', compact('dataAccess', 'modelStaff', 'dataTransfer', 'dataTransferDetail'));
     }
 
+    # thong tin chuyen
     public function transferInfo($transferId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelTransfer = new QcTransfers();
         $dataAccess = [
@@ -68,8 +70,19 @@ class MoneyTransferController extends Controller
             'subObjectLabel' => 'Giao tiền'
         ];
         $dataTransfer = $modelTransfer->getInfo($transferId);
-        $dataTransferDetail = $dataTransfer->transfersDetailInfo();
-        return view('work.money.transfer.transfer-info', compact('modelStaff', 'dataAccess', 'modelStaff', 'dataTransfer', 'dataTransferDetail'));
+        if($hFunction->checkCount($dataTransfer)){
+            $dataTransferDetail = $dataTransfer->transfersDetailInfo();
+            return view('work.money.transfer.transfer-info', compact('modelStaff', 'dataAccess', 'modelStaff', 'dataTransfer', 'dataTransferDetail'));
+        }else{
+            return redirect()->back();
+        }
+    }
+
+    # huy 1 giao dich
+    public function transferCancel($transferId)
+    {
+        $modelTransfer = new QcTransfers();
+        return $modelTransfer->deleteTransfers($transferId);
     }
 
     #huy chi tiet chuyen thu 1 don hang

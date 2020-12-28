@@ -43,7 +43,6 @@ $indexHref = route('qc.ad3d.system.staff.get');
                 </div>
             </div>
             <div class="qc_ad3d_list_content row"
-                 data-href-view="{!! route('qc.ad3d.system.staff.view.get') !!}"
                  data-href-reset="{!! route('qc.ad3d.system.staff.reset_pass') !!}"
                  data-href-del="{!! route('qc.ad3d.system.staff.delete') !!}">
                 <div class="table-responsive">
@@ -109,6 +108,7 @@ $indexHref = route('qc.ad3d.system.staff.get');
                             @foreach($dataCompanyStaffWork as $companyStaffWork)
                                 <?php
                                 # thong tin nhan vien
+                                $companyStaffWorkId =  $companyStaffWork->workId();
                                 $staff = $companyStaffWork->staff;
                                 $staffId = $staff->staffId();
                                 $image = $staff->image();
@@ -123,29 +123,28 @@ $indexHref = route('qc.ad3d.system.staff.get');
                                     <td class="text-center">
                                         {!! $n_o += 1 !!}
                                     </td>
-                                    <td style="padding: 0;">
-                                        <div class="media" style="margin: 3px;">
+                                    <td >
+                                        <div class="media">
                                             <a class="pull-left"
                                                href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
                                                 <img class="media-object"
-                                                     style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $src !!}">
                                             </a>
 
                                             <div class="media-body">
-                                                <h5 class="media-heading">{!! $staff->fullName() !!}</h5>
-
+                                                <h6 class="media-heading">{!! $staff->fullName() !!}</h6>
                                                 @if($staff->checkRootStatus())
                                                     @if($dataStaffLogin->checkRootStatus())
-                                                        <a class="qc_edit qc-link" title="Quản lý thông tin"
+                                                        <a class="qc_edit qc-font-size-12 qc-link-green" title="Quản lý thông tin"
                                                            href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
-                                                            <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                                            Chi tiết
                                                         </a>
                                                     @endif
                                                 @else
-                                                    <a class="qc_edit qc-link" title="Quản lý thông tin"
+                                                    <a class="qc_edit qc-font-size-12 qc-link-green" title="Quản lý thông tin"
                                                        href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
-                                                        <i class="qc-font-size-14 glyphicon glyphicon-pencil"></i>
+                                                        Chi tiết
                                                     </a>
                                                     {{--<span>|</span>
                                                     <a class="qc_delete qc-link-red" href="#"
@@ -153,6 +152,11 @@ $indexHref = route('qc.ad3d.system.staff.get');
                                                         <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
                                                     </a>--}}
                                                 @endif
+                                                <span> | </span>
+                                                <a class="qc-font-size-12 qc-link-red" title="Thống kê"
+                                                   href="{!! route('qc.ad3d.system.staff.statistical.get', $companyStaffWorkId) !!}">
+                                                    Thống kê
+                                                </a>
                                             </div>
                                         </div>
                                     </td>

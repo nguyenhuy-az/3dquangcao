@@ -65,6 +65,7 @@ class OrderAllocationController extends Controller
         }
     }
 
+    # bao hoan than cong viec duoc phan cong
     public function postConstructionReportFinish(Request $request, $allocationId = null)
     {
         $hFunction = new \Hfunction();

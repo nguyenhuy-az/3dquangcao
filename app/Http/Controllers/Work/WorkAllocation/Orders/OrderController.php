@@ -209,15 +209,15 @@ class OrderController extends Controller
         $cbDeadlineYear = $request->input('cbDeadlineYear');
         $cbDeadlineHours = $request->input('cbDeadlineHours');
         $cbDeadlineMinute = $request->input('cbDeadlineMinute');
-        $dateAllocation = $hFunction->convertStringToDatetime("$cbAllocationMonth/$cbAllocationDay/$cbAllocationYear $cbAllocationHours:$cbAllocationMinute:00");
-        $dateDeadline = $hFunction->convertStringToDatetime("$cbDeadlineMonth/$cbDeadlineDay/$cbDeadlineYear $cbDeadlineHours:$cbDeadlineMinute:00");
+        $allocationDate = $hFunction->convertStringToDatetime("$cbAllocationMonth/$cbAllocationDay/$cbAllocationYear $cbAllocationHours:$cbAllocationMinute:00");
+        $deadlineDate = $hFunction->convertStringToDatetime("$cbDeadlineMonth/$cbDeadlineDay/$cbDeadlineYear $cbDeadlineHours:$cbDeadlineMinute:00");
         if (empty($cbReceiveStaffId)) {
             Session::put('notifyAdd', "Chọn nhân viên bàn giao");
         } else {
-            if ($dateDeadline > $dateAllocation) {
+            if ($deadlineDate > $allocationDate) {
                 # kiem tra nv co duoc ban giao cong trinh nay chua
                 if (!$modelOrdersAllocation->checkStaffReceiveOrder($cbReceiveStaffId, $orderId)) {
-                    if ($modelOrdersAllocation->insert($dateAllocation, 0, $dateDeadline, '', $orderId, $cbReceiveStaffId, $modelStaff->loginStaffId())) {
+                    if ($modelOrdersAllocation->insert($allocationDate, 0, $deadlineDate, '', $orderId, $cbReceiveStaffId, $modelStaff->loginStaffId())) {
                         $newOrderAllocationId = $modelOrdersAllocation->insertGetId();
                         $modelStaffNotify->insert(null, $cbReceiveStaffId, 'Giao phụ trách đơn hàng', $newOrderAllocationId, null);
                     }
@@ -290,7 +290,6 @@ class OrderController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        $modelStaffNotify = new QcStaffNotify();
         $modelProduct = new QcProduct();
         $modelWorkAllocation = new QcWorkAllocation();
 
@@ -308,10 +307,10 @@ class OrderController extends Controller
         $minuteDeadline = $request->input('cbMinuteDeadline');
         # thong tin nhan vien nhan
         $staffReceive = $request->input('staffReceive');
-        $dateAllocation = $hFunction->convertStringToDatetime("$monthAllocation/$dayAllocation/$yearAllocation $hoursAllocation:$minuteAllocation:00");
-        $dateDeadline = $hFunction->convertStringToDatetime("$monthDeadline/$dayDeadline/$yearDeadline $hoursDeadline:$minuteDeadline:00");
+        $allocationDate = $hFunction->convertStringToDatetime("$monthAllocation/$dayAllocation/$yearAllocation $hoursAllocation:$minuteAllocation:00");
+        $deadlineDate = $hFunction->convertStringToDatetime("$monthDeadline/$dayDeadline/$yearDeadline $hoursDeadline:$minuteDeadline:00");
         $errorStatus = false;
-        if ($dateDeadline <= $dateAllocation) {
+        if ($deadlineDate <= $allocationDate) {
             $errorContent = $errorContent . "- Thời gian kết thúc phải lớn hơn thời gian nhận <br/>";
             $errorStatus = true;
         } else {
@@ -322,10 +321,7 @@ class OrderController extends Controller
                     # chua duoc phan cong
                     if (!$modelProduct->checkStaffReceiveProduct($receiveStaffId, $productId)) {
                         #them giao viec
-                        if ($modelWorkAllocation->insert($dateAllocation, 0, $dateDeadline, 1, $hFunction->carbonNow(), $txtDescription, $productId, $loginStaffId, $receiveStaffId, $role)) {
-                            $newWorkAllocationId = $modelWorkAllocation->insertGetId();
-                            $modelStaffNotify->insert(null, $receiveStaffId, 'Giao thi công sản phẩm', null, $newWorkAllocationId);
-                        }
+                        $modelProduct->allocationForStaff($productId, $receiveStaffId, $allocationDate, $deadlineDate, $txtDescription, $loginStaffId, $role, $modelWorkAllocation->getDefaultFirstConstructionNumber(), $modelWorkAllocation->getDefaultProductRepairId());
                     }
                 }
             } else {
@@ -334,82 +330,6 @@ class OrderController extends Controller
             }
         }
         if ($errorStatus) {
-            Session::put('notifyAddAllocation', $errorContent);
-        }
-        return redirect()->back();
-    }
-
-    public function postAddWorkAllocation_v1(Request $request, $productId)
-    {
-        $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
-        $modelStaffNotify = new QcStaffNotify();
-        $modelProduct = new QcProduct();
-        $modelWorkAllocation = new QcWorkAllocation();
-
-        $loginStaffId = $modelStaff->loginStaffId();
-        # thong tin nhan vien nhan
-        $cbReceiveStaff = $request->input('cbReceiveStaff');
-
-        # thong tin phan viec
-        $cbRole = $request->input('cbRole');
-        $cbDayAllocation = $request->input('cbDayAllocation');
-        $cbMonthAllocation = $request->input('cbMonthAllocation');
-        $cbYearAllocation = $request->input('cbYearAllocation');
-        $cbHoursAllocation = $request->input('cbHoursAllocation');
-        $cbMinuteAllocation = $request->input('cbMinuteAllocation');
-
-        $cbDayDeadline = $request->input('cbDayDeadline');
-        $cbMonthDeadline = $request->input('cbMonthDeadline');
-        $cbYearDeadline = $request->input('cbYearDeadline');
-        $cbHoursDeadline = $request->input('cbHoursDeadline');
-        $cbMinuteDeadline = $request->input('cbMinuteDeadline');
-        $txtDescription = $request->input('txtDescription');
-
-        $errorStatus = true;
-        $errorContent = "Thông tin nhập bị lỗi: ";
-        # co chon nv
-        if ($hFunction->checkCount($cbReceiveStaff)) {
-            foreach ($cbReceiveStaff as $key => $value) {
-                $dateAllocation = $hFunction->convertStringToDatetime("$cbMonthAllocation[$key]/$cbDayAllocation[$key]/$cbYearAllocation[$key] $cbHoursAllocation[$key]:$cbMinuteAllocation[$key]:00");
-                $dateDeadline = $hFunction->convertStringToDatetime("$cbMonthDeadline[$key]/$cbDayDeadline[$key]/$cbYearDeadline[$key] $cbHoursDeadline[$key]:$cbMinuteDeadline[$key]:00");
-                if ($dateDeadline < $dateAllocation) {
-                    $errorContent = $errorContent . "Thời gian kết thúc phải lớn hơn thời gian nhận <br/>";
-                    $errorStatus = false;
-                }
-            }
-        }
-
-        //echo $errorContent;
-        if ($errorStatus) {
-            foreach ($cbReceiveStaff as $key => $value) {
-                $receiveStaffId = $value;
-                $dayAllocation = $cbDayAllocation[$key];
-                $monthAllocation = $cbMonthAllocation[$key];
-                $yearAllocation = $cbYearAllocation[$key];
-                $hoursAllocation = $cbHoursAllocation[$key];
-                $minuteAllocation = $cbMinuteAllocation[$key];
-                $dayDeadline = $cbDayDeadline[$key];
-                $monthDeadline = $cbMonthDeadline[$key];
-                $yearDeadline = $cbYearDeadline[$key];
-                $hoursDeadline = $cbHoursDeadline[$key];
-                $minuteDeadline = $cbMinuteDeadline[$key];
-                $role = $cbRole[$key];
-                $description = $txtDescription[$key];
-                $dateAllocation = $hFunction->convertStringToDatetime("$monthAllocation/$dayAllocation/$yearAllocation $hoursAllocation:$minuteAllocation:00");
-                $dateDeadline = $hFunction->convertStringToDatetime("$monthDeadline/$dayDeadline/$yearDeadline $hoursDeadline:$minuteDeadline:00");
-                if ($dateDeadline > $dateAllocation) {
-                    # chua duoc phan cong
-                    if (!$modelProduct->checkStaffReceiveProduct($receiveStaffId, $productId)) {
-                        #them giao viec
-                        if ($modelWorkAllocation->insert($dateAllocation, 0, $dateDeadline, 1, $hFunction->carbonNow(), $description, $productId, $loginStaffId, $receiveStaffId, $role)) {
-                            $newWorkAllocationId = $modelWorkAllocation->insertGetId();
-                            $modelStaffNotify->insert(null, $receiveStaffId, 'Giao thi công sản phẩm', null, $newWorkAllocationId);
-                        }
-                    }
-                }
-            }
-        } else {
             Session::put('notifyAddAllocation', $errorContent);
         }
         return redirect()->back();
@@ -446,6 +366,7 @@ class OrderController extends Controller
             return view('work.work-allocation.orders.product.view-design-image', compact('dataProductDesign'));
         }
     }
+
     #xem anh bao cao truc tiep
     public function viewReportImageDirect($imageId)
     {

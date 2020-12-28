@@ -33,14 +33,10 @@ $transfersId = $dataTransfer->transfersId();
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
-                            <th style="width: 20px;"></th>
-                            <th>Ngày thu tiền</th>
-                            <th>Mã ĐH</th>
-                            <th>Tên ĐH</th>
-                            <th class="text-right">
+                            <th style="width: 150px;">Ngày thu tiền</th>
+                            <th>
                                 Số tiền
                             </th>
-                            <th></th>
                         </tr>
                         @if($hFunction->checkCount($dataTransferDetail))
                             <?php
@@ -56,46 +52,45 @@ $transfersId = $dataTransfer->transfersId();
                                 $order = $orderPay->order;
                                 ?>
                                 <tr @if($n_o % 2) class="info" @endif>
-                                    <td class="text-center">
-                                        {!! $n_o = $n_o + 1 !!}
-                                    </td>
                                     <td>
-                                        {!! date('d/m/Y',strtotime($orderPay->datePay()))  !!}
-                                    </td>
-                                    <td>
-                                        <span class="qc-color-grey">{!! $order->orderCode() !!}</span>
-                                    </td>
-                                    <td>
-                                        <span>{!! $orderPay->order->name() !!}</span>
-                                    </td>
-                                    <td class="text-right" style="color: blue;">
-                                        {!! $hFunction->currencyFormat($money) !!}
-                                    </td>
-                                    <td class="text-center">
+                                        <b style="color: blue;">
+                                            {!! date('d/m/Y',strtotime($orderPay->datePay()))  !!}
+                                        </b>
                                         @if($confirmReceiveStatus)
-                                            <span>Đã xác nhận</span>
+                                            <br/>
+                                            <i class="glyphicon glyphicon-ok" style="font-size: 14px; color: green;"></i>
+                                            <em style="color: grey;">Đã xác nhận</em>
                                         @else
-                                            <a class="qc_transfer_detail_del qc-link-red"
+                                            <br/>
+                                            <a class="qc_transfer_detail_del qc-font-size-14 qc-link-red"
                                                data-href="{!! route('qc.work.money.transfer.transfer.info.delete',$detailId) !!}">
-                                                <i class="glyphicon glyphicon-trash" style="font-size: 16px;"></i>
+                                                HỦY
                                             </a>
                                         @endif
+                                    </td>
+                                    <td>
+                                        <b style="color: red;">
+                                            {!! $hFunction->currencyFormat($money) !!}
+                                        </b>
+                                        <br/>
+                                        <em style="color: grey;">ĐH: {!! $orderPay->order->name() !!}</em>
                                     </td>
                                 </tr>
                             @endforeach
                             <tr style="border-top: 2px solid brown;">
-                                <td class="text-right qc-color-red"
-                                    style="background-color: whitesmoke;" colspan="4">
+                                <td class="text-right"
+                                    style="background-color: whitesmoke;">
                                     Tổng chuyển
                                 </td>
-                                <td class="text-right qc-color-green">
-                                    <b>{!! $hFunction->currencyFormat($totalMoney) !!}</b>
+                                <td>
+                                    <b style="color: red; font-size: 1.5em;">
+                                        {!! $hFunction->currencyFormat($totalMoney) !!}
+                                    </b>
                                 </td>
-                                <td></td>
                             </tr>
                         @else
                             <tr>
-                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="6">
+                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="2">
                                     <em class="qc-color-red">Không có thông tin thu</em>
                                 </td>
                             </tr>

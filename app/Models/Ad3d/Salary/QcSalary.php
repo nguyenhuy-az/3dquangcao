@@ -426,17 +426,21 @@ class QcSalary extends Model
     public function totalSalaryUnpaid($salaryId = null)
     {
         $dataSalary = $this->getInfo($this->checkIdNull($salaryId));
+        # thong tin lam viec
+        $dataWork = $dataSalary->work;
         # tien ung
-        $totalBeforePay = $dataSalary->beforePay();
+        $totalMoneyConfirmedBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
         # tien phat
         $minusMoney = $dataSalary->minusMoney();
         # tong tien nhan trong thang
         $totalSalaryReceive = $dataSalary->totalSalaryReceive();
         # tong tien giu trong thang
         $totalKeepMoney = $dataSalary->totalKeepMoney();
+
+
         # tien da thanh toan
         $totalPaid = $dataSalary->totalPaid();
 
-        return $totalSalaryReceive + $totalBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
+        return $totalSalaryReceive - $totalMoneyConfirmedBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
     }
 }

@@ -101,7 +101,7 @@ class QcTransfers extends Model
     # kiem tra id
     public function checkNullId($id = null)
     {
-        return (empty($id)) ? $this->paymentId() : $id;
+        return (empty($id)) ? $this->transfersId() : $id;
     }
 
     // insert

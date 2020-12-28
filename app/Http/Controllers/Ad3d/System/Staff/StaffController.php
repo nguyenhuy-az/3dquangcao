@@ -57,14 +57,26 @@ class StaffController extends Controller
 
     }
 
-    public function view($staffId)
+    # thong tin thong ke
+    public function getStatistical($companyStaffWorkId)
     {
+        $hFunction = new \Hfunction();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaff = new QcStaff();
-        $dataStaff = $modelStaff->getInfo($staffId);
-        return view('ad3d.system.staff.view', compact('dataStaff'));
+        $dataCompanyStaffWork = $modelCompanyStaffWork->getInfo($companyStaffWorkId);
+        $dataAccess = [
+            'accessObject' => 'staff',
+            'subObject' => 'staffOn'
+        ];
+        if ($hFunction->checkCount($dataCompanyStaffWork)) {
+            $dataStaff = $dataCompanyStaffWork->staff;
+        } else {
+            $dataStaff = null;
+        }
+        return view('ad3d.system.staff.statistical', compact('modelStaff', 'dataCompanyStaffWork', 'dataStaff', 'dataAccess'));
     }
 
-    //form thêm
+    # them
     public function getAdd()
     {
         $modelStaff = new QcStaff();
@@ -276,7 +288,7 @@ class StaffController extends Controller
         $dataStaff = $modelStaff->getInfo($staffId);
         $dataRank = $modelRank->getInfo();
         if ($hFunction->checkCount($dataStaff)) {
-                return view('ad3d.system.staff.info-work-edit', compact('modelStaff', 'modelRank', 'dataStaff', 'dataDepartment', 'dataRank'));
+            return view('ad3d.system.staff.info-work-edit', compact('modelStaff', 'modelRank', 'dataStaff', 'dataDepartment', 'dataRank'));
         }
     }
 

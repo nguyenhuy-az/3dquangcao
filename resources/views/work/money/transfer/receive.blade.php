@@ -27,18 +27,14 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
-                                <th class="text-center" style="width: 20px;"></th>
-                                <th>Thời gian</th>
-                                <th>Người chuyển</th>
+                                <th style="width: 150px;">Ngày</th>
+                                <th style="width: 150px;">Số tiền</th>
+                                <th style="width: 170px;">Người chuyển</th>
                                 <th>Hình thức</th>
-                                <th>Ghi chú</th>
-                                <th class="text-center">Xác nhận</th>
-                                <th class="text-right">Số tiền</th>
                             </tr>
                             <tr>
-                                <td class="text-center"></td>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_money_transfer_filter_month col-sx-5 col-sm-5 col-md-5 col-lg-5" style="height: 34px; padding: 0;"
+                                    <select class="qc_work_money_transfer_filter_month col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefFilter !!}">
                                         @for($m = 1; $m <=12; $m++)
                                             <option value="{!! $m !!}" @if($monthFilter == $m) selected="selected" @endif>
@@ -46,7 +42,7 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_money_transfer_filter_year col-sx-7 col-sm-7 col-md-7 col-lg-7" style="height: 34px;padding: 0;"
+                                    <select class="qc_work_money_transfer_filter_year col-sx-6 col-sm-6 col-md-6 col-lg-6" style="height: 34px;padding: 0;"
                                             data-href="{!! $hrefFilter !!}">
                                         @for($y = 2017; $y <=2050; $y++)
                                             <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
@@ -57,8 +53,7 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                 </td>
                                 <td></td>
                                 <td></td>
-                                <td class="text-center"></td>
-                                <td class="text-right"></td>
+                                <td></td>
                             </tr>
                             @if($hFunction->checkCount($dataTransfer))
                                 <?php
@@ -75,60 +70,70 @@ $hrefFilter = route('qc.work.money.transfer.receive.get');
                                     $dataTransfersStaff = $transfer->transfersStaff;
                                     ?>
                                     <tr>
-                                        <td class="text-center">
-                                            {!! $n_o !!}
-                                        </td>
                                         <td>
+                                            <b style="color: blue;">
+                                                {!! date('d/m/Y',strtotime($transfer->transfersDate()))  !!}
+                                            </b>
+                                            <br/>
                                             <a class="qcMoneyReceiveView qc-link-green"
                                                data-href="{!! route('qc.work.money.transfer.receive.view',$transferId) !!}">
-                                                {!! date('d/m/Y',strtotime($transfer->transfersDate()))  !!}
-                                                &nbsp; <i class="glyphicon glyphicon-eye-open"></i>
+                                               CHI TIẾT
                                             </a>
                                         </td>
                                         <td>
-                                            <div class="media">
-                                                <a class="pull-left" href="#">
-                                                    <img class="media-object"
-                                                         style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
-                                                         src="{!! $dataTransfersStaff->pathAvatar($dataTransfersStaff->image()) !!}">
-                                                </a>
-                                                <div class="media-body">
-                                                    <h5 class="media-heading">{!! $dataTransfersStaff->fullName() !!}</h5>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            {!! $transfer->transferTypeName() !!}
-                                        </td>
-                                        <td>
-                                            {!! $transfer->reason() !!}
-                                        </td>
-                                        <td class="text-center qc-color-grey qc-padding-none">
+                                            <b style="color: red;">
+                                                {!! $hFunction->currencyFormat($transfer->money()) !!}
+                                            </b>
                                             @if($transfer->checkConfirmReceive())
-                                                <em>Đã xác nhận</em>
+                                                <br/>
+                                                <i class="qc-font-size-12 glyphicon glyphicon-ok" style="color: green;"></i>
+                                                <em style="color: grey;">Đã xác nhận</em>
                                             @else
-                                                <a class="qc_receive_confirm_act qc-link-red" data-money="{!! $transferMoney !!}"
+                                                <br/>
+                                                <a class="qc_receive_confirm_act qc-font-size-14 qc-link-green-bold" data-money="{!! $transferMoney !!}"
                                                    data-href="{!! route('qc.work.money.transfer.receive.confirm.get',$transferId) !!}">
                                                     XÁC NHẬN
                                                 </a>
                                             @endif
                                         </td>
-                                        <td class="text-right" style="color: blue;">
-                                            {!! $hFunction->currencyFormat($transfer->money()) !!}
+                                        <td>
+                                            <div class="media">
+                                                <a class="pull-left" href="#">
+                                                    <img class="media-object"
+                                                         style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                         src="{!! $dataTransfersStaff->pathAvatar($dataTransfersStaff->image()) !!}">
+                                                </a>
+                                                <div class="media-body">
+                                                    <h5 class="media-heading">{!! $dataTransfersStaff->lastName() !!}</h5>
+                                                </div>
+                                            </div>
                                         </td>
+                                        <td>
+                                            <b>
+                                                {!! $transfer->transferTypeName() !!}
+                                            </b>
+                                            <br/>
+                                            <em style="color: grey;">
+                                                {!! $transfer->reason() !!}
+                                            </em>
+                                        </td>
+
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-right qc-color-red"
-                                        style="background-color: whitesmoke;" colspan="6">
+                                    <td></td>
+                                    <td>
+                                        <b style="color: red; font-size: 1.5em;">
+                                            {!! $hFunction->currencyFormat($totalMoney)  !!}
+                                        </b>
                                     </td>
-                                    <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($totalMoney)  !!}
+                                    <td colspan="2">
+
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="8">
+                                    <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="4">
                                         <em class="qc-color-red">Không có thông tin nhận tiền</em>
                                     </td>
                                 </tr>

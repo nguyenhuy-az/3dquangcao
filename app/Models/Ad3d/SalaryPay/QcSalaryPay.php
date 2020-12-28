@@ -40,7 +40,10 @@ class QcSalaryPay extends Model
         $modelSalaryPay->staff_id = $staffPayId;
         $modelSalaryPay->created_at = $hFunction->createdAt();
         if ($modelSalaryPay->save()) {
-            $this->lastId = $modelSalaryPay->pay_id;
+            $newPayId = $modelSalaryPay->pay_id;
+            $this->lastId = $newPayId;
+            # xu ly sau khi thanh toan
+            $this->handleAfterPay($newPayId);
             return true;
         } else {
             return false;
@@ -56,7 +59,7 @@ class QcSalaryPay extends Model
         # khong con lam
         if (!$dataStaff->checkWorkStatus()) {
             # tu dong xac nhan da nhan luong
-            //$this->confirmReceiveOfSalary($payId);
+            $this->confirmReceiveOfSalary($payId);
         }
     }
 
@@ -144,12 +147,12 @@ class QcSalaryPay extends Model
     # thong tin thanh toan chua xac nhan cua 1 bang luong
     public function getInfoUnConfirmOfSalary($salaryId)
     {
-        return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', 0)->get();
+        return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', $this->getDefaultNotConfirm())->get();
     }
 
     public function confirmReceiveOfSalary($salaryId)
     {
-        return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', 0)->update(['confirmStatus' => 1]);
+        return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', $this->getDefaultNotConfirm())->update(['confirmStatus' => $this->getDefaultHasConfirm()]);
     }
 
 
@@ -165,12 +168,12 @@ class QcSalaryPay extends Model
 
     public function totalPayConfirmedOfSalary($salaryId)
     {
-        return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', 1)->sum('money');
+        return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', $this->getDefaultHasConfirm())->sum('money');
     }
 
     public function checkExistUnConfirmOfSalary($salaryId)
     {
-        return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', 0)->exists('*');
+        return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', $this->getDefaultNotConfirm())->exists('*');
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
@@ -234,7 +237,7 @@ class QcSalaryPay extends Model
 
     public function checkConfirmed($payId = null)
     {
-        return ($this->confirmStatus($payId) == 0) ? false : true;
+        return ($this->confirmStatus($payId) == $this->getDefaultNotConfirm()) ? false : true;
     }
 
     #============ =========== ============ STATISTICAL ============= =========== ==========
