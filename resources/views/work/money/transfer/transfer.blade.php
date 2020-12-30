@@ -32,14 +32,14 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
-                                <th style="width: 170px;">Ngày</th>
-                                <th style="width: 150px;">Số tiền</th>
+                                <th style="width: 140px;">Ngày</th>
+                                <th style="width: 120px;">Số tiền</th>
                                 <th style="width: 170px;">Người nhận</th>
                                 <th>Ghi chú</th>
                             </tr>
                             <tr>
                                 <td style="padding: 0;">
-                                    <select class="qc_work_money_transfer_filter_month col-sx-5 col-sm-5 col-md-5 col-lg-5"
+                                    <select class="qc_work_money_transfer_filter_month col-sx-6 col-sm-6 col-md-6 col-lg-6"
                                             style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefFilter !!}">
                                         @for($m = 1; $m <=12; $m++)
@@ -49,13 +49,13 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_money_transfer_filter_year col-sx-7 col-sm-7 col-md-7 col-lg-7"
+                                    <select class="qc_work_money_transfer_filter_year col-sx-6 col-sm-6 col-md-6 col-lg-6"
                                             style="height: 34px; padding: 0;"
                                             data-href="{!! $hrefFilter !!}">
                                         @for($y = 2017; $y <=2050; $y++)
                                             <option value="{!! $y !!}"
                                                     @if($yearFilter == $y) selected="selected" @endif>
-                                                Năm {!! $y !!}
+                                                {!! $y !!}
                                             </option>
                                         @endfor
                                     </select>
@@ -72,6 +72,7 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                 @foreach($dataTransfer as $transfer)
                                     <?php
                                     $transfersId = $transfer->transfersId();
+                                    $reason = $transfer->reason();
                                     $totalMoney = $totalMoney + $transfer->money();
                                     $confirmReceiveStatus = $transfer->checkConfirmReceive();
                                     # thong tin nguoi nhan
@@ -101,16 +102,18 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                                 </a>
                                             @endif
                                         </td>
-                                        <td >
+                                        <td>
                                             <b style="color: red;">{!! $hFunction->currencyFormat($transfer->money()) !!}</b>
                                             @if($confirmReceiveStatus)
                                                 <br/>
-                                                <i class="qc-font-size-12 glyphicon glyphicon-ok" style="color: green;"></i>
+                                                <i class="qc-font-size-12 glyphicon glyphicon-ok"
+                                                   style="color: green;"></i>
                                                 <em style="color: grey;">Đã xác nhận</em>
                                             @else
                                                 <br/>
-                                                <i class="qc-font-size-12 glyphicon glyphicon-ok" style="color: red;"></i>
-                                                <em style="color: grey;" >Chưa xác nhận</em>
+                                                <i class="qc-font-size-12 glyphicon glyphicon-ok"
+                                                   style="color: red;"></i>
+                                                <em style="color: grey;">Chưa xác nhận</em>
                                             @endif
                                         </td>
                                         <td>
@@ -127,7 +130,28 @@ $hrefFilter = route('qc.work.money.transfer.transfer.get');
                                             </div>
                                         </td>
                                         <td>
-                                            {!! $transfer->reason() !!}
+                                            <b>
+                                                {!! $transfer->transferTypeName() !!}
+                                            </b>
+                                            @if(!$hFunction->checkEmpty($reason))
+                                                <br/>
+                                                <em style="color: grey;">
+                                                    {!! $reason !!}
+                                                </em>
+                                            @endif
+                                            {{--thu tien don hang--}}
+                                            @if($transfer->checkTransferOrderPay())
+                                                <br/>
+                                                <?php
+                                                $dataTransferDetail = $transfer->transfersDetailInfo();
+                                                ?>
+                                                @if($hFunction->checkCount($dataTransferDetail))
+                                                    @foreach($dataTransferDetail as $transferDetail)
+                                                        <em style="color: grey;">   {!! $transferDetail->orderPay->order->name() !!}</em>
+                                                        <span>|</span>
+                                                    @endforeach
+                                                @endif
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

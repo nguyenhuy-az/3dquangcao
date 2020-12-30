@@ -42,6 +42,29 @@ class QcCompany extends Model
 
     private $lastId;
 
+    # mac dinh co hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong co hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh loai cty me
+    public function getDefaultParentCompanyType()
+    {
+        return 0;
+    }
+
+    # mac dinh loai cty con - chi nhanh
+    public function getDefaultBranchCompanyType()
+    {
+        return 1;
+    }
     //---------- CẬP NHẬT ĐỮ LIỆU CŨ BANG CODE ----------
     # cap nhat du lieu he thong
     public function checkAutoUpdateInfo()
@@ -173,7 +196,7 @@ class QcCompany extends Model
     public function updateCheckAutoDate()
     {
         $hFunction = new \Hfunction();
-        return QcCompany::where('action', 1)->update(
+        return QcCompany::where('action', $this->getDefaultHasAction())->update(
             [
                 'checkAutoDate' => $hFunction->carbonNow()
             ]
@@ -250,6 +273,7 @@ class QcCompany extends Model
         # mac dinh la 8h sang ngay hom sau
         return date('Y-m-d 08:00', strtotime($hFunction->datetimePlusDay($date, 1)));
     }
+
     #----------- cập nhật ----------
     public function updateInfo($companyId, $companyCode, $name, $nameCode, $address, $phone, $email, $website, $companyType, $logo)
     {
@@ -403,6 +427,7 @@ class QcCompany extends Model
         return $modelStaff->getInfoActivityByListStaffId($this->staffIdOfListCompanyId($listCompanyId));
     }
 
+    // ========= BO PHAN THU QUY =========
     # danh sach tat ca nhan vien BO PHAN THU QUY - dang hoat dong
     public function staffInfoActivityOfTreasurerDepartment($companyId)
     {
@@ -432,6 +457,37 @@ class QcCompany extends Model
         $modelRank = new QcRank();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->treasurerDepartmentId()], $modelRank->staffRankId());
+        return $modelStaff->getInfoByListStaffId($listStaffId);
+    }
+
+    // ========= BO PHAN THI CONG =========
+    # danh sach tat ca nhan vien BO PHAN THI CONG - dang hoat dong
+    public function staffInfoActivityOfConstructionDepartment($companyId)
+    {
+        $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()]);
+        return $modelStaff->getInfoByListStaffId($listStaffId);
+    }
+    # danh sach nhan vien BO PHAN THI CONG CAP QUA LY- dang hoat dong
+    public function staffInfoActivityOfConstructionManage($companyId)
+    {
+        $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()], $modelRank->manageRankId());
+        return $modelStaff->getInfoByListStaffId($listStaffId);
+    }
+    # danh sach nhan vien BO PHAN THI CONG CAP NHAN VIEN- dang hoat dong
+    public function staffInfoActivityOfConstructionStaff($companyId)
+    {
+        $modelStaff = new QcStaff();
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()], $modelRank->staffRankId());
         return $modelStaff->getInfoByListStaffId($listStaffId);
     }
 
@@ -523,12 +579,12 @@ class QcCompany extends Model
     # thong tin cty me
     public function infoRootActivity()
     {
-        return QcCompany::where('companyType', 0)->where('action', 1)->get();
+        return QcCompany::where('companyType', $this->getDefaultParentCompanyType())->where('action', $this->getDefaultHasAction())->get();
     }
 
     public function getRootActivityCompanyId()
     {
-        return QcCompany::where('companyType', 0)->where('action', 1)->pluck('company_id');
+        return QcCompany::where('companyType', $this->getDefaultParentCompanyType())->where('action', $this->getDefaultHasAction())->pluck('company_id');
     }
 
     # lay hotline cua bo phan thi cong cua cong ty
@@ -566,7 +622,7 @@ class QcCompany extends Model
 
     public function infoActivity()
     {
-        return QcCompany::where('action', 1)->get();
+        return QcCompany::where('action', $this->getDefaultHasAction())->get();
     }
 
     public function infoByListId($listId)
@@ -628,7 +684,7 @@ class QcCompany extends Model
     #-----------  INFO -------------
     public function listIdActivity()
     {
-        return QcCompany::where('action', 1)->pluck('company_id');
+        return QcCompany::where('action', $this->getDefaultHasAction())->pluck('company_id');
     }
 
     public function companyId()
@@ -717,7 +773,7 @@ class QcCompany extends Model
     # lay ma cty ty me (Tru so)
     public function rootCompanyId()
     {
-        return QcCompany::where('companyType', 0)->pluck('company_id');
+        return QcCompany::where('companyType', $this->getDefaultParentCompanyType())->pluck('company_id');
     }
 
     #============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
@@ -733,52 +789,47 @@ class QcCompany extends Model
     # kiem tra cty co phai cong ty me hay khong
     public function checkRoot($companyId = null)
     {
-        $hFunction = new \Hfunction();
-        return ($hFunction->checkEmpty($this->rootId($companyId))) ? true : false;
+        return ($this->companyType($companyId) == $this->getDefaultParentCompanyType()) ? true : false;
+    }
+
+    # kiem tra co phai la cty con
+    public function checkBranch($companyId = null)
+    {
+        return ($this->companyType($companyId) == $this->getDefaultBranchCompanyType()) ? true : false;
     }
 
     # ten cong ty da ton tai
     public function existName($name)
     {
-        $result = QcCompany::where('name', $name)->count();
-        return ($result > 0) ? true : false;
+        return QcCompany::where('name', $name)->exists();
     }
 
     # ma cty
     public function existCompanyCode($departmentCode)
     {
-        $result = QcCompany::where('companyCode', $departmentCode)->count();
-        return ($result > 0) ? true : false;
+        return QcCompany::where('companyCode', $departmentCode)->exists();
     }
 
     public function existEditName($companyId, $name)
     {
-        $result = QcCompany::where('name', $name)->where('company_id', '<>', $companyId)->count();
-        return ($result > 0) ? true : false;
+        return QcCompany::where('name', $name)->where('company_id', '<>', $companyId)->exists();
     }
 
     public function existEditCompanyCode($companyId, $companyCode)
     {
-        $result = QcCompany::where('companyCode', $companyCode)->where('company_id', '<>', $companyId)->count();
-        return ($result > 0) ? true : false;
+        return QcCompany::where('companyCode', $companyCode)->where('company_id', '<>', $companyId)->exists();
     }
 
     public function existEditNameCode($companyId, $nameCode)
     {
-        $result = QcCompany::where('nameCode', $nameCode)->where('company_id', '<>', $companyId)->count();
-        return ($result > 0) ? true : false;
+        return QcCompany::where('nameCode', $nameCode)->where('company_id', '<>', $companyId)->exists();
     }
 
     public function existEditCode($companyId, $code)
     {
-        $result = QcCompany::where('companyCode', $code)->where('company_id', '<>', $companyId)->count();
-        return ($result > 0) ? true : false;
+        return QcCompany::where('companyCode', $code)->where('company_id', '<>', $companyId)->exists();
     }
 
-    public function checkBranch($companyId = null)
-    {
-        return ($this->companyType($companyId) == 1) ? true : false;
-    }
 
     #============ =========== ============ BANG TIN HE THONG ============= =========== ==========
     # Thong tin cham cong trong ngay

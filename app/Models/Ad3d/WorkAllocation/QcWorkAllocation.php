@@ -90,6 +90,19 @@ class QcWorkAllocation extends Model
     {
         return null;
     }
+
+    # mac dinh ghi chu
+    public function getDefaultNoted()
+    {
+        return null;
+    }
+
+    # mac dinh nguoi phan cong
+    public function getDefaultAllocationStaffId()
+    {
+        return null; # null - phan cong tu dong
+    }
+
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- them moi ----------
     public function insert($allocationDate, $receiveStatus, $receiveDeadline, $confirmStatus, $confirmDate, $noted, $productId, $allocationStaffId, $receiveStaffId, $role = 0, $constructionNumber = 1, $productRepairId = null)

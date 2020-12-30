@@ -2,9 +2,11 @@
 
 namespace App\Models\Ad3d\Product;
 
+use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\ProductCancel\QcProductCancel;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\ProductRepair\QcProductRepair;
+use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +20,41 @@ class QcProduct extends Model
 
     private $lastId;
 
+    # mac dinh da ket thuc
+    public function getDefaultHasFinishStatus()
+    {
+        return 1;
+    }
+
+    # mac dinh da ket thuc
+    public function getDefaultNotFinishStatus()
+    {
+        return 0;
+    }
+
+    # mac dinh da huy
+    public function getDefaultHasCancel()
+    {
+        return 1;
+    }
+
+    # mac dinh khong huy
+    public function getDefaultNotCancel()
+    {
+        return 0;
+    }
+
+    # mac dinh co thi cong
+    public function getDefaultHasConstruction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong thi cong
+    public function getDefaultNotConstruction()
+    {
+        return 0;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- Insert ----------
     // insert
@@ -257,7 +294,7 @@ class QcProduct extends Model
 
     public function infoActivityOfOrder($orderId)
     {
-        return QcProduct::where('order_id', $orderId)->where('cancelStatus', 0)->get();
+        return QcProduct::where('order_id', $orderId)->where('cancelStatus', $this->getDefaultNotCancel())->get();
     }
 
     public function allInfoOfOrder($orderId)
@@ -272,14 +309,14 @@ class QcProduct extends Model
 
     public function cancelByOrder($orderId)
     {
-        return QcProduct::where('order_id', $orderId)->update(['cancelStatus' => 1]);
+        return QcProduct::where('order_id', $orderId)->update(['cancelStatus' => $this->getDefaultHasCancel()]);
     }
 
     public function totalPriceOfOrder($orderId)
     {
         $hFunction = new \Hfunction();
         $totalPrice = 0;
-        $dataProduct = QcProduct::where('order_id', $orderId)->where('cancelStatus', 0)->get();
+        $dataProduct = QcProduct::where('order_id', $orderId)->where('cancelStatus', $this->getDefaultNotCancel())->get();
         if ($hFunction->checkCount($dataProduct)) {
             foreach ($dataProduct as $key => $value) {
                 $totalPrice = $totalPrice + ($value['price'] * $value['amount']);
@@ -291,7 +328,7 @@ class QcProduct extends Model
     public function totalPriceOfListOrder($listOrderId)
     {
         $totalPrice = 0;
-        $dataProduct = QcProduct::whereIn('order_id', $listOrderId)->where('cancelStatus', 0)->get();
+        $dataProduct = QcProduct::whereIn('order_id', $listOrderId)->where('cancelStatus', $this->getDefaultNotCancel())->get();
         if (count($dataProduct) > 0) {
             foreach ($dataProduct as $key => $value) {
                 $totalPrice = $totalPrice + ($value['price'] * $value['amount']);
@@ -303,7 +340,7 @@ class QcProduct extends Model
     //kiem tra ton san pham khong hoan thanh cua don hang
     public function checkExistsProductNotFinishOfOrder($orderId)
     {
-        return QcProduct::where('order_id', $orderId)->where('finishStatus', 0)->exists();
+        return QcProduct::where('order_id', $orderId)->where('finishStatus',$this->getDefaultNotFinishStatus())->exists();
     }
 
     # danh sach ma san pham cua 1 don hang
@@ -561,12 +598,12 @@ class QcProduct extends Model
 
     public function checkFinishStatus($productId = null)
     {
-        return ($this->finishStatus($productId) == 0) ? false : true;
+        return ($this->finishStatus($productId) == $this->getDefaultNotFinishStatus()) ? false : true;
     }
 
     public function checkCancelStatus($productId = null)
     {
-        return ($this->cancelStatus($productId) == 0) ? false : true;
+        return ($this->cancelStatus($productId) == $this->getDefaultNotCancel()) ? false : true;
     }
 
     # kiem tra san pham co duoc bao hanh hay
@@ -602,11 +639,42 @@ class QcProduct extends Model
     */
     public function autoAllocation($productId)
     {
+        $hFunction = new \Hfunction();
+        $modelCompany = new QcCompany();
+        $modelStaff = new QcStaff();
         $modelWorkAllocation = new QcWorkAllocation();
+        # lay thong tin cong ty dang login
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        # lay danh sach nhan vien cua bo phan thi cong
+        # thong tin san pham
+        $dataProduct = $this->getInfo($productId);
+        if ($hFunction->checkCount($dataProduct)) {
+            # lay danh sach nhan vien thi cong cap nhan vien
+            $dataStaffReceive = $modelCompany->staffInfoActivityOfConstructionStaff($dataCompanyLogin->companyId());
+            # mac dinh ngay ban giao la thoi gian hien tai
+            $allocationDate = $hFunction->carbonNow();
+            # lay gia tri mac dinh
+            $note = $modelWorkAllocation->getDefaultNoted();
+            $allocationStaffId = $modelWorkAllocation->getDefaultAllocationStaffId();
+            $role = $modelWorkAllocation->getDefaultNotRole(); # mac dinh lam phu
+            $constructionNumber = $modelWorkAllocation->getDefaultFirstConstructionNumber();
+            $productRepairId = $modelWorkAllocation->getDefaultProductRepairId();
+            # thong tin don hang
+            $dataOrders = $dataProduct->order;
+            # ngay den hang cua don hang
+            $receiveDeadline = $dataOrders->deliveryDate();
+            if ($hFunction->checkCount($dataStaffReceive)) { # co nhan vien thi cong
+                foreach ($dataStaffReceive as $staffReceive) {
+                    $receiveStaffId = $staffReceive->staffId();
+                    $this->allocationForStaff($productId, $receiveStaffId, $allocationDate, $receiveDeadline, $note, $allocationStaffId, $role, $constructionNumber, $productRepairId);
+                }
+            }
+        }
+
     }
 
     # phan viec cho 1 NV
-    public function allocationForStaff($productId,$receiveStaffId, $allocationDate, $receiveDeadline, $noted, $allocationStaffId, $role, $constructionNumber, $productRepairId)
+    public function allocationForStaff($productId, $receiveStaffId, $allocationDate, $receiveDeadline, $noted, $allocationStaffId, $role, $constructionNumber, $productRepairId)
     {
         $hFunction = new \Hfunction();
         $modelWorkAllocation = new QcWorkAllocation();

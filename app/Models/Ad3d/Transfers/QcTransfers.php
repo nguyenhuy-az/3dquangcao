@@ -413,6 +413,7 @@ class QcTransfers extends Model
         return $this->hasMany('App\Models\Ad3d\TransfersDetail\QcTransfersDetail', 'transfers_id', 'transfers_id');
     }
 
+    # thong tin chi tiet chuyen
     public function transfersDetailInfo($transfersId = null)
     {
         $modelTransfersDetail = new QcTransfersDetail();

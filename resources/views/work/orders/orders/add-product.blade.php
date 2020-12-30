@@ -83,12 +83,11 @@ $mobileStatus = $mobile->isMobile();
                         </div>
                         <div class="col-xs-6 col-sm-12 col-md-2 col-lg-2">
                             <div class="form-group form-group-sm qc-margin-none">
-                                <label>
-                                    Bảo hành (Tháng):
-                                    <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
-                                </label>
-                                <input class="txtWarrantyTime form-control" type="text" name="txtWarrantyTime[]"
-                                       placeholder="Số tháng bảo hành" value="0">
+                                <label>Thi công:</label>
+                                <select class="cbConstructionStatus form-control" name="cbConstructionStatus[]" style="padding: 0; color: red;">
+                                    <option value="1">CÓ THI CÔNG</option>
+                                    <option value="0">KHÔNG THI CÔNG</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -99,10 +98,13 @@ $mobileStatus = $mobile->isMobile();
                             </div>
                         </div>
                         <div class="text-left col-xs-12 col-sm-12 col-md-2 col-lg-2">
-                            <div class="checkbox" style="color: red;">
+                            <div class="form-group form-group-sm qc-margin-none">
                                 <label>
-                                    <input type="checkbox" name="txtConstructionStatus[]" checked="checked" > CÓ THI CÔNG
+                                    Bảo hành (Tháng):
+                                    <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                 </label>
+                                <input class="txtWarrantyTime form-control" type="text" name="txtWarrantyTime[]"
+                                       placeholder="Số tháng bảo hành" value="0">
                             </div>
                         </div>
                     </div>

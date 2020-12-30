@@ -299,6 +299,7 @@ class OrdersController extends Controller
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $modelCustomer = new QcCustomer();
+        //$dataCompanyLogin = $modelStaff->companyLogin();
         $dataAccess = [
             'object' => 'orders',
             'subObjectLabel' => 'Sản phảm'
@@ -390,7 +391,7 @@ class OrdersController extends Controller
         $cbYearDelivery = $request->input('cbYearDelivery');
         $txtDateDelivery = $hFunction->convertStringToDatetime("$cbMonthDelivery/$cbDayDelivery/$cbYearDelivery $cbHoursDelivery:$cbMinuteDelivery:00");
         # trang thai thi cong
-        $txtConstructionStatus = $request->input('txtConstructionStatus');
+        $cbConstructionStatus = $request->input('cbConstructionStatus');
         $oldCustomerId = null;
         $dataCustomer = null;
         if ($hFunction->formatDateToYMDHI($txtDateReceive) > $hFunction->formatDateToYMDHI($txtDateDelivery)) {
@@ -457,13 +458,14 @@ class OrdersController extends Controller
                                 $amount = $txtAmount[$key];
                                 $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
                                 $description = $txtDescription[$key];
-                                $constructionStatus = $txtConstructionStatus[$key];
+                                $constructionStatus = $cbConstructionStatus[$key];
                                 $modelProduct = new QcProduct();
                                 if ($modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, null, $warrantyTime)) {
                                     $newProductId = $modelProduct->insertGetId();
                                     # co thi cong
-                                    if ($constructionStatus) {
+                                    if ($constructionStatus == $modelProduct->getDefaultHasConstruction()) {
                                         # phan cong tu dong
+                                        $modelProduct->autoAllocation($newProductId);
                                     }
                                 }
                             }
@@ -642,6 +644,8 @@ class OrdersController extends Controller
         $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
         $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
         $txtDepth = (empty($txtDepth)) ? 0 : $txtDepth;
+        # trang thai thi cong
+        $cbConstructionStatus = $request->input('cbConstructionStatus');
         if (count($productType) > 0) {
             # them san pham
             foreach ($productType as $key => $value) {
@@ -661,10 +665,18 @@ class OrdersController extends Controller
                     $height = $txtHeight[$key];
                     $depth = $txtDepth[$key];
                     $amount = $txtAmount[$key];
+                    $constructionStatus = $cbConstructionStatus[$key];
                     $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
                     $description = $txtDescription[$key];
                     $modelProduct = new QcProduct();
-                    $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId);
+                    if($modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId)){
+                        $newProductId = $modelProduct->insertGetId();
+                        # co thi cong
+                        if ($constructionStatus == $modelProduct->getDefaultHasConstruction()) {
+                            # phan cong tu dong
+                            $modelProduct->autoAllocation($newProductId);
+                        }
+                    }
                 }
             }
         }

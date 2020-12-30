@@ -353,23 +353,21 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                             $dataWorkAllocationReport = $workAllocation->workAllocationReportInfo($allocationId, 1);
                                                             ?>
                                                             <tr>
-                                                                <td style="width: 170px;">
+                                                                <td style="width: 170px; padding: 3px;">
                                                                     <div class="media">
                                                                         <a class="pull-left" href="#">
                                                                             <img class="media-object"
-                                                                                 style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                                                 style="background-color: white; width: 30px;height: 30px; border: 1px solid #d7d7d7;border-radius: 5px;"
                                                                                  src="{!! $src !!}">
                                                                         </a>
-
                                                                         <div class="media-body">
                                                                             <h5 class="media-heading">{!! ucwords($dataStaffReceive->lastName()) !!}</h5>
-                                                                            @if($workAllocation->checkRoleMain())
+                                                                           {{-- @if($workAllocation->checkRoleMain())
                                                                                 <em class="qc-color-red">Làm chính</em>
                                                                             @else
                                                                                 <em style="color: grey;">Làm phụ</em>
-                                                                            @endif
+                                                                            @endif--}}
                                                                             @if($workAllocation->checkActivity())
-                                                                                <span> | </span>
                                                                                 <a class="qc_cancel_allocation_product qc-link-red-bold"
                                                                                    title="Hủy giao việc"
                                                                                    data-href="{!! route('qc.work.work_allocation.order.product.work-allocation.cancel.get', $allocationId) !!}">
@@ -387,7 +385,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                         </div>
                                                                     </div>
                                                                 </td>
-                                                                <td style="width: 200px;">
+                                                                <td style="width: 200px; padding: 0;">
                                                                     <em>TG nhận:</em>
                                                                     <span style="color: blue;">
                                                                         {!! $hFunction->convertDateDMYFromDatetime($workAllocation->allocationDate()) !!}
@@ -410,7 +408,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                         <em style="color: grey;">{!! $workAllocationNote !!}</em>
                                                                     @endif
                                                                 </td>
-                                                                <td>
+                                                                <td style="padding: 0;">
                                                                     @if($hFunction->checkCount($dataWorkAllocationReport))
                                                                         @foreach($dataWorkAllocationReport as $workAllocationReport)
                                                                             <?php
