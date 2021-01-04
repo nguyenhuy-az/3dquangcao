@@ -71,7 +71,7 @@ $limitPay = 100;
                         </div>
                         <div class="text-center qc-padding-bot-20  qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                            <button type="button" class="qc_save btn btn-sm btn-primary">Hủy đơn hàng</button>
+                            <button type="button" class="qc_save btn btn-sm btn-primary">HỦY ĐƠN HÀNG</button>
                             <button type="button" class="qc_container_close btn btn-sm btn-default">Đóng</button>
                         </div>
                     </div>

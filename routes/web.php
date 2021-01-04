@@ -1014,8 +1014,8 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
         #thanh toan don hang
         Route::group(['prefix' => 'payment'], function () {
-            Route::get('/{orderId?}', ['as' => 'qc.work.orders.payment.get', 'uses' => 'Work\Orders\OrdersController@getPayment']);
-            Route::post('/{orderId?}', ['as' => 'qc.work.orders.payment.post', 'uses' => 'Work\Orders\OrdersController@postPayment']);
+            Route::get('add/{orderId?}', ['as' => 'qc.work.orders.payment.get', 'uses' => 'Work\Orders\OrdersController@getPayment']);
+            Route::post('add/{orderId?}', ['as' => 'qc.work.orders.payment.post', 'uses' => 'Work\Orders\OrdersController@postPayment']);
         });
 
         # huy don hang

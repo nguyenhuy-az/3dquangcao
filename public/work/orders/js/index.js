@@ -6,9 +6,13 @@ var qc_work_orders = {
         qc_main.url_replace(href);
     },
     payment: {
+        getPay: function (href) {
+            qc_master_submit.ajaxNotReload(href, '#qc_master', false);
+        },
         save: function (frm) {
             var txtMoney = $(frm).find("input[name='txtMoney']");
             var txtName = $(frm).find("input[name='txtName']");
+            var notify = $(frm).find('.qc_notify');
             if (qc_main.check.inputNull(txtMoney, 'Nhập số tiền thanh toán')) {
                 txtMoney.focus();
                 return false;
@@ -26,7 +30,7 @@ var qc_work_orders = {
                 txtName.focus();
                 return false;
             } else {
-                qc_master_submit.normalForm('.qc_frm_work_orders_payment');
+                qc_master_submit.ajaxFormHasReload(frm, notify, true);
             }
             //$('#qc_frm_work_orders_payment').submit();
             //qc_master_submit.normalForm('#qc_frm_work_orders_payment');
@@ -943,14 +947,17 @@ $(document).ready(function () {
 });
 /* ---------- THANH TOAN DON HANG -----------------*/
 $(document).ready(function () {
+    $('.qc_work_orders_wrap').on('click', '.qc_payment_get', function () {
+        qc_work_orders.payment.getPay($(this).data('href'));
+    });
     /*Thanh toan don hang*/
-    $('.qc_frm_work_orders_payment').on('click', '.qc_save', function () {
+    $('body').on('click', '.qc_frm_work_orders_payment .qc_save', function () {
         qc_work_orders.payment.save('.qc_frm_work_orders_payment');
     });
 });
 /* ---------- ------- THONG TIN THI CONG -------- ------ */
-$(document).ready(function(){
-    $('#qc_order_order_construction_wrap').on('click', '.qc_work_order_allocation_construction_report_image_view', function(){
+$(document).ready(function () {
+    $('#qc_order_order_construction_wrap').on('click', '.qc_work_order_allocation_construction_report_image_view', function () {
         qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
     });
 });

@@ -656,7 +656,7 @@ class QcProduct extends Model
             # lay gia tri mac dinh
             $note = $modelWorkAllocation->getDefaultNoted();
             $allocationStaffId = $modelWorkAllocation->getDefaultAllocationStaffId();
-            $role = $modelWorkAllocation->getDefaultNotRole(); # mac dinh lam phu
+            $role = $modelWorkAllocation->getDefaultHasRole(); # mac dinh lam chinh
             $constructionNumber = $modelWorkAllocation->getDefaultFirstConstructionNumber();
             $productRepairId = $modelWorkAllocation->getDefaultProductRepairId();
             # thong tin don hang

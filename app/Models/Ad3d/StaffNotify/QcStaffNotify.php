@@ -13,6 +13,59 @@ class QcStaffNotify extends Model
 
     private $lastId;
 
+    #mac dinh da xem
+    public function getDefaultHasView()
+    {
+        return 1;
+    }
+
+    #mac dinh chua xem
+    public function getDefaultNotView()
+    {
+        return 0;
+    }
+
+    # mac dinh ngay xem
+    public function getDefaultViewDate()
+    {
+        return null;
+    }
+
+    # mac dinh ma phan cong ban giao don hang
+    public function getDefaultOrderAllocationId()
+    {
+        return null;
+    }
+
+    #mac dinh phan cong lam san pham
+    public function getDefaultWorkAllocationId()
+    {
+        return null;
+    }
+
+    #mac dinh thuong
+    public function getDefaultBonusId()
+    {
+        return null;
+    }
+
+    #mac dinh ma phat
+    public function getDefaultMinusId()
+    {
+        return null;
+    }
+
+    # mac dinh bao ket thuc don hang
+    public function getDefaultOrderAllocationFinishId()
+    {
+        return null;
+    }
+
+    #mac dinh them don hang
+    public function getDefaultOrderId()
+    {
+        return null;
+    }
     #========== ========== ========== THEM - SUA ========== ========== ==========
     #---------- Them ----------
     public function insert($orderId = null, $staffId, $note = null, $orderAllocationId = null, $workAllocationId = null, $bonusId = null, $minusMoneyId = null, $orderAllocationFinishId = null)
@@ -41,10 +94,11 @@ class QcStaffNotify extends Model
         return (empty($notifyId)) ? $this->cancalId() : $notifyId;
     }
 
+    # cap nhat da xem thong bao
     public function updateViewed($notifyId)
     {
         $hFunction = new \Hfunction();
-        return QcStaffNotify::where('notify_id', $notifyId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+        return QcStaffNotify::where('notify_id', $notifyId)->update(['viewStatus' => $this->getDefaultHasView(), 'viewDate' => $hFunction->carbonNow()]);
     }
     #========== ========== ========== CAC MOI QUAN HE DU LIEU ========== ========== ==========
     //---------- NHAN VIEN -----------
@@ -81,32 +135,36 @@ class QcStaffNotify extends Model
     #tong thong them don hang moi cua 1 nhan vien
     public function totalNotifyNewOrderOfStaff($staffId)
     {
-        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('order_id')->where('viewStatus', 0)->count();
+        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('order_id')->where('viewStatus', $this->getDefaultNotView())->count();
     }
 
     #tong thong báo moi cua 1 nhan vien
     public function totalNewNotifyOfStaff($staffId)
     {
-        return QcStaffNotify::where('staff_id', $staffId)->where('viewStatus', 0)->count();
+        return QcStaffNotify::where('staff_id', $staffId)->where('viewStatus', $this->getDefaultNotView())->count();
     }
 
     #cap nhat nhan vien da xem ta ca thong bao ve don hang moi
     public function updateViewedAllNewOrderOfStaff($staffId)
     {
         $hFunction = new \Hfunction();
-        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('order_id')->where('viewStatus', 0)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('order_id')->where('viewStatus', $this->getDefaultNotView())->update(
+            [
+                'viewStatus' => $this->getDefaultHasView(),
+                'viewDate' => $hFunction->carbonNow()
+            ]);
     }
 
     public function updateViewedOfStaffAndOrder($staffId, $orderId)
     {
         $hFunction = new \Hfunction();
-        return QcStaffNotify::where('staff_id', $staffId)->where('order_id', $orderId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+        return QcStaffNotify::where('staff_id', $staffId)->where('order_id', $orderId)->update(['viewStatus' => $this->getDefaultHasView(), 'viewDate' => $hFunction->carbonNow()]);
     }
 
     public function checkViewedNewOrderOfStaff($staffId, $orderId)
     {
         if (QcStaffNotify::where('staff_id', $staffId)->where('order_id', $orderId)->exists()) {
-            return QcStaffNotify::where('staff_id', $staffId)->where('order_id', $orderId)->where('viewStatus', 1)->exists();
+            return QcStaffNotify::where('staff_id', $staffId)->where('order_id', $orderId)->where('viewStatus', $this->getDefaultHasView())->exists();
         } else {
             return true;
         }
@@ -115,13 +173,13 @@ class QcStaffNotify extends Model
     #tong thong bao bang giao don hang moi cua 1 nhan vien
     public function totalNotifyNewOrderAllocationOfStaff($staffId)
     {
-        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('orderAllocation_id')->where('viewStatus', 0)->count();
+        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('orderAllocation_id')->where('viewStatus', $this->getDefaultNotView())->count();
     }
 
     #tong thong bao phan viec moi cua 1 nhan vien
     public function totalNotifyNewWorkAllocationOfStaff($staffId)
     {
-        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('workAllocation_id')->where('viewStatus', 0)->count();
+        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('workAllocation_id')->where('viewStatus', $this->getDefaultNotView())->count();
     }
 
     //---------- DON HANG -----------
@@ -144,28 +202,36 @@ class QcStaffNotify extends Model
     #tong thong bao thuong moi cua 1 nhan vien
     public function totalNotifyNewBonusOfStaff($staffId)
     {
-        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('bonus_id')->where('viewStatus', 0)->count();
+        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('bonus_id')->where('viewStatus', $this->getDefaultNotView())->count();
     }
 
     #cap nhat nhan vien da xem ta ca thong bao ve thuong moi
     public function updateViewedAllOfStaffAndBonus($staffId)
     {
         $hFunction = new \Hfunction();
-        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('bonus_id')->where('viewStatus', 0)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('bonus_id')->where('viewStatus', $this->getDefaultNotView())->update(
+            [
+                'viewStatus' => $this->getDefaultHasView(),
+                'viewDate' => $hFunction->carbonNow()
+            ]);
     }
 
     #cap nhat da xem thong bao thuong
     public function updateViewedOfStaffAndBonus($staffId, $bonusId)
     {
         $hFunction = new \Hfunction();
-        return QcStaffNotify::where('staff_id', $staffId)->where('bonus_id', $bonusId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+        return QcStaffNotify::where('staff_id', $staffId)->where('bonus_id', $bonusId)->update(
+            [
+                'viewStatus' => $this->getDefaultHasView(),
+                'viewDate' => $hFunction->carbonNow()
+            ]);
     }
 
     # kien tra da xem thong bao ban giao don hang
     public function checkViewedBonusOfStaff($staffId, $bonusId)
     {
         if (QcStaffNotify::where('staff_id', $staffId)->where('bonus_id', $bonusId)->exists()) {
-            return QcStaffNotify::where('staff_id', $staffId)->where('bonus_id', $bonusId)->where('viewStatus', 1)->exists();
+            return QcStaffNotify::where('staff_id', $staffId)->where('bonus_id', $bonusId)->where('viewStatus', $this->getDefaultHasView())->exists();
         } else {
             return true;
         }
@@ -181,28 +247,32 @@ class QcStaffNotify extends Model
     #tong thong bao phat moi cua 1 nhan vien
     public function totalNotifyNewMinusMoneyOfStaff($staffId)
     {
-        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('minusMoney_id')->where('viewStatus', 0)->count();
+        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('minusMoney_id')->where('viewStatus', $this->getDefaultNotView())->count();
     }
 
     #cap nhat nhan vien da xem ta ca thong bao ve phat moi
     public function updateViewedAllOfStaffAndMinusMoney($staffId)
     {
         $hFunction = new \Hfunction();
-        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('minusMoney_id')->where('viewStatus', 0)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+        return QcStaffNotify::where('staff_id', $staffId)->whereNotNull('minusMoney_id')->where('viewStatus', $this->getDefaultNotView())->update(
+            [
+                'viewStatus' => $this->getDefaultHasView(),
+                'viewDate' => $hFunction->carbonNow()
+            ]);
     }
 
     #cap nhat da xem thong bao phat
     public function updateViewedOfStaffAndMinusMoney($staffId, $minusMoneyId)
     {
         $hFunction = new \Hfunction();
-        return QcStaffNotify::where('staff_id', $staffId)->where('minusMoney_id', $minusMoneyId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+        return QcStaffNotify::where('staff_id', $staffId)->where('minusMoney_id', $minusMoneyId)->update(['viewStatus' => $this->getDefaultHasView(), 'viewDate' => $hFunction->carbonNow()]);
     }
 
     # kien tra da xem thong bao phat tre don hang
     public function checkViewedMinusMoneyOfStaff($staffId, $minusMoneyId)
     {
         if (QcStaffNotify::where('staff_id', $staffId)->where('minusMoney_id', $minusMoneyId)->exists()) {
-            return QcStaffNotify::where('staff_id', $staffId)->where('minusMoney_id', $minusMoneyId)->where('viewStatus', 1)->exists();
+            return QcStaffNotify::where('staff_id', $staffId)->where('minusMoney_id', $minusMoneyId)->where('viewStatus', $this->getDefaultHasView())->exists();
         } else {
             return true;
         }
@@ -219,14 +289,14 @@ class QcStaffNotify extends Model
     public function updateViewedOfStaffAndOrderAllocation($staffId, $orderAllocationId)
     {
         $hFunction = new \Hfunction();
-        return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocation_id', $orderAllocationId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+        return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocation_id', $orderAllocationId)->update(['viewStatus' => $this->getDefaultHasView(), 'viewDate' => $hFunction->carbonNow()]);
     }
 
     # kien tra da xem thong bao ban giao don hang
     public function checkViewedOrderAllocationOfStaff($staffId, $orderAllocationId)
     {
         if (QcStaffNotify::where('staff_id', $staffId)->where('orderAllocation_id', $orderAllocationId)->exists()) {
-            return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocation_id', $orderAllocationId)->where('viewStatus', 1)->exists();
+            return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocation_id', $orderAllocationId)->where('viewStatus', $this->getDefaultHasView())->exists();
         } else {
             return true;
         }
@@ -243,14 +313,14 @@ class QcStaffNotify extends Model
     public function updateViewedOfStaffAndOrderAllocationFinish($staffId, $orderAllocationFinishId)
     {
         $hFunction = new \Hfunction();
-        return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocationFinish_id', $orderAllocationFinishId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+        return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocationFinish_id', $orderAllocationFinishId)->update(['viewStatus' => $this->getDefaultHasView(), 'viewDate' => $hFunction->carbonNow()]);
     }
 
     # kien tra da xem thong bao ban giao don hang
     public function checkViewedOrderAllocationFinishOfStaff($staffId, $orderAllocationFinishId)
     {
         if (QcStaffNotify::where('staff_id', $staffId)->where('orderAllocationFinish_id', $orderAllocationFinishId)->exists()) {
-            return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocationFinish_id', $orderAllocationFinishId)->where('viewStatus', 1)->exists();
+            return QcStaffNotify::where('staff_id', $staffId)->where('orderAllocationFinish_id', $orderAllocationFinishId)->where('viewStatus', $this->getDefaultHasView())->exists();
         } else {
             return true;
         }
@@ -267,14 +337,14 @@ class QcStaffNotify extends Model
     public function updateViewedOfStaffAndWorkAllocation($staffId, $workAllocationId)
     {
         $hFunction = new \Hfunction();
-        return QcStaffNotify::where('staff_id', $staffId)->where('workAllocation_id', $workAllocationId)->update(['viewStatus' => 1, 'viewDate' => $hFunction->carbonNow()]);
+        return QcStaffNotify::where('staff_id', $staffId)->where('workAllocation_id', $workAllocationId)->update(['viewStatus' => $this->getDefaultHasView(), 'viewDate' => $hFunction->carbonNow()]);
     }
 
     # kien tra da xem thong bao
     public function checkViewedWorkAllocationOfStaff($staffId, $workAllocationId)
     {
         if (QcStaffNotify::where('staff_id', $staffId)->where('workAllocation_id', $workAllocationId)->exists()) {
-            return QcStaffNotify::where('staff_id', $staffId)->where('workAllocation_id', $workAllocationId)->where('viewStatus', 1)->exists();
+            return QcStaffNotify::where('staff_id', $staffId)->where('workAllocation_id', $workAllocationId)->where('viewStatus', $this->getDefaultHasView())->exists();
         } else {
             return true;
         }
@@ -367,6 +437,6 @@ class QcStaffNotify extends Model
 
     public function checkNewInfo($notifyId = null)
     {
-        return ($this->viewStatus($notifyId) == 1) ? false : true;
+        return ($this->viewStatus($notifyId) == $this->getDefaultHasView()) ? false : true;
     }
 }

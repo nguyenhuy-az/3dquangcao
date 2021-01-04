@@ -16,6 +16,9 @@ $loginStaffId = $dataStaffLogin->staffId();
 $hrefIndex = route('qc.work.orders.get');
 $manageStatus = false;
 if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = true;
+# lay loai don hang mac dinh
+# don hang thuc
+
 ?>
 @extends('work.orders.orders.index')
 @section('titlePage')
@@ -189,7 +192,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                             Tất cả
                                         </option>--}}
                                         @for($y = 2017; $y <=2050; $y++)
-                                            <option value="{!! $yearFilter !!}"
+                                            <option value="{!! $y !!}"
                                                     @if($yearFilter == $y) selected="selected" @endif>
                                                 {!! $y !!}
                                             </option>
@@ -407,8 +410,8 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                                 @if(!$orders->checkFinishPayment())
                                                     {{--chu so hua hoac quan ly--}}
                                                     @if($ownerStatus || $manageStatus)
-                                                        <a class="qc-link-red" title="Thanh toán đơn hàng"
-                                                           href="{!! route('qc.work.orders.payment.get', $orderId) !!} ">
+                                                        <a class="qc_payment_get qc-link-red" title="Thanh toán đơn hàng"
+                                                           data-href="{!! route('qc.work.orders.payment.get', $orderId) !!} ">
                                                             THANH TOÁN <br/>
                                                             <img alt="icon"
                                                                  style="margin-bottom: 3px; border: 1px solid #d7d7d7; width: 30px; height: 30px;"

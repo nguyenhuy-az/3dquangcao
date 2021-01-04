@@ -291,14 +291,13 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                             @endfor
                                         </select>
                                     </td>
-                                    </td>
                                     <td colspan="2" style="border: 0;"></td>
                                 </tr>
                                 <tr style="background-color: black; color: yellow;">
                                     <th class="text-center" style="width:20px;">GIAO</th>
                                     <th>Nhân viên</th>
-                                    <th class="text-center">Vai trò</th>
-                                    <th style="border: 0;">Nội dung</th>
+                                 {{--   <th class="text-center">Vai trò</th>--}}
+                                    <th style="border: 0;" colspan="2">Ghi chú</th>
                                 </tr>
                                 @if($hFunction->checkCount($dataReceiveStaff))
                                     @foreach($dataReceiveStaff as $receiveStaff)
@@ -331,14 +330,14 @@ if ($hFunction->getCountFromData($dataProductDesign) == 0) {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td style="padding: 0;">
+                                                {{--<td style="padding: 0;">
                                                     <select class="cbRole text-center form-control"
                                                             name="cbRole_{!! $receiveStaffId !!}">
                                                         <option value="0">Làm phụ</option>
-                                                        <option value="1">Làm chính</option>
+                                                        --}}{{--<option value="1">Làm chính</option>--}}{{--
                                                     </select>
-                                                </td>
-                                                <td class="text-center" style="padding: 0;">
+                                                </td>--}}
+                                                <td class="text-center" style="padding: 0;" colspan="2">
                                                     <input type="text" class="txtDescription form-control"
                                                            name="txtDescription_{!! $receiveStaffId !!}"
                                                            placeholder="Chú thích công viêc" value="">

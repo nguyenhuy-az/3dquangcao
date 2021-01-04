@@ -266,23 +266,26 @@ class OrderController extends Controller
     public function getAddWorkAllocation($productId)
     {
         $modelStaff = new QcStaff();
+        $modelCompany = new QcCompany();
         $modelProduct = new QcProduct();
         $dataAccess = [
             'object' => 'workAllocationOrder',
             'subObjectLabel' => 'Triển khai thi công'
         ];
         $dataProduct = $modelProduct->getInfo($productId);
-        $dataReceiveStaff = $modelStaff->infoActivityConstructionOfCompany($dataProduct->order->companyId()); # lay NV so hua don hang
+        $dataReceiveStaff = $modelCompany->staffInfoActivityOfConstructionStaff($dataProduct->order->companyId()); # lay NV so hua don hang
         return view('work.work-allocation.orders.product.work-allocation', compact('modelStaff', 'dataAccess', 'dataProduct', 'dataReceiveStaff'));
     }
 
     # thêm nv làm sản phẩm
     public function getAddStaff($productId)
     {
+        $modelCompany = new QcCompany();
         $modelStaff = new QcStaff();
         $modelProduct = new QcProduct();
         $dataProduct = $modelProduct->getInfo($productId);
-        $dataReceiveStaff = $modelStaff->infoActivityConstructionOfCompany($dataProduct->order->companyId()); # lay NV so hua don hang
+        # nhan vien bo phan thi cong cap nv
+        $dataReceiveStaff = $modelCompany->staffInfoActivityOfConstructionStaff($dataProduct->order->companyId());
         return view('work.work-allocation.orders.product.work-allocation-staff', compact('modelStaff', 'dataReceiveStaff', 'dataProduct'));
     }
 
@@ -316,7 +319,7 @@ class OrderController extends Controller
         } else {
             if ($hFunction->checkCount($staffReceive)) { # co chon nguoi phan viec
                 foreach ($staffReceive as $key => $receiveStaffId) {
-                    $role = $request->input('cbRole_' . $receiveStaffId);
+                    $role = $modelWorkAllocation->getDefaultNotRole(); //$request->input('cbRole_' . $receiveStaffId);
                     $txtDescription = $request->input('txtDescription_' . $receiveStaffId);
                     # chua duoc phan cong
                     if (!$modelProduct->checkStaffReceiveProduct($receiveStaffId, $productId)) {

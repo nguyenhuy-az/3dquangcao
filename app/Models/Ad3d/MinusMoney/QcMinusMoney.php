@@ -57,31 +57,37 @@ class QcMinusMoney extends Model
     {
         return 0;
     }
+
     # mac dinh don hang duoc phan cong cong
     public function getDefaultOrderAllocation()
     {
         return null;
     }
+
     # mac dinh don hang thi cong
     public function getDefaultOrderConstruction()
     {
         return null;
     }
+
     # mac dinh tien phat
     public function getDefaultMoney()
     {
         return 0;# $money == 0 - phat theo so tien quy dinh san - $money > 0 - nhap truc tiep
     }
+
     # mac dinh hoat dong
     public function getDefaultHasAction()
     {
         return 1;
     }
+
     # mac dinh khong hoat dong
     public function getDefaultNotAction()
     {
         return 0;
     }
+
     #---------- Insert ----------
     /*
 `   $orderAllocationId : quan ly thi cong don hang
@@ -519,11 +525,13 @@ class QcMinusMoney extends Model
     {
         return ($this->action($minusId) == $this->getDefaultHasAction()) ? true : false;
     }
+
     # kiem tra co huy phat khong
     public function checkCancelStatus($minusId = null)
     {
         return ($this->cancelStatus($minusId) == $this->getDefaultHasCancelStatus()) ? true : false;
     }
+
     # kiem tra co ap dung
     public function checkEnableApply($minusId = null)
     {

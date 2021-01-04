@@ -423,7 +423,14 @@ class OrdersController extends Controller
                 $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
                 $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
                 $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
-                if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 1, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 1, null, 1)) {
+                # lay gia tri mac dinh
+                # dơn hang thuc
+                $provisionalStatus = $modelOrder->getDefaultRealOrder();
+                $staffKpiId = $modelOrder->getDefaultStaffKPIId();
+                $confirmStatus = $modelOrder->getDefaultHasConfirm();
+                $provisionalDate = $modelOrder->getDefaultProvisionalDate();
+                $provisionalConfirm = $modelOrder->getDefaultHasProvisionalConfirm();
+                if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, $staffKpiId, $confirmStatus, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, $provisionalStatus, $provisionalDate, $provisionalConfirm)) {
                     $orderId = $modelOrder->insertGetId();
                     # xet them vao ngan sach thuong
                     $modelOrder->checkAddBonusBudget($orderId);
@@ -618,7 +625,7 @@ class OrdersController extends Controller
             'object' => 'orders',
             'subObjectLabel' => 'Sản phảm'
         ];
-        $dataOrders = (empty($orderId)) ? $orderId : $modelOrder->getInfo($orderId);
+        $dataOrders = $modelOrder->getInfo($orderId);
         return view('work.orders.orders.edit-add-product', compact('modelStaff', 'dataAccess', 'dataOrders'));
     }
 
@@ -669,7 +676,7 @@ class OrdersController extends Controller
                     $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
                     $description = $txtDescription[$key];
                     $modelProduct = new QcProduct();
-                    if($modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId)){
+                    if ($modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId)) {
                         $newProductId = $modelProduct->insertGetId();
                         # co thi cong
                         if ($constructionStatus == $modelProduct->getDefaultHasConstruction()) {
@@ -719,8 +726,6 @@ class OrdersController extends Controller
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($dataOrder)) {
             return view('work.orders.orders.payment', compact('dataAccess', 'dataOrder'));
-        } else {
-            return redirect()->back();
         }
 
     }
@@ -738,12 +743,9 @@ class OrdersController extends Controller
         $txtMoney = $hFunction->convertCurrencyToInt($txtMoney);
         $dataOrder = $modelOrders->getInfo($orderId);
         if ($hFunction->checkCount($txtMoney) && $hFunction->checkCount($dataOrder)) {
-            if ($modelOrderPay->insert($txtMoney, $txtNote, $hFunction->carbonNow(), $orderId, $modelStaff->loginStaffId(), $txtName, $txtPhone)) {
-                return redirect()->route('qc.work.orders.print.get', $orderId);
-            }
+            $modelOrderPay->insert($txtMoney, $txtNote, $hFunction->carbonNow(), $orderId, $modelStaff->loginStaffId(), $txtName, $txtPhone);
         } else {
-            Session::put('notifyAdd', "Phải nhập số tiền thanh toán");
-            return redirect()->back();
+            return "Phải nhập số tiền thanh toán";
         }
     }
 
