@@ -110,6 +110,7 @@ $currentMonth = $hFunction->currentMonth();
                                     # cong them
                                     $benefitMoney = $salary->benefitMoney();
                                     $sumSalaryBenefit = $sumSalaryBenefit + $benefitMoney;
+                                    $benefitDescription = $salary->benefitDescription();
                                     # tien ung
                                     $beforePay = $salary->beforePay();
                                     $sumBeforePay = $sumBeforePay + $beforePay;
@@ -178,9 +179,6 @@ $currentMonth = $hFunction->currentMonth();
                                                             <br/>
                                                             <em style="color: grey;">Số TK:</em>
                                                             <span>{!! $bankAccount !!}</span>
-                                                            <br/>
-                                                            <em style="color: grey;">Ngân hàng:</em>
-                                                            <span>{!! $bankName !!}</span>
                                                         @else
                                                             <br/>
                                                             <em style="color: grey;">TK ngân hàng:</em>
@@ -232,6 +230,10 @@ $currentMonth = $hFunction->currentMonth();
                                                     <br/>
                                                     <i class="glyphicon glyphicon-ok" style="color: green;"></i>
                                                     <em style="color: grey;">Đã cộng thêm</em>
+                                                    @if(!$hFunction->checkEmpty($benefitDescription))
+                                                        <br/>
+                                                        <em style="color: grey;">- {!! $benefitDescription !!}</em>
+                                                    @endif
                                                 @else
                                                     @if(!$salary->checkPaid())
                                                         <br/>

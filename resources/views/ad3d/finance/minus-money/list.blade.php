@@ -194,7 +194,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                                 <br/>
                                                 <a class="qc_view_image qc-link"
                                                    data-href="{!! route('qc.ad3d.finance.minus_money.feedback.image.view',$feedbackId) !!}">
-                                                    <img style="height: 70px; border: 1px solid grey;" alt="..."
+                                                    <img style="max-width: 200px; max-height: 200px; border: 1px solid grey;" alt="..."
                                                          src="{!! $dataMinusMoneyFeedback->pathSmallImage($feedbackImage) !!}">
                                                 </a>
                                             @endif
@@ -237,7 +237,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                             <br/>
                                             <a class="qc_view_image qc-link"
                                                data-href="{!! route('qc.ad3d.finance.minus_money.image.view', $minusId) !!}">
-                                                <img style="height: 70px; border: 1px solid grey;" alt="..."
+                                                <img style="max-width: 200px; max-height: 200px; border: 1px solid grey;" alt="..."
                                                      src="{!! $minusMoney ->pathSmallImage($reasonImage) !!}">
                                             </a>
                                         @endif

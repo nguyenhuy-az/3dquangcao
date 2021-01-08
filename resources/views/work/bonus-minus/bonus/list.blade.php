@@ -74,12 +74,10 @@ $hrefIndex = route('qc.work.bonus.get');
                                     $cancelNote = $bonus->cancelNote();
                                     $cancelImage = $bonus->cancelImage();
                                     $cancelStatus = $bonus->checkCancelStatus();
-                                    if ($cancelStatus) {
-                                        $money = 0;
-                                    } else {
-                                        $money = $bonus->money();
+                                    $money = $bonus->money();
+                                    if (!$cancelStatus) {
+                                        $totalMoney = $totalMoney + $money;
                                     }
-                                    $totalMoney = $totalMoney + $money;
                                     $n_o = $n_o + 1;
                                     ?>
                                     <tr @if($n_o%2 == 0) class="info" @endif>
@@ -87,7 +85,8 @@ $hrefIndex = route('qc.work.bonus.get');
                                             <b style="color: blue;">{!! date('d/m/Y', strtotime($bonus->bonusDate())) !!} </b>
                                             <br/>
                                             @if($cancelStatus)
-                                                <em style="color: brown;">Đã hủy</em>
+                                                <i class="glyphicon glyphicon-ok qc-font-size-12" style="color: green;" ></i>
+                                                <em style="color: grey;">Đã hủy</em>
                                                 @if(!$hFunction->checkEmpty($cancelNote))
                                                     <br/>
                                                     <em style="color: grey;">- {!! $cancelNote !!}</em>
@@ -100,7 +99,7 @@ $hrefIndex = route('qc.work.bonus.get');
                                             @endif
                                         </td>
                                         <td>
-                                            <b style="color: red;">
+                                            <b style="@if(!$cancelStatus) color: red; @endif">
                                                 {!! $hFunction->currencyFormat($money) !!}
                                             </b>
                                             <br/>

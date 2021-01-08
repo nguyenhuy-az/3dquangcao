@@ -19,6 +19,7 @@ class ToolPackageAllocationController extends Controller
 {
     public function index()
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelTool = new QcTool();
         $dataAccess = [
@@ -33,6 +34,7 @@ class ToolPackageAllocationController extends Controller
         # lay danh sach cong cu dung de cap phat cho nv
         $dataTool = $modelTool->getInfoPrivate();
         return view('work.tool.tool-package-allocation.list', compact('dataAccess', 'modelStaff', 'dataTool', 'dataToolPackageAllocation'));
+
     }
 
     # bao cao do nghe bi hu hoac mat

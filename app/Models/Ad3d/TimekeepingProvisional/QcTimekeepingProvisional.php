@@ -225,13 +225,13 @@ class QcTimekeepingProvisional extends Model
                         if ($dataLicenseOffWork->checkAgreeStatus()) {
                             # them thong tin vao ngay cham cong
                             if (!$modelTimekeeping->existDateOfWork($workId, $checkDate)) {
-                                $timekeepingPermissionStatus = $modelTimekeeping->getDefaultNotPermissionStatus();
+                                $timekeepingPermissionStatus = $modelTimekeeping->getDefaultHasPermissionStatus();
                                 $modelTimekeeping->insert(null, null, $checkDate, $timekeepingAfternoonStatus, 0, 0, 0, null, 'Duyệt tự động - không chấm công', $timekeepingLateStatus, $timekeepingPermissionStatus, $timekeepingWorkStatus, null, $workId);
                             }
                         } else {
                             # khong duoc duyet
                             if (!$modelTimekeeping->existDateOfWork($workId, $checkDate)) {
-                                $timekeepingPermissionStatus = $modelTimekeeping->getDefaultHasPermissionStatus();
+                                $timekeepingPermissionStatus = $modelTimekeeping->getDefaultNotPermissionStatus();
                                 if ($modelTimekeeping->insert(null, null, $checkDate, $timekeepingAfternoonStatus, 0, 0, 0, null, 'Duyệt tự động - không chấm công', $timekeepingLateStatus, $timekeepingPermissionStatus, $timekeepingWorkStatus, null, $workId)) {
                                     if ($modelStaff->checkApplyRule($staffId)) { # ap dung noi quy
                                         if (!empty($punishIdOfOffWork)) {

@@ -17,7 +17,7 @@ $hFunction = new Hfunction();
            style="position: absolute; top: 0; right: 0;">
             <i class="glyphicon glyphicon-remove" style="font-size: 1.5em;"></i>
         </a>
-        <img class="qc-link qc-margin-top-10" onclick="qc_main.rotateImage(this);" style="max-width: 100%; min-height: 500px;" alt="..."
+        <img class="qc-link qc-margin-top-10" onclick="qc_main.rotateImage(this);" style="max-width: 100%;" alt="..."
              src="{!! $dataMinusMoneyFeedback->pathFullImage($dataMinusMoneyFeedback->image())  !!}">
     </div>
 @endsection

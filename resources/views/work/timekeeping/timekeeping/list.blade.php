@@ -223,14 +223,8 @@ if ($hFunction->checkCount($dataWork)) {
                                                 <br/>
                                                 <a class="qc_time_end_edit_action qc-font-size-14 qc-link-red-bold"
                                                    data-href="{!! route('qc.work.timekeeping.timeEnd.edit.get',$timekeepingProvisionalId) !!}">
-                                                    SỬA
+                                                    BÁO LẠI
                                                 </a>
-                                                @if($endCheckStatus)
-                                                    <br/>
-                                                    <a class="qc_timekeeping_provisional_image_action qc-font-size-14 qc-link-bold">
-                                                        BÁO CÁO TIẾN ĐỘ
-                                                    </a>
-                                                @endif
                                             @else
                                                 <br/>
                                                 <em style="color: grey;">Đã duyệt</em>
@@ -242,11 +236,7 @@ if ($hFunction->checkCount($dataWork)) {
                                             @if($endCheckStatus)
                                                 <a class="qc_time_end_action qc-link-red-bold"
                                                    style="font-size: 1.5em;">
-                                                    - BÁO GIỜ RA
-                                                </a>
-                                                <br/>
-                                                <a class="qc_timekeeping_provisional_image_action qc-link-bold qc-font-size-14">
-                                                    - BÁO CÁO TIẾN ĐỘ
+                                                    BÁO GIỜ RA
                                                 </a>
                                             @else
                                                 <em class="qc-color-red">Hết hạn báo</em>
@@ -254,11 +244,16 @@ if ($hFunction->checkCount($dataWork)) {
                                         @endif
 
                                     </td>
-                                    <td style="padding: 0;">
+                                    <td>
+                                        @if($modelCompany->checkWorkInMorningByCurrentTime() && $endCheckStatus)
+                                            <a class="qc_timekeeping_provisional_image_action qc-link-bold qc-font-size-14">
+                                                BÁO CÁO TIẾN ĐỘ
+                                            </a>
+                                        @endif
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInMorning))
                                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
                                                 @foreach($dataTimekeepingProvisionalImageInMorning as $timekeepingProvisionalImage)
-                                                    <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                    <div style="background-color: white; position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                         <a class="qc_work_allocation_report_image_view qc-link"
                                                            data-href="{!! route('qc.work.timekeeping_provisional.image.get', $timekeepingProvisionalImage->imageId()) !!}">
                                                             <img style="max-width: 100%; max-height: 100%;"
@@ -274,20 +269,26 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @endforeach
                                             </div>
                                         @else
-                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
-                                                <i class="glyphicon glyphicon-warning-sign" style="color: red; font-size: 1.5em;"></i>
-                                                <br/>
-                                                <em style="background-color: black; color: lime; padding: 3px;">
-                                                    Không có báo cáo SẼ KHÔNG DUYỆT
-                                                </em>
+                                            <div class="row">
+                                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                                                     style="padding-top: 10px;">
+                                                    <em style="color: grey; padding: 3px;">
+                                                        Không có báo cáo
+                                                    </em>
+                                                </div>
                                             </div>
                                         @endif
                                     </td>
-                                    <td style="padding:0;">
+                                    <td>
+                                        @if($modelCompany->checkWorkInAfternoonByCurrentTime() && $endCheckStatus)
+                                            <a class="qc_timekeeping_provisional_image_action qc-link-bold qc-font-size-14">
+                                                BÁO CÁO TIẾN ĐỘ
+                                            </a>
+                                        @endif
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInAfternoon))
                                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
                                                 @foreach($dataTimekeepingProvisionalImageInAfternoon as $timekeepingProvisionalImage)
-                                                    <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                    <div style="background: white; position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                         <a class="qc_work_allocation_report_image_view qc-link"
                                                            data-href="{!! route('qc.work.timekeeping_provisional.image.get', $timekeepingProvisionalImage->imageId()) !!}">
                                                             <img style="max-width: 100%; max-height: 100%;"
@@ -303,20 +304,26 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @endforeach
                                             </div>
                                         @else
-                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
-                                                <i class="glyphicon glyphicon-warning-sign" style="color: red; font-size: 1.5em;"></i>
-                                                <br/>
-                                                <em style="background-color: black; color: lime; padding: 3px;">
-                                                    Không có báo cáo SẼ KHÔNG DUYỆT
-                                                </em>
+                                            <div class="row">
+                                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                                                     style="padding-top: 10px;">
+                                                    <em style="color: grey; padding: 3px;">
+                                                        Không có báo cáo
+                                                    </em>
+                                                </div>
                                             </div>
                                         @endif
                                     </td>
-                                    <td style="padding: 0;">
+                                    <td>
+                                        @if($modelCompany->checkWorkInEveningByCurrentTime() && $endCheckStatus)
+                                            <a class="qc_timekeeping_provisional_image_action qc-link-bold qc-font-size-14">
+                                                BÁO CÁO TIẾN ĐỘ
+                                            </a>
+                                        @endif
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInEvening))
                                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
                                                 @foreach($dataTimekeepingProvisionalImageInEvening as $timekeepingProvisionalImage)
-                                                    <div style="position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                    <div style="background-color: white; position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                         <a class="qc_work_allocation_report_image_view qc-link"
                                                            data-href="{!! route('qc.work.timekeeping_provisional.image.get', $timekeepingProvisionalImage->imageId()) !!}">
                                                             <img style="max-width: 100%; max-height: 100%;"
@@ -332,13 +339,13 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @endforeach
                                             </div>
                                         @else
-                                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
-                                                <i class="glyphicon glyphicon-warning-sign" style="color: red; font-size: 1.5em;"></i>
-                                                <em style="color: red;">Nếu có tăng ca</em>
-                                                <br/>
-                                                <em style="background-color: black; color: lime; padding: 3px;">
-                                                    Không có báo cáo SẼ KHÔNG DUYỆT
-                                                </em>
+                                            <div class="row">
+                                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                                                     style="padding-top: 10px;">
+                                                    <em style="color: grey; padding: 3px;">
+                                                        Không có báo cáo
+                                                    </em>
+                                                </div>
                                             </div>
                                         @endif
                                     </td>

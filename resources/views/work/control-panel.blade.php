@@ -11,7 +11,6 @@ $hFunction = new Hfunction();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $dataCompanyLogin = $modelStaff->companyLogin();
 $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
-$dataCompanyLogin->checkAutoUpdateInfo();
 # thong tin yeu cau tang ca
 $dataOverTimeRequest = $dataCompanyStaffWorkLogin->overTimeRequestGetInfoActivity();
 ?>

@@ -100,18 +100,15 @@ $currentMonth = $hFunction->currentMonth();
                                                             {{--khong co hinh anh mơi - lay anh nhap kho --}}
                                                             <?php
                                                             $dataImport = $companyStore->import;
-                                                            $dataImportImage = $dataImport->importImageInfoOfImport();
+                                                            $importImage = $dataImport->image();
                                                             ?>
-                                                            @if($hFunction->checkCount($dataImportImage))
-                                                                @foreach($dataImportImage as $importImage)
-                                                                    <div style="position: relative; float: left; width: 70px;">
-                                                                        <a class="qc_view_image_get qc-link"
-                                                                           data-href="{!! route('qc.work.tool.check_store.import_image.get',$importImage->imageId()) !!}">
-                                                                            <img style="max-width: 100%; max-height: 100%;"
-                                                                                 src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                                                        </a>
-                                                                    </div>
-                                                                @endforeach
+                                                            @if(!$hFunction->checkEmpty($importImage))
+                                                                <div style="position: relative; float: left; width: 70px;">
+                                                                    <a class=" qc-link">
+                                                                        <img style="max-width: 100%; max-height: 100%;"
+                                                                             src="{!! $dataImport->pathFullImage($importImage) !!}">
+                                                                    </a>
+                                                                </div>
                                                             @endif
 
                                                         @endif
@@ -181,20 +178,16 @@ $currentMonth = $hFunction->currentMonth();
                                                             {{--khong co hinh anh mơi - lay anh nhap kho --}}
                                                             <?php
                                                             $dataImport = $companyStore->import;
-                                                            $dataImportImage = $dataImport->importImageInfoOfImport();
+                                                            $importImage = $dataImport->image();
                                                             ?>
-                                                            @if($hFunction->checkCount($dataImportImage))
-                                                                @foreach($dataImportImage as $importImage)
-                                                                    <div style="position: relative; float: left; width: 70px;">
-                                                                        <a class="qc_view_image_get qc-link"
-                                                                           data-href="{!! route('qc.work.tool.check_store.import_image.get',$importImage->imageId()) !!}">
-                                                                            <img style="max-width: 100%; max-height: 100%;"
-                                                                                 src="{!! $importImage->pathFullImage($importImage->name()) !!}">
-                                                                        </a>
-                                                                    </div>
-                                                                @endforeach
+                                                            @if(!$hFunction->checkEmpty($importImage))
+                                                                <div style="position: relative; float: left; width: 70px;">
+                                                                    <a class=" qc-link">
+                                                                        <img style="max-width: 100%; max-height: 100%;"
+                                                                             src="{!! $dataImport->pathFullImage($importImage) !!}">
+                                                                    </a>
+                                                                </div>
                                                             @endif
-
                                                         @endif
                                                     </td>
                                                     <td>

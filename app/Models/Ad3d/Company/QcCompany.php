@@ -65,84 +65,12 @@ class QcCompany extends Model
     {
         return 1;
     }
-    //---------- CẬP NHẬT ĐỮ LIỆU CŨ BANG CODE ----------
-    # cap nhat du lieu he thong
-    public function checkAutoUpdateInfo()
-    {
-        # cap nhat ngan sach thuong cua don hang - CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
-        ///$this->checkAutoUpdateBonusBudget();
-        # cap nhat bao cao hoan thanh san pham - CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
-        ///$this->checkFixProduct();
-    }
-
-    # cap nhat bao hoan thanh san phaC- CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
-    public function checkFixProduct()
-    {
-        $hFunction = new \Hfunction();
-        $modelProduct = new QcProduct();
-        $dataProduct = $modelProduct->getInfo();
-        if ($hFunction->checkCount($dataProduct)) {
-            foreach ($dataProduct as $product) {
-                $productId = $product->productId();
-                $finishReportStaffId = $product->finishReportStaffId();
-                $confirmStaffId = $product->confirmStaffId();
-                if ($confirmStaffId > 0 && !empty($finishReportStaffId)) {
-                    QcProduct::where('product_id', $productId)->update(['finishReportStaff_id' => $confirmStaffId]);
-                }
-            }
-        }
-
-    }
-
-    # cap nhat ngan sach thuong cua don hang - CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
-    public function checkAutoUpdateBonusBudget()
-    {
-        $hFunction = new \Hfunction();
-        $modelDepartment = new QcDepartment();
-        $modelBonusDepartment = new QcBonusDepartment();
-        $modelOrder = new QcOrder();
-        $modelOrderBonusBudget = new QcOrderBonusBudget();
-        # thong tin thuong cua bo phan thi cong cap quan ly dang hoat dong
-        $dataBonusDepartment = $modelBonusDepartment->getActivityInfo();
-        # lay danh sach don hang
-        $dataOrder = $modelOrder->get();
-        if ($hFunction->checkCount($dataOrder)) {
-            foreach ($dataOrder as $order) {
-                $orderId = $order->orderId();
-                foreach ($dataBonusDepartment as $bonusDepartment) {
-                    $bonusId = $bonusDepartment->bonusId();
-                    $departmentId = $bonusDepartment->departmentId();
-                    $rankId = $bonusDepartment->rankId();
-                    #chu ap dung moi them vao
-                    if (!$modelOrderBonusBudget->checkExistOrderAndBonusDepartment($orderId, $bonusId)) {
-                        $modelOrderBonusBudget->insert($orderId, $bonusId, $departmentId, $rankId);
-                    }
-                }
-            }
-        }
-    }
-
-    # cap nhat anh hoa don phien ban cu - CAP NHAT DU LIEU CHO PHIEN BAN CU, XONG ROI XOA
-    public function checkAutoUpdateImportImage()
-    {
-        $hFunction = new \Hfunction();
-        $modelImportImage = new QcImportImage();
-        $dataImportImage = $modelImportImage->getInfo();
-        if ($hFunction->checkCount($dataImportImage)) {
-            foreach ($dataImportImage as $importImage) {
-                $name = $importImage->name();
-                $importId = $importImage->importId();
-                if (empty($this->image($importId)[0])) {
-                    $this->updateImage($importId, $name);
-                }
-            }
-        }
-    }
-
     #========== ========== ========== TU DONG KIEM TRA DU LIEU CUA HE THONG ========== ========== ==========
     # KIEM TRA DU LIEU TU DONG
-    /*DUOC GOI TRONG FUNCTION "LOGIN" MODEL NHAN VIEN*/
-
+    /*
+     * DUOC GOI TRONG FUNCTION "LOGIN" MODEL NHAN VIEN
+     *
+     * */
     public function checkAutoInfo()
     {
         $hFunction = new \Hfunction();
@@ -272,6 +200,41 @@ class QcCompany extends Model
         $hFunction = new \Hfunction();
         # mac dinh la 8h sang ngay hom sau
         return date('Y-m-d 08:00', strtotime($hFunction->datetimePlusDay($date, 1)));
+    }
+
+    # kiem tra dang lam trong buoi sang
+    public function checkWorkInMorningByCurrentTime()
+    {
+        $hours = (int)date('H');
+        if (8 < $hours && $hours < 14) { # tinh vao buoi sang
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    # kiem tra dang lam trong buoi sang
+    public function checkWorkInAfternoonByCurrentTime()
+    {
+        $hours = (int)date('H');
+        if (14 < $hours && $hours < 18) { # tinh vao buoi chieu
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    # kiem tra dang lam trong buoi sang
+    public function checkWorkInEveningByCurrentTime()
+    {
+        $hours = (int)date('H');
+        if (1 < $hours && $hours < 4) { # tang ca den ngay hom sau
+            return true;
+        } elseif (18 < $hours) { # tinh vao buoi chieu
+            return true;
+        } else {
+            return false;
+        }
     }
 
     #----------- cập nhật ----------
@@ -470,6 +433,7 @@ class QcCompany extends Model
         $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()]);
         return $modelStaff->getInfoByListStaffId($listStaffId);
     }
+
     # danh sach nhan vien BO PHAN THI CONG CAP QUA LY- dang hoat dong
     public function staffInfoActivityOfConstructionManage($companyId)
     {
@@ -480,6 +444,7 @@ class QcCompany extends Model
         $listStaffId = $modelCompanyStaffWork->listStaffIdActivityOfCompanyIdAndListDepartmentId($companyId, [$modelDepartment->constructionDepartmentId()], $modelRank->manageRankId());
         return $modelStaff->getInfoByListStaffId($listStaffId);
     }
+
     # danh sach nhan vien BO PHAN THI CONG CAP NHAN VIEN- dang hoat dong
     public function staffInfoActivityOfConstructionStaff($companyId)
     {

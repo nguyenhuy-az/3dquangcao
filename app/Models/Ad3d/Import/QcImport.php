@@ -560,51 +560,58 @@ class QcImport extends Model
             }
         }
     }
-    /*
-        # thong tin tat ca hoa don mua vat tu cua 1 nhan vien
-        public function infoOfStaff($staffId, $date = null, $payStatus = null, $order = 'DESC')#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
-        {
-            $modelImportPay = new QcImportPay();
-            if ($payStatus < 3) $listImportId = $modelImportPay->listImportId();
-            if (!empty($date)) {
-                if ($payStatus == 0) {
-                    # chua thanh toan
-                    return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
-                } elseif ($payStatus == 1) {
-                    # da thanh toan
-                    return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
-                } else {
-                    return QcImport::where(['importStaff_id' => $staffId])->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
-                }
+    public function importImageInfoOfImport($importId = null)
+    {
+        return $this->image($this->checkIdNull($importId));
+    }
+    #=============================
+    # thong tin tat ca hoa don mua vat tu cua 1 nhan vien
+    public function infoOfStaff($staffId, $date = null, $payStatus = null, $order = 'DESC')#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
+    {
+        $modelImportPay = new QcImportPay();
+        if ($payStatus < 3) $listImportId = $modelImportPay->listImportId();
+        if (!empty($date)) {
+            if ($payStatus == 0) {
+                # chua thanh toan
+                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
+            } elseif ($payStatus == 1) {
+                # da thanh toan
+                return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
             } else {
-                if ($payStatus == 0) {
-                    return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->orderBy('importDate', $order)->get();
-                } elseif ($payStatus == 1) {
-                    return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->orderBy('importDate', $order)->get();
-                } else {
-                    return QcImport::where(['importStaff_id' => $staffId])->orderBy('importDate', $order)->get();
-                }
+                return QcImport::where(['importStaff_id' => $staffId])->where('importDate', 'like', "%$date%")->orderBy('importDate', $order)->get();
+            }
+        } else {
+            if ($payStatus == 0) {
+                return QcImport::where(['importStaff_id' => $staffId])->whereNotIn('import_id', $listImportId)->orderBy('importDate', $order)->get();
+            } elseif ($payStatus == 1) {
+                return QcImport::where(['importStaff_id' => $staffId])->whereIn('import_id', $listImportId)->orderBy('importDate', $order)->get();
+            } else {
+                return QcImport::where(['importStaff_id' => $staffId])->orderBy('importDate', $order)->get();
             }
         }
+    }
+    # chon thong tin da xac nhan chua thanh toan cua 1 nhan vien
+    public function selectInfoOfStaffAndConfirmedAndUnpaid($staffId, $order = 'DESC')
+        #  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
+    {
+        $modelImportPay = new QcImportPay();
+        $listImportId = $modelImportPay->listImportId();
+        return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->whereNotIn('import_id', $listImportId)->orderBy('importDate', $order)->select('*');
+    }
 
 
-        # chon thong tin da xac nhan chua thanh toan cua 1 nhan vien
-        public function selectInfoOfStaffAndConfirmedAndUnpaid($staffId, $order = 'DESC')
-            #  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
-        {
-            $modelImportPay = new QcImportPay();
-            $listImportId = $modelImportPay->listImportId();
-            return QcImport::where(['importStaff_id' => $staffId])->where('confirmStatus', 1)->where('exactlyStatus', 1)->whereNotIn('import_id', $listImportId)->orderBy('importDate', $order)->select('*');
-        }
+
+    # tong tien tat ca don hang mua vat tu cua 1 nhan vien
+    /*public function totalMoneyImportOfStaff($staffId, $date = null, $payStatus = 3)
+    {
+        $modelImportDetail = new QcImportDetail();
+        return $modelImportDetail->totalMoneyOfListImport($this->listIdOfStaff($staffId, $date, $payStatus));
+    }*/
 
 
 
-        # tong tien tat ca don hang mua vat tu cua 1 nhan vien
-        public function totalMoneyImportOfStaff($staffId, $date = null, $payStatus = 3)
-        {
-            $modelImportDetail = new QcImportDetail();
-            return $modelImportDetail->totalMoneyOfListImport($this->listIdOfStaff($staffId, $date, $payStatus));
-        }
+
+
 
         public function listIdConfirmedAndAgreeOfStaff($staffId, $date = null, $payStatus = 3)#  $payStatus: 3_tat ca/ 1_da thanh toan/0_chua thanh toan
         {
@@ -684,18 +691,14 @@ class QcImport extends Model
         }
 
         # lay tat ca anh
-        public function importImageInfoOfImport($importId = null)
-        {
-            $modelImportImage = new QcImportImage();
-            return $modelImportImage->infoOfImport($this->checkIdNull($importId));
-        }
+
 
         # lay 1 hinh anh - tat tinh nang cho up nhieu anh hoa don
-        public function getOneImportImage($importId = null)
+        /*public function getOneImportImage($importId = null)
         {
             $modelImportImage = new QcImportImage();
             return $modelImportImage->oneInfoOfImport($this->checkIdNull($importId));
-        }
+        }*/
 
 
 
@@ -707,10 +710,10 @@ class QcImport extends Model
 
 
         //---------- chi tiết thanh toán -----------
-        public function importPay()
+        /*public function importPay()
         {
             return $this->hasMany('App\Models\Ad3d\ImportPay\QcImportPay', 'import_id', 'import_id');
-        }
+        }*/
 
         public function importPayInfo($importId = null)
         {
@@ -733,6 +736,6 @@ class QcImport extends Model
                 return QcImport::where('payStatus', $payStatus)->whereIn('importStaff_id', $listStaffId)->whereIn('company_id', $searchCompanyFilterId)->where('importDate', 'like', "%$dateFilter%")->orderBy('importDate', $orderBy)->orderBy('import_id', 'DESC')->select('*');
             }
         }
-        */
+
 
 }

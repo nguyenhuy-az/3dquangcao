@@ -27,13 +27,14 @@ class TimekeepingController extends Controller
     public function index()
     {
         $hFunction = new \Hfunction();
+        $modelCompany = new QcCompany();
         $modelStaff = new QcStaff();
         $dataAccess = [
             'object' => 'timekeeping'
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
         $dateFilter = $hFunction->currentDate();
-        return view('work.timekeeping.timekeeping.list', compact('dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
+        return view('work.timekeeping.timekeeping.list', compact('modelCompany','dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
     }
 
     # xem anh bao cao

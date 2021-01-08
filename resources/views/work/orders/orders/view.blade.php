@@ -9,6 +9,12 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $orderId = $dataOrders->orderId();
+# tong tien chua giam gia
+$orderTotalPrice = $dataOrders->totalPrice();
+# tong tien giam
+$orderTotalDiscount = $dataOrders->totalMoneyDiscount();
+# tong tien VAT
+$orderTotalVat = $dataOrders->totalMoneyOfVat();
 # thong tin san pham
 $dataProduct = $dataOrders->productActivityOfOrder();
 #anh thiet ke tong quat
@@ -20,12 +26,12 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
 @endsection
 @section('qc_work_order_body')
     <div class="row">
-        <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
                 Về trang trước
             </a>
         </div>
-        <div class="qc-padding-top-20 qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <h3>{!! $dataOrders->name() !!}</h3>
             </div>
@@ -325,15 +331,15 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
             </div>
             <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12">
+                    <div class="qc-container-table-border-none col-xs-12 col-sm-12 col-dm-12 col-lg-12">
                         <div class="table-responsive">
                             <table class="table table-hover qc-margin-bot-none">
                                 <tr>
                                     <td>
-                                        <em class=" qc-color-grey">Tổng tiền:</em>
+                                        <em class=" qc-color-grey">Thành tiền:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b>{!! $hFunction->currencyFormat($dataOrders->totalPrice()) !!}</b>
+                                        <b>{!! $hFunction->currencyFormat($orderTotalPrice) !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -341,7 +347,17 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                         <em class="qc-color-grey">Giảm {!! $dataOrders->discount() !!}%:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b>- {!! $hFunction->currencyFormat($dataOrders->totalMoneyDiscount()) !!}</b>
+                                        <b>- {!! $hFunction->currencyFormat($orderTotalDiscount) !!}</b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <em class="qc-color-grey">Tổng tiền chưa VAT:</em>
+                                    </td>
+                                    <td class="text-right">
+                                        <b style="color: red;">
+                                            {!! $hFunction->currencyFormat($orderTotalPrice - $orderTotalDiscount) !!}
+                                        </b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -349,15 +365,15 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                         <em class="qc-color-grey">VAT {!! $dataOrders->vat() !!}%:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b>+ {!! $hFunction->currencyFormat($dataOrders->totalMoneyOfVat()) !!}</b>
+                                        <b>+ {!! $hFunction->currencyFormat($orderTotalVat) !!}</b>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr style="border-top: 1px solid grey;">
                                     <td>
-                                        <em class="qc-color-grey">Tổng thanh toán:</em>
+                                        <em class="qc-color-grey">Tổng tiền có VAT:</em>
                                     </td>
                                     <td class="text-right">
-                                        <b class="qc-color-red">{!! $hFunction->currencyFormat($dataOrders->totalMoneyPayment()) !!}</b>
+                                        <b class="qc-color-red">{!! $hFunction->currencyFormat($orderTotalPrice - $orderTotalDiscount + $orderTotalVat ) !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
@@ -368,7 +384,7 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                         <b>- {!! $hFunction->currencyFormat($dataOrders->totalPaid()) !!}</b>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr style="border-top: 1px solid grey;">
                                     <td>
                                         <em class="qc-color-grey">Còn lại:</em>
                                     </td>

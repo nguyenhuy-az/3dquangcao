@@ -16,6 +16,12 @@ $hotlineName = $dataStaffHotline->lastName();
 $hotlinePhone = $dataStaffHotline->phone();
 $hotlineName = (empty($hotlineName)) ? 'Null' : $hotlineName;
 $hotlinePhone = (empty($hotlinePhone)) ? 'Null' : $hotlinePhone;
+# tong tien chua giam gia
+$orderTotalPrice = $dataOrders->totalPrice();
+# tong tien giam
+$orderTotalDiscount = $dataOrders->totalMoneyDiscount();
+# tong tien VAT
+$orderTotalVat = $dataOrders->totalMoneyOfVat();
 // san pham cua don hang
 $dataProduct = $dataOrders->productActivityOfOrder();
 #anh thiet ke tong quat
@@ -138,10 +144,9 @@ $staffOrderPhone = (empty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
                             <div class="table-responsive">
                                 <table class="table table-bordered" style="margin-bottom: 0;">
                                     <tr style="background-color: whitesmoke;">
-                                        <th class="text-center" style="width: 20px;padding: 0;">
-                                            <i class="qc-font-size-16 glyphicon glyphicon-shopping-cart"></i>
+                                        <th style="width: 100px;">
+                                            Sản phẩm
                                         </th>
-                                        <th style="width: 100px;">Đặt hàng</th>
                                         <th>Thiết kế</th>
                                         <th>Ghi chú</th>
                                         <th class="text-center" style="width: 20px;">Dài (m)</th>
@@ -166,10 +171,10 @@ $staffOrderPhone = (empty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
                                             }
                                             ?>
                                             <tr>
-                                                <td class="text-center">
-                                                    {!! $n_o+=1  !!}
-                                                </td>
                                                 <td>
+                                                    <b>
+                                                        {!! $n_o+=1  !!})
+                                                    </b>
                                                     {!! $product->productType->name()  !!}
                                                 </td>
                                                 <td style="padding: 0; ">
@@ -236,7 +241,7 @@ $staffOrderPhone = (empty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
                                         </tr>--}}
                                     @else
                                         <tr>
-                                            <td class="text-center" colspan="10">
+                                            <td class="text-center" colspan="9">
                                                 <em class="qc-color-red">Không có sản phẩm</em>
                                             </td>
                                         </tr>
@@ -255,10 +260,10 @@ $staffOrderPhone = (empty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
                                 <table class="table table-hover qc-margin-bot-none">
                                     <tr>
                                         <td>
-                                            <em class=" qc-color-grey">Tổng tiền chưa VAT:</em>
+                                            <em class=" qc-color-grey">Thành tiền:</em>
                                         </td>
                                         <td class="text-right">
-                                            <b>{!! $hFunction->currencyFormat($dataOrders->totalPrice()) !!}</b>
+                                            <b>{!! $hFunction->currencyFormat($orderTotalPrice) !!}</b>
                                         </td>
                                     </tr>
                                     <tr>
@@ -266,7 +271,15 @@ $staffOrderPhone = (empty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
                                             <em class="qc-color-grey">Giảm {!! $dataOrders->discount() !!}%:</em>
                                         </td>
                                         <td class="text-right">
-                                            <b>- {!! $hFunction->currencyFormat($dataOrders->totalMoneyDiscount()) !!}</b>
+                                            <b>- {!! $hFunction->currencyFormat($orderTotalDiscount) !!}</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td >
+                                            <em class=" qc-color-grey">Tổng tiền chưa VAT:</em>
+                                        </td>
+                                        <td class="text-right">
+                                            <b style="color: red;">{!! $hFunction->currencyFormat($orderTotalPrice - $orderTotalDiscount ) !!}</b>
                                         </td>
                                     </tr>
                                     <tr>
@@ -274,7 +287,15 @@ $staffOrderPhone = (empty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
                                             <em class="qc-color-grey">VAT {!! $dataOrders->vat() !!}%:</em>
                                         </td>
                                         <td class="text-right">
-                                            <b>+ {!! $hFunction->currencyFormat($dataOrders->totalMoneyOfVat()) !!}</b>
+                                            <b>+ {!! $hFunction->currencyFormat($orderTotalVat) !!}</b>
+                                        </td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid grey;">
+                                        <td>
+                                            <em class=" qc-color-grey">Tổng tiền có VAT:</em>
+                                        </td>
+                                        <td class="text-right">
+                                            <b style="color: red;">{!! $hFunction->currencyFormat($orderTotalPrice - $orderTotalDiscount + $orderTotalVat ) !!}</b>
                                         </td>
                                     </tr>
                                     <?php
@@ -294,12 +315,12 @@ $staffOrderPhone = (empty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
 
                                                 </td>
                                                 <td class="text-right">
-                                                    <b class="qc-color-red">- {!! $hFunction->currencyFormat($orderPay->money()) !!}</b>
+                                                    <b>- {!! $hFunction->currencyFormat($orderPay->money()) !!}</b>
                                                 </td>
                                             </tr>
                                         @endforeach
                                     @endif
-                                    <tr>
+                                    <tr style="border-top: 1px solid grey;">
                                         <td>
                                             <em class="qc-color-grey">Còn lại chưa thanh toán:</em>
                                         </td>

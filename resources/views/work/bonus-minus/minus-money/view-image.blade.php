@@ -16,7 +16,7 @@ $hFunction = new Hfunction();
         <button type="button" class="qc_container_close btn btn-sm btn-primary qc-color-red"
                 style="position: absolute; top: 0; right: 0;">Đóng
         </button>
-        <img class="qc-link qc-margin-top-10" onclick="qc_main.rotateImage(this);" style="max-width: 100%; min-height: 500px;" alt="..."
+        <img class="qc-link qc-margin-top-10" onclick="qc_main.rotateImage(this);" style="max-width: 100%;" alt="..."
              src="{!! $dataMinusMoney->pathFullImage($dataMinusMoney->feedbackImage())  !!}">
     </div>
 @endsection

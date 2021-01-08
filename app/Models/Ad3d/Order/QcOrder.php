@@ -329,7 +329,7 @@ class QcOrder extends Model
     {
         $orderId = (empty($orderId)) ? $this->orderId() : $orderId;
         # giam gia 100%
-        if ($this->discount($orderId)[0] == 100) {
+        if ($this->discount($orderId) == 100) {
             return $this->finishPayment($orderId);
         } else {
             $totalPaid = $this->totalPaid($orderId);
@@ -698,7 +698,7 @@ class QcOrder extends Model
                 $listOrderId = QcOrder::where('name', 'like', "%$keyWord%")->pluck('order_id');
             }
         }
-       # da xac nhan
+        # da xac nhan
         $hasConfirm = $this->getDefaultHasConfirm();
         # khong huy
         $notCancel = $this->getDefaultNotCancel();
@@ -986,10 +986,10 @@ class QcOrder extends Model
     public function checkLate($orderId)
     {
         $currentDate = date('Y-m-d');
-        $deliveryDate = $this->deliveryDate($orderId)[0];
+        $deliveryDate = $this->deliveryDate($orderId);
         $lateStatus = false;
         if ($this->checkFinishStatus($orderId)) { # don hang da ket thuc
-            $finishDate = $this->finishDate($orderId)[0]; # ngay bao ket thuc thi cong
+            $finishDate = $this->finishDate($orderId); # ngay bao ket thuc thi cong
             if ($finishDate > $deliveryDate) $lateStatus = true;
         } else { # don hang chua ket thuc
             if ($deliveryDate < $currentDate) $lateStatus = true;
@@ -1174,15 +1174,17 @@ class QcOrder extends Model
     #tien Vat cua don hang - tinh sau khi giam gia
     public function totalMoneyOfVat($orderId = null)
     {
-        $orderId = $this->checkIdNull($orderId);
-        return ($this->totalPrice($orderId) - $this->totalMoneyDiscount($orderId)) * $this->vat($orderId)[0] / 100;
+        $vat = $this->vat($orderId);
+        $totalPrice = $this->totalPrice($orderId);
+        $totalDiscount = $this->totalMoneyDiscount($orderId);
+        return ($totalPrice - $totalDiscount) * $vat / 100;
     }
 
     # tong tien giam gia cua don hang
     public function totalMoneyDiscount($orderId = null)
     {
         $orderId = $this->checkIdNull($orderId);
-        return ($this->totalPrice($orderId) * $this->discount($orderId)[0]) / 100;
+        return ($this->totalPrice($orderId) * $this->discount($orderId)) / 100;
     }
 
     public function totalMoneyPayment($orderId = null)
@@ -1284,7 +1286,7 @@ class QcOrder extends Model
     # lay tat ca don hang khong huy
     public function infoNoCancelFromSuggestionName($name)
     {
-        return QcOrder::where('name', 'like', "%$name%")->where('cancelStatus',$this->getDefaultNotCancel())->get();
+        return QcOrder::where('name', 'like', "%$name%")->where('cancelStatus', $this->getDefaultNotCancel())->get();
     }
 
 
@@ -1326,7 +1328,7 @@ class QcOrder extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcOrder::where('order_id', $objectId)->pluck($column);
+            return QcOrder::where('order_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -1503,14 +1505,14 @@ class QcOrder extends Model
     // kiem tra don hang bao gia
     public function checkProvisionalOfOrder($orderId = null)
     {
-        return ($this->provisionalStatus($orderId)[0] == 0) ? true : false;
+        return ($this->provisionalStatus($orderId) == $this->getDefaultProvisionalOrder()) ? true : false;
     }
 
 
     // kiem tra don hang da dat hàng tu bao gia
     public function checkProvisionConfirm($orderId = null)
     {
-        if ($this->checkProvisionalOfOrder($orderId) && $this->provisionalConfirm($orderId)[0] == $this->getDefaultHasProvisionalConfirm()) {
+        if ($this->checkProvisionalOfOrder($orderId) && $this->provisionalConfirm($orderId) == $this->getDefaultHasProvisionalConfirm()) {
             return true;
         } else {
             return false;
@@ -1520,7 +1522,7 @@ class QcOrder extends Model
     // kiem tra don hang bao gia chua xac nhan (chua dat hang)
     public function checkProvisionUnConfirmed($orderId)
     {
-        if ($this->checkProvisionalOfOrder($orderId) && $this->provisionalConfirm($orderId)[0] == $this->getDefaultNotProvisionalConfirm()) {
+        if ($this->checkProvisionalOfOrder($orderId) && $this->provisionalConfirm($orderId) == $this->getDefaultNotProvisionalConfirm()) {
             return true;
         } else {
             return false;

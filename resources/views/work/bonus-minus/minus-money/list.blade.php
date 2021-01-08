@@ -73,12 +73,10 @@ $checkTime = date('m-Y');
                                     $workAllocationId = $minusMoney->workAllocationId();
                                     $reason = $minusMoney->reason();
                                     $cancelStatus = $minusMoney->checkCancelStatus();
-                                    if ($cancelStatus) {
-                                        $money = 0;
-                                    } else {
-                                        $money = $minusMoney->money();
+                                    $money = $minusMoney->money();
+                                    if (!$cancelStatus) {
+                                        $totalMoney = $totalMoney + $money;
                                     }
-                                    $totalMoney = $totalMoney + $money;
                                     # trang thai co hieu luc the / sua /xoa cua phan hoi
                                     $actionStatus = ($checkTime == date('m-Y', strtotime($dateMinus))) ? true : false;
                                     # thong tin phan
@@ -88,17 +86,19 @@ $checkTime = date('m-Y');
                                     <tr @if($n_o%2) class="info" @endif>
                                         <td>
                                             <b style="color: blue;">{!! date('d-m-Y', strtotime($minusMoney->dateMinus())) !!}</b>
+                                            @if($cancelStatus)
+                                                <br/>
+                                                <i class="glyphicon glyphicon-ok qc-font-size-12" style="color: green;" ></i>
+                                                <em style="color: grey;">Đã hủy</em>
+                                            @endif
                                             <br/>
                                             <em style="color: grey;">
                                                 - {!! $minusMoney->punishContent->name() !!}
                                             </em>
-                                            <br/>
-                                            @if($cancelStatus)
-                                                <em style="color: red;">Đã hủy</em>
-                                            @endif
+
                                         </td>
                                         <td>
-                                            <b style="color: red;">
+                                            <b style="@if(!$cancelStatus) color: red; @endif">
                                                 {!! $hFunction->currencyFormat($money) !!}
                                             </b>
                                             @if(!$hFunction->checkEmpty($reasonMinus))
@@ -108,7 +108,7 @@ $checkTime = date('m-Y');
                                             @if(!$hFunction->checkEmpty($reasonImage))
                                                 <br/>
                                                 <a class="qc-link">
-                                                    <img style="height: 70px; border: 1px solid #d7d7d7;" alt="..."
+                                                    <img style="max-width: 200px; max-height: 200px; border: 1px solid #d7d7d7;" alt="..."
                                                          src="{!! $minusMoney ->pathSmallImage($reasonImage) !!}">
                                                 </a>
                                             @endif
@@ -154,17 +154,16 @@ $checkTime = date('m-Y');
                                                     <br/>
                                                     <a class="qc_view_image qc-link"
                                                        data-href="{!! route('qc.work.minus_money.feedback.view_image.get',$feedbackId) !!}">
-                                                        <img style="height: 70px; border: 1px solid #d7d7d7;" alt="..."
+                                                        <img style="max-width: 150px; max-height: 150px; border: 1px solid #d7d7d7;" alt="..."
                                                              src="{!! $dataMinusMoneyFeedback->pathSmallImage($feedbackImage) !!}">
                                                     </a>
                                                 @endif
                                                 @if($actionStatus && !$dataMinusMoneyFeedback->checkConfirm())
-                                                    <br/><br/>
-                                                    <a class="qc_minus_money_feedback_cancel qc-link-green-bold"
+                                                    <br/>
+                                                    <a class="qc_minus_money_feedback_cancel qc-font-size-12 qc-link-red-bold"
                                                        title="Xóa phản hồi"
                                                        data-href="{!! route('qc.work.minus_money.feedback.cancel',$feedbackId) !!}">
-                                                        <i class="qc-font-size-16 glyphicon glyphicon-trash"
-                                                           style="color: red;"></i>
+                                                        HỦY
                                                     </a>
                                                 @else
                                                     @if($dataMinusMoneyFeedback->checkConfirm())
@@ -178,7 +177,7 @@ $checkTime = date('m-Y');
                                                     @endif
                                                 @endif
                                             @else
-                                                @if($actionStatus)
+                                                @if($actionStatus && !$cancelStatus)
                                                     <a class="qc_minus_money_feedback qc-link-green-bold qc-font-size-14"
                                                        data-href="{!! route('qc.work.minus_money.feedback.get',$minusId) !!}">
                                                         GỬI PHẢN HỒI

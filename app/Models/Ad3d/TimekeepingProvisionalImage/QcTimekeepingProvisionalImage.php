@@ -16,6 +16,23 @@ class QcTimekeepingProvisionalImage extends Model
 
     private $lastId;
 
+    #mac dinh hinh buoi sang
+    public function getDefaultMorningReportPeriod()
+    {
+        return 1;
+    }
+
+    #mac dinh hinh buoi sang
+    public function getDefaultAfternoonReportPeriod()
+    {
+        return 2;
+    }
+
+    #mac dinh hinh buoi sang
+    public function getDefaultEveningReportPeriod()
+    {
+        return 3;
+    }
     #========== ========== ========== THEM  && CAP NHAT ========== ========== ==========
 
     # lay giai doan up hinh thong qua thơi gian hien tai
@@ -23,11 +40,11 @@ class QcTimekeepingProvisionalImage extends Model
     {
         $hours = (int)date('H');
         if (8 < $hours && $hours < 14) { # tinh vao buoi sang
-            return 1;
+            return $this->getDefaultMorningReportPeriod();
         } elseif (14 < $hours && $hours < 18) { # tinh vao buoi chieu
-            return 2;
+            return $this->getDefaultAfternoonReportPeriod();
         } else {
-            return 3; # buoi toi
+            return $this->getDefaultEveningReportPeriod(); # buoi toi
         }
     }
 
