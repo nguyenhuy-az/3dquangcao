@@ -117,7 +117,7 @@ class QcStaffNotify extends Model
 
     }
 
-    public function selectInfoOfStaff($staffId)
+    public function selectInfoOfStaff($staffId, $date = null)
     {
         return QcStaffNotify::where('staff_id', $staffId)->orderBy('created_at', 'DESC')->select('*');
 

@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\WorkAllocation;
 
+use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\PunishContent\QcPunishContent;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcWorkAllocation extends Model
 {
     protected $table = 'qc_work_allocation';
-    protected $fillable = ['allocation_id', 'allocationDate', 'constructionNumber', 'receiveStatus', 'receiveDeadline', 'confirmStatus', 'confirmDate', 'noted', 'role', 'cancelStatus', 'cancelDate', 'action', 'product_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at', 'productRepair_id'];
+    protected $fillable = ['allocation_id', 'allocationDate', 'constructionNumber', 'receiveStatus', 'receiveDeadline', 'confirmStatus', 'confirmDate', 'noted', 'role', 'lateStatus', 'cancelStatus', 'cancelDate', 'action', 'product_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at', 'productRepair_id'];
     protected $primaryKey = 'allocation_id';
     public $timestamps = false;
 
@@ -51,6 +52,18 @@ class QcWorkAllocation extends Model
 
     # mac dinh lam phu
     public function getDefaultNotRole()
+    {
+        return 0;
+    }
+
+    # mac dinh co tre
+    public function getDefaultHasLate()
+    {
+        return 1;
+    }
+
+    # mac dinh khong tre
+    public function getDefaultNotLate()
     {
         return 0;
     }
@@ -185,11 +198,25 @@ class QcWorkAllocation extends Model
         }
     }
 
+    # cap nhat tre
+    public function updateLateStatus($allocationId)
+    {
+        return QcWorkAllocation::where('allocation_id', $allocationId)->update(
+            [
+                'lateStatus' => $this->getDefaultHasLate()
+            ]);
+    }
+
     # huy ban giao
     public function cancelAllocation($allocationId)
     {
         $hFunction = new \Hfunction();
-        return QcWorkAllocation::where('allocation_id', $allocationId)->update(['action' => 0, 'cancelStatus' => 1, 'cancelDate' => $hFunction->carbonNow()]);
+        return QcWorkAllocation::where('allocation_id', $allocationId)->update(
+            [
+                'action' => $this->getDefaultNotAction(),
+                'cancelStatus' => $this->getDefaultHasCancelStatus(),
+                'cancelDate' => $hFunction->carbonNow()
+            ]);
     }
     //========== ========= ========= RELATION ========== ========= ==========
     //---------- thuong  -----------
@@ -261,7 +288,7 @@ class QcWorkAllocation extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'receiveStaff_id', 'staff_id');
     }
 
-    # lay tat ca thong tin cua nguoi nhan
+    # lay tat ca phan cong cua nguoi nhan
     public function infoOfStaffReceive($staffId, $dateFilter = null)
     {
         if (empty($dateFilter)) {
@@ -271,19 +298,26 @@ class QcWorkAllocation extends Model
         }
     }
 
+    # chon danh sach phan cong cua 1 nhan vien
     public function selectInfoOfStaffReceive($staffId, $finishStatus = 100, $dateFilter = null)
     {
+        $modelCompany = new QcCompany();
         $modelWorkAllocationFinish = new QcWorkAllocationFinish();
-
-        if ($finishStatus < 100) {
+        # da ket thuc
+        $hasFinishStatus = $modelCompany->getDefaultValueHasFinish();
+        # chua ket thuc
+        $notFinishStatus = $modelCompany->getDefaultValueNotFinish();
+        #tat ca trang thai ket thuc
+        $defaultAllFinishStatus = $modelCompany->getDefaultValueAllFinish();
+        if ($finishStatus != $defaultAllFinishStatus) { # khong lay tat ca
             $allocationFinishId = $modelWorkAllocationFinish->listAllocationId();
-            if ($finishStatus == 0) { #chua hoan thanh
+            if ($finishStatus == $notFinishStatus) { #chua hoan thanh
                 if (empty($dateFilter)) {
                     return QcWorkAllocation::whereNotIn('allocation_id', $allocationFinishId)->where('receiveStaff_id', $staffId)->orderBy('receiveDeadline', 'DESC')->select('*');
                 } else {
                     return QcWorkAllocation::whereNotIn('allocation_id', $allocationFinishId)->where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
                 }
-            } elseif ($finishStatus == 1) { # da hoan thanh
+            } elseif ($finishStatus == $hasFinishStatus) { # da hoan thanh
                 if (empty($dateFilter)) {
                     return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('receiveStaff_id', $staffId)->orderBy('receiveDeadline', 'DESC')->select('*');
                 } else {
@@ -291,6 +325,7 @@ class QcWorkAllocation extends Model
                 }
             }
         } else {
+
             if (empty($dateFilter)) {
                 return QcWorkAllocation::where('receiveStaff_id', $staffId)->orderBy('receiveDeadline', 'DESC')->select('*');
             } else {
@@ -298,6 +333,17 @@ class QcWorkAllocation extends Model
             }
         }
 
+    }
+
+    # chon danh sach phan cong bi tre cua 1 nhan vien
+    public function selectInfoHasLateOfStaffReceive($staffId, $dateFilter = null)
+    {
+        $hasLateStatus = $this->getDefaultHasLate();
+        if (empty($dateFilter)) {
+            return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('lateStatus',$hasLateStatus)->orderBy('receiveDeadline', 'DESC')->select('*');
+        } else {
+            return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('lateStatus',$hasLateStatus)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
+        }
     }
 
     # kiem tra nhan vien da duoc phan cong san pham
@@ -309,23 +355,54 @@ class QcWorkAllocation extends Model
     # lay thong tin dang thi cong cua nhan vien
     public function infoActivityOfStaffReceive($staffId)
     {
-        return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('action', 1)->orderBy('allocationDate', 'DESC')->get();
+        return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('action', $this->getDefaultHasAction())->orderBy('allocationDate', 'DESC')->get();
     }
 
-    # lay thong tin viec da ket thuc cua nhan vien cua nhan vien
+    # lay thong tin viec da ket thuc cua 1 nhan vien
     public function infoFinishOfStaffReceive($staffId)
     {
-        return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('action', 0)->orderBy('receiveDeadline', 'ASC')->get();
+        return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('action', $this->getDefaultNotAction())->orderBy('receiveDeadline', 'ASC')->get();
     }
 
+    # danh sach ma san pham dang thi cong cua 1 nhan vien
     public function listProductIdActivityOfReceiveStaff($receiveStaffId)
     {
-        return QcWorkAllocation::where('receiveStaff_id', $receiveStaffId)->where('action', 1)->orderBy('receiveDeadline', 'ASC')->pluck('product_id');
+        return QcWorkAllocation::where('receiveStaff_id', $receiveStaffId)->where('action', $this->getDefaultHasAction())->orderBy('receiveDeadline', 'ASC')->pluck('product_id');
     }
 
+    # danh sach ma phan cong cua 1 nhan vien nhan
     public function listIdOfReceiveStaff($receiveStaffId)
     {
         return QcWorkAllocation::whereIn('receiveStaff_id', $receiveStaffId)->orderBy('receiveDeadline', 'ASC')->pluck('allocation_id');
+    }
+
+    # lay gia tri mang ve (tien) tu thi cong cua nhieu san pham
+    public function valueMoneyFromListWorkAllocation($dataListWorkAllocation)
+    {
+        $hFunction = new \Hfunction();
+        $result = 0;
+        if ($hFunction->checkCount($dataListWorkAllocation)) {
+            foreach ($dataListWorkAllocation as $value) {
+                $result = $result + $this->valueMoneyFromAllocation($value->allocationId());
+            }
+        }
+        return $result;
+    }
+
+    # lay gia tri mang ve (tien) tu thi cong cua 1 san pham
+    public function valueMoneyFromAllocation($allocationId = null)
+    {
+        $hFunction = new \Hfunction();
+        $dataWorkAllocation = $this->getInfo($this->checkIdNull($allocationId));
+        # thong tin san pham
+        $dataProduct = $dataWorkAllocation->product;
+        $productId = $dataProduct->productId();
+        $productPrice = $dataProduct->price();
+        # lay danh sach trien khai thi cong cua san pham - KHONG BI HUY
+        $dataListWorkAllocation = $this->infoNotCancelOfProduct($productId);
+        # so luong nguoi thi cong
+        $amountAllocation = $hFunction->getCount($dataListWorkAllocation);
+        return $productPrice / $amountAllocation;
     }
 
     //---------- don hang -----------
@@ -352,7 +429,7 @@ class QcWorkAllocation extends Model
     # kiem tra sam pham co nguoi nhan chin
     public function existMaimRoleActivityOfProduct($productId)
     {
-        return QcWorkAllocation::where('product_id', $productId)->where('role', 1)->exists();
+        return QcWorkAllocation::where('product_id', $productId)->where('role', $this->getDefaultHasRole())->exists();
     }
 
     # kiem tra sam pham dang duoc phan viec
@@ -364,7 +441,7 @@ class QcWorkAllocation extends Model
     # danh sach thi cong cua san pham  - DANG HOAT DONG
     public function infoActivityOfProduct($productId)
     {
-        return QcWorkAllocation::where('product_id', $productId)->where('action', 1)->get();
+        return QcWorkAllocation::where('product_id', $productId)->where('action', $this->getDefaultHasAction())->get();
     }
 
     # danh sach thi cong cua san pham - TAT CA
@@ -376,7 +453,7 @@ class QcWorkAllocation extends Model
     # danh sach thi cong cua san pham - KHONG BI HUY
     public function infoNotCancelOfProduct($productId, $orderBy = 'DESC')
     {
-        return QcWorkAllocation::where('product_id', $productId)->where('cancelStatus', 0)->orderBy('allocationDate', $orderBy)->get();
+        return QcWorkAllocation::where('product_id', $productId)->where('cancelStatus', $this->getDefaultNotCancelStatus())->orderBy('allocationDate', $orderBy)->get();
     }
 
 
@@ -397,6 +474,7 @@ class QcWorkAllocation extends Model
         return $modelWorkAllocationFinish->infoOfAllocation($this->checkIdNull($allocationId));
     }
 
+    # kiem tra phan viec da ket thuc chua
     public function checkFinishAllocation($allocationId = null)
     {
         $modelWorkAllocationFinish = new QcWorkAllocationFinish();
@@ -452,7 +530,7 @@ class QcWorkAllocation extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcWorkAllocation::where('allocation_id', $objectId)->pluck($column);
+            return QcWorkAllocation::where('allocation_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -567,45 +645,39 @@ class QcWorkAllocation extends Model
     # chon tat cac cac thong tin dang hoat dong
     public function selectInfoActivity()
     {
-        return QcWorkAllocation::where('action', 1)->select('*');
+        return QcWorkAllocation::where('action', $this->getDefaultHasAction())->select('*');
     }
 
     # chon tat ca thong tin dang hoat dong se het han trong thang hien tai
     public function selectInfoActivityDeadlineInCurrentMonth()
     {
         $currentMonth = date('Y-m');
-        return QcWorkAllocation::where('action', 1)->where('receiveDeadline', 'like', "%$currentMonth%")->select('*');
+        return QcWorkAllocation::where('action', $this->getDefaultHasAction())->where('receiveDeadline', 'like', "%$currentMonth%")->select('*');
     }
 
     //======= ======= KIEM TRA THONG TIN ======== =========
     #con hoat dong
     public function checkActivity($allocationId = null)
     {
-        return ($this->action($allocationId) == 1) ? true : false;
+        return ($this->action($allocationId) == $this->getDefaultHasAction()) ? true : false;
     }
 
     #kiem tra huy phan viec is_int
     public function checkCancel($allocationId = null)
     {
-        $result = $this->cancelStatus($allocationId);
-        $result = is_int($result) ? $result : $result[0];
-        return ($result == 1) ? true : false;
+        return ($this->cancelStatus($allocationId) == $this->getDefaultHasCancelStatus()) ? true : false;
     }
 
     # xac nhan phan cong
     public function checkConfirm($allocationId = null)
     {
-        $result = $this->confirmStatus($allocationId);
-        $result = is_int($result) ? $result : $result[0];
-        return ($result == 1) ? true : false;
+        return ($this->confirmStatus($allocationId) == $this->getDefaultHasConfirmStatus()) ? true : false;
     }
 
     # kiem tra tho lam chinh
     public function checkRoleMain($allocationId = null)
     {
-        $result = $this->role($allocationId);
-        $result = is_int($result) ? $result : $result[0];
-        return ($result == 1) ? true : false;
+        return ($this->role($allocationId) == $this->getDefaultHasRole()) ? true : false;
     }
 
     #kiem tra phan viec bi tre
@@ -620,10 +692,28 @@ class QcWorkAllocation extends Model
         } else { # don hang chưa ket thuc
             if (!$this->checkCancel($allocationId)) { # chua huy
                 $receiveDeadline = $this->receiveDeadline($allocationId); // lay ngay den han
-                if ($checkDate > $receiveDeadline[0]) $lateStatus = true;
+                if ($checkDate > $receiveDeadline) $lateStatus = true;
             }
         }
         return $lateStatus;
+    }
+
+    # kiem tra cap nhat trang thai bi tre
+    public function checkUpdateLateStatus()
+    {
+        $hFunction = new \Hfunction();
+        # cap nhat du lieu cu nen chon het
+        $dataWorkAllocation = $this->getInfo();
+        # chi chon phan viec con hoat dong
+        //$dataWorkAllocationHasActivity = $this->getInfo();
+        if ($hFunction->checkCount($dataWorkAllocation)) {
+            foreach ($dataWorkAllocation as $workAllocation) {
+                $allocationId = $workAllocation->allocationId();
+                if ($this->checkLate($allocationId)) {
+                    $this->updateLateStatus($allocationId);
+                }
+            }
+        }
     }
 
     # ========= ======== KIEM TRA PHAT TREN PHAN VIEC ======== =======

@@ -14,6 +14,59 @@ class QcWorkAllocationFinish extends Model
 
     private $lastId;
 
+    # mac dinh da hoan thanh
+    public function getDefaultHasFinish()
+    {
+        return 1;
+    }
+
+    # mac dinh khong hoan thanh
+    public function getDefaultNotFinish()
+    {
+        return 0;
+    }
+
+    # mac dinh hoan thanh dung han
+    public function getDefaultHasFinishLevel()
+    {
+        return 0;
+    }
+
+    # mac dinh hoan trưoc han han
+    public function getDefaultBeforeFinishLevel()
+    {
+        return 1;
+    }
+
+    # mac dinh hoan thanh tre
+    public function getDefaultLateFinishLevel()
+    {
+        return 2;
+    }
+
+    # mac dinh tu bao hoan thanh
+    public function getDefaultStaffReportFinish()
+    {
+        return 0;
+    }
+
+    # mac dinh quan ly huy phan cong
+    public function getDefaultCancelAllocationFinish()
+    {
+        return 2;
+    }
+
+    # mac dinh he thong huy
+    public function getDefaultSystemFinish()
+    {
+        return 1;
+    }
+
+    #mac dinh chu thich
+    public function getDefaultNote()
+    {
+        return null;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- them ----------
     public function insert($finishDate, $finishStatus, $finishLevel, $finishReason, $noted, $allocationId)
@@ -21,7 +74,7 @@ class QcWorkAllocationFinish extends Model
         $hFunction = new \Hfunction();
         $modelWorkAllocationFinish = new QcWorkAllocationFinish();
         $modelWorkAllocationFinish->finishDate = $finishDate;
-        $modelWorkAllocationFinish->finishStatus = $finishStatus; # trang thai khi ket thuc 0 - hoan thanh / 1 - khong hoan thanh
+        $modelWorkAllocationFinish->finishStatus = $finishStatus; # trang thai khi ket thuc 1 - hoan thanh / 0 - khong hoan thanh
         $modelWorkAllocationFinish->finishLevel = $finishLevel; # muc do hoan thanh # 0 - dung han / 1 - som / 2 tre
         $modelWorkAllocationFinish->finishReason = $finishReason; # lnguyen nhan ket thuc 0 - tu bao / 1- he thong huy / 2 - he thong phan sai
         $modelWorkAllocationFinish->noted = $noted;
@@ -52,21 +105,23 @@ class QcWorkAllocationFinish extends Model
         return QcWorkAllocationFinish::where('allocation_id', $allocationId)->first();
     }
 
+    # kiem tra thi cong co hoan thanh chua
     public function checkFinishOfAllocation($allocationId)
     {
-        $dataWorkAllocation = $this->infoOfAllocation($allocationId);
-        if (count($dataWorkAllocation) > 0) {
-            return ($dataWorkAllocation->finishStatus() == 0) ? false : true;
+        $dataWorkAllocationFinish = $this->infoOfAllocation($allocationId);
+        if (count($dataWorkAllocationFinish) > 0) {
+            return ($dataWorkAllocationFinish->finishStatus() == $this->getDefaultNotFinish()) ? false : true;
         } else {
             return false;
         }
     }
 
+    # quan ly huy phan cong
     public function checkSystemCancelOfAllocation($allocationId)
     {
         $dataWorkAllocation = $this->infoOfAllocation($allocationId);
         if (count($dataWorkAllocation) > 0) {
-            return ($dataWorkAllocation->finishReason() == 1) ? true : false;
+            return ($dataWorkAllocation->finishReason() == $this->getDefaultSystemFinish()) ? true : false;
         } else {
             return false;
         }
@@ -97,7 +152,7 @@ class QcWorkAllocationFinish extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcWorkAllocationFinish::where('finish_id', $objectId)->pluck($column);
+            return QcWorkAllocationFinish::where('finish_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -148,14 +203,15 @@ class QcWorkAllocationFinish extends Model
         return (empty($result)) ? 0 : $result->finish_id;
     }
 
+    # kiem tra co hoan thanh khong
     public function checkFinishStatus($finishId = null)
     {
-        return ($this->finishStatus($finishId) == 0) ? false : true;
+        return ($this->finishStatus($finishId) == $this->getDefaultHasFinish()) ? true : false;
     }
-
+    # kiem tra hoan thanh truoc han
     public function checkFinishSoon($finishId = null)
     {
-        return ($this->finishLevel($finishId) == 1) ? true : false;
+        return ($this->finishLevel($finishId) == $this->getDefaultBeforeFinishLevel()) ? true : false;
     }
 
     public function checkFinishLate($finishId = null)
@@ -163,8 +219,7 @@ class QcWorkAllocationFinish extends Model
         $modelWorkAllocation = new QcWorkAllocation();
         $finishDate = $this->finishDate($finishId);
         $receiveDeadline = $modelWorkAllocation->receiveDeadline($this->allocationId($finishId));
-        //dd($finishDate."===".$receiveDeadline[0]);
-        if ($finishDate > $receiveDeadline[0]) {
+        if ($finishDate > $receiveDeadline) {
             return true;
         } else {
             return false;
@@ -174,6 +229,6 @@ class QcWorkAllocationFinish extends Model
     // he thong huy
     public function checkSystemCancel($finishId = null)
     {
-        return ($this->finishReason($finishId) == 1) ? true : false;
+        return ($this->finishReason($finishId) == $this->getDefaultSystemFinish()) ? true : false;
     }
 }

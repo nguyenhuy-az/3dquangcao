@@ -455,11 +455,11 @@ class QcImport extends Model
     }
 
     # tong tien hang mua vat tu cua 1 nhan vien - chua xac nhan thanh toan
-    /*public function totalMoneyImportOfStaffNotConfirmPay($companyId, $staffId, $date = null)
+    public function totalMoneyImportOfStaffNotConfirmPay($companyId, $staffId, $date = null)
     {
         $dataImport = $this->getInfoHastPayOffStaff($companyId, $staffId, $date);
         return $this->totalMoneyOfListImportHasConfirmPay($dataImport);
-    }*/
+    }
 
     //---------- chi tiết nhập -----------
     public function importDetail()

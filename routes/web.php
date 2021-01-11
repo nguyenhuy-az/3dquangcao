@@ -547,7 +547,7 @@ Route::group(['prefix' => 'ad3d'], function () {
             #---------- --------- da nghi --------- ---------
             #---------- --------- dang lam --------- ---------
             # thong ke
-            Route::get('statistical/{companyStaffWorkId?}', ['as' => 'qc.ad3d.system.staff.statistical.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatistical']);
+            Route::get('statistical/{companyStaffWorkId?}/{monthFilter?}/{yearMonth?}', ['as' => 'qc.ad3d.system.staff.statistical.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatistical']);
 
             #them moi
             Route::get('add', ['as' => 'qc.ad3d.system.staff.add.get', 'uses' => 'Ad3d\System\Staff\StaffController@getAdd']);

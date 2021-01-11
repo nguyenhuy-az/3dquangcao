@@ -145,7 +145,7 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                                         <em style="color: grey;">- {!! $hFunction->formatDateToDMYHI($createdAd) !!}</em>
                                     </td>
                                     <td class="text-left">
-                                        @if(!$hFunction->checkEmpty($confirmNote))
+                                        @if(!$hFunction->checkEmpty($note))
                                             <span class="qc-color-grey">{!! $note !!}</span>
                                         @endif
                                         @if(!$hFunction->checkEmpty($confirmNote))

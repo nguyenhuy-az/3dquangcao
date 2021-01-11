@@ -39,9 +39,9 @@ class QcTimekeepingProvisionalImage extends Model
     public function getReportPeriodByCurrentTime()
     {
         $hours = (int)date('H');
-        if (8 < $hours && $hours < 14) { # tinh vao buoi sang
+        if (8 <= $hours && $hours < 14) { # tinh vao buoi sang
             return $this->getDefaultMorningReportPeriod();
-        } elseif (14 < $hours && $hours < 18) { # tinh vao buoi chieu
+        } elseif (14 <= $hours && $hours < 18) { # tinh vao buoi chieu
             return $this->getDefaultAfternoonReportPeriod();
         } else {
             return $this->getDefaultEveningReportPeriod(); # buoi toi
@@ -133,7 +133,13 @@ class QcTimekeepingProvisionalImage extends Model
         return $this->belongsTo('App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional', 'timekeeping_provisional_id', 'timekeeping_provisional_id');
     }
 
-    // lay thong tin ảnh bao cao cham cong
+    # kiem tra ton tai bao cao trong 1 khoang thoi gian xac dinh cua 1 lan cham cong
+    public function checkExistReportInPeriodOfTimekeepingProvisional($timekeepingProvisionalId, $fromDate, $toDate)
+    {
+        return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->where('created_at', '>=', $fromDate)->where('created_at', '<=', $toDate)->exists();
+    }
+
+    # lay thong tin ảnh bao cao cham cong
     public function infoOfTimekeepingProvisional($timekeepingProvisionalId)
     {
         return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->get();

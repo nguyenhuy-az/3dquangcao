@@ -87,6 +87,12 @@ class QcStaff extends Model
     {
         return 0;
     }
+
+    #mac dinh tai goc cua cty bang 0
+    public function getDefaultRootLevel()
+    {
+        return 0;
+    }
     //---------- Insert ----------
     //tạo mật khẩu cho người dùng
     public function createStaffPass($password, $nameCode)
@@ -109,10 +115,11 @@ class QcStaff extends Model
     public function insert($firstName, $lastName, $identityCard, $account, $birthday = null, $gender, $image = null, $identityCardFront, $identityCardBack, $email, $address = null, $phone = null, $level, $bankAccount = null, $bankName = null)
     {
         $hFunction = new \Hfunction();
+        $modelCompany = new QcCompany();
         $modelStaff = new QcStaff();
         //create code
         $nameCode = $hFunction->getTimeCode();
-        if ($level == 0) { // root staff of system
+        if ($level == $this->getDefaultRootLevel()) {# mac dinh 0 la nhan vien quan ly he thong cua 1 cty
             $pass = '3dtfquangcao';
             $newPass = $this->createStaffPass($pass, $nameCode);
         } else {
@@ -137,8 +144,8 @@ class QcStaff extends Model
         $modelStaff->phone = $phone;
         $modelStaff->bankAccount = $bankAccount;
         $modelStaff->bankName = $bankName;
-        $modelStaff->workStatus = 1;
-        $modelStaff->rootStatus = 0;
+        $modelStaff->workStatus = $this->getDefaultHasWorkStatus();
+        $modelStaff->rootStatus = $modelCompany->getDefaultNotRootOfStaff(); # lay mac dinh level la nhan vien he thong duoc xoa sua
         $modelStaff->created_at = $hFunction->createdAt();
         if ($modelStaff->save()) {
             $this->lastId = $modelStaff->staff_id;
@@ -275,7 +282,7 @@ class QcStaff extends Model
     # cap nhat tai khoan
     public function updateAccount($staffId, $newAccount)
     {
-        return QcStaff::where('staff_id', $staffId)->update(['account' => $newAccount, 'confirmStatus' => 1]);
+        return QcStaff::where('staff_id', $staffId)->update(['account' => $newAccount, 'confirmStatus' => $this->getDefaultHasConfirm()]);
     }
 
     # cap nhat thong tin tk ngan hang
@@ -287,7 +294,7 @@ class QcStaff extends Model
     # phuc hoi trang thai lam viec
     public function restoreWorkStatus($staffId)
     {
-        return QcStaff::where('staff_id', $staffId)->update(['workStatus' => 1]);
+        return QcStaff::where('staff_id', $staffId)->update(['workStatus' => $this->getDefaultHasWorkStatus()]);
 
     }
 
@@ -311,7 +318,7 @@ class QcStaff extends Model
     {
         $nameCode = $this->nameCode($staffId);
         $createPass = $this->createStaffPass($newPass, $nameCode);
-        return QcStaff::where('staff_id', $staffId)->update(['account' => $newAccount, 'password' => $createPass, 'confirmStatus' => 1]);
+        return QcStaff::where('staff_id', $staffId)->update(['account' => $newAccount, 'password' => $createPass, 'confirmStatus' => $this->getDefaultHasConfirm()]);
     }
 
     public function checkPassOfStaff($staffId, $password)
@@ -324,7 +331,7 @@ class QcStaff extends Model
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $staffId = $this->checkIdNull($staffId);
-        if (QcStaff::where('staff_id', $staffId)->update(['workStatus' => 0])) {
+        if (QcStaff::where('staff_id', $staffId)->update(['workStatus' => $this->getDefaultNotWorkStatus()])) {
             $modelCompanyStaffWork->deleteOfStaff($staffId);
         }
     }
@@ -636,11 +643,13 @@ class QcStaff extends Model
         return $modelWorkAllocation->infoOfStaffReceive($staffId, $dateFilter);
     }
 
+    # chon so cong viec duoc giao cua 1 NV
     public function selectWorkAllocationOfStaffReceive($staffId, $finishStatus = 100, $dateFilter = null)
     {
         $modelWorkAllocation = new QcWorkAllocation();
         return $modelWorkAllocation->selectInfoOfStaffReceive($staffId, $finishStatus, $dateFilter);
     }
+
 
     #lay thong tin phan cong dang nhan
     public function workAllocationActivityOfStaffReceive($staffId = null)
@@ -1065,12 +1074,14 @@ class QcStaff extends Model
         $modelImport = new QcImport();
         return $modelImport->totalMoneyImportOfStaffNotConfirmPay($companyId, $staffId, $date);
     }
+
     # tong tien mua vat tu da duyet chua thanh toan
     public function importTotalMoneyHasConfirmNotPay($companyId, $staffId, $date = null)
     {
         $modelImport = new QcImport();
         return $modelImport->totalMoneyImportOfStaffHasConfirmNotPay($companyId, $staffId, $date);
     }
+
     //---------- ngươi xac nhan -----------
     public function confirmStaff()
     {
@@ -1675,6 +1686,37 @@ class QcStaff extends Model
     }
 
     #============ =========== ============ STATISTICAL ============= =========== ==========
+    // =========== ================= THONG KE THONG TIN CA NHAN =========== ===============
+    # tong tin gia tri mang ve tu thi cong san pham
+    public function totalValueMoneyFromListWorkAllocation($dataListWorkAllocation)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+        return $modelWorkAllocation->valueMoneyFromListWorkAllocation($dataListWorkAllocation);
+    }
+
+    # tong so luong cong viec duoc giao theo thoi gian
+    public function statisticGetReceiveWorkAllocation($staffId, $dateFilter = null)
+    {
+        $modelCompany = new QcCompany();
+        $modelWorkAllocation = new QcWorkAllocation();
+        return $modelWorkAllocation->selectInfoOfStaffReceive($staffId, $modelCompany->getDefaultValueAllFinish(), $dateFilter)->get();
+    }
+
+    # tong so cong viec duoc giao da hoan thanh
+    public function statisticGetWorkAllocationHasFinish($staffId, $dateFilter = null)
+    {
+        $modelCompany = new QcCompany();
+        $modelWorkAllocation = new QcWorkAllocation();
+        return $modelWorkAllocation->selectInfoOfStaffReceive($staffId, $modelCompany->getDefaultValueHasFinish(), $dateFilter)->get();
+    }
+
+    # tong so luong cong viec duoc giao theo thoi gian va bi tre
+    public function statisticGetWorkAllocationHasLate($staffId, $dateFilter = null)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+        return $modelWorkAllocation->selectInfoHasLateOfStaffReceive($staffId, $dateFilter)->get();
+    }
+
     //  ========== ================= THONG KE THU ===================
     public function totalReceivedMoneyForCompany($staffId, $date = null)
     {

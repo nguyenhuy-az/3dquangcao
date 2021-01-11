@@ -431,7 +431,7 @@ class QcTimekeepingProvisional extends Model
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $model = new QcTimekeepingProvisionalImage();
         # kiem tra co cap nhat khi canh bao neu co
-        if(!$modelTimekeepingProvisional->checkUpdateTimekeepingProvisionalWaring($timekeepingProvisionalId)){ # khong cap nhat
+        if (!$modelTimekeepingProvisional->checkUpdateTimekeepingProvisionalWaring($timekeepingProvisionalId)) { # khong cap nhat
             # khong tinh cong neu khong cap nhat
             $applyTimekeepingStatus = $this->getDefaultNotTimekeeping();
             $confirmNote = $confirmNote . " - Không báo lại khi bị cảnh báo sai";
@@ -843,7 +843,53 @@ class QcTimekeepingProvisional extends Model
         return $this->pluck('updated_at', $timekeepingId);
     }
 
-    //======= kiểm tra thông tin =========
+    //======= ======   kiểm tra thông tin ========= ======
+    # kiem tra duoc phep huy hay khong
+    public function checkAllowCancel($timekeepingId = null)
+    {
+        $hFunction = new \Hfunction();
+        $cancelStatus = false;
+        # con han bao gio ra
+        if ($this->checkTimeOutToEndWork($timekeepingId)) {
+            ;
+            # chua bao gio ra
+            if ($hFunction->checkEmpty($this->timeEnd($timekeepingId))) {
+                $cancelStatus = true;
+            } else {
+                # duyet roi chua xac nhan
+                if (!$this->checkConfirmStatus($timekeepingId)) $cancelStatus = true;
+            }
+        }
+        return $cancelStatus;
+
+    }
+
+    # kiem tra vo hieu hoa bao gio ra trong ngay
+    public function checkDisableReportEndCurrentDate($timekeepingId = null)
+    {
+        $modelCompany = new QcCompany();
+        $modelTimekeepingProvisionalImage = new QcTimekeepingProvisionalImage();
+        $timekeepingId = $this->checkNullId($timekeepingId);
+        $disableStatus = false;
+        # thoi gian hien tai
+        $currentDateTime = date('Y-m-d H:i');
+        # lay hang thoi gian bao cao cuoi ngay
+        $fromDateTime = date('Y-m-d 17:10'); # cho som 10 phut
+        $toDateTime = date('Y-m-d 17:50'); # cho tre 20 phut
+        # chi kiem tra sau 17h50
+        if($currentDateTime > $toDateTime){
+            if($modelTimekeepingProvisionalImage->checkExistReportInPeriodOfTimekeepingProvisional($timekeepingId, $fromDateTime, $toDateTime)){
+                # co anh bao cao
+                $disableStatus = false;
+            }else{
+                # khong co anh bao cao
+                $disableStatus = true;
+            }
+        }
+        return $disableStatus;
+
+    }
+
     # kiem tra hang bao gio ra
     public function checkTimeOutToEndWork($timekeepingId = null)
     {
@@ -852,9 +898,11 @@ class QcTimekeepingProvisional extends Model
         # kiem tra han bao gio ra
         $currentDateCheck = $hFunction->carbonNow();
         $beginCheckDate = $modelCompany->getDefaultTimeBeginToWorkOfDate($this->timeBegin($timekeepingId));
-        $endCheck = $hFunction->datetimePlusDay($beginCheckDate, 1); # sau 1 ngay
+        # sau 1 ngay
+        $endCheck = $hFunction->datetimePlusDay($beginCheckDate, 1);
         return ($endCheck < $currentDateCheck) ? false : true;
     }
+
 
     # kiem tra co tang ca hay khong
     public function checkHasOverTime($timekeepingId = null)
@@ -870,21 +918,20 @@ class QcTimekeepingProvisional extends Model
     # kiem tra co lam trua hay khong
     public function checkAfternoonWork($timekeepingId = null)
     {
-        return ($this->afternoonStatus($timekeepingId)[0] == $this->getDefaultNotAfternoonStatus()) ? false : true;
+        return ($this->afternoonStatus($timekeepingId) == $this->getDefaultNotAfternoonStatus()) ? false : true;
     }
 
     # kiem tra thong tin co xac nhan chua
     public function checkConfirmStatus($timekeepingId = null)
     {
         $result = $this->confirmStatus($timekeepingId);
-        $result = (is_int($result)) ? $result : $result[0];
         return ($result == $this->getDefaultNotConfirmStatus()) ? false : true;
     }
 
     # kiem tra bao gio co chinh xac hay khong
     public function checkAccuracyStatus($timekeepingId = null)
     {
-        return ($this->accuracyStatus($timekeepingId)[0] == $this->getDefaultNotAccuracyStatus()) ? false : true;
+        return ($this->accuracyStatus($timekeepingId) == $this->getDefaultNotAccuracyStatus()) ? false : true;
     }
 
     //======= thống kê =========

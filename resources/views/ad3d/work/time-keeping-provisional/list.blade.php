@@ -53,7 +53,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr>
-                            <td colspan="5" style="background-color: red;">
+                            <td colspan="3" style="background-color: red;">
                                 <b style="color: white;">
                                     - Chấm công bị cảnh báo mà không cập nhật sẽ không được tính công.
                                 </b>
@@ -67,19 +67,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                             <th style="width: 220px;">NHÂN VIÊN</th>
                             <th class="text-center" style="width: 200px;">GIỜ CHẤM - GIỜ VÀO - GIỜ RA</th>
                             <th>
-                                BÁO CÁO BUỔI SÁNG
-                                <br/>
-                                <em style="color: white;">(Trước 13h30)</em>
-                            </th>
-                            <th>
-                                BÁO CÁO BUỔI CHIỀU
-                                <br/>
-                                <em style="color: white;">(Từ 13h30 -> Trước 18h)</em>
-                            </th>
-                            <th>
-                                BÁO CÁO TĂNG CA
-                                <br/>
-                                <em style="color: white;">(Sau 18h)</em>
+                                ẢNH BÁO CÁO
                             </th>
                         </tr>
                         @if($hFunction->checkCount($dataTimekeepingProvisional ))
@@ -128,39 +116,39 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                 <tr class="qc_ad3d_list_object @if($n_o%2 == 0) info @endif"
                                     data-object="{!! $timekeepingProvisionalId !!}">
                                     <td>
-                                            <div class="media">
-                                                <a class="pull-left" href="#">
-                                                    <img class="media-object"
-                                                         style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
-                                                         src="{!! $src !!}">
-                                                </a>
+                                        <div class="media">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object"
+                                                     style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                     src="{!! $src !!}">
+                                            </a>
 
-                                                <div class="media-body">
-                                                    <h5 class="media-heading">{!! $dataStaffTimekeepingProvisional->lastName() !!}</h5>
-                                                    @if(!$timekeepingProvisional->work->checkSalaryStatus())
-                                                        @if($hFunction->checkEmpty($timeEnd))
-                                                            <em style="color: blue;">Chưa báo giờ ra</em>
-                                                        @else
-                                                            @if($timekeepingProvisional->checkConfirmStatus())
-                                                                <em style="color: grey;">Đã duyệt</em>
-                                                            @else
-                                                                <a class="qc_confirm qc-link-red qc-font-size-14"
-                                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.confirm.get', $timekeepingProvisionalId) !!}">
-                                                                    XÁC NHẬN
-                                                                </a>
-                                                            @endif
-                                                        @endif
+                                            <div class="media-body">
+                                                <h5 class="media-heading">{!! $dataStaffTimekeepingProvisional->lastName() !!}</h5>
+                                                @if(!$timekeepingProvisional->work->checkSalaryStatus())
+                                                    @if($hFunction->checkEmpty($timeEnd))
+                                                        <em style="color: blue;">Chưa báo giờ ra</em>
                                                     @else
-                                                        @if(!$timekeepingProvisional->checkConfirmStatus())
-                                                            <em style="color: grey;">Không duyệt-</em>
+                                                        @if($timekeepingProvisional->checkConfirmStatus())
+                                                            <em style="color: grey;">Đã duyệt</em>
+                                                        @else
+                                                            <a class="qc_confirm qc-link-red qc-font-size-14"
+                                                               data-href="{!! route('qc.ad3d.work.time_keeping_provisional.confirm.get', $timekeepingProvisionalId) !!}">
+                                                                XÁC NHẬN
+                                                            </a>
                                                         @endif
                                                     @endif
-                                                    @if(!$hFunction->checkEmpty($note))
-                                                        <br/>
-                                                        <em class="qc-color-grey">- {!! $note !!}</em>
+                                                @else
+                                                    @if(!$timekeepingProvisional->checkConfirmStatus())
+                                                        <em style="color: grey;">Không duyệt-</em>
                                                     @endif
-                                                </div>
+                                                @endif
+                                                @if(!$hFunction->checkEmpty($note))
+                                                    <br/>
+                                                    <em class="qc-color-grey">- {!! $note !!}</em>
+                                                @endif
                                             </div>
+                                        </div>
                                     </td>
                                     <td class="text-center">
                                         <a class="qc_warning_time_begin qc-link-red" title="Cảnh báo chấm sai"
@@ -253,54 +241,97 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                         @endif
                                     </td>
                                     <td style="padding: 3px; ">
+                                        {{--Bao cao tien do buoi sang--}}
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInMorning))
-                                            @foreach($dataTimekeepingProvisionalImageInMorning as $timekeepingProvisionalImage)
-                                                <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
-                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
-                                                    <img style="background-color: white;border: 1px solid grey; width: 70px; max-height: 100%;"
-                                                         src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
-                                                </a>
-                                            @endforeach
-                                        @else
-                                            <em style="color: brown;">- Không có báo cáo</em>
+                                            <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                                                <div class="row">
+                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                        <em style="color: grey; padding: 3px;">
+                                                            Sáng:
+                                                        </em>
+                                                    </div>
+                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                        @foreach($dataTimekeepingProvisionalImageInMorning as $timekeepingProvisionalImage)
+                                                            <div style="background-color: white; position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                                <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
+                                                                   style="position: relative;"
+                                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
+                                                                    <img style="max-width: 100%; max-height: 100%;"
+                                                                         src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
+                                                                </a>
+                                                                <em style="position: absolute; left: 0; bottom: 0; color: red;">
+                                                                    {!! date('H:i',strtotime($timekeepingProvisionalImage->createdAt())) !!}
+                                                                </em>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            </div>
                                         @endif
-                                    </td>
-                                    <td style="padding: 3px;">
+                                        {{--Bao cao tien do buoi chieu--}}
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInAfternoon))
-                                            @foreach($dataTimekeepingProvisionalImageInAfternoon as $timekeepingProvisionalImage)
-                                                <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
-                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
-                                                    <img style="background-color: white;border: 1px solid grey; width: 70px; max-height: 100%;"
-                                                         src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
-                                                </a>
-                                            @endforeach
-                                        @else
-                                            <em style="color: brown;">- Không có báo cáo</em>
+                                            <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                                                <div class="row">
+                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                        <em style="color: grey; padding: 3px;">
+                                                            Chiều:
+                                                        </em>
+                                                    </div>
+                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                        @foreach($dataTimekeepingProvisionalImageInAfternoon as $timekeepingProvisionalImage)
+                                                            <div style="background-color: white; position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                                <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
+                                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
+                                                                    <img style="max-width: 100%; max-height: 100%;"
+                                                                         src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
+                                                                </a>
+                                                                <em style="position: absolute; left: 0; bottom: 0; color: red;">
+                                                                    {!! date('H:i',strtotime($timekeepingProvisionalImage->createdAt())) !!}
+                                                                </em>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            </div>
                                         @endif
-                                    </td>
-                                    <td>
+                                        {{--Bao cao tien tang ca--}}
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInEvening))
-                                            @foreach($dataTimekeepingProvisionalImageInEvening as $timekeepingProvisionalImage)
-                                                <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
-                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
-                                                    <img style="background-color: white;border: 1px solid grey; width: 70px; max-height: 100%;"
-                                                         src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
-                                                </a>
-                                            @endforeach
-                                        @else
-                                            <em style="color: brown;">- Không có báo cáo</em>
+                                            <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                                                <div class="row">
+                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                        <em style="color: grey; padding: 3px;">
+                                                            Tăng ca:
+                                                        </em>
+                                                    </div>
+                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                                                         style="padding: 0;">
+                                                        @foreach($dataTimekeepingProvisionalImageInEvening as $timekeepingProvisionalImage)
+                                                            <div style="background-color: white; position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
+                                                                <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
+                                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.view.get',$timekeepingProvisionalImage->imageId()) !!}">
+                                                                    <img style="max-width: 100%; max-height: 100%;"
+                                                                         src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
+                                                                </a>
+                                                                <em style="position: absolute; left: 0; bottom: 0; color: red;">
+                                                                    {!! date('H:i',strtotime($timekeepingProvisionalImage->createdAt())) !!}
+                                                                </em>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            </div>
                                         @endif
                                     </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="5">
+                                <td class="text-center" colspan="3">
                                     {!! $hFunction->page($dataTimekeepingProvisional) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="5">
+                                <td class="qc-padding-top-5 qc-padding-bot-5 text-center" colspan="3">
                                     <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
                                 </td>
                             </tr>

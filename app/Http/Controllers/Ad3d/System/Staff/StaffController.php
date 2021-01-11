@@ -58,11 +58,15 @@ class StaffController extends Controller
     }
 
     # thong tin thong ke
-    public function getStatistical($companyStaffWorkId)
+    public function getStatistical($companyStaffWorkId, $monthFilter = null, $yearFilter = null)
     {
         $hFunction = new \Hfunction();
+        $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaff = new QcStaff();
+        # lay gia tri mac dinh
+        $allMonthFilter = $modelCompany->getDefaultValueAllMonth();
+        $allYearFilter = $modelCompany->getDefaultValueAllYear();
         $dataCompanyStaffWork = $modelCompanyStaffWork->getInfo($companyStaffWorkId);
         $dataAccess = [
             'accessObject' => 'staff',
@@ -73,7 +77,25 @@ class StaffController extends Controller
         } else {
             $dataStaff = null;
         }
-        return view('ad3d.system.staff.statistical', compact('modelStaff', 'dataCompanyStaffWork', 'dataStaff', 'dataAccess'));
+        if ($monthFilter == null & $yearFilter == null) { #mac dinh
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+        } elseif ($monthFilter == $allMonthFilter && $yearFilter == $allYearFilter) { //xem  trong tháng
+            $dateFilter = null;
+        } elseif ($monthFilter == $allMonthFilter && $yearFilter != $allYearFilter) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($monthFilter != $allMonthFilter && $yearFilter == $allYearFilter) { //xem tất cả các ngày trong nam
+            $yearFilter = date('Y');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter != $allMonthFilter && $yearFilter != $allYearFilter) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } else {
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+        }
+        return view('ad3d.system.staff.statistical', compact('modelCompany', 'modelStaff', 'dataCompanyStaffWork', 'dataStaff', 'dataAccess', 'monthFilter', 'yearFilter','dateFilter'));
     }
 
     # them

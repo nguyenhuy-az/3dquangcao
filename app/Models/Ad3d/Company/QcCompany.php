@@ -65,6 +65,69 @@ class QcCompany extends Model
     {
         return 1;
     }
+
+    //============== ================ giá tri mac dinh cua he thong
+
+    # mac dinh gia tri tat cac ngay
+    public function getDefaultValueAllDay()
+    {
+        return 100;
+    }
+
+    # mac dinh gia tri tat ca cac thang trong
+    public function getDefaultValueAllMonth()
+    {
+        return 100;
+    }
+
+    # mac dinh gia tri ta ca cac nam
+    public function getDefaultValueAllYear()
+    {
+        return 100;
+    }
+
+    # mac dinh lay tat ca trang thai xac nhan
+    public function getDefaultValueAllConfirmStatus()
+    {
+        return 100;
+    }
+
+    # mac dinh da xac nhan cua he thong
+    public function getDefaultValueHasConfirm()
+    {
+        return 1;
+    }
+    # mac dinh chua xac nhan cua he thong
+    public function getDefaultValueNotConfirm()
+    {
+        return 0;
+    }
+
+    # mac dinh lay tat ca trang thai ket thuc
+    public function getDefaultValueAllFinish()
+    {
+        return 100;
+    }
+    # mac dinh da ket thuc cua he thong
+    public function getDefaultValueHasFinish()
+    {
+        return 1;
+    }
+    # mac dinh chua ket thuc cua he thong
+    public function getDefaultValueNotFinish()
+    {
+        return 0;
+    }
+
+    # mac dinh cap nhan vien he thong cua 1 cty
+    public function getDefaultHasRootOfStaff()
+    {
+        return 1;
+    }
+    public function getDefaultNotRootOfStaff()
+    {
+        return 0;
+    }
     #========== ========== ========== TU DONG KIEM TRA DU LIEU CUA HE THONG ========== ========== ==========
     # KIEM TRA DU LIEU TU DONG
     /*
@@ -83,7 +146,10 @@ class QcCompany extends Model
         // ===== ===== DON HANG - SAN PHAM ====== ======
         # kiem tra thong tin ban giao don hang - cua bo phan thi cong cap quan ly
         $modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
-        # kiem tra ap dung phat tr thi cong san pham
+        # kiem tra cap nhat tre cua thi cong san pham
+        $modelWorkAllocation->checkUpdateLateStatus();
+
+        # kiem tra ap dung phat thi cong san pham
         $modelWorkAllocation->autoCheckMinusMoneyLateWorkAllocation();
 
         // ===== ===== ĐO NGHE ====== ======
@@ -206,7 +272,7 @@ class QcCompany extends Model
     public function checkWorkInMorningByCurrentTime()
     {
         $hours = (int)date('H');
-        if (8 < $hours && $hours < 14) { # tinh vao buoi sang
+        if (8 <= $hours && $hours < 14) { # tinh vao buoi sang
             return true;
         } else {
             return false;
@@ -217,7 +283,7 @@ class QcCompany extends Model
     public function checkWorkInAfternoonByCurrentTime()
     {
         $hours = (int)date('H');
-        if (14 < $hours && $hours < 18) { # tinh vao buoi chieu
+        if (14 <= $hours && $hours < 18) { # tinh vao buoi chieu
             return true;
         } else {
             return false;
@@ -228,14 +294,15 @@ class QcCompany extends Model
     public function checkWorkInEveningByCurrentTime()
     {
         $hours = (int)date('H');
-        if (1 < $hours && $hours < 4) { # tang ca den ngay hom sau
+        if (1 <= $hours && $hours < 4) { # tang ca den ngay hom sau
             return true;
-        } elseif (18 < $hours) { # tinh vao buoi chieu
+        } elseif (18 <= $hours) { # tinh vao buoi chieu
             return true;
         } else {
             return false;
         }
     }
+
 
     #----------- cập nhật ----------
     public function updateInfo($companyId, $companyCode, $name, $nameCode, $address, $phone, $email, $website, $companyType, $logo)

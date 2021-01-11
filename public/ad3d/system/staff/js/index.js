@@ -691,9 +691,21 @@ var qc_ad3d_staff_staff = {
         if (confirm('Bạn muốn xóa nhân viên này')) {
             qc_ad3d_submit.ajaxHasReload($(listObject).parents('.qc_ad3d_list_content').data('href-del') + '/' + $(listObject).data('object'), '', false);
         }
+    },
+    statistic: {
+        filter: function (object) {
+            var href = $(object).data('href');
+            href = href + '/' + $('.qc_statistic_filter_month').val() + '/' + $('.qc_statistic_filter_year').val();
+            qc_main.url_replace(href);
+        }
     }
 }
-
+// loc thong ke
+$(document).ready(function () {
+    $('.qc_ad3d_sys_staff_statistical_wrap').on('change', '.qc_statistic_filter', function () {
+        qc_ad3d_staff_staff.statistic.filter($(this));
+    });
+});
 //-------------------- HINH ANH ------------
 $(document).ready(function () {
     $('.qc_ad3d_sys_staff_edit_wrap').on('click', '.qc_ad3d_staff_edit_image_act', function () {
