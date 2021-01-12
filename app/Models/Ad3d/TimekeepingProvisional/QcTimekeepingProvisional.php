@@ -128,8 +128,14 @@ class QcTimekeepingProvisional extends Model
         return null; # null -> duyet tu dong
     }
 
+    #mac dinh gio ra
+    public function getDefaultTimeEnd()
+    {
+        return null;
+    }
+
     //---------- them ----------workStatus
-    public function insert($timeBegin, $timeEnd, $note, $afternoonStatus, $workId, $staffCheckId)
+    public function insert($timeBegin, $timeEnd, $note, $afternoonStatus, $workId, $staffConfirmId)
     {
         $hFunction = new \Hfunction();
         $modelTimekeeping = new QcTimekeepingProvisional();
@@ -138,7 +144,7 @@ class QcTimekeepingProvisional extends Model
         $modelTimekeeping->note = $note;
         $modelTimekeeping->afternoonStatus = $afternoonStatus;
         $modelTimekeeping->work_id = $workId;
-        $modelTimekeeping->staffConfirm_id = $staffCheckId;
+        $modelTimekeeping->staffConfirm_id = $staffConfirmId;
         $modelTimekeeping->created_at = $hFunction->createdAt();
         if ($modelTimekeeping->save()) {
             $this->lastId = $modelTimekeeping->timekeeping_provisional_id;
@@ -459,7 +465,7 @@ class QcTimekeepingProvisional extends Model
                 $mainMinute = 0;
                 $plusMinute = 0;
                 $minusMinute = 0;
-                $lateStatus = 1;
+                $lateStatus = $modelTimekeeping->getDefaultNotLateStatus();// mac dinh la khong tre
                 # ----- ap dung noi quy phat  --------
                 if ($applyRuleStatus == $this->getDefaultHasApplyRule()) {
                     //khong phai ngay chu nhat
@@ -480,7 +486,7 @@ class QcTimekeepingProvisional extends Model
                                     if (!empty($punishId)) {
                                         $modelMinusMoney->insert($dateBegin, $minusReason, $workId, $confirmStaffId, $punishId, $minusApplyStatus, null, null, null, null, $minusMoney, $minusReasonImage);
                                     }
-                                    $lateStatus = 0;
+                                    $lateStatus = $modelTimekeeping->getDefaultHasLateStatus();
                                 }
                                 # bao gio khong chinh xac
                                 if ($accuracyStatus == $this->getDefaultNotAccuracyStatus()) {
@@ -532,7 +538,8 @@ class QcTimekeepingProvisional extends Model
                     }
                 }
                 #------- them thong tin cham cong chinh thuc --------
-                if ($modelTimekeeping->insert($dateBegin, $dateEnd, null, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $confirmNote, $lateStatus, $permissionLateStatus, $modelTimekeeping->getDefaultNotWorkStatus(), $confirmStaffId, $workId)) {
+                $dateOff = $modelTimekeeping->getDefaultDateOff();
+                if ($modelTimekeeping->insert($dateBegin, $dateEnd, $dateOff, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $confirmNote, $lateStatus, $permissionLateStatus, $modelTimekeeping->getDefaultNotWorkStatus(), $confirmStaffId, $workId)) {
                     $newTimekeepingId = $modelTimekeeping->insertGetId();
                     $dataTimekeepingProvisionalImage = $modelTimekeepingProvisional->imageOfTimekeepingProvisional($timekeepingProvisionalId);
                     //thêm hình ảnh vào bảng chấm công chính
@@ -877,11 +884,11 @@ class QcTimekeepingProvisional extends Model
         $fromDateTime = date('Y-m-d 17:10'); # cho som 10 phut
         $toDateTime = date('Y-m-d 17:50'); # cho tre 20 phut
         # chi kiem tra sau 17h50
-        if($currentDateTime > $toDateTime){
-            if($modelTimekeepingProvisionalImage->checkExistReportInPeriodOfTimekeepingProvisional($timekeepingId, $fromDateTime, $toDateTime)){
+        if ($currentDateTime > $toDateTime) {
+            if ($modelTimekeepingProvisionalImage->checkExistReportInPeriodOfTimekeepingProvisional($timekeepingId, $fromDateTime, $toDateTime)) {
                 # co anh bao cao
                 $disableStatus = false;
-            }else{
+            } else {
                 # khong co anh bao cao
                 $disableStatus = true;
             }

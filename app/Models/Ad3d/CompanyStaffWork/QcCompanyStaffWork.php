@@ -23,6 +23,17 @@ class QcCompanyStaffWork extends Model
 
     private $lastId;
 
+    # mac dinh con hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong con hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
     public function insert($beginDate, $level, $staffId, $staffAddId, $companyId)
@@ -34,7 +45,7 @@ class QcCompanyStaffWork extends Model
         $modelCompanyStaffWork->staff_id = $staffId;
         $modelCompanyStaffWork->staffAdd_id = $staffAddId;
         $modelCompanyStaffWork->company_id = $companyId;
-        $modelCompanyStaffWork->action = 1;
+        $modelCompanyStaffWork->action = $this->getDefaultHasAction();
         $modelCompanyStaffWork->created_at = $hFunction->createdAt();
         if ($modelCompanyStaffWork->save()) {
             $this->lastId = $modelCompanyStaffWork->work_id;
@@ -44,7 +55,7 @@ class QcCompanyStaffWork extends Model
         }
     }
 
-    // lấy id mới thêm
+    # lấy id mới thêm
     public function insertGetId()
     {
         return $this->lastId;
@@ -55,17 +66,29 @@ class QcCompanyStaffWork extends Model
         return (empty($workId)) ? $this->workId() : $workId;
     }
 
+    # nghi - truc tiep
     public function updateEndWork($workId = null)
     {
-        return QcCompanyStaffWork::where('work_id', $this->checkIdNull($workId))->update(['action' => 0]);
+        $hFunction = new \Hfunction();
+        return QcCompanyStaffWork::where('work_id', $this->checkIdNull($workId))->update(
+            [
+                'action' => $this->getDefaultNotAction(),
+                'endDate' => $hFunction->carbonNow()
+            ]);
     }
 
+    # khi xoa nhan vien
     public function deleteOfStaff($staffId)
     {
-        return QcCompanyStaffWork::where('staff_id', $staffId)->where('action', 1)->update(['action' => 0]);
+        $hFunction = new \Hfunction();
+        return QcCompanyStaffWork::where('staff_id', $staffId)->where('action', $this->getDefaultHasAction())->update(
+            [
+                'action' => $this->getDefaultNotAction(),
+                'endDate' => $hFunction->carbonNow()
+            ]);
     }
 
-    //cap nhat quyen admin
+    #cap nhat quyen admin
     public function updateLevel($level, $workId = null)
     {
         return QcCompanyStaffWork::where('work_id', $this->checkIdNull($workId))->update(['level' => $level]);
@@ -103,14 +126,14 @@ class QcCompanyStaffWork extends Model
         return $this->hasMany('App\Models\Ad3d\OverTimeRequest\QcOverTimeRequest', 'work_id ', 'work_id');
     }
 
-    // kiem ta ton tai yeu cau tang ca trong ngay
+    # kiem ta ton tai yeu cau tang ca trong ngay
     public function checkExistOverTimeRequestOfDate($date, $workId = null)
     {
         $modelOverTimeRequest = new QcOverTimeRequest();
         return $modelOverTimeRequest->checkExistDateOfCompanyStaffWork($this->checkIdNull($workId), $date);
     }
 
-    // lay thong tin yeu cau tang ca trong ngay
+    # lay thong tin yeu cau tang ca trong ngay
     public function overTimeRequestGetInfoInDate($date, $workId = null)
     {
         $modelOverTimeRequest = new QcOverTimeRequest();
@@ -303,7 +326,7 @@ class QcCompanyStaffWork extends Model
         return $modelWork->listIdOfListCompanyStaffWork([$this->checkIdNull($companyStaffWorkId)]);
     }
 
-    // lay thong tin cham cong cua trong ngay cua 1 NV
+    # lay thong tin cham cong cua trong ngay cua 1 NV
     public function infoTimekeepingProvisionalInDate($date, $companyStaffWorkId = null)
     {
         $hFunction = new \Hfunction();

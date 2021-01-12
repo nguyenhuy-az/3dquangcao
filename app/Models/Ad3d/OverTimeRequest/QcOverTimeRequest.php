@@ -14,6 +14,34 @@ class QcOverTimeRequest extends Model
 
     private $lastId;
 
+    #mac dinh co chap nhan tang ca
+    public function getDefaultHasAccept()
+    {
+        return 1;
+    }
+
+    # mac dinh khong chap nhan tang ca
+    public function getDefaultNotAccept()
+    {
+        return 0;
+    }
+
+    # mac dinh ghi chu
+    public function getDefaultNote()
+    {
+        return null;
+    }
+
+    # mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+    # mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- them ----------
     public function insert($requestDate, $note, $workId, $staffId)
@@ -55,11 +83,22 @@ class QcOverTimeRequest extends Model
         return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
     }
 
+    # lat tat ca cau cua 1 bang lam viec
     public function infoOfCompanyStaffWork($workId)
     {
         return QcOverTimeRequest::where('work_id', $workId)->get();
     }
 
+    # lat tat ca cau theo 1 danh sach ma lam viec
+    public function infoOfListCompanyStaffWork($listWorkId,$dateFilter =null)
+    {
+        $hFunction = new \Hfunction();
+        if($hFunction->checkEmpty($dateFilter)){
+            return QcOverTimeRequest::whereIn('work_id', $listWorkId)->get();
+        }else{
+            return QcOverTimeRequest::whereIn('work_id', $listWorkId)->where('requestDate', 'like', "%$dateFilter%")->get();
+        }
+    }
     # lay thong tin thong bao tang ca trong ngày
     public function getInfoOfCompanyStaffWorkAndDate($workId, $date)
     {
@@ -77,7 +116,7 @@ class QcOverTimeRequest extends Model
     # lay thong tin yeu cau tang ca dang hoat dong
     public function getInfoActivityOfCompanyStaffWork($workId)
     {
-        return QcOverTimeRequest::where('work_id', $workId)->where('action', 1)->get();
+        return QcOverTimeRequest::where('work_id', $workId)->where('action', $this->getDefaultHasAction())->get();
     }
 
     //========= ========== ========== lay thong tin ========== ========== ==========
@@ -87,7 +126,7 @@ class QcOverTimeRequest extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcOverTimeRequest::where('request_id', $objectId)->pluck($column);
+            return QcOverTimeRequest::where('request_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -141,7 +180,7 @@ class QcOverTimeRequest extends Model
     # lay danh sach yeu cau dang hoat dong
     public function  getAllInfoActivity()
     {
-        return QcOverTimeRequest::where('action', 1)->get();
+        return QcOverTimeRequest::where('action', $this->getDefaultHasAction())->get();
     }
 
     public function getInfo($requestId = '', $field = '')
@@ -163,19 +202,19 @@ class QcOverTimeRequest extends Model
     {
         $hFunction = new \Hfunction();
         $dataRequest = $this->getInfo($this->checkNullId($requestId));
-        $agreeStatus = 0;
+        $acceptStatus = $this->getDefaultNotAccept();
         if ($hFunction->checkCount($dataRequest)) {
             $requestDate = $dataRequest->requestDate();
             $dataCompanyStaffWork = $dataRequest->companyStaffWork;
             $dataTimekeepingProvisional = $dataCompanyStaffWork->infoTimekeepingProvisionalInDate($requestDate);
             if ($hFunction->checkCount($dataTimekeepingProvisional)) {
                 # kiem tra co tang ca hay khong
-                if ($dataTimekeepingProvisional->checkHasOverTime()) $agreeStatus = 1;
+                if ($dataTimekeepingProvisional->checkHasOverTime()) $acceptStatus = $this->getDefaultHasAccept();
             }
         }
         return QcOverTimeRequest::where('request_id', $requestId)->update([
-            'acceptStatus' => $agreeStatus,
-            'action' => 0
+            'acceptStatus' => $acceptStatus,
+            'action' => $this->getDefaultNotAction()
         ]);
 
     }

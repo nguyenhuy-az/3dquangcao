@@ -253,7 +253,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                                                                                     <div style="position: relative; float: left; margin: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                                                         <a class="qc_work_order_allocation_construction_report_image_view qc-link"
                                                                                            title="Click xem chi tiết hình ảnh"
-                                                                                           data-href="{!! route('qc.work.work_allocation.order.allocation.report_image.get', $workAllocationReportImage->imageId()) !!}">
+                                                                                           data-href="{!! route('qc.work.work_allocation.work_allocation.report_image_direct.view', $workAllocationReportImage->imageId()) !!}">
                                                                                             <img style="max-width: 100%; max-height: 100%;"
                                                                                                  src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
                                                                                         </a>

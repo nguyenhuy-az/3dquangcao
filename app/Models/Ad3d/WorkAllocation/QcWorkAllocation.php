@@ -334,7 +334,6 @@ class QcWorkAllocation extends Model
         }
 
     }
-
     # chon danh sach phan cong bi tre cua 1 nhan vien
     public function selectInfoHasLateOfStaffReceive($staffId, $dateFilter = null)
     {
@@ -345,6 +344,33 @@ class QcWorkAllocation extends Model
             return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('lateStatus',$hasLateStatus)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
         }
     }
+
+    # chon danh sach phan cong da hoan thanh khong tre (dung hen)cua 1 nhan vien
+    public function selectInfoFinishNotLateOfStaffReceive($staffId, $dateFilter = null)
+    {
+        $modelWorkAllocationFinish = new QcWorkAllocationFinish();
+        $allocationFinishId = $modelWorkAllocationFinish->listAllocationId();
+        $notLateStatus = $this->getDefaultNotLate();
+        if (empty($dateFilter)) {
+            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus',$notLateStatus)->where('receiveStaff_id', $staffId)->orderBy('receiveDeadline', 'DESC')->select('*');
+        } else {
+            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus',$notLateStatus)->where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
+        }
+    }
+
+    # chon danh sach phan cong da hoan thanh bi tre cua 1 nhan vien
+    public function selectInfoFinishHasLateOfStaffReceive($staffId, $dateFilter = null)
+    {
+        $modelWorkAllocationFinish = new QcWorkAllocationFinish();
+        $allocationFinishId = $modelWorkAllocationFinish->listAllocationId();
+        $hasLateStatus = $this->getDefaultHasLate();
+        if (empty($dateFilter)) {
+            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus',$hasLateStatus)->where('receiveStaff_id', $staffId)->orderBy('receiveDeadline', 'DESC')->select('*');
+        } else {
+            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus',$hasLateStatus)->where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
+        }
+    }
+
 
     # kiem tra nhan vien da duoc phan cong san pham
     public function checkStaffReceiveProduct($staffId, $productId)
@@ -402,7 +428,12 @@ class QcWorkAllocation extends Model
         $dataListWorkAllocation = $this->infoNotCancelOfProduct($productId);
         # so luong nguoi thi cong
         $amountAllocation = $hFunction->getCount($dataListWorkAllocation);
-        return $productPrice / $amountAllocation;
+        if($amountAllocation == 0){
+            return 0;
+        }else{
+            return $productPrice / $amountAllocation;
+        }
+
     }
 
     //---------- don hang -----------

@@ -127,7 +127,7 @@ class QcWork extends Model
                 $overtimeHour = $dataStaffWorkSalary->overtimeHour($workSalaryId);
                 $overtimeHour = (is_int($overtimeHour)) ? $overtimeHour : $overtimeHour[0];
 
-                $totalSalary = (int)($this->totalSalaryBasicOfWorkInMonth($workId) + $totalBonusMoney - $totalBeforePay  - $totalMinusMoney);
+                $totalSalary = (int)($this->totalSalaryBasicOfWorkInMonth($workId) + $totalBonusMoney - $totalBeforePay - $totalMinusMoney);
                 $overtimeMoney = ($plusMinute / 60) * $overtimeHour;
                 if ($modelSalary->insert($mainMinute, $plusMinute, $minusMinute, $totalBeforePay, $totalMinusMoney, $benefit, $overtimeMoney, $totalSalary, 0, $workId, $workSalaryId, null, 0, $totalBonusMoney)) {
                     # vo hieu hoa bang cam cong cu
@@ -266,10 +266,21 @@ class QcWork extends Model
     {
         return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('action', 1)->get();
     }
-
+    # lay danh sach ma cham cong theo ma danh sach lam viec cua 1 cty
     public function listIdOfListCompanyStaffWork($listCompanyStaffWorkId)
     {
         return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->pluck('work_id');
+
+    }
+    # lay danh sach ma cham cong theo ma danh sach lam viec cua 1 cty
+    public function listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter = null)
+    {
+        if (empty($dateFilter)) {
+            return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('work_id', 'DESC')->pluck('work_id');
+        } else {
+            return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('fromDate', 'like', "%$dateFilter%")->orderBy('work_id', 'DESC')->pluck('work_id');
+        }
+
     }
 
     public function listIdActivityOfListCompanyStaffWork($listCompanyStaffWorkId)
@@ -356,16 +367,6 @@ class QcWork extends Model
             return QcWork::whereIn('staff_id', $listStaffId)->orderBy('work_id', 'DESC')->pluck('work_id');
         } else {
             return QcWork::whereIn('staff_id', $listStaffId)->where('fromDate', 'like', "%$dateFilter%")->orderBy('work_id', 'DESC')->pluck('work_id');
-        }
-
-    }
-
-    public function listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter = null)
-    {
-        if (empty($dateFilter)) {
-            return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('work_id', 'DESC')->pluck('work_id');
-        } else {
-            return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('fromDate', 'like', "%$dateFilter%")->orderBy('work_id', 'DESC')->pluck('work_id');
         }
 
     }

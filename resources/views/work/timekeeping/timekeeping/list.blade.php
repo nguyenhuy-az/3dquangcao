@@ -159,12 +159,16 @@ if ($hFunction->checkCount($dataWork)) {
                                         @endif
                                         {{--Huy cham cong--}}
                                         @if($timekeepingProvisional->checkAllowCancel())
-                                            <br/>
-                                            <a class="qc_time_end_cancel qc-link-red-bold">
-                                                <span class="qc-font-size-14" title="Hủy">
-                                                    HỦY CHẤM CÔNG
-                                                </span>
-                                            </a>
+                                            @if($endCheckStatus)
+                                                @if(!$timekeepingProvisional->checkDisableReportEndCurrentDate())
+                                                    <br/>
+                                                    <a class="qc_time_end_cancel qc-link-red-bold">
+                                                        <span class="qc-font-size-14" title="Hủy">
+                                                            HỦY CHẤM CÔNG
+                                                        </span>
+                                                    </a>
+                                                @endif
+                                            @endif
                                         @endif
                                         @if($dataCompanyStaffWork->checkExistOverTimeRequestOfDate($timeBegin))
                                             @if($endCheckStatus)

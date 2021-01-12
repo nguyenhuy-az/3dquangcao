@@ -34,7 +34,7 @@ class TimekeepingController extends Controller
         ];
         $dataStaff = $modelStaff->loginStaffInfo();
         $dateFilter = $hFunction->currentDate();
-        return view('work.timekeeping.timekeeping.list', compact('modelCompany','dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
+        return view('work.timekeeping.timekeeping.list', compact('modelCompany', 'dataAccess', 'modelStaff', 'dataStaff', 'dateFilter'));
     }
 
     # xem anh bao cao
@@ -62,7 +62,7 @@ class TimekeepingController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        $modelTimekeeping = new QcTimekeepingProvisional();
+        $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $workId = Request::input('txtWork');
 
         $dayBegin = Request::input('cbDayBegin');
@@ -81,10 +81,13 @@ class TimekeepingController extends Controller
                 if (date('Y-m-d', strtotime($timeBegin)) > date('Y-m-d')) {
                     return 'Giờ vào làm phải nhỏ hơn giờ hiện tại';
                 } else {
-                    if ($modelTimekeeping->existDateOfWork($workId, "$monthBegin/$dayBegin/$yearBegin")) {
+                    if ($modelTimekeepingProvisional->existDateOfWork($workId, "$monthBegin/$dayBegin/$yearBegin")) {
                         return 'Ngày này đã chấm công, chon ngày khác';
                     } else {
-                        if (!$modelTimekeeping->insert($timeBegin, null, $note, 0, $workId, null)) {
+                        $timeEnd = $modelTimekeepingProvisional->getDefaultTimeEnd();
+                        $notAfternoon = $modelTimekeepingProvisional->getDefaultNotAfternoonStatus();
+                        $staffConfirmId = $modelTimekeepingProvisional->getDefaultConfirmStaff();
+                        if (!$modelTimekeepingProvisional->insert($timeBegin, $timeEnd, $note, $notAfternoon, $workId, $staffConfirmId)) {
                             return "Hệ thống đang bảo trì";
                         }
                     }
@@ -125,7 +128,7 @@ class TimekeepingController extends Controller
         } else {
             $checkTime = $timeEnd;
         }
-        if ($hFunction->formatDateToYMDHI($timeBegin)  > $hFunction->formatDateToYMDHI($checkTime)) {
+        if ($hFunction->formatDateToYMDHI($timeBegin) > $hFunction->formatDateToYMDHI($checkTime)) {
             return "Giờ vào phải nhỏ hơn giờ ra";
         } else {
             if (!$modelTimekeepingProvisional->updateTimeBegin($timekeepingProvisionalId, $timeBegin)) {

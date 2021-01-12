@@ -13,6 +13,7 @@ use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
+use App\Models\Ad3d\OverTimeRequest\QcOverTimeRequest;
 use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
 use App\Models\Ad3d\Payment\QcPayment;
 use App\Models\Ad3d\PaymentType\QcPaymentType;
@@ -24,6 +25,7 @@ use App\Models\Ad3d\StaffKpi\QcStaffKpi;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\StaffSalaryBasic\QcStaffSalaryBasic;
 use App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod;
+use App\Models\Ad3d\Timekeeping\QcTimekeeping;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Work\QcWork;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
@@ -1481,7 +1483,7 @@ class QcStaff extends Model
     }
 
 
-    // lay thong tin nv them tai khoan
+    # lay thong tin nv them tai khoan
     public function infoFromAccount($account)
     {
         return QcStaff::where('account', $account)->first();
@@ -1686,7 +1688,61 @@ class QcStaff extends Model
     }
 
     #============ =========== ============ STATISTICAL ============= =========== ==========
-    // =========== ================= THONG KE THONG TIN CA NHAN =========== ===============
+    // =========== ======= THONG KE THONG TIN CA NHAN ======== ========
+    //======= THONG TIN CHUYEN CAN
+    # lay danh sach bang cham cong cua 1 nhan vien theo thang nam
+    public function listWorkIdOfListCompanyStaffWork($staffId, $dateFilter = null)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelWork = new QcWork();
+        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfStaff($staffId);
+        return $modelWork->listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter);
+    }
+
+    #thong tim co cham cong cua 1 nhan vien
+    public function statisticGetHasWorkTimekeeping($staffId, $dateFilter = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoHasWorkFromListWork($this->listWorkIdOfListCompanyStaffWork($staffId, $dateFilter));
+    }
+
+    # ngay nghi co phep cua 1 nhan vien
+    public function statisticGetOffWorkHasPermissionTimekeeping($staffId, $dateFilter = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoOffWorkHasPermissionFromListWork($this->listWorkIdOfListCompanyStaffWork($staffId, $dateFilter));
+    }
+
+    # ngay nghi khong phep cua 1 nhan vien
+    public function statisticGetOffWorkNotPermissionTimekeeping($staffId, $dateFilter = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoOffWorkNotPermissionFromListWork($this->listWorkIdOfListCompanyStaffWork($staffId, $dateFilter));
+    }
+
+    # di lam tre cua 1 nhan vien
+    public function statisticGetLateWork($staffId, $dateFilter = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoLateWork($this->listWorkIdOfListCompanyStaffWork($staffId, $dateFilter));
+    }
+
+    # lam tang ca
+    public function statisticGetOverTimeWork($staffId, $dateFilter = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoOverTimeWork($this->listWorkIdOfListCompanyStaffWork($staffId, $dateFilter));
+    }
+
+    #yeu cau tang ca
+    public function statisticGetAllOverTimeRequest($staffId, $dateFilter = null)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelOverTimeRequest = new QcOverTimeRequest();
+        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfStaff($staffId);
+        return $modelOverTimeRequest->infoOfListCompanyStaffWork($listCompanyStaffWorkId, $dateFilter);
+    }
+    //===== THONG TIN CHUYEN MON
     # tong tin gia tri mang ve tu thi cong san pham
     public function totalValueMoneyFromListWorkAllocation($dataListWorkAllocation)
     {
@@ -1702,6 +1758,13 @@ class QcStaff extends Model
         return $modelWorkAllocation->selectInfoOfStaffReceive($staffId, $modelCompany->getDefaultValueAllFinish(), $dateFilter)->get();
     }
 
+    # tong so luong cong viec duoc giao theo thoi gian va bi tre
+    public function statisticGetWorkAllocationHasLate($staffId, $dateFilter = null)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+        return $modelWorkAllocation->selectInfoHasLateOfStaffReceive($staffId, $dateFilter)->get();
+    }
+
     # tong so cong viec duoc giao da hoan thanh
     public function statisticGetWorkAllocationHasFinish($staffId, $dateFilter = null)
     {
@@ -1710,11 +1773,18 @@ class QcStaff extends Model
         return $modelWorkAllocation->selectInfoOfStaffReceive($staffId, $modelCompany->getDefaultValueHasFinish(), $dateFilter)->get();
     }
 
-    # tong so luong cong viec duoc giao theo thoi gian va bi tre
-    public function statisticGetWorkAllocationHasLate($staffId, $dateFilter = null)
+    # tong so luong cong viec duoc giao hoan thanh dung hen
+    public function statisticGetWorkAllocationFinishNotLate($staffId, $dateFilter = null)
     {
         $modelWorkAllocation = new QcWorkAllocation();
-        return $modelWorkAllocation->selectInfoHasLateOfStaffReceive($staffId, $dateFilter)->get();
+        return $modelWorkAllocation->selectInfoFinishNotLateOfStaffReceive($staffId, $dateFilter)->get();
+    }
+
+    # tong so luong cong viec duoc giao hoan thanh tre hen
+    public function statisticGetWorkAllocationFinishHasLate($staffId, $dateFilter = null)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+        return $modelWorkAllocation->selectInfoFinishHasLateOfStaffReceive($staffId, $dateFilter)->get();
     }
 
     //  ========== ================= THONG KE THU ===================
