@@ -27,6 +27,12 @@ class QcImportPay extends Model
         return 0;
     }
 
+    # mac dinh lay tat ca trang thai xac nhan
+    public function getDefaultAllConfirm()
+    {
+        return 100;
+    }
+
     #---------- Insert ----------
     public function insert($money, $importId, $payStaffId)
     {
@@ -49,12 +55,15 @@ class QcImportPay extends Model
         return $this->lastId;
     }
 
+    public function checkNullId($id = null)
+    {
+        return (empty($id)) ? $id : $this->payId();
+    }
 
     # xóa
     public function actionDelete($payId = null)
     {
-        if (empty($payId)) $payId = $this->payId();
-        return QcImportPay::where('pay_id', $payId)->delete();
+        return QcImportPay::where('pay_id', $this->checkNullId($payId))->delete();
     }
 
     #========== ========== ========== RELATION ========== ========== ==========
@@ -73,7 +82,7 @@ class QcImportPay extends Model
     # thong tin thanh toan chua xac nhan cua nhieu don nhap
     public function infoUnConfirmOfListImportId($listImportId)
     {
-        return QcImportPay::whereIn('import_id', $listImportId)->where('confirmStatus', 0)->get();
+        return QcImportPay::whereIn('import_id', $listImportId)->where('confirmStatus', $this->getDefaultNotConfirm())->get();
     }
 
     # kien tra da xac nhan thanh toan
@@ -91,7 +100,7 @@ class QcImportPay extends Model
     public function totalMoneyOfImportStaffAndDate($staffId, $date)
     {
         $modelImport = new QcImport();
-        $listImportId = $modelImport->listIdOfStaff($staffId, null, 3);
+        $listImportId = $modelImport->listIdOfStaff($staffId, null, $modelImport->getDefaultAllPay());
         if (!empty($date)) {
             return QcImportPay::whereIn('import_id', $listImportId)->where('created_at', 'like', "%$date%")->sum('money');
         } else {
@@ -146,18 +155,18 @@ class QcImportPay extends Model
     public function totalMoneyConfirmedOfPayStaffAndDate($staffId, $date)
     {
         if (!empty($date)) {
-            return QcImportPay::where('staff_id', $staffId)->where('confirmStatus', 1)->where('created_at', 'like', "%$date%")->sum('money');
+            return QcImportPay::where('staff_id', $staffId)->where('confirmStatus', $this->getDefaultHasConfirm())->where('created_at', 'like', "%$date%")->sum('money');
         } else {
-            return QcImportPay::where('staff_id', $staffId)->where('confirmStatus', 1)->sum('money');
+            return QcImportPay::where('staff_id', $staffId)->where('confirmStatus', $this->getDefaultHasConfirm())->sum('money');
         }
     }
 
     public function totalMoneyConfirmedOfPayListStaffAndDate($listStaffId, $date)
     {
         if (!empty($date)) {
-            return QcImportPay::whereIn('staff_id', $listStaffId)->where('confirmStatus', 1)->where('created_at', 'like', "%$date%")->sum('money');
+            return QcImportPay::whereIn('staff_id', $listStaffId)->where('confirmStatus', $this->getDefaultHasConfirm())->where('created_at', 'like', "%$date%")->sum('money');
         } else {
-            return QcImportPay::whereIn('staff_id', $listStaffId)->where('confirmStatus', 1)->sum('money');
+            return QcImportPay::whereIn('staff_id', $listStaffId)->where('confirmStatus', $this->getDefaultHasConfirm())->sum('money');
         }
 
     }
@@ -192,7 +201,7 @@ class QcImportPay extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcImportPay::where('pay_id', $objectId)->pluck($column);
+            return QcImportPay::where('pay_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -236,6 +245,6 @@ class QcImportPay extends Model
     #==== ====== check in ====== =====
     public function checkConfirm($payId = null)
     {
-        return ($this->confirmStatus($payId) == 1) ? true : false;
+        return ($this->confirmStatus($payId) == $this->getDefaultHasConfirm()) ? true : false;
     }
 }

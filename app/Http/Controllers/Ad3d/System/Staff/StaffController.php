@@ -6,7 +6,6 @@ use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\CompanyStaffWorkEnd\QcCompanyStaffWorkEnd;
 use App\Models\Ad3d\Department\QcDepartment;
-use App\Models\Ad3d\DepartmentStaff\QcDepartmentStaff;
 use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
@@ -14,6 +13,7 @@ use App\Models\Ad3d\StaffSalaryBasic\QcStaffSalaryBasic;
 use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod;
 use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
+use App\Models\Ad3d\Statistical\QcStatistical;
 use App\Models\Ad3d\ToolPackage\QcToolPackage;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Support\Facades\Session;
@@ -36,11 +36,13 @@ class StaffController extends Controller
         if ($companyFilterId == null || $companyFilterId == 0) {
             $companyFilterId = $companyLoginId;
         }
+        # dang hoat dong
+        $hasAction = $modelCompanyStaffWork->getDefaultHasAction();
         # lay thong tin cong ty cung he thong
         $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         # lay thong tin lam viec cua nv tai cty dang truy cap
         $dataCompanyStaffWork = $modelCompanyStaffWork->selectInfoOfCompanyAndActionStatus($companyFilterId, $actionStatus)->paginate(30);
-        if ($actionStatus == 1) {
+        if ($actionStatus == $hasAction) {
             $dataAccess = [
                 'accessObject' => 'staff',
                 'subObject' => 'staffOn'
@@ -64,6 +66,7 @@ class StaffController extends Controller
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaff = new QcStaff();
+        $modelStatistical = new QcStatistical();
         # lay gia tri mac dinh
         $allMonthFilter = $modelCompany->getDefaultValueAllMonth();
         $allYearFilter = $modelCompany->getDefaultValueAllYear();
@@ -95,7 +98,7 @@ class StaffController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        return view('ad3d.system.staff.statistical', compact('modelCompany', 'modelStaff', 'dataCompanyStaffWork', 'dataStaff', 'dataAccess', 'monthFilter', 'yearFilter','dateFilter'));
+        return view('ad3d.system.staff.statistical', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataCompanyStaffWork', 'dataStaff', 'dataAccess', 'monthFilter', 'yearFilter', 'dateFilter'));
     }
 
     # them
@@ -170,7 +173,7 @@ class StaffController extends Controller
         $txtUsePhone = $hFunction->convertCurrencyToInt($txtUsePhone);
         $txtFuel = Request::input('txtFuel');
         $txtFuel = $hFunction->convertCurrencyToInt($txtFuel);
-        $txtDateOff = 1;// Request::input('txtDateOff');
+        $txtDateOff = $modelStaffWorkSalary->getDefaultDateOff();# so ngay nghi mac dinh
         //$txtDateOff = $hFunction->convertCurrencyToInt($txtDateOff); //mac dinh 1 ngay
         $txtOvertimeHour = Request::input('txtOvertimeHour');
         $txtOvertimeHour = $hFunction->convertCurrencyToInt($txtOvertimeHour);
@@ -228,7 +231,7 @@ class StaffController extends Controller
                             if ($staffRank) $rankId = $modelRank->staffRankId();
                         }
                         // co chon vi tri lam viẹc
-                        if (!empty($rankId)) $modelStaffWorkDepartment->insert($newWorkId, $departmentId, $rankId, $fromDateWork);
+                        if (!$hFunction->checkEmpty($rankId)) $modelStaffWorkDepartment->insert($newWorkId, $departmentId, $rankId, $fromDateWork);
                         // neu la bo phan thi cong thi phat tui do nghe
                         if ($modelDepartment->checkConstruction($departmentId)) {
                             # giao do nghe
@@ -496,7 +499,14 @@ class StaffController extends Controller
                 #Them luong cho nhan vien
                 $salaryBasicOld = $dataStaffOld->salaryBasicOfStaff();
                 $salaryBasicOld = (is_array($salaryBasicOld)) ? $salaryBasicOld[0] : $salaryBasicOld;
-                $modelStaffWorkSalary->insert($salaryBasicOld, 0, 0, 0, 0, 1, 10000, $newCompanyStaffWorkId);
+                # lay gia tri mac dinh
+                $salaryResponsibility = $modelStaffWorkSalary->getDefaultResponsibility();
+                $salaryInsurance = $modelStaffWorkSalary->getDefaultInsurance();
+                $salaryUsePhone = $modelStaffWorkSalary->getDefaultUsePhone();
+                $salaryFuel = $modelStaffWorkSalary->getDefaultFuel();
+                $salaryDateOff = $modelStaffWorkSalary->getDefaultDateOff();
+                $salaryOverTimeHour = $modelStaffWorkSalary->getDefaultOverTimeHour();
+                $modelStaffWorkSalary->insert($salaryBasicOld, $salaryResponsibility, $salaryUsePhone, $salaryInsurance, $salaryFuel, $salaryDateOff, $salaryOverTimeHour, $newCompanyStaffWorkId);
             }
         }
         return redirect()->back();
@@ -538,7 +548,7 @@ class StaffController extends Controller
         $txtUsePhone = $hFunction->convertCurrencyToInt($txtUsePhone);
         $txtFuel = Request::input('txtFuel');
         $txtFuel = $hFunction->convertCurrencyToInt($txtFuel);
-        $txtDateOff = 1;// Request::input('txtDateOff'); // mac dinh nghi 1 ngay
+        $txtDateOff = $modelStaffWorkSalary->getDefaultDateOff();// Request::input('txtDateOff'); // mac dinh nghi 1 ngay
         //$txtDateOff = $hFunction->convertCurrencyToInt($txtDateOff);
         $txtOvertimeHour = Request::input('txtOvertimeHour');
         $txtOvertimeHour = $hFunction->convertCurrencyToInt($txtOvertimeHour);
@@ -549,11 +559,11 @@ class StaffController extends Controller
         $modelStaff->updateBankAccount($staffId, $txtBankAccount, $cbBankName);
 
         // cap nhat luong
-        if (count($dataCompanyStaffWork) > 0) {
+        if ($hFunction->checkCount($dataCompanyStaffWork)) {
             $companyStaffWorkId = $dataCompanyStaffWork->workId();
             $oldStaffWorkSalary = $dataCompanyStaffWork->staffWorkSalaryActivity($companyStaffWorkId);
             if ($modelStaffWorkSalary->insert($txtTotalSalary, $txtSalary, $txtResponsibility, $txtUsePhone, $txtInsurance, $txtFuel, $txtDateOff, $txtOvertimeHour, $companyStaffWorkId)) {
-                if (count($oldStaffWorkSalary) > 0) $oldStaffWorkSalary->disableStaffWorkSalary();
+                if ($hFunction->checkCount($oldStaffWorkSalary)) $oldStaffWorkSalary->disableStaffWorkSalary();
             } else {
                 return "Hệ thống đang bảo trì";
             }
@@ -676,7 +686,7 @@ class StaffController extends Controller
                 if ($modelStaff->uploadImage($source_img, $name_img)) {
                     $oldImage = $dataStaff->image();
                     if ($modelStaff->updateImage($staffId, $name_img)) {
-                        if (!empty($oldImage)) $modelStaff->dropImage($oldImage);
+                        if (!$hFunction->checkEmpty($oldImage)) $modelStaff->dropImage($oldImage);
                     } else {
                         $modelStaff->dropImage($name_img);
                     }
@@ -689,7 +699,7 @@ class StaffController extends Controller
                 if ($modelStaff->uploadImage($source_img, $name_img_front)) {
                     $oldImageFront = $dataStaff->identityCardFront();
                     if ($modelStaff->updateIdentityCardFront($staffId, $name_img_front)) {
-                        if (!empty($oldImageFront)) $modelStaff->dropImage($oldImageFront);
+                        if (!$hFunction->checkEmpty($oldImageFront)) $modelStaff->dropImage($oldImageFront);
                     } else {
                         $modelStaff->dropImage($name_img_front);
                     }
@@ -702,7 +712,7 @@ class StaffController extends Controller
                 if ($modelStaff->uploadImage($source_img, $name_img_back)) {
                     $oldImageBack = $dataStaff->identityCardBack();
                     if ($modelStaff->updateIdentityCardBack($staffId, $name_img_back)) {
-                        if (!empty($oldImageBack)) $modelStaff->dropImage($oldImageBack);
+                        if (!$hFunction->checkEmpty($oldImageBack)) $modelStaff->dropImage($oldImageBack);
                     } else {
                         $modelStaff->dropImage($name_img_back);
                     }
@@ -731,11 +741,10 @@ class StaffController extends Controller
     //xóa
     public function deleteStaff($staffId = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        if (!empty($staffId)) {
+        if (!$hFunction->checkEmpty($staffId)) {
             return $modelStaff->actionDelete($staffId);
         }
     }
-
-    #======= ==========
 }

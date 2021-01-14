@@ -112,6 +112,8 @@ if ($hFunction->checkCount($dataWork)) {
                                 $dataTimekeepingProvisionalWarningTimeBegin = $timekeepingProvisional->timekeepingProvisionalWarningGetTimeBegin();
                                 # lay thong tin canh bao gio ra
                                 $dataTimekeepingProvisionalWarningTimeEnd = $timekeepingProvisional->timekeepingProvisionalWarningGetTimeEnd();
+                                # kiem tra vo hieu bao gio ra
+                                $checkDisableReportEndCurrentDate = $timekeepingProvisional->checkDisableReportEndCurrentDate();
                                 $n_o = (isset($n_o)) ? $n_o + 1 : 1;
                                 ?>
                                 <tr class="qc_timekeeping_provisional_object @if(!($n_o%2)) info @endif"
@@ -230,7 +232,7 @@ if ($hFunction->checkCount($dataWork)) {
                                             @endif
                                         @else
                                             @if($endCheckStatus)
-                                                @if($timekeepingProvisional->checkDisableReportEndCurrentDate())
+                                                @if($checkDisableReportEndCurrentDate)
                                                     <em style="background: red; color: yellow; padding: 3px;">
                                                         Bị vô hiệu - KHÔNG CÓ BÁO CÁO CUỐI NGÀY
                                                     </em>
@@ -247,7 +249,7 @@ if ($hFunction->checkCount($dataWork)) {
 
                                     </td>
                                     <td>
-                                        @if($endCheckStatus && !$checkConfirmStatus)
+                                        @if($endCheckStatus && !$checkConfirmStatus && !$checkDisableReportEndCurrentDate)
                                             <a class="qc_timekeeping_provisional_image_action qc-link-bold qc-font-size-14">
                                                 BÁO CÁO TIẾN ĐỘ
                                             </a>

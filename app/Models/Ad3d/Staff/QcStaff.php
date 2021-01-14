@@ -13,7 +13,6 @@ use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
-use App\Models\Ad3d\OverTimeRequest\QcOverTimeRequest;
 use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
 use App\Models\Ad3d\Payment\QcPayment;
 use App\Models\Ad3d\PaymentType\QcPaymentType;
@@ -25,7 +24,6 @@ use App\Models\Ad3d\StaffKpi\QcStaffKpi;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\StaffSalaryBasic\QcStaffSalaryBasic;
 use App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod;
-use App\Models\Ad3d\Timekeeping\QcTimekeeping;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Work\QcWork;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
@@ -64,6 +62,12 @@ class QcStaff extends Model
     public function getDefaultNotWorkStatus()
     {
         return 0;
+    }
+
+    # mac dinh tat ca trang thai lam viec
+    public function getDefaultAllWorkStatus()
+    {
+        return 100;
     }
 
     # mac dinh tai khoan root
@@ -165,7 +169,8 @@ class QcStaff extends Model
 
     public function checkIdNull($staffId)
     {
-        return (empty($staffId)) ? $this->staffId() : $staffId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($staffId)) ? $this->staffId() : $staffId;
     }
 
     public function staffId()
@@ -369,7 +374,8 @@ class QcStaff extends Model
 
     public function pathSmallImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathSmallImage() . '/' . $image);
@@ -378,7 +384,8 @@ class QcStaff extends Model
 
     public function pathFullImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
@@ -1303,9 +1310,10 @@ class QcStaff extends Model
     // thong tin NV dang nhap
     public function loginStaffInfo($field = '')
     {
+        $hFunction = new \Hfunction();
         if (Session::has('loginStaff')) {//da dang nhap
             $staff = Session::get('loginStaff');
-            if (empty($field)) { // have not to select a field -> return all field
+            if ($hFunction->checkEmpty($field)) { // have not to select a field -> return all field
                 return $staff;
             } else { // have not to select a field -> return one field
                 return $staff->$field;
@@ -1395,18 +1403,20 @@ class QcStaff extends Model
     //========= ========== ========== lay thong tin ========== ========== ==========
     public function selectInfoAll($listStaffId = null, $workStatus = 100)
     {
+        $hFunction = new \Hfunction();
         # chon tat ca thong tin
-        if (empty($listStaffId) && $workStatus == 100) {
+        $getAllWorkStatus = $this->getDefaultAllWorkStatus();
+        if ($hFunction->checkEmpty($listStaffId) && $workStatus == $getAllWorkStatus) {
             return QcStaff::select('*');
         } else {
-            if (!empty($listStaffId)) {
-                if ($workStatus == 100) {
+            if (!$hFunction->checkEmpty($listStaffId)) {
+                if ($workStatus == $getAllWorkStatus) {
                     return QcStaff::whereIn('staff_id', $listStaffId)->select('*');
                 } else {
                     return QcStaff::whereIn('staff_id', $listStaffId)->where('workStatus', $workStatus)->select('*');
                 }
             } else {
-                if ($workStatus < 100) {
+                if ($workStatus < $getAllWorkStatus) {
                     return QcStaff::where('workStatus', $workStatus)->select('*');
                 }
             }
@@ -1426,11 +1436,12 @@ class QcStaff extends Model
 
     public function getInfo($staffId = '', $field = '')
     {
-        if (empty($staffId)) {
-            return QcStaff::where('workStatus', 1)->get();
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($staffId)) {
+            return QcStaff::where('workStatus', $this->getDefaultHasWorkStatus())->get();
         } else {
             $result = QcStaff::where('staff_id', $staffId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -1509,11 +1520,11 @@ class QcStaff extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            $result = QcStaff::where('staff_id', $objectId)->pluck($column);
-            return $result[0];
+            return QcStaff::where('staff_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -1527,8 +1538,9 @@ class QcStaff extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcStaff::orderBy('staff_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->staff_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->staff_id;
     }
 
     //========== ========== ========= KIEM TRA THONG TIN ========== ========= =========
@@ -1688,106 +1700,7 @@ class QcStaff extends Model
     }
 
     #============ =========== ============ STATISTICAL ============= =========== ==========
-    // =========== ======= THONG KE THONG TIN CA NHAN ======== ========
-    //======= THONG TIN CHUYEN CAN
-    # lay danh sach bang cham cong cua 1 nhan vien theo thang nam
-    public function listWorkIdOfListCompanyStaffWork($staffId, $dateFilter = null)
-    {
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelWork = new QcWork();
-        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfStaff($staffId);
-        return $modelWork->listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter);
-    }
-
-    #thong tim co cham cong cua 1 nhan vien
-    public function statisticGetHasWorkTimekeeping($staffId, $dateFilter = null)
-    {
-        $modelTimekeeping = new QcTimekeeping();
-        return $modelTimekeeping->getInfoHasWorkFromListWork($this->listWorkIdOfListCompanyStaffWork($staffId, $dateFilter));
-    }
-
-    # ngay nghi co phep cua 1 nhan vien
-    public function statisticGetOffWorkHasPermissionTimekeeping($staffId, $dateFilter = null)
-    {
-        $modelTimekeeping = new QcTimekeeping();
-        return $modelTimekeeping->getInfoOffWorkHasPermissionFromListWork($this->listWorkIdOfListCompanyStaffWork($staffId, $dateFilter));
-    }
-
-    # ngay nghi khong phep cua 1 nhan vien
-    public function statisticGetOffWorkNotPermissionTimekeeping($staffId, $dateFilter = null)
-    {
-        $modelTimekeeping = new QcTimekeeping();
-        return $modelTimekeeping->getInfoOffWorkNotPermissionFromListWork($this->listWorkIdOfListCompanyStaffWork($staffId, $dateFilter));
-    }
-
-    # di lam tre cua 1 nhan vien
-    public function statisticGetLateWork($staffId, $dateFilter = null)
-    {
-        $modelTimekeeping = new QcTimekeeping();
-        return $modelTimekeeping->getInfoLateWork($this->listWorkIdOfListCompanyStaffWork($staffId, $dateFilter));
-    }
-
-    # lam tang ca
-    public function statisticGetOverTimeWork($staffId, $dateFilter = null)
-    {
-        $modelTimekeeping = new QcTimekeeping();
-        return $modelTimekeeping->getInfoOverTimeWork($this->listWorkIdOfListCompanyStaffWork($staffId, $dateFilter));
-    }
-
-    #yeu cau tang ca
-    public function statisticGetAllOverTimeRequest($staffId, $dateFilter = null)
-    {
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelOverTimeRequest = new QcOverTimeRequest();
-        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfStaff($staffId);
-        return $modelOverTimeRequest->infoOfListCompanyStaffWork($listCompanyStaffWorkId, $dateFilter);
-    }
-    //===== THONG TIN CHUYEN MON
-    # tong tin gia tri mang ve tu thi cong san pham
-    public function totalValueMoneyFromListWorkAllocation($dataListWorkAllocation)
-    {
-        $modelWorkAllocation = new QcWorkAllocation();
-        return $modelWorkAllocation->valueMoneyFromListWorkAllocation($dataListWorkAllocation);
-    }
-
-    # tong so luong cong viec duoc giao theo thoi gian
-    public function statisticGetReceiveWorkAllocation($staffId, $dateFilter = null)
-    {
-        $modelCompany = new QcCompany();
-        $modelWorkAllocation = new QcWorkAllocation();
-        return $modelWorkAllocation->selectInfoOfStaffReceive($staffId, $modelCompany->getDefaultValueAllFinish(), $dateFilter)->get();
-    }
-
-    # tong so luong cong viec duoc giao theo thoi gian va bi tre
-    public function statisticGetWorkAllocationHasLate($staffId, $dateFilter = null)
-    {
-        $modelWorkAllocation = new QcWorkAllocation();
-        return $modelWorkAllocation->selectInfoHasLateOfStaffReceive($staffId, $dateFilter)->get();
-    }
-
-    # tong so cong viec duoc giao da hoan thanh
-    public function statisticGetWorkAllocationHasFinish($staffId, $dateFilter = null)
-    {
-        $modelCompany = new QcCompany();
-        $modelWorkAllocation = new QcWorkAllocation();
-        return $modelWorkAllocation->selectInfoOfStaffReceive($staffId, $modelCompany->getDefaultValueHasFinish(), $dateFilter)->get();
-    }
-
-    # tong so luong cong viec duoc giao hoan thanh dung hen
-    public function statisticGetWorkAllocationFinishNotLate($staffId, $dateFilter = null)
-    {
-        $modelWorkAllocation = new QcWorkAllocation();
-        return $modelWorkAllocation->selectInfoFinishNotLateOfStaffReceive($staffId, $dateFilter)->get();
-    }
-
-    # tong so luong cong viec duoc giao hoan thanh tre hen
-    public function statisticGetWorkAllocationFinishHasLate($staffId, $dateFilter = null)
-    {
-        $modelWorkAllocation = new QcWorkAllocation();
-        return $modelWorkAllocation->selectInfoFinishHasLateOfStaffReceive($staffId, $dateFilter)->get();
-    }
-
-    //  ========== ================= THONG KE THU ===================
+    //  ========== ========= ======== THONG KE THU ========= ========== ==========
     public function totalReceivedMoneyForCompany($staffId, $date = null)
     {
         //  tong tien nhan tu thu don hang
@@ -1800,11 +1713,12 @@ class QcStaff extends Model
     #TONG THU
     public function totalReceivedMoney($staffId, $date = null)
     {
+        ///$companyId = $this->companyId($staffId);
         //  tong tien nhan tu thu don hang
         $totalMoneyOrderPay = $this->totalReceiveMoneyFromOrderPay($staffId, $date);
 
         //tong tien nhan tu thanh toan mua vat tu
-        $totalMoneyImportPaidOfStaff = $this->totalMoneyImportOfStaff($staffId, $date, 1);
+        $totalMoneyImportPaidOfStaff = 0;// $this->totalMoneyImportOfStaffHasConfirmPay($staffId, $date, 1);
 
         // tien duoc giao
         $totalReceivedMoneyOfStaffAndDate = $this->totalMoneyReceivedTransferOfStaffAndDate($staffId, $date);

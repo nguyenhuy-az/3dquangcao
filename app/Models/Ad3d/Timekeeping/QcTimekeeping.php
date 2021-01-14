@@ -77,6 +77,12 @@ class QcTimekeeping extends Model
         return 0;
     }
 
+    #mac dinh gio vao
+    public function getDefaultTimeBegin()
+    {
+        return null;
+    }
+
     #mac dinh gio ra
     public function getDefaultTimeEnd()
     {
@@ -88,6 +94,43 @@ class QcTimekeeping extends Model
     {
         return null;
     }
+
+    #mac dinh gio lam chinh
+    public function getDefaultMainMinute()
+    {
+        return 0;
+    }
+
+    #mac dinh gio tang ca
+    public function getDefaultPlusMinute()
+    {
+        return 0;
+    }
+
+    #mac dinh gio tru
+    public function getDefaultMinusMinute()
+    {
+        return 0;
+    }
+
+    # mac dinh ghi chu
+    public function getDefaultNote()
+    {
+        return null;
+    }
+
+    # mac dinh ghi chu xac nhan
+    public function getDefaultConfirmNote()
+    {
+        return null;
+    }
+
+    #mac dinh nguoi duyet
+    public function getDefaultConfirmStaffId()
+    {
+        return null;
+    }
+
 
     //---------- Insert ----------
     public function insert($timeBegin, $timeEnd, $dateOff, $afternoonStatus, $mainMinute, $plusMinute, $minusMinute, $note, $confirmNote, $lateStatus, $permissionStatus, $workStatus, $staffCheckId, $workId)

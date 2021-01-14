@@ -34,6 +34,30 @@ class QcCompanyStaffWork extends Model
     {
         return 0;
     }
+
+    #mac dinh lay tat ca trang thai hoat dong
+    public function getDefaultAllAction()
+    {
+        return 100;
+    }
+
+    # mac dinh cap bac try cap vao ad min
+    public function getDefaultLevel()
+    {
+        return 5; # level binh thuong
+    }
+
+    # mac dinh gioi hạn truy cap admin
+    public function getDefaultLimitAdmin()
+    {
+        return 3; # <=3 duoc truy cap vao admin
+    }
+
+    # mac dinh chon het cap bac
+    public function getDefaultAllLevel()
+    {
+        return 100; # dung chon loc thong tin
+    }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
     public function insert($beginDate, $level, $staffId, $staffAddId, $companyId)
@@ -63,7 +87,8 @@ class QcCompanyStaffWork extends Model
 
     public function checkIdNull($workId)
     {
-        return (empty($workId)) ? $this->workId() : $workId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($workId)) ? $this->workId() : $workId;
     }
 
     # nghi - truc tiep
@@ -110,7 +135,7 @@ class QcCompanyStaffWork extends Model
         $modelStaff = new QcStaff();
         $staffId = $this->staffId($companyStaffWorkId);
         if ($modelStaff->restoreWorkStatus($staffId)) {
-            if (QcCompanyStaffWork::where('work_id', $companyStaffWorkId)->update(['action' => 1])) {
+            if (QcCompanyStaffWork::where('work_id', $companyStaffWorkId)->update(['action' => $this->getDefaultHasAction()])) {
                 return $this->openWork($companyStaffWorkId);
             } else {
                 return false;
@@ -251,7 +276,7 @@ class QcCompanyStaffWork extends Model
 
                         }
                         # co nhan vien dc chon
-                        if (!empty($selectedStaffWorkId)) {
+                        if (!$hFunction->checkEmpty($selectedStaffWorkId)) {
                             # them vao phan cong kiem tra do nghe
                             $modelCompanyStoreCheck->insert($selectedStaffWorkId);
                         } else {
@@ -381,16 +406,19 @@ class QcCompanyStaffWork extends Model
     }
 
 
-    public function listStaffIdHasFilter($companyId, $departmentId = null, $level = 1000) #level = 1000 ->mac dinh chon tat ca level
+    public function listStaffIdHasFilter($companyId, $departmentId = null, $level = 100) #level = 1000 ->mac dinh chon tat ca level
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
-        if (!empty($departmentId) && $level < 1000) { # theo bo phan va cap bac
+        #mac dinh chon het cap bac
+        $getAllLevel = $this->getDefaultAllLevel();
+        if (!$hFunction->checkEmpty($departmentId) && $level < $getAllLevel) { # theo bo phan va cap bac
             $listWorkId = $modelStaffWorkDepartment->workIdOfDepartment($departmentId);
             return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('level', $level)->pluck('staff_id');
-        } elseif (!empty($departmentId) && $level == 1000) { # theo bo phan va ko can cap bac
+        } elseif (!$hFunction->checkEmpty($departmentId) && $level == $getAllLevel) { # theo bo phan va ko can cap bac
             $listWorkId = $modelStaffWorkDepartment->workIdOfDepartment($departmentId);
             return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->pluck('staff_id');
-        } elseif (empty($departmentId) && $level < 1000) { # theo cap bat, khong phan biet bo phan
+        } elseif ($hFunction->checkEmpty($departmentId) && $level < $getAllLevel) { # theo cap bat, khong phan biet bo phan
             return QcCompanyStaffWork::where('company_id', $companyId)->where('level', $level)->pluck('staff_id');
         } else {
             return QcCompanyStaffWork::where('company_id', $companyId)->pluck('staff_id');
@@ -411,7 +439,7 @@ class QcCompanyStaffWork extends Model
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $listWorkId = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment($listDepartmentId, $rankId);
         if ($hFunction->checkCount($listWorkId)) {
-            return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', 1)->pluck('staff_id');
+            return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', $this->getDefaultHasAction())->pluck('staff_id');
         } else {
             return null;
         }
@@ -431,21 +459,23 @@ class QcCompanyStaffWork extends Model
     }
 
     # lay danh sach ma nv dang hoat dong theo ma cong ty va ma bo phan va cap bac lam viec
-    public function listStaffIdActivityHasFilter($companyId, $departmentId = null, $level = 1000)
+    public function listStaffIdActivityHasFilter($companyId, $departmentId = null, $level = 100)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
-        #level = 1000 ->mac dinh chon tat ca level / level <=3 cap admin / 3 < level <= 5 cap thong thuong
+        #mac dinh chon het cap bac
+        $getAllLevel = $this->getDefaultAllLevel();
         # theo bo phan va cap bac
-        if (!empty($departmentId) && $level < 1000) {
+        if (!$hFunction->checkEmpty($departmentId) && $level < $getAllLevel) {
             $listWorkId = $modelStaffWorkDepartment->workIdActivityOfDepartment($departmentId);
-            return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('level', $level)->where('action', 1)->pluck('staff_id');
-        } elseif (!empty($departmentId) && $level == 1000) { # theo bo phan va ko can cap bac
+            return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('level', $level)->where('action', $this->getDefaultHasAction())->pluck('staff_id');
+        } elseif (!$hFunction->checkEmpty($departmentId) && $level == $getAllLevel) { # theo bo phan va ko can cap bac
             $listWorkId = $modelStaffWorkDepartment->workIdActivityOfDepartment($departmentId);
-            return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', 1)->pluck('staff_id');
-        } elseif (empty($departmentId) && $level < 1000) { # theo cap bat, khong phan biet bo phan
-            return QcCompanyStaffWork::where('company_id', $companyId)->where('level', $level)->where('action', 1)->pluck('staff_id');
+            return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', $this->getDefaultHasAction())->pluck('staff_id');
+        } elseif ($hFunction->checkEmpty($departmentId) && $level < $getAllLevel) { # theo cap bat, khong phan biet bo phan
+            return QcCompanyStaffWork::where('company_id', $companyId)->where('level', $level)->where('action', $this->getDefaultHasAction())->pluck('staff_id');
         } else {
-            return QcCompanyStaffWork::where('company_id', $companyId)->where('action', 1)->pluck('staff_id');
+            return QcCompanyStaffWork::where('company_id', $companyId)->where('action', $this->getDefaultHasAction())->pluck('staff_id');
         }
     }
 
@@ -494,27 +524,25 @@ class QcCompanyStaffWork extends Model
     # lay ma dang lam viec cua 1 nhan vien
     public function workIdActivityOfStaff($staffId)
     {
-        return QcCompanyStaffWork::where('staff_id', $staffId)->where('action', 1)->pluck('work_id');
+        return QcCompanyStaffWork::where('staff_id', $staffId)->where('action', $this->getDefaultHasAction())->pluck('work_id');
     }
 
     //lay thong tin dang lam viec cua NV
     public function infoActivityOfStaff($staffId)
     {
-        return QcCompanyStaffWork::where(['staff_id' => $staffId, 'action' => 1])->first();
+        return QcCompanyStaffWork::where(['staff_id' => $staffId, 'action' => $this->getDefaultHasAction()])->first();
     }
 
     # kiem tra da lam viec tai cty - da nghi / dang lam
     public function checkExistStaffOfCompany($staffId, $companyId)
     {
-        $result = QcCompanyStaffWork::where(['staff_id' => $staffId, 'company_id' => $companyId])->count();
-        return ($result > 0) ? true : false;
+        return QcCompanyStaffWork::where(['staff_id' => $staffId, 'company_id' => $companyId])->exists();
     }
 
     # kiem tra dang lam viec tai cty - dang lam
     public function checkExistActivityStaffOfCompany($staffId, $companyId)
     {
-        $result = QcCompanyStaffWork::where(['staff_id' => $staffId, 'company_id' => $companyId, 'action' => 1])->count();
-        return ($result > 0) ? true : false;
+        return QcCompanyStaffWork::where(['staff_id' => $staffId, 'company_id' => $companyId, 'action' => $this->getDefaultHasAction()])->exists();
     }
 
     public function levelActivityOfStaff($staffId)
@@ -533,7 +561,7 @@ class QcCompanyStaffWork extends Model
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $listWorkId = $modelStaffWorkDepartment->workIdActivityOfDepartment($departmentId);
-        return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->WhereIn('work_id', $listWorkId)->where('action', 1)->pluck('staff_id');
+        return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->WhereIn('work_id', $listWorkId)->where('action', $this->getDefaultHasAction())->pluck('staff_id');
     }
 
     //---------- nhan vien them nha su vao cty -----------
@@ -873,7 +901,7 @@ class QcCompanyStaffWork extends Model
         $listWorkIdOfDepartment = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment([$modelDepartment->constructionDepartmentId()], null);
         # danh sach lam viec da phat do nghe
         $listWorkId = $modelToolPackageAllocation->listWorkIdIsActive();
-        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkIdOfDepartment)->whereNotIn('work_id', $listWorkId)->where('action', 1)->get();
+        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkIdOfDepartment)->whereNotIn('work_id', $listWorkId)->where('action', $this->getDefaultHasAction())->get();
     }
 
     # lay thong tin lam viec theo bo phan thi cong cap nhan vien tai 1 cty - dang lam viec
@@ -883,7 +911,7 @@ class QcCompanyStaffWork extends Model
         $modelRank = new QcRank();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $listWorkId = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment([$modelDepartment->constructionDepartmentId()], $modelRank->staffRankId());
-        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', 1)->get();
+        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', $this->getDefaultHasAction())->get();
     }
 
     # lay tat ca thong tin lam viec theo bo phan thi cong tai 1 cty - dang lam viec
@@ -892,7 +920,7 @@ class QcCompanyStaffWork extends Model
         $modelDepartment = new QcDepartment();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $listWorkId = $modelStaffWorkDepartment->listWorkIdActivityOfListDepartment([$modelDepartment->constructionDepartmentId()], null);
-        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', 1)->get();
+        return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', $this->getDefaultHasAction())->get();
     }
 
     # lay danh sach tat ca ma lam viec tai 1 cty
@@ -904,7 +932,8 @@ class QcCompanyStaffWork extends Model
     # lay danh sach ma thong tin lam theo danh sach cong ty va danh sach NV - tat ca
     public function listIdOfListCompanyAndListStaff($listCompanyId, $listStaffId = null)
     {
-        if (empty($listStaffId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($listStaffId)) {
             return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->pluck('work_id');
         } else {
             return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->whereIn('staff_id', $listStaffId)->pluck('work_id');
@@ -915,10 +944,11 @@ class QcCompanyStaffWork extends Model
     # lay danh sach ma thong tin lam theo danh sach cong ty va danh sach NV - dang hoat dong
     public function listIdActivityOfListCompanyAndListStaff($listCompanyId, $listStaffId = null)
     {
-        if (empty($listStaffId)) {
-            return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->where('action', 1)->pluck('work_id');
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($listStaffId)) {
+            return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->where('action', $this->getDefaultHasAction())->pluck('work_id');
         } else {
-            return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->whereIn('staff_id', $listStaffId)->where('action', 1)->pluck('work_id');
+            return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->whereIn('staff_id', $listStaffId)->where('action', $this->getDefaultHasAction())->pluck('work_id');
         }
 
     }
@@ -942,7 +972,8 @@ class QcCompanyStaffWork extends Model
     # lay danh sach ma nv theo 1 cty va trang thai lam viẹc
     public function staffIdOfCompanyAndActionStatus($companyId, $actionStatus = 100) // mac dinh chon tat ca = 100
     {
-        if ($actionStatus == 100) {
+        $getAllAction = $this->getDefaultAllAction();
+        if ($actionStatus == $getAllAction) {
             return QcCompanyStaffWork::where('company_id', $companyId)->pluck('staff_id');
         } else {
             return QcCompanyStaffWork::where('company_id', $companyId)->where('action', $actionStatus)->pluck('staff_id');
@@ -952,17 +983,19 @@ class QcCompanyStaffWork extends Model
     # lay danh sach ma nv đang hoat dong theo 1 cty
     public function staffIdActivityOfCompany($companyId = null)
     {
-        if (empty($companyId)) {
-            return QcCompanyStaffWork::where('action', 1)->pluck('staff_id');
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($companyId)) {
+            return QcCompanyStaffWork::where('action', $this->getDefaultHasAction())->pluck('staff_id');
         } else {
-            return QcCompanyStaffWork::where('company_id', $companyId)->where('action', 1)->pluck('staff_id');
+            return QcCompanyStaffWork::where('company_id', $companyId)->where('action', $this->getDefaultHasAction())->pluck('staff_id');
         }
     }
 
     # lay danh sach ma nv theo danh sach ma cty
     public function staffIdOfListCompany($listCompanyId = null)
     {
-        if (empty($listCompanyId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($listCompanyId)) {
             return QcCompanyStaffWork::pluck('staff_id');
         } else {
             return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->pluck('staff_id');
@@ -972,22 +1005,23 @@ class QcCompanyStaffWork extends Model
     # lay danh sach ma nv đang hoat dong theo danh sach ma cty
     public function staffIdActivityOfListCompany($listCompanyId = null)
     {
-        if (empty($listCompanyId)) {
-            return QcCompanyStaffWork::where('action', 1)->pluck('staff_id');
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($listCompanyId)) {
+            return QcCompanyStaffWork::where('action', $this->getDefaultHasAction())->pluck('staff_id');
         } else {
-            return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->where('action', 1)->pluck('staff_id');
+            return QcCompanyStaffWork::whereIn('company_id', $listCompanyId)->where('action', $this->getDefaultHasAction())->pluck('staff_id');
         }
     }
 
     // lay danh sach ma nv cua bo phan quan ly cua 1 cty
-    public function listStaffIdManage($companyId, $level = 1000)
+    public function listStaffIdManage($companyId, $level = 100)
     {
         $modelDepartment = new QcDepartment();
         return $this->listStaffIdActivityHasFilter($companyId, $modelDepartment->manageDepartmentId(), $level);
     }
 
     //lay danh sach ma nv cua bo phan thu quy cua 1 cty
-    public function listStaffIdTreasure($companyId, $level = 1000)
+    public function listStaffIdTreasure($companyId, $level = 100)
     {
         $modelDepartment = new QcDepartment();
         return $this->listStaffIdActivityHasFilter($companyId, $modelDepartment->treasurerDepartmentId(), $level);
@@ -1001,7 +1035,7 @@ class QcCompanyStaffWork extends Model
     }
 
     //lay danh sach ma nv cua bo phan thi thi cong cua 1 cty
-    public function listStaffIdConstruction($companyId, $level = 1000)
+    public function listStaffIdConstruction($companyId, $level = 100)
     {
         $modelDepartment = new QcDepartment();
         return $this->listStaffIdActivityHasFilter($companyId, $modelDepartment->constructionDepartmentId(), $level);
@@ -1036,11 +1070,12 @@ class QcCompanyStaffWork extends Model
 
     public function getInfo($workId = '', $field = '')
     {
-        if (empty($workId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($workId)) {
             return QcCompanyStaffWork::get();
         } else {
             $result = QcCompanyStaffWork::where('work_id', $workId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -1050,10 +1085,11 @@ class QcCompanyStaffWork extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcCompanyStaffWork::where('work_id', $objectId)->pluck($column);
+            return QcCompanyStaffWork::where('work_id', $objectId)->pluck($column)[0];
         }
     }
 

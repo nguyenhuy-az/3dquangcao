@@ -13,6 +13,42 @@ class QcTimekeepingProvisionalWarning extends Model
 
     private $lastId;
 
+    # mac dinh ngay cap nhat
+    public function getDefaultUpdateDate()
+    {
+        return null;
+    }
+
+    # mac dinh anh canh bao
+    public function getDefaultImage()
+    {
+        return null;
+    }
+
+    # mac dinh ghi chu
+    public function getDefaultNote()
+    {
+        return null;
+    }
+
+    #mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    #mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh nguoi canh bao
+    public function getDefaultWarningStaffId()
+    {
+        return null; # null - canh bao tu dong
+    }
+
     #============ =========== ============ FIELD INFO ============= =========== ==========
     public function getInfo($warningId = '', $field = '')
     {

@@ -148,19 +148,19 @@ class QcTimekeepingProvisionalImage extends Model
     // lay thong tin hình anh bao cao cua 1 cham cong  cua buoi sang
     public function infoOfTimekeepingProvisionalInMorning($timekeepingProvisionalId)
     {
-        return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->where('reportPeriod', 1)->get();
+        return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->where('reportPeriod',$this->getDefaultMorningReportPeriod())->get();
     }
 
     // lay thong tin hình anh bao cao cua 1 cham cong  cua buoi sang
     public function infoOfTimekeepingProvisionalInAfternoon($timekeepingProvisionalId)
     {
-        return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->where('reportPeriod', 2)->get();
+        return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->where('reportPeriod', $this->getDefaultAfternoonReportPeriod())->get();
     }
 
     // lay thong tin hình anh bao cao cua 1 cham cong  cua buoi sang
     public function infoOfTimekeepingProvisionalInEvening($timekeepingProvisionalId)
     {
-        return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->where('reportPeriod', 3)->get();
+        return QcTimekeepingProvisionalImage::where('timekeeping_provisional_id', $timekeepingProvisionalId)->where('reportPeriod', $this->getDefaultEveningReportPeriod())->get();
     }
 
     #----------- anh bao cao tren phan viec ------------

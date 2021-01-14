@@ -11,9 +11,12 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$companyLoginId = $dataStaffLogin->companyId();
 $hrefIndex = route('qc.work.work_allocation.orders.index');
 # lay thong tin NV cap quan ly bo phan thi cong
+
 $dataStaffConstruction = $modelStaff->infoStaffConstructionRankManage($dataStaffLogin->companyId());
+
 $actionStatus = false;
 if ($dataStaffLogin->checkApplyRule()) $actionStatus = true; # quan ly co ap dung noi quy moi co quyen hanh dong tren trang
 ?>

@@ -6,6 +6,7 @@ use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\KeepMoney\QcKeepMoney;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
+use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
 use App\Models\Ad3d\Work\QcWork;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,16 +38,28 @@ class QcSalary extends Model
         return 0;
     }
 
-    #mac tinh da thanh toan
+    # mac dinh tien KPi
+    public function getDefaultKPIMoney()
+    {
+        return 0;
+    }
+
+    #mac tinh da thanh toan xong
     public function getDefaultHasPay()
     {
         return 1;
     }
 
-    #mac tinh chua thanh toan
+    #mac tinh chua thanh toan xong
     public function getDefaultNotPay()
     {
         return 0;
+    }
+
+    # mac dinh ghi chu cong them
+    public function getDefaultBenefitDescription()
+    {
+        return null;
     }
     //---------- them bang luong ----------
     /*
@@ -94,7 +107,8 @@ class QcSalary extends Model
 
     public function checkIdNull($salaryId = null)
     {
-        return (empty($salaryId)) ? $this->salaryId() : $salaryId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($salaryId)) ? $this->salaryId() : $salaryId;
     }
 
     public function updatePayStatus($salaryId)
@@ -231,11 +245,12 @@ class QcSalary extends Model
 
     public function getInfo($timekeepingId = '', $field = '')
     {
-        if (empty($timekeepingId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($timekeepingId)) {
             return QcSalary::get();
         } else {
             $result = QcSalary::where('salary_id', $timekeepingId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -245,7 +260,8 @@ class QcSalary extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcSalary::where('salary_id', $objectId)->pluck($column);
@@ -355,16 +371,18 @@ class QcSalary extends Model
     # tinh theo bang luong khi xuat bang luong
     public function totalSalaryBasic($salaryId = null)
     {
+        $hFunction = new \Hfunction();
+        $modelStaffWorkSalary = new QcStaffWorkSalary();
         $dataSalary = $this->getInfo($this->checkIdNull($salaryId));
         $mainMinute = $dataSalary->mainMinute();
         $plusMinute = $dataSalary->plusMinute();
         $dataStaffWorkSalary = $dataSalary->staffWorkSalary;
-        if (!empty($dataStaffWorkSalary)) {
+        if (!$hFunction->checkEmpty($dataStaffWorkSalary)) {
             $overtime = $dataStaffWorkSalary->overtimeHour($dataStaffWorkSalary->workSalaryId());
             $totalSalaryOnHour = $dataStaffWorkSalary->salaryOnHour(); # lương lam trong 1 gio
         } else {
-            $overtime = 0;
-            $totalSalaryOnHour = 0;
+            $overtime = $modelStaffWorkSalary->getDefaultOverTimeHour();
+            $totalSalaryOnHour = $modelStaffWorkSalary->getDefaultSalaryOnHour();
         }
 
         $overtime = (is_int($overtime)) ? $overtime : $overtime[0];

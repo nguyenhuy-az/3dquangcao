@@ -8,22 +8,94 @@ use Illuminate\Database\Eloquent\Model;
 class QcBonus extends Model
 {
     protected $table = 'qc_bonus';
-    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus','cancelImage', 'cancelNote', 'action', 'created_at', 'work_id', 'orderAllocation_id', 'orderConstruction_id', 'orderPay_id', 'workAllocation_id'];
+    protected $fillable = ['bonus_id', 'money', 'bonusDate', 'note', 'applyStatus', 'cancelStatus', 'cancelImage', 'cancelNote', 'action', 'created_at', 'work_id', 'orderAllocation_id', 'orderConstruction_id', 'orderPay_id', 'workAllocation_id'];
     protected $primaryKey = 'bonus_id';
     public $timestamps = false;
     private $lastId;
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     # trang thai mac dinh ap dung thuong
-    public function getHasApplyStatus()
+    public function getHasApplyStatus() # cu
     {
         return 1;
     }
 
     # trang thai mac dinh ap dung thuong
-    public function getNotApplyStatus()
+    public function getNotApplyStatus() # cu
     {
         return 0;
+    }
+
+    # mac dinh co ap dung
+    public function getDefaultHasApply()
+    {
+        return 1;
+    }
+
+    # trang thai mac dinh ap dung thuong
+    public function getDefaultNotApply()
+    {
+        return 0;
+    }
+
+    # mac dinh da huy
+    public function getDefaultHasCancel()
+    {
+        return 1;
+    }
+
+    # trang thai mac dinh ap dung thuong
+    public function getDefaultNotCancel()
+    {
+        return 0;
+    }
+
+    # mac dinh anh huy
+    public function getDefaultCancelImage()
+    {
+        return null;
+    }
+
+    # mac dinh ghi chu huy
+    public function getDefaultCancelNot()
+    {
+        return null;
+    }
+
+    # mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong con hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh ma don hang - thuong quan ly don hang
+    public function getDefaultOrderAllocationId()
+    {
+        return null;
+    }
+
+    # mac dinh ma don hang - thuong quan ly thi cong don hang
+    public function getDefaultOrderConstructionId()
+    {
+        return null;
+    }
+
+    # mac dinh ma thu tien don hang
+    public function getDefaultOrderPayId()
+    {
+        return null;
+    }
+
+    # mac dinh ma phan viec - thi cong san pham
+    public function getDefaultWorkAllocationId()
+    {
+        return null;
     }
 
     #---------- Insert ----------
@@ -108,13 +180,15 @@ class QcBonus extends Model
             return asset($this->rootPathFullImage() . '/' . $image);
         }
     }
+
+    # huy thuong
     public function cancelBonus($bonusId, $cancelNote, $image)
     {
         return QcBonus::where('bonus_id', $bonusId)->update([
-            'cancelStatus' => 1,
+            'cancelStatus' => $this->getDefaultHasCancel(),
             'cancelNote' => $cancelNote,
             'cancelImage' => $image,
-            'action' => 0
+            'action' => $this->getDefaultNotAction()
         ]);
     }
 
@@ -153,30 +227,36 @@ class QcBonus extends Model
         return QcBonus::where('work_id', $workId)->orderBy('bonusDate', 'DESC')->get();
     }
 
+    # tong tin phat cua 1 bang uong
     public function totalMoneyOfWork($workId)
     {
-        return QcBonus::where('work_id', $workId)->where('cancelStatus', 0)->sum('money');
+        return QcBonus::where('work_id', $workId)->where('cancelStatus', $this->getDefaultNotCancel())->sum('money');
     }
 
     public function totalMoneyApplyOfWork($workId)
     {
-        return QcBonus::where('work_id', $workId)->where('applyStatus', 1)->sum('money');
+        return QcBonus::where('work_id', $workId)->where('applyStatus', $this->getDefaultHasApply())->sum('money');
     }
 
     public function totalMoneyNotApplyOfWork($workId)
     {
-        return QcBonus::where('work_id', $workId)->where('applyStatus', 0)->sum('money');
+        return QcBonus::where('work_id', $workId)->where('applyStatus', $this->getDefaultNotApply())->sum('money');
     }
+
     # tong tien da ap dung phat
     public function totalMoneyAppliedOfWork($workId)
     {
-        return QcBonus::where('work_id', $workId)->where('applyStatus', 1)->where('cancelStatus', 0)->where('action', 0)->sum('money');
+        return QcBonus::where('work_id', $workId)->where('applyStatus', $this->getDefaultHasApply())->where('cancelStatus', $this->getDefaultNotCancel())->where('action', $this->getDefaultNotAction())->sum('money');
     }
 
     # neu khong huy thi se mac dinh la dong y
     public function autoCheckApplyBonusEndWork($workId)
     {
-        return QcBonus::where('work_id', $workId)->where('cancelStatus', 0)->where('action', 1)->update(['applyStatus' => 1, 'action' => 0]);
+        return QcBonus::where('work_id', $workId)->where('cancelStatus', $this->getDefaultNotCancel())->where('action', $this->getDefaultHasAction())->update(
+            [
+                'applyStatus' => $this->getDefaultHasApply(),
+                'action' => $this->getDefaultNotAction()
+            ]);
     }
 
     //---------- thong bao ban giao don hang moi ----------- -------
@@ -214,21 +294,38 @@ class QcBonus extends Model
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
-    public function selectInfoHasFilter($listWorkId, $dateFilter)
+    public function selectInfoHasFilter($listWorkId, $dateFilter = null)
     {
         if (empty($dateFilter)) {
             return QcBonus::whereIn('work_id', $listWorkId)->orderBy('bonusDate', 'DESC')->select('*');
         } else {
-            return QcBonus::where('bonusDate', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->orderBy('bonusDate', 'DESC')->select('*');
+            return QcBonus::whereIn('work_id', $listWorkId)->where('bonusDate', 'like', "%$dateFilter%")->orderBy('bonusDate', 'DESC')->select('*');
         }
     }
 
+    # lay thong tin thuong duoc ap dung theo danh sach ma cham cong
+    public function getInfoHasApplyFromListWorkId($listWorkId, $dateFilter = null)
+    {
+        # co ap dung
+        $hasApply = $this->getDefaultHasApply();
+        # khong huy
+        $notCancel = $this->getDefaultNotCancel();
+        if (empty($dateFilter)) {
+            return QcBonus::whereIn('work_id', $listWorkId)->where('applyStatus', $hasApply)->where('cancelStatus', $notCancel)->orderBy('bonusDate', 'DESC')->get();
+        } else {
+            return QcBonus::whereIn('work_id', $listWorkId)->where('bonusDate', 'like', "%$dateFilter%")->where('applyStatus', $hasApply)->where('cancelStatus', $notCancel)->orderBy('bonusDate', 'DESC')->get();
+        }
+    }
+
+    # tong tien phat theo danh sach ma bang cham cong - khong huy
     public function totalMoneyHasFilter($listWorkId, $dateFilter)
     {
+        # khong huy
+        $notCancel = $this->getDefaultNotCancel();
         if (empty($dateFilter)) {
-            return QcBonus::where('cancelStatus', 0)->whereIn('work_id', $listWorkId)->sum('money');
+            return QcBonus::whereIn('work_id', $listWorkId)->where('cancelStatus', $notCancel)->sum('money');
         } else {
-            return QcBonus::where('cancelStatus', 0)->where('bonusDate', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->sum('money');
+            return QcBonus::whereIn('work_id', $listWorkId)->where('cancelStatus', $notCancel)->where('bonusDate', 'like', "%$dateFilter%")->sum('money');
         }
     }
 
@@ -251,7 +348,7 @@ class QcBonus extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcBonus::where('bonus_id', $objectId)->pluck($column);
+            return QcBonus::where('bonus_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -331,15 +428,16 @@ class QcBonus extends Model
         return $this->pluck('workAllocation_id', $bonusId);
     }
 
-    #========= ============= ============= ============= =============
+    #========= ============= KIEM TRA THONG TIN ============= =============
     public function checkCancelStatus($bonusId = null)
     {
-        return ($this->cancelStatus($bonusId) == 1) ? true : false;
+        return ($this->cancelStatus($bonusId) == $this->getDefaultHasCancel()) ? true : false;
     }
 
+    # kiem tra co ap dung phat
     public function checkEnableApply($bonusId = null)
     {
-        if ($this->applyStatus($bonusId) == 1 && $this->cancelStatus() == 0) {
+        if ($this->applyStatus($bonusId) == $this->getDefaultHasApply() && $this->cancelStatus() == $this->getDefaultNotCancel()) {
             return true; # ap dung phat
         } else {
             return false; # khong ap dung phat

@@ -425,12 +425,12 @@ class OrdersController extends Controller
                 $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
                 # lay gia tri mac dinh
                 # dơn hang thuc
-                $provisionalStatus = $modelOrder->getDefaultRealOrder();
+                $provisionalStatus = $modelOrder->getDefaultNotProvisionalStatus();
                 $staffKpiId = $modelOrder->getDefaultStaffKPIId();
                 $confirmStatus = $modelOrder->getDefaultHasConfirm();
                 $provisionalDate = $modelOrder->getDefaultProvisionalDate();
                 $provisionalConfirm = $modelOrder->getDefaultHasProvisionalConfirm();
-                if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, $staffKpiId, $confirmStatus, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, $provisionalStatus, $provisionalDate, $provisionalConfirm)) {
+                if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffKpiId, $confirmStatus, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, $provisionalStatus, $provisionalDate, $provisionalConfirm)) {
                     $orderId = $modelOrder->insertGetId();
                     # xet them vao ngan sach thuong
                     $modelOrder->checkAddBonusBudget($orderId);
@@ -569,7 +569,12 @@ class OrdersController extends Controller
             $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
             $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
             $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
-            if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 0, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, 0, $hFunction->carbonNow(), 0)) {
+            # lay gia tri mac dinh
+            $staffKpiId = $modelOrder->getDefaultStaffKPIId();
+            $notConfirm = $modelOrder->getDefaultNotConfirm();
+            $notProvisionalStatus = $modelOrder->getDefaultNotProvisionalStatus();
+            $notProvisionalConfirm = $modelOrder->getDefaultNotProvisionalConfirm();
+            if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffKpiId, $notConfirm, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, $notProvisionalStatus, $hFunction->carbonNow(), $notProvisionalConfirm)) {
                 $orderId = $modelOrder->insertGetId();
                 if (count($productType) > 0) {
                     # them san pham

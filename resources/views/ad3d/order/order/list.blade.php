@@ -201,12 +201,12 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             <td style="padding: 0px;">
                                 <select class="cbPaymentStatus form-control"
                                         data-href="{!! route('qc.ad3d.order.order.get') !!}">
-                                    <option value="2" @if($paymentStatus == 2) selected="selected" @endif>Tất cả
+                                    <option value="{!! $modelOrder->getDefaultAllPayment() !!}" @if($paymentStatus == 2) selected="selected" @endif>Tất cả
                                     </option>
-                                    <option value="1" @if($paymentStatus == 1) selected="selected" @endif>
+                                    <option value="{!! $modelOrder->getDefaultHasPayment() !!}" @if($paymentStatus == 1) selected="selected" @endif>
                                         Đã thu xong
                                     </option>
-                                    <option value="0" @if($paymentStatus == 0) selected="selected" @endif>
+                                    <option value="{!! $modelOrder->getDefaultNotPayment() !!}" @if($paymentStatus == 0) selected="selected" @endif>
                                         Chưa thu xong
                                     </option>
                                 </select>
@@ -234,6 +234,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             $sumDiscountMoney = 0;
                             $sumPaidMoney = 0;
                             $sumUnPaidMoney = 0;
+
                             ?>
                             @foreach($dataOrder as $order)
                                 <?php

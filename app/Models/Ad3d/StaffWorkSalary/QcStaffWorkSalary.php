@@ -13,6 +13,59 @@ class QcStaffWorkSalary extends Model
 
     private $lastId;
 
+    # mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh dang hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh luong co ban cua 1 gio
+    public function getDefaultSalaryOnHour()
+    {
+        return 0;
+    }
+
+    # mac dinh tien gio tang ca - trong 1 gio
+    public function getDefaultOverTimeHour()
+    {
+        return 10000;
+    }
+
+    # mac dinh so ngay nghi
+    public function getDefaultDateOff()
+    {
+        return 1;
+    }
+
+    # mac dinh tien xang
+    public function getDefaultFuel()
+    {
+        return 0;
+    }
+
+    # mac dinh tien bao hiem
+    public function getDefaultInsurance()
+    {
+        return 0;
+    }
+
+    # mac dinh tien su dung dien thoai
+    public function getDefaultUsePhone()
+    {
+        return 0;
+    }
+
+    # mac dinh tien trach nhiem
+    public function getDefaultResponsibility()
+    {
+        return 0;
+    }
     //========== ========== ========== them moi && cap nhat ========== ========== ==========
     //---------- them moi ----------
     public function insert($totalSalary, $salary, $responsibility, $usePhone, $insurance, $fuel, $dateOff, $overtimeHour, $workId)
@@ -53,7 +106,7 @@ class QcStaffWorkSalary extends Model
     public function getInfo($workSalaryId = '', $field = '')
     {
         if (empty($workSalaryId)) {
-            return QcStaffWorkSalary::where('action', 1)->get();
+            return QcStaffWorkSalary::where('action', $this->getDefaultHasAction())->get();
         } else {
             $result = QcStaffWorkSalary::where('workSalary_id', $workSalaryId)->first();
             if (empty($field)) {
@@ -69,7 +122,7 @@ class QcStaffWorkSalary extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcStaffWorkSalary::where('workSalary_id', $objectId)->pluck($column);
+            return QcStaffWorkSalary::where('workSalary_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -137,12 +190,12 @@ class QcStaffWorkSalary extends Model
     // vo hieu bang luong
     public function disableOfWork($workId)
     {
-        return QcStaffWorkSalary::where('work_id', $workId)->update(['action' => 0]);
+        return QcStaffWorkSalary::where('work_id', $workId)->update(['action' => $this->getDefaultNotAction()]);
     }
 
     public function disableStaffWorkSalary($workSalaryId = null)
     {
-        return QcStaffWorkSalary::where('workSalary_id', $this->checkIdNull($workSalaryId))->update(['action' => 0]);
+        return QcStaffWorkSalary::where('workSalary_id', $this->checkIdNull($workSalaryId))->update(['action' => $this->getDefaultNotAction()]);
     }
     //========== ========== ========== moi quan he cac bang ========== ========== ==========
     //----------- cty noi lam viec ------------
@@ -153,7 +206,7 @@ class QcStaffWorkSalary extends Model
 
     public function checkExistsActivityOfWork($workId)
     {
-        return QcStaffWorkSalary::where(['work_id' => $workId, 'action' => 1])->exists();
+        return QcStaffWorkSalary::where(['work_id' => $workId, 'action' => $this->getDefaultHasAction()])->exists();
     }
 
     public function workSalaryOfWork($workId, $date = null)
@@ -165,7 +218,7 @@ class QcStaffWorkSalary extends Model
             $salary = QcStaffWorkSalary::where(['work_id' => $workId])->where('created_at', '<', $lastDate)->orderBy('created_at', 'DESC')->pluck('salary')[0];
         }
         if (empty($salary)) {
-            return QcStaffWorkSalary::where(['work_id' => $workId, 'action' => 1])->pluck('salary')[0];
+            return QcStaffWorkSalary::where(['work_id' => $workId, 'action' => $this->getDefaultHasAction()])->pluck('salary')[0];
         } else {
             return $salary;
         }
@@ -173,7 +226,7 @@ class QcStaffWorkSalary extends Model
 
     public function infoActivityOfWork($workId = null)
     {
-        return QcStaffWorkSalary::where(['work_id' => $workId, 'action' => 1])->first();//return value
+        return QcStaffWorkSalary::where(['work_id' => $workId, 'action' => $this->getDefaultHasAction()])->first();//return value
     }
 
     public function  allInfoOfWork($workId)

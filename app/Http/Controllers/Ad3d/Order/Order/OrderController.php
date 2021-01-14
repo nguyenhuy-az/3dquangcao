@@ -21,7 +21,7 @@ use Request;
 
 class OrderController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $paymentStatus = 2, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = 0)
+    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -65,18 +65,6 @@ class OrderController extends Controller
         }
         # lay thong tin cong ty cung he thong
         $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
-       /* if ($dataStaffLogin->checkRootManage()) {
-            if (empty($companyFilterId) || $companyFilterId == 1000) {
-                $searchCompanyFilterId = $modelCompany->listIdActivity();
-                $companyFilterId = 1000;
-            } else {
-                $searchCompanyFilterId = [$companyFilterId];
-            }
-
-        } else {
-            $searchCompanyFilterId = [$dataStaffLogin->companyId()];
-            $companyFilterId = $dataStaffLogin->companyId();
-        }*/
         if (empty($companyFilterId) || $companyFilterId == 1000)  $companyFilterId = $companyLoginId;
         if ($staffFilterId > 0) {
             $listStaffId = [$staffFilterId];
@@ -94,7 +82,6 @@ class OrderController extends Controller
 
         $dataOrder = $dataOrderSelect->paginate(30);
 
-        //dd($dataOrder);
         $totalMoneyOrder = $modelOrder->totalMoneyOfListOrder($dataMoneyOrder); // tong tien
         $totalMoneyDiscountOrder = $modelOrder->totalMoneyDiscountOfListOrder($dataMoneyOrder); // tong tien giam
         $totalMoneyPaidOrder = $modelOrder->totalMoneyPaidOfListOrder($dataMoneyOrder); // tong tien da thanh toan
@@ -103,7 +90,7 @@ class OrderController extends Controller
 
         //danh sach NV
         $dataStaff = $modelCompany->staffInfoActivityOfCompanyId([$companyFilterId]);
-        return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany', 'dataStaff', 'dataAccess', 'dataOrder', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId'));
+        return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany','modelOrder', 'dataStaff', 'dataAccess', 'dataOrder', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId'));
 
     }
 

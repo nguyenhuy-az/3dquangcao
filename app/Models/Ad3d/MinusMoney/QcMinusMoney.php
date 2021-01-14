@@ -70,6 +70,17 @@ class QcMinusMoney extends Model
         return null;
     }
 
+    public function getDefaultCompanyStoreCheckReport()
+    {
+        return null;
+    }
+
+    # mac dinh phan viec thi cong
+    public function getDefaultWorkAllocation()
+    {
+        return null;
+    }
+
     # mac dinh tien phat
     public function getDefaultMoney()
     {
@@ -99,7 +110,6 @@ class QcMinusMoney extends Model
                            $orderConstructionId = null, $companyStoreCheckReportId = null, $workAllocationId = null, $money = 0, $reasonImage = null)
     {
         $hFunction = new \Hfunction();
-        $modelOrder = new QcOrder();
         $modelOrderBonusBudget = new QcOrderBonusBudget();
         $modelOrderAllocation = new QcOrderAllocation();
         $modelWorkAllocation = new QcWorkAllocation();
@@ -129,7 +139,7 @@ class QcMinusMoney extends Model
                     $money = (int)$modelOrderBonusBudget->totalBudgetMoneyOfConstructionStaff($orderConstructionId);//  - chua phat kinh doanh
                 } elseif (!empty($companyStoreCheckReportId)) {
                     $punishIdLostTool = $modelPunishContent->getPunishIdLostPublicTool();
-                    $punishIdLostTool = (is_int($punishIdLostTool)) ? $punishIdLostTool : $punishIdLostTool[0];
+                    ///$punishIdLostTool = (is_int($punishIdLostTool)) ? $punishIdLostTool : $punishIdLostTool[0];
                     # phat mat do nghe
                     if ($punishIdLostTool == $punishId) {
                         $money = $modelCompanyStore->importPrice($modelCompanyStoreCheckReport->storeId($companyStoreCheckReportId));
@@ -225,21 +235,31 @@ class QcMinusMoney extends Model
 
     public function updateInfo($minusId, $money, $datePay, $reason, $punishId)
     {
-        return QcMinusMoney::where('minus_id', $minusId)->update(['money' => $money, 'dateMinus' => $datePay, 'reason' => $reason, 'punish_id' => $punishId]);
+        return QcMinusMoney::where('minus_id', $minusId)->update(
+            [
+                'money' => $money,
+                'dateMinus' => $datePay,
+                'reason' => $reason,
+                'punish_id' => $punishId
+            ]);
     }
 
+    # huy phat
     public function cancelMinus($minusId = null)
     {
-        return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->update(['cancelStatus' => $this->getDefaultHasCancelStatus(), 'action' => 0]);
+        return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->update(
+            [
+                'cancelStatus' => $this->getDefaultHasCancelStatus(),
+                'action' =>$this->getDefaultNotAction()
+            ]);
     }
-
 
     public function deleteInfo($minusId = null)
     {
         return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->delete();
     }
 
-//---------- phan hoi phat -----------
+    //---------- phan hoi phat -----------
     public function minusMoneyFeedback()
     {
         return $this->hasOne('App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback', 'minus_id', 'minus_id');
@@ -251,19 +271,19 @@ class QcMinusMoney extends Model
         return $modelMinusMoneyFeedback->infoOfMinusMoney($this->checkNullId($minusId));
     }
 
-//---------- nhân viên -----------
+    //---------- nhân viên -----------
     public function staff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
     }
 
-//kiển tra người nhập
+    //kiển tra người nhập
     public function checkStaffInput($staffId, $minusId = null)
     {
         return QcMinusMoney::where('staff_id', $staffId)->where('minus_id', $this->checkNullId($minusId))->exists();
     }
 
-//---------- thong bao ban giao don hang moi -----------
+    //---------- thong bao ban giao don hang moi -----------
     public function staffNotify()
     {
         return $this->hasMany('App\Models\Ad3d\StaffNotify\QcStaffNotify', 'minusMoney_id', 'minusMoney_id');
@@ -275,23 +295,33 @@ class QcMinusMoney extends Model
         return $modelStaffAllocation->checkViewedMinusMoneyOfStaff($staffId, $minusMoneyId);
     }
 
-//----------- làm việc ------------
+    //----------- làm việc ------------
     public function work()
     {
         return $this->belongsTo('App\Models\Ad3d\Work\QcWork', 'work_id', 'work_id');
     }
-
+    # lay tat ca thong tin phat cua 1 bang cham cong
     public function infoOfWork($workId)
     {
         return QcMinusMoney::where('work_id', $workId)->orderBy('dateMinus', 'DESC')->get();
     }
 
-    /*public function infoOfWork($workId)
+    # lay thong tin phat duoc ap dung theo danh sach ma cham cong
+    public function getInfoHasApplyFromListWorkId($listWorkId, $dateFilter = null)
     {
-        return QcMinusMoney::where('work_id', $workId)->orderBy('dateMinus', 'DESC')->get();
-    }*/
+        # co ap dung
+        $hasApply = $this->getDefaultHasApplyStatus();
+        # khong huy
+        $notCancel = $this->getDefaultNotCancelStatus();
+        //dd($dateFilter);
+        if (empty($dateFilter)) {
+            return QcMinusMoney::whereIn('work_id', $listWorkId)->where('applyStatus', $hasApply)->where('cancelStatus', $notCancel)->orderBy('dateMinus', 'DESC')->get();
+        } else {
+            return QcMinusMoney::whereIn('work_id', $listWorkId)->where('dateMinus', 'like', "%$dateFilter%")->where('applyStatus', $hasApply)->where('cancelStatus', $notCancel)->orderBy('dateMinus', 'DESC')->get();
+        }
+    }
 
-# tong tien phat khong huy trong thang lam viec - tam
+    # tong tien phat khong huy trong thang lam viec - tam
     public function totalMoneyOfWork($workId)
     {
         return QcMinusMoney::where('work_id', $workId)->where('cancelStatus', $this->getDefaultNotCancelStatus())->sum('money');
@@ -299,13 +329,17 @@ class QcMinusMoney extends Model
 
     public function totalMoneyAppliedOfWork($workId)
     {
-        return QcMinusMoney::where('work_id', $workId)->where('applyStatus', $this->getDefaultHasApplyStatus())->where('cancelStatus', $this->getDefaultNotCancelStatus())->where('action', 0)->sum('money');
+        return QcMinusMoney::where('work_id', $workId)->where('applyStatus', $this->getDefaultHasApplyStatus())->where('cancelStatus', $this->getDefaultNotCancelStatus())->where('action',$this->getDefaultNotAction())->sum('money');
     }
 
     # tu dong kiem tra tu xac nhan - mac dinh khong huy là ap dung khi cuoi thang
     public function autoCheckApplyMinusMoneyEndWork($workId)
     {
-        return QcMinusMoney::where('work_id', $workId)->where('cancelStatus', $this->getDefaultNotCancelStatus())->where('action', 1)->update(['applyStatus' => $this->getDefaultHasApplyStatus(), 'action' => 0]);
+        return QcMinusMoney::where('work_id', $workId)->where('cancelStatus', $this->getDefaultNotCancelStatus())->where('action', $this->getDefaultHasAction())->update(
+            [
+                'applyStatus' => $this->getDefaultHasApplyStatus(),
+                'action' => $this->getDefaultNotAction()
+            ]);
     }
 
     //---------- quan ly don hang thi cong -----------
@@ -433,7 +467,7 @@ class QcMinusMoney extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcMinusMoney::where('minus_id', $objectId)->pluck($column);
+            return QcMinusMoney::where('minus_id', $objectId)->pluck($column)[0];
         }
     }
 

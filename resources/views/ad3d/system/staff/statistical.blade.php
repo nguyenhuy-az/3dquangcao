@@ -20,37 +20,45 @@ $dataCompany = $dataCompanyStaffWork->company;
 $indexHref = route('qc.ad3d.system.staff.statistical.get', $companyStaffWorkId);
 //========  ============ CHUYEN CAN ======== ==========
 # co lam viec
-$dataAllTimekeeping = $dataStaff->statisticGetHasWorkTimekeeping($statisticStaffId, $dateFilter);
+$dataAllTimekeeping = $modelStatistical->statisticGetHasWorkTimekeeping($statisticStaffId, $dateFilter);
 # nghi lam co phep
-$dataOffWorkHasPermission = $dataStaff->statisticGetOffWorkHasPermissionTimekeeping($statisticStaffId, $dateFilter);
+$dataOffWorkHasPermission = $modelStatistical->statisticGetOffWorkHasPermissionTimekeeping($statisticStaffId, $dateFilter);
 # nghi lam khong phep
-$dataOffWorkNotPermission = $dataStaff->statisticGetOffWorkNotPermissionTimekeeping($statisticStaffId, $dateFilter);
+$dataOffWorkNotPermission = $modelStatistical->statisticGetOffWorkNotPermissionTimekeeping($statisticStaffId, $dateFilter);
 # di lam tre
-$dataLateWork = $dataStaff->statisticGetLateWork($statisticStaffId, $dateFilter);
-# ma tang ca
-$dataOverTimeWork = $dataStaff->statisticGetOverTimeWork($statisticStaffId, $dateFilter);
+$dataLateWork = $modelStatistical->statisticGetLateWork($statisticStaffId, $dateFilter);
+# lam tang ca
+$dataOverTimeWork = $modelStatistical->statisticGetOverTimeWork($statisticStaffId, $dateFilter);
+# yeu cau tang ca
+$dataOverTimeRequest = $modelStatistical->statisticGetAllOverTimeRequest($statisticStaffId, $dateFilter);
+# co tang ca theo yeu cau
+$dataOverTimeRequestHasAccept = $modelStatistical->statisticGetHasAcceptOverTimeRequest($statisticStaffId, $dateFilter);
+# so lan thuong - duoc ap dung
+$dataHasApplyBonus = $modelStatistical->statisticGetHasApplyBonus($statisticStaffId, $dateFilter);
+# so lan phat - duoc ap dung
+$dataHasApplyMinus = $modelStatistical->statisticGetHasApplyMinus($statisticStaffId, $dateFilter);
 
 //======= ========= NANG LUC LAM VIEC ========= =======
 //===== DUOC GIAO
 # tong thi cong san pham - tat ca
-$dataAllReceiveWorkAllocation = $dataStaff->statisticGetReceiveWorkAllocation($statisticStaffId, $dateFilter);
+$dataAllReceiveWorkAllocation = $modelStatistical->statisticGetReceiveWorkAllocation($statisticStaffId, $dateFilter);
 # tong tien tren cong viec duoc phan cong
-$valueMoneyFromWorkAllocation = $dataStaff->totalValueMoneyFromListWorkAllocation($dataAllReceiveWorkAllocation);
+$valueMoneyFromWorkAllocation = $modelStatistical->totalValueMoneyFromListWorkAllocation($dataAllReceiveWorkAllocation);
 # tong thi cong bi tre
-$dataWorkAllocationHasLate = $dataStaff->statisticGetWorkAllocationHasLate($statisticStaffId, $dateFilter);
-$valueMoneyFromWorkAllocationHasLate = $dataStaff->totalValueMoneyFromListWorkAllocation($dataWorkAllocationHasLate);
+$dataWorkAllocationHasLate = $modelStatistical->statisticGetWorkAllocationHasLate($statisticStaffId, $dateFilter);
+$valueMoneyFromWorkAllocationHasLate = $modelStatistical->totalValueMoneyFromListWorkAllocation($dataWorkAllocationHasLate);
 
 //==== DA HOAN THANH
 # tong thi cong da hoan thanh
-$dataWorkAllocationHasFinish = $dataStaff->statisticGetWorkAllocationHasFinish($statisticStaffId, $dateFilter);
-$valueMoneyFromWorkAllocationHasFinish = $dataStaff->totalValueMoneyFromListWorkAllocation($dataWorkAllocationHasFinish);
+$dataWorkAllocationHasFinish = $modelStatistical->statisticGetWorkAllocationHasFinish($statisticStaffId, $dateFilter);
+$valueMoneyFromWorkAllocationHasFinish = $modelStatistical->totalValueMoneyFromListWorkAllocation($dataWorkAllocationHasFinish);
 
 # tong thi cong dung hen - khong tre
-$dataWorkAllocationHasFinishNotLate = $dataStaff->statisticGetWorkAllocationFinishNotLate($statisticStaffId, $dateFilter);
-$valueMoneyFromWorkAllocationFinishNotLate = $dataStaff->totalValueMoneyFromListWorkAllocation($dataWorkAllocationHasFinishNotLate);
+$dataWorkAllocationHasFinishNotLate = $modelStatistical->statisticGetWorkAllocationFinishNotLate($statisticStaffId, $dateFilter);
+$valueMoneyFromWorkAllocationFinishNotLate = $modelStatistical->totalValueMoneyFromListWorkAllocation($dataWorkAllocationHasFinishNotLate);
 # tong thi cong dung hen - tre hen
-$dataWorkAllocationHasFinishHasLate = $dataStaff->statisticGetWorkAllocationFinishHasLate($statisticStaffId, $dateFilter);
-$valueMoneyFromWorkAllocationFinishHasLate = $dataStaff->totalValueMoneyFromListWorkAllocation($dataWorkAllocationHasFinishHasLate);
+$dataWorkAllocationHasFinishHasLate = $modelStatistical->statisticGetWorkAllocationFinishHasLate($statisticStaffId, $dateFilter);
+$valueMoneyFromWorkAllocationFinishHasLate = $modelStatistical->totalValueMoneyFromListWorkAllocation($dataWorkAllocationHasFinishHasLate);
 
 
 ?>
@@ -162,35 +170,35 @@ $valueMoneyFromWorkAllocationFinishHasLate = $dataStaff->totalValueMoneyFromList
                                         </b>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr style="border-top: 2px solid black;">
                                     <td>Yêu cầu tăng ca</td>
                                     <td class="text-center">
                                         <b style="color:red;">
-                                            {!! $hFunction->getCount($dataAllTimekeeping) !!}
+                                            {!! $hFunction->getCount($dataOverTimeRequest) !!}
                                         </b>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Tăng ca theo yêu cầu</td>
+                                    <td>Có tăng ca theo yêu cầu</td>
                                     <td class="text-center">
                                         <b style="color:red;">
-                                            {!! $hFunction->getCount($dataAllTimekeeping) !!}
+                                            {!! $hFunction->getCount($dataOverTimeRequestHasAccept) !!}
                                         </b>
                                     </td>
                                 </tr>
-                                <tr style="border-top: 3px solid black;">
-                                    <td>Số lần thưởng</td>
+                                <tr style="border-top: 2px solid black;">
+                                    <td>Số lần được thưởng</td>
                                     <td class="text-center">
                                         <b style="color:red;">
-                                            {!! $hFunction->getCount($dataAllTimekeeping) !!}
+                                            {!! $hFunction->getCount($dataHasApplyBonus) !!}
                                         </b>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Số lần phạt</td>
+                                    <td>Số lần bị phạt</td>
                                     <td class="text-center">
                                         <b style="color:red;">
-                                            {!! $hFunction->getCount($dataOffWorkHasPermission) !!}
+                                            {!! $hFunction->getCount($dataHasApplyMinus) !!}
                                         </b>
                                     </td>
                                 </tr>

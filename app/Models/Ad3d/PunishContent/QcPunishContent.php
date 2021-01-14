@@ -250,8 +250,8 @@ class QcPunishContent extends Model
     # lay Id theo  ma phat
     public function getPunishIdByCode($punishCode)
     {
-        $result = QcPunishContent::where('punishCode', $punishCode)->pluck('punish_id');
-        return (count($result) > 0) ? $result[0] : null;
+        return QcPunishContent::where('punishCode', $punishCode)->pluck('punish_id')[0];
+        //return (count($result) > 0) ? $result[0] : null;
     }
 
     # di lam tre khong phep

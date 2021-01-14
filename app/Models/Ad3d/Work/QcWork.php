@@ -23,6 +23,29 @@ class QcWork extends Model
 
     private $lastId;
 
+    #mac dinh da tinh luong
+    public function getDefaultHasSalaryStatus()
+    {
+        return 1;
+    }
+
+    #mac dinh chua tinh luong
+    public function getDefaultNotSalaryStatus()
+    {
+        return 0;
+    }
+
+    #mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    #mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
     //========== ========== ========== INSERT && UPDATE ========== ========== ==========
 
     //---------- them bang cham cong moi ----------
@@ -50,7 +73,8 @@ class QcWork extends Model
 
     public function checkIdNull($workId)
     {
-        return (empty($workId)) ? $this->workId() : $workId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($workId)) ? $this->workId() : $workId;
     }
 
 
@@ -58,8 +82,7 @@ class QcWork extends Model
     public function endWork($workId = null)
     {
         $modelWork = new QcWork();
-        $workId = $this->checkIdNull($workId);
-        $modelWork->disableWord($workId);
+        $modelWork->disableWord($this->checkIdNull($workId));
     }
 
     # lay thong tin thuong khi xuat bang luong cuoi thang - tu dong
@@ -113,7 +136,7 @@ class QcWork extends Model
 
             $companyStaffWorkId = $dataWork->companyStaffWorkId();
             # phien ban moi - nv lam nhieu cty
-            if (!empty($companyStaffWorkId)) {
+            if (!$hFunction->checkEmpty($companyStaffWorkId)) {
                 $dataStaffWorkSalary = $modelStaffWorkSalary->infoActivityOfWork($companyStaffWorkId);
             } else {
                 # truong hop phien ban cu chua cap nhat
@@ -125,15 +148,19 @@ class QcWork extends Model
                 $workSalaryId = $dataStaffWorkSalary->workSalaryId();
                 # phu cap tang ca
                 $overtimeHour = $dataStaffWorkSalary->overtimeHour($workSalaryId);
-                $overtimeHour = (is_int($overtimeHour)) ? $overtimeHour : $overtimeHour[0];
+                ///$overtimeHour = (is_int($overtimeHour)) ? $overtimeHour : $overtimeHour[0];
 
                 $totalSalary = (int)($this->totalSalaryBasicOfWorkInMonth($workId) + $totalBonusMoney - $totalBeforePay - $totalMinusMoney);
                 $overtimeMoney = ($plusMinute / 60) * $overtimeHour;
-                if ($modelSalary->insert($mainMinute, $plusMinute, $minusMinute, $totalBeforePay, $totalMinusMoney, $benefit, $overtimeMoney, $totalSalary, 0, $workId, $workSalaryId, null, 0, $totalBonusMoney)) {
+                # lay gia tri mac dinh
+                $salaryPayStatus = $modelSalary->getDefaultNotPay();
+                $salaryKPI = $modelSalary->getDefaultKPIMoney();
+                $salaryBenefitDescription = $modelSalary->getDefaultBenefitDescription();
+                if ($modelSalary->insert($mainMinute, $plusMinute, $minusMinute, $totalBeforePay, $totalMinusMoney, $benefit, $overtimeMoney, $totalSalary, $salaryPayStatus, $workId, $workSalaryId, $salaryBenefitDescription, $salaryKPI, $totalBonusMoney)) {
                     # vo hieu hoa bang cam cong cu
                     $this->endWork($workId);
                     if ($this->confirmExportSalary($workId)) {
-                        if ($workStatus == 1) { # tiep tuc lam viec
+                        if ($workStatus == $this->getDefaultHasWorkStatus()) { # tiep tuc lam viec
                             if (!$this->checkCompanyStaffWorkActivity($companyStaffWorkId)) { # khong ton tai thong tin lam viec chua ket thuc
                                 #them thong tin lam viec trong thang
                                 $currentDate = date('Y-m-d');
@@ -169,6 +196,7 @@ class QcWork extends Model
      */
     public function totalSalaryBasicOfWorkInMonth($workId = null)
     {
+        $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaffWorkSalary = new QcStaffWorkSalary();
         $workId = $this->checkIdNull($workId);
@@ -176,14 +204,14 @@ class QcWork extends Model
         $mainMinute = $this->sumMainMinute($workId);
         $plusMinute = $this->sumPlusMinute($workId);
         $companyStaffWorkId = $dataWork->companyStaffWorkId();
-        if (!empty($companyStaffWorkId)) {
+        if (!$hFunction->checkEmpty($companyStaffWorkId)) {
             $dataStaffWorkSalary = $modelStaffWorkSalary->infoActivityOfWork($companyStaffWorkId);
-            if (!empty($dataStaffWorkSalary)) {
+            if (!$hFunction->checkEmpty($dataStaffWorkSalary)) {
                 $overtime = $dataStaffWorkSalary->overtimeHour($dataStaffWorkSalary->workSalaryId());
                 $totalSalaryOnHour = $dataStaffWorkSalary->salaryOnHour(); # lương lam trong 1 gio
             } else {
-                $overtime = 0;
-                $totalSalaryOnHour = 0;
+                $overtime = $modelStaffWorkSalary->getDefaultOverTimeHour();
+                $totalSalaryOnHour = $modelStaffWorkSalary->getDefaultSalaryOnHour;
             }
 
 
@@ -202,7 +230,7 @@ class QcWork extends Model
             }
         }
 
-        $overtime = (is_int($overtime)) ? $overtime : $overtime[0];
+        //$overtime = (is_int($overtime)) ? $overtime : $overtime[0];
         $moneyOfMainMinute = ($mainMinute / 60) * $totalSalaryOnHour;  # tong luong trong gio lam chinh
         $moneyOfPlusMinute = ($plusMinute / 60) * 1.5 * $totalSalaryOnHour; # tang ca nhan 1.5  - tong luong cua gio tang ca
         $allowanceOvertime = ($plusMinute / 60) * $overtime; # tien phu cap tang ca
@@ -211,12 +239,16 @@ class QcWork extends Model
 
     public function confirmExportSalary($workId = null)
     {
-        return QcWork::where('work_id', $this->checkIdNull($workId))->update(['salaryStatus' => 1, 'action' => 0]);
+        return QcWork::where('work_id', $this->checkIdNull($workId))->update(
+            [
+                'salaryStatus' => $this->getDefaultHasSalaryStatus(),
+                'action' => $this->getDefaultNotAction()
+            ]);
     }
 
     public function disableWord($workId = null)
     {
-        return QcWork::where('work_id', $this->checkIdNull($workId))->update(['action' => 0]);
+        return QcWork::where('work_id', $this->checkIdNull($workId))->update(['action' => $this->getDefaultNotAction()]);
     }
 
     //========== ========== ========== CAC MOI QUAN HE ========== ========== ==========
@@ -235,13 +267,13 @@ class QcWork extends Model
     # kiem tra ton tai bang cham cong dang hoat dong
     public function checkCompanyStaffWorkActivity($companyStaffWorkId)
     {
-        return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->where('action', 1)->exists();
+        return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->where('action', $this->getDefaultHasAction())->exists();
     }
 
     # vo hieu hoa cham cong thong tin lam vie
     public function disableOfCompanyStaffWork($companyStaffWorkId)
     {
-        return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->update(['action' => 0]);
+        return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->update(['action' => $this->getDefaultNotAction()]);
     }
 
     # lay thong tin bang cham cong theo ngay thang
@@ -254,28 +286,32 @@ class QcWork extends Model
     # lay 1 bang cham cong dang lam viec
     public function infoActivityOfCompanyStaffWork($companyStaffWorkId, $date = null)
     {
-        if (!empty($date)) {
-            return QcWork::where(['companyStaffWork_id' => $companyStaffWorkId])->where('fromDate', 'like', "%$date%")->where('action', 1)->first();
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
+            return QcWork::where(['companyStaffWork_id' => $companyStaffWorkId])->where('fromDate', 'like', "%$date%")->where('action', $this->getDefaultHasAction())->first();
         } else {
-            return QcWork::where(['companyStaffWork_id' => $companyStaffWorkId, 'action' => 1])->first();
+            return QcWork::where(['companyStaffWork_id' => $companyStaffWorkId, 'action' => $this->getDefaultHasAction()])->first();
         }
     }
 
     # lay nhieu bang cham cong dang lam viec
     public function infoActivityOfListCompanyStaffWork($listCompanyStaffWorkId)
     {
-        return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('action', 1)->get();
+        return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('action', $this->getDefaultHasAction())->get();
     }
+
     # lay danh sach ma cham cong theo ma danh sach lam viec cua 1 cty
     public function listIdOfListCompanyStaffWork($listCompanyStaffWorkId)
     {
         return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->pluck('work_id');
 
     }
+
     # lay danh sach ma cham cong theo ma danh sach lam viec cua 1 cty
     public function listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter = null)
     {
-        if (empty($dateFilter)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('work_id', 'DESC')->pluck('work_id');
         } else {
             return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('fromDate', 'like', "%$dateFilter%")->orderBy('work_id', 'DESC')->pluck('work_id');
@@ -285,7 +321,7 @@ class QcWork extends Model
 
     public function listIdActivityOfListCompanyStaffWork($listCompanyStaffWorkId)
     {
-        return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('action', 1)->pluck('work_id');
+        return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->where('action', $this->getDefaultHasAction())->pluck('work_id');
     }
 
     # chon sanh sach cham cong trong thang theo thoi gian
@@ -314,24 +350,25 @@ class QcWork extends Model
     # vo hieu hoa thong tiin lam viec cua nv - phien ban cú
     public function disableOfStaff($staffId)
     {
-        return QcWork::where('staff_id', $staffId)->update(['action' => 0]);
+        return QcWork::where('staff_id', $staffId)->update(['action' => $this->getDefaultNotAction()]);
     }
 
     public function infoActivityOfStaff($staffId = null, $date = null)
     {
+        $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $dataCompanyStaffWork = $modelCompanyStaffWork->infoActivityOfStaff($staffId);
-        if (count($dataCompanyStaffWork) > 0) {
-            if (!empty($date)) {
-                return QcWork::where(['companyStaffWork_id' => $dataCompanyStaffWork->workId()])->where('fromDate', 'like', "%$date%")->where('action', 1)->first();
+        if ($hFunction->checkCount($dataCompanyStaffWork)) {
+            if (!$hFunction->checkEmpty($date)) {
+                return QcWork::where(['companyStaffWork_id' => $dataCompanyStaffWork->workId()])->where('fromDate', 'like', "%$date%")->where('action', $this->getDefaultHasAction())->first();
             } else {
-                return QcWork::where(['companyStaffWork_id' => $dataCompanyStaffWork->workId(), 'action' => 1])->first();
+                return QcWork::where(['companyStaffWork_id' => $dataCompanyStaffWork->workId(), 'action' => $this->getDefaultHasAction()])->first();
             }
         } else {
-            if (!empty($date)) {
-                return QcWork::where(['staff_id' => $staffId])->where('fromDate', 'like', "%$date%")->where('action', 1)->first();
+            if (!$hFunction->checkEmpty($date)) {
+                return QcWork::where(['staff_id' => $staffId])->where('fromDate', 'like', "%$date%")->where('action', $this->getDefaultHasAction())->first();
             } else {
-                return QcWork::where(['staff_id' => $staffId, 'action' => 1])->first();
+                return QcWork::where(['staff_id' => $staffId, 'action' => $this->getDefaultHasAction()])->first();
             }
         }
 
@@ -339,16 +376,17 @@ class QcWork extends Model
 
     public function firstInfoOfStaff($staffId = null, $date = null)
     {
+        $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $dataCompanyStaffWork = $modelCompanyStaffWork->infoActivityOfStaff($staffId);
-        if (count($dataCompanyStaffWork) > 0) {
-            if (!empty($date)) {
+        if ($hFunction->checkCount($dataCompanyStaffWork)) {
+            if (!$hFunction->checkEmpty($date)) {
                 return QcWork::where(['companyStaffWork_id' => $dataCompanyStaffWork->workId()])->where('fromDate', 'like', "%$date%")->first();
             } else {
                 return QcWork::where(['companyStaffWork_id' => $dataCompanyStaffWork->workId()])->first();
             }
         } else {
-            if (!empty($date)) {
+            if (!$hFunction->checkEmpty($date)) {
                 return QcWork::where(['staff_id' => $staffId])->where('fromDate', 'like', "%$date%")->first();
             } else {
                 return QcWork::where(['staff_id' => $staffId])->first();
@@ -363,7 +401,8 @@ class QcWork extends Model
 
     public function listIdOfListStaffInBeginDate($listStaffId, $dateFilter = null)
     {
-        if (empty($dateFilter)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcWork::whereIn('staff_id', $listStaffId)->orderBy('work_id', 'DESC')->pluck('work_id');
         } else {
             return QcWork::whereIn('staff_id', $listStaffId)->where('fromDate', 'like', "%$dateFilter%")->orderBy('work_id', 'DESC')->pluck('work_id');
@@ -399,11 +438,12 @@ class QcWork extends Model
 
     public function companyIdOfWork($workId = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $workId = $this->checkIdNull($workId);
         $companyStaffWorkId = $this->companyStaffWorkId($workId);
-        if (!empty($companyStaffWorkId)) { # du lieu moi
+        if (!$hFunction->checkEmpty($companyStaffWorkId)) { # du lieu moi
             return $modelCompanyStaffWork->companyId($companyStaffWorkId);
         } else { # du lieu cu
             return $modelStaff->companyId($this->staffId($workId));
@@ -413,10 +453,11 @@ class QcWork extends Model
     # tính tien xang bi tru khi di lam ko du ngay
     public function totalMinusFuelInMonth($workId = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkSalary = new QcStaffWorkSalary();
         $companyStaffWorkId = $this->companyStaffWorkId($workId);
         $dataStaffWorkSalary = $modelStaffWorkSalary->infoActivityOfWork($companyStaffWorkId);
-        if (count($dataStaffWorkSalary) > 0) {
+        if ($hFunction->checkCount($dataStaffWorkSalary)) {
             $fuel = $dataStaffWorkSalary->fuel(); # phu cap di lai trong thang (26 ngay)
             $mainMinute = $this->sumMainMinute($workId); # lay gio lam chinh
             return (12480 - $mainMinute) * ($fuel / 12480); #so tien bi tru do lam ko du 26 ngay
@@ -588,42 +629,49 @@ class QcWork extends Model
         return $this->hasMany('App\Models\Ad3d\Timekeeping\QcTimekeeping', 'work_id', 'work_id');
     }
 
+    # thong tin cham cong
     public function infoTimekeeping($workId = null, $orderBy = null)
     {
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->infoOfWork($this->checkIdNull($workId), $orderBy);
     }
 
+    # tong gio lam chinh
     public function sumMainMinute($workId = null)
     {
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->sumMainMinuteOfWork($this->checkIdNull($workId));
     }
 
+    # tong gio tang ca
     public function sumPlusMinute($workId = null)
     {
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->sumPlusMinuteOfWork($this->checkIdNull($workId));
     }
 
+    # tong gio phat
     public function sumMinusMinute($workId = null)
     {
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->sumMinusMinuteOfWork($this->checkIdNull($workId));
     }
 
+    # tong lan cham cong
     public function sumOffWork($workId = null)
     {
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->sumOffWork($this->checkIdNull($workId));
     }
 
+    # tong lan xin nghi co phep
     public function sumOffWorkTrue($workId = null)
     {
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->sumOffWorkTrue($this->checkIdNull($workId));
     }
 
+    # tong lan xin nghi khong duoc duyet
     public function sumOffWorkFalse($workId = null)
     {
         $modelTimekeeping = new QcTimekeeping();
@@ -635,6 +683,7 @@ class QcWork extends Model
         return $this->totalSalaryBasicOfWorkInMonth($this->checkIdNull($workId));
     }
 
+    # gioi hang ung cua 1 bang cham cong
     public function limitBeforePay($workId = null)
     {
         $workId = $this->checkIdNull($workId);
@@ -680,12 +729,13 @@ class QcWork extends Model
 
     public function staffId($workId = null)
     {
+        $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $companyStaffWorkId = $this->companyStaffWorkId($workId);
-        if (empty($companyStaffWorkId)) {
+        if ($hFunction->checkEmpty($companyStaffWorkId)) {
             return $this->pluck('staff_id', $workId);
         } else {
-            return $modelCompanyStaffWork->staffId($companyStaffWorkId)[0];
+            return $modelCompanyStaffWork->staffId($companyStaffWorkId);
         }
 
     }
@@ -702,11 +752,12 @@ class QcWork extends Model
 
     public function getInfo($workId = '', $field = '')
     {
-        if (empty($workId)) {
-            return QcWork::where('action', 1)->get();
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($workId)) {
+            return QcWork::where('action', $this->getDefaultHasAction())->get();
         } else {
             $result = QcWork::where('work_id', $workId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -716,17 +767,18 @@ class QcWork extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcWork::where('work_id', $objectId)->pluck($column);
+            return QcWork::where('work_id', $objectId)->pluck($column)[0];
         }
     }
 
     # lay tat ca cac thong tin dang lam viec
     public function getAllInfoActivity()
     {
-        return QcWork::where('action', 1)->get();
+        return QcWork::where('action', $this->getDefaultHasAction())->get();
     }
     //----------- Kiểm tra thông tin -------------
     /*
@@ -764,13 +816,13 @@ class QcWork extends Model
     # bang cham cong con hoat dong khong
     public function checkActivity($workId = null)
     {
-        return ($this->action($workId) == 0) ? false : true;
+        return ($this->action($workId) == $this->getDefaultNotAction()) ? false : true;
     }
 
     # xuat bang luong hay chua
     public function checkSalaryStatus($workId = null)
     {
-        return ($this->salaryStatus($workId) == 0) ? false : true;
+        return ($this->salaryStatus($workId) == $this->getDefaultNotSalaryStatus()) ? false : true;
     }
 
     public function existTimeEndIsNullInTimekeeping($workId = null)

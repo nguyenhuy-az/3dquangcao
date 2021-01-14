@@ -37,6 +37,7 @@ class QcOverTimeRequest extends Model
     {
         return 1;
     }
+
     # mac dinh khong hoat dong
     public function getDefaultNotAction()
     {
@@ -83,22 +84,35 @@ class QcOverTimeRequest extends Model
         return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
     }
 
-    # lat tat ca cau cua 1 bang lam viec
+    # lay tat ca cau cua 1 bang lam viec
     public function infoOfCompanyStaffWork($workId)
     {
         return QcOverTimeRequest::where('work_id', $workId)->get();
     }
 
-    # lat tat ca cau theo 1 danh sach ma lam viec
-    public function infoOfListCompanyStaffWork($listWorkId,$dateFilter =null)
+    # lay tat ca cau theo 1 danh sach ma lam viec
+    public function infoOfListCompanyStaffWork($listWorkId, $dateFilter = null)
     {
         $hFunction = new \Hfunction();
-        if($hFunction->checkEmpty($dateFilter)){
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcOverTimeRequest::whereIn('work_id', $listWorkId)->get();
-        }else{
+        } else {
             return QcOverTimeRequest::whereIn('work_id', $listWorkId)->where('requestDate', 'like', "%$dateFilter%")->get();
         }
     }
+
+    # lay tat ca cau theo 1 danh sach ma lam viec
+    public function infoHasAcceptOfListCompanyStaffWork($listWorkId, $dateFilter = null)
+    {
+        $hFunction = new \Hfunction();
+        $hasAccept = $this->getDefaultHasAccept();
+        if ($hFunction->checkEmpty($dateFilter)) {
+            return QcOverTimeRequest::whereIn('work_id', $listWorkId)->where('acceptStatus', $hasAccept)->get();
+        } else {
+            return QcOverTimeRequest::whereIn('work_id', $listWorkId)->where('acceptStatus', $hasAccept)->where('requestDate', 'like', "%$dateFilter%")->get();
+        }
+    }
+
     # lay thong tin thong bao tang ca trong ngày
     public function getInfoOfCompanyStaffWorkAndDate($workId, $date)
     {
