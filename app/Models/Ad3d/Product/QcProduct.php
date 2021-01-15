@@ -20,6 +20,36 @@ class QcProduct extends Model
 
     private $lastId;
 
+    #mac dinh chieu ngang
+    public function getDefaultWidth()
+    {
+        return 0;
+    }
+
+    #mac dinh chieu cao
+    public function getDefaultHeight()
+    {
+        return 0;
+    }
+
+    # mac dinh chieu sau
+    public function getDefaultDepth()
+    {
+        return 0;
+    }
+
+    #mac dinh gia
+    public function getDefaultPrice()
+    {
+        return 0;
+    }
+
+    # mac dinh so luong
+    public function getDefaultAmount()
+    {
+        return 1;
+    }
+
     # mac dinh da ket thuc
     public function getDefaultHasFinishStatus()
     {
@@ -55,6 +85,12 @@ class QcProduct extends Model
     {
         return 0;
     }
+
+    # mac dinh anh thiet ke
+    public function getDefaultDesignImage()
+    {
+        return null;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- Insert ----------
     // insert
@@ -65,10 +101,10 @@ class QcProduct extends Model
         $modelProduct->width = $width;
         $modelProduct->height = $height;
         $modelProduct->depth = $depth;
-        $modelProduct->warrantyTime = $warrantyTime;
         $modelProduct->price = $price;
         $modelProduct->amount = $amount;
         $modelProduct->description = $description;
+        $modelProduct->warrantyTime = $warrantyTime;
         $modelProduct->designImage = $designImage;
         $modelProduct->productImage = null;
         $modelProduct->type_id = $typeId;
@@ -141,7 +177,12 @@ class QcProduct extends Model
 
     public function confirmFinish($confirmStaffId, $date, $productId = null)
     {
-        return QcProduct::where('product_id', $this->checkIdNull($productId))->update(['finishStatus' => 1, 'finishDate' => $date, 'confirmStaff_id' => $confirmStaffId]);
+        return QcProduct::where('product_id', $this->checkIdNull($productId))->update(
+            [
+                'finishStatus' => $this->getDefaultHasFinishStatus(),
+                'finishDate' => $date,
+                'confirmStaff_id' => $confirmStaffId
+            ]);
     }
 
     # xac nhan hoan thanh khi bao hoan thanh don hang
@@ -151,7 +192,7 @@ class QcProduct extends Model
         $modelWorkAllocation = new QcWorkAllocation();
         if (QcProduct::where('product_id', $productId)->update(
             [
-                'finishStatus' => 1,
+                'finishStatus' => $this->getDefaultHasFinishStatus(),
                 'finishDate' => $hFunction->carbonNow(),
                 'finishReportStaff_id' => $staffReportFinishId,
                 'confirmStaff_id' => $staffReportFinishId // tam thoi khong can duyen
@@ -340,7 +381,7 @@ class QcProduct extends Model
     //kiem tra ton san pham khong hoan thanh cua don hang
     public function checkExistsProductNotFinishOfOrder($orderId)
     {
-        return QcProduct::where('order_id', $orderId)->where('finishStatus',$this->getDefaultNotFinishStatus())->exists();
+        return QcProduct::where('order_id', $orderId)->where('finishStatus', $this->getDefaultNotFinishStatus())->exists();
     }
 
     # danh sach ma san pham cua 1 don hang

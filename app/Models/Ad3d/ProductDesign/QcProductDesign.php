@@ -62,6 +62,12 @@ class QcProductDesign extends Model
         return 0;
     }
 
+    #mac dinh mo ta
+    public function getDefaultDescription()
+    {
+        return null;
+    }
+
     #---------- Them ----------
     public function insert($image, $description, $productId, $staffId, $designType = 1)
     {
@@ -107,7 +113,7 @@ class QcProductDesign extends Model
     # xoa thiet ke
     public function actionDelete($designId = null)
     {
-        $designId = (empty($designId)) ? $this->imageId() : $designId;
+        $designId = $this->checkIdNull($designId);
         $imageName = $this->image($designId);
         if (QcProductDesign::where('design_id', $designId)->delete()) {
             $this->dropImage($imageName); # xoa anh
@@ -261,7 +267,8 @@ class QcProductDesign extends Model
 
     public function getInfo($designId = '', $field = '')
     {
-        if (empty($designId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($designId)) {
             return QcProductDesign::get();
         } else {
             $result = QcProductDesign::where('design_id', $designId)->first();
@@ -275,7 +282,8 @@ class QcProductDesign extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcProductDesign::where('design_id', $objectId)->pluck($column)[0];

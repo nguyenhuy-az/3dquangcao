@@ -139,13 +139,18 @@ class QcCompany extends Model
         $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelWork = new QcWork();
+        $modelOrder = new QcOrder();
         $modelOrderAllocation = new QcOrderAllocation();
         $modelWorkAllocation = new QcWorkAllocation();
         $modelOverTimeRequest = new QcOverTimeRequest();
 
         // ===== ===== DON HANG - SAN PHAM ====== ======
+        # kiem tra cap ban giao don hang tre - cua bo phan kinh doanh
+        $modelOrder->checkUpdateLateStatus();
+
         # kiem tra thong tin ban giao don hang - cua bo phan thi cong cap quan ly
         $modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
+
         # kiem tra cap nhat tre cua thi cong san pham
         $modelWorkAllocation->checkUpdateLateStatus();
 

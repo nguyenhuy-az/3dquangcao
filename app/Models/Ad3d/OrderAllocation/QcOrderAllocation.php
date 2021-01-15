@@ -33,6 +33,12 @@ class QcOrderAllocation extends Model
         return 0;
     }
 
+    # mac dinh tat ca trang thai hoan thanh
+    public function getDefaultAllFinish()
+    {
+        return 100;
+    }
+
     #mac dinh da xac nhan phan cong
     public function getDefaultHasConfirmStatus()
     {
@@ -86,6 +92,19 @@ class QcOrderAllocation extends Model
     {
         return 0;
     }
+
+    # mac dinh tu nhan
+    public function getDefaultHasReceive()
+    {
+        return 1;
+    }
+
+    # mac dinh duoc giao
+    public function getDefaultNotReceive()
+    {
+        return 0;
+    }
+
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- them moi ----------
     public function insert($allocationDate, $receiveStatus, $receiveDeadline, $noted, $orderId, $receiveStaffId, $allocationStaffId = null)
@@ -116,7 +135,8 @@ class QcOrderAllocation extends Model
 
     public function checkNullId($allocationId = null)
     {
-        return (empty($allocationId)) ? $this->allocationId() : $allocationId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($allocationId)) ? $this->allocationId() : $allocationId;
     }
 
     # huy ban giao
@@ -138,19 +158,20 @@ class QcOrderAllocation extends Model
         $dataProduct = $modelOrder->productActivityOfOrder($orderId);
         if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['finishStatus' => $this->getDefaultHasFinish(), 'finishNote' => $finishNote, 'finishDate' => $reportDate, 'paymentStatus' => $paymentStatus, 'action' => $this->getDefaultNotAction()])) {
             # thong bao hoan thanh thi cong cho quan ly thi cong (nguoi phan viec)
-            $staffNotifyId = $this->allocationStaffId($allocationId)[0];
+            $staffNotifyId = $this->allocationStaffId($allocationId);
+            $notifyNote = 'Hoàn thành thi công';
             if (!$hFunction->checkEmpty($staffNotifyId)) {
                 $notifyOrderId = $modelStaffNotify->getDefaultOrderId();
                 $orderAllocationId = $modelStaffNotify->getDefaultOrderAllocationId();
                 $workAllocationId = $modelStaffNotify->getDefaultWorkAllocationId();
                 $bonusId = $modelStaffNotify->getDefaultBonusId();
                 $minusMoneyId = $modelStaffNotify->getDefaultMinusId();
-                $modelStaffNotify->insert($notifyOrderId, $staffNotifyId, 'Hoàn thành thi công', $orderAllocationId, $workAllocationId, $bonusId, $minusMoneyId, $allocationId);
+                $modelStaffNotify->insert($notifyOrderId, $staffNotifyId, $notifyNote, $orderAllocationId, $workAllocationId, $bonusId, $minusMoneyId, $allocationId);
             }
             # bao ket thuc san pham
             if ($hFunction->checkCount($dataProduct)) {
                 foreach ($dataProduct as $product) {
-                    $modelProduct->confirmFinishFromFinishOrder($product->productId(), $this->receiveStaffId($allocationId)[0]);
+                    $modelProduct->confirmFinishFromFinishOrder($product->productId(), $this->receiveStaffId($allocationId));
                 }
             }
             ### TAM THOI KHONG CAN NGUOI XAC NHAN - MAC DINH NGUOI XA NHAN LA NGUOI GIAO
@@ -184,7 +205,8 @@ class QcOrderAllocation extends Model
                 $minusMoneyId = $modelStaffNotify->getDefaultMinusId();
                 # xac nhan dong y  hoan thanh
                 # thong bao hoan thanh thi cong cho kinh doanh
-                $modelStaffNotify->insert($notifyOrderId, $dataOrder->staffId(), 'Hoàn thành thi công', $orderAllocationId, $workAllocationId, $bonusId, $minusMoneyId, $allocationId);
+                $notifyNote = 'Hoàn thành thi công';
+                $modelStaffNotify->insert($notifyOrderId, $dataOrder->staffId(), $notifyNote, $orderAllocationId, $workAllocationId, $bonusId, $minusMoneyId, $allocationId);
             }
             return true;
         } else {
@@ -258,7 +280,8 @@ class QcOrderAllocation extends Model
     # lay cong trinh cua NV nhan
     public function infoOfReceiveStaff($staffId, $date = null, $order = 'DESC')
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcOrderAllocation::where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$date%")->orderBy('allocationDate', $order)->get();
         } else {
             return QcOrderAllocation::where('receiveStaff_id', $staffId)->orderBy('allocationDate', $order)->get();
@@ -267,14 +290,16 @@ class QcOrderAllocation extends Model
 
     public function selectInfoOfReceiveStaff($staffId, $date = null, $finishStatus = 100, $order = 'DESC')
     {
-        if (!empty($date)) {
-            if ($finishStatus == 100) {
+        $hFunction = new \Hfunction();
+        $getAllFinish = $this->getDefaultAllFinish();
+        if (!$hFunction->checkEmpty($date)) {
+            if ($finishStatus == $getAllFinish) {
                 return QcOrderAllocation::where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$date%")->orderBy('allocationDate', $order)->select('*');
             } else {
                 return QcOrderAllocation::where('receiveStaff_id', $staffId)->where('finishStatus', $finishStatus)->where('allocationDate', 'like', "%$date%")->orderBy('allocationDate', $order)->select('*');
             }
         } else {
-            if ($finishStatus == 100) {
+            if ($finishStatus == $getAllFinish) {
                 return QcOrderAllocation::where('receiveStaff_id', $staffId)->orderBy('allocationDate', $order)->select('*');
             } else {
                 return QcOrderAllocation::where('receiveStaff_id', $staffId)->where('finishStatus', $finishStatus)->orderBy('allocationDate', $order)->select('*');
@@ -377,11 +402,12 @@ class QcOrderAllocation extends Model
 
     public function getInfo($allocationId = '', $field = '')
     {
-        if (empty($allocationId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($allocationId)) {
             return QcOrderAllocation::get();
         } else {
             $result = QcOrderAllocation::where('allocation_id', $allocationId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -389,12 +415,14 @@ class QcOrderAllocation extends Model
         }
     }
 
+    # lay 1 gia tri
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcOrderAllocation::where('allocation_id', $objectId)->pluck($column);
+            return QcOrderAllocation::where('allocation_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -501,34 +529,29 @@ class QcOrderAllocation extends Model
 // id cuoi
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcOrderAllocation::orderBy('allocation_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->allocation_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->allocation_id;
     }
 
     // kiem tra thong tin
     #con hoat dong
     public function checkActivity($allocationId = null)
     {
-        $result = $this->action($allocationId);
-        $result = (is_int($result)) ? $result : $result[0];
-        return ($result == 1) ? true : false;
+        return ($this->action($allocationId) == $this->getDefaultHasAction()) ? true : false;
     }
 
     # kiem tra bao cao hoan thanh
     public function checkFinish($allocationId = null)
     {
-        $result = $this->finishStatus($allocationId);
-        $result = (is_int($result)) ? $result : $result[0];
-        return ($result == 1) ? true : false;
+        return ($this->finishStatus($allocationId) == $this->getDefaultHasFinish()) ? true : false;
     }
 
 
     # kiem tra xac nhan ket thuc giao viec
     public function checkConfirm($allocationId = null)
     {
-        $result = $this->confirmStatus($allocationId);
-        $result = (is_int($result)) ? $result : $result[0];
-        return ($result == 1) ? true : false;
+        return ($this->confirmStatus($allocationId) == $this->getDefaultHasConfirmStatus()) ? true : false;
     }
 
     public function checkWaitConfirmFinish($allocationId)
@@ -540,17 +563,13 @@ class QcOrderAllocation extends Model
     # he thong xac nhan da hoanh thanh
     public function checkConfirmFinish($allocationId = null)
     {
-        $result = $this->confirmFinish($allocationId);
-        $result = (is_int($result)) ? $result : $result[0];
-        return ($result == 1) ? true : false;
+        return ($this->confirmFinish($allocationId) == $this->getDefaultHasConfirmFinish()) ? true : false;
     }
 
     # trang thai thu ho
     public function checkPaymentStatus($allocationId = null)
     {
-        $result = $this->paymentStatus($allocationId);
-        $result = (is_int($result)) ? $result : $result[0];
-        return ($result == 1) ? true : false;
+        return ($this->paymentStatus($allocationId) == $this->getDefaultHasPayment()) ? true : false;
     }
 
     # kiem tra huy ban giao
@@ -622,14 +641,24 @@ class QcOrderAllocation extends Model
             $workId = $dataWork->workId();
             if ($receiveDeadline < $checkDate) { # tre ngay
                 if (!$modelMinusMoney->checkExistMinusMoneyOrderAllocationLate($allocationId)) { // Neu chua phat thi se phat
-                    $punishId = (is_int($punishId)) ? $punishId : $punishId[0];
-                    if ($modelMinusMoney->insert($checkDate, null, $workId, null, $punishId, 0, $allocationId, null, null, null, 0)) {
+                    ///$punishId = (is_int($punishId)) ? $punishId : $punishId[0];
+                    $minusReason = $modelMinusMoney->getDefaultReason();
+                    $minusStaffId = $modelMinusMoney->getDefaultStaffId();
+                    $minusApply = $modelMinusMoney->getDefaultHasApplyStatus();
+                    $minusOrderConstructionId = $modelMinusMoney->getDefaultOrderConstruction();
+                    $minusCompanyStoreCheckReportId = $modelMinusMoney->getDefaultCompanyStoreCheckReport();
+                    $minusWorkAllocationId = $modelMinusMoney->getDefaultWorkAllocation();
+                    $minusMoney = $modelMinusMoney->getDefaultMoney();
+                    $minusReasonImage = $modelMinusMoney->getDefaultReasonImage();
+                    if ($modelMinusMoney->insert($checkDate, $minusReason, $workId, $minusStaffId, $punishId, $minusApply, $allocationId, $minusOrderConstructionId, $minusCompanyStoreCheckReportId, $minusWorkAllocationId, $minusMoney, $minusReasonImage)) {
+                        # lay gia tri mac dinh
                         $notifyOrderId = $modelStaffNotify->getDefaultOrderId();
                         $orderAllocationId = $modelStaffNotify->getDefaultOrderAllocationId();
                         $workAllocationId = $modelStaffNotify->getDefaultWorkAllocationId();
                         $bonusId = $modelStaffNotify->getDefaultBonusId();
                         $orderAllocationFinishId = $modelStaffNotify->getDefaultOrderAllocationFinishId();
-                        $modelStaffNotify->insert($notifyOrderId, $dataReceiveStaff->staffId(), 'Quản lý thi công trễ đơn hàng', $orderAllocationId, $workAllocationId, $bonusId, $modelMinusMoney->insertGetId(), $orderAllocationFinishId);
+                        $notifyNote = 'Quản lý thi công trễ đơn hàng';
+                        $modelStaffNotify->insert($notifyOrderId, $dataReceiveStaff->staffId(), $notifyNote, $orderAllocationId, $workAllocationId, $bonusId, $modelMinusMoney->insertGetId(), $orderAllocationFinishId);
                     }
                 }
 

@@ -63,7 +63,7 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                         THÊM BÁO GIÁ
                                     </a>
                                 </td>
-                                <td colspan="8" style="background-color: red;">
+                                <td colspan="7" style="background-color: red;">
                                     <span style="font-size: 1.5em;color: yellow;">Mức độ </span>
                                     <span style="font-size: 1.5em;color: white;">HOÀN THÀNH </span>
                                     <span style="font-size: 1.5em;color: yellow;">dùng để </span>
@@ -86,7 +86,6 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                 </th>
                                 <th>THANH TOÁN</th>
                                 <th class="text-right">Tổng tiền ĐH</th>
-                                <th class="text-right">Giảm</th>
                                 <th class="text-right">
                                     Tổng Đã thu <br/>
                                     <em>(Của 1 ĐH)</em>
@@ -215,7 +214,6 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                     </select>
                                 </td>
                                 <td></td>
-                                <td class="text-right" style="color: blue;"></td>
                                 <td class="text-right"></td>
                                 <td class="text-right qc-color-green"></td>
                                 <td class="text-right qc-color-green"></td>
@@ -226,7 +224,6 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                 $currentPage = $dataOrders->currentPage();
                                 $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage;
                                 $sumOrderMoney = 0;
-                                $sumDiscountMoney = 0;
                                 $sumPaidMoney = 0;
                                 $sumUnPaidMoney = 0;
                                 $sumPaidMoneyInDate = 0;
@@ -239,13 +236,10 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                     $orderDeliveryDate = $orders->deliveryDate();
                                     $orderFinishDate = $orders->finishDate();
                                     $createdAt = $orders->createdAt();
-                                    $totalPrice = $orders->totalPrice();
+                                    $totalPrice = $orders->totalMoney();// $orders->totalPrice();
                                     $sumOrderMoney = $sumOrderMoney + $totalPrice;
-                                    $totalDiscount = $orders->totalMoneyDiscount();
-                                    $sumDiscountMoney = $sumDiscountMoney + $totalDiscount;
                                     $totalPaid = $orders->totalPaid();
                                     $sumPaidMoney = $sumPaidMoney + $totalPaid;
-                                    //$totalUnPaid = $totalPrice - $totalDiscount - $totalPaid;
                                     $amountOrderPay = count($orders->infoOrderPayOfOrder($orderId));
                                     $totalUnPaid = $orders->totalMoneyUnpaid();
                                     $totalUnPaid = ($totalUnPaid < 0) ? 0 : $totalUnPaid;
@@ -441,10 +435,9 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
 
                                         </td>
                                         <td class="text-right">
-                                            {!! $hFunction->currencyFormat($totalPrice) !!}
-                                        </td>
-                                        <td class="text-right" style="color: brown;">
-                                            {!! $hFunction->currencyFormat($totalDiscount) !!}
+                                            <b style="color: blue;">
+                                                {!! $hFunction->currencyFormat($totalPrice) !!}
+                                            </b>
                                         </td>
                                         <td class="text-right">
                                             <a class="qc_order_pay_view qc-link-bold" title="Click xem chi tiết TT"
@@ -466,13 +459,13 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-center" colspan="12">
+                                    <td class="text-center" colspan="11">
                                         {!! $hFunction->page($dataOrders) !!}
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-center" colspan="12">
+                                    <td class="text-center" colspan="11">
                                         <em class="qc-color-red">Không đơn hàng</em>
                                     </td>
                                 </tr>

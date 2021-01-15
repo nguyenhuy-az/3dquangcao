@@ -8,6 +8,7 @@ use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\JobApplication\QcJobApplication;
 use App\Models\Ad3d\JobApplicationInterview\QcJobApplicationInterview;
 use App\Models\Ad3d\MinusMoney\QcMinusMoney;
+use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OverTimeRequest\QcOverTimeRequest;
 use App\Models\Ad3d\Timekeeping\QcTimekeeping;
 use App\Models\Ad3d\Transfers\QcTransfers;
@@ -162,9 +163,30 @@ class QcStatistical extends Model
     }
 
     //=========== THONG TIN CHUYEN MON - KINH DOANH =========
-    # tong don hang da nhan khong huy
-    public function statisticGetAllOrder()
+    # tong tin gia tri mang ve tu thi cong san pham
+    public function totalValueMoneyFromListOrder($dataListOrder)
     {
+        $modelOrder = new QcOrder();
+        return $modelOrder->totalMoneyOfListOrder($dataListOrder);
+    }
 
+    # danh sach don hang da nhan khong huy cua 1 nhan vien
+    public function statisticGetAllOrder($staffId, $dateFilter = null)
+    {
+        $modelOrder = new QcOrder();
+        return $modelOrder->getInfoAllOfStaff($staffId, $dateFilter);
+    }
+    # danh sach don hang bi tre
+    public function statisticGetHasLateOrder($staffId, $dateFilter = null)
+    {
+        $modelOrder = new QcOrder();
+        return $modelOrder->getInfoHasLateOfStaff($staffId, $dateFilter);
+    }
+
+    # danh sach don hang da hoan thanh
+    public function statisticGetHasFinishOrder($staffId, $dateFilter = null)
+    {
+        $modelOrder = new QcOrder();
+        return $modelOrder->getInfoHasFinishOfStaff($staffId, $dateFilter);
     }
 }

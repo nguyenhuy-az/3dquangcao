@@ -19,12 +19,24 @@ class QcOrder extends Model
 {
     protected $table = 'qc_orders';
     protected $fillable = ['order_id', 'nameCode', 'name', 'constructionAddress', 'constructionPhone', 'constructionContact',
-        'discount', 'vat', 'receiveDate', 'deliveryDate', 'finishDate', 'finishStatus', 'paymentStatus', 'confirmStatus',
+        'discount', 'vat', 'receiveDate', 'deliveryDate', 'lateStatus', 'finishDate', 'finishStatus', 'paymentStatus', 'confirmStatus',
         'confirmAgree', 'confirmDate', 'cancelStatus', 'action', 'company_id', 'customer_id', 'staffReceive_id', 'staffConfirm_id', 'staffReportFinish_id', 'staffKpi_id', 'created_at', 'provisionalStatus', 'provisionalDate', 'provisionalConfirm'];
     protected $primaryKey = 'order_id';
     public $timestamps = false;
 
     private $lastId;
+
+    # mac dinh bi tre
+    public function getDefaultHasLate()
+    {
+        return 1;
+    }
+
+    # mac dinh khong tre
+    public function getDefaultNotLate()
+    {
+        return 0;
+    }
 
     # mac dinh da ket thuc
     public function getDefaultHasFinishStatus()
@@ -361,11 +373,19 @@ class QcOrder extends Model
         }
     }
 
+    # cap nhat trang thai tre
+    public function updateLateStatus($orderId = null)
+    {
+        return QcOrder::where('order_id', $this->checkIdNull($orderId))->update(['lateStatus' => $this->getDefaultHasLate()]);
+    }
+
+    # ket thuc thanh toan
     public function finishPayment($orderId = null)
     {
         return QcOrder::where('order_id', $this->checkIdNull($orderId))->update(['paymentStatus' => $this->getDefaultHasPayment()]);
     }
 
+    # huy ket thuc thanh toan
     public function cancelFinishPayment($orderId = null)
     {
         return QcOrder::where('order_id', $this->checkIdNull($orderId))->update(['paymentStatus' => $this->getDefaultNotPayment()]);
@@ -603,7 +623,8 @@ class QcOrder extends Model
         return $modelOrderBonusBudget->infoOfOrder($this->checkIdNull($orderId));
     }
 
-    //---------- ---------- ---------- nhan vien ----------- ---------- ----------
+    //======== ========== NHAN VIEN ======== ==========
+    #========= nguoi  xac nhan ======
     # nha vien xac nhan
     public function staffConfirm()
     {
@@ -628,11 +649,48 @@ class QcOrder extends Model
         return QcOrder::where('staffReceive_id', $staffReceiveId)->where('order_id', $this->checkIdNull($orderId))->exists();
     }
 
+    #========= Nguoi nhan ==========
     public function staffReceive()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staffReceive_id', 'staff_id');
     }
 
+    # lay danh sach don hang cua 1 nhan vien
+    public function getInfoAllOfStaff($staffId, $dateFilter = null)
+    {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateFilter)) {
+            return QcOrder::where('staffReceive_id', $staffId)->orderBy('receiveDate', 'DESC')->get();
+        } else {
+            return QcOrder::where('staffReceive_id', $staffId)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->get();
+        }
+    }
+
+    # lay danh sach don hang bi tre cua 1 nhan vien
+    public function getInfoHasLateOfStaff($staffId, $dateFilter = null)
+    {
+        $hFunction = new \Hfunction();
+        $hasLate = $this->getDefaultHasLate();
+        if ($hFunction->checkEmpty($dateFilter)) {
+            return QcOrder::where('staffReceive_id', $staffId)->where('lateStatus', $hasLate)->orderBy('receiveDate', 'DESC')->get();
+        } else {
+            return QcOrder::where('staffReceive_id', $staffId)->where('lateStatus', $hasLate)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->get();
+        }
+    }
+
+    # lay danh sach don hang da hoan thanh cua 1 nhan vien
+    public function getInfoHasFinishOfStaff($staffId, $dateFilter = null)
+    {
+        $hFunction = new \Hfunction();
+        $hasFinish = $this->getDefaultHasFinishStatus();
+        if ($hFunction->checkEmpty($dateFilter)) {
+            return QcOrder::where('staffReceive_id', $staffId)->where('finishStatus', $hasFinish)->orderBy('receiveDate', 'DESC')->get();
+        } else {
+            return QcOrder::where('staffReceive_id', $staffId)->where('finishStatus', $hasFinish)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->get();
+        }
+    }
+
+    # lay danh sach tat ca don hang cua 1 nhan vien
     public function infoOfStaffReceive($staffId = null, $date = null, $confirmStatus = 3, $keyWord = null, $orderBy = 'DESC')
     {
         $hFunction = new \Hfunction();
@@ -664,7 +722,7 @@ class QcOrder extends Model
 
     }
 
-    // lay thong tin don hang da thanh toan hoac chưa hoan thanh toan theo tg
+    #lay thong tin don hang da thanh toan hoac chưa hoan thanh toan theo tg
     public function infoAndPayOfStaffReceive($staffId = null, $date = null, $paymentStatus = 3, $keyWord = null, $orderBy = 'DESC')
     {
         $hFunction = new \Hfunction();
@@ -699,19 +757,19 @@ class QcOrder extends Model
         return QcOrder::where(['staffReceive_id' => $staffId])->whereIn('order_id', $selectOrderId)->where('confirmStatus', $hasConfirm)->orderBy('receiveDate', $orderBy)->get();
     }
 
-    // lay thong tin don hang da thanh toan hoac chưa hoan thanh toan theo tg - khong huy
+    #lay thong tin don hang da thanh toan hoac chưa hoan thanh toan theo tg - khong huy
     public function infoNoCancelAndPayOfStaffReceive($staffId = null, $date = null, $paymentStatus = 3, $keyWord = null, $orderBy = 'DESC')
     {
         return $this->selectInfoNoCancelAndPayOfStaffReceive($staffId, $date, $paymentStatus, $keyWord, $orderBy)->get();
     }
 
-    # cua 1 hay nhieu nguoi
+    #cua 1 hay nhieu nguoi
     public function infoNoCancelAndPayOfListStaffReceive($listStaffId, $date = null, $paymentStatus = 3, $keyWord = null, $orderBy = 'DESC')
     {
         return $this->selectInfoNoCancelAndPayOfListStaffReceive($listStaffId, $date, $paymentStatus, $keyWord, $orderBy)->get();
     }
 
-    # cua 1 NV
+    #cua 1 NV
     public function selectInfoNoCancelAndPayOfStaffReceive($staffId = null, $date = null, $paymentStatus = 3, $finishStatus = 100, $keyWord = null, $orderBy = 'DESC')
     {
         $hFunction = new \Hfunction();
@@ -796,6 +854,7 @@ class QcOrder extends Model
 
     }
 
+    # chon  don hang theo danh sach ma nhan vien nhan
     public function selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $nameFiler = null, $dateFilter = null, $paymentStatus)
     {
         $hFunction = new \Hfunction();
@@ -1039,9 +1098,10 @@ class QcOrder extends Model
     }
 
     # kiem tra don hang bi tre
-    public function checkLate($orderId)
+    public function checkLate($orderId = null)
     {
         $currentDate = date('Y-m-d');
+        $orderId = $this->checkIdNull($orderId);
         $deliveryDate = $this->deliveryDate($orderId);
         $lateStatus = false;
         if ($this->checkFinishStatus($orderId)) { # don hang da ket thuc
@@ -1248,15 +1308,18 @@ class QcOrder extends Model
         return $this->totalPrice($orderId) - $this->totalMoneyDiscount($orderId) + $this->totalMoneyOfVat($orderId);
     }
 
+    # tong tien cua 1 don hang
     public function totalMoney($orderId = null)
     {
-        return $this->totalPrice($orderId) + $this->totalMoneyOfVat($orderId);
+        return $this->totalPrice($orderId) + $this->totalMoneyOfVat($orderId) - $this->totalMoneyDiscount($orderId);
     }
 
+    # tong tien cua danh sach don hang
     public function totalMoneyOfListOrder($listOrder)
     {
+        $hFunction = new \Hfunction();
         $totalMoney = 0;
-        if (count($listOrder) > 0) {
+        if ($hFunction->checkCount($listOrder)) {
             foreach ($listOrder as $key => $value) {
                 $totalMoney = $totalMoney + $this->totalMoney($value['order_id']);
             }
@@ -1264,10 +1327,12 @@ class QcOrder extends Model
         return $totalMoney;
     }
 
+    # tong tien giam cua danh  sach don hang
     public function totalMoneyDiscountOfListOrder($listOrder)
     {
+        $hFunction = new \Hfunction();
         $totalMoney = 0;
-        if (count($listOrder) > 0) {
+        if ($hFunction->checkCount($listOrder)) {
             foreach ($listOrder as $key => $value) {
                 $totalMoney = $totalMoney + $this->totalMoneyDiscount($value['order_id']);
             }
@@ -1278,8 +1343,9 @@ class QcOrder extends Model
     # tong tien thanh toan theo danh sach don hang
     public function totalMoneyPaidOfListOrder($listOrder)
     {
+        $hFunction = new \Hfunction();
         $totalMoney = 0;
-        if (count($listOrder) > 0) {
+        if ($hFunction->checkCount($listOrder)) {
             foreach ($listOrder as $key => $value) {
                 $totalMoney = $totalMoney + $this->totalPaid($value['order_id']);
             }
@@ -1287,10 +1353,12 @@ class QcOrder extends Model
         return $totalMoney;
     }
 
+    # tong tien chua thanh toan theo danh sach don hang
     public function totalMoneyUnPaidOfListOrder($listOrder)
     {
+        $hFunction = new \Hfunction();
         $totalMoney = 0;
-        if (count($listOrder) > 0) {
+        if ($hFunction->checkCount($listOrder)) {
             foreach ($listOrder as $key => $value) {
                 $totalMoney = $totalMoney + $this->totalMoneyUnpaid($value['order_id']);
             }
@@ -1298,6 +1366,7 @@ class QcOrder extends Model
         return $totalMoney;
     }
 
+    # tong tien chua thanh toan cua 1 don hang
     public function totalMoneyUnpaid($orderId = null)
     {
         $orderId = $this->checkIdNull($orderId);
@@ -1444,6 +1513,11 @@ class QcOrder extends Model
     public function deliveryDate($orderId = null)
     {
         return $this->pluck('deliveryDate', $orderId);
+    }
+
+    public function lateStatus($orderId = null)
+    {
+        return $this->pluck('lateStatus', $orderId);
     }
 
     public function finishDate($orderId = null)
@@ -1668,7 +1742,27 @@ class QcOrder extends Model
     }
 
     //============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
+    # kiem tra trang thai tre cua don hang
+    /*
+     * goi trong qc_company
+     * */
+    public function checkUpdateLateStatus()
+    {
+        $hFunction = new \Hfunction();
+        $dataOrder = $this->getInfo();
+        if ($hFunction->checkCount($dataOrder)) {
+            foreach ($dataOrder as $order) {
+                if ($order->checkLate()) {
+                    $this->updateLateStatus($order->orderId());
+                }
+            }
+        }
+    }
+
     # kiem tra cap nhat trang thai thanh toan don hang cu
+    /*
+     * goi khi thanh toan don hang
+     * */
     public function checkUpdatePaymentStatus()
     {
         $hFunction = new \Hfunction();

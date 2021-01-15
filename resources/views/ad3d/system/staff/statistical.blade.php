@@ -38,7 +38,7 @@ $dataHasApplyBonus = $modelStatistical->statisticGetHasApplyBonus($statisticStaf
 # so lan phat - duoc ap dung
 $dataHasApplyMinus = $modelStatistical->statisticGetHasApplyMinus($statisticStaffId, $dateFilter);
 
-//======= ========= NANG LUC LAM VIEC ========= =======
+//========== ========== NANG LUC LAM VIEC ========== ===========
 //===== DUOC GIAO
 # tong thi cong san pham - tat ca
 $dataAllReceiveWorkAllocation = $modelStatistical->statisticGetReceiveWorkAllocation($statisticStaffId, $dateFilter);
@@ -60,7 +60,17 @@ $valueMoneyFromWorkAllocationFinishNotLate = $modelStatistical->totalValueMoneyF
 $dataWorkAllocationHasFinishHasLate = $modelStatistical->statisticGetWorkAllocationFinishHasLate($statisticStaffId, $dateFilter);
 $valueMoneyFromWorkAllocationFinishHasLate = $modelStatistical->totalValueMoneyFromListWorkAllocation($dataWorkAllocationHasFinishHasLate);
 
+//========== ========= NANG LUC LAM VIEC - KINH DOANH =========== ==========
+# tat ca don hang
+$dataAllOrder = $modelStatistical->statisticGetAllOrder($statisticStaffId, $dateFilter);
+$valueMoneyFromAllOrder = $modelStatistical->totalValueMoneyFromListOrder($dataAllOrder);
+# danh sach don hang bi tre
+$dataOrderHasLate = $modelStatistical->statisticGetHasLateOrder($statisticStaffId, $dateFilter);
+$valueMoneyFromOrderHasLate = $modelStatistical->totalValueMoneyFromListOrder($dataOrderHasLate);
 
+# danh sach don hang da hoan thanh
+$dataOrderHasFinish = $modelStatistical->statisticGetHasFinishOrder($statisticStaffId, $dateFilter);
+$valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder($dataOrderHasFinish);
 ?>
 @extends('ad3d.system.staff.index')
 @section('qc_ad3d_index_content')
@@ -246,7 +256,7 @@ $valueMoneyFromWorkAllocationFinishHasLate = $modelStatistical->totalValueMoneyF
                                         </b>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr style="border-top: 2px solid black;">
                                     <td>Sản phẩm đã hoàn thành</td>
                                     <td class="text-center">
                                         <b style="color:blue;">
@@ -302,41 +312,41 @@ $valueMoneyFromWorkAllocationFinishHasLate = $modelStatistical->totalValueMoneyF
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <tr>
-                                    <td>Tất cả sản phẩm được giao</td>
+                                    <td>Tất cả đơn hàng đã nhận</td>
                                     <td class="text-center">
                                         <b style="color:red;">
-                                            {!! $hFunction->getCount($dataAllReceiveWorkAllocation) !!}
+                                            {!! $hFunction->getCount($dataAllOrder) !!}
                                         </b>
                                     </td>
                                     <td class="text-center">
                                         <b style="color: green;">
-                                            {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocation) !!}
+                                            {!! $hFunction->currencyFormat($valueMoneyFromAllOrder) !!}
                                         </b>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Thi công bị trễ</td>
+                                    <td>Số đơn hàng bị trễ</td>
                                     <td class="text-center">
                                         <b style="color:red;">
-                                            {!! $hFunction->getCount($dataWorkAllocationHasLate) !!}
+                                            {!! $hFunction->getCount($dataOrderHasLate) !!}
                                         </b>
                                     </td>
                                     <td class="text-center">
                                         <b style="color: green;">
-                                            {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationHasLate) !!}
+                                            {!! $hFunction->currencyFormat($valueMoneyFromOrderHasLate) !!}
                                         </b>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>Sản phẩm đã hoàn thành</td>
+                                <tr style="border-top: 2px solid black;">
+                                    <td>Tổng đơn hàng đã hoàn thành</td>
                                     <td class="text-center">
                                         <b style="color:blue;">
-                                            {!! $hFunction->getCount($dataWorkAllocationHasFinish) !!}
+                                            {!! $hFunction->getCount($dataOrderHasFinish) !!}
                                         </b>
                                     </td>
                                     <td class="text-center">
                                         <b style="color: blue;">
-                                            {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationHasFinish) !!}
+                                            {!! $hFunction->currencyFormat($valueMoneyFromOrderHasFinish) !!}
                                         </b>
                                     </td>
                                 </tr>

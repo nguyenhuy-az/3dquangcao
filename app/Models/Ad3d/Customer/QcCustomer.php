@@ -16,6 +16,36 @@ class QcCustomer extends Model
 
     private $lastId;
 
+    #mac dinh ngay sinh
+    public function getDefaultBirthday()
+    {
+        return null;
+    }
+
+    #mac dinh dia chi
+    public function getDefaultAddress()
+    {
+        return null;
+    }
+
+    # mac dinh so dien thoai
+    public function getDefaultPhone()
+    {
+        return null;
+    }
+
+    # mac dinh email
+    public function getDefaultEmail()
+    {
+        return null;
+    }
+
+    # mac dinh zalo
+    public function getDefaultZalo()
+    {
+        return null;
+    }
+
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- Insert ----------
 
@@ -133,7 +163,7 @@ class QcCustomer extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcCustomer::where('customer_id', $objectId)->pluck($column);
+            return QcCustomer::where('customer_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -197,15 +227,15 @@ class QcCustomer extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcCustomer::orderBy('customer_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->customer_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->customer_id;
     }
 
     //========== ========== ========= CHECK INFO ========== ========= =========
     // exist of phone
     public function existPhone($phone)
     {
-        $customer = QcCustomer::where('phone', $phone)->count();
-        return ($customer > 0) ? true : false;
+        return QcCustomer::where('phone', $phone)->exists();
     }
 }

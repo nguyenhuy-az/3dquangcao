@@ -347,6 +347,7 @@ class OrdersController extends Controller
         $modelProductType = new QcProductType();
         $modelCustomer = new QcCustomer();
         $modelOrder = new QcOrder();
+        $modelProduct = new QcProduct();
         $modelStaffNotify = new QcStaffNotify();
         $modelOrderPay = new QcOrderPay();
         $modelOrderAllocation = new QcOrderAllocation();
@@ -369,9 +370,9 @@ class OrdersController extends Controller
         $txtAmount = $request->input('txtAmount');
         $txtPrice = $request->input('txtPrice');
         $txtDescription = $request->input('txtDescription');
-        $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
-        $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
-        //$txtDepth = (empty($txtDepth)) ? 0 : $txtDepth;
+        $txtWidth = ($hFunction->checkEmpty($txtWidth)) ? 0 : $txtWidth;
+        $txtHeight = ($hFunction->checkEmpty($txtHeight)) ? 0 : $txtHeight;
+
 
         //thong tin don hang
         $txtOrderName = $request->input('txtOrderName');
@@ -392,37 +393,41 @@ class OrdersController extends Controller
         $txtDateDelivery = $hFunction->convertStringToDatetime("$cbMonthDelivery/$cbDayDelivery/$cbYearDelivery $cbHoursDelivery:$cbMinuteDelivery:00");
         # trang thai thi cong
         $cbConstructionStatus = $request->input('cbConstructionStatus');
-        $oldCustomerId = null;
-        $dataCustomer = null;
+        $oldCustomerId = $hFunction->getDefaultNull();
+        $dataCustomer = $hFunction->getDefaultNull();
         if ($hFunction->formatDateToYMDHI($txtDateReceive) > $hFunction->formatDateToYMDHI($txtDateDelivery)) {
             return "Ngày giao phải lớn hơn ngày nhận <br/> <a style='color: red;' onclick='history.back();'>Quay lại</a>";
         } else {
-            if (!empty($txtPhone)) {
+            if (!$hFunction->checkEmpty($txtPhone)) {
                 #lay thong tin khach hang tu so dien thoai di dong
                 $dataCustomer = $modelCustomer->infoFromPhone($txtPhone);
             }
-            if (!empty($txtZalo) && count($dataCustomer) <= 0) {
+            if (!$hFunction->checkEmpty($txtZalo) && count($dataCustomer) <= 0) {
                 # lay thong tin khach hang tu so zalo
                 $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
             }
+            # lay gia tri mac dinh khach hang
+            $customerAddress = $modelCustomer->getDefaultAddress();
+            $customerEmail = $modelCustomer->getDefaultEmail();
+
             if ($hFunction->checkCount($dataCustomer)) {
                 # ton tai khach hang - khach hang cu
                 $customerId = $dataCustomer->customerId();
                 $customerName = $dataCustomer->name();
             } else {
                 # khach hang moi
-                if ($modelCustomer->insert($txtCustomerName, null, null, $txtAddress, $txtPhone, $txtZalo)) {
+                if ($modelCustomer->insert($txtCustomerName, $customerEmail, $customerAddress, $txtAddress, $txtPhone, $txtZalo)) {
                     $customerId = $modelCustomer->insertGetId();
                     $customerName = $txtCustomerName;
                 }
             }
-            if (!empty($customerId) && !empty($staffLoginId)) {
+            if (!$hFunction->checkEmpty($customerId) && !$hFunction->checkEmpty($staffLoginId)) {
                 #cap nhat thong tin khach hang neu co thay doi dia chi
-                $modelCustomer->updateInfo($customerId, $customerName, null, null, $txtAddress, $txtPhone, $txtZalo);
+                $modelCustomer->updateInfo($customerId, $customerName, $customerEmail, $customerAddress, $txtAddress, $txtPhone, $txtZalo);
                 # them don hang
-                $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
-                $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
-                $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
+                $txtConstructionAddress = ($hFunction->checkEmpty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
+                $txtConstructionPhone = ($hFunction->checkEmpty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
+                $txtConstructionContact = ($hFunction->checkEmpty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
                 # lay gia tri mac dinh
                 # dơn hang thuc
                 $provisionalStatus = $modelOrder->getDefaultNotProvisionalStatus();
@@ -437,8 +442,15 @@ class OrdersController extends Controller
                     # thong bao them don hang
                     $listStaffReceiveNotify = $modelStaff->infoStaffReceiveNotifyNewOrder($dataStaff->companyId());
                     if ($hFunction->checkCount($listStaffReceiveNotify)) {
+                        # lay gia tri mac dinh
+                        $orderAllocationId = $modelStaffNotify->getDefaultOrderAllocationId();
+                        $workAllocationId = $modelStaffNotify->getDefaultWorkAllocationId();
+                        $bonusId = $modelStaffNotify->getDefaultBonusId();
+                        $minusMoneyId = $modelStaffNotify->getDefaultMinusId();
+                        $orderAllocationFinishId = $modelStaffNotify->getDefaultOrderAllocationFinishId();
+                        $notifyNote = 'Quản lý thi công trễ đơn hàng';
                         foreach ($listStaffReceiveNotify as $staff) {
-                            $modelStaffNotify->insert($orderId, $staff->staffId(), null);
+                            $modelStaffNotify->insert($orderId, $staff->staffId(), $notifyNote, $orderAllocationId, $workAllocationId, $bonusId, $minusMoneyId, $orderAllocationFinishId);
                         }
                     }
                     # them san pham
@@ -452,22 +464,27 @@ class OrdersController extends Controller
                             } else {
                                 # chu ton tai - them moi
                                 $unit = $txtUnit[$key];
-                                if ($modelProductType->insert($value, null, $unit, 0, 0, $warrantyTime)) {
+                                # lay gia tri mac dinh
+                                $productTypeDescription = $modelProductType->getDefaultDescription();
+                                $productTypeConfirm = $modelProductType->getDefaultNotConfirm();
+                                $productTypeApply = $modelProductType->getDefaultNotApply();
+                                if ($modelProductType->insert($value, $productTypeDescription, $unit, $productTypeConfirm, $productTypeApply, $warrantyTime)) {
                                     $productTypeId = $modelProductType->insertGetId();
                                 } else {
-                                    $productTypeId = null;
+                                    $productTypeId = $hFunction->getDefaultNull();
                                 }
                             }
-                            if (!empty($productTypeId)) {
+                            if (!$hFunction->checkEmpty($productTypeId)) {
                                 $width = $txtWidth[$key];
                                 $height = $txtHeight[$key];
-                                $depth = 0;
                                 $amount = $txtAmount[$key];
                                 $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
                                 $description = $txtDescription[$key];
                                 $constructionStatus = $cbConstructionStatus[$key];
-                                $modelProduct = new QcProduct();
-                                if ($modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, null, $warrantyTime)) {
+                                # lay gia tri mac dinh
+                                $depth = $modelProduct->getDefaultDepth();
+                                $designImage = $modelProduct->getDefaultDesignImage();
+                                if ($modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, $designImage, $warrantyTime)) {
                                     $newProductId = $modelProduct->insertGetId();
                                     # co thi cong
                                     if ($constructionStatus == $modelProduct->getDefaultHasConstruction()) {
@@ -486,7 +503,11 @@ class OrdersController extends Controller
                     # bàn giao don hang = cong trinh
                     if ($modelStaff->checkConstructionDepartment($staffLoginId)) {
                         # neu thuoc bo thi cong -> ban giao quan ly thi cong
-                        $modelOrderAllocation->insert($txtDateReceive, 0, $txtDateDelivery, 'Bàn giao khi nhận đơn hàng', $orderId, $staffLoginId, null);
+                        # lay gia tri mac dinh
+                        $allocationStaffId = $modelOrderAllocation->getDefaultAllocationStaffId();
+                        $allocationReceiveStatus = $modelOrderAllocation->getDefaultNotReceive();
+                        $allocationNote = 'Bàn giao khi nhận đơn hàng';
+                        $modelOrderAllocation->insert($txtDateReceive, $allocationReceiveStatus, $txtDateDelivery, $allocationNote, $orderId, $staffLoginId, $allocationStaffId);
                     }
                     return redirect()->route('qc.work.orders.print.get', $orderId);
                 } else {
@@ -508,7 +529,7 @@ class OrdersController extends Controller
         $modelCustomer = new QcCustomer();
         $modelOrder = new QcOrder();
         $modelStaff = new QcStaff();
-
+        $modelProduct = new QcProduct();
         $dataStaff = $modelStaff->loginStaffInfo();
         //thong tin khach hang
         $txtCustomerName = $request->input('txtCustomerName');
@@ -526,21 +547,21 @@ class OrdersController extends Controller
         $txtPrice = $request->input('txtPrice');
         $txtWarrantyTime = $request->input('txtWarrantyTime');
         $txtDescription = $request->input('txtDescription');
-        $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
-        $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
-        $txtDepth = (empty($txtDepth)) ? 0 : $txtDepth;
+        $txtWidth = ($hFunction->checkEmpty($txtWidth)) ? 0 : $txtWidth;
+        $txtHeight = ($hFunction->checkEmpty($txtHeight)) ? 0 : $txtHeight;
+        //$txtDepth = ($hFunction->checkEmpty($txtDepth)) ? 0 : $txtDepth;
 
         //thong tin don hang
         $txtOrderName = $request->input('txtOrderName');
         $txtConstructionAddress = $request->input('txtConstructionAddress');
         $txtConstructionPhone = $request->input('txtConstructionPhone');
         $txtConstructionContact = $request->input('txtConstructionContact');
-        $txtDateReceive = null;
-        $txtDateDelivery = null;
+        $txtDateReceive = $hFunction->getDefaultNull();
+        $txtDateDelivery = $hFunction->getDefaultNull();
         $cbDiscount = $request->input('cbDiscount');
         $cbVat = $request->input('cbVat');
-        $oldCustomerId = null;
-        $dataCustomer = null;
+        $oldCustomerId = $hFunction->getDefaultNull();
+        $dataCustomer = $hFunction->getDefaultNull();
         $staffLoginId = $dataStaff->staffId();
         if (!$hFunction->checkEmpty($txtPhone)) {
             #lay thong tin khach hang tu so dien thoai di dong
@@ -557,18 +578,24 @@ class OrdersController extends Controller
             $customerName = $dataCustomer->name();
         } else {
             # khach hang moi
-            if ($modelCustomer->insert($txtCustomerName, null, null, $txtAddress, $txtPhone, $txtZalo)) {
+            # gia tri mac dinh
+            $customerBirthday = $modelCustomer->getDefaultBirthday();
+            $customerEmail = $modelCustomer->getDefaultEmail();
+            if ($modelCustomer->insert($txtCustomerName, $customerBirthday, $customerEmail, $txtAddress, $txtPhone, $txtZalo)) {
                 $customerId = $modelCustomer->insertGetId();
                 $customerName = $txtCustomerName;
             }
         }
-        if (!empty($customerId) && !empty($staffLoginId)) {
+        if (!$hFunction->checkEmpty($customerId) && !$hFunction->checkEmpty($staffLoginId)) {
             #cap nhat thong tin khach hang neu co thay doi dia chi
-            $modelCustomer->updateInfo($customerId, $customerName, null, null, $txtAddress, $txtPhone, $txtZalo);
+            # gia tri mac dinh
+            $customerBirthday = $modelCustomer->getDefaultBirthday();
+            $customerEmail = $modelCustomer->getDefaultEmail();
+            $modelCustomer->updateInfo($customerId, $customerName, $customerBirthday, $customerEmail, $txtAddress, $txtPhone, $txtZalo);
             # them don hang
-            $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
-            $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
-            $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
+            $txtConstructionAddress = ($hFunction->checkEmpty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
+            $txtConstructionPhone = ($hFunction->checkEmpty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
+            $txtConstructionContact = ($hFunction->checkEmpty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
             # lay gia tri mac dinh
             $staffKpiId = $modelOrder->getDefaultStaffKPIId();
             $notConfirm = $modelOrder->getDefaultNotConfirm();
@@ -576,30 +603,35 @@ class OrdersController extends Controller
             $notProvisionalConfirm = $modelOrder->getDefaultNotProvisionalConfirm();
             if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffKpiId, $notConfirm, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact, $notProvisionalStatus, $hFunction->carbonNow(), $notProvisionalConfirm)) {
                 $orderId = $modelOrder->insertGetId();
-                if (count($productType) > 0) {
+                if ($hFunction->checkCount($productType)) {
                     # them san pham
                     foreach ($productType as $key => $value) {
                         $warrantyTime = $txtWarrantyTime[$key];
                         $dataProductType = $modelProductType->infoFromExactlyName($value);
-                        if (count($dataProductType) > 0) {
+                        if ($hFunction->checkCount($dataProductType)) {
                             $productTypeId = $dataProductType->typeId();
                         } else {
                             $unit = $txtUnit[$key];
-                            if ($modelProductType->insert($value, null, $unit, 0, 0, $warrantyTime)) {
+                            # lay gia tri mac dinh
+                            $productTypeDescription = $modelProductType->getDefaultDescription();
+                            $productTypeConfirm = $modelProductType->getDefaultNotConfirm();
+                            $productTypeApply = $modelProductType->getDefaultNotApply();
+                            if ($modelProductType->insert($value, $productTypeDescription, $unit, $productTypeConfirm, $productTypeApply, $warrantyTime)) {
                                 $productTypeId = $modelProductType->insertGetId();
                             } else {
-                                $productTypeId = null;
+                                $productTypeId = $hFunction->getDefaultNull();
                             }
                         }
-                        if (!empty($productTypeId)) {
+                        if (!$hFunction->checkEmpty($productTypeId)) {
                             $width = $txtWidth[$key];
                             $height = $txtHeight[$key];
-                            $depth = 0;
                             $amount = $txtAmount[$key];
                             $price = $hFunction->convertCurrencyToInt($txtPrice[$key]);
                             $description = $txtDescription[$key];
-                            $modelProduct = new QcProduct();
-                            $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, null, $warrantyTime);
+                            # lay gia tri mac dinh
+                            $depth = $modelProduct->getDefaultDepth();
+                            $designImage = $modelProduct->getDefaultDesignImage();
+                            $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $productTypeId, $orderId, $designImage, $warrantyTime);
                         }
                     }
                 }
@@ -653,26 +685,31 @@ class OrdersController extends Controller
         $txtPrice = $request->input('txtPrice');
         $txtWarrantyTime = $request->input('txtWarrantyTime');
         $txtDescription = $request->input('txtDescription');
-        $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
-        $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
-        $txtDepth = (empty($txtDepth)) ? 0 : $txtDepth;
+        $txtWidth = ($hFunction->checkEmpty($txtWidth)) ? 0 : $txtWidth;
+        $txtHeight = ($hFunction->checkEmpty($txtHeight)) ? 0 : $txtHeight;
+        $txtDepth = ($hFunction->checkEmpty($txtDepth)) ? 0 : $txtDepth;
         # trang thai thi cong
         $cbConstructionStatus = $request->input('cbConstructionStatus');
-        if (count($productType) > 0) {
+        if ($hFunction->checkCount($productType)) {
             # them san pham
             foreach ($productType as $key => $value) {
                 $warrantyTime = $txtWarrantyTime[$key];
                 $dataProductType = $modelProductType->infoFromExactlyName($value);
-                if (count($dataProductType) > 0) {
+                if ($hFunction->checkCount($dataProductType)) {
                     $productTypeId = $dataProductType->typeId();
                 } else {
-                    if ($modelProductType->insert($value, null, null, 0, 0, $warrantyTime)) {
+                    # lay gia tri mac dinh
+                    $productTypeDescription = $modelProductType->getDefaultDescription();
+                    $productTypeUnit = $modelProductType->getDefaultUnit();
+                    $productTypeConfirm = $modelProductType->getDefaultNotConfirm();
+                    $productTypeApply = $modelProductType->getDefaultNotApply();
+                    if ($modelProductType->insert($value, $productTypeDescription, $productTypeUnit, $productTypeConfirm, $productTypeApply, $warrantyTime)) {
                         $productTypeId = $modelProductType->insertGetId();
                     } else {
-                        $productTypeId = null;
+                        $productTypeId = $hFunction->getDefaultNull();
                     }
                 }
-                if (!empty($productTypeId)) {
+                if (!$hFunction->checkEmpty($productTypeId)) {
                     $width = $txtWidth[$key];
                     $height = $txtHeight[$key];
                     $depth = $txtDepth[$key];
@@ -698,12 +735,13 @@ class OrdersController extends Controller
     // ======== ======= KINH DOANH BAO CAO HOAN THANH ======= =======
     public function getReportFinish($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        if (count($dataStaffLogin) > 0) {
+        if ($hFunction->checkCount($dataStaffLogin)) {
             $dataOrder = $modelOrder->getInfo($orderId);
-            if (count($dataOrder) > 0) {
+            if ($hFunction->checkCount($dataOrder)) {
                 return view('work.orders.orders.report-finish', compact('dataStaffLogin', 'dataOrder'));
             }
         }
@@ -715,7 +753,7 @@ class OrdersController extends Controller
         $modelOrder = new QcOrder();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $staffLoginId = $dataStaffLogin->staffId();
-        $modelOrder->confirmReportFinish($orderId, 1, $staffLoginId);
+        $modelOrder->confirmReportFinish($orderId, $modelOrder->getDefaultHasFinishStatus(), $staffLoginId);
     }
 
     // ======= ===== ==== THANH TOAN DON HANG ====== ======== =====
@@ -817,13 +855,13 @@ class OrdersController extends Controller
         $txtImage = $request->file('txtImage');
         $txtNote = $request->input('txtNote');
         $loginStaffId = $modelStaff->loginStaffId();
-        $name_img = null;
-        if (!empty($txtImage)) {
+        $name_img = $hFunction->getDefaultNull();
+        if (!$hFunction->checkEmpty($txtImage)) {
             $name_img = stripslashes($_FILES['txtImage']['name']);
             $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtImage']['tmp_name'];
             if (!$modelProductRepair->uploadImage($source_img, $name_img)) {
-                $name_img = null;
+                $name_img = $hFunction->getDefaultNull();
             }
         }
         if (!$modelProductRepair->insert($name_img, $txtNote, $productId, $loginStaffId)) {
@@ -861,7 +899,10 @@ class OrdersController extends Controller
         $txtCustomerPhone = $request->input('txtCustomerPhone');
         $txtCustomerZalo = $request->input('txtCustomerZalo');
         $txtCustomerAddress = $request->input('txtCustomerAddress');
-        if (!$modelCustomer->updateInfo($customerId, $txtCustomerName, null, null, $txtCustomerAddress, $txtCustomerPhone, $txtCustomerZalo)) {
+        # gia tri mac dinh
+        $customerBirthday = $modelCustomer->getDefaultBirthday();
+        $customerEmail = $modelCustomer->getDefaultEmail();
+        if (!$modelCustomer->updateInfo($customerId, $txtCustomerName, $customerBirthday, $customerEmail, $txtCustomerAddress, $txtCustomerPhone, $txtCustomerZalo)) {
             return "Tính năng đang bảo trì";
         }
 
@@ -870,6 +911,7 @@ class OrdersController extends Controller
     // thay doi thong tin don hang
     public function postEditInfoOrder(Request $request, $orderId)
     {
+        $hFunction = new \Hfunction();
         $modelOrder = new QcOrder();
         $txtOrderName = $request->input('txtOrderName');
         $cbDiscount = $request->input('cbDiscount');
@@ -878,13 +920,13 @@ class OrdersController extends Controller
         $txtConstructionPhone = $request->input('txtConstructionPhone');
         $txtConstructionContact = $request->input('txtConstructionContact');
         if ($modelOrder->checkProvisionUnConfirmed($orderId)) { // don hang dang bao gia
-            $txtDateReceive = null;
-            $txtDateDelivery = null;
+            $txtDateReceive = $hFunction->getDefaultNull();
+            $txtDateDelivery = $hFunction->getDefaultNull();
         } else {
             $txtDateReceive = $request->input('txtDateReceive');
             $txtDateDelivery = $request->input('txtDateDelivery');
         }
-        $staffReceiveId = $modelOrder->staffReceiveId($orderId)[0];
+        $staffReceiveId = $modelOrder->staffReceiveId($orderId);
         if (!$modelOrder->updateInfo($orderId, $txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $staffReceiveId, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact)) {
             return "Tính năng đang bảo trì";
         }
@@ -1008,9 +1050,10 @@ class OrdersController extends Controller
     # xac nhan don hang
     public function getProductConfirm($productId = null)
     {
+        $hFunction = new \Hfunction();
         $modelProduct = new QcProduct();
         $dataProduct = $modelProduct->getInfo($productId);
-        if (count($dataProduct) > 0) {
+        if ($hFunction->checkCount($dataProduct)) {
             return view('work.orders.orders.product.confirm-finish', compact('dataProduct'));
         }
     }
@@ -1116,7 +1159,7 @@ class OrdersController extends Controller
             $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtDesignImage']['tmp_name'];
             if ($modelProductDesign->uploadImage($source_img, $name_img)) {
-                if ($modelProductDesign->insert($name_img, null, $productId, $dataStaffLogin->staffId(), $txtDesignType)) {
+                if ($modelProductDesign->insert($name_img, $modelProductDesign->getDefaultDescription(), $productId, $dataStaffLogin->staffId(), $txtDesignType)) {
                     $newId = $modelProductDesign->insertGetId();
                     # nguoi quan ly don hang up thiet ke ===> Ap dụng
                     if ($loginStaffId == $dataProduct->order->staffReceiveId()) {
@@ -1146,7 +1189,7 @@ class OrdersController extends Controller
         $modelStaff = new QcStaff();
         $modelProductDesign = new QcProductDesign();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        $modelProductDesign->confirmApplyStatus($designId, $applyStatus, 1, $dataStaffLogin->staffId());
+        $modelProductDesign->confirmApplyStatus($designId, $applyStatus, $modelProductDesign->getDefaultHasConfirm(), $dataStaffLogin->staffId());
     }
 
     #xem chi tiet hinh anh thiet ke

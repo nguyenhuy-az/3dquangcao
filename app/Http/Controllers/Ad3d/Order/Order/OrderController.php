@@ -257,7 +257,7 @@ class OrderController extends Controller
         $dateAllocation = $hFunction->convertStringToDatetime("$cbAllocationMonth/$cbAllocationDay/$cbAllocationYear $cbAllocationHours:00:00");
         $dateDeadline = $hFunction->convertStringToDatetime("$cbDeadlineMonth/$cbDeadlineDay/$cbDeadlineYear $cbDeadlineMinute:00:00");
         if ($modelStaff->checkLogin()) {
-            if (empty($cbReceiveStaffId)) {
+            if ($hFunction->checkEmpty($cbReceiveStaffId)) {
                 Session::put('notifyAdd', "Chọn nhân viên bàn giao");
             } else {
                 if ($dateDeadline > $dateAllocation) {

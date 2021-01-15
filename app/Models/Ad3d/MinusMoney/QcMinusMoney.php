@@ -99,6 +99,11 @@ class QcMinusMoney extends Model
         return 0;
     }
 
+    # mac dinh nguoi nhap phat
+    public function getDefaultStaffId()
+    {
+        return null;
+    }
     #---------- Insert ----------
     /*
 `   $orderAllocationId : quan ly thi cong don hang
@@ -120,24 +125,24 @@ class QcMinusMoney extends Model
         # $money == 0 - phat theo so tien quy dinh san - $money > 0 - nhap truc tiep
         if ($money == $this->getDefaultMoney()) {
             # phat theo noi quy
-            if (empty($orderAllocationId) && empty($orderConstructionId) && empty($companyStoreCheckReportId) && empty($workAllocationId)) {
+            if ($hFunction->checkEmpty($orderAllocationId) && $hFunction->checkEmpty($orderConstructionId) && $hFunction->checkEmpty($companyStoreCheckReportId) && $hFunction->checkEmpty($workAllocationId)) {
                 # tien phat
                 $money = $modelPunishContent->money($punishId);
             } else {
                 # phat theo gia tri don hang
-                if (!empty($orderAllocationId)) {
+                if (!$hFunction->checkEmpty($orderAllocationId)) {
                     # quan ly thi cong don hang
                     $dataOrderAllocation = $modelOrderAllocation->getInfo($orderAllocationId);
                     $dataOrder = $dataOrderAllocation->orders;
                     $money = (int)$dataOrder->getBonusAndMinusMoneyOfConstructionManage();
-                } elseif (!empty($workAllocationId)) {
+                } elseif (!$hFunction->checkEmpty($workAllocationId)) {
                     # phat thi cong san pham
                     $productId = $modelWorkAllocation->productId($workAllocationId);
                     $money = (int)$modelOrderBonusBudget->totalBudgetMoneyEachPersonOfConstructionStaffOfProduct($productId);
-                } elseif (!empty($orderConstructionId)) {
+                } elseif (!$hFunction->checkEmpty($orderConstructionId)) {
                     # kinh doanh tre don hang giao khach
                     $money = (int)$modelOrderBonusBudget->totalBudgetMoneyOfConstructionStaff($orderConstructionId);//  - chua phat kinh doanh
-                } elseif (!empty($companyStoreCheckReportId)) {
+                } elseif (!$hFunction->checkEmpty($companyStoreCheckReportId)) {
                     $punishIdLostTool = $modelPunishContent->getPunishIdLostPublicTool();
                     ///$punishIdLostTool = (is_int($punishIdLostTool)) ? $punishIdLostTool : $punishIdLostTool[0];
                     # phat mat do nghe
@@ -180,7 +185,8 @@ class QcMinusMoney extends Model
 
     public function checkNullId($minusId)
     {
-        return (empty($minusId)) ? $this->minusId() : $minusId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($minusId)) ? $this->minusId() : $minusId;
     }
 
     public function rootPathFullImage()
@@ -217,7 +223,8 @@ class QcMinusMoney extends Model
     // get path image
     public function pathSmallImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathSmallImage() . '/' . $image);
@@ -226,7 +233,8 @@ class QcMinusMoney extends Model
 
     public function pathFullImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
@@ -250,7 +258,7 @@ class QcMinusMoney extends Model
         return QcMinusMoney::where('minus_id', $this->checkNullId($minusId))->update(
             [
                 'cancelStatus' => $this->getDefaultHasCancelStatus(),
-                'action' =>$this->getDefaultNotAction()
+                'action' => $this->getDefaultNotAction()
             ]);
     }
 
@@ -300,6 +308,7 @@ class QcMinusMoney extends Model
     {
         return $this->belongsTo('App\Models\Ad3d\Work\QcWork', 'work_id', 'work_id');
     }
+
     # lay tat ca thong tin phat cua 1 bang cham cong
     public function infoOfWork($workId)
     {
@@ -309,12 +318,13 @@ class QcMinusMoney extends Model
     # lay thong tin phat duoc ap dung theo danh sach ma cham cong
     public function getInfoHasApplyFromListWorkId($listWorkId, $dateFilter = null)
     {
+        $hFunction = new \Hfunction();
         # co ap dung
         $hasApply = $this->getDefaultHasApplyStatus();
         # khong huy
         $notCancel = $this->getDefaultNotCancelStatus();
         //dd($dateFilter);
-        if (empty($dateFilter)) {
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcMinusMoney::whereIn('work_id', $listWorkId)->where('applyStatus', $hasApply)->where('cancelStatus', $notCancel)->orderBy('dateMinus', 'DESC')->get();
         } else {
             return QcMinusMoney::whereIn('work_id', $listWorkId)->where('dateMinus', 'like', "%$dateFilter%")->where('applyStatus', $hasApply)->where('cancelStatus', $notCancel)->orderBy('dateMinus', 'DESC')->get();
@@ -329,7 +339,7 @@ class QcMinusMoney extends Model
 
     public function totalMoneyAppliedOfWork($workId)
     {
-        return QcMinusMoney::where('work_id', $workId)->where('applyStatus', $this->getDefaultHasApplyStatus())->where('cancelStatus', $this->getDefaultNotCancelStatus())->where('action',$this->getDefaultNotAction())->sum('money');
+        return QcMinusMoney::where('work_id', $workId)->where('applyStatus', $this->getDefaultHasApplyStatus())->where('cancelStatus', $this->getDefaultNotCancelStatus())->where('action', $this->getDefaultNotAction())->sum('money');
     }
 
     # tu dong kiem tra tu xac nhan - mac dinh khong huy là ap dung khi cuoi thang
@@ -432,7 +442,8 @@ class QcMinusMoney extends Model
 #============ =========== ============ GET INFO ============= =========== ==========
     public function selectInfoHasFilter($listWorkId, $punishId, $dateFilter)
     {
-        if (empty($punishId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($punishId)) {
             return QcMinusMoney::where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->orderBy('dateMinus', 'DESC')->select('*');
         } else {
             return QcMinusMoney::where('punish_id', $punishId)->where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->orderBy('dateMinus', 'DESC')->select('*');
@@ -441,7 +452,8 @@ class QcMinusMoney extends Model
 
     public function totalMoneyHasFilter($listWorkId, $punishId, $dateFilter)
     {
-        if (empty($punishId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($punishId)) {
             return QcMinusMoney::where('cancelStatus', $this->getDefaultNotCancelStatus())->where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->sum('money');
         } else {
             return QcMinusMoney::where('cancelStatus', $this->getDefaultNotCancelStatus())->where('punish_id', $punishId)->where('dateMinus', 'like', "%$dateFilter%")->whereIn('work_id', $listWorkId)->sum('money');
@@ -450,11 +462,12 @@ class QcMinusMoney extends Model
 
     public function getInfo($minusId = '', $field = '')
     {
-        if (empty($minusId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($minusId)) {
             return QcMinusMoney::get();
         } else {
             $result = QcMinusMoney::where('minus_id', $minusId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -464,7 +477,8 @@ class QcMinusMoney extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcMinusMoney::where('minus_id', $objectId)->pluck($column)[0];

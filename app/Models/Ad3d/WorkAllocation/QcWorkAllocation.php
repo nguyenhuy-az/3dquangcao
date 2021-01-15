@@ -157,18 +157,17 @@ class QcWorkAllocation extends Model
     // ket thuc cong viec
     public function confirmFinish($allocationId, $reportDate, $finishStatus, $finishReason = 0, $finishNoted = null)
     {
-        $hFunction = new \Hfunction();
         $modelWorkAllocationFinish = new QcWorkAllocationFinish();
-        $allocationId = (empty($allocationId)) ? $this->allocationId() : $allocationId;
-        if (QcWorkAllocation::where('allocation_id', $allocationId)->update(['action' => 0])) {
-            $receiveDate = $this->receiveDeadline($allocationId)[0];
+        $allocationId = $this->checkIdNull($allocationId);
+        if (QcWorkAllocation::where('allocation_id', $allocationId)->update(['action' => $this->getDefaultHasAction()])) {
+            $receiveDate = $this->receiveDeadline($allocationId);
             if (date('Y-m-d H:i', strtotime($reportDate)) > date('Y-m-d H:i', strtotime($receiveDate))) {
                 # hoan thanh tre
-                $finishLevel = 2;
+                $finishLevel = $modelWorkAllocationFinish->getDefaultLateFinishLevel();
             } elseif (date('Y-m-d H:i', strtotime($reportDate)) == date('Y-m-d H:i', strtotime($receiveDate))) {
-                $finishLevel = 0;
+                $finishLevel = $modelWorkAllocationFinish->getDefaultHasFinishLevel();
             } else {
-                $finishLevel = 1;
+                $finishLevel = $modelWorkAllocationFinish->getDefaultBeforeFinishLevel();
             }
             $modelWorkAllocationFinish->insert($reportDate, $finishStatus, $finishLevel, $finishReason, $finishNoted, $allocationId);
         }
@@ -178,10 +177,15 @@ class QcWorkAllocation extends Model
     public function confirmFinishFromFinishProduct($productId)
     {
         $hFunction = new \Hfunction();
+        $modelWorkAllocationFinish = new QcWorkAllocationFinish();
         $dataWorkAllocation = $this->infoActivityOfProduct($productId);
         if ($hFunction->checkCount($dataWorkAllocation)) {
+            # lay gia tri mac dinh
+            $hasFinish = $modelWorkAllocationFinish->getDefaultHasFinish();
+            $reasonFinish = $modelWorkAllocationFinish->getDefaultStaffReportFinish();
+            $note = 'Kết thúc từ báo hoàn thành sản phẩm';
             foreach ($dataWorkAllocation as $workAllocation) {
-                $this->confirmFinish($workAllocation->allocationId(), $hFunction->carbonNow(), 1, 0, 'Kết thúc từ báo hoàn thành sản phẩm');
+                $this->confirmFinish($workAllocation->allocationId(), $hFunction->carbonNow(), $hasFinish, $reasonFinish, $note);
             }
         }
     }
@@ -190,10 +194,15 @@ class QcWorkAllocation extends Model
     public function confirmFinishFromCancelProduct($productId)
     {
         $hFunction = new \Hfunction();
+        $modelWorkAllocationFinish = new QcWorkAllocationFinish();
         $dataWorkAllocation = $this->infoActivityOfProduct($productId);
         if ($hFunction->checkCount($dataWorkAllocation)) {
+            # lay gia tri mac dinh
+            $hasFinish = $modelWorkAllocationFinish->getDefaultHasFinish();
+            $reasonFinish = $modelWorkAllocationFinish->getDefaultStaffReportFinish();
+            $note = 'Kết thúc từ báo hủy sản phẩm';
             foreach ($dataWorkAllocation as $workAllocation) {
-                $this->confirmFinish($workAllocation->allocationId(), $hFunction->carbonNow(), 1, 0, 'Kết thúc từ báo hủy sản phẩm');
+                $this->confirmFinish($workAllocation->allocationId(), $hFunction->carbonNow(), $hasFinish, $reasonFinish, $note);
             }
         }
     }
@@ -334,14 +343,15 @@ class QcWorkAllocation extends Model
         }
 
     }
+
     # chon danh sach phan cong bi tre cua 1 nhan vien
     public function selectInfoHasLateOfStaffReceive($staffId, $dateFilter = null)
     {
         $hasLateStatus = $this->getDefaultHasLate();
         if (empty($dateFilter)) {
-            return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('lateStatus',$hasLateStatus)->orderBy('receiveDeadline', 'DESC')->select('*');
+            return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('lateStatus', $hasLateStatus)->orderBy('receiveDeadline', 'DESC')->select('*');
         } else {
-            return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('lateStatus',$hasLateStatus)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
+            return QcWorkAllocation::where('receiveStaff_id', $staffId)->where('lateStatus', $hasLateStatus)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
         }
     }
 
@@ -352,9 +362,9 @@ class QcWorkAllocation extends Model
         $allocationFinishId = $modelWorkAllocationFinish->listAllocationId();
         $notLateStatus = $this->getDefaultNotLate();
         if (empty($dateFilter)) {
-            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus',$notLateStatus)->where('receiveStaff_id', $staffId)->orderBy('receiveDeadline', 'DESC')->select('*');
+            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus', $notLateStatus)->where('receiveStaff_id', $staffId)->orderBy('receiveDeadline', 'DESC')->select('*');
         } else {
-            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus',$notLateStatus)->where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
+            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus', $notLateStatus)->where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
         }
     }
 
@@ -365,9 +375,9 @@ class QcWorkAllocation extends Model
         $allocationFinishId = $modelWorkAllocationFinish->listAllocationId();
         $hasLateStatus = $this->getDefaultHasLate();
         if (empty($dateFilter)) {
-            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus',$hasLateStatus)->where('receiveStaff_id', $staffId)->orderBy('receiveDeadline', 'DESC')->select('*');
+            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus', $hasLateStatus)->where('receiveStaff_id', $staffId)->orderBy('receiveDeadline', 'DESC')->select('*');
         } else {
-            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus',$hasLateStatus)->where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
+            return QcWorkAllocation::whereIn('allocation_id', $allocationFinishId)->where('lateStatus', $hasLateStatus)->where('receiveStaff_id', $staffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('receiveDeadline', 'DESC')->select('*');
         }
     }
 
@@ -428,9 +438,9 @@ class QcWorkAllocation extends Model
         $dataListWorkAllocation = $this->infoNotCancelOfProduct($productId);
         # so luong nguoi thi cong
         $amountAllocation = $hFunction->getCount($dataListWorkAllocation);
-        if($amountAllocation == 0){
+        if ($amountAllocation == 0) {
             return 0;
-        }else{
+        } else {
             return $productPrice / $amountAllocation;
         }
 
@@ -556,6 +566,7 @@ class QcWorkAllocation extends Model
         }
     }
 
+    # lay 1 gia tri
     public function pluck($column, $objectId = null)
     {
         if (empty($objectId)) {
@@ -610,6 +621,11 @@ class QcWorkAllocation extends Model
     {
 
         return $this->pluck('noted', $allocationId);
+    }
+
+    public function lateStatus($allocationId = null)
+    {
+        return $this->pluck('lateStatus', $allocationId);
     }
 
     public function cancelStatus($allocationId = null)
@@ -711,6 +727,12 @@ class QcWorkAllocation extends Model
         return ($this->role($allocationId) == $this->getDefaultHasRole()) ? true : false;
     }
 
+    # kiem tra co bi tre khi sau check tu dong
+    public function checkHasLate($allocationId = null)
+    {
+        return ($this->lateStatus($allocationId) == $this->getDefaultHasLate()) ? true : false;
+    }
+
     #kiem tra phan viec bi tre
     public function checkLate($allocationId)
     {
@@ -735,8 +757,6 @@ class QcWorkAllocation extends Model
         $hFunction = new \Hfunction();
         # cap nhat du lieu cu nen chon het
         $dataWorkAllocation = $this->getInfo();
-        # chi chon phan viec con hoat dong
-        //$dataWorkAllocationHasActivity = $this->getInfo();
         if ($hFunction->checkCount($dataWorkAllocation)) {
             foreach ($dataWorkAllocation as $workAllocation) {
                 $allocationId = $workAllocation->allocationId();

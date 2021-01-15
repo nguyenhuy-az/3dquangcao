@@ -16,6 +16,59 @@ class QcProductType extends Model
 
     private $lastId;
 
+    # mac dinh mo static
+    public function getDefaultDescription()
+    {
+        return null;
+    }
+
+    #mac dinh thoi gian bao hanh
+    public function getDefaultWarrantyTime()
+    {
+        return 0;
+    }
+
+    #mac dinh da xac nhan
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    #mac dinh chua xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
+
+    # mac dinh co ap dung
+    public function getDefaultHasApply()
+    {
+        return 1;
+    }
+
+    # mac dinh khong ap dung
+    public function getDefaultNotApply()
+    {
+        return 0;
+    }
+
+    #mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh don vi
+    public function getDefaultUnit()
+    {
+        return null;
+    }
     #========== ========== ========== Thêm && cập nhật ========== ========== ==========
     #---------- Thêm ----------
     public function insert($name, $description = null, $unit = null, $confirmStatus = 1, $applyStatus = 1, $warrantyTime = 0)
@@ -66,14 +119,14 @@ class QcProductType extends Model
     {
         return QcProductType::where('type_id', $typeId)->update([
             'applyStatus' => $applyStatusId,
-            'confirmStatus' => 1
+            'confirmStatus' => $this->getDefaultHasConfirm()
         ]);
     }
 
     # xóa
     public function actionDelete($typeId = null)
     {
-        return QcProductType::where('type_id', $this->checkIdNull($typeId))->update(['action' => 0]);
+        return QcProductType::where('type_id', $this->checkIdNull($typeId))->update(['action' => $this->getDefaultNotAction()]);
     }
 
     #========== ========== ========== Mối quan hệ ========== ========== ==========
@@ -129,17 +182,17 @@ class QcProductType extends Model
 
     public function infoActivity()
     {
-        return QcProductType::where('action', 1)->orderBy('name', 'ASC')->get();
+        return QcProductType::where('action', $this->getDefaultHasAction())->orderBy('name', 'ASC')->get();
     }
 
     public function listIdActivity($orderBy = 'ASC')
     {
-        return QcProductType::where('action', 1)->orderBy('name', $orderBy)->pluck('type_id');
+        return QcProductType::where('action', $this->getDefaultHasAction())->orderBy('name', $orderBy)->pluck('type_id');
     }
 
     public function listIdActivityByName($name, $orderBy = 'ASC')
     {
-        return QcProductType::where('name', 'like', "%$name%")->where('action', 1)->orderBy('name', $orderBy)->pluck('type_id');
+        return QcProductType::where('name', 'like', "%$name%")->where('action', $this->getDefaultHasAction())->orderBy('name', $orderBy)->pluck('type_id');
     }
 
     public function listIdByName($name, $orderBy = 'ASC')
@@ -149,11 +202,12 @@ class QcProductType extends Model
 
     public function getInfo($typeId = '', $field = '')
     {
-        if (empty($typeId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($typeId)) {
             return QcProductType::get();
         } else {
             $result = QcProductType::where('type_id', $typeId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -171,10 +225,11 @@ class QcProductType extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcProductType::where('type_id', $objectId)->pluck($column);
+            return QcProductType::where('type_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -186,7 +241,7 @@ class QcProductType extends Model
 
     public function infoFromSuggestionName($name)
     {
-        return QcProductType::where('name', 'like', "%$name%")->where('applyStatus', 1)->get();
+        return QcProductType::where('name', 'like', "%$name%")->where('applyStatus', $this->getDefaultHasApply())->get();
     }
 
     public function typeId()
@@ -245,36 +300,32 @@ class QcProductType extends Model
     #============ =========== ============ kiểm tra thông tin ============= =========== ==========
     public function checkApplyStatus($typeId = null)
     {
-        return ($this->applyStatus($typeId) == 1) ? true : false;
+        return ($this->applyStatus($typeId) == $this->getDefaultHasApply()) ? true : false;
     }
 
     public function checkConfirmStatus($typeId = null)
     {
-        return ($this->confirmStatus($typeId) == 1) ? true : false;
+        return ($this->confirmStatus($typeId) == $this->getDefaultHasConfirm()) ? true : false;
     }
 
     # tồn tại tên khi thêm mới
     public function existName($name)
     {
-        $result = QcProductType::where('name', $name)->count();
-        return ($result > 0) ? true : false;
+        return QcProductType::where('name', $name)->exists();
     }
 
     public function existEditName($typeId, $name)
     {
-        $result = QcProductType::where('name', $name)->where('type_id', '<>', $typeId)->count();
-        return ($result > 0) ? true : false;
+        return QcProductType::where('name', $name)->where('type_id', '<>', $typeId)->exists();
     }
 
     public function existTypeCode($typeCode)
     {
-        $result = QcProductType::where('typeCode', $typeCode)->count();
-        return ($result > 0) ? true : false;
+        return QcProductType::where('typeCode', $typeCode)->exists();
     }
 
     public function existEditTypeCode($typeId, $typeCode)
     {
-        $result = QcProductType::where('typeCode', $typeCode)->where('type_id', '<>', $typeId)->count();
-        return ($result > 0) ? true : false;
+        return QcProductType::where('typeCode', $typeCode)->where('type_id', '<>', $typeId)->exists();
     }
 }

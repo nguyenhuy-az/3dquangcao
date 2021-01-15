@@ -214,6 +214,7 @@ class QcWorkAllocationFinish extends Model
         return ($this->finishLevel($finishId) == $this->getDefaultBeforeFinishLevel()) ? true : false;
     }
 
+    # kiem tra bi tre
     public function checkFinishLate($finishId = null)
     {
         $modelWorkAllocation = new QcWorkAllocation();

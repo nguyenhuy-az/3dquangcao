@@ -8,6 +8,12 @@ class Hfunction
         $this->dateDefaultHCM();
     }
 
+    # mac dinh null
+    public function getDefaultNull()
+    {
+        return null;
+    }
+
     # lay gio mac dinh HCM
     public function dateDefaultHCM()
     {

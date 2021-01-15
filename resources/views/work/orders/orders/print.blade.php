@@ -14,8 +14,8 @@ $orderId = $dataOrders->orderId();
 $dataStaffHotline = $dataCompany->hotlineInfoOfConstructionDepartment($dataCompany->companyId());
 $hotlineName = $dataStaffHotline->lastName();
 $hotlinePhone = $dataStaffHotline->phone();
-$hotlineName = (empty($hotlineName)) ? 'Null' : $hotlineName;
-$hotlinePhone = (empty($hotlinePhone)) ? 'Null' : $hotlinePhone;
+$hotlineName = ($hFunction->checkEmpty($hotlineName)) ? 'Null' : $hotlineName;
+$hotlinePhone = ($hFunction->checkEmpty($hotlinePhone)) ? 'Null' : $hotlinePhone;
 # tong tien chua giam gia
 $orderTotalPrice = $dataOrders->totalPrice();
 # tong tien giam
@@ -27,11 +27,11 @@ $dataProduct = $dataOrders->productActivityOfOrder();
 #anh thiet ke tong quat
 $dataOrderImage = $dataOrders->orderImageInfoActivity();
 # thong tin nguoi nhan don hang
-$dataStaffOrder = $dataOrders->staff()->first();
+$dataStaffOrder = $dataOrders->staffReceive;
 $staffOrderName = $dataStaffOrder->lastName();
-$staffOrderName = (empty($staffOrderName)) ? '-----------' : $staffOrderName;
+$staffOrderName = ($hFunction->checkEmpty($staffOrderName)) ? '-----------' : $staffOrderName;
 $staffOrderPhone = $dataStaffOrder->phone();
-$staffOrderPhone = (empty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
+$staffOrderPhone = ($hFunction->checkEmpty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
 ?>
 @extends('work.orders.index')
 @section('titlePage')
@@ -275,7 +275,7 @@ $staffOrderPhone = (empty($staffOrderPhone)) ? '-----------' : $staffOrderPhone;
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td >
+                                        <td>
                                             <em class=" qc-color-grey">Tổng tiền chưa VAT:</em>
                                         </td>
                                         <td class="text-right">

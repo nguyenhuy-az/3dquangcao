@@ -27,13 +27,14 @@ class StaffController extends Controller
 {
     public function index($companyFilterId = 0, $actionStatus = 1)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
         $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
-        if ($companyFilterId == null || $companyFilterId == 0) {
+        if ($companyFilterId == $hFunction->getDefaultNull() || $companyFilterId == 0) {
             $companyFilterId = $companyLoginId;
         }
         # dang hoat dong
@@ -78,14 +79,14 @@ class StaffController extends Controller
         if ($hFunction->checkCount($dataCompanyStaffWork)) {
             $dataStaff = $dataCompanyStaffWork->staff;
         } else {
-            $dataStaff = null;
+            $dataStaff = $hFunction->getDefaultNull();
         }
-        if ($monthFilter == null & $yearFilter == null) { #mac dinh
+        if ($hFunction->checkEmpty($monthFilter) & $hFunction->checkEmpty($yearFilter)) { #mac dinh
             $dateFilter = date('Y-m');
             $monthFilter = date('m');
             $yearFilter = date('Y');
         } elseif ($monthFilter == $allMonthFilter && $yearFilter == $allYearFilter) { //xem  trong tháng
-            $dateFilter = null;
+            $dateFilter = $hFunction->getDefaultNull();
         } elseif ($monthFilter == $allMonthFilter && $yearFilter != $allYearFilter) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } elseif ($monthFilter != $allMonthFilter && $yearFilter == $allYearFilter) { //xem tất cả các ngày trong nam
@@ -187,9 +188,9 @@ class StaffController extends Controller
         if ($modelStaff->existAccount($account)) { # exists account
             return Session::put('notifyAdd', "Thêm thất bại, tài khỏan '$account' tồn tại.");
         }
-        $name_img = null;
-        $name_img_front = null;
-        $name_img_back = null;
+        $name_img = $hFunction->getDefaultNull();
+        $name_img_front = $hFunction->getDefaultNull();
+        $name_img_back = $hFunction->getDefaultNull();
 
         # lay danh sach bo phan
         $dataDepartment = $modelDepartment->getInfo();
@@ -197,19 +198,19 @@ class StaffController extends Controller
             $name_img = stripslashes($_FILES['txtImage']['name']);
             $name_img = 'avatar' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtImage']['tmp_name'];
-            if (!$modelStaff->uploadImage($source_img, $name_img)) $name_img = null;
+            if (!$modelStaff->uploadImage($source_img, $name_img)) $name_img = $hFunction->getDefaultNull();
         }
         if (count($txtIdentityCardFront) > 0) {
             $name_img_front = stripslashes($_FILES['txtIdentityCardFront']['name']);
             $name_img_front = 'identity_front' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_front);
             $source_img = $_FILES['txtIdentityCardFront']['tmp_name'];
-            if (!$modelStaff->uploadImage($source_img, $name_img_front)) $name_img_front = null;
+            if (!$modelStaff->uploadImage($source_img, $name_img_front)) $name_img_front = $hFunction->getDefaultNull();
         }
         if (count($txtIdentityCardBack) > 0) {
             $name_img_back = stripslashes($_FILES['txtIdentityCardBack']['name']);
             $name_img_back = 'identity_back' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_back);
             $source_img = $_FILES['txtIdentityCardBack']['tmp_name'];
-            if (!$modelStaff->uploadImage($source_img, $name_img_back)) $name_img_back = null;
+            if (!$modelStaff->uploadImage($source_img, $name_img_back)) $name_img_back = $hFunction->getDefaultNull();
         }
         if ($modelStaff->insert($firstName, $lastName, $txtIdentityCard, $account, $birthDay, $gender, $name_img, $name_img_front, $name_img_back, $email, $address, $phone, $level, $txtBankAccount, $cbBankName)) {
             $newStaffId = $modelStaff->insertGetId();
@@ -220,7 +221,7 @@ class StaffController extends Controller
                 if ($hFunction->checkCount($dataDepartment)) {
                     foreach ($dataDepartment as $department) {
                         $departmentId = $department->departmentId();
-                        $rankId = null;
+                        $rankId = $hFunction->getDefaultNull();
                         $manageRank = Request::input('chkDepartmentManageRank_' . $departmentId);
                         # xet co chon cap quan ly - uu tien cap quan ly
                         if ($manageRank) {
@@ -368,7 +369,7 @@ class StaffController extends Controller
                 if ($hFunction->checkCount($dataDepartment)) {
                     foreach ($dataDepartment as $department) {
                         $departmentId = $department->departmentId();
-                        $rankId = null;
+                        $rankId = $hFunction->getDefaultNull();
                         $manageRank = Request::input('chkDepartmentManageRank_' . $departmentId);
                         # lay cap bac duoc chon khi cap nhat
                         # xet co chon cap quan ly - uu tien cap quan ly
@@ -437,7 +438,7 @@ class StaffController extends Controller
                         if ($hFunction->checkCount($dataDepartment)) {
                             foreach ($dataDepartment as $department) {
                                 $departmentId = $department->departmentId();
-                                $rankId = null;
+                                $rankId = $hFunction->getDefaultNull();
                                 $manageRank = Request::input('chkDepartmentManageRank_' . $departmentId);
                                 # lay cap bac duoc chon khi cap nhat
                                 # xet co chon cap quan ly - uu tien cap quan ly
@@ -724,17 +725,18 @@ class StaffController extends Controller
     // xoa hinh anh
     public function deleteImage($staffId, $type)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $dataStaff = $modelStaff->getInfo($staffId);
         $image = $dataStaff->image();
         $identityCardFront = $dataStaff->identityCardFront();
         $identityCardBack = $dataStaff->identityCardBack();
         if ($type == 'avatar') {
-            if ($modelStaff->updateImage($staffId, null)) $modelStaff->dropImage($image);
+            if ($modelStaff->updateImage($staffId, $hFunction->getDefaultNull())) $modelStaff->dropImage($image);
         } elseif ($type == 'identityCardFront') {
-            if ($modelStaff->updateIdentityCardFront($staffId, null)) $modelStaff->dropImage($identityCardFront);
+            if ($modelStaff->updateIdentityCardFront($staffId, $hFunction->getDefaultNull())) $modelStaff->dropImage($identityCardFront);
         } elseif ($type == 'identityCardBack') {
-            if ($modelStaff->updateIdentityCardBack($staffId, null)) $modelStaff->dropImage($identityCardBack);
+            if ($modelStaff->updateIdentityCardBack($staffId, $hFunction->getDefaultNull())) $modelStaff->dropImage($identityCardBack);
         }
     }
 
