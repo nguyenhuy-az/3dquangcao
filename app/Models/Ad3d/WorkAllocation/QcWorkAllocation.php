@@ -157,14 +157,17 @@ class QcWorkAllocation extends Model
     // ket thuc cong viec
     public function confirmFinish($allocationId, $reportDate, $finishStatus, $finishReason = 0, $finishNoted = null)
     {
+        $hFunction = new \Hfunction();
         $modelWorkAllocationFinish = new QcWorkAllocationFinish();
         $allocationId = $this->checkIdNull($allocationId);
-        if (QcWorkAllocation::where('allocation_id', $allocationId)->update(['action' => $this->getDefaultHasAction()])) {
+        if (QcWorkAllocation::where('allocation_id', $allocationId)->update(['action' => $this->getDefaultNotAction()])) {
             $receiveDate = $this->receiveDeadline($allocationId);
-            if (date('Y-m-d H:i', strtotime($reportDate)) > date('Y-m-d H:i', strtotime($receiveDate))) {
+            $receiveDate = $hFunction->formatDateToYMDHI($receiveDate);
+            $reportDate = $hFunction->formatDateToYMDHI($reportDate);
+            if ($reportDate > $receiveDate) {
                 # hoan thanh tre
                 $finishLevel = $modelWorkAllocationFinish->getDefaultLateFinishLevel();
-            } elseif (date('Y-m-d H:i', strtotime($reportDate)) == date('Y-m-d H:i', strtotime($receiveDate))) {
+            } elseif ($reportDate == $receiveDate) {
                 $finishLevel = $modelWorkAllocationFinish->getDefaultHasFinishLevel();
             } else {
                 $finishLevel = $modelWorkAllocationFinish->getDefaultBeforeFinishLevel();

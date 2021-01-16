@@ -95,45 +95,43 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                             <td id="staffInfoBasicContainer">
                                 <div class="row">
                                     <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
-                                        <div class="row">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover table-bordered" style="margin-bottom: 0;">
-                                                    <tr>
-                                                        <td class="text-center" style="border: none;" colspan="2">
-                                                            @if(!empty($image))
-                                                                <a class="qc-link" data-href="#">
-                                                                    <img style="max-width: 100%;height: 190px;"
-                                                                         src="{!! $dataJobApplication->pathFullImage($image) !!}">
-                                                                </a>
-                                                            @else
-                                                                <span>Ảnh</span>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-center" style="border: none;">
-                                                            @if(!empty($identityFront))
-                                                                <a class="qc-link" data-href="#">
-                                                                    <img style="width: 100px;height: 90px;"
-                                                                         src="{!! $dataJobApplication->pathFullImage($identityFront) !!}">
-                                                                </a>
-                                                            @else
-                                                                <span>Mặt trước CMND</span>
-                                                            @endif
-                                                        </td>
-                                                        <td class="text-center" style="border: none;">
-                                                            @if(!empty($identityBack))
-                                                                <a class="qc-link" data-href="#">
-                                                                    <img style="width: 150px; height: 90px;"
-                                                                         src="{!! $dataJobApplication->pathFullImage($identityBack) !!}">
-                                                                </a>
-                                                            @else
-                                                                <span>Mặt sau CMND</span>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-bordered" style="margin-bottom: 0;">
+                                                <tr>
+                                                    <td class="text-center" style="border: none;" colspan="2">
+                                                        @if(!empty($image))
+                                                            <a class="qc-link" data-href="#">
+                                                                <img style="max-width: 100%;height: 190px;"
+                                                                     src="{!! $dataJobApplication->pathFullImage($image) !!}">
+                                                            </a>
+                                                        @else
+                                                            <span>Ảnh</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center" style="border: none;">
+                                                        @if(!empty($identityFront))
+                                                            <a class="qc-link" data-href="#">
+                                                                <img style="width: 100px;height: 90px;"
+                                                                     src="{!! $dataJobApplication->pathFullImage($identityFront) !!}">
+                                                            </a>
+                                                        @else
+                                                            <span>Mặt trước CMND</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center" style="border: none;">
+                                                        @if(!empty($identityBack))
+                                                            <a class="qc-link" data-href="#">
+                                                                <img style="width: 150px; height: 90px;"
+                                                                     src="{!! $dataJobApplication->pathFullImage($identityBack) !!}">
+                                                            </a>
+                                                        @else
+                                                            <span>Mặt sau CMND</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </div>
                                     </div>
                                     <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8">
@@ -150,7 +148,7 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                                                     <td style="border: none;">
                                                         <i class="glyphicon glyphicon-arrow-right"></i>
                                                         <em>Họ và tên: </em>
-                                                        <b> Tên ứng tuyển</b>
+                                                        <b> {!! "$firstName $lastName" !!}</b>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -178,14 +176,14 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                                                     <td style="border: none;">
                                                         <i class="glyphicon glyphicon-arrow-right"></i>
                                                         <em>Địa chỉ: </em>&nbsp;&nbsp;
-                                                        <b>Thông tin địa chỉ</b>
+                                                        <b>{!! $address !!}</b>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="border: none;">
                                                         <i class="glyphicon glyphicon-arrow-right"></i>
                                                         <em>Email: </em>&nbsp;&nbsp;
-                                                        <b>{!! $address !!}</b>
+                                                        <b>{!! $email !!}</b>
                                                     </td>
                                                 </tr>
                                                 <tr>

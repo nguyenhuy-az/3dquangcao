@@ -22,6 +22,23 @@ class QcOrderPay extends Model
 
     private $lastId;
 
+    #mac dinh ghi chu
+    public function getDefaultNote()
+    {
+        return null;
+    }
+
+    #mac dinh ten nguoi thanh toan
+    public function getDefaultPayerName()
+    {
+        return null;
+    }
+
+    #mac dinh so dien thoai
+    public function getDefaultPayerPhone()
+    {
+        return null;
+    }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
     public function insert($money, $note, $datePay, $orderId, $staffReceiveId, $payerName = null, $payerPhone = null)
@@ -62,9 +79,10 @@ class QcOrderPay extends Model
         return $this->lastId;
     }
 
-    public function checkIdNull($payId)
+    public function checkIdNull($payId = null)
     {
-        return (empty($payId)) ? $this->payId() : $payId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($payId)) ? $this->payId() : $payId;
     }
 
     public function deleteOrderPay($payId)
@@ -79,7 +97,6 @@ class QcOrderPay extends Model
     // cap nhat  thong tin don hang thanh toan
     public function updateInfo($payId, $money, $payerName, $payerPhone)
     {
-        $hFunction = new \Hfunction();
         return QcOrderPay::where('pay_id', $payId)->update([
             'money' => $money,
             'payerName' => $payerName,
@@ -96,19 +113,19 @@ class QcOrderPay extends Model
     //kiem tra thanh toan thuoc nhan vien
     public function checkOwnerStatusOfStaff($staffId, $payId)
     {
-        return (QcOrderPay::where('staff_id', $staffId)->where('pay_id', $payId)->count() > 0) ? true : false;
+        return QcOrderPay::where('staff_id', $staffId)->where('pay_id', $payId)->exists();
     }
 
     //kiem tra thanh toan thuoc nhan vien
     public function checkStaffInput($staffId, $payId = null)
     {
-        $payId = (empty($payId)) ? $this->payId() : $payId;
-        return (QcOrderPay::where('staff_id', $staffId)->where('pay_id', $payId)->count() > 0) ? true : false;
+        return QcOrderPay::where('staff_id', $staffId)->where('pay_id', $this->checkIdNull($payId))->exists();
     }
 
     public function infoOfStaff($staffId, $date, $orderBy = 'DESC')
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcOrderPay::where('staff_id', $staffId)->where('datePay', 'like', "%$date%")->orderBy('datePay', $orderBy)->get();
         } else {
             return QcOrderPay::where('staff_id', $staffId)->orderBy('datePay', $orderBy)->get();
@@ -119,7 +136,8 @@ class QcOrderPay extends Model
     # danh sach ma thanh toan cua 1 nv
     public function listOrderIdOfStaff($staffId, $date)
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcOrderPay::where('staff_id', $staffId)->where('datePay', 'like', "%$date%")->groupBy('order_id')->pluck('order_id');
         } else {
             return QcOrderPay::where('staff_id', $staffId)->groupBy('order_id')->pluck('order_id');
@@ -129,7 +147,8 @@ class QcOrderPay extends Model
     # danh sach ma thanh toan cua 1 nv hoac nhieu nv
     public function listOrderIdOfListStaff($listStaffId, $date)
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcOrderPay::whereIn('staff_id', $listStaffId)->where('datePay', 'like', "%$date%")->groupBy('order_id')->pluck('order_id');
         } else {
             return QcOrderPay::whereIn('staff_id', $listStaffId)->groupBy('order_id')->pluck('order_id');
@@ -139,7 +158,8 @@ class QcOrderPay extends Model
     # cua 1 nhan vien
     public function totalMoneyOfStaffAndDate($staffId, $date)
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcOrderPay::where('staff_id', $staffId)->where('datePay', 'like', "%$date%")->sum('money');
         } else {
             return QcOrderPay::where('staff_id', $staffId)->sum('money');
@@ -150,7 +170,8 @@ class QcOrderPay extends Model
     # cua nhieu vien
     public function totalMoneyOfListStaffAndDate($staffId, $date)
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcOrderPay::whereIn('staff_id', $staffId)->where('datePay', 'like', "%$date%")->sum('money');
         } else {
             return QcOrderPay::whereIn('staff_id', $staffId)->sum('money');
@@ -160,9 +181,10 @@ class QcOrderPay extends Model
 
     public function infoNoTransferOfStaff($staffId, $date = null, $orderBy = 'DESC')
     {
+        $hFunction = new \Hfunction();
         $modelTransferDetail = new QcTransfersDetail();
         $listPayId = $modelTransferDetail->listPayId();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcOrderPay::where('staff_id', $staffId)->whereNotIn('pay_id', $listPayId)->where('datePay', 'like', "%$date%")->orderBy('datePay', $orderBy)->get();
         } else {
             return QcOrderPay::where('staff_id', $staffId)->whereNotIn('pay_id', $listPayId)->orderBy('datePay', $orderBy)->get();
@@ -208,18 +230,31 @@ class QcOrderPay extends Model
                 # CAP QUAN LY - lay danh sach NV kinh doanh cap quan ly
                 $dataStaffBusiness = $modelStaff->infoActivityStaffBusinessRankManage($dataOrder->companyId());
                 if ($hFunction->checkCount($dataStaffBusiness)) {
+                    # lay gia trin mac dinh thuong
+                    $bonusNote = 'Thưởng Quản lý kinh doanh nhận tiền từ đơn hàng';
+                    $bonusHasApply = $modelBonus->getDefaultHasApply();
+                    $bonusOrderAllocationId = $modelBonus->getDefaultOrderAllocationId();
+                    $bonusOrderConstructionId = $modelBonus->getDefaultOrderConstructionId();
+                    $bonusWorkAllocationId = $modelBonus->getDefaultWorkAllocationId();
                     foreach ($dataStaffBusiness as $staffBusiness) {
                         $dataWork = $staffBusiness->workInfoActivityOfStaff();
                         if ($hFunction->checkCount($dataWork)) {
                             $workId = $dataWork->workId();
                             # kiem tra da duoc thuong chua - neu chua thi thuong
                             if (!$modelBonus->checkOrderPayBonus($workId, $payId)) {
-                                if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), 'Thưởng Quản lý kinh doanh nhận tiền từ đơn hàng', 1, $workId, null, null, $payId)) {
+                                if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), $bonusNote, $bonusHasApply, $workId, $bonusOrderAllocationId, $bonusOrderConstructionId, $payId,$bonusWorkAllocationId)) {
                                     $bonusId = $modelBonus->insertGetId();
                                     $notifyStaffId = $staffBusiness->staffId();
-                                    $notifyStaffId = (is_int($notifyStaffId)) ? $notifyStaffId : $notifyStaffId[0];
+                                    ///$notifyStaffId = (is_int($notifyStaffId)) ? $notifyStaffId : $notifyStaffId[0];
                                     # thong bao cho nguoi nhan thuong
-                                    $modelStaffNotify->insert(null, $notifyStaffId, 'Thưởng Quản lý kinh doanh nhận tiền từ đơn hàng', null, null, $bonusId, null, null);
+                                    # lay gia tri mac dinh
+                                    $notifyOrderId = $modelStaffNotify->getDefaultOrderId();
+                                    $orderAllocationId = $modelStaffNotify->getDefaultOrderAllocationId();
+                                    $workAllocationId = $modelStaffNotify->getDefaultWorkAllocationId();
+                                    $minusId = $modelStaffNotify->getDefaultMinusId();
+                                    $orderAllocationFinishId = $modelStaffNotify->getDefaultOrderAllocationFinishId();
+                                    $notifyNote = 'Thưởng Quản lý kinh doanh nhận tiền từ đơn hàng';
+                                    $modelStaffNotify->insert($notifyOrderId, $notifyStaffId, $notifyNote, $orderAllocationId, $workAllocationId, $bonusId, $minusId, $orderAllocationFinishId);
                                 }
                             }
                         }
@@ -240,7 +275,7 @@ class QcOrderPay extends Model
         if ($hFunction->checkCount($dataOrderPay)) {
             $dataOrder = $dataOrderPay->order;
             # thong tin nhan vien tao don hang
-            $dataStaffCreated = $dataOrder->staff;
+            $dataStaffCreated = $dataOrder->staffReceive;
             #NGUOI NHAN DON HANG - thuong cho nguoi nhan don hang
             if ($hFunction->checkCount($dataStaffCreated)) {
                 $bonusMoney = $this->getBonusMoneyOfBusinessStaff($payId);
@@ -250,12 +285,25 @@ class QcOrderPay extends Model
                         $workId = $dataWork->workId();
                         # kiem tra da duoc thuong chua - neu chua thi thuong
                         if (!$modelBonus->checkOrderPayBonus($workId, $payId)) {
-                            if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), 'Thưởng Nhân viên kinh doanh nhận tiền đơn hàng', 1, $workId, null, null, $payId)) {
+                            # lay gia trin mac dinh thuong
+                            $bonusNote = 'Thưởng Quản lý kinh doanh nhận tiền từ đơn hàng';
+                            $bonusHasApply = $modelBonus->getDefaultHasApply();
+                            $bonusOrderAllocationId = $modelBonus->getDefaultOrderAllocationId();
+                            $bonusOrderConstructionId = $modelBonus->getDefaultOrderConstructionId();
+                            $bonusWorkAllocationId = $modelBonus->getDefaultWorkAllocationId();
+                            if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), $bonusNote, $bonusHasApply, $workId, $bonusOrderAllocationId, $bonusOrderConstructionId, $payId,$bonusWorkAllocationId)) {
                                 $bonusId = $modelBonus->insertGetId();
                                 $notifyStaffId = $dataStaffCreated->staffId();
-                                $notifyStaffId = (is_int($notifyStaffId)) ? $notifyStaffId : $notifyStaffId[0];
+                                //$notifyStaffId = (is_int($notifyStaffId)) ? $notifyStaffId : $notifyStaffId[0];
                                 # thong bao cho nguoi nhan thuong
-                                $modelStaffNotify->insert(null, $notifyStaffId, 'Thưởng Nhân viên kinh doanh nhận tiền đơn hàng', null, null, $bonusId, null, null);
+                                # lay gia tri mac dinh
+                                $notifyOrderId = $modelStaffNotify->getDefaultOrderId();
+                                $orderAllocationId = $modelStaffNotify->getDefaultOrderAllocationId();
+                                $workAllocationId = $modelStaffNotify->getDefaultWorkAllocationId();
+                                $minusId = $modelStaffNotify->getDefaultMinusId();
+                                $orderAllocationFinishId = $modelStaffNotify->getDefaultOrderAllocationFinishId();
+                                $notifyNote = 'Thưởng Nhân viên kinh doanh nhận tiền đơn hàng';
+                                $modelStaffNotify->insert($notifyOrderId, $notifyStaffId, $notifyNote, $orderAllocationId, $workAllocationId, $bonusId, $minusId, $orderAllocationFinishId);
                             }
                         }
                     }
@@ -273,7 +321,7 @@ class QcOrderPay extends Model
         $bonusPercent = $modelOrderBonusBudget->getPercentOfBusinessManage($dataOrder->orderId());
         if ($bonusPercent > 0) {
             $moneyPay = $dataOrderPay->money();
-            $moneyPay = (is_array($moneyPay)) ? $moneyPay[0]:$moneyPay;
+            $moneyPay = (is_array($moneyPay)) ? $moneyPay[0] : $moneyPay;
             return (int)($moneyPay * ($bonusPercent / 100));
         } else {
             return 0;
@@ -289,7 +337,7 @@ class QcOrderPay extends Model
         $bonusPercent = $modelOrderBonusBudget->getPercentOfBusinessStaff($dataOrder->orderId());
         if ($bonusPercent > 0) {
             $moneyPay = $dataOrderPay->money();
-            $moneyPay = (is_array($moneyPay)) ? $moneyPay[0]:$moneyPay;
+            $moneyPay = (is_array($moneyPay)) ? $moneyPay[0] : $moneyPay;
             return (int)($moneyPay * ($bonusPercent / 100));
         } else {
             return 0;
@@ -318,7 +366,8 @@ class QcOrderPay extends Model
     # tong tien da thanh toan cua 1 don hang theo ngay
     public function totalPayOfOrderAndDate($orderId, $date = null)
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcOrderPay::where('order_id', $orderId)->where('datePay', 'like', "%$date%")->sum('money');
         } else {
             return QcOrderPay::where('order_id', $orderId)->sum('money');
@@ -363,18 +412,20 @@ class QcOrderPay extends Model
 
     public function checkExistTransfersDetail($payId = null)
     {
+        $hFunction = new \Hfunction();
         $modelTransfersDetail = new QcTransfersDetail();
-        return (count($modelTransfersDetail->getInfoOfPay($this->checkIdNull($payId))) > 0) ? true : false;
+        return ($hFunction->checkCount($modelTransfersDetail->getInfoOfPay($this->checkIdNull($payId)))) ? true : false;
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
     public function getInfo($payId = '', $field = '')
     {
-        if (empty($payId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($payId)) {
             return QcOrderPay::get();
         } else {
             $result = QcOrderPay::where('pay_id', $payId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -384,10 +435,11 @@ class QcOrderPay extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcOrderPay::where('pay_id', $objectId)->pluck($column);
+            return QcOrderPay::where('pay_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -440,9 +492,10 @@ class QcOrderPay extends Model
     #============ =========== ============ THONG KE ============= =========== ==========
     public function infoStaffOrderPay($listCompanyId, $dateFilter = null)
     {
+        $hFunction = new \Hfunction();
         $modelOrder = new QcOrder();
-        $listOrderId = $modelOrder->listIdOfListCompanyAndName($listCompanyId, null);
-        if (empty($dateFilter)) {
+        $listOrderId = $modelOrder->listIdOfListCompanyAndName($listCompanyId, $hFunction->getDefaultNull());
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcOrderPay::whereIn('order_id', $listOrderId)->groupBy('staff_id')->pluck('staff_id');
         } else {
             return QcOrderPay::whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$dateFilter%")->groupBy('staff_id')->pluck('staff_id');
@@ -451,9 +504,10 @@ class QcOrderPay extends Model
 
     public function totalOrderPayOfCompany($listCompanyId, $dateFilter = null)
     {
+        $hFunction = new \Hfunction();
         $modelOlder = new QcOrder();
-        $listOrderId = $modelOlder->listIdOfListCompanyAndName($listCompanyId, null);
-        if (empty($dateFilter)) {
+        $listOrderId = $modelOlder->listIdOfListCompanyAndName($listCompanyId, $hFunction->getDefaultNull());
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcOrderPay::whereIn('order_id', $listOrderId)->sum('money');
         } else {
             return QcOrderPay::whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$dateFilter%")->sum('money');
@@ -462,9 +516,10 @@ class QcOrderPay extends Model
 
     public function totalOrderPayOfCompanyStaffDate($listCompanyId, $staffId, $dateFilter = null)
     {
+        $hFunction = new \Hfunction();
         $modelOlder = new QcOrder();
-        $listOrderId = $modelOlder->listIdOfListCompanyAndName($listCompanyId, null);
-        if (empty($dateFilter)) {
+        $listOrderId = $modelOlder->listIdOfListCompanyAndName($listCompanyId, $hFunction->getDefaultNull());
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcOrderPay::where('staff_id', $staffId)->whereIn('order_id', $listOrderId)->sum('money');
         } else {
             return QcOrderPay::where('staff_id', $staffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$dateFilter%")->sum('money');

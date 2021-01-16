@@ -53,8 +53,12 @@ $orderId = $dataOrder->orderId();
                         <div class="row">
                             <div class="text-center qc-padding-top-20 qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                                <button type="button" class="qc_save btn btn-sm btn-primary">Đồng ý</button>
-                                <button type="button" class="qc_container_close btn btn-sm btn-default">Đóng</button>
+                                <button type="button" class="qc_save btn btn-sm btn-primary">
+                                    XÁC NHẬN HOÀN THÀNH
+                                </button>
+                                <button type="button" class="qc_container_close btn btn-sm btn-default">
+                                    ĐÓNG
+                                </button>
                             </div>
                         </div>
                     </form>

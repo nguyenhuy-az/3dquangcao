@@ -156,7 +156,14 @@ class QcOrderAllocation extends Model
         $modelOrder = new QcOrder();
         $orderId = $this->orderId($allocationId);
         $dataProduct = $modelOrder->productActivityOfOrder($orderId);
-        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(['finishStatus' => $this->getDefaultHasFinish(), 'finishNote' => $finishNote, 'finishDate' => $reportDate, 'paymentStatus' => $paymentStatus, 'action' => $this->getDefaultNotAction()])) {
+        if (QcOrderAllocation::where('allocation_id', $allocationId)->update(
+            [
+                'finishStatus' => $this->getDefaultHasFinish(),
+                'finishNote' => $finishNote,
+                'finishDate' => $reportDate,
+                'paymentStatus' => $paymentStatus,
+                'action' => $this->getDefaultNotAction()
+            ])) {
             # thong bao hoan thanh thi cong cho quan ly thi cong (nguoi phan viec)
             $staffNotifyId = $this->allocationStaffId($allocationId);
             $notifyNote = 'Hoàn thành thi công';
@@ -206,7 +213,7 @@ class QcOrderAllocation extends Model
                 # xac nhan dong y  hoan thanh
                 # thong bao hoan thanh thi cong cho kinh doanh
                 $notifyNote = 'Hoàn thành thi công';
-                $modelStaffNotify->insert($notifyOrderId, $dataOrder->staffId(), $notifyNote, $orderAllocationId, $workAllocationId, $bonusId, $minusMoneyId, $allocationId);
+                $modelStaffNotify->insert($notifyOrderId, $dataOrder->staffReceiveId(), $notifyNote, $orderAllocationId, $workAllocationId, $bonusId, $minusMoneyId, $allocationId);
             }
             return true;
         } else {

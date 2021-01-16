@@ -122,7 +122,7 @@ class QcOrderBonusBudget extends Model
     {
         $modelOrder = new QcOrder();
         # tong tien hoa don
-        $orderTotalPrice = $modelOrder->totalPrice($orderId);
+        $orderTotalPrice = $modelOrder->totalMoney($orderId);
         return (int)$orderTotalPrice * ($this->getPercentOfBusinessStaff($orderId) / 100);
     }
 
@@ -159,13 +159,28 @@ class QcOrderBonusBudget extends Model
                     $dataWork = $dataReceiveStaff->workInfoActivityOfStaff();
                     if ($hFunction->checkCount($dataWork)) {
                         $workId = $dataWork->workId();
+                        # lay gia trin mac dinh thuong
+                        $bonusNote = 'Quản lý thi công đơn hàng';
+                        $bonusHasApply = $modelBonus->getDefaultHasApply();
+                        $bonusOrderAllocationId = $modelBonus->getDefaultOrderAllocationId();
+                        $bonusOrderConstructionId = $modelBonus->getDefaultOrderConstructionId();
+                        $bonusPayId = $modelBonus->getDefaultOrderPayId();
+                        $bonusWorkAllocationId = $modelBonus->getDefaultWorkAllocationId();
                         if (!$modelBonus->checkExistBonusWorkOfOrderAllocation($workId, $allocationId)) { # chua ap dung thuong
-                            if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), 'Quản lý thi công đơn hàng', $modelBonus->getNotApplyStatus(), $workId, $allocationId, null, null, null)) {
+                            # thuong
+                            if ($modelBonus->insert($orderBonusPrice, $hFunction->carbonNow(), $bonusNote, $bonusHasApply, $workId, $allocationId, $bonusOrderAllocationId, $bonusOrderConstructionId, $bonusPayId, $bonusWorkAllocationId)) {
                                 $bonusId = $modelBonus->insertGetId();
                                 $allocationStaffId = $dataReceiveStaff->staffId();
-                                $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
+                                //$allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
                                 # thong bao cho nguoi nhan thuong
-                                $modelStaffNotify->insert(null, $allocationStaffId, 'Quản lý thi công đơn hàng', null, null, $bonusId, null, null);
+                                # lay gia tri mac dinh
+                                $notifyOrderId = $modelStaffNotify->getDefaultOrderId();
+                                $orderAllocationId = $modelStaffNotify->getDefaultOrderAllocationId();
+                                $workAllocationId = $modelStaffNotify->getDefaultWorkAllocationId();
+                                $minusId = $modelStaffNotify->getDefaultMinusId();
+                                $orderAllocationFinishId = $modelStaffNotify->getDefaultOrderAllocationFinishId();
+                                $notifyNote = 'Quản lý thi công đơn hàng';
+                                $modelStaffNotify->insert($notifyOrderId, $allocationStaffId, $notifyNote, $orderAllocationId, $workAllocationId, $bonusId, $minusId, $orderAllocationFinishId);
                             }
                         }
                     }
@@ -207,12 +222,25 @@ class QcOrderBonusBudget extends Model
                                 if ($hFunction->checkCount($dataWork)) {
                                     $workId = $dataWork->workId();
                                     if (!$modelBonus->checkExistBonusWorkOfWorkAllocation($workId, $allocationId)) { # chua ap dung thuong
-                                        if ($modelBonus->insert($bonusMoneyOfEachPerson, $hFunction->carbonNow(), 'Thi công sản phẩm', $modelBonus->getNotApplyStatus(), $workId, null, null, null, $allocationId)) {
+                                        # lay gia trin mac dinh thuong
+                                        $bonusNote = 'Thi công sản phẩm';
+                                        $bonusHasApply = $modelBonus->getDefaultHasApply();
+                                        $bonusOrderAllocationId = $modelBonus->getDefaultOrderAllocationId();
+                                        $bonusOrderConstructionId = $modelBonus->getDefaultOrderConstructionId();
+                                        $bonusPayId = $modelBonus->getDefaultOrderPayId();
+                                        if ($modelBonus->insert($bonusMoneyOfEachPerson, $hFunction->carbonNow(), $bonusNote, $bonusHasApply, $workId, $bonusOrderAllocationId, $bonusOrderConstructionId, $bonusPayId, $allocationId)) {
                                             $bonusId = $modelBonus->insertGetId();
                                             $allocationStaffId = $dataReceiveStaff->staffId();
-                                            $allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
+                                            ///$allocationStaffId = (is_int($allocationStaffId)) ? $allocationStaffId : $allocationStaffId[0];
                                             # thong bao cho nguoi nhan thuong
-                                            $modelStaffNotify->insert(null, $allocationStaffId, 'Thi công sản phẩm', null, null, $bonusId, null, null);
+                                            # lay gia tri mac dinh
+                                            $notifyOrderId = $modelStaffNotify->getDefaultOrderId();
+                                            $orderAllocationId = $modelStaffNotify->getDefaultOrderAllocationId();
+                                            $workAllocationId = $modelStaffNotify->getDefaultWorkAllocationId();
+                                            $minusId = $modelStaffNotify->getDefaultMinusId();
+                                            $orderAllocationFinishId = $modelStaffNotify->getDefaultOrderAllocationFinishId();
+                                            $notifyNote = 'Thi công sản phẩm';
+                                            $modelStaffNotify->insert($notifyOrderId, $allocationStaffId, $notifyNote, $orderAllocationId, $workAllocationId, $bonusId, $minusId, $orderAllocationFinishId);
                                         }
                                     }
                                 }
@@ -244,7 +272,7 @@ class QcOrderBonusBudget extends Model
     {
         $modelOrder = new QcOrder();
         # tong tien hoa don
-        $orderTotalPrice = $modelOrder->totalPrice($orderId);
+        $orderTotalPrice = $modelOrder->totalMoney($orderId);
         return (int)$orderTotalPrice * ($this->getPercentOfConstructionManage($orderId) / 100);
     }
 

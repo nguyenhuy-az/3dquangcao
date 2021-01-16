@@ -89,7 +89,14 @@ class QcProduct extends Model
     # mac dinh anh thiet ke
     public function getDefaultDesignImage()
     {
-        return null;
+        $hFunction = new \Hfunction();
+        return $hFunction->getDefaultNull();
+    }
+
+    # mac dinh khong bao hanh
+    public function getDefaultNotWarrantyTime()
+    {
+        return 0;
     }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- Insert ----------
@@ -127,7 +134,8 @@ class QcProduct extends Model
     //kiem tra ID
     public function checkIdNull($productId = null)
     {
-        return (empty($productId)) ? $this->productId() : $productId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($productId)) ? $this->productId() : $productId;
     }
 
     // cap nhat thong tin
@@ -353,6 +361,7 @@ class QcProduct extends Model
         return QcProduct::where('order_id', $orderId)->update(['cancelStatus' => $this->getDefaultHasCancel()]);
     }
 
+    # tong tien cua 1 don hang - khong tinh san pham da huy
     public function totalPriceOfOrder($orderId)
     {
         $hFunction = new \Hfunction();
@@ -366,11 +375,13 @@ class QcProduct extends Model
         return $totalPrice;
     }
 
+    # tong tien cua danh sach don hang
     public function totalPriceOfListOrder($listOrderId)
     {
+        $hFunction = new \Hfunction();
         $totalPrice = 0;
         $dataProduct = QcProduct::whereIn('order_id', $listOrderId)->where('cancelStatus', $this->getDefaultNotCancel())->get();
-        if (count($dataProduct) > 0) {
+        if ($hFunction->checkCount($dataProduct)) {
             foreach ($dataProduct as $key => $value) {
                 $totalPrice = $totalPrice + ($value['price'] * $value['amount']);
             }
@@ -472,11 +483,12 @@ class QcProduct extends Model
 
     public function getInfo($productId = '', $field = '')
     {
-        if (empty($productId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($productId)) {
             return QcProduct::get();
         } else {
             $result = QcProduct::where('product_id', $productId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -484,12 +496,14 @@ class QcProduct extends Model
         }
     }
 
+    # lay 1 gia tri
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcProduct::where('product_id', $objectId)->pluck($column);
+            return QcProduct::where('product_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -544,8 +558,9 @@ class QcProduct extends Model
     // get path image
     public function pathSmallDesignImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathDesignSmallImage() . '/' . $image);
         }
@@ -553,8 +568,9 @@ class QcProduct extends Model
 
     public function pathFullDesignImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathDesignFullImage() . '/' . $image);
         }
@@ -565,11 +581,12 @@ class QcProduct extends Model
         return $this->pluck('productImage', $orderId);
     }
 
-    // get path image
+    # get path image
     public function pathSmallProductImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathProductSmallImage() . '/' . $image);
         }
@@ -577,8 +594,9 @@ class QcProduct extends Model
 
     public function pathFullProductImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathProductFullImage() . '/' . $image);
         }
@@ -633,8 +651,9 @@ class QcProduct extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcProduct::orderBy('product_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->product_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->product_id;
     }
 
     public function checkFinishStatus($productId = null)
@@ -650,8 +669,7 @@ class QcProduct extends Model
     # kiem tra san pham co duoc bao hanh hay
     public function checkHasWarranty($productId = null)
     {
-        $warrantyTime = $this->warrantyTime($productId)[0];
-        return ($warrantyTime == 0) ? false : true;
+        return ($this->warrantyTime($productId) == $this->getDefaultNotWarrantyTime()) ? false : true;
     }
 
     # kiem tra con thoi gian bao hanh hay khong
@@ -659,11 +677,11 @@ class QcProduct extends Model
     {
         $hFunction = new \Hfunction();
         $productId = $this->checkIdNull($productId);
-        $warrantyTime = $this->warrantyTime($productId)[0];
-        $createdAd = $this->createdAt($productId);
-        if ($warrantyTime == 0) {
+        if (!$this->checkHasWarranty($productId)) {
             return false;
         } else {
+            $createdAd = $this->createdAt($productId);
+            $warrantyTime = $this->warrantyTime($productId);
             $currentDate = $hFunction->carbonNow();
             $checkTime = $hFunction->datetimePlusMonth($createdAd, $warrantyTime);
             if ($checkTime > $currentDate) {
@@ -727,7 +745,14 @@ class QcProduct extends Model
         $receiveStatus = $modelWorkAllocation->getDefaultHasReceiveStatus();
         if ($modelWorkAllocation->insert($allocationDate, $receiveStatus, $receiveDeadline, $confirmStatus, $confirmDate, $noted, $productId, $allocationStaffId, $receiveStaffId, $role, $constructionNumber, $productRepairId)) {
             $newWorkAllocationId = $modelWorkAllocation->insertGetId();
-            $modelStaffNotify->insert(null, $receiveStaffId, 'Giao thi công sản phẩm', null, $newWorkAllocationId);
+            # lay gia tri mac dinh
+            $notifyOrderId = $modelStaffNotify->getDefaultOrderId();
+            $orderAllocationId = $modelStaffNotify->getDefaultOrderAllocationId();
+            $bonusMoneyId = $modelStaffNotify->getDefaultBonusId();
+            $minusId = $modelStaffNotify->getDefaultMinusId();
+            $orderAllocationFinishId = $modelStaffNotify->getDefaultOrderAllocationFinishId();
+            $notifyNote = 'Giao thi công sản phẩm';
+            $modelStaffNotify->insert($notifyOrderId, $receiveStaffId, $notifyNote, $orderAllocationId, $newWorkAllocationId, $bonusMoneyId, $minusId, $orderAllocationFinishId);
         }
 
     }

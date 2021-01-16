@@ -242,6 +242,9 @@ $valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder(
                                             {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocation) !!}
                                         </b>
                                     </td>
+                                    <td class="text-center">
+                                        {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocation*0.05) !!}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Thi công bị trễ</td>
@@ -254,6 +257,9 @@ $valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder(
                                         <b style="color: green;">
                                             {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationHasLate) !!}
                                         </b>
+                                    </td>
+                                    <td class="text-center">
+                                        {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationHasLate*0.05) !!}
                                     </td>
                                 </tr>
                                 <tr style="border-top: 2px solid black;">
@@ -268,6 +274,9 @@ $valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder(
                                             {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationHasFinish) !!}
                                         </b>
                                     </td>
+                                    <td class="text-center">
+                                        {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationHasFinish*0.05) !!}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Hoàn thành đúng hẹn</td>
@@ -281,10 +290,13 @@ $valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder(
                                             {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationFinishNotLate) !!}
                                         </b>
                                     </td>
+                                    <td class="text-center">
+                                        {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationFinishNotLate*0.05) !!}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Hoàn thành trễ hẹn</td>
-                                    <td class="text-center">
+                                        <td class="text-center">
                                         <b style="color:brown;">
                                             {!! $hFunction->getCount($dataWorkAllocationHasFinishHasLate) !!}
                                         </b>
@@ -294,6 +306,7 @@ $valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder(
                                             {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationFinishHasLate) !!}
                                         </b>
                                     </td>
+                                    <td class="text-center">{!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationFinishHasLate*0.05) !!}</td>
                                 </tr>
 
                             </table>
@@ -323,6 +336,9 @@ $valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder(
                                             {!! $hFunction->currencyFormat($valueMoneyFromAllOrder) !!}
                                         </b>
                                     </td>
+                                    <td class="text-center">
+                                        {!! $hFunction->currencyFormat($valueMoneyFromAllOrder*0.05) !!}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Số đơn hàng bị trễ</td>
@@ -335,6 +351,9 @@ $valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder(
                                         <b style="color: green;">
                                             {!! $hFunction->currencyFormat($valueMoneyFromOrderHasLate) !!}
                                         </b>
+                                    </td>
+                                    <td class="text-center">
+                                        {!! $hFunction->currencyFormat($valueMoneyFromOrderHasLate*0.05) !!}
                                     </td>
                                 </tr>
                                 <tr style="border-top: 2px solid black;">
@@ -349,6 +368,9 @@ $valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder(
                                             {!! $hFunction->currencyFormat($valueMoneyFromOrderHasFinish) !!}
                                         </b>
                                     </td>
+                                    <td class="text-center">
+                                        {!! $hFunction->currencyFormat($valueMoneyFromOrderHasFinish*0.05) !!}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Hoàn thành đúng hẹn</td>
@@ -362,6 +384,9 @@ $valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder(
                                             {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationFinishNotLate) !!}
                                         </b>
                                     </td>
+                                    <td class="text-center">
+                                        {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationFinishNotLate*0.05) !!}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Hoàn thành trễ hẹn</td>
@@ -374,6 +399,9 @@ $valueMoneyFromOrderHasFinish = $modelStatistical->totalValueMoneyFromListOrder(
                                         <b style="color: green;">
                                             {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationFinishHasLate) !!}
                                         </b>
+                                    </td>
+                                    <td class="text-center">
+                                        {!! $hFunction->currencyFormat($valueMoneyFromWorkAllocationFinishHasLate*0.05) !!}
                                     </td>
                                 </tr>
 

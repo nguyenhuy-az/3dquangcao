@@ -99,6 +99,10 @@ class QcBonus extends Model
     }
 
     #---------- Insert ----------
+    /*
+     * them khi thanh toan don hang - QcOrderPay
+     * them khi xet thương don hang - QcOrderBonusBudget
+     * */
     public function insert($money, $bonusDate, $note, $applyStatus, $workId, $orderAllocationId = null, $orderConstructionId = null, $orderPayId = null, $workAllocationId = null)
     {
         $hFunction = new \Hfunction();
@@ -128,7 +132,8 @@ class QcBonus extends Model
 
     public function checkNullId($bonusId)
     {
-        return (empty($bonusId)) ? $this->payId() : $bonusId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($bonusId)) ? $this->payId() : $bonusId;
     }
 
     public function rootPathFullImage()
@@ -165,7 +170,8 @@ class QcBonus extends Model
     // get path image
     public function pathSmallImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathSmallImage() . '/' . $image);
@@ -174,7 +180,8 @@ class QcBonus extends Model
 
     public function pathFullImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
@@ -296,7 +303,8 @@ class QcBonus extends Model
     #============ =========== ============ GET INFO ============= =========== ==========
     public function selectInfoHasFilter($listWorkId, $dateFilter = null)
     {
-        if (empty($dateFilter)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcBonus::whereIn('work_id', $listWorkId)->orderBy('bonusDate', 'DESC')->select('*');
         } else {
             return QcBonus::whereIn('work_id', $listWorkId)->where('bonusDate', 'like', "%$dateFilter%")->orderBy('bonusDate', 'DESC')->select('*');
@@ -306,11 +314,12 @@ class QcBonus extends Model
     # lay thong tin thuong duoc ap dung theo danh sach ma cham cong
     public function getInfoHasApplyFromListWorkId($listWorkId, $dateFilter = null)
     {
+        $hFunction = new \Hfunction();
         # co ap dung
         $hasApply = $this->getDefaultHasApply();
         # khong huy
         $notCancel = $this->getDefaultNotCancel();
-        if (empty($dateFilter)) {
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcBonus::whereIn('work_id', $listWorkId)->where('applyStatus', $hasApply)->where('cancelStatus', $notCancel)->orderBy('bonusDate', 'DESC')->get();
         } else {
             return QcBonus::whereIn('work_id', $listWorkId)->where('bonusDate', 'like', "%$dateFilter%")->where('applyStatus', $hasApply)->where('cancelStatus', $notCancel)->orderBy('bonusDate', 'DESC')->get();
@@ -320,9 +329,10 @@ class QcBonus extends Model
     # tong tien phat theo danh sach ma bang cham cong - khong huy
     public function totalMoneyHasFilter($listWorkId, $dateFilter)
     {
+        $hFunction = new \Hfunction();
         # khong huy
         $notCancel = $this->getDefaultNotCancel();
-        if (empty($dateFilter)) {
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcBonus::whereIn('work_id', $listWorkId)->where('cancelStatus', $notCancel)->sum('money');
         } else {
             return QcBonus::whereIn('work_id', $listWorkId)->where('cancelStatus', $notCancel)->where('bonusDate', 'like', "%$dateFilter%")->sum('money');
@@ -331,11 +341,12 @@ class QcBonus extends Model
 
     public function getInfo($bonusId = '', $field = '')
     {
-        if (empty($bonusId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($bonusId)) {
             return QcBonus::get();
         } else {
             $result = QcBonus::where('bonus_id', $bonusId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -345,7 +356,8 @@ class QcBonus extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcBonus::where('bonus_id', $objectId)->pluck($column)[0];
