@@ -702,9 +702,9 @@ var qc_ad3d_staff_staff = {
 }
 // loc thong ke
 $(document).ready(function () {
-    $('.qc_ad3d_sys_staff_statistical_wrap').on('change', '.qc_statistic_filter', function () {
+    /*$('.qc_ad3d_sys_staff_statistical_wrap').on('change', '.qc_statistic_filter', function () {
         qc_ad3d_staff_staff.statistic.filter($(this));
-    });
+    });*/
 });
 //-------------------- HINH ANH ------------
 $(document).ready(function () {

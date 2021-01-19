@@ -38,6 +38,12 @@ class QcTransfers extends Model
         return 3;
     }
 
+    # mac dinh tat ca hinh thuc chuyen tien
+    public function getDefaultAllTransferType()
+    {
+        return 100;
+    }
+
     # mac dinh co xac nhan
     public function getDefaultHasConfirmReceive()
     {
@@ -82,7 +88,7 @@ class QcTransfers extends Model
         $modelTransfers->transferType = $transferType;
         $modelTransfers->transfersStaff_id = $transfersStaffId;
         $modelTransfers->receiveStaff_id = $receiveStaffId;
-        $modelTransfers->company_id = (empty($companyId)) ? $modelStaff->companyId($receiveStaffId) : $companyId;
+        $modelTransfers->company_id = ($hFunction->checkEmpty($companyId)) ? $modelStaff->companyId($receiveStaffId) : $companyId;
         $modelTransfers->created_at = $hFunction->createdAt();
         if ($modelTransfers->save()) {
             $this->lastId = $modelTransfers->transfers_id;
@@ -101,7 +107,8 @@ class QcTransfers extends Model
     # kiem tra id
     public function checkNullId($id = null)
     {
-        return (empty($id)) ? $this->transfersId() : $id;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->transfersId() : $id;
     }
 
     // insert
@@ -116,7 +123,7 @@ class QcTransfers extends Model
     # cap nhat so tien'
     public function updateMoney($transferId, $money)
     {
-        return QcTransfers::where('transfers_id', $transferId)->update(['money' => $money,]);
+        return QcTransfers::where('transfers_id', $transferId)->update(['money' => $money]);
     }
 
     public function updateConfirmReceive($transfersId, $confirmNote, $acceptStatus)
@@ -166,7 +173,8 @@ class QcTransfers extends Model
     // get path image
     public function pathSmallImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
@@ -175,7 +183,8 @@ class QcTransfers extends Model
 
     public function pathFullImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
@@ -191,11 +200,12 @@ class QcTransfers extends Model
     # tong tien da nhan va da xac nhan tu tien thu don hang cua 1 cong ty
     public function totalMoneyReceivedFromOrderPayOfCompanyAndDate($companyId, $date = null)
     {
+        $hFunction = new \Hfunction();
         # kinh doanh nop tien
         $transferType = $this->getDefaultTransferTypeOfBusiness();
         # da xac nhan
         $confirmStatus = $this->getDefaultHasConfirmReceive();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('company_id', $companyId)->where('transferType', $transferType)->where('confirmReceive', $confirmStatus)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('company_id', $companyId)->where('transferType', $transferType)->where('confirmReceive', $confirmStatus)->sum('money');
@@ -205,11 +215,12 @@ class QcTransfers extends Model
     # tong tien da nhan va da xac nhan tu dau tu cua 1 cong ty
     public function totalMoneyReceivedFromInvestmentOfCompanyAndDate($companyId, $date = null)
     {
+        $hFunction = new \Hfunction();
         # tien dau tu
         $transferType = $this->getDefaultTransferTypeOfInvestment();
         # da xac nhan
         $confirmStatus = $this->getDefaultHasConfirmReceive();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('company_id', $companyId)->where('transferType', $transferType)->where('confirmReceive', $confirmStatus)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('company_id', $companyId)->where('transferType', $transferType)->where('confirmReceive', $confirmStatus)->sum('money');
@@ -230,7 +241,8 @@ class QcTransfers extends Model
 
     public function infoOfTransferStaff($staffId, $date, $orderBy = 'DESC')
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('transfersDate', 'like', "%$date%")->orderBy('transfers_id', $orderBy)->get();
         } else {
             return QcTransfers::where('transfersStaff_id', $staffId)->orderBy('transfers_id', $orderBy)->get();
@@ -239,9 +251,10 @@ class QcTransfers extends Model
 
     public function infoConfirmedOfTransferStaff($staffId, $date)
     {
+        $hFunction = new \Hfunction();
         # da xac nhan
         $confirmStatus = $this->getDefaultHasConfirmReceive();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->where('transfersDate', 'like', "%$date%")->orderBy('transfers_id', 'DESC')->get();
         } else {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->orderBy('transfers_id', 'DESC')->get();
@@ -252,7 +265,8 @@ class QcTransfers extends Model
     // tong tien da giao cua 1 nhan vien
     public function totalMoneyOfTransferStaffAndDate($staffId, $date = null)
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('transfersStaff_id', $staffId)->sum('money');
@@ -263,9 +277,10 @@ class QcTransfers extends Model
     // tong tien da giao va chua xac nhan
     public function totalMoneyUnConfirmOfTransferStaff($staffId, $date = null)
     {
+        $hFunction = new \Hfunction();
         # chua xac nhan
         $confirmStatus = $this->getDefaultNotConfirmReceive();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->sum('money');
@@ -276,9 +291,10 @@ class QcTransfers extends Model
     // tong tien da giao va da duoc xac nhan
     public function totalMoneyConfirmedOfTransferStaffAndDate($staffId, $date = null)
     {
+        $hFunction = new \Hfunction();
         # da xac nhan
         $confirmStatus = $this->getDefaultHasConfirmReceive();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->sum('money');
@@ -289,11 +305,12 @@ class QcTransfers extends Model
     // tong tien da giao va da duoc xac nhan dong y
     public function totalMoneyConfirmedAndAcceptedOfTransferStaff($staffId, $date = null)
     {
+        $hFunction = new \Hfunction();
         # da xac nhan
         $confirmStatus = $this->getDefaultHasConfirmReceive();
         # co dong y
         $acceptStatus = $this->getDefaultHasAccept();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('acceptStatus', $acceptStatus)->where('confirmReceive', $confirmStatus)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('acceptStatus', $acceptStatus)->where('confirmReceive', $confirmStatus)->sum('money');
@@ -304,11 +321,12 @@ class QcTransfers extends Model
     // tong tien nop cho cong ty cua 1 nhan vien - nop cho thu quy cap quan ly
     public function totalMoneyConfirmedTransfersForTreasurerManage($staffId, $date = null)
     {
+        $hFunction = new \Hfunction();
         # da xac nhan
         $confirmStatus = $this->getDefaultHasConfirmReceive();
         # thu quy nop cong ty
         $transferType = $this->getDefaultTransferTypeOfTreasurer();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->where('transferType', $transferType)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->where('transferType', $transferType)->sum('money');
@@ -324,7 +342,8 @@ class QcTransfers extends Model
 
     public function infoOfReceiveStaff($staffId, $date, $orderBy = 'DESC')
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('transfersDate', 'like', "%$date%")->orderBy('transfers_id', $orderBy)->get();
         } else {
             return QcTransfers::where('receiveStaff_id', $staffId)->orderBy('transfers_id', $orderBy)->get();
@@ -335,9 +354,10 @@ class QcTransfers extends Model
     // tong tien da nhan va da duoc xac nhan
     public function infoConfirmedOfReceiveStaff($staffId, $date)
     {
+        $hFunction = new \Hfunction();
         # da xac nhan
         $confirmStatus = $this->getDefaultHasConfirmReceive();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->where('transfersDate', 'like', "%$date%")->orderBy('transfers_id', 'DESC')->get();
         } else {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->orderBy('transfers_id', 'DESC')->get();
@@ -347,7 +367,8 @@ class QcTransfers extends Model
 
     public function totalMoneyOfReceiveStaffAndDate($staffId, $date)
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('receiveStaff_id', $staffId)->sum('money');
@@ -357,9 +378,10 @@ class QcTransfers extends Model
     # tong tien da nhan va da xac nhan
     public function totalMoneyConfirmedOfReceivedStaffAndDate($staffId, $date = null)
     {
+        $hFunction = new \Hfunction();
         # da xac nhan
         $confirmStatus = $this->getDefaultHasConfirmReceive();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', $confirmStatus)->sum('money');
@@ -369,11 +391,12 @@ class QcTransfers extends Model
     # tong tien da nhan va da xac nhan tu tien thu don hang cua 1 NV
     public function totalMoneyReceivedFromOrderPayOfStaffAndDate($staffId, $date = null)
     {
+        $hFunction = new \Hfunction();
         # kinh doanh nop tien
         $transferType = $this->getDefaultTransferTypeOfBusiness();
         # da xac nhan
         $confirmStatus = $this->getDefaultHasConfirmReceive();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', $transferType)->where('confirmReceive', $confirmStatus)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', $transferType)->where('confirmReceive', $confirmStatus)->sum('money');
@@ -383,11 +406,12 @@ class QcTransfers extends Model
     # tong tien da nhan va da xac nhan tu dau tu cua 1 NV
     public function totalMoneyReceivedFromInvestmentOfStaffAndDate($staffId, $date = null)
     {
+        $hFunction = new \Hfunction();
         # da xac nhan
         $confirmStatus = $this->getDefaultHasConfirmReceive();
         # chuyen dau tu
         $transferType = $this->getDefaultTransferTypeOfInvestment();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', $transferType)->where('confirmReceive', $confirmStatus)->where('transfersDate', 'like', "%$date%")->sum('money');
         } else {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('transferType', $transferType)->where('confirmReceive', $confirmStatus)->sum('money');
@@ -397,9 +421,10 @@ class QcTransfers extends Model
     // tong tien da nhan va chua xac nhan cua 1 nhan vien
     public function sumReceiveUnconfirmedOfStaff($staffId, $date)
     {
+        $hFunction = new \Hfunction();
         # chua xac nhan
         $notConfirm = $this->getDefaultNotConfirmReceive();
-        if (!empty($date)) {
+        if (!$hFunction->checkEmpty($date)) {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', $notConfirm)->where('transfersDate', 'like', "%$date%")->count();
         } else {
             return QcTransfers::where('receiveStaff_id', $staffId)->where('confirmReceive', $notConfirm)->count();
@@ -423,11 +448,12 @@ class QcTransfers extends Model
     //========= ========== ========== GET INFO ========== ========== ==========
     public function getInfo($transfersId = '', $field = '')
     {
-        if (empty($transfersId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($transfersId)) {
             return QcTransfers::get();
         } else {
             $result = QcTransfers::where('transfers_id', $transfersId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -437,9 +463,9 @@ class QcTransfers extends Model
 
     // ---------- ----------  LAY THONG TIN --------- -------
     # chon thong tin chuyen tien theo 1 danh sach ma nhan vien / cong ty theo ngay thang
-    public function selectInfoByListReceiveStaffAndDate($listStaffId, $companyId, $date, $transfersType = 0)
+    public function selectInfoByListReceiveStaffAndDate($listStaffId, $companyId, $date, $transfersType = 100)
     {
-        if ($transfersType == 0) {
+        if ($transfersType == $this->getDefaultAllTransferType()) {
             return QcTransfers::wherein('receiveStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->orderBy('transfersDate', 'DESC')->select('*');
         } else {
             return QcTransfers::wherein('receiveStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->where('transferType', $transfersType)->orderBy('transfersDate', 'DESC')->select('*');
@@ -447,9 +473,9 @@ class QcTransfers extends Model
     }
 
     # chon thong tin chuyen tien theo 1 danh sach ma nhan vien / cong ty theo ngay thang
-    public function selectInfoByListTransfersStaffAndDate($listStaffId, $companyId, $date, $transfersType = 0)
+    public function selectInfoByListTransfersStaffAndDate($listStaffId, $companyId, $date, $transfersType = 100)
     {
-        if ($transfersType == 0) {
+        if ($transfersType == $this->getDefaultAllTransferType()) {
             return QcTransfers::wherein('transfersStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->orderBy('transfersDate', 'DESC')->select('*');
         } else {
             return QcTransfers::wherein('transfersStaff_id', $listStaffId)->where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->where('transferType', $transfersType)->orderBy('transfersDate', 'DESC')->select('*');
@@ -477,7 +503,8 @@ class QcTransfers extends Model
     # lay thong tin 1 cot theo ma nhap vao
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcTransfers::where('transfers_id', $objectId)->pluck($column)[0];
@@ -580,8 +607,9 @@ class QcTransfers extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcTransfers::orderBy('transfers_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->transfers_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->transfers_id;
     }
 
     # kiem tra giao tien duoc xac nhan hay chua
@@ -618,7 +646,8 @@ class QcTransfers extends Model
     #============ =========== ============ thong ke ============= =========== ==========
     public function totalReceiveMoneyOfCompany($listCompanyId, $staffId, $dateFilter = null)
     {
-        if (empty($dateFilter)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcTransfers::whereIn('company_id', $listCompanyId)->where('receiveStaff_id', $staffId)->sum('money');
         } else {
             return QcTransfers::whereIn('company_id', $listCompanyId)->where('receiveStaff_id', $staffId)->where('transfersDate', 'like', "%$dateFilter%")->sum('money');
@@ -627,7 +656,8 @@ class QcTransfers extends Model
 
     public function totalTransfersMoneyOfStaff($staffId, $dateFilter = null)
     {
-        if (empty($dateFilter)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcTransfers::where('transfersStaff_id', $staffId)->sum('money');
         } else {
             return QcTransfers::where('transfersStaff_id', $staffId)->where('transfersDate', 'like', "%$dateFilter%")->sum('money');

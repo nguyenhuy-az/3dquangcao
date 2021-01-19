@@ -220,7 +220,7 @@ class QcWork extends Model
             # truong hop phien ban cu chua cap nhat
             $staffId = $this->staffIdOld($workId);
             $dataStaffWorkSalary = $modelCompanyStaffWork->staffWorkSalaryActivityOfStaff($staffId);
-            if (count($dataStaffWorkSalary) > 0) {
+            if ($hFunction->checkCount($dataStaffWorkSalary)) {
                 $overtime = $dataStaffWorkSalary->overtimeHour($dataStaffWorkSalary->workSalaryId());
                 $totalSalaryOnHour = $dataStaffWorkSalary->salaryOnHour(); # lương lam trong 1 gio
             } else { # theo ban luong phien bang cu
@@ -288,7 +288,7 @@ class QcWork extends Model
     {
         $hFunction = new \Hfunction();
         if (!$hFunction->checkEmpty($date)) {
-            return QcWork::where(['companyStaffWork_id' => $companyStaffWorkId])->where('fromDate', 'like', "%$date%")->where('action', $this->getDefaultHasAction())->first();
+            return QcWork::where('companyStaffWork_id', $companyStaffWorkId)->where('fromDate', 'like', "%$date%")->where('action', $this->getDefaultHasAction())->first();
         } else {
             return QcWork::where(['companyStaffWork_id' => $companyStaffWorkId, 'action' => $this->getDefaultHasAction()])->first();
         }
@@ -330,8 +330,22 @@ class QcWork extends Model
         return QcWork::where('fromDate', 'like', "%$dateFilter%")->whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('created_at', 'DESC')->select('*');
     }
 
+    # bang cham cong cua 1 nhan vien
+    public function getInfoOfStaff($staffId, $dateFilter = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfStaff($staffId);
+        if ($hFunction->checkEmpty($dateFilter)) {
+            return QcWork::whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('created_at', 'DESC')->get();
+        } else {
+            return QcWork::where('fromDate', 'like', "%$dateFilter%")->whereIn('companyStaffWork_id', $listCompanyStaffWorkId)->orderBy('created_at', 'DESC')->get();
+        }
+
+    }
+
     //----------- NHAN VIEN ------------
-    public function staff()
+    public function staff() //phien ban cu
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
     }
@@ -353,6 +367,7 @@ class QcWork extends Model
         return QcWork::where('staff_id', $staffId)->update(['action' => $this->getDefaultNotAction()]);
     }
 
+    # bang cham cong dang hoat dong cua 1 nv
     public function infoActivityOfStaff($staffId = null, $date = null)
     {
         $hFunction = new \Hfunction();
@@ -422,6 +437,7 @@ class QcWork extends Model
 
     public function existStaffActivity($staffId = null)
     {
+
         return (count($this->infoActivityOfStaff($staffId)) > 0) ? true : false;
     }
 
@@ -546,6 +562,12 @@ class QcWork extends Model
         return $modelBonus->totalMoneyAppliedOfWork($this->checkIdNull($workId));
     }
 
+    #so lan duoc thuong (co ap dung)
+    public function getInfoHasApplyBonus($workId = null)
+    {
+        $modelBonus = new QcBonus();
+        return $modelBonus->getInfoHasApplyFromListWorkId([$this->checkIdNull($workId)]);
+    }
     //----------- phạt ------------
     public function minusMoney()
     {
@@ -570,6 +592,13 @@ class QcWork extends Model
     {
         $modelMinusMoney = new QcMinusMoney();
         return $modelMinusMoney->totalMoneyAppliedOfWork($this->checkIdNull($workId));
+    }
+
+    #so lan duoc thuong (co ap dung)
+    public function getInfoHasApplyMinusMoney($workId = null)
+    {
+        $modelMinus = new QcMinusMoney();
+        return $modelMinus->getInfoHasApplyFromListWorkId([$this->checkIdNull($workId)]);
     }
 
     //----------- chấm công tạm ------------
@@ -634,6 +663,39 @@ class QcWork extends Model
     {
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->infoOfWork($this->checkIdNull($workId), $orderBy);
+    }
+
+    # lay ngay co lam viec - co cham cong
+    public function getInfoHasWorkTimekeeping($workId = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoHasWorkFromListWork([$this->checkIdNull($workId)]);
+    }
+
+    # ngay nghi co phep cua 1 bang cham cong
+    public function getInfoOffWorkHasPermissionTimekeeping($workId = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoOffWorkHasPermissionFromListWork([$this->checkIdNull($workId)]);
+    }
+    # ngay nghi  khong phep cua 1 bang cham cong
+    public function getInfoOffWorkNotPermissionTimekeeping($workId = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoOffWorkNotPermissionFromListWork([$this->checkIdNull($workId)]);
+    }
+
+    # ngay di lam tre cua 1 bang cham cong
+    public function getInfoLateWork($workId = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoLateWork([$this->checkIdNull($workId)]);
+    }
+    # so ngay cua 1 bang cham cong
+    public function getInfoOverTimeWork($workId = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoOverTimeWork([$this->checkIdNull($workId)]);
     }
 
     # tong gio lam chinh

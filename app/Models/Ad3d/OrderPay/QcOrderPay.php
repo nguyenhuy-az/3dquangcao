@@ -3,9 +3,6 @@
 namespace App\Models\Ad3d\OrderPay;
 
 use App\Models\Ad3d\Bonus\QcBonus;
-use App\Models\Ad3d\BonusDepartment\QcBonusDepartment;
-use App\Models\Ad3d\Company\QcCompany;
-use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget;
 use App\Models\Ad3d\Staff\QcStaff;
@@ -38,6 +35,24 @@ class QcOrderPay extends Model
     public function getDefaultPayerPhone()
     {
         return null;
+    }
+
+    # mac dinh da giao
+    public function getDefaultHasTransfers()
+    {
+        return 1;
+    }
+
+    # mac dinh chua giao
+    public function getDefaultNotTransfers()
+    {
+        return 0;
+    }
+
+    # mac dinh tat ca da giao / chua giao
+    public function getDefaultAllTransfers()
+    {
+        return 100;
     }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
@@ -242,7 +257,7 @@ class QcOrderPay extends Model
                             $workId = $dataWork->workId();
                             # kiem tra da duoc thuong chua - neu chua thi thuong
                             if (!$modelBonus->checkOrderPayBonus($workId, $payId)) {
-                                if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), $bonusNote, $bonusHasApply, $workId, $bonusOrderAllocationId, $bonusOrderConstructionId, $payId,$bonusWorkAllocationId)) {
+                                if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), $bonusNote, $bonusHasApply, $workId, $bonusOrderAllocationId, $bonusOrderConstructionId, $payId, $bonusWorkAllocationId)) {
                                     $bonusId = $modelBonus->insertGetId();
                                     $notifyStaffId = $staffBusiness->staffId();
                                     ///$notifyStaffId = (is_int($notifyStaffId)) ? $notifyStaffId : $notifyStaffId[0];
@@ -291,7 +306,7 @@ class QcOrderPay extends Model
                             $bonusOrderAllocationId = $modelBonus->getDefaultOrderAllocationId();
                             $bonusOrderConstructionId = $modelBonus->getDefaultOrderConstructionId();
                             $bonusWorkAllocationId = $modelBonus->getDefaultWorkAllocationId();
-                            if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), $bonusNote, $bonusHasApply, $workId, $bonusOrderAllocationId, $bonusOrderConstructionId, $payId,$bonusWorkAllocationId)) {
+                            if ($modelBonus->insert($bonusMoney, $hFunction->carbonNow(), $bonusNote, $bonusHasApply, $workId, $bonusOrderAllocationId, $bonusOrderConstructionId, $payId, $bonusWorkAllocationId)) {
                                 $bonusId = $modelBonus->insertGetId();
                                 $notifyStaffId = $dataStaffCreated->staffId();
                                 //$notifyStaffId = (is_int($notifyStaffId)) ? $notifyStaffId : $notifyStaffId[0];
@@ -321,7 +336,7 @@ class QcOrderPay extends Model
         $bonusPercent = $modelOrderBonusBudget->getPercentOfBusinessManage($dataOrder->orderId());
         if ($bonusPercent > 0) {
             $moneyPay = $dataOrderPay->money();
-            $moneyPay = (is_array($moneyPay)) ? $moneyPay[0] : $moneyPay;
+            //$moneyPay = (is_array($moneyPay)) ? $moneyPay[0] : $moneyPay;
             return (int)($moneyPay * ($bonusPercent / 100));
         } else {
             return 0;
@@ -337,7 +352,7 @@ class QcOrderPay extends Model
         $bonusPercent = $modelOrderBonusBudget->getPercentOfBusinessStaff($dataOrder->orderId());
         if ($bonusPercent > 0) {
             $moneyPay = $dataOrderPay->money();
-            $moneyPay = (is_array($moneyPay)) ? $moneyPay[0] : $moneyPay;
+            //$moneyPay = (is_array($moneyPay)) ? $moneyPay[0] : $moneyPay;
             return (int)($moneyPay * ($bonusPercent / 100));
         } else {
             return 0;
@@ -380,10 +395,10 @@ class QcOrderPay extends Model
     {
         $modelTransferDetail = new QcTransfersDetail();
         # 100 - mac dinh chon tat ca
-        if ($transferStatus == 1) { // da giao
+        if ($transferStatus == $this->getDefaultHasTransfers()) { // da giao
             $listPayIdTransferred = $modelTransferDetail->listPayId();
             return QcOrderPay:: whereIn('pay_id', $listPayIdTransferred)->whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$date%")->orderBy('datePay', 'DESC')->select('*');
-        } elseif ($transferStatus == 0) { // chua giao
+        } elseif ($transferStatus == $this->getDefaultNotTransfers()) { // chua giao
             $listPayIdTransferred = $modelTransferDetail->listPayId();
             return QcOrderPay:: whereNotIn('pay_id', $listPayIdTransferred)->whereIn('staff_id', $listStaffId)->whereIn('order_id', $listOrderId)->where('datePay', 'like', "%$date%")->orderBy('datePay', 'DESC')->select('*');
         } else {

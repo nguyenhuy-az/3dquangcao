@@ -42,8 +42,8 @@ class QcTransfersDetail extends Model
         if (QcTransfersDetail::where('detail_id', $detailId)->delete()) {
             # cap nhat so tien chuyen
             $moneyTransfer = $modelTransfer->money($transferId);
-            $moneyTransfer = (is_int($moneyTransfer)) ? $moneyTransfer : $moneyTransfer[0];
-            $moneyPay = (is_int($moneyPay)) ? $moneyPay : $moneyPay[0];
+            //$moneyTransfer = (is_int($moneyTransfer)) ? $moneyTransfer : $moneyTransfer[0];
+            //$moneyPay = (is_int($moneyPay)) ? $moneyPay : $moneyPay[0];
             $modelTransfer->updateMoney($transferId, $moneyTransfer - $moneyPay);
         }
     }

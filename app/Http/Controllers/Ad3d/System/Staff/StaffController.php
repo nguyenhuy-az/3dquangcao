@@ -31,9 +31,10 @@ class StaffController extends Controller
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
+        //$modelWork = new qc
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
-        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        $companyFilterId = ($companyFilterId == 'null') ? $hFunction->getDefaultNull() : $companyFilterId;
         if ($companyFilterId == $hFunction->getDefaultNull() || $companyFilterId == 0) {
             $companyFilterId = $companyLoginId;
         }
@@ -288,7 +289,6 @@ class StaffController extends Controller
 
     public function postInfoBasicEdit($staffId)
     {
-        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $firstName = Request::input('txtFirstName');
         $lastName = Request::input('txtLastName');

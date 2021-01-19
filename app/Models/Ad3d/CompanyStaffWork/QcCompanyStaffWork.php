@@ -716,10 +716,11 @@ class QcCompanyStaffWork extends Model
     //kiem tra nv thuoc bo phan thiet ke cap quan ly hay khong
     public function checkDesignDepartmentAndManageRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkDesignDepartmentAndManageRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -728,10 +729,11 @@ class QcCompanyStaffWork extends Model
     //kiem tra nv thuoc bo phan thiet ke cap thong thuong
     public function checkDesignDepartmentAndNormalRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkDesignDepartmentAndNormalRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;

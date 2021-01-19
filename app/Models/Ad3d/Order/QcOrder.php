@@ -690,6 +690,38 @@ class QcOrder extends Model
         }
     }
 
+    # lay danh sach don hang da hoan thanh - dung hen cua 1 nhan vien
+    public function getInfoHasFinishNotLateOfStaff($staffId, $dateFilter = null)
+    {
+        $hFunction = new \Hfunction();
+        $hasFinish = $this->getDefaultHasFinishStatus();
+        # khong tre
+        $notLate = $this->getDefaultNotLate();
+        # khong huy
+        $notCancel = $this->getDefaultNotLate();
+        if ($hFunction->checkEmpty($dateFilter)) {
+            return QcOrder::where('staffReceive_id', $staffId)->where('finishStatus', $hasFinish)->where('lateStatus', $notLate)->where('cancelStatus', $notCancel)->orderBy('receiveDate', 'DESC')->get();
+        } else {
+            return QcOrder::where('staffReceive_id', $staffId)->where('finishStatus', $hasFinish)->where('lateStatus', $notLate)->where('cancelStatus', $notCancel)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->get();
+        }
+    }
+
+    # lay danh sach don hang da hoan thanh - tre hen cua 1 nhan vien
+    public function getInfoHasFinishHasLateOfStaff($staffId, $dateFilter = null)
+    {
+        $hFunction = new \Hfunction();
+        $hasFinish = $this->getDefaultHasFinishStatus();
+        # khong tre
+        $hasLate = $this->getDefaultHasLate();
+        # khong huy
+        $notCancel = $this->getDefaultNotLate();
+        if ($hFunction->checkEmpty($dateFilter)) {
+            return QcOrder::where('staffReceive_id', $staffId)->where('finishStatus', $hasFinish)->where('lateStatus', $hasLate)->where('cancelStatus', $notCancel)->orderBy('receiveDate', 'DESC')->get();
+        } else {
+            return QcOrder::where('staffReceive_id', $staffId)->where('finishStatus', $hasFinish)->where('lateStatus', $hasLate)->where('cancelStatus', $notCancel)->where('receiveDate', 'like', "%$dateFilter%")->orderBy('receiveDate', 'DESC')->get();
+        }
+    }
+
     # lay danh sach tat ca don hang cua 1 nhan vien
     public function infoOfStaffReceive($staffId = null, $date = null, $confirmStatus = 3, $keyWord = null, $orderBy = 'DESC')
     {

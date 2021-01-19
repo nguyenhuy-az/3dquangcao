@@ -336,24 +336,26 @@ class QcOrderBonusBudget extends Model
 
     public function getInfo($budgetId = '', $field = '')
     {
-        if (empty($budgetId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($budgetId)) {
             return QcOrderBonusBudget::get();
         } else {
             $result = QcOrderBonusBudget::where('budget_id', $budgetId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
             }
         }
     }
-
+    # lay 1 gia tri
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcOrderBonusBudget::where('budget_id', $objectId)->pluck($column);
+            return QcOrderBonusBudget::where('budget_id', $objectId)->pluck($column)[0];
         }
     }
 

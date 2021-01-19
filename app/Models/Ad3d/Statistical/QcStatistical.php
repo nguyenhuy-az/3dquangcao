@@ -40,6 +40,12 @@ class QcStatistical extends Model
     }
 
     // =========== ======= THONG KE THONG TIN CA NHAN ======== ========
+    # thong tin bang cham cong
+    public function statisticGetWork($staffId, $dateFilter = null)
+    {
+        $modelWork = new QcWork();
+        return $modelWork->getInfoOfStaff($staffId, $dateFilter);
+    }
     //======= THONG TIN CHUYEN CAN ===========
     # lay danh sach bang cham cong cua 1 nhan vien theo thang nam
     public function listWorkIdOfListCompanyStaffWork($staffId, $dateFilter = null)
@@ -176,6 +182,7 @@ class QcStatistical extends Model
         $modelOrder = new QcOrder();
         return $modelOrder->getInfoAllOfStaff($staffId, $dateFilter);
     }
+
     # danh sach don hang bi tre
     public function statisticGetHasLateOrder($staffId, $dateFilter = null)
     {
@@ -188,5 +195,19 @@ class QcStatistical extends Model
     {
         $modelOrder = new QcOrder();
         return $modelOrder->getInfoHasFinishOfStaff($staffId, $dateFilter);
+    }
+
+    # danh sach don hang da hoan thanh va dung hen
+    public function statisticGetHasFinishNotLateOrder($staffId, $dateFilter = null)
+    {
+        $modelOrder = new QcOrder();
+        return $modelOrder->getInfoHasFinishNotLateOfStaff($staffId, $dateFilter);
+    }
+
+    # danh sach don hang da hoan thanh va tre hen
+    public function statisticGetHasFinishHasLateOrder($staffId, $dateFilter = null)
+    {
+        $modelOrder = new QcOrder();
+        return $modelOrder->getInfoHasFinishHasLateOfStaff($staffId, $dateFilter);
     }
 }
