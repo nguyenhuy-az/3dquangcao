@@ -544,11 +544,15 @@ Route::group(['prefix' => 'ad3d'], function () {
 
         //nhan vien
         Route::group(['prefix' => 'staff'], function () {
-            #---------- --------- da nghi --------- ---------
+            #---------- --------- thong ke --------- ---------
+            Route::group(['prefix' => 'statistical'], function () {
+                Route::get('work/{workId?}/{workStatus?}', ['as' => 'qc.ad3d.system.staff.statistical.work.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatisticalWork']);
+                # thong ke - bo phan thi cong
+                Route::get('construction/{workId?}/{constructionStatus?}', ['as' => 'qc.ad3d.system.staff.statistical.construction.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatisticalConstruction']);
+                # thong ke
+                Route::get('/{companyStaffWorkId?}/{monthFilter?}/{yearMonth?}', ['as' => 'qc.ad3d.system.staff.statistical.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatistical']);
+            });
             #---------- --------- dang lam --------- ---------
-            # thong ke
-            Route::get('statistical/{companyStaffWorkId?}/{monthFilter?}/{yearMonth?}', ['as' => 'qc.ad3d.system.staff.statistical.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatistical']);
-
             #them moi
             Route::get('add', ['as' => 'qc.ad3d.system.staff.add.get', 'uses' => 'Ad3d\System\Staff\StaffController@getAdd']);
             Route::get('add/department', ['as' => 'qc.ad3d.system.staff.department.add', 'uses' => 'Ad3d\System\Staff\StaffController@getAddDepartment']);

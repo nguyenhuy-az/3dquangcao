@@ -30,6 +30,7 @@ if ($monthFilter > 0) { # lay theo thang nam - theo 1 bang cham cong
     # bang cham cong dc chon - chi lay theo nam
     $dataWorkSelected = $modelStatistical->statisticGetWork($statisticStaffId, $yearFilter)->first();
 }
+$workSelectedId = $dataWorkSelected->workId();
 //========  ============ CHUYEN CAN ======== ==========
 # co lam viec
 $dataAllTimekeeping = $dataWorkSelected->getInfoHasWorkTimekeeping();// $modelStatistical->statisticGetHasWorkTimekeeping($statisticStaffId, $dateFilter);
@@ -126,12 +127,8 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                         $dataWork = $modelStatistical->statisticGetWork($statisticStaffId, $y);
                         ?>
                         @if($hFunction->checkCount($dataWork))
-                            <?php
-                            # lay bang thong tin login
-                            $workSelectedId = $dataWorkSelected->workId();
-                            ?>
                             @if($y == $yearFilter)
-                                <a data-href="#" class="list-group-item" style="color: red;">
+                                <a data-href="#" class="qc-cursor-pointer list-group-item" style="color: red;">
                                     <i class="glyphicon glyphicon-minus qc-font-size-12"></i>
                                     {!! $y !!}
                                     <span class="badge" style="background-color: red;">100%</span>
@@ -156,7 +153,7 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                                     @endforeach
                                 </ul>
                             @else
-                                <a data-href="#" class="list-group-item"
+                                <a data-href="#" class="qc-cursor-pointer list-group-item"
                                    onclick="qc_main.toggle('#qc_container_work_{!! $y !!}');">
                                     <i class="glyphicon glyphicon-plus qc-font-size-12"></i>
                                     {!! $y !!}
@@ -201,7 +198,12 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <tr>
-                                            <td>Tổng số ngày làm</td>
+                                            <td>
+                                                <a class="qc-link"
+                                                   href="{!! route('qc.ad3d.system.staff.statistical.work.get',"$workSelectedId/get-has-work") !!}">
+                                                    Tổng số ngày đi làm
+                                                </a>
+                                            </td>
                                             <td class="text-center">
                                                 <b style="color:red;">
                                                     {!! $hFunction->getCount($dataAllTimekeeping) !!}
@@ -290,7 +292,12 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <tr>
-                                            <td>Tất cả sản phẩm được giao</td>
+                                            <td>
+                                                <a class="qc-link"
+                                                   href="{!! route('qc.ad3d.system.staff.statistical.construction.get',"$workSelectedId/get-all") !!}">
+                                                    Tất cả sản phẩm được giao
+                                                </a>
+                                            </td>
                                             <td class="text-center">
                                                 <b style="color:red;">
                                                     {!! $hFunction->getCount($dataAllReceiveWorkAllocation) !!}
@@ -308,7 +315,12 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Thi công bị trễ</td>
+                                            <td>
+                                                <a class="qc-link"
+                                                   href="{!! route('qc.ad3d.system.staff.statistical.construction.get',"$workSelectedId/get-all-late") !!}">
+                                                    Tất cả sản phẩm bị trễ
+                                                </a>
+                                            </td>
                                             <td class="text-center">
                                                 <b style="color:red;">
                                                     {!! $hFunction->getCount($dataWorkAllocationHasLate) !!}
@@ -326,7 +338,12 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                                             </td>
                                         </tr>
                                         <tr style="border-top: 2px solid black;">
-                                            <td>Sản phẩm đã hoàn thành</td>
+                                            <td>
+                                                <a class="qc-link"
+                                                   href="{!! route('qc.ad3d.system.staff.statistical.construction.get',"$workSelectedId/get-all-finish") !!}">
+                                                    Sản phẩm đã hoàn thành
+                                                </a>
+                                            </td>
                                             <td class="text-center">
                                                 <b style="color:blue;">
                                                     {!! $hFunction->getCount($dataWorkAllocationHasFinish) !!}
@@ -344,7 +361,12 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Hoàn thành đúng hẹn</td>
+                                            <td>
+                                                <a class="qc-link"
+                                                   href="{!! route('qc.ad3d.system.staff.statistical.construction.get',"$workSelectedId/get-finish-not-late") !!}">
+                                                    Hoàn thành đúng hẹn
+                                                </a>
+                                            </td>
                                             <td class="text-center">
                                                 <b style="color:brown;">
                                                     {!! $hFunction->getCount($dataWorkAllocationHasFinishNotLate) !!}
@@ -362,7 +384,12 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Hoàn thành trễ hẹn</td>
+                                            <td>
+                                                <a class="qc-link"
+                                                   href="{!! route('qc.ad3d.system.staff.statistical.construction.get',"$workSelectedId/get-finish-has-late") !!}">
+                                                    Hoàn thành trễ hẹn
+                                                </a>
+                                            </td>
                                             <td class="text-center">
                                                 <b style="color:brown;">
                                                     {!! $hFunction->getCount($dataWorkAllocationHasFinishHasLate) !!}

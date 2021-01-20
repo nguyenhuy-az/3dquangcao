@@ -283,6 +283,12 @@ class QcTimekeeping extends Model
         return QcTimekeeping::whereIn('work_id', $listWorkId)->whereNull('dateOff')->orderBy('timeBegin', 'DESC')->orderBy('dateOff', 'DESC')->get();
     }
 
+    # thong tin ngay nghi
+    public function getInfoNotWorkFromListWork($listWorkId)
+    {
+        return QcTimekeeping::whereIn('work_id', $listWorkId)->whereNotNull('dateOff')->orderBy('timeBegin', 'DESC')->orderBy('dateOff', 'DESC')->get();
+    }
+
     # thong tin nghi co phep
     public function getInfoOffWorkHasPermissionFromListWork($listWorkId)
     {
@@ -504,7 +510,7 @@ class QcTimekeeping extends Model
 
     public function checkOvertime($timekeepingId = null)
     {
-        return ($this->plusMinute($timekeepingId) > 0) ? true : false;
+        return ($this->plusMinute($timekeepingId) > $this->getDefaultPlusMinute()) ? true : false;
     }
 
     public function checkOff($timekeepingId = null)

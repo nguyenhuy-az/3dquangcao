@@ -253,7 +253,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                                     <b>
                                                         {!! date('H:i',strtotime($timekeeping->timeBegin())) !!}
                                                     </b>
-                                                    @if(!empty($timekeeping->timeEnd()))
+                                                    @if(!$hFunction->checkEmpty($timekeeping->timeEnd()))
                                                         <br/>
                                                         <span style="color: brown;">{!! date('d-m-Y',strtotime($timekeeping->timeEnd())) !!}</span>
                                                         <b> {!! date('H:i',strtotime($timekeeping->timeEnd())) !!}</b>

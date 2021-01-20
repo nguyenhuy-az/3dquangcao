@@ -100,7 +100,36 @@ class StaffController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        return view('ad3d.system.staff.statistical', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataCompanyStaffWork', 'dataStaff', 'dataAccess', 'monthFilter', 'yearFilter', 'dateFilter'));
+        return view('ad3d.system.staff.statistic.statistic', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataCompanyStaffWork', 'dataStaff', 'dataAccess', 'monthFilter', 'yearFilter', 'dateFilter'));
+    }
+    # chi tiet thong ke thong tin lam viec
+    public function getStatisticalWork($workId, $workStatus =null)
+    {
+        $modelCompany = new QcCompany();
+        $modelWork = new QcWork();
+        $modelStaff = new QcStaff();
+        $modelStatistical = new QcStatistical();
+        $dataAccess = [
+            'accessObject' => 'staff',
+            'subObject' => 'staffOn'
+        ];
+        $dataWork = $modelWork->getInfo($workId);
+        return view('ad3d.system.staff.statistic.statistic-work', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataAccess', 'dataWork','workStatus'));
+    }
+
+    # chi tiet thong ke bo phan thi cong
+    public function getStatisticalConstruction($workId, $constructionStatus =null)
+    {
+        $modelCompany = new QcCompany();
+        $modelWork = new QcWork();
+        $modelStaff = new QcStaff();
+        $modelStatistical = new QcStatistical();
+        $dataAccess = [
+            'accessObject' => 'staff',
+            'subObject' => 'staffOn'
+        ];
+        $dataWork = $modelWork->getInfo($workId);
+        return view('ad3d.system.staff.statistic.statistic-construction', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataAccess', 'dataWork','constructionStatus'));
     }
 
     # them

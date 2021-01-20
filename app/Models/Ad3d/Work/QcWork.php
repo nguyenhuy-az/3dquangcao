@@ -671,6 +671,12 @@ class QcWork extends Model
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->getInfoHasWorkFromListWork([$this->checkIdNull($workId)]);
     }
+    # lay ngay khong lam viec - khong cham cong
+    public function getInfoNotWorkTimekeeping($workId = null)
+    {
+        $modelTimekeeping = new QcTimekeeping();
+        return $modelTimekeeping->getInfoNotWorkFromListWork([$this->checkIdNull($workId)]);
+    }
 
     # ngay nghi co phep cua 1 bang cham cong
     public function getInfoOffWorkHasPermissionTimekeeping($workId = null)
