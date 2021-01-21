@@ -155,7 +155,7 @@ $dateOfMonth = 31;
                             <div class="col-sx-3 col-sm-3 col-md-2 col-lg-2">
                                 <div class="panel panel-default" style="height: 100px; border: 1px solid red;">
                                     <!-- Default panel contents -->
-                                    <div class="panel-heading" style="background-color: brown; color: yellow;">
+                                    <div class="panel-heading" style="background-color: black; color: yellow;">
                                         <b style="font-size: 1.5em;">
                                             {!! $day !!}
                                         </b>

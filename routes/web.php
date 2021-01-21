@@ -546,9 +546,16 @@ Route::group(['prefix' => 'ad3d'], function () {
         Route::group(['prefix' => 'staff'], function () {
             #---------- --------- thong ke --------- ---------
             Route::group(['prefix' => 'statistical'], function () {
-                Route::get('work/{workId?}/{workStatus?}', ['as' => 'qc.ad3d.system.staff.statistical.work.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatisticalWork']);
+                # cham cong
+                Route::get('work/{workId?}', ['as' => 'qc.ad3d.system.staff.statistical.work.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatisticalWork']);
+                # thong ke thuong
+                Route::get('bonus/{workId?}', ['as' => 'qc.ad3d.system.staff.statistical.bonus.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatisticalBonus']);
+                # thong ke phat
+                Route::get('minus-money/{workId?}', ['as' => 'qc.ad3d.system.staff.statistical.minus_money.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatisticalMinus']);
                 # thong ke - bo phan thi cong
                 Route::get('construction/{workId?}/{constructionStatus?}', ['as' => 'qc.ad3d.system.staff.statistical.construction.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatisticalConstruction']);
+                # thong ke - bo phan kinh doanh
+                Route::get('business/{workId?}/{constructionStatus?}', ['as' => 'qc.ad3d.system.staff.statistical.business.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatisticalBusiness']);
                 # thong ke
                 Route::get('/{companyStaffWorkId?}/{monthFilter?}/{yearMonth?}', ['as' => 'qc.ad3d.system.staff.statistical.get', 'uses' => 'Ad3d\System\Staff\StaffController@getStatistical']);
             });
