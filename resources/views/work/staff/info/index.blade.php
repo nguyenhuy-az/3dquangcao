@@ -79,19 +79,20 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
     $applyRuleLabel = 'Áp dụng';
 }
 ?>
-@extends('ad3d.system.staff.index')
-@section('qc_ad3d_index_content')
-    <div class="qc_ad3d_sys_staff_edit_wrap qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+@extends('work.staff.index')
+@section('qc_work_staff_body')
+    <div class="qc_work_staff_info_wrap qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="row">
+            <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                {{-- Menu --}}
+                @include('work.staff.menu')
+            </div>
+        </div>
         <div class="row">
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <a class="qc-link-white-bold btn btn-sm btn-primary" onclick="qc_main.page_back_go();">
                     <i class="glyphicon glyphicon-backward"></i> Về trang trước
                 </a>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <h3 style="color: red;">THÔNG TIN NHÂN VIÊN</h3>
             </div>
         </div>
         @if(!$dataStaff->checkWorkStatus())
@@ -106,18 +107,13 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                     <table class="table table-bordered" style="border: none;">
                         {{--THONG TIN CO BAN--}}
                         <tr>
-                            <td style="background-color: black; color: yellow;padding-bottom: 0;">
+                            <td style="color:red; padding-bottom: 0; border: none;">
                                 <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
-                                <label style="font-size: 1.5em;">Thông tin cơ bản</label>
-                                <a class="qc_staffInfoBasicContainerEdit qc-link-red pull-right "
-                                   data-href="{!! route('qc.ad3d.system.staff.info_basic.edit.get',$staffId) !!}"
-                                   title="Sửa thông tin">
-                                    <i class="glyphicon glyphicon-pencil" style="font-size: 1.5em;"></i>
-                                </a>
+                                <label style="font-size: 1.5em;">THÔNG TIN CÁ NHÂN</label>
                             </td>
                         </tr>
                         <tr>
-                            <td id="staffInfoBasicContainer">
+                            <td id="staffInfoBasicContainer" style="border: none;">
                                 <div class="row">
                                     <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
                                         <div class="row">
@@ -128,12 +124,6 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                                         <img style="max-width: 100%;height: 150px; border: 1px solid #d7d7d7;"
                                                              src="{!! $imageSrc !!}">
                                                     </a>
-                                                    @if(!$hFunction->checkEmpty($image))
-                                                        <a class="qc_ad3d_staff_edit_image_act_del qc-link"
-                                                           data-href="{!! route('qc.ad3d.system.staff.image.delete.get', "$staffId/avatar") !!}">
-                                                            <i style="position: absolute; font-weight: bold; padding: 0 3px; color: red; top: 3px; right: 3px; border: 1px solid #d7d7d7;">x</i>
-                                                        </a>
-                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -145,12 +135,6 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                                         <img style="max-width: 100%;height: 90px;border: 1px solid #d7d7d7;"
                                                              src="{!! $identityCardFrontSrc !!}">
                                                     </a>
-                                                    @if(!$hFunction->checkEmpty($identityCardFront))
-                                                        <a class="qc_ad3d_staff_edit_image_act_del qc-link"
-                                                           data-href="{!! route('qc.ad3d.system.staff.image.delete.get', "$staffId/identityCardFront") !!}">
-                                                            <i style="position: absolute; font-weight: bold; padding: 0 3px; color: red; top: 3px; right: 3px; border: 1px solid #d7d7d7;">x</i>
-                                                        </a>
-                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="text-center col-sx-12 col-sm-12 col-md-6 col-lg-6"
@@ -160,20 +144,8 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                                         <img style="max-width: 100%; height: 90px; border: 1px solid #d7d7d7;"
                                                              src="{!! $identityCardBackSrc !!}">
                                                     </a>
-                                                    @if(!$hFunction->checkEmpty($identityCardBack))
-                                                        <a class="qc_ad3d_staff_edit_image_act_del qc-link"
-                                                           data-href="{!! route('qc.ad3d.system.staff.image.delete.get', "$staffId/identityCardBack") !!}">
-                                                            <i style="position: absolute; font-weight: bold; padding: 0 3px; color: red; top: 3px; right: 3px; border: 1px solid #d7d7d7;">x</i>
-                                                        </a>
-                                                    @endif
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                            <a class=" qc_ad3d_staff_edit_image_act qc-link-green"
-                                               data-href="{!! route('qc.ad3d.system.staff.image.add.get',$staffId) !!}">
-                                                Cập nhật hình ảnh
-                                            </a>
                                         </div>
                                     </div>
                                     <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8">
@@ -251,18 +223,13 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                         </tr>
                         {{--THONG TIN LAM VIEC--}}
                         <tr>
-                            <td style="background-color: black;color: yellow;padding-bottom: 0;">
+                            <td style="color: red;padding-bottom: 0; border: none;">
                                 <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
-                                <label style="font-size: 1.5em;">Làm việc</label>
-                                <a class="qc_staffInfoWorkContainerEdit qc-link-red pull-right"
-                                   data-href="{!! route('qc.ad3d.system.staff_info.work.edit.get',$staffId) !!}"
-                                   title="Sửa thông tin">
-                                    <i class=" glyphicon glyphicon-pencil" style="font-size: 1.5em;"></i>
-                                </a>
+                                <label style="font-size: 1.5em;">CHUYÊN MÔN</label>
                             </td>
                         </tr>
                         <tr>
-                            <td id="staffInfoWorkContainer">
+                            <td id="staffInfoWorkContainer" style="border: none;">
                                 <div class="table-responsive">
                                     <table class="table table-hover table-bordered" style="margin-bottom: 0;">
                                         <tr>
@@ -346,17 +313,13 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                         </tr>
                         {{--THONG TIN LUONG--}}
                         <tr>
-                            <td style="background-color: black; color: yellow; padding-bottom: 0;">
+                            <td style="color: red; padding-bottom: 0; border: none;">
                                 <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
-                                <label style="font-size: 1.5em;">Lương</label>
-                                <a class="qc_staffInfoSalaryContainerEdit qc-link-red pull-right" title="Sửa thông tin"
-                                   data-href="{!! route('qc.ad3d.system.staff_info.salary.edit.get',$staffId) !!}">
-                                    <i class=" glyphicon glyphicon-pencil" style="font-size: 1.5em;"></i>
-                                </a>
+                                <label style="font-size: 1.5em;">LƯƠNG</label>
                             </td>
                         </tr>
                         <tr>
-                            <td id="staffInfoSalaryContainer">
+                            <td id="staffInfoSalaryContainer" style="border: none;">
                                 <?php
                                 if ($hFunction->checkCount($dataStaffWorkSalary)) {
                                     $totalSalary = $dataStaffWorkSalary->totalSalary();
@@ -383,7 +346,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                         <div class="table-responsive">
                                             <table class="table table-hover table-condensed" style="margin: 0;">
                                                 <tr>
-                                                    <td style="border-top: none;">
+                                                    <td>
                                                         <i class="glyphicon glyphicon-arrow-right"></i>
                                                         <em>Tổng lương: </em>
                                                         <b class="qc-color-red">{!! $hFunction->currencyFormat($totalSalary) !!}</b>
@@ -454,7 +417,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                                     <td>
                                                         <i class="glyphicon glyphicon-arrow-right"></i>
                                                         <em>Số TK: </em>&nbsp;&nbsp;
-                                                        @if($hFunction->checkEmpty($bankAccount))
+                                                        @if(empty($bankAccount))
                                                             <b>.............</b>
                                                         @else
                                                             <b>{!! $bankAccount !!} </b><br>
@@ -465,7 +428,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                                     <td>
                                                         <i class="glyphicon glyphicon-arrow-right"></i>
                                                         <em>Ngân hàng: </em>&nbsp;&nbsp;
-                                                        @if($hFunction->checkEmpty($bankAccount))
+                                                        @if(empty($bankAccount))
                                                             <b>.............</b>
                                                         @else
                                                             <b>{!! $bankName !!} </b>

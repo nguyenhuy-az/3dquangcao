@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Ad3d\System\JobApplicationInterview;
 
 use App\Models\Ad3d\Company\QcCompany;
-use App\Models\Ad3d\JobApplication\QcJobApplication;
 use App\Models\Ad3d\JobApplicationInterview\QcJobApplicationInterview;
 use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\Staff\QcStaff;

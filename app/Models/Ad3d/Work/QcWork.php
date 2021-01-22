@@ -211,7 +211,7 @@ class QcWork extends Model
                 $totalSalaryOnHour = $dataStaffWorkSalary->salaryOnHour(); # lương lam trong 1 gio
             } else {
                 $overtime = $modelStaffWorkSalary->getDefaultOverTimeHour();
-                $totalSalaryOnHour = $modelStaffWorkSalary->getDefaultSalaryOnHour;
+                $totalSalaryOnHour = $modelStaffWorkSalary->getDefaultSalaryOnHour();
             }
 
 
@@ -234,7 +234,7 @@ class QcWork extends Model
         $moneyOfMainMinute = ($mainMinute / 60) * $totalSalaryOnHour;  # tong luong trong gio lam chinh
         $moneyOfPlusMinute = ($plusMinute / 60) * 1.5 * $totalSalaryOnHour; # tang ca nhan 1.5  - tong luong cua gio tang ca
         $allowanceOvertime = ($plusMinute / 60) * $overtime; # tien phu cap tang ca
-        return (int)($moneyOfMainMinute + $moneyOfPlusMinute + $allowanceOvertime);
+        return  (int)($moneyOfMainMinute + $moneyOfPlusMinute + $allowanceOvertime);
     }
 
     public function confirmExportSalary($workId = null)

@@ -20,6 +20,55 @@ class QcJobApplicationInterview extends Model
 
     private $lastId;
 
+    #mac dinh da xac nhan
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    # mac dinh chua xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
+
+    # mac dinh dong ý
+    public function getDefaultHasAgree()
+    {
+        return 1;
+    }
+
+    # mac dinh khong dong y
+    public function getDefaultNotAgree()
+    {
+        return 0;
+    }
+
+    #mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh ngay xac nhan
+    public function getDefaultConfirmDate()
+    {
+        $hFunction = new \Hfunction();
+        return $hFunction->getDefaultNull();
+    }
+
+    # mac dinh nguoi xac nhan
+    public function getDefaultStaffConfirm()
+    {
+        $hFunction = new \Hfunction();
+        return $hFunction->getDefaultNull();
+    }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
     public function insert($interviewDate, $jobApplicationId)
@@ -55,7 +104,7 @@ class QcJobApplicationInterview extends Model
         $hFunction = new \Hfunction();
         return QcJobApplicationInterview::where('interview_id', $interviewId)->update(
             [
-                'interviewConfirm' => 1,
+                'interviewConfirm' => $this->getDefaultHasConfirm(),
                 'confirmDate' => $hFunction->carbonNow(),
                 'staff_id' => $confirmStaffId,
             ]
@@ -74,8 +123,8 @@ class QcJobApplicationInterview extends Model
         $modelWork = new QcWork();
         if (QcJobApplicationInterview::where('interview_id', $interviewId)->update(
             [
-                'interviewConfirm' => 1,
-                'agreeStatus' => 1,
+                'interviewConfirm' => $this->getDefaultHasConfirm(),
+                'agreeStatus' => $this->getDefaultHasAgree(),
                 'confirmDate' => $hFunction->carbonNow(),
                 'staff_id' => $confirmStaffId,
             ]

@@ -9,6 +9,7 @@
  */
 $hFunction = new Hfunction();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$staffLoginId = $dataStaffLogin->staffId();
 $dataCompanyLogin = $modelStaff->companyLogin();
 $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
 # thong tin yeu cau tang ca
@@ -138,9 +139,9 @@ $dataOverTimeRequest = $dataCompanyStaffWorkLogin->overTimeRequestGetInfoActivit
                 </a>
             </div>
             <div class="qc-work-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">
-                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.change-account.get') !!}">
-                    <i class="glyphicon glyphicon-user" style="font-size: 20px;color: grey;"></i> <br/>
-                    Đổi tài khoản
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.staff.index.get', $staffLoginId) !!}">
+                    <i class="glyphicon glyphicon-user" style="font-size: 20px;color: green;"></i> <br/>
+                    THÔNG TIN CÁ NHÂN
                 </a>
             </div>
             <div class="qc-work-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">

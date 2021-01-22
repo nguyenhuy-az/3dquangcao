@@ -101,8 +101,8 @@ if ($viewLoginObject == 'timekeepingWork') {
 } elseif ($viewLoginObject == 'rules') {
     $label = 'Nội quy';
     $href = route('qc.work.rules');
-} elseif ($viewLoginObject == 'changeAccount') {
-    $label = 'Quản lý tài khoản';
+} elseif ($viewLoginObject == 'staff') {
+    $label = 'Thông tin cá nhân';
 } else {
     $label = 'Trang chủ';
 }

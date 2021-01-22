@@ -397,6 +397,12 @@ class QcStaff extends Model
         return asset('public/images/icons/people.jpeg');
     }
 
+    // up hinh anh
+    public function pathDefaultNotImage()
+    {
+        return asset('public/images/icons/not-image.png');
+    }
+
     public function updateImage($staffId, $image)
     {
         return QcStaff::where('staff_id', $staffId)->update(['image' => $image]);

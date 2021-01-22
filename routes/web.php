@@ -1320,10 +1320,15 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
 
         Route::get('/', ['as' => 'qc.work.timekeeping.get', 'uses' => 'Work\Timekeeping\TimekeepingController@index']);
     });
-
-    //đổi mật khẩu
-    Route::get('change-account', ['as' => 'qc.work.change-account.get', 'uses' => 'Work\WorkController@getChangeAccount']);
-    Route::post('change-account', ['as' => 'qc.work.change-account.post', 'uses' => 'Work\WorkController@postChangeAccount']);
+    # thong tin ca nhan ca nhan
+    Route::group(['prefix' => 'staff'], function () {
+        Route::group(['prefix' => 'account'], function () {
+            //đổi mật khẩu
+            Route::get('change', ['as' => 'qc.work.change-account.get', 'uses' => 'Work\WorkController@getChangeAccount']);
+            Route::post('change', ['as' => 'qc.work.change-account.post', 'uses' => 'Work\WorkController@postChangeAccount']);
+        });
+        Route::get('/{staffId}', ['as' => 'qc.work.staff.index.get', 'uses' => 'Work\Staff\StaffController@index']);
+    });
     // lương
     Route::group(['prefix' => 'salary'], function () {
         //giu tien tu lương

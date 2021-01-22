@@ -18,7 +18,6 @@ $hFunction = new Hfunction();
             {{-- chi tiêt --}}
             <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="qc_work_salary_salary_content row">
-
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black; color: yellow;">
@@ -62,28 +61,30 @@ $hFunction = new Hfunction();
                                     $dataSalaryPayInfo = $salary->infoSalaryPay();
                                     # thong tin lam viec
                                     $dataWork = $salary->work;
+                                    $workId = $dataWork->workId();
                                     $dataCompanyStaffWork = $dataWork->companyStaffWork;
                                     if ($hFunction->checkCount($dataCompanyStaffWork)) { # du lieu moi - 1 NV lam nhieu cty
                                         $dataOld = false;
                                         # tong luong co ban
-                                        $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
+                                        $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($workId);
                                         $fromDate = $dataWork->fromDate();
                                         $monthOfFromDate = date('m', strtotime($fromDate));
                                         $yearOfFromDate = date('Y', strtotime($fromDate));
                                         # tong tien mua vat tu da duyet chua thanh toan
-                                        $totalMoneyImportOfStaff = $modelStaff->importTotalMoneyHasConfirmNotPay($dataCompanyStaffWork->companyId(), $dataStaff->staffId(), date('Y-m', strtotime($fromDate)));
+                                        $totalMoneyImportOfStaff = 1000;/// $modelStaff->importTotalMoneyHasConfirmNotPay($dataCompanyStaffWork->companyId(), $dataStaff->staffId(), date('Y-m', strtotime($fromDate)));
                                         # luong da thanh toan
                                         $totalPaid = $salary->totalPaid();//totalPayConfirmed();
                                         # luong da ung
-                                        $totalMoneyConfirmedBeforePay = $dataWork->totalMoneyConfirmedBeforePay();
+                                        $totalMoneyConfirmedBeforePay = 1000;/// $dataWork->totalMoneyConfirmedBeforePay();
                                         # tong tien nhan
                                         $totalSalaryReceive = $totalSalaryBasic + $benefitMoney + $bonusMoney;
                                         # tong can thanh toan
-                                        $totalUnpaid = $totalSalaryReceive + $totalMoneyImportOfStaff - $totalMoneyConfirmedBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
+                                        $totalUnpaid = 0;/// $totalSalaryReceive + $totalMoneyImportOfStaff - $totalMoneyConfirmedBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
                                     } else {
                                         # du lieu cũ bỏ. 1 NV lam 1 cty
                                         $dataOld = true;
                                     }
+
                                     ?>
                                     @if($dataOld)
                                         <tr>
