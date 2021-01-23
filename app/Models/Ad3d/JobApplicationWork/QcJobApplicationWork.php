@@ -13,6 +13,24 @@ class QcJobApplicationWork extends Model
 
     private $lastId;
 
+    #mac dinh khong biet lam
+    public function getDefaultNotSkill()
+    {
+        return 1;
+    }
+
+    # mac dinh biet lam
+    public function getDefaultMediumSkill()
+    {
+        return 2;
+    }
+
+    #mac dinh lam gioi
+    public function getDefaultGoodSkill()
+    {
+        return 3;
+    }
+
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
     public function insert($skillStatus, $workId, $jobApplicationId)
@@ -70,11 +88,12 @@ class QcJobApplicationWork extends Model
 
     public function getInfo($detailId = '', $field = '')
     {
-        if (empty($detailId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($detailId)) {
             return QcJobApplicationWork::get();
         } else {
             $result = QcJobApplicationWork::where('detail_id', $detailId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -84,10 +103,11 @@ class QcJobApplicationWork extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcJobApplicationWork::where('detail_id', $objectId)->pluck($column);
+            return QcJobApplicationWork::where('detail_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -103,13 +123,13 @@ class QcJobApplicationWork extends Model
 
     public function skillStatusLabel($skillStatus)
     {
-        if($skillStatus == 1){
+        if ($skillStatus == $this->getDefaultNotSkill()) {
             return 'Không biết';
-        }elseif($skillStatus == 2){
+        } elseif ($skillStatus == $this->getDefaultMediumSkill()) {
             return 'Biêt';
-        }elseif($skillStatus == 3){
+        } elseif ($skillStatus == $this->getDefaultGoodSkill()) {
             return 'Giỏi';
-        }else{
+        } else {
             return 'Chưa xác định';
         }
     }

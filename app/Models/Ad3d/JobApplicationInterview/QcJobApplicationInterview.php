@@ -9,6 +9,7 @@ use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
 use App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod;
 use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
 use App\Models\Ad3d\Work\QcWork;
+use App\Models\Ad3d\WorkSkill\QcWorkSkill;
 use Illuminate\Database\Eloquent\Model;
 
 class QcJobApplicationInterview extends Model
@@ -30,6 +31,12 @@ class QcJobApplicationInterview extends Model
     public function getDefaultNotConfirm()
     {
         return 0;
+    }
+
+    #mac dinh tat ca trang thai xac nhan
+    public function getDefaultAllConfirm()
+    {
+        return 100;
     }
 
     # mac dinh dong ý
@@ -120,6 +127,7 @@ class QcJobApplicationInterview extends Model
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $modelStaffWorkSalary = new QcStaffWorkSalary();
         $modelStaffWorkMethod = new QcStaffWorkMethod();
+        $modelWorkSkill = new QcWorkSkill();
         $modelWork = new QcWork();
         if (QcJobApplicationInterview::where('interview_id', $interviewId)->update(
             [
@@ -147,19 +155,18 @@ class QcJobApplicationInterview extends Model
             $email = $dataJobApplication->email();
             $companyId = $dataJobApplication->companyId();
             $departmentId = $dataJobApplication->departmentId();
+            # thong tin ky nag lam viec o bo phan
+            $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
             # thong tin them nhan su
-            $add_image = null;
-            $add_identityFront = null;
-            $add_identityBack = null;
+            $add_image = $hFunction->getDefaultNull();
+            $add_identityFront = $hFunction->getDefaultNull();
+            $add_identityBack = $hFunction->getDefaultNull();
             $add_account = $identityCard;
-            $add_level = 4;
+            $add_level = $modelCompanyStaffWork->getDefaultLevel(); # mac dinh binh thuong
             $add_rankId = $departmentWorkRank; # cap bac lam viec tai 1 bo phan
             $add_totalSalary = $totalSalary;
-            $add_usePhone = 100000;
+            $add_usePhone = $modelStaffWorkSalary->getDefaultUsePhone();
             $add_salary = $add_totalSalary - $add_usePhone; // tru tien dien thoai
-            # phuong thuc lam viec
-            $add_workMethod = 2; # 2 -lam khong chinh thuc - thu viec
-            $add_applyRule = 1; # ap dung noi quy
             #copy anh dai dien
             if (copy($dataJobApplication->rootPathSmallImage() . '/' . $image, $modelStaff->rootPathSmallImage() . '/' . $image)) {
                 if (copy($dataJobApplication->rootPathFullImage() . '/' . $image, $modelStaff->rootPathFullImage() . '/' . $image)) {
@@ -179,7 +186,10 @@ class QcJobApplicationInterview extends Model
                 }
             }
             # then nhan vien
-            if ($modelStaff->insert($firstName, $lastName, $identityCard, $add_account, $birthday, $gender, $add_image, $add_identityFront, $add_identityBack, $email, $address, $phone, $add_level, null, null)) {
+            #mac dinh
+            $bankAccount = $modelStaff->getDefaultBankAccount();
+            $bankName = $modelStaff->getDefaultBankName();
+            if ($modelStaff->insert($firstName, $lastName, $identityCard, $add_account, $birthday, $gender, $add_image, $add_identityFront, $add_identityBack, $email, $address, $phone, $add_level, $bankAccount, $bankName)) {
                 $newStaffId = $modelStaff->insertGetId();
                 #them vao cong ty lam viec
                 if ($modelCompanyStaffWork->insert($workBeginDate, $add_level, $newStaffId, $confirmStaffId, $companyId)) {
@@ -188,14 +198,31 @@ class QcJobApplicationInterview extends Model
                     $modelStaffWorkDepartment->insert($newWorkId, $departmentId, $add_rankId, $workBeginDate);
 
                     # them luong cho nv
-                    $modelStaffWorkSalary->insert($add_totalSalary, $add_salary, 0, $add_usePhone, 0, 0, 0, 10000, $newWorkId);
+                    $responsibility = $modelStaffWorkSalary->getDefaultResponsibility();
+                    $insurance = $modelStaffWorkSalary->getDefaultInsurance();
+                    $fuel = $modelStaffWorkSalary->getDefaultFuel();
+                    $dateOff = $modelStaffWorkSalary->getDefaultDateOff();
+                    $overTimeHour = $modelStaffWorkSalary->getDefaultOverTimeHour();
+                    $modelStaffWorkSalary->insert($add_totalSalary, $add_salary, $responsibility, $add_usePhone, $insurance, $fuel, $dateOff, $overTimeHour, $newWorkId);
 
                     # them bang cham cong theo thang
                     $toDateWork = $hFunction->lastDateOfMonthFromDate($workBeginDate);
                     $modelWork->insert($workBeginDate, $toDateWork, $newWorkId);
+                    
+                    # them ky nang lam viec
+                    if ($hFunction->checkCount($dataJobApplicationWork)) {
+                        foreach ($dataJobApplicationWork as $jobApplicationWork) {
+                            $level = $jobApplicationWork->skillStatus();
+                            $departmentWorkId = $jobApplicationWork->workId();
+                            $modelWorkSkill->insert($level, $departmentWorkId, $newWorkId);
+                        }
+                    }
                 }
 
                 # them phương thuc lam viec
+                # mac dinh phuong thuc lam viec
+                $add_workMethod = $modelStaffWorkMethod->getDefaultMethodNotMain(); # - thu viec
+                $add_applyRule = $modelStaffWorkMethod->getDefaultHasApplyRule(); # ap dung noi quy
                 $modelStaffWorkMethod->insert($add_workMethod, $add_applyRule, $newStaffId, $confirmStaffId);
                 return true;
             } else {
@@ -229,7 +256,7 @@ class QcJobApplicationInterview extends Model
     {
         $modelJobApplication = new QcJobApplication();
         $listJobApplicationId = $modelJobApplication->listIdByCompany($companyId);
-        if ($confirmStatus == 100) { # tat ca thong tin
+        if ($confirmStatus == $this->getDefaultAllConfirm()) { # tat ca thong tin
             return QcJobApplicationInterview::whereIn('jobApplication_id', $listJobApplicationId)->orderBy('interview_id', 'DESC')->select();
         } else {
             return QcJobApplicationInterview::whereIn('jobApplication_id', $listJobApplicationId)->where('interviewConfirm', $confirmStatus)->orderBy('interview_id', 'DESC')->select();
@@ -244,11 +271,12 @@ class QcJobApplicationInterview extends Model
 
     public function getInfo($interviewId = '', $field = '')
     {
-        if (empty($interviewId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($interviewId)) {
             return QcJobApplicationInterview::get();
         } else {
             $result = QcJobApplicationInterview::where('interview_id', $interviewId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -258,10 +286,11 @@ class QcJobApplicationInterview extends Model
 
     public function pluck($column, $id = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($id)) {
             return $this->$column;
         } else {
-            return QcJobApplicationInterview::where('interview_id', $objectId)->pluck($column);
+            return QcJobApplicationInterview::where('interview_id', $id)->pluck($column)[0];
         }
     }
 
@@ -309,19 +338,19 @@ class QcJobApplicationInterview extends Model
     # kiem tra co duoc phong van hay chua
     public function checkInterviewConfirm($interviewId = null)
     {
-        return ($this->interviewConfirm($interviewId) == 1) ? true : false;
+        return ($this->interviewConfirm($interviewId) == $this->getDefaultHasConfirm()) ? true : false;
     }
 
     # kiem tra duoc dong y hay khong
     public function checkAgreeStatus($interviewId = null)
     {
-        return ($this->agreeStatus($interviewId) == 1) ? true : false;
+        return ($this->agreeStatus($interviewId) == $this->getDefaultHasAgree()) ? true : false;
     }
 
     # tong ho so chua phong van
     public function totalUnconfirmed()
     {
-        return QcJobApplicationInterview::where('interviewConfirm', 0)->count();
+        return QcJobApplicationInterview::where('interviewConfirm', $this->getDefaultNotConfirm())->count();
     }
 
 }

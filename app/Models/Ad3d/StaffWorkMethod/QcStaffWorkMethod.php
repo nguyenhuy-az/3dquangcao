@@ -13,8 +13,49 @@ class QcStaffWorkMethod extends Model
 
     private $lastId;
 
+    # mac dinh co ap dung noi quy
+    public function getDefaultHasApplyRule()
+    {
+        return 1;
+    }
+
+    # mac dinh khong ap dung noi quy
+    public function getDefaultNotApplyRule()
+    {
+        return 2;
+    }
+
+    # mac dinh lam chinh
+    public function getDefaultMethodHasMain()
+    {
+        return 1;
+    }
+
+    # mac dinh lam phu
+    public function getDefaultMethodNotMain()
+    {
+        return 1;
+    }
+
+    #mac dinh co hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh nguoi xac nhan
+    public function getDefaultConfirmStaffId()
+    {
+        return null;
+    }
     //========== ========= ========= THEM && CAP NHAT ========== ========= =========
-    //---------- th�m ----------
+    //---------- them ----------
     public function insert($method, $applyRule, $staffId, $confirmStaffId)
     {
         $hFunction = new \Hfunction();
@@ -44,19 +85,31 @@ class QcStaffWorkMethod extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
     }
 
+    # thong dang sau cung
+    public function lastInfoOfStaff($staffId)
+    {
+        return QcStaffWorkMethod::where('staff_id', $staffId)->orderBy('method_id', 'DESC')->first();
+    }
+
+    # thong dang hoat dong
     public function infoActivityOfStaff($staffId)
     {
-        return QcStaffWorkMethod::where('staff_id', $staffId)->where('action', 1)->first();
+        return QcStaffWorkMethod::where('staff_id', $staffId)->where('action', $this->getDefaultHasAction())->first();
     }
 
     public function checkExistActivityMethodApplyRuleOfStaff($staffId, $method, $applyRule)
     {
-        return QcStaffWorkMethod::where(['staff_id' => $staffId, 'method' => $method, 'applyRule' => $applyRule])->where('action', 1)->exists();
+        return QcStaffWorkMethod::where(
+            [
+                'staff_id' => $staffId,
+                'method' => $method,
+                'applyRule' => $applyRule
+            ])->where('action', $this->getDefaultHasAction())->exists();
     }
 
     public function disableInfoActivity($staffId)
     {
-        return QcStaffWorkMethod::where(['staff_id' => $staffId])->where('action', 1)->update(['action' => 0]);
+        return QcStaffWorkMethod::where('staff_id', $staffId)->where('action', $this->getDefaultHasAction())->update(['action' => $this->getDefaultNotAction()]);
     }
 
     //----------  nhan vien xac nhan -----------
@@ -65,8 +118,8 @@ class QcStaffWorkMethod extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'confirmStaff_id', 'staff_id');
     }
 
-    //========= ========== ========== lay thong tin ========== ========== ==========
-    public function getInfo($methodId = '', $field = '')
+    //========= ========== ========== lay thong  ========== ========== ==========
+    public function getInfo($methodId = '', $fietinld = '')
     {
         if (empty($methodId)) {
             return QcStaffWorkMethod::get();
@@ -85,7 +138,7 @@ class QcStaffWorkMethod extends Model
         if (empty($objectId)) {
             return $this->$column;
         } else {
-            return QcStaffWorkMethod::where('method_id', $objectId)->pluck($column);
+            return QcStaffWorkMethod::where('method_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -101,7 +154,7 @@ class QcStaffWorkMethod extends Model
 
     public function methodLabel($method)
     {
-        if ($method == 1) {
+        if ($method == $this->getDefaultMethodHasMain()) {
             return 'Chính thưc';
         } else {
             return 'Không chính thức';
@@ -115,7 +168,7 @@ class QcStaffWorkMethod extends Model
 
     public function applyRuleLabel($applyRule)
     {
-        if ($applyRule == 1) {
+        if ($applyRule == $this->getDefaultHasApplyRule()) {
             return 'Áp dụng';
         } else {
             return 'Không áp dụng';
@@ -140,18 +193,20 @@ class QcStaffWorkMethod extends Model
     // lay id cuoi
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcStaffWorkMethod::orderBy('method_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->method_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->method_id;
     }
+
 
     // ----------- kiem tra thong tin --------------------
-    public function checkOfficialMethod($methodId=null)
+    public function checkOfficialMethod($methodId = null)
     {
-        return ($this->method($methodId) == 1) ? true : false; # 1 chinh thuc / 2 - khong
+        return ($this->method($methodId) == $this->getDefaultMethodHasMain()) ? true : false; # 1 chinh thuc / 2 - khong
     }
 
-    public function checkApplyRule($methodId=null)
+    public function checkApplyRule($methodId = null)
     {
-        return ($this->applyRule($methodId) == 1) ? true : false; # 1 chinh thuc / 2 - khong
+        return ($this->applyRule($methodId) == $this->getDefaultHasApplyRule()) ? true : false; # 1 chinh thuc / 2 - khong
     }
 }

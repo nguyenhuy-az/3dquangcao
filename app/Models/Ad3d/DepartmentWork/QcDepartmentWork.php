@@ -54,6 +54,11 @@ class QcDepartmentWork extends Model
     }
 
     #========== ========== ========== RELATION ========== ========== ==========
+    #----------- tay nghe  ------------
+    public function workSkill()
+    {
+        return $this->hasMany('App\Models\Ad3d\WorkSkill\QcWorkSkill', 'work_id', 'departmentWork_id');
+    }
     #----------- qc-punish-content ------------
     public function department()
     {
@@ -86,11 +91,12 @@ class QcDepartmentWork extends Model
 
     public function getInfo($workId = '', $field = '')
     {
-        if (empty($workId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($workId)) {
             return QcDepartmentWork::get();
         } else {
             $result = QcDepartmentWork::where('work_id', $workId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -100,10 +106,11 @@ class QcDepartmentWork extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcDepartmentWork::where('work_id', $objectId)->pluck($column);
+            return QcDepartmentWork::where('work_id', $objectId)->pluck($column)[0];
         }
     }
 

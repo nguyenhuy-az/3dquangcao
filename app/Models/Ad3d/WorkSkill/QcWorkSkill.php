@@ -1,0 +1,181 @@
+<?php
+
+namespace App\Models\Ad3d\WorkSkill;
+
+use Illuminate\Database\Eloquent\Model;
+
+class QcWorkSkill extends Model
+{
+    protected $table = 'qc_work_skill';
+    protected $fillable = ['skill_id', 'level', 'action', 'created_at', 'departmentWork_id', 'companyStaffWork_id'];
+    protected $primaryKey = 'skill_id';
+    public $timestamps = false;
+
+    private $lastId;
+
+    #mac dinh khong biet lam
+    public function getDefaultNotLevel()
+    {
+        return 1;
+    }
+
+    # mac dinh biet lam
+    public function getDefaultMediumLevel()
+    {
+        return 2;
+    }
+
+    #mac dinh lam gioi
+    public function getDefaultGoodLevel()
+    {
+        return 3;
+    }
+
+    #mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong con hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+    #========== ========== ========== INSERT && UPDATE ========== ========== ==========
+    #---------- Insert ----------
+    public function insert($level, $departmentWorkId, $companyStaffWorkId)
+    {
+        $hFunction = new \Hfunction();
+        $modelStaffWorkSkill = new QcWorkSkill();
+        $modelStaffWorkSkill->level = $level;
+        $modelStaffWorkSkill->departmentWork_id = $departmentWorkId;
+        $modelStaffWorkSkill->companyStaffWork_id = $companyStaffWorkId;
+        $modelStaffWorkSkill->created_at = $hFunction->createdAt();
+        if ($modelStaffWorkSkill->save()) {
+            $this->lastId = $modelStaffWorkSkill->skill_id;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    # lay ma ky nang moi them
+    public function insertGetId()
+    {
+        return $this->lastId;
+    }
+
+    # kiem tra id
+    public function checkNullId($id = null)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->skillId() : $id;
+    }
+
+    # delete
+    public function deleteInfo($detailId = null)
+    {
+        return QcWorkSkill::where('skill_id', $detailId)->delete();
+    }
+
+    #========== ========== ========== RELATION ========== ========== ==========
+    #----------- cong viec cua bo phan ------------
+    public function departmentWork()
+    {
+        return $this->belongsTo('App\Models\Ad3d\DepartmentWork\QcDepartmentWork', 'departmentWork_id', 'work_id');
+    }
+
+    #----------- thong tin ho so ------------
+    public function companyStaffWork()
+    {
+        return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'companyStaffWork_id', 'work_id');
+    }
+
+    #============ =========== ============ GET INFO ============= =========== ==========
+    public function selectInfoAll()
+    {
+        return QcWorkSkill::select('*');
+    }
+
+    public function getInfo($detailId = '', $field = '')
+    {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($detailId)) {
+            return QcWorkSkill::get();
+        } else {
+            $result = QcWorkSkill::where('skill_id', $detailId)->first();
+            if ($hFunction->checkEmpty($field)) {
+                return $result;
+            } else {
+                return $result->$field;
+            }
+        }
+    }
+
+    public function pluck($column, $objectId = null)
+    {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
+            return $this->$column;
+        } else {
+            return QcWorkSkill::where('skill_id', $objectId)->pluck($column)[0];
+        }
+    }
+
+    public function detailId()
+    {
+        return $this->skill_id;
+    }
+
+    public function level($detailId = null)
+    {
+        return $this->pluck('level', $detailId);
+    }
+
+    public function levelLabel($level)
+    {
+        if ($level == $this->getDefaultNotLevel()) {
+            return 'Không biết';
+        } elseif ($level == $this->getDefaultMediumLevel()) {
+            return 'Biêt';
+        } elseif ($level == $this->getDefaultGoodLevel()) {
+            return 'Giỏi';
+        } else {
+            return 'Chưa xác định';
+        }
+    }
+
+    public function skillId($detailId = null)
+    {
+        return $this->pluck('skill_id', $detailId);
+    }
+
+    public function departmentWorkId($detailId)
+    {
+        return $this->pluck('departmentWork_id', $detailId);
+    }
+
+    public function companyStaffWorkId($detailId)
+    {
+        return $this->pluck('companyStaffWork_id', $detailId);
+    }
+
+    public function createdAt($detailId = null)
+    {
+        return $this->pluck('created_at', $detailId);
+    }
+
+    # total record
+    public function totalRecords()
+    {
+        return QcWorkSkill::count();
+    }
+
+    #============ =========== ============ CHECK INFO ============= =========== ==========
+    # ton tai 1 ky nang dang hoat dong cua 1 nhan vien
+    public function existSkillIsActivity($companyStaffWorkId, $departmentWorkId)
+    {
+        return QcWorkSkill::where('companyStaffWork_id', $companyStaffWorkId)->where('departmentWork_id', $departmentWorkId)->exists();
+    }
+}

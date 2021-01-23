@@ -15,6 +15,23 @@ class QcStaffWorkDepartment extends Model
 
     private $lastId;
 
+    # mac dinh quyen cao nhat
+    public function getDefaultFullPermission()
+    {
+        return 'f';
+    }
+
+    # mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    #mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
     public function insert($workId, $departmentId, $rankId, $beginDate, $permission = 'f')
@@ -26,7 +43,7 @@ class QcStaffWorkDepartment extends Model
         $modelStaffWorkDepartment->work_id = $workId;
         $modelStaffWorkDepartment->department_id = $departmentId;
         $modelStaffWorkDepartment->rank_id = $rankId;
-        $modelStaffWorkDepartment->action = 1;
+        $modelStaffWorkDepartment->action = $this->getDefaultHasAction();
         $modelStaffWorkDepartment->created_at = $hFunction->createdAt();
         if ($modelStaffWorkDepartment->save()) {
             $this->lastId = $modelStaffWorkDepartment->detail_id;
@@ -42,14 +59,16 @@ class QcStaffWorkDepartment extends Model
         return $this->lastId;
     }
 
+    # vo hieu hoa tai 1 bo phan
     public function disableWorkDepartment($workId, $departmentId)
     {
-        return QcStaffWorkDepartment::where('work_id', $workId)->where('department_id', $departmentId)->update(['action' => 0]);
+        return QcStaffWorkDepartment::where('work_id', $workId)->where('department_id', $departmentId)->update(['action' => $this->getDefaultNotAction()]);
     }
 
+    #vo hieu hoa tat ca cac bo phan
     public function disableWorkAllDepartment($workId)
     {
-        return QcStaffWorkDepartment::where('work_id', $workId)->update(['action' => 0]);
+        return QcStaffWorkDepartment::where('work_id', $workId)->update(['action' => $this->getDefaultNotAction()]);
     }
 
     //---------- lam viec -----------
@@ -61,37 +80,38 @@ class QcStaffWorkDepartment extends Model
     //1 NV co the co the lam nhieu bo phan
     public function infoActivityOfWork($workId)
     {
-        return QcStaffWorkDepartment::where(['work_id' => $workId, 'action' => 1])->get();
+        return QcStaffWorkDepartment::where(['work_id' => $workId, 'action' => $this->getDefaultHasAction()])->get();
     }
 
     # kiem tra ton tai dang lam viec tai 1 bo phan
     public function checkExistWorkOfDepartment($workId, $departmentId)
     {
-        return QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId, 'action' => 1])->exists();
+        return QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId, 'action' => $this->getDefaultHasAction()])->exists();
     }
 
     # kiem tra ton tai dang lam viec tai 1 bo phan va vi tri lam
     public function checkExistWorkActivityOfDepartmentAndRank($workId, $departmentId, $rankId)
     {
-        return QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId, 'rank_id' => $rankId, 'action' => 1])->exists();
+        return QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId, 'rank_id' => $rankId, 'action' => $this->getDefaultHasAction()])->exists();
     }
 
     # danh sach ma bo phan cua 1 bang lam viec  - tat ca
     public function listIdDepartmentOfWork($workId)
     {
-        return QcStaffWorkDepartment::where(['work_id' => $workId])->pluck('department_id');
+        return QcStaffWorkDepartment::where('work_id', $workId)->pluck('department_id');
     }
 
     # danh sach ma bo phan cua 1 bang lam viec - dang hoat dong
     public function listIdDepartmentActivityOfWork($workId)
     {
-        return QcStaffWorkDepartment::where(['work_id' => $workId, 'action' => 1])->pluck('department_id');
+        return QcStaffWorkDepartment::where(['work_id' => $workId, 'action' => $this->getDefaultHasAction()])->pluck('department_id');
     }
 
     # lay dang sach tat ca ma lam viẹc theo danh sach ma bo phan va cap bac
     public function listWorkIdOfListDepartment($listDepartmentId, $rankId = null)
     {
-        if (empty($rankId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($rankId)) {
             return QcStaffWorkDepartment::whereIn('department_id', $listDepartmentId)->pluck('work_id');
         } else {
             return QcStaffWorkDepartment::whereIn('department_id', $listDepartmentId)->where('rank_id', $rankId)->pluck('work_id');
@@ -101,10 +121,11 @@ class QcStaffWorkDepartment extends Model
     # lay dang sach ma lam viẹc dang hoat dong theo danh sach ma bo phan va cap bac
     public function listWorkIdActivityOfListDepartment($listDepartmentId, $rankId = null)
     {
-        if (empty($rankId)) {
-            return QcStaffWorkDepartment::whereIn('department_id', $listDepartmentId)->where('action', 1)->pluck('work_id');
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($rankId)) {
+            return QcStaffWorkDepartment::whereIn('department_id', $listDepartmentId)->where('action', $this->getDefaultHasAction())->pluck('work_id');
         } else {
-            return QcStaffWorkDepartment::whereIn('department_id', $listDepartmentId)->where('rank_id', $rankId)->where('action', 1)->pluck('work_id');
+            return QcStaffWorkDepartment::whereIn('department_id', $listDepartmentId)->where('rank_id', $rankId)->where('action', $this->getDefaultHasAction())->pluck('work_id');
         }
     }
 
@@ -112,10 +133,11 @@ class QcStaffWorkDepartment extends Model
 
     public function checkCurrentDepartmentAccountantOfWork($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkAccountant($value->departmentId())) $resultStatus = true;
             }
@@ -141,10 +163,11 @@ class QcStaffWorkDepartment extends Model
 
     public function checkCurrentDepartmentManageOfWork($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkManage($value->departmentId())) $resultStatus = true;
             }
@@ -175,11 +198,12 @@ class QcStaffWorkDepartment extends Model
     //kiem tranv thuoc bo phan quan ly cap nv
     public function checkManageDepartmentAndNormalRank($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkManage($value->departmentId())) {
                     if ($modelRank->checkNormalRank($value->rankId())) {
@@ -230,10 +254,11 @@ class QcStaffWorkDepartment extends Model
     #-------------- ----------- kiem tra bo phan NHAN SU ------------- --------------
     public function checkCurrentDepartmentPersonnelOfWork($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkPersonnel($value->departmentId())) $resultStatus = true;
             }
@@ -243,10 +268,11 @@ class QcStaffWorkDepartment extends Model
 
     public function checkPersonnelDepartment($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkPersonnel($value->departmentId())) $resultStatus = true;
             }
@@ -257,11 +283,12 @@ class QcStaffWorkDepartment extends Model
     // cap quan ly
     public function checkPersonnelDepartmentAndManageRank($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkPersonnel($value->departmentId())) {
                     if ($modelRank->checkManageRank($value->rankId())) {
@@ -276,11 +303,12 @@ class QcStaffWorkDepartment extends Model
     // cap nhan vien
     public function checkPersonnelDepartmentAndNormalRank($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checPersonnel($value->departmentId())) {
                     if ($modelRank->checkNormalRank($value->rankId())) {
@@ -295,10 +323,11 @@ class QcStaffWorkDepartment extends Model
     #-------------- ----------- kiem tra bo phan THIET KE ------------- --------------
     public function checkCurrentDepartmentDesignOfWork($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkDesign($value->departmentId())) $resultStatus = true;
             }
@@ -309,10 +338,11 @@ class QcStaffWorkDepartment extends Model
     //kiem tra nv thuoc bo phan thiet ke
     public function checkDesignDepartment($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkDesign($value->departmentId())) $resultStatus = true;
             }
@@ -323,11 +353,12 @@ class QcStaffWorkDepartment extends Model
     //kiem tra nv thuoc bp thiet ke cap quan ly
     public function checkDesignDepartmentAndManageRank($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkDesign($value->departmentId())) {
                     if ($modelRank->checkManageRank($value->rankId())) {
@@ -341,11 +372,12 @@ class QcStaffWorkDepartment extends Model
 
     public function checkDesignDepartmentAndNormalRank($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checDesign($value->departmentId())) {
                     if ($modelRank->checkNormalRank($value->rankId())) {
@@ -360,10 +392,11 @@ class QcStaffWorkDepartment extends Model
     #-------------- ----------- kiem tra bo phan KINH DOANH ------------- --------------
     public function checkCurrentDepartmentBusinessOfWork($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkBusiness($value->departmentId())) $resultStatus = true;
             }
@@ -374,10 +407,11 @@ class QcStaffWorkDepartment extends Model
     // kiem tra nvthuoc BP thu quy
     public function checkBusinessDepartment($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkBusiness($value->departmentId())) $resultStatus = true;
             }
@@ -388,11 +422,12 @@ class QcStaffWorkDepartment extends Model
     // kiem tra nvthuoc BP kinh doanh cap quan ly
     public function checkBusinessDepartmentAndManageRank($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkBusiness($value->departmentId())) {
                     if ($modelRank->checkManageRank($value->rankId())) {
@@ -407,11 +442,12 @@ class QcStaffWorkDepartment extends Model
     // kiem tra nvthuoc BP kinh doanh cap quan nhan vien
     public function checkBusinessDepartmentAndNormalRank($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkBusiness($value->departmentId())) {
                     if ($modelRank->checkNormalRank($value->rankId())) {
@@ -426,10 +462,11 @@ class QcStaffWorkDepartment extends Model
     #-------------- ----------- kiem tra bo phan THU QUY ------------- --------------
     public function checkCurrentDepartmentTreasureOfWork($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkTreasure($value->departmentId())) $resultStatus = true;
             }
@@ -440,10 +477,11 @@ class QcStaffWorkDepartment extends Model
     // kiem tra nvthuoc BP thu quy
     public function checkTreasureDepartment($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkTreasure($value->departmentId())) $resultStatus = true;
             }
@@ -454,11 +492,12 @@ class QcStaffWorkDepartment extends Model
     // kiem tra nvthuoc BP thu quy cap quan ly
     public function checkTreasureDepartmentAndManageRank($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkTreasure($value->departmentId())) {
                     if ($modelRank->checkManageRank($value->rankId())) {
@@ -473,11 +512,12 @@ class QcStaffWorkDepartment extends Model
     // kiem tra nvthuoc BP thu quy cap quan nhan vien
     public function checkTreasureDepartmentAndNormalRank($workId)
     {
+        $hFunction = new \Hfunction();
         $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $result = $this->infoActivityOfWork($workId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             foreach ($result as $value) {
                 if ($modelDepartment->checkTreasure($value->departmentId())) {
                     if ($modelRank->checkNormalRank($value->rankId())) {
@@ -503,7 +543,7 @@ class QcStaffWorkDepartment extends Model
 
     public function workIdActivityOfDepartment($departmentId)
     {
-        return QcStaffWorkDepartment::where('department_id', $departmentId)->where('action', 1)->pluck('work_id');
+        return QcStaffWorkDepartment::where('department_id', $departmentId)->where('action', $this->getDefaultHasAction())->pluck('work_id');
     }
 
     //lay id cac bo phan quan ly ma nv dang lam
@@ -558,11 +598,12 @@ class QcStaffWorkDepartment extends Model
     #============ =========== ============ l?y th�ng tin chi ti?t ============= =========== ==========
     public function getInfo($detailId = '', $field = '')
     {
-        if (empty($detailId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($detailId)) {
             return QcStaffWorkDepartment::get();
         } else {
             $result = QcStaffWorkDepartment::where('detail_id', $detailId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -572,10 +613,11 @@ class QcStaffWorkDepartment extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcStaffWorkDepartment::where('detail_id', $objectId)->pluck($column);
+            return QcStaffWorkDepartment::where('detail_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -607,7 +649,6 @@ class QcStaffWorkDepartment extends Model
     #============ =========== ============ CHECK INFO ============= =========== ==========
     public function existWorkDepartmentRank($workId, $departmentId, $rankId)
     {
-        $result = QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId, 'rank_id' => $rankId, 'action' => 1])->count();
-        return ($result > 0) ? true : false;
+        return QcStaffWorkDepartment::where(['work_id' => $workId, 'department_id' => $departmentId, 'rank_id' => $rankId, 'action' => $this->getDefaultHasAction()])->exists();
     }
 }

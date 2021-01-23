@@ -99,6 +99,18 @@ class QcStaff extends Model
     {
         return 0;
     }
+
+    #mac dinh ten tai khoan
+    public function getDefaultBankAccount()
+    {
+        return null;
+    }
+
+    # mac dinh ten ngan hang
+    public function getDefaultBankName()
+    {
+        return null;
+    }
     //---------- Insert ----------
     //tạo mật khẩu cho người dùng
     public function createStaffPass($password, $nameCode)
@@ -109,8 +121,9 @@ class QcStaff extends Model
     //lấy lại mật khẫu mặc định
     public function resetPass($staffId)
     {
+        $hFunction = new \Hfunction();
         $dataStaff = $this->getInfo($staffId);
-        if (count($dataStaff) > 0) {
+        if ($hFunction->checkCount($dataStaff)) {
             $identityCard = $this->identityCard($staffId);
             $newPass = $this->createStaffPass("3d$identityCard", $this->nameCode($staffId));
             return QcStaff::where('staff_id', $staffId)->update(['account' => $identityCard, 'password' => $newPass]);
@@ -167,10 +180,10 @@ class QcStaff extends Model
         return $this->lastId;
     }
 
-    public function checkIdNull($staffId)
+    public function checkIdNull($id)
     {
         $hFunction = new \Hfunction();
-        return ($hFunction->checkEmpty($staffId)) ? $this->staffId() : $staffId;
+        return ($hFunction->checkEmpty($id)) ? $this->staffId() : $id;
     }
 
     public function staffId()
@@ -472,6 +485,13 @@ class QcStaff extends Model
         return $this->hasMany('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'staff_id', 'staff_id');
     }
 
+    # thong tin lam viec sau cung
+    public function companyStaffWorkLastInfo($staffId = null)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        return $modelCompanyStaffWork->getLastInfoOfStaff($this->checkIdNull($staffId));
+    }
+
     # thong tin đang lam viec tai 1 cty
     public function companyStaffWorkInfoActivity($staffId = null)
     {
@@ -481,10 +501,11 @@ class QcStaff extends Model
 
     public function level($staffId = null)
     {
+        $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $staffId = $this->checkIdNull($staffId);
         $dataCompanyStaffWork = $modelCompanyStaffWork->infoActivityOfStaff($staffId);
-        if (count($dataCompanyStaffWork) > 0) { # du lieu phien ban moi
+        if ($hFunction->checkCount($dataCompanyStaffWork)) { # du lieu phien ban moi
             return $dataCompanyStaffWork->level();
         } else { # du lieu phien ban cu
             return $this->pluck('level', $staffId);
@@ -493,10 +514,11 @@ class QcStaff extends Model
 
     public function companyId($staffId = null)
     {
+        $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $staffId = $this->checkIdNull($staffId);
         $dataCompanyStaffWork = $modelCompanyStaffWork->infoActivityOfStaff($staffId);
-        if (count($dataCompanyStaffWork) > 0) {
+        if ($hFunction->checkCount($dataCompanyStaffWork)) {
             return $dataCompanyStaffWork->companyId();
         } else { # du lieu cu
             return $this->pluck('company_id', $staffId);
@@ -833,6 +855,13 @@ class QcStaff extends Model
     public function staffWorkMethod()
     {
         return $this->hasMany('App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod', 'staff_id', 'staff_id');
+    }
+
+    # phuong thuc lam viec sau cung ---
+    public function staffWorkMethodLastInfo($staffId = null)
+    {
+        $modelStaffWorkMethod = new QcStaffWorkMethod();
+        return $modelStaffWorkMethod->lastInfoOfStaff($this->checkIdNull($staffId));
     }
 
     # kiem tra co ap dung noi quy cho NV hay khong

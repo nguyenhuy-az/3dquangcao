@@ -47,6 +47,12 @@ class QcCompanyStaffWork extends Model
         return 5; # level binh thuong
     }
 
+    # mac dinh cap bac truy cap admin
+    public function getDefaultLevelAdmin()
+    {
+        return 3;
+    }
+
     # mac dinh gioi hạn truy cap admin
     public function getDefaultLimitAdmin()
     {
@@ -183,6 +189,12 @@ class QcCompanyStaffWork extends Model
     {
         $modelToolReturnDetail = new QcToolPackageAllocationDetail();
         return $modelToolReturnDetail->totalToolOfWork($toolId, $workId);
+    }
+
+    #----------- tay nghe  ------------
+    public function workSkill()
+    {
+        return $this->hasMany('App\Models\Ad3d\WorkSkill\QcWorkSkill', 'work_id', 'companyStaffWork_id');
     }
 
     # ---------- ---------- giao do nghe ---------- ----------
@@ -441,7 +453,7 @@ class QcCompanyStaffWork extends Model
         if ($hFunction->checkCount($listWorkId)) {
             return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->where('action', $this->getDefaultHasAction())->pluck('staff_id');
         } else {
-            return null;
+            return $hFunction->getDefaultNull();
         }
     }
 
@@ -454,7 +466,7 @@ class QcCompanyStaffWork extends Model
         if ($hFunction->checkCount($listWorkId)) {
             return QcCompanyStaffWork::where('company_id', $companyId)->whereIn('work_id', $listWorkId)->pluck('staff_id');
         } else {
-            return null;
+            return $hFunction->getDefaultNull();
         }
     }
 
@@ -491,6 +503,12 @@ class QcCompanyStaffWork extends Model
     public function staff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
+    }
+
+    #lay thong tin lam viec sau cung cua 1 nhan vie
+    public function getLastInfoOfStaff($staffId)
+    {
+        return QcCompanyStaffWork::where('staff_id', $staffId)->orderBy('work_id', 'DESC')->first();
     }
 
     # lay danh sach ma bo phan dang lam viec cua 1 nv
@@ -593,11 +611,12 @@ class QcCompanyStaffWork extends Model
     # lay thong tin bang luong co ban dang hoat dong theo ma nv
     public function staffWorkSalaryActivityOfStaff($staffId)
     {
+        $hFunction = new \Hfunction();
         $dataInfoActivityOfStaff = $this->infoActivityOfStaff($staffId);
-        if (count($dataInfoActivityOfStaff) > 0) {
+        if ($hFunction->checkCount($dataInfoActivityOfStaff)) {
             return $this->staffWorkSalaryActivity($dataInfoActivityOfStaff->workId());
         } else {
-            return null;
+            return $hFunction->getDefaultNull();
         }
     }
 
@@ -605,10 +624,11 @@ class QcCompanyStaffWork extends Model
     # kiem tra hien tai NV co lam bon phan ke toan hay khong
     public function checkCurrentDepartmentAccountantOfStaff($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkCurrentDepartmentAccountantOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -618,10 +638,11 @@ class QcCompanyStaffWork extends Model
     # kiem tra hien tai NV co lam bon phan quan ly hay khong
     public function checkCurrentDepartmentManageOfStaff($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkCurrentDepartmentManageOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -630,10 +651,11 @@ class QcCompanyStaffWork extends Model
     //kiem tra nv thuoc bp quan ly
     public function checkManageDepartment($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkManageDepartment($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -642,10 +664,11 @@ class QcCompanyStaffWork extends Model
     // kiem tra nv theo bo phan quan ly cap quan ly
     public function checkManageDepartmentAndManageRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkManageDepartmentAndManageRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -654,10 +677,11 @@ class QcCompanyStaffWork extends Model
     // kiem tra nv theo bo phan quan ly cap thong thuong
     public function checkManageDepartmentAndNormalRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkManageDepartmentAndNormalRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -667,10 +691,11 @@ class QcCompanyStaffWork extends Model
     # kiem tra hien tai NV co lam bon phan thi cong hay khong
     public function checkCurrentDepartmentConstructionOfStaff($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkCurrentDepartmentConstructionOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -679,10 +704,11 @@ class QcCompanyStaffWork extends Model
     // kiem tra nv co thuoc bo phan thi cong cap quan ly hay khong
     public function checkConstructionDepartmentAndManageRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkConstructionDepartmentAndManageRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -692,10 +718,11 @@ class QcCompanyStaffWork extends Model
     # kiem tra hien tai NV co lam bon phan thiet ke hay khong
     public function checkCurrentDepartmentDesignOfStaff($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkCurrentDepartmentDesignOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -704,10 +731,11 @@ class QcCompanyStaffWork extends Model
     //kiem tra nv thuoc bo phan thiet ke
     public function checkDesignDepartment($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkDesignDepartment($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -743,10 +771,11 @@ class QcCompanyStaffWork extends Model
     # kiem tra hien tai NV co lam bon phan kinh doanh hay khong
     public function checkCurrentDepartmentBusinessOfStaff($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkCurrentDepartmentBusinessOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -755,10 +784,11 @@ class QcCompanyStaffWork extends Model
     //kiem tra nv thuoc bp kinh doanh
     public function checkBusinessDepartment($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkBusinessDepartment($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -767,10 +797,11 @@ class QcCompanyStaffWork extends Model
     //kiem tra nv thuoc bo phan kinh doanh cap quan ly hay khong
     public function checkBusinessDepartmentAndManageRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkBusinessDepartmentAndManageRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -779,10 +810,11 @@ class QcCompanyStaffWork extends Model
     //kiem tra nv thuoc bo phan kinh doanh cap thong thuong
     public function checkBusinessDepartmentAndNormalRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkBusinessDepartmentAndNormalRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -792,10 +824,11 @@ class QcCompanyStaffWork extends Model
     # kiem tra hien tai NV co lam bon phan nhan su hay khong
     public function checkCurrentDepartmentPersonnelOfStaff($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkCurrentDepartmentPersonnelOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -804,10 +837,11 @@ class QcCompanyStaffWork extends Model
     // kiem tra nv theo cap bac nhan su
     public function checkPersonnelDepartment($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkPersonnelDepartment($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -816,10 +850,11 @@ class QcCompanyStaffWork extends Model
     //kiem tran nv thuoc bo phan nhan su cap quan ly
     public function checkPersonnelDepartmentAndManageRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkPersonnelDepartmentAndManageRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -828,10 +863,11 @@ class QcCompanyStaffWork extends Model
     //kiem tran nv thuoc bo phan nhan su cap thong thuong
     public function checkPersonnelDepartmentAndNormalRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkPersonnelDepartmentAndNormalRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -841,10 +877,11 @@ class QcCompanyStaffWork extends Model
     # kiem tra hien tai NV co lam bon phan thu quy hay khong
     public function checkCurrentDepartmentTreasureOfStaff($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkCurrentDepartmentTreasureOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -853,10 +890,11 @@ class QcCompanyStaffWork extends Model
     //kiem tra nv thuoc bp thu quy
     public function checkTreasureDepartment($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkCurrentDepartmentTreasureOfWork($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -865,10 +903,11 @@ class QcCompanyStaffWork extends Model
     //kiem tra nv thuoc bo phan thu quy cap quan ly hay khong
     public function checkTreasureDepartmentAndManageRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkTreasureDepartmentAndManageRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -877,10 +916,11 @@ class QcCompanyStaffWork extends Model
     //kiem tra nv thuoc bo phan thu quy cap thong thuong
     public function checkTreasureDepartmentAndNormalRank($staffId)
     {
+        $hFunction = new \Hfunction();
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         $result = $this->infoActivityOfStaff($staffId);
         $resultStatus = false;
-        if (count($result) > 0) {
+        if ($hFunction->checkCount($result)) {
             if ($modelStaffWorkDepartment->checkTreasureDepartmentAndNormalRank($result->workId())) $resultStatus = true;
         }
         return $resultStatus;
@@ -964,7 +1004,7 @@ class QcCompanyStaffWork extends Model
     # lay danh sach thong tin theo 1 cty va trang thai lam viẹc
     public function selectInfoOfCompanyAndActionStatus($companyId, $actionStatus = 100) // mac dinh chon tat ca = 100
     {
-        if ($actionStatus == 100) {
+        if ($actionStatus == $this->getDefaultAllAction()) {
             return QcCompanyStaffWork::where('company_id', $companyId)->select('*');
         } else {
             return QcCompanyStaffWork::where('company_id', $companyId)->where('action', $actionStatus)->select('*');
@@ -974,8 +1014,7 @@ class QcCompanyStaffWork extends Model
     # lay danh sach ma nv theo 1 cty va trang thai lam viẹc
     public function staffIdOfCompanyAndActionStatus($companyId, $actionStatus = 100) // mac dinh chon tat ca = 100
     {
-        $getAllAction = $this->getDefaultAllAction();
-        if ($actionStatus == $getAllAction) {
+        if ($actionStatus == $this->getDefaultAllAction()) {
             return QcCompanyStaffWork::where('company_id', $companyId)->pluck('staff_id');
         } else {
             return QcCompanyStaffWork::where('company_id', $companyId)->where('action', $actionStatus)->pluck('staff_id');

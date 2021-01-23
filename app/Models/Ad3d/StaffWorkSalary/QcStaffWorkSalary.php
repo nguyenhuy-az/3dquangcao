@@ -58,7 +58,7 @@ class QcStaffWorkSalary extends Model
     # mac dinh tien su dung dien thoai
     public function getDefaultUsePhone()
     {
-        return 0;
+        return 100000;
     }
 
     # mac dinh tien trach nhiem
@@ -96,20 +96,22 @@ class QcStaffWorkSalary extends Model
         return $this->lastId;
     }
 
-    public function checkIdNull($workSalaryId)
+    public function checkIdNull($id)
     {
-        return (empty($workSalaryId)) ? $this->workSalaryId() : $workSalaryId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->workSalaryId() : $id;
     }
 
     //============ =========== ============ LAY THONG TIN ============= =========== ==========
 
     public function getInfo($workSalaryId = '', $field = '')
     {
-        if (empty($workSalaryId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($workSalaryId)) {
             return QcStaffWorkSalary::where('action', $this->getDefaultHasAction())->get();
         } else {
             $result = QcStaffWorkSalary::where('workSalary_id', $workSalaryId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -119,7 +121,8 @@ class QcStaffWorkSalary extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcStaffWorkSalary::where('workSalary_id', $objectId)->pluck($column)[0];
@@ -213,11 +216,11 @@ class QcStaffWorkSalary extends Model
     {
         $hFunction = new \Hfunction();
         $lastDate = $hFunction->lastDateOfMonthFromDate(date('Y-m-d', strtotime($date)));
-        $salary = null;
-        if (!empty($date)) {
-            $salary = QcStaffWorkSalary::where(['work_id' => $workId])->where('created_at', '<', $lastDate)->orderBy('created_at', 'DESC')->pluck('salary')[0];
+        $salary = $hFunction->getDefaultNull();
+        if (!$hFunction->checkEmpty($date)) {
+            $salary = QcStaffWorkSalary::where('work_id', $workId)->where('created_at', '<', $lastDate)->orderBy('created_at', 'DESC')->pluck('salary')[0];
         }
-        if (empty($salary)) {
+        if ($hFunction->checkEmpty($salary)) {
             return QcStaffWorkSalary::where(['work_id' => $workId, 'action' => $this->getDefaultHasAction()])->pluck('salary')[0];
         } else {
             return $salary;
@@ -231,7 +234,7 @@ class QcStaffWorkSalary extends Model
 
     public function  allInfoOfWork($workId)
     {
-        return QcStaffWorkSalary::where(['work_id' => $workId])->orderBy('created_at', 'DESC')->get();
+        return QcStaffWorkSalary::where('work_id',$workId)->orderBy('created_at', 'DESC')->get();
     }
 
     public function totalSalaryBasic($workSalaryId = null) # tong tien luong co ban dc lanh

@@ -38,11 +38,10 @@ class StaffController extends Controller
             'subObjectLabel' => 'Thông tin cơ bán'
         ];
         $dataCompany = $modelCompany->getInfo();
-        $dataDepartment = $modelDepartment->getInfo();
         $dataStaff = $modelStaff->getInfo($staffId);
         $dataRank = $modelRank->getInfo();
         if ($hFunction->checkCount($dataStaff)) {
-            return view('work.staff.info.index', compact('modelStaff', 'modelRank', 'dataStaff', 'dataCompany', 'dataDepartment', 'dataRank','dataAccess'));
+            return view('work.staff.info.index', compact('modelStaff', 'modelRank', 'dataStaff', 'dataCompany', 'dataRank','dataAccess'));
         }
     }
 }
