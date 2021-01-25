@@ -390,6 +390,14 @@ class QcCompanyStaffWork extends Model
         return $this->hasMany('App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment', 'work_id', 'work_id');
     }
 
+    # thong tin bo phan dang lam viec
+    public function staffWorkDepartmentGetInfoHasAction($workId = null)
+    {
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        return $modelStaffWorkDepartment->infoActivityOfWork($this->checkIdNull($workId));
+    }
+
+    # kiem tra ton tai thi cong theo cap bac
     public function checkExistActivityWorkDepartmentAndRank($departmentId, $rankId, $workId = null)
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();

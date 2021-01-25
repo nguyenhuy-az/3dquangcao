@@ -229,7 +229,9 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                                         <span class="qc-font-bold">{!! date('H:i', strtotime($warningUpdate)) !!}</span>
                                                     @else
                                                         <br/>
-                                                        <em style="color: grey;">Đã gửi CẢNH BÁO RA</em>
+                                                        <a class="qc_warning_time_end qc-link" data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_end.get',$timekeepingProvisionalId) !!}">
+                                                            Đã gửi CẢNH BÁO RA
+                                                        </a>
                                                         <span>|</span>
                                                         <a class="qc_warning_time_end_cancel qc-link-red qc-font-size-14"
                                                            data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_timekeeping.cancel',$warningId) !!}">

@@ -192,6 +192,7 @@ if ($hFunction->checkCount($dataWork)) {
                                             </span>
                                             @if($hFunction->checkCount($dataTimekeepingProvisionalWarningTimeEnd))
                                                 <?php
+                                                $warningId = $dataTimekeepingProvisionalWarningTimeEnd->warningId();
                                                 $warningNote = $dataTimekeepingProvisionalWarningTimeEnd->note();
                                                 $warningImage = $dataTimekeepingProvisionalWarningTimeEnd->image();
                                                 ?>
@@ -205,15 +206,20 @@ if ($hFunction->checkCount($dataWork)) {
                                                 @else
                                                     @if(!$hFunction->checkEmpty($warningNote))
                                                         <br/>
-                                                        <span style="background-color: red;color: yellow; padding: 2px 3px;">
-                                                        {!! $warningNote !!}
-                                                    </span>
+                                                        <a class="qc_view_warning qc-cursor-pointer"
+                                                           style="background-color: red;color: yellow; padding: 2px 3px;"
+                                                           data-href="{!! route('qc.work.timekeeping_provisional.warning.view',$warningId) !!}">
+                                                            {!! $warningNote !!}
+                                                        </a>
                                                     @endif
                                                     @if(!$hFunction->checkEmpty($warningImage))
                                                         <br/>
-                                                        <img style="width: 100%;"
-                                                             src="{!! $dataTimekeepingProvisionalWarningTimeEnd->pathSmallImage($warningImage) !!}"
-                                                             alt="anh_canh_bao">
+                                                        <a class="qc_view_warning qc-link"
+                                                           data-href="{!! route('qc.work.timekeeping_provisional.warning.view',$warningId) !!}">
+                                                            <img style="width: 100%;"
+                                                                 src="{!! $dataTimekeepingProvisionalWarningTimeEnd->pathSmallImage($warningImage) !!}"
+                                                                 alt="anh_canh_bao">
+                                                        </a>
                                                     @endif
                                                 @endif
                                             @endif

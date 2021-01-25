@@ -1314,6 +1314,9 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
         //xem chi tiết ảnh báo cáo
         Route::get('image/{imageId?}', ['as' => 'qc.work.timekeeping_provisional.image.get', 'uses' => 'Work\Timekeeping\TimekeepingController@viewTimekeepingProvisionalImage']);
 
+        //xem chi tiết ảnh cảnh báo
+        Route::get('warning-view/{waringId?}', ['as' => 'qc.work.timekeeping_provisional.warning.view', 'uses' => 'Work\Timekeeping\TimekeepingController@viewTimekeepingProvisionalWarning']);
+
         //Hủy chấm công
         Route::get('cancel/{timekeepingId?}', ['as' => 'qc.work.timekeeping.cancel.get', 'uses' => 'Work\Timekeeping\TimekeepingController@cancelTimekeeping']);
 

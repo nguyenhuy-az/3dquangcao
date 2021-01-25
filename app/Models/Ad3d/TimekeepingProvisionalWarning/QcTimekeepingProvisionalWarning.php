@@ -52,11 +52,12 @@ class QcTimekeepingProvisionalWarning extends Model
     #============ =========== ============ FIELD INFO ============= =========== ==========
     public function getInfo($warningId = '', $field = '')
     {
-        if (empty($warningId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($warningId)) {
             return QcTimekeepingProvisionalWarning::get();
         } else {
             $result = QcTimekeepingProvisionalWarning::where('warning_id', $warningId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -66,7 +67,8 @@ class QcTimekeepingProvisionalWarning extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcTimekeepingProvisionalWarning::where('warning_id', $objectId)->pluck($column)[0];
@@ -160,7 +162,8 @@ class QcTimekeepingProvisionalWarning extends Model
     # check id
     public function checkNullId($id)
     {
-        return (empty($id)) ? $this->warningId() : $id;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->warningId() : $id;
     }
 
     #----------- cap nhat thong tin ----------
@@ -208,8 +211,9 @@ class QcTimekeepingProvisionalWarning extends Model
     // get path image
     public function pathSmallImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathSmallImage() . '/' . $image);
         }
@@ -217,8 +221,9 @@ class QcTimekeepingProvisionalWarning extends Model
 
     public function pathFullImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
         }

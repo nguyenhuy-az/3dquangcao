@@ -15,6 +15,17 @@ class QcDepartment extends Model
 
     private $lastId;
 
+    # mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong con hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
     public function insert($departmentCode, $name, $activityStatus = 1)
@@ -40,7 +51,8 @@ class QcDepartment extends Model
 
     public function checkNullId($id = null)
     {
-        return (empty($id)) ? $this->departmentId() : $id;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->departmentId() : $id;
     }
 
     #----------- update ----------
@@ -61,8 +73,7 @@ class QcDepartment extends Model
     # delete
     public function actionDelete($departmentId = null)
     {
-        if (empty($departmentId)) $departmentId = $this->departmentId();
-        return QcDepartment::where('department_id', $departmentId)->delete();
+        return QcDepartment::where('department_id', $this->checkNullId($departmentId))->delete();
     }
 
     # ----------- thong tin cong viec cua bo phan --------------
@@ -119,7 +130,7 @@ class QcDepartment extends Model
     #============ =========== ============ GET INFO ============= =========== ==========
     public function selectInfoAllActivity()
     {
-        return QcDepartment::where('activityStatus', 1)->select('*');
+        return QcDepartment::where('activityStatus', $this->getDefaultHasAction())->select('*');
     }
 
     public function selectInfoAll()
@@ -135,11 +146,12 @@ class QcDepartment extends Model
 
     public function getInfo($departmentId = '', $field = '')
     {
-        if (empty($departmentId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($departmentId)) {
             return QcDepartment::get();
         } else {
             $result = QcDepartment::where('department_id', $departmentId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -157,7 +169,8 @@ class QcDepartment extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcDepartment::where('department_id', $objectId)->pluck($column);
@@ -237,72 +250,69 @@ class QcDepartment extends Model
     #----------- KIỂM TRA THÔNG TIN -------------
     public function existName($name)
     {
-        $result = QcDepartment::where('name', $name)->count();
-        return ($result > 0) ? true : false;
+        return QcDepartment::where('name', $name)->exists();
     }
 
     public function existEditName($departmentId, $name)
     {
-        $result = QcDepartment::where('name', $name)->where('department_id', '<>', $departmentId)->count();
-        return ($result > 0) ? true : false;
+        return QcDepartment::where('name', $name)->where('department_id', '<>', $departmentId)->exists();
     }
 
     public function existNameCode($departmentCode)
     {
-        $result = QcDepartment::where('departmentCode', $departmentCode)->count();
-        return ($result > 0) ? true : false;
+        return QcDepartment::where('departmentCode', $departmentCode)->exists();
     }
 
     public function existEditNameCode($departmentId, $departmentCode)
     {
-        $result = QcDepartment::where('departmentCode', $departmentCode)->where('department_id', '<>', $departmentId)->count();
-        return ($result > 0) ? true : false;
+        return QcDepartment::where('departmentCode', $departmentCode)->where('department_id', '<>', $departmentId)->exists();
     }
 
+    # con hoat dong hay ko
     public function checkActivityStatus($departmentId = null)
     {
-        return ($this->getInfo((empty($departmentId) ? $this->departmentId() : $departmentId), 'activityStatus') == 1) ? true : false;
+        return ($this->activityStatus($departmentId) == $this->getDefaultHasAction()) ? true : false;
     }
 
     // bộ phận quản lý
     public function checkManage($departmentId)
     {
-        return ((empty($departmentId) ? $this->departmentId() : $departmentId) == $this->manageDepartmentId()) ? true : false;
+        return ($this->checkNullId($departmentId) == $this->manageDepartmentId()) ? true : false;
     }
 
     //bộ phận thi công
     public function checkConstruction($departmentId)
     {
-        return ((empty($departmentId) ? $this->departmentId() : $departmentId) == $this->constructionDepartmentId()) ? true : false;
+        return ($this->checkNullId($departmentId) == $this->constructionDepartmentId()) ? true : false;
     }
 
     //bộ phận kế toán
     public function checkAccountant($departmentId)
     {
-        return ((empty($departmentId) ? $this->departmentId() : $departmentId) == $this->accountantDepartmentId()) ? true : false;
+        return ($this->checkNullId($departmentId) == $this->accountantDepartmentId()) ? true : false;
     }
 
     //bộ phận thiết kê
     public function checkDesign($departmentId)
     {
-        return ((empty($departmentId) ? $this->departmentId() : $departmentId) == $this->designDepartmentId()) ? true : false;
+        return ($this->checkNullId($departmentId) == $this->designDepartmentId()) ? true : false;
     }
 
     //bộ phận nhân sự
     public function checkBusiness($departmentId)
     {
-        return ((empty($departmentId) ? $this->departmentId() : $departmentId) == $this->businessDepartmentId()) ? true : false;
+        return ($this->checkNullId($departmentId) == $this->businessDepartmentId()) ? true : false;
     }
 
     //bộ phận nhân sự
     public function checkPersonnel($departmentId)
     {
-        return ((empty($departmentId) ? $this->departmentId() : $departmentId) == $this->personnelDepartmentId()) ? true : false;
+        return ($this->checkNullId($departmentId) == $this->personnelDepartmentId()) ? true : false;
     }
 
     //bộ phận nhân sự
     public function checkTreasure($departmentId)
     {
-        return ((empty($departmentId) ? $this->departmentId() : $departmentId) == $this->treasurerDepartmentId()) ? true : false;
+        return ($this->checkNullId($departmentId) == $this->treasurerDepartmentId()) ? true : false;
     }
 }

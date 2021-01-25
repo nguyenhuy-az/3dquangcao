@@ -74,9 +74,9 @@ class QcWorkSkill extends Model
     }
 
     # delete
-    public function deleteInfo($detailId = null)
+    public function deleteInfo($skillId = null)
     {
-        return QcWorkSkill::where('skill_id', $detailId)->delete();
+        return QcWorkSkill::where('skill_id', $skillId)->delete();
     }
 
     #========== ========== ========== RELATION ========== ========== ==========
@@ -92,19 +92,25 @@ class QcWorkSkill extends Model
         return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'companyStaffWork_id', 'work_id');
     }
 
+    # lay danh sach ky nang dang hoat dong
+    public function getInfoHasActionOfCompanyStaffWork($companyStaffWorkId)
+    {
+        return QcWorkSkill::where('companyStaffWork_id', $companyStaffWorkId)->get();
+    }
+
     #============ =========== ============ GET INFO ============= =========== ==========
     public function selectInfoAll()
     {
         return QcWorkSkill::select('*');
     }
 
-    public function getInfo($detailId = '', $field = '')
+    public function getInfo($skillId = '', $field = '')
     {
         $hFunction = new \Hfunction();
-        if ($hFunction->checkEmpty($detailId)) {
+        if ($hFunction->checkEmpty($skillId)) {
             return QcWorkSkill::get();
         } else {
-            $result = QcWorkSkill::where('skill_id', $detailId)->first();
+            $result = QcWorkSkill::where('skill_id', $skillId)->first();
             if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
@@ -123,14 +129,14 @@ class QcWorkSkill extends Model
         }
     }
 
-    public function detailId()
+    public function skillId()
     {
         return $this->skill_id;
     }
 
-    public function level($detailId = null)
+    public function level($skillId = null)
     {
-        return $this->pluck('level', $detailId);
+        return $this->pluck('level', $skillId);
     }
 
     public function levelLabel($level)
@@ -146,24 +152,19 @@ class QcWorkSkill extends Model
         }
     }
 
-    public function skillId($detailId = null)
+    public function departmentWorkId($skillId)
     {
-        return $this->pluck('skill_id', $detailId);
+        return $this->pluck('departmentWork_id', $skillId);
     }
 
-    public function departmentWorkId($detailId)
+    public function companyStaffWorkId($skillId)
     {
-        return $this->pluck('departmentWork_id', $detailId);
+        return $this->pluck('companyStaffWork_id', $skillId);
     }
 
-    public function companyStaffWorkId($detailId)
+    public function createdAt($skillId = null)
     {
-        return $this->pluck('companyStaffWork_id', $detailId);
-    }
-
-    public function createdAt($detailId = null)
-    {
-        return $this->pluck('created_at', $detailId);
+        return $this->pluck('created_at', $skillId);
     }
 
     # total record

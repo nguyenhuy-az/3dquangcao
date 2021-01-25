@@ -201,7 +201,7 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
                             $workMethodLabel = $dataStaffWorkMethod->methodLabel($workMethod);
                             $applyRuleLabel = $dataStaffWorkMethod->applyRuleLabel($applyRule);
                             # bo phan lam viec
-                            $dataDepartment = null;
+                            $dataStaffWorkDepartment = $dataCompanyStaffWork->staffWorkDepartmentGetInfoHasAction();
                             ?>
                             <tr>
                                 <td style="color: red;padding-bottom: 0; border: none;">
@@ -240,52 +240,32 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover table-condensed">
-                                            <tr>
-                                                <th>
-                                                    BỘ PHẬN
-                                                </th>
-                                                <th class="text-center">
-                                                    CẤP QUẢN LÝ
-                                                </th>
-                                                <th class="text-center">
-                                                    CẤP NHÂN VIÊN
-                                                </th>
-                                            </tr>
-                                            @if($hFunction->checkCount($dataDepartment))
-                                                @foreach($dataDepartment as $department)
+                                            @if($hFunction->checkCount($dataStaffWorkDepartment))
+                                                <?php
+                                                    # lay ky nang lam viec
+                                                ?>
+                                                @foreach($dataStaffWorkDepartment as $staffWorkDepartment)
                                                     <?php
-                                                    $departmentId = $department->departmentId(); //
+                                                    # bo phan
+                                                    $dataDepartment = $staffWorkDepartment->department;
+                                                    $departmentId = $dataDepartment->departmentId(); //
+                                                    # cap bac
+                                                    $dataRank = $staffWorkDepartment->rank;
                                                     ?>
-                                                    @if($companyStaffWorkStatus)
-                                                        <tr>
-                                                            <td>
-                                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                                {!! $department->name() !!}
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <input type="checkbox"
-                                                                       disabled="disabled"
-                                                                       @if($dataCompanyStaffWork->checkExistActivityWorkDepartmentAndRank($departmentId, $manageRankId)) checked="checked" @endif>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <input type="checkbox" disabled="disabled"
-                                                                       @if($dataCompanyStaffWork->checkExistActivityWorkDepartmentAndRank($departmentId, $staffRankId)) checked="checked" @endif>
-                                                            </td>
-                                                        </tr>
-                                                    @else
-                                                        <tr>
-                                                            <td>
-                                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                                {!! $department->name() !!}
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <input type="checkbox" disabled="disabled">
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <input type="checkbox" disabled="disabled">
-                                                            </td>
-                                                        </tr>
-                                                    @endif
+                                                    <tr>
+                                                        <td>
+                                                            <i class="glyphicon glyphicon-arrow-right"></i>
+                                                            <em>Bộ phận:</em>
+                                                            <b>{!! $dataDepartment->name() !!}</b>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            @if($dataRank->checkManageRank())
+                                                                Cấp quản lý
+                                                            @else
+                                                                Cấp nhân viên
+                                                            @endif
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
                                             @endif
                                         </table>
@@ -303,23 +283,23 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
                                 <td id="staffInfoSalaryContainer" style="border: none;">
                                     <?php
                                     if ($hFunction->checkCount($dataStaffWorkSalary)) {
-                                    $totalSalary = $dataStaffWorkSalary->totalSalary();
-                                    $salary = $dataStaffWorkSalary->salary();
-                                    $responsibility = $dataStaffWorkSalary->responsibility();
-                                    $insurance = $dataStaffWorkSalary->totalMoneyInsurance();
-                                    $usePhone = $dataStaffWorkSalary->usePhone();
-                                    $fuel = $dataStaffWorkSalary->fuel();
-                                    $dateOff = $dataStaffWorkSalary->salaryOneDateOff();
-                                    $overtimeHour = $dataStaffWorkSalary->overtimeHour();
+                                        $totalSalary = $dataStaffWorkSalary->totalSalary();
+                                        $salary = $dataStaffWorkSalary->salary();
+                                        $responsibility = $dataStaffWorkSalary->responsibility();
+                                        $insurance = $dataStaffWorkSalary->totalMoneyInsurance();
+                                        $usePhone = $dataStaffWorkSalary->usePhone();
+                                        $fuel = $dataStaffWorkSalary->fuel();
+                                        $dateOff = $dataStaffWorkSalary->salaryOneDateOff();
+                                        $overtimeHour = $dataStaffWorkSalary->overtimeHour();
                                     } else {
-                                    $totalSalary = 0;
-                                    $salary = 0;
-                                    $responsibility = 0;
-                                    $insurance = 0;
-                                    $usePhone = 0;
-                                    $fuel = 0;
-                                    $dateOff = 0;
-                                    $overtimeHour = 0;
+                                        $totalSalary = 0;
+                                        $salary = 0;
+                                        $responsibility = 0;
+                                        $insurance = 0;
+                                        $usePhone = 0;
+                                        $fuel = 0;
+                                        $dateOff = 0;
+                                        $overtimeHour = 0;
                                     }
                                     ?>
                                     <div class="row">

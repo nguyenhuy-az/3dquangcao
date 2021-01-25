@@ -202,4 +202,10 @@ $(document).ready(function () {
         qc_work_timekeeping.lateWork.cancel(href);
     });
 });
+//=========== =========== xem thong tin canh bao =========== ========
+$(document).ready(function () {
+    $('.qc_timekeeping_container_wrap').on('click', '.qc_view_warning', function () {
+        qc_master_submit.ajaxNotReload($(this).data('href'), '#qc_master', false);
+    });
+});
 

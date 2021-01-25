@@ -13,6 +13,11 @@ class QcRank extends Model
 
     private $lastId;
 
+    #mac dinh mo ta
+    public function getDefaultDescription()
+    {
+        return null;
+    }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
     public function insert($name, $description)
@@ -30,10 +35,17 @@ class QcRank extends Model
         }
     }
 
-    # get new id
+    # ma cap bac moi them
     public function insertGetId()
     {
         return $this->lastId;
+    }
+
+    # kiem tra Id
+    public function checkNullId($id = null)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $id : $this->rankId();
     }
 
     #----------- update ----------
@@ -48,8 +60,7 @@ class QcRank extends Model
     # delete
     public function actionDelete($rankId = null)
     {
-        if (empty($rankId)) $rankId = $this->departmentId();
-        return QcRank::where('rank_id', $rankId)->delete();
+        return QcRank::where('rank_id', $this->checkNullId($rankId))->delete();
     }
 
     #----------- department-staff ------------
@@ -63,14 +74,16 @@ class QcRank extends Model
     {
         return $this->hasMany('App\Models\Ad3d\BonusDepartment\QcBonusDepartment', 'rank_id', 'rank_id');
     }
+
     #============ =========== ============ GET INFO ============= =========== ==========
     public function getInfo($rankId = '', $field = '')
     {
-        if (empty($rankId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($rankId)) {
             return QcRank::get();
         } else {
             $result = QcRank::where('rank_id', $rankId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -88,7 +101,8 @@ class QcRank extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcRank::where('rank_id', $objectId)->pluck($column);
@@ -117,12 +131,13 @@ class QcRank extends Model
         return $this->pluck('created_at', $rankId);
     }
 
-    // ID cấp quản lý
+    // mac dinh cap quan ly
     public function manageRankId()
     {
         return 1;
     }
 
+    #mac din cap nhan vie
     public function staffRankId()
     {
         return 2;
@@ -136,25 +151,23 @@ class QcRank extends Model
     #----------- CHECK INFO -------------
     public function existName($name)
     {
-        $result = QcRank::where('name', $name)->count();
-        return ($result > 0) ? true : false;
+        return QcRank::where('name', $name)->exists();
     }
 
     public function existEditName($rankId, $name)
     {
-        $result = QcRank::where('name', $name)->where('rank_id', '<>', $rankId)->count();
-        return ($result > 0) ? true : false;
+        return QcRank::where('name', $name)->where('rank_id', '<>', $rankId)->exists();
     }
 
     // cấp quản lý
-    public function checkManageRank($rankId)
+    public function checkManageRank($rankId=null)
     {
-        return ((empty($rankId) ? $this->rankId() : $rankId) == 1) ? true : false;
+        return ($this->checkNullId($rankId) == $this->manageRankId()) ? true : false;
     }
 
     // cấp thông thường
-    public function checkNormalRank($rankId)
+    public function checkNormalRank($rankId=null)
     {
-        return ((empty($rankId) ? $this->rankId() : $rankId) == 2) ? true : false;
+        return ($this->checkNullId($rankId) == $this->staffRankId()) ? true : false;
     }
 }

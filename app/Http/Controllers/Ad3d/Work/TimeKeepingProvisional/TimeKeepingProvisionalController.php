@@ -43,7 +43,7 @@ class TimeKeepingProvisionalController extends Controller
         ];
         # lay trong thang hien tai - THANG CU SE DUYET TU DONG
         $dateFilter = $hFunction->currentMonthYear();
-        if (!empty($nameFiler)) {
+        if (!$hFunction->checkEmpty($nameFiler)) {
             $listWorkId = $modelWork->listIdOfListCompanyStaffWork($modelCompanyStaffWork->listIdOfListCompanyAndListStaff([$companyFilterId], $modelStaff->listStaffIdByName($nameFiler)));
         } else {
 
@@ -57,9 +57,10 @@ class TimeKeepingProvisionalController extends Controller
     # xem anh bao cao
     public function viewProvisionalImage($imageId)
     {
+        $hFunction = new \Hfunction();
         $modelProvisionalImage = new QcTimekeepingProvisionalImage();
         $dataTimekeepingProvisionalImage = $modelProvisionalImage->getInfo($imageId);
-        if (count($dataTimekeepingProvisionalImage) > 0) {
+        if ($hFunction->checkCount($dataTimekeepingProvisionalImage)) {
             return view('ad3d.work.time-keeping-provisional.view-provisional-image', compact('dataTimekeepingProvisionalImage'));
         }
     }
@@ -77,6 +78,7 @@ class TimeKeepingProvisionalController extends Controller
 
     public function postConfirm()
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $staffLoginId = $modelStaff->loginStaffId();
@@ -86,10 +88,10 @@ class TimeKeepingProvisionalController extends Controller
         $applyTimekeepingStatus = Request::input('txtApplyTimekeepingStatus');
         $applyRuleStatus = Request::input('txtApplyRuleStatus');
         $confirmNote = Request::input('txtConfirmNote');
-        $permissionLateStatus = (empty($permissionLateStatus) ? 1 : 0); // 1 - co phep; 0 - khong phep
-        $accuracyStatus = (empty($accuracyStatus) ? 1 : 0); // 1 - chinh xac; 0 - khong chinh xac
-        $applyTimekeepingStatus = (empty($applyTimekeepingStatus) ? 1 : 0); // 1 - ap dung tinh cong; 0 - khong tin cong
-        $applyRuleStatus = (empty($applyRuleStatus) ? 0 : 1); // 1 - a dung; 0 - khong ap dung
+        $permissionLateStatus = ($hFunction->checkEmpty($permissionLateStatus) ? $modelTimekeepingProvisional->getDefaultHasPermissionStatus() : $modelTimekeepingProvisional->getDefaultNotPermissionStatus()); // 1 - co phep; 0 - khong phep
+        $accuracyStatus = ($hFunction->checkEmpty($accuracyStatus) ? $modelTimekeepingProvisional->getDefaultHasAccuracyStatus() : $modelTimekeepingProvisional->getDefaultNotAccuracyStatus()); // 1 - chinh xac; 0 - khong chinh xac
+        $applyTimekeepingStatus = ($hFunction->checkEmpty($applyTimekeepingStatus) ? $modelTimekeepingProvisional->getDefaultHasTimekeeping() : $modelTimekeepingProvisional->getDefaultNotTimekeeping()); // 1 - ap dung tinh cong; 0 - khong tin cong
+        $applyRuleStatus = ($hFunction->checkEmpty($applyRuleStatus) ? $modelTimekeepingProvisional->getDefaultNotApplyRule() : $modelTimekeepingProvisional->getDefaultHasApplyRule()); // 1 - a dung; 0 - khong ap dung
         $modelTimekeepingProvisional->confirmWork($timekeepingId, $staffLoginId, $confirmNote, $permissionLateStatus, $accuracyStatus, $applyTimekeepingStatus, $applyRuleStatus);
 
     }
@@ -116,7 +118,8 @@ class TimeKeepingProvisionalController extends Controller
         }
     }
 
-    #===== canh bao gio vao
+    #===== canh bao gio vao===== ===
+    # lay form canh bao
     public function getWarningBegin($timekeepingId)
     {
         $hFunction = new \Hfunction();
@@ -126,7 +129,7 @@ class TimeKeepingProvisionalController extends Controller
             return view('ad3d.work.time-keeping-provisional.warning-time-begin', compact('dataTimekeepingProvisional'));
         }
     }
-
+    # them canh bao
     public function postWarningBegin($timekeepingId)
     {
         $hFunction = new \Hfunction();
@@ -134,8 +137,8 @@ class TimeKeepingProvisionalController extends Controller
         $modelWarning = new QcTimekeepingProvisionalWarning();
         $txtNote = Request::input('txtWarningNote');
         $txtWarningImage = Request::file('txtWarningImage');
-        $name_img = null; // mac dinh null
-        if (!empty($txtWarningImage)) {
+        $name_img = $hFunction->getDefaultNull(); // mac dinh null
+        if (!$hFunction->checkEmpty($txtWarningImage)) {
             $name_img = stripslashes($_FILES['txtWarningImage']['name']);
             $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtWarningImage']['tmp_name'];
@@ -144,7 +147,8 @@ class TimeKeepingProvisionalController extends Controller
         $modelWarning->insert($txtNote, $name_img, $modelWarning->getDefaultWarningTypeTimeBegin(), $timekeepingId, $modelStaff->loginStaffId());
     }
 
-    #===== canh bao gio vao
+    #===== canh bao gio ra =======
+    # lay form canh bao
     public function getWarningEnd($timekeepingId)
     {
         $hFunction = new \Hfunction();
@@ -155,6 +159,7 @@ class TimeKeepingProvisionalController extends Controller
         }
     }
 
+    # them canh bao ra
     public function postWarningEnd($timekeepingId)
     {
         $hFunction = new \Hfunction();
@@ -162,8 +167,8 @@ class TimeKeepingProvisionalController extends Controller
         $modelWarning = new QcTimekeepingProvisionalWarning();
         $txtNote = Request::input('txtWarningNote');
         $txtWarningImage = Request::file('txtWarningImage');
-        $name_img = null; // mac dinh null
-        if (!empty($txtWarningImage)) {
+        $name_img = $hFunction->getDefaultNull(); // mac dinh null
+        if (!$hFunction->checkEmpty($txtWarningImage)) {
             $name_img = stripslashes($_FILES['txtWarningImage']['name']);
             $name_img = $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtWarningImage']['tmp_name'];
@@ -171,6 +176,7 @@ class TimeKeepingProvisionalController extends Controller
         }
         $modelWarning->insert($txtNote, $name_img, $modelWarning->getDefaultWarningTypeTimeEnd(), $timekeepingId, $modelStaff->loginStaffId());
     }
+
     # huy canh bao cham cong
     public function cancelWarningTimekeeping($warningId)
     {

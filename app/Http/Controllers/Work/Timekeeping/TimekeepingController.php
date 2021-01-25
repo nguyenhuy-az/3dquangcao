@@ -13,6 +13,7 @@ use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
 use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
+use App\Models\Ad3d\TimekeepingProvisionalWarning\QcTimekeepingProvisionalWarning;
 use App\Models\Ad3d\Work\QcWork;
 //use Illuminate\Http\Request;
 use App\Models\Ad3d\WorkAllocationReport\QcWorkAllocationReport;
@@ -492,11 +493,9 @@ class TimekeepingController extends Controller
     {
         $modelStaff = new QcStaff();
         $modelWork = new QcWork();
-        if ($modelStaff->checkLogin()) {
-            $dataStaff = $modelStaff->loginStaffInfo();
-            $dataWork = $modelWork->getInfo($workId);
-            return view('work.timekeeping.timekeeping.late-work', compact('modelStaff', 'dataStaff', 'dataWork'));
-        }
+        $dataStaff = $modelStaff->loginStaffInfo();
+        $dataWork = $modelWork->getInfo($workId);
+        return view('work.timekeeping.timekeeping.late-work', compact('modelStaff', 'dataStaff', 'dataWork'));
     }
 
     public function postLateWork()
@@ -537,11 +536,20 @@ class TimekeepingController extends Controller
         $modelLicenseLate->deleteInfo($licenseId);
     }
 
-    //===== ==== hủy chấm công
+    //===== ==== hủy chấm công ======= =======
     public function cancelTimekeeping($timekeepingProvisionalId)
     {
         $modelTimekeepingProvisional = new QcTimekeepingProvisional();
         $modelTimekeepingProvisional->deleteInfo($timekeepingProvisionalId);
+    }
+
+    //========= ======== XEM CANH BAO ======== =========
+    public function viewTimekeepingProvisionalWarning($warningId)
+    {
+        $modelStaff = new QcStaff();
+        $modelTimekeepingProvisionalWarning = new QcTimekeepingProvisionalWarning();
+        $dataTimekeepingProvisionalWarning = $modelTimekeepingProvisionalWarning->getInfo($warningId);
+        return view('work.timekeeping.timekeeping.view-provisional-warning', compact('modelStaff', 'dataStaff', 'dataTimekeepingProvisionalWarning'));
     }
 
 }
