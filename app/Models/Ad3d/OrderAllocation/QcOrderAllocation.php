@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcOrderAllocation extends Model
 {
     protected $table = 'qc_order_allocation';
-    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'noted', 'finishStatus', 'finishDate', 'finishNote', 'confirmStatus', 'confirmFinish', 'confirmDate', 'confirmNote', 'paymentStatus', 'action', 'confirmStaff_id', 'order_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
+    protected $fillable = ['allocation_id', 'allocationDate', 'receiveStatus', 'receiveDeadline', 'noted', 'lateStatus', 'finishStatus', 'finishDate', 'finishNote', 'confirmStatus', 'confirmFinish', 'confirmDate', 'confirmNote', 'paymentStatus', 'action', 'confirmStaff_id', 'order_id', 'allocationStaff_id', 'receiveStaff_id', 'created_at'];
     protected $primaryKey = 'allocation_id';
     public $timestamps = false;
 
@@ -105,6 +105,16 @@ class QcOrderAllocation extends Model
         return 0;
     }
 
+    # mac dinh da tre
+    public function getDefaultHasLate()
+    {
+        return 1;
+    }
+    # mac dinh da tre
+    public function getDefaultNotLate()
+    {
+        return 0;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- them moi ----------
     public function insert($allocationDate, $receiveStatus, $receiveDeadline, $noted, $orderId, $receiveStaffId, $allocationStaffId = null)
@@ -145,7 +155,11 @@ class QcOrderAllocation extends Model
         return QcOrderAllocation::where('allocation_id', $this->checkNullId($allocationId))->update(['action' => $this->getDefaultNotAction()]);
     }
 
-
+    # cap nhat trang thai tre
+    public function updateLate($allocationId = null)
+    {
+        return QcOrderAllocation::where('allocation_id', $this->checkNullId($allocationId))->update(['lateStatus' => $this->getDefaultHasLate()]);
+    }
     //========== ========= DUYET TU BAO CAO BAN GIAO CONG TRINH ========= ==========
     # BAO HOAN THANH cong trinh
     public function reportFinishAllocation($allocationId, $reportDate, $finishNote = null, $paymentStatus = 0)
@@ -163,7 +177,8 @@ class QcOrderAllocation extends Model
                 'finishDate' => $reportDate,
                 'paymentStatus' => $paymentStatus,
                 'action' => $this->getDefaultNotAction()
-            ])) {
+            ])
+        ) {
             # thong bao hoan thanh thi cong cho quan ly thi cong (nguoi phan viec)
             $staffNotifyId = $this->allocationStaffId($allocationId);
             $notifyNote = 'Hoàn thành thi công';
@@ -406,6 +421,11 @@ class QcOrderAllocation extends Model
         return QcOrderAllocation::where('action', $this->getDefaultHasAction())->where('receiveDeadline', 'like', "%$currentMonth%")->select('*');
     }
 
+    #lay thong tin con hoat dong
+    public function getAllInfoHasAction()
+    {
+        return QcOrderAllocation::where('action', $this->getDefaultHasLate())->get();
+    }
 
     public function getInfo($allocationId = '', $field = '')
     {
@@ -453,6 +473,11 @@ class QcOrderAllocation extends Model
     {
 
         return $this->pluck('receiveDeadline', $allocationId);
+    }
+
+    public function lastStatus($allocationId = null)
+    {
+        return $this->pluck('lateStatus', $allocationId);
     }
 
     public function finishStatus($allocationId = null)
@@ -589,16 +614,21 @@ class QcOrderAllocation extends Model
         }
     }
 
+    # kiem tra co bi tre khi sau check tu dong
+    public function checkHasLate($allocationId = null)
+    {
+        return ($this->lastStatus($allocationId) == $this->getDefaultHasLate()) ? true : false;
+    }
     #kiem tra phan viec bi tre hay khong
     public function checkLate($allocationId)
     {
         $hFunction = new \Hfunction();
         $checkDate = $hFunction->carbonNow();
         $lateStatus = false;
-        $receiveDeadline = $this->receiveDeadline($allocationId)[0];
+        $receiveDeadline = $this->receiveDeadline($allocationId);
         if (!$this->checkActivity($allocationId)) { # cong viec da xong
             if ($this->checkFinish($allocationId)) { # co bao hoan thanh
-                $finishDate = $this->finishDate($allocationId)[0];
+                $finishDate = $this->finishDate($allocationId);
                 if ($finishDate > $receiveDeadline) {
                     $lateStatus = true;
                 }
@@ -609,8 +639,22 @@ class QcOrderAllocation extends Model
         return $lateStatus;
     }
 
+    # kiem tra cap nhat trang thai bi tre
+    public function checkUpdateLateStatus()
+    {
+        $hFunction = new \Hfunction();
+        # chi kiem tra thong tin con hoat dong
+        $dataOrderAllocation = $this->getAllInfoHasAction();
+        if ($hFunction->checkCount($dataOrderAllocation)) {
+            foreach ($dataOrderAllocation as $orderAllocation) {
+                if ($this->checkLate($orderAllocation->allocationId())) {
+                    $orderAllocation->updateLate();
+                }
+            }
+        }
+    }
     // ======== ======== KIEM TRA PHAT TREN PHAN CONG ======== ========
-    #kiem tra tu dong thi cong don hang don hang - tat ca thong tin ban giao
+    #kiem tra tu dong thi cong don hang - tat ca thong tin ban giao
     public function autoCheckMinusMoneyLateOrderAllocation()
     {
         $hFunction = new \Hfunction();

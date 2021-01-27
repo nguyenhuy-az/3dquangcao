@@ -55,6 +55,12 @@ class QcStaffWorkSalary extends Model
         return 0;
     }
 
+    # mac dinh phan tram bao hiem
+    public function getDefaultInsurancePercent()
+    {
+        return 21.5;
+    }
+
     # mac dinh tien su dung dien thoai
     public function getDefaultUsePhone()
     {
@@ -234,7 +240,7 @@ class QcStaffWorkSalary extends Model
 
     public function  allInfoOfWork($workId)
     {
-        return QcStaffWorkSalary::where('work_id',$workId)->orderBy('created_at', 'DESC')->get();
+        return QcStaffWorkSalary::where('work_id', $workId)->orderBy('created_at', 'DESC')->get();
     }
 
     public function totalSalaryBasic($workSalaryId = null) # tong tien luong co ban dc lanh

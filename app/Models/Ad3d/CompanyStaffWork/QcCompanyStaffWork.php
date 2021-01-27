@@ -513,7 +513,7 @@ class QcCompanyStaffWork extends Model
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
     }
 
-    #lay thong tin lam viec sau cung cua 1 nhan vie
+    #lay thong tin lam viec sau cung cua 1 nhan vien
     public function getLastInfoOfStaff($staffId)
     {
         return QcCompanyStaffWork::where('staff_id', $staffId)->orderBy('work_id', 'DESC')->first();

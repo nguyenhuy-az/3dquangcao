@@ -17,6 +17,91 @@ class QcJobApplication extends Model
 
     private $lastId;
 
+
+    # mac dinh email
+    public function getDefaultEmail()
+    {
+        return null;
+    }
+
+    # mac dinh mo ta ho so
+    public function getDefaultIntroduce()
+    {
+        return null;
+    }
+
+    # mac dinh da xac nhan
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    # mac dinh chua xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
+
+    # mac dinh tat ca trang thai xac nhan
+    public function getDefaultAllConfirm()
+    {
+        return 100;
+    }
+
+    # mac dinh ghi chu xac nhan
+    public function getDefaultConfirmNote()
+    {
+        return null;
+    }
+
+    # mac dinh ngay xac nhan
+    public function getDefaultConfirmDate()
+    {
+        return null;
+    }
+
+    #mac dinh co dong y
+    public function getDefaultHasAgree()
+    {
+        return 1;
+    }
+
+    # mac dinh khong dong y
+    public function getDefaultNotAgree()
+    {
+        return 0;
+    }
+
+    # mac dinh trang thai dong y
+    public function getDefaultAllAgree()
+    {
+        return 100;
+    }
+
+    # mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh tat ca trang thai hoat dong
+    public function getDefaultAllAction()
+    {
+        return 100;
+    }
+
+    # mac dinh nguoi xac nhan
+    public function getDefaultConfirmStaffId()
+    {
+        return null;
+    }
+
     public function insert($firstName, $lastName, $identityCard, $birthday, $gender, $image, $identityFront, $identityBack, $email, $address, $phone, $introduce, $salaryOffer, $companyId, $departmentId)
     {
         $hFunction = new \Hfunction();
@@ -39,7 +124,7 @@ class QcJobApplication extends Model
         $modelJobApplication->phone = $phone;
         $modelJobApplication->company_id = $companyId;
         $modelJobApplication->department_id = $departmentId;
-        $modelJobApplication->action = 1;
+        $modelJobApplication->action = $this->getDefaultHasAction();
         $modelJobApplication->created_at = $hFunction->createdAt();
         if ($modelJobApplication->save()) {
             $this->lastId = $modelJobApplication->jobApplication_id;
@@ -57,7 +142,8 @@ class QcJobApplication extends Model
 
     public function checkIdNull($jobApplicationId)
     {
-        return (empty($jobApplicationId)) ? $this->jobApplicationId() : $jobApplicationId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkNull($jobApplicationId)) ? $this->jobApplicationId() : $jobApplicationId;
     }
 
     // up hinh anh
@@ -91,8 +177,9 @@ class QcJobApplication extends Model
 
     public function pathSmallImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkNull($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathSmallImage() . '/' . $image);
         }
@@ -100,8 +187,9 @@ class QcJobApplication extends Model
 
     public function pathFullImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
         }
@@ -175,7 +263,7 @@ class QcJobApplication extends Model
     # lay tong so luong ho so tuyen dung chua duyet
     public function totalUnconfirmed()
     {
-        return QcJobApplication::where('confirmStatus', 0)->count();
+        return QcJobApplication::where('confirmStatus', $this->getDefaultNotConfirm())->count();
     }
 
     # lay thong tin theo so dien thoai cua cong
@@ -186,11 +274,12 @@ class QcJobApplication extends Model
 
     public function getInfo($id = '', $field = '')
     {
-        if (empty($id)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($id)) {
             return QcJobApplication::select('*')->get();
         } else {
             $result = QcJobApplication::where('jobApplication_id', $id)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -200,13 +289,13 @@ class QcJobApplication extends Model
 
     public function getInfoActivity()
     {
-        return QcJobApplication::where('action', 1)->get();
+        return QcJobApplication::where('action', $this->getDefaultHasAction())->get();
     }
 
     //danh sach ho so  dang hoat dong
     public function listIdActivity()
     {
-        return QcJobApplication::where('action', 1)->pluck('jobApplication_id');
+        return QcJobApplication::where('action', $this->getDefaultHasAction())->pluck('jobApplication_id');
     }
 
     public function jobApplicationId()
@@ -214,13 +303,14 @@ class QcJobApplication extends Model
         return $this->jobApplication_id;
     }
 
+    # lay mot gia tri
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            $result = QcJobApplication::where('jobApplication_id', $objectId)->pluck($column);
-            return $result[0];
+            return QcJobApplication::where('jobApplication_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -362,8 +452,9 @@ class QcJobApplication extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcJobApplication::orderBy('jobApplication_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->jobApplication_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->jobApplication_id;
     }
 
     # ======== ======== kiem tra thong tin ========= ==========
@@ -371,7 +462,7 @@ class QcJobApplication extends Model
     #lay ho so tuyen dung theo cty va trang thai duyet
     public function selectInfoByCompany($companyId, $confirmStatus = 100)
     {
-        if ($confirmStatus == 100) { # tat ca thong tin
+        if ($confirmStatus == $this->getDefaultAllConfirm()) { # tat ca thong tin
             return QcJobApplication::where('company_id', $companyId)->orderBy('jobApplication_id', 'DESC')->select();
         } else {
             return QcJobApplication::where('company_id', $companyId)->where('confirmStatus', $confirmStatus)->orderBy('jobApplication_id', 'DESC')->select();
@@ -381,8 +472,9 @@ class QcJobApplication extends Model
     # dang nhap ho so
     public function loginJobApplication($companyId, $phone)
     {
+        $hFunction = new \Hfunction();
         $getInfo = QcJobApplication::where('company_id', $companyId)->where('phone', $phone)->first();
-        if (count($getInfo) > 0) { // login success
+        if ($hFunction->checkCount($getInfo)) { // login success
             Session::put('loginJobApplication', $getInfo);
             return true;
         } else {
@@ -409,13 +501,13 @@ class QcJobApplication extends Model
     # kiem tra hs da xac nhan hay chua
     public function checkConfirmStatus($jobApplicationId = null)
     {
-        return ($this->confirmStatus($jobApplicationId) == 1) ? true : false;
+        return ($this->confirmStatus($jobApplicationId) == $this->getDefaultHasConfirm()) ? true : false;
     }
 
     # hs con hoat dong hay khong
     public function checkActivity($jobApplicationId = null)
     {
-        return ($this->confirmStatus($jobApplicationId) == 1) ? true : false;
+        return ($this->action($jobApplicationId) == $this->getDefaultHasAction()) ? true : false;
     }
 
     # kiem tra so dien thoai da dang ky o cty
@@ -427,7 +519,7 @@ class QcJobApplication extends Model
     # kiem tra co duoc dong y chap nhan hay khong
     public function checkAgreeStatus($jobApplicationId = null)
     {
-        return ($this->agreeStatus($jobApplicationId) == 1) ? true : false;
+        return ($this->agreeStatus($jobApplicationId) == $this->getDefaultHasAgree()) ? true : false;
     }
 
     # xac nhan khong dong y ho so
@@ -436,7 +528,7 @@ class QcJobApplication extends Model
         $hFunction = new \Hfunction();
         return QcJobApplication::where('jobApplication_id', $jobApplicationId)->update(
             [
-                'confirmStatus' => 1,
+                'confirmStatus' => $this->getDefaultHasConfirm(),
                 'confirmStaff_id' => $confirmStaffId,
                 'confirmDate' => $hFunction->carbonNow()
             ]);
@@ -449,8 +541,8 @@ class QcJobApplication extends Model
         $modelJobApplicationInterview = new QcJobApplicationInterview();
         if (QcJobApplication::where('jobApplication_id', $jobApplicationId)->update(
             [
-                'confirmStatus' => 1,
-                'agreeStatus' => 1,
+                'confirmStatus' => $this->getDefaultHasConfirm(),
+                'agreeStatus' => $this->getDefaultHasAgree(),
                 'confirmStaff_id' => $confirmStaffId,
                 'confirmDate' => $hFunction->carbonNow()
             ])

@@ -343,9 +343,6 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                                                 <th>
                                                     Tay nghề / Kỹ năng
                                                 </th>
-                                                <th class="text-center" style="width: 70px;">
-                                                    Kỹ năng
-                                                </th>
                                             </tr>
                                             @if($hFunction->checkCount($dataJobApplicationWork))
                                                 @foreach($dataJobApplicationWork as $jobApplicationWork)
@@ -355,10 +352,13 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                                                     <tr>
                                                         <td>
                                                             <i class="glyphicon glyphicon-arrow-right"></i>
-                                                            {!! $jobApplicationWork->departmentWork->name() !!}
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <span>{!! $jobApplicationWork->skillStatusLabel($skillStatus) !!}</span>
+                                                            <b>
+                                                                {!! $jobApplicationWork->departmentWork->name() !!}
+                                                            </b>
+                                                            <br/> &emsp;
+                                                            <em style="color: grey;">
+                                                                {!! $jobApplicationWork->skillStatusLabel($skillStatus) !!}
+                                                            </em>
                                                         </td>
                                                     </tr>
                                                 @endforeach

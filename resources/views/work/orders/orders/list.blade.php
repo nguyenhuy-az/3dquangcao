@@ -44,7 +44,9 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                         @if($hFunction->checkCount($dataStaffFilter))
                                             @foreach($dataStaffFilter as $staff)
                                                 <option @if($staff->staffId() == $staffFilterId) selected="selected"
-                                                        @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                                        @endif  value="{!! $staff->staffId() !!}">
+                                                    {!! $staff->lastName() !!}
+                                                </option>
                                             @endforeach
                                         @endif
                                     </select>

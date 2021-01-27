@@ -45,7 +45,7 @@ class QcRank extends Model
     public function checkNullId($id = null)
     {
         $hFunction = new \Hfunction();
-        return ($hFunction->checkEmpty($id)) ? $id : $this->rankId();
+        return (!$hFunction->checkEmpty($id)) ? $id : $this->rankId();
     }
 
     #----------- update ----------

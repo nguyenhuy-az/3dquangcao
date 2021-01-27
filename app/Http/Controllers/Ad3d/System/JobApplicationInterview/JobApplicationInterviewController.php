@@ -61,7 +61,7 @@ class JobApplicationInterviewController extends Controller
         $agreeStatus = Request::input('cbAgreeStatus');
         $dataJobApplicationInterview = $modelJobApplicationInterview->getInfo($interviewId);
         if ($hFunction->checkCount($dataJobApplicationInterview)) {
-            if ($agreeStatus == 1) { # dong y tuyen dung
+            if ($agreeStatus == $modelJobApplicationInterview->getDefaultHasAgree()) { # dong y tuyen dung
                 $totalSalary = Request::input('txtSalary');
                 $salary = $hFunction->convertCurrencyToInt($totalSalary);
                 $departmentRank = Request::input('cbDepartmentRank');

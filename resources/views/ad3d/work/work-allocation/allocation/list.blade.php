@@ -23,7 +23,7 @@ $indexHref = route('qc.ad3d.work.work_allocation.get');
                     <tr style=" background-color: black; color: yellow;">
                         <th class="text-center" style="width: 20px;">STT</th>
                         <th style="width: 150px;">TG nhận - TG giao</th>
-                        <th>Nhân viên</th>
+                        <th style="width: 170px;">Nhân viên</th>
                         <th>Sản phẩm</th>
                         <th class="text-center">Thi công</th>
                         <th class="text-center">Phạt</th>
@@ -31,7 +31,7 @@ $indexHref = route('qc.ad3d.work.work_allocation.get');
                     <tr>
                         <td class="text-center"></td>
                         <td style="padding: 0;">
-                            <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                            <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                     style="height: 34px; padding: 0;"
                                     data-href="{!! $indexHref !!}">
                                 <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
@@ -42,7 +42,7 @@ $indexHref = route('qc.ad3d.work.work_allocation.get');
                                             @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
                                 @endfor
                             </select>
-                            <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                            <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                     style="height: 34px; padding: 0;"
                                     data-href="{!! $indexHref !!}">
                                 <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
@@ -53,15 +53,17 @@ $indexHref = route('qc.ad3d.work.work_allocation.get');
                                             @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
                                 @endfor
                             </select>
-                            <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                            <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
                                     style="height: 34px; padding: 0;"
                                     data-href="{!! $indexHref !!}">
                                 <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                     Tất cả
                                 </option>
-                                @for($i =2017;$i<= 2050; $i++)
-                                    <option value="{!! $i !!}"
-                                            @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                @for($y =2017;$y<= 2050; $y++)
+                                    <option value="{!! $y !!}"
+                                            @if($yearFilter == $y) selected="selected" @endif>
+                                        {!! $y !!}
+                                    </option>
                                 @endfor
                             </select>
                         </td>
@@ -80,14 +82,17 @@ $indexHref = route('qc.ad3d.work.work_allocation.get');
                         <td></td>
                         <td style="padding: 0;">
                             <select class="text-center cbPaymentStatus form-control" data-href="{!! $indexHref !!}">
-                                <option value="2" @if($finishStatus == 2) selected="selected" @endif>
+                                <option value="{!! $modelWorkAllocation->getDefaultAllAction() !!}"
+                                        @if($actionStatus == 2) selected="selected" @endif>
                                     Tất cả
                                 </option>
-                                <option value="0" @if($finishStatus == 0) selected="selected" @endif>
-                                    Đã hoàn thành
+                                <option value="0"
+                                        @if($actionStatus == $modelWorkAllocation->getDefaultNotAction()) selected="selected" @endif>
+                                    Đã làm
                                 </option>
-                                <option value="1" @if($finishStatus == 1) selected="selected" @endif>
-                                    Chưa hoàn thành
+                                <option value="1"
+                                        @if($actionStatus == $modelWorkAllocation->getDefaultHasAction()) selected="selected" @endif>
+                                    Đã kết thúc
                                 </option>
                             </select>
                         </td>
@@ -110,6 +115,8 @@ $indexHref = route('qc.ad3d.work.work_allocation.get');
                             $dataMinus = $workAllocation->minusMoneyGetInfo();
                             # thong tin nguoi nhan
                             $dataReceiveStaff = $workAllocation->receiveStaff;
+                            # thong ket thuc phan viec
+                            $dataWorkAllocationFinish = $workAllocation->workAllocationFinishInfo();
                             ?>
                             <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
                                 data-object="{!! $workAllocationId !!}">
@@ -130,8 +137,9 @@ $indexHref = route('qc.ad3d.work.work_allocation.get');
                                                  style="background-color: white;width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                  src="{!! $dataReceiveStaff->pathAvatar($dataReceiveStaff->image()) !!}">
                                         </a>
+
                                         <div class="media-body">
-                                            <h5 class="media-heading">{!! $dataReceiveStaff->fullName() !!}</h5>
+                                            <h5 class="media-heading">{!! $dataReceiveStaff->lastName() !!}</h5>
                                             <a class="qc_view qc-link-green" href="#">
                                                 <i class="glyphicon glyphicon-eye-open qc-font-size-14"></i>
                                             </a>
@@ -161,12 +169,24 @@ $indexHref = route('qc.ad3d.work.work_allocation.get');
                                         </a>--}}
                                     @else
                                         <em style="color: grey;">Đã kết thúc</em>
+                                        <br/>
+                                        @if($hFunction->checkCount($dataWorkAllocationFinish))
+                                            <br/>
+                                            <em style="color: grey;">Đã kết thúc</em>
+                                            <br/>
+                                            <span class="qc-font-bold" style="color: blue;">
+                                                {!! date('d-m-Y ', strtotime($dataWorkAllocationFinish->finishDate())) !!}
+                                            </span>
+                                            <span class="qc-font-bold">
+                                                {!! date('H:i', strtotime($dataWorkAllocationFinish->finishDate())) !!}
+                                            </span>
+                                        @endif
                                     @endif
                                 </td>
                                 <td class="text-center">
                                     <a class="qc_minus_money_get qc-link-bold"
                                        data-href="{!! route('qc.ad3d.work.work_allocation.minus_money.add.post',$workAllocationId) !!}">
-                                        Bồi thường vật tư
+                                        BỒI THƯỜNG VẬT TƯ
                                     </a>
                                     @if($hFunction->checkCount($dataMinus))
                                         @foreach($dataMinus as $minus)

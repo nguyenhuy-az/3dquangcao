@@ -14,25 +14,25 @@ use Request;
 
 class WorkAllocationController extends Controller
 {
-    public function index($dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $finishStatus = 2, $nameFiler = null)
+    public function index($dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $actionStatus = 100, $nameFiler = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelWorkAllocation = new QcWorkAllocation();
-
         $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $companyFilterId = $dataStaffLogin->companyId();
         $dataAccess = [
             'accessObject' => 'workAllocation',
             'subObject' => 'workAllocation'
         ];
-        if (empty($companyFilterId)) {
+       /* if ($hFunction->checkEmpty($companyFilterId)) {
             $companyFilterId = $dataStaffLogin->companyId();
-        }
+        }*/
 
         $searchCompanyFilterId = [$companyFilterId];
 
-        if (!empty($nameFiler)) {
+        if (!$hFunction->checkEmpty($nameFiler)) {
             $listStaffId = $modelStaff->listIdOfListCompanyAndName($searchCompanyFilterId, $nameFiler);
         } else {
             $listStaffId = $modelStaff->listIdOfListCompany($searchCompanyFilterId);
@@ -67,8 +67,8 @@ class WorkAllocationController extends Controller
             $yearFilter = date('Y');
         }
         #tat ca dang thi cong va ket thuc
-        $dataWorkAllocation = $modelWorkAllocation->selectInfoOfReceiveListStaff($listStaffId, $finishStatus, $dateFilter)->paginate(30);
-        return view('ad3d.work.work-allocation.allocation.list', compact('modelStaff', 'dataAccess', 'dataWorkAllocation', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'finishStatus', 'nameFiler'));
+        $dataWorkAllocation = $modelWorkAllocation->selectInfoOfReceiveListStaff($listStaffId, $actionStatus, $dateFilter)->paginate(30);
+        return view('ad3d.work.work-allocation.allocation.list', compact('modelStaff', 'modelWorkAllocation','dataAccess', 'dataWorkAllocation', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'actionStatus', 'nameFiler'));
 
     }
 

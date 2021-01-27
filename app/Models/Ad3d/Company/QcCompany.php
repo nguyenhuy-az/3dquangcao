@@ -145,12 +145,17 @@ class QcCompany extends Model
         $modelOverTimeRequest = new QcOverTimeRequest();
 
         // ===== ===== DON HANG - SAN PHAM ====== ======
+        #--------- Don hang ---------
         # kiem tra cap ban giao don hang tre - cua bo phan kinh doanh
         $modelOrder->checkUpdateLateStatus();
+
+        # kiem tra ban giao don hang
+        $modelOrderAllocation->checkUpdateLateStatus();
 
         # kiem tra thong tin ban giao don hang - cua bo phan thi cong cap quan ly
         $modelOrderAllocation->autoCheckMinusMoneyLateOrderAllocation();
 
+        #-------- San Pham ----------
         # kiem tra cap nhat tre cua thi cong san pham
         $modelWorkAllocation->checkUpdateLateStatus();
 

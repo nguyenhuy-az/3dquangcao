@@ -30,7 +30,6 @@ class StaffController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
-        $modelDepartment = new QcDepartment();
         $modelRank = new QcRank();
         $dataAccess = [
             'object' => 'staff',

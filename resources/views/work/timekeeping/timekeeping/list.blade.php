@@ -328,8 +328,7 @@ if ($hFunction->checkCount($dataWork)) {
                                                         Tăng ca:
                                                     </em>
                                                 </div>
-                                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                                                     style="padding: 0;">
+                                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                                                     @foreach($dataTimekeepingProvisionalImageInEvening as $timekeepingProvisionalImage)
                                                         <div style="background-color: white; position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                             <a class="qc_work_allocation_report_image_view qc-link"

@@ -103,7 +103,7 @@ $dateOfMonth = 31;
                                             <span class="badge pull-right">Có tăng ca</span>
                                         @endif
                                     </div>
-                                    <div class="panel-body">
+                                    <div class="panel-body" style="padding-top: 5px;">
                                         <span style="color: blue;">Giờ vào:</span>
                                         <b>
                                             {!! date('H:i',strtotime($timeBegin)) !!}
@@ -115,9 +115,8 @@ $dateOfMonth = 31;
                                             <br/>
                                             <span style="color: brown;">Giờ ra:</span>
                                             <b> {!! date('H:i',strtotime($hasTimeKeeping->timeEnd())) !!}</b>
-                                            <br/>
                                             @if($hasTimeKeeping->checkAfternoonStatus())
-                                                <em style="color: grey;">Có làm trưa</em>
+                                                <em style="color: grey;"> - Có làm trưa</em>
                                             @endif
                                         @else
                                             <br/>
@@ -125,7 +124,7 @@ $dateOfMonth = 31;
                                         @endif
                                         @if($hFunction->checkCount($dataOverTimeRequest))
                                             <br/>
-                                            <em style="color: red;">Có báo tăng ca</em>
+                                            <em style="color: red;">Có yêu cầu tăng ca</em>
 
                                         @endif
                                     </div>

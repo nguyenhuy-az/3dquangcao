@@ -136,7 +136,7 @@ class QcJobApplicationWork extends Model
 
     public function workId($detailId = null)
     {
-        return $this->pluck('workId', $detailId);
+        return $this->pluck('work_id', $detailId);
     }
 
     public function jobApplicationId($detailId)

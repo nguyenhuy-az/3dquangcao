@@ -492,7 +492,14 @@ class QcStaff extends Model
         return $modelCompanyStaffWork->getLastInfoOfStaff($this->checkIdNull($staffId));
     }
 
-    # thong tin đang lam viec tai 1 cty
+    # thong tin lam viec sau cung tai 1 cty
+    public function companyStaffWorkLastInfoInCompany($companyId, $staffId = null)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        return $modelCompanyStaffWork->getLastInfoOfStaffInCompany($companyId, $this->checkIdNull($staffId));
+    }
+
+    # thong tin đang lam viec
     public function companyStaffWorkInfoActivity($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -780,14 +787,14 @@ class QcStaff extends Model
     }*/
 
     # danh sach NV bo phan thi cong dang hoat dong
-    public function infoActivityConstructionOfCompany($companyId, $level = 1000, $orderByName = 'ASC')
+    public function infoActivityConstructionOfCompany($companyId, $level = 100, $orderByName = 'ASC')
     {
         $modelDepartment = new QcDepartment();
         return $this->infoActivityOfCompany($companyId, $modelDepartment->constructionDepartmentId(), $level, $orderByName);
     }
 
     # lay danh sach tat ca nv cua 1 cty
-    public function infoOfCompany($companyId, $departmentId = null, $level = 1000)
+    public function infoOfCompany($companyId, $departmentId = null, $level = 100)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $listStaffId = $modelCompanyStaffWork->listStaffIdHasFilter($companyId, $departmentId, $level);
@@ -795,11 +802,11 @@ class QcStaff extends Model
     }
 
     # lay danh sach tat ca nv dang hoat dong cua 1 cty
-    public function infoActivityOfCompany($companyId, $departmentId = null, $level = 1000, $orderByName = 'ASC') # mac dinh 1000 = tat ca level
+    public function infoActivityOfCompany($companyId, $departmentId = null, $level = 100, $orderByName = 'ASC') # mac dinh 100 = tat ca level
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $listStaffId = $modelCompanyStaffWork->listStaffIdActivityHasFilter($companyId, $departmentId, $level);
-        return QcStaff::whereIn('staff_id', $listStaffId)->where('workStatus', 1)->orderBy('lastName', $orderByName)->get();
+        return QcStaff::whereIn('staff_id', $listStaffId)->where('workStatus', $this->getDefaultHasWorkStatus())->orderBy('lastName', $orderByName)->get();
 
     }
 
@@ -1313,13 +1320,14 @@ class QcStaff extends Model
     //========== ========== ========== dang nhap ========== ========== ==========
     public function login($account, $password)
     {
+        $hFunction = new \Hfunction();
         $modelCompany = new QcCompany();
         //$passLog = Hash::make($pass);
         $nameCode = QcStaff::where('account', $account)->pluck('nameCode');
-        if (count($nameCode) > 0) {
+        if ($hFunction->checkCount($nameCode)) {
             $passLog = $this->createStaffPass($password, $nameCode[0]);
-            $staff = QcStaff::where('account', $account)->where('password', $passLog)->where('workStatus', 1)->first();
-            if (count($staff) > 0) { // login success
+            $staff = QcStaff::where('account', $account)->where('password', $passLog)->where('workStatus', $this->getDefaultHasWorkStatus())->first();
+            if ($hFunction->checkCount($staff)) { // login success
                 # KIEM TRA DU LIEU TU DONG
                 $modelCompany->checkAutoInfo();
                 Session::put('loginStaff', $staff);
@@ -1486,7 +1494,7 @@ class QcStaff extends Model
 
     public function getInfoActivityOrderByName($orderBy = 'ASC')
     {
-        return QcStaff::where('workStatus', 1)->orderBy('lastName', $orderBy)->get();
+        return QcStaff::where('workStatus', $this->getDefaultHasWorkStatus())->orderBy('lastName', $orderBy)->get();
     }
 
     // tao danh muc chon dang select box
@@ -1500,7 +1508,7 @@ class QcStaff extends Model
 
     public function getInfoActivity()
     {
-        return QcStaff::where('workStatus', 1)->get();
+        return QcStaff::where('workStatus', $this->getDefaultHasWorkStatus())->get();
     }
 
     public function getInfoByListStaffId($listStaffId)
@@ -1510,7 +1518,7 @@ class QcStaff extends Model
 
     public function getInfoActivityByListStaffId($listStaffId)
     {
-        return QcStaff::whereIn('staff_id', $listStaffId)->where('workStatus', 1)->get();
+        return QcStaff::whereIn('staff_id', $listStaffId)->where('workStatus', $this->getDefaultHasWorkStatus())->get();
     }
 
 
@@ -1518,14 +1526,14 @@ class QcStaff extends Model
     public function getInfoActivityByLevel($level)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        return QcStaff::whereIn('staff_id', $modelCompanyStaffWork->listStaffIdActivityByLevel($level))->where('workStatus', 1)->get();
+        return QcStaff::whereIn('staff_id', $modelCompanyStaffWork->listStaffIdActivityByLevel($level))->where('workStatus', $this->getDefaultHasWorkStatus())->get();
     }
 
     # tat ca nhan trong he thong theo level
-    public function getTreasureInfoActivity($companyId, $level = 1000)# 1000 = tat ca level
+    public function getTreasureInfoActivity($companyId, $level = 100)# 100 = tat ca level
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        return QcStaff::whereIn('staff_id', $modelCompanyStaffWork->listStaffIdTreasure($companyId, $level))->where('workStatus', 1)->get();
+        return QcStaff::whereIn('staff_id', $modelCompanyStaffWork->listStaffIdTreasure($companyId, $level))->where('workStatus', $this->getDefaultHasWorkStatus())->get();
     }
 
 
@@ -1550,7 +1558,7 @@ class QcStaff extends Model
     //danh sach ma nv dang hoat dong
     public function listStaffIdActivity()
     {
-        return QcStaff::where('workStatus', 1)->pluck('staff_id');
+        return QcStaff::where('workStatus', $this->getDefaultHasWorkStatus())->pluck('staff_id');
     }
 
     public function pluck($column, $objectId = null)
@@ -1602,7 +1610,7 @@ class QcStaff extends Model
 
     public function checkRootManage($staffId = null)
     {
-        if ($this->checkRootStatus($staffId) && $this->level($staffId) == 0) {
+        if ($this->checkRootStatus($staffId) && $this->level($staffId) == $this->getDefaultRootLevel()) {
             return true;
         } else {
             return false;

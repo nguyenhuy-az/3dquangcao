@@ -41,7 +41,7 @@ $email = $dataStaff->email();
 $bankAccount = $dataStaff->bankAccount();
 $bankName = $dataStaff->bankName();
 $dateAdd = $dataStaff->createdAt();
-# lay thong tin lam viec tai cty
+# lay thong tin lam viec sau cung tai cty
 $dataCompanyStaffWork = $dataStaff->companyStaffWorkLastInfo();
 $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true : false; # co dang lam cho 1 cty hay ko
 ?>

@@ -619,7 +619,7 @@ class StaffController extends Controller
         $txtSalary = $hFunction->convertCurrencyToInt($txtSalary);
         $txtResponsibility = Request::input('txtResponsibility');
         $txtResponsibility = $hFunction->convertCurrencyToInt($txtResponsibility);
-        $txtInsurance = 21.5;// Request::input('txtInsurance');
+        $txtInsurance = $modelStaffWorkSalary->getDefaultInsurancePercent();// Request::input('txtInsurance');
         $txtUsePhone = Request::input('txtUsePhone');
         $txtUsePhone = $hFunction->convertCurrencyToInt($txtUsePhone);
         $txtFuel = Request::input('txtFuel');
