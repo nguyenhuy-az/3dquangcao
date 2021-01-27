@@ -97,14 +97,14 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
 @section('qc_ad3d_index_content')
     <div class="qc_ad3d_sys_staff_statistical_wrap qc-padding-bot-30 row">
         <div class="row" style="margin-bottom: 20px;">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <a class="qc-link-white-bold btn btn-sm btn-primary" onclick="qc_main.page_back_go();">
                     <i class="glyphicon glyphicon-backward"></i> Về trang trước
                 </a>
             </div>
         </div>
         <div class="row" style="margin-bottom: 10px;">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="media">
                     <a class="pull-left">
                         <img class="media-object"
@@ -120,7 +120,7 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
             </div>
         </div>
         <div class="row">
-            <div class="col-sx-3 col-sm-2 col-md-2 col-lg-2">
+            <div class="col-xs-3 col-sm-2 col-md-2 col-lg-2">
                 <div class="list-group">
                     @for($y = $currentYear; $y > $limitYear; $y = $y - 1)
                         <?php
@@ -184,17 +184,17 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                     @endfor
                 </div>
             </div>
-            <div class="col-sx-3 col-sm-10 col-md-10 col-lg-10">
+            <div class="col-xs-9 col-sm-10 col-md-10 col-lg-10">
                 <div class="row">
                     {{-- CHUYÊN CẦN --}}
-                    <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <div class="row" style="margin-bottom: 10px;">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <label style="color: red; font-size: 1.5em;">
                                     CHUYÊN CẦN
                                 </label>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <tr>
@@ -321,14 +321,14 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                         </div>
                     </div>
                     {{--NĂNG LỰC CHUYÊN MÔN - THI CÔNG--}}
-                    <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <div class="row" style="margin-bottom: 10px;">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <label style="color: red; font-size: 1.5em;">
                                     NĂNG LỰC CHUYÊN MÔN - THI CÔNG
                                 </label>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <tr>
@@ -454,14 +454,14 @@ $valueMoneyFromOrderHasFinishHasLate = $modelStatistical->totalValueMoneyFromLis
                         </div>
                     </div>
                     {{--NĂNG LỰC CHUYÊN MÔN - KINH DOANH--}}
-                    <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <div class="row" style="margin-bottom: 10px;">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <label style="color: red; font-size: 1.5em;">
                                     NĂNG LỰC CHUYÊN MÔN - KINH DOANH - THIẾT KẾ
                                 </label>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <tr>

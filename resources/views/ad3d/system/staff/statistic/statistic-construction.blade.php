@@ -45,14 +45,14 @@ elseif ($constructionStatus == 'get-finish-has-late') {
 @section('qc_ad3d_index_content')
     <div class="qc_ad3d_sys_staff_statistical_wrap qc-padding-bot-30 row">
         <div class="row" style="margin-bottom: 20px;">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <a class="qc-link-white-bold btn btn-sm btn-primary" onclick="qc_main.page_back_go();">
                     <i class="glyphicon glyphicon-backward"></i> Về trang trước
                 </a>
             </div>
         </div>
         <div class="row" style="margin-bottom: 10px;">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="media">
                     <a class="pull-left">
                         <img class="media-object"
@@ -68,12 +68,12 @@ elseif ($constructionStatus == 'get-finish-has-late') {
             </div>
         </div>
         <div class="row">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <label style="color: blue; font-size: 1.5em;">
                     {!! $title !!}
                 </label>
             </div>
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 @if($hFunction->checkCount($dataWorkAllocation))
                     @foreach($dataWorkAllocation as $workAllocation)
                         <?php
@@ -101,7 +101,7 @@ elseif ($constructionStatus == 'get-finish-has-late') {
                         $dataWorkAllocationFinish = $workAllocation->workAllocationFinishInfo();
                         $n_o = (isset($n_o)) ? $n_o + 1 : 1;
                         ?>
-                        <div class="col-sx-12 col-sm-6 col-md-6 col-lg-6" style="margin-bottom: 10px; padding-left: 0;">
+                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="margin-bottom: 10px; padding-left: 0;">
                             <div class="table-responsive">
                                 <table class="table table-bordered qc-margin-bot-none">
                                     <tr>

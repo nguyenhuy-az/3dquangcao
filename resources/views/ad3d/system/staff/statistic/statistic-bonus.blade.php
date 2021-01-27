@@ -25,14 +25,14 @@ $dataBonus = $dataWork->getInfoHasApplyBonus();
 @section('qc_ad3d_index_content')
     <div class="qc_ad3d_sys_staff_statistical_wrap qc-padding-bot-30 row">
         <div class="row" style="margin-bottom: 20px;">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <a class="qc-link-white-bold btn btn-sm btn-primary" onclick="qc_main.page_back_go();">
                     <i class="glyphicon glyphicon-backward"></i> Về trang trước
                 </a>
             </div>
         </div>
         <div class="row" style="margin-bottom: 10px;">
-            <div class="col-sx-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <div class="media">
                     <a class="pull-left">
                         <img class="media-object"
@@ -46,18 +46,18 @@ $dataBonus = $dataWork->getInfoHasApplyBonus();
                     </div>
                 </div>
             </div>
-            <div class="col-sx-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <h3 style="color: red;">{!! date('m-Y', strtotime($fromDate)) !!}</h3>
             </div>
         </div>
         {{--Ngay di lam--}}
         <div class="row">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <label style="color: red; font-size: 1.5em;">
                     THỐNG KÊ NHẬN THƯỞNG - {!! $hFunction->getCount($dataBonus) !!}
                 </label>
             </div>
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         @if($hFunction->checkCount($dataBonus))

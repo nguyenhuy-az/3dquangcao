@@ -2,6 +2,7 @@
 
 namespace App\Models\Ad3d\WorkSkill;
 
+use App\Models\Ad3d\DepartmentWork\QcDepartmentWork;
 use Illuminate\Database\Eloquent\Model;
 
 class QcWorkSkill extends Model
@@ -98,6 +99,21 @@ class QcWorkSkill extends Model
         return QcWorkSkill::where('companyStaffWork_id', $companyStaffWorkId)->get();
     }
 
+    # lay ky nang theo bo phan
+    public function getInfoOfCompanyStaffWorkInDepartment($companyStaffWorkId, $departmentId)
+    {
+        $modelDepartmentWork = new QcDepartmentWork();
+        # danh sach cong viec cua bo phan
+        $listDepartmentWorkId = $modelDepartmentWork->getListIdOfDepartment($departmentId);
+        return QcWorkSkill::where('companyStaffWork_id', $companyStaffWorkId)->whereIn('departmentWork_id', $listDepartmentWorkId)->get();
+    }
+
+    # lay thong tin ky nang sau cung cua 1 cong viec trong bo phan
+    public function getInfoLastOfCompanyStaffWorkAndWork($companyStaffWorkId, $departmentWorkId)
+    {
+        return QcWorkSkill::where('companyStaffWork_id', $companyStaffWorkId)->where('departmentWork_id', $departmentWorkId)->orderBy('skill_id', 'DESC')->first();
+    }
+
     #============ =========== ============ GET INFO ============= =========== ==========
     public function selectInfoAll()
     {
@@ -119,6 +135,7 @@ class QcWorkSkill extends Model
         }
     }
 
+    # lay 1 thong tin
     public function pluck($column, $objectId = null)
     {
         $hFunction = new \Hfunction();

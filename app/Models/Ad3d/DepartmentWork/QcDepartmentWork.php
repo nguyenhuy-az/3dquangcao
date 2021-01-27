@@ -59,10 +59,11 @@ class QcDepartmentWork extends Model
     {
         return $this->hasMany('App\Models\Ad3d\WorkSkill\QcWorkSkill', 'work_id', 'departmentWork_id');
     }
+
     #----------- qc-punish-content ------------
     public function department()
     {
-        return $this->belongsTo('App\Models\Ad3d\Department\QcDepartment', 'work_id', 'work_id');
+        return $this->belongsTo('App\Models\Ad3d\Department\QcDepartment', 'department_id', 'department_id');
     }
 
     public function getInfoOfDepartment($departmentId)
@@ -75,6 +76,12 @@ class QcDepartmentWork extends Model
     {
         $modelDepartment = new QcDepartment();
         return $this->getInfoOfDepartment($modelDepartment->constructionDepartmentId());
+    }
+
+    # lay danh sach ma cong viec theo bo phan
+    public function getListIdOfDepartment($departmentId)
+    {
+        return QcDepartmentWork::where('department_id', $departmentId)->orderBy('name', 'ASC')->pluck('work_id');
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
@@ -104,6 +111,7 @@ class QcDepartmentWork extends Model
         }
     }
 
+    # lay 1 gia tri
     public function pluck($column, $objectId = null)
     {
         $hFunction = new \Hfunction();

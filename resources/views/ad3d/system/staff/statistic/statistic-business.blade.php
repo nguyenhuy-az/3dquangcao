@@ -45,14 +45,14 @@ elseif ($orderStatus == 'get-finish-has-late') {
 @section('qc_ad3d_index_content')
     <div class="qc_ad3d_sys_staff_statistical_wrap qc-padding-bot-30 row">
         <div class="row" style="margin-bottom: 20px;">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <a class="qc-link-white-bold btn btn-sm btn-primary" onclick="qc_main.page_back_go();">
                     <i class="glyphicon glyphicon-backward"></i> Về trang trước
                 </a>
             </div>
         </div>
         <div class="row" style="margin-bottom: 10px;">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="media">
                     <a class="pull-left">
                         <img class="media-object"
@@ -68,12 +68,12 @@ elseif ($orderStatus == 'get-finish-has-late') {
             </div>
         </div>
         <div class="row">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <label style="color: red; font-size: 1.5em;">
                     {!! $title !!} - {!! $hFunction->getCount($dataOrder) !!}
                 </label>
             </div>
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">

@@ -12,6 +12,7 @@ use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
 use App\Models\Ad3d\ToolPackageAllocation\QcToolPackageAllocation;
 use App\Models\Ad3d\ToolPackageAllocationDetail\QcToolPackageAllocationDetail;
 use App\Models\Ad3d\Work\QcWork;
+use App\Models\Ad3d\WorkSkill\QcWorkSkill;
 use Illuminate\Database\Eloquent\Model;
 
 class QcCompanyStaffWork extends Model
@@ -195,6 +196,20 @@ class QcCompanyStaffWork extends Model
     public function workSkill()
     {
         return $this->hasMany('App\Models\Ad3d\WorkSkill\QcWorkSkill', 'work_id', 'companyStaffWork_id');
+    }
+
+    # lay thong tin ky nang theo bo phan
+    public function workSkillGetInfoInDepartment($departmentId, $workId = null)
+    {
+        $modelWorkSkill = new QcWorkSkill();
+        return $modelWorkSkill->getInfoOfCompanyStaffWorkInDepartment($this->checkIdNull($workId), $departmentId);
+    }
+
+    # lay thong tin ky nang sau cung cua 1 cong viec trong bo phan
+    public function workSkillGetLastInfoOfDepartmentWork($departmentWorkId, $workId = null)
+    {
+        $modelWorkSkill = new QcWorkSkill();
+        return $modelWorkSkill->getInfoLastOfCompanyStaffWorkAndWork($this->checkIdNull($workId), $departmentWorkId);
     }
 
     # ---------- ---------- giao do nghe ---------- ----------
@@ -517,6 +532,12 @@ class QcCompanyStaffWork extends Model
     public function getLastInfoOfStaff($staffId)
     {
         return QcCompanyStaffWork::where('staff_id', $staffId)->orderBy('work_id', 'DESC')->first();
+    }
+
+    #lay thong tin lam viec sau cung cua 1 nhan vien - thuoc 1 cty
+    public function getLastInfoOfStaffInCompany($companyId, $staffId)
+    {
+        return QcCompanyStaffWork::where('company_id', $companyId)->where('staff_id', $staffId)->orderBy('work_id', 'DESC')->first();
     }
 
     # lay danh sach ma bo phan dang lam viec cua 1 nv

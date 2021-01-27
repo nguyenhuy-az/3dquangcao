@@ -50,14 +50,14 @@ $dateOfMonth = 31;
 @section('qc_ad3d_index_content')
     <div class="qc_ad3d_sys_staff_statistical_wrap qc-padding-bot-30 row">
         <div class="row" style="margin-bottom: 20px;">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <a class="qc-link-white-bold btn btn-sm btn-primary" onclick="qc_main.page_back_go();">
                     <i class="glyphicon glyphicon-backward"></i> Về trang trước
                 </a>
             </div>
         </div>
         <div class="row" style="margin-bottom: 10px;">
-            <div class="col-sx-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <div class="media">
                     <a class="pull-left">
                         <img class="media-object"
@@ -71,19 +71,19 @@ $dateOfMonth = 31;
                     </div>
                 </div>
             </div>
-            <div class="col-sx-12 col-sm-6 col-md-6 col-lg-6">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <h3 style="color: red;">{!! date('m-Y', strtotime($fromDate)) !!}</h3>
             </div>
         </div>
         {{--Ngay di lam--}}
         <div class="row">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <label style="color: red; font-size: 1.5em;">
                     NGÀY ĐI LÀM ĐI LÀM - {!! $hFunction->getCount($dataTimekeepingHasWork) !!}
                 </label>
             </div>
             @if($hFunction->checkCount($dataTimekeepingHasWork))
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
                         @foreach($dataTimekeepingHasWork as $hasTimeKeeping)
                             <?php
@@ -92,7 +92,7 @@ $dateOfMonth = 31;
                             # thong tin yeu cau tang ca
                             $dataOverTimeRequest = $dataCompanyStaffWork->overTimeRequestGetInfoInDate($timeBegin);
                             ?>
-                            <div class="col-sx-3 col-sm-3 col-md-2 col-lg-2">
+                            <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2">
                                 <div class="panel panel-default" style="height: 110px; border: 1px solid blue;">
                                     <!-- Default panel contents -->
                                     <div class="panel-heading">
@@ -138,20 +138,20 @@ $dateOfMonth = 31;
         </div>
         {{--Ngay nghi--}}
         <div class="row">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <label style="color: red; font-size: 1.5em;">
                     NGÀY NGHỈ - {!! $hFunction->getCount($dataTimekeepingNotWork) !!}
                 </label>
             </div>
             @if($hFunction->checkCount($dataTimekeepingNotWork))
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
                         @foreach($dataTimekeepingNotWork as $notTimeKeeping)
                             <?php
                             $dateOff = $notTimeKeeping->dateOff();
                             $day = $hFunction->getDayFromDate($dateOff);
                             ?>
-                            <div class="col-sx-3 col-sm-3 col-md-2 col-lg-2">
+                            <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2">
                                 <div class="panel panel-default" style="height: 100px; border: 1px solid red;">
                                     <!-- Default panel contents -->
                                     <div class="panel-heading" style="background-color: black; color: yellow;">
