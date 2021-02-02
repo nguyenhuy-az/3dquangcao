@@ -16,6 +16,41 @@ class QcToolPackageAllocationDetail extends Model
 
     private $lastId;
 
+    # mac dinh hinh anh
+    public function getDefaultImage()
+    {
+        return null;
+    }
+
+    # mac dinh trang thai moi
+    public function getDefaultHasNew()
+    {
+        return 1;
+    }
+
+    # mac dinh trang thai khong moi
+    public function getDefaultNotNew()
+    {
+        return 0;
+    }
+
+    # mac dinh trang thai dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh trang thai khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh ma ban giao
+    public function getDefaultAllocationId()
+    {
+        return null;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
     public function insert($allocationId, $storeId)
@@ -29,7 +64,7 @@ class QcToolPackageAllocationDetail extends Model
         $allocationImage = null;
         # de nghe da tung duoc giao
         if ($hFunction->checkCount($dataLastToolAllocationDetail)) {
-            $newStatus = 0;
+            $newStatus = $this->getDefaultNotNew();
             # lay thong tin tra sau cung cua lan giao
             $dataToolReturn = $dataLastToolAllocationDetail->lastInfoOfToolReturn();
             $returnImage = $dataToolReturn->image();
@@ -40,7 +75,7 @@ class QcToolPackageAllocationDetail extends Model
                 }
             }
         } else {
-            $newStatus = 1;
+            $newStatus = $this->getDefaultHasNew();
             $dataImport = $dataCompanyStore->import;
             $dataImportImage = $dataImport->getOneImportImage();
             $importImageName = $dataImportImage->name();
@@ -72,7 +107,8 @@ class QcToolPackageAllocationDetail extends Model
 
     public function checkNullId($id = null)
     {
-        return (empty($id)) ? $this->detailId() : $id;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->detailId() : $id;
     }
 
     public function deleteDetail($detailId = null)
@@ -82,7 +118,7 @@ class QcToolPackageAllocationDetail extends Model
 
     public function disableDetail($detailId = null)
     {
-        return QcToolPackageAllocationDetail::where('detail_id', $this->checkNullId($detailId))->update(['action' => 0]);
+        return QcToolPackageAllocationDetail::where('detail_id', $this->checkNullId($detailId))->update(['action' => $this->getDefaultNotAction()]);
     }
 
     # hinh anh
@@ -99,8 +135,9 @@ class QcToolPackageAllocationDetail extends Model
     // get path image
     public function pathSmallImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathSmallImage() . '/' . $image);
         }
@@ -108,8 +145,9 @@ class QcToolPackageAllocationDetail extends Model
 
     public function pathFullImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
         }
@@ -142,8 +180,9 @@ class QcToolPackageAllocationDetail extends Model
     # lay ma ban giao sau cung cua dung cu trong kho
     public function lastIdOfCompanyStore($storeId)
     {
+        $hFunction = new \Hfunction();
         $lastInfo = $this->lastInfoOfCompanyStore($storeId);
-        return (!empty($lastInfo)) ? $lastInfo->detailId() : null;
+        return (!$hFunction->checkEmpty($lastInfo)) ? $lastInfo->detailId() : $hFunction->getDefaultNull();
     }
 
     # thong tin do nghe dang ban giao chua dươc tra cua 1 loai do nghe
@@ -151,19 +190,19 @@ class QcToolPackageAllocationDetail extends Model
     {
         $modelCompanyStore = new QcCompanyStore();
         $listStoreId = $modelCompanyStore->listIdOfToolAndCompany($toolId, $companyId);
-        return QcToolPackageAllocationDetail::whereIn('store_id', $listStoreId)->where('action', 1)->get();
+        return QcToolPackageAllocationDetail::whereIn('store_id', $listStoreId)->where('action', $this->getDefaultHasAction())->get();
     }
 
     # danh sach ma do nghe trong kho dang duoc cap phat
     public function listStoreIdIsActivity()
     {
-        return QcToolPackageAllocationDetail::where('action', 1)->pluck('store_id');
+        return QcToolPackageAllocationDetail::where('action', $this->getDefaultHasAction())->pluck('store_id');
     }
 
     # thong tin dang phat cua do nghe
     public function infoActivityOfStore($storeId)
     {
-        return QcToolPackageAllocationDetail::where('store_id', $storeId)->where('action', 1)->first();
+        return QcToolPackageAllocationDetail::where('store_id', $storeId)->where('action', $this->getDefaultHasAction())->first();
     }
 
     //---------- tra do nghe -----------
@@ -259,7 +298,7 @@ class QcToolPackageAllocationDetail extends Model
     # thong tin chi tiet dang hoat dong cua 1 lan ban giao
     public function infoActivityOfToolAllocation($allocationId)
     {
-        return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->where('action', 1)->get();
+        return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->where('action', $this->getDefaultHasAction())->get();
     }
 
     # thong tin ban giao cua loai do nghe  trong bo do nghe duoc giao
@@ -269,12 +308,13 @@ class QcToolPackageAllocationDetail extends Model
         $listStoreId = $modelCompanyStore->listIdOfTool($toolId);
         return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->whereIn('store_id', $listStoreId)->get();
     }
+
     # thong tin ban giao cua loai do nghe  trong bo do nghe duoc giao, dang hoat hoat dong
     public function infoActivityOfToolAllocationAndTool($allocationId, $toolId)
     {
         $modelCompanyStore = new QcCompanyStore();
         $listStoreId = $modelCompanyStore->listIdOfTool($toolId);
-        return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->whereIn('store_id', $listStoreId)->where('action', 1)->get();
+        return QcToolPackageAllocationDetail::where('allocation_id', $allocationId)->whereIn('store_id', $listStoreId)->where('action', $this->getDefaultHasAction())->get();
     }
 
     # tong so luong 1 cong cu cua 1 lan hoac nhieu lan giao tai 1 cty
@@ -317,11 +357,12 @@ class QcToolPackageAllocationDetail extends Model
     //========= ========== ========== lấy thông tin ========== ========== ==========
     public function getInfo($detailId = '', $field = '')
     {
-        if (empty($detailId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($detailId)) {
             return QcToolPackageAllocationDetail::get();
         } else {
             $result = QcToolPackageAllocationDetail::where('detail_id', $detailId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -329,9 +370,11 @@ class QcToolPackageAllocationDetail extends Model
         }
     }
 
+    # lay 1 gia tri
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcToolPackageAllocationDetail::where('detail_id', $objectId)->pluck($column);
@@ -382,19 +425,20 @@ class QcToolPackageAllocationDetail extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcToolPackageAllocationDetail::orderBy('detail_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->detail_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->detail_id;
     }
 
     # trang thai con hoat dong
     public function checkActivity($detailId = null)
     {
-        return ($this->action($detailId) == 1) ? true : false;
+        return ($this->action($detailId) == $this->getDefaultHasAction()) ? true : false;
     }
 
     //kiểm tra thông tin
     public function checkNewStatus($detailId = null)
     {
-        return ($this->newStatus($detailId) == 1) ? true : false;
+        return ($this->newStatus($detailId) == $this->getDefaultHasNew()) ? true : false;
     }
 }

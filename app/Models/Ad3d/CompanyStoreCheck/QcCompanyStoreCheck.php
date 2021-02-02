@@ -16,6 +16,53 @@ class QcCompanyStoreCheck extends Model
 
     private $lastId;
 
+    # mac dinh da xac nhan
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    # mac dinh khong xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
+
+    # mac dinh tat ca trang thai xac nhan
+    public function getDefaultAllConfirm()
+    {
+        return 100;
+    }
+
+    # mac dinh ngay xac nhan
+    public function getDefaultConfirmDate()
+    {
+        return null;
+    }
+
+    # mac dinh co xac nhan tu dong
+    public function getDefaultHasConfirmAuto()
+    {
+        return 1;
+    }
+
+    # mac dinh khong xac nhan tu dong
+    public function getDefaultNotConfirmAuto()
+    {
+        return 0;
+    }
+
+    #mac dinh co nhan
+    public function getDefaultHasReceive()
+    {
+        return 1;
+    }
+
+    # mac dinh khong nhan
+    public function getDefaultNotReceive()
+    {
+        return 0;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
     public function insert($workId)
@@ -38,9 +85,10 @@ class QcCompanyStoreCheck extends Model
         return $this->lastId;
     }
 
-    public function checkIdNull($checkId)
+    public function checkIdNull($id)
     {
-        return (empty($checkId)) ? $this->checkId() : $checkId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->checkId() : $id;
     }
 
     /*public function deleteAllocation($checkId = null)
@@ -52,7 +100,7 @@ class QcCompanyStoreCheck extends Model
         $hFunction = new \Hfunction();
         return QcCompanyStoreCheck::where('check_id', $checkId)->update(
             [
-                'confirmStatus' => 1,
+                'confirmStatus' => $this->getDefaultHasConfirm(),
                 'confirmDate' => $hFunction->carbonNow(),
                 'confirmAutoStatus' => $confirmAutoStatus
             ]);
@@ -65,7 +113,7 @@ class QcCompanyStoreCheck extends Model
         $modelCompanyStore = new QcCompanyStore();
         $modelCompanyStoreCheckReport = new QcCompanyStoreCheckReport();
         $dataCompanyStoreCheck = $this->getInfo($checkId);
-        $confirmAutoStatus = 1; // he thong tu xac nhan
+        $confirmAutoStatus = $this->getDefaultHasConfirmAuto(); // he thong tu xac nhan
         if ($this->confirmCheck($checkId, $confirmAutoStatus)) {
             $dataCompanyStaffWork = $dataCompanyStoreCheck->companyStaffWork;
             #do nghe dung chung cua he thong can kiem tra
@@ -76,11 +124,12 @@ class QcCompanyStoreCheck extends Model
                     $useStatus = $companyStore->useStatus();
                     # neu chua co bao cao
                     if (!$modelCompanyStoreCheckReport->checkExistReportOfCompanyCheck($storeId, $checkId)) {
-                        $confirmStatus = 1;
+                        $confirmStatus = $this->getDefaultHasConfirm();
                         $confirmNote = 'Xác nhận tự động';
                         $confirmDate = $hFunction->carbonNow();
                         # them bao cao
-                        $modelCompanyStoreCheckReport->insert($useStatus,null, $storeId, $checkId, $confirmStatus, $confirmNote, $confirmDate);
+                        $image = $modelCompanyStoreCheckReport->getDefaultReportImage();
+                        $modelCompanyStoreCheckReport->insert($useStatus, $image, $storeId, $checkId, $confirmStatus, $confirmNote, $confirmDate);
                     }
                 }
             }
@@ -150,19 +199,19 @@ class QcCompanyStoreCheck extends Model
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $listWorkId = $modelCompanyStaffWork->listIdOfCompany($companyId);
-        return QcCompanyStoreCheck::whereIn('work_id',$listWorkId )->where('receiveDate', 'like', "%$checkDate%")->exists();
+        return QcCompanyStoreCheck::whereIn('work_id', $listWorkId)->where('receiveDate', 'like', "%$checkDate%")->exists();
     }
 
     # kiem tra thong tin 1 nv co da duoc phan cong trong vong kiem tra chưa
     public function checkExistWorkReceived($workId)
     {
-        return QcCompanyStoreCheck::where('work_id', $workId)->where('receiveStatus', 1)->exists();
+        return QcCompanyStoreCheck::where('work_id', $workId)->where('receiveStatus', $this->getDefaultHasReceive())->exists();
     }
 
     # kiem tra ton tai den lich ma chua xac nhan cua 1 NV - trong vong chon
     public function checkExistUnConfirmInRoundOfWork($workId)
     {
-        return QcCompanyStoreCheck::where('work_id', $workId)->where('confirmStatus', 0)->where('receiveStatus', 1)->exists();
+        return QcCompanyStoreCheck::where('work_id', $workId)->where('confirmStatus', $this->getDefaultNotConfirm())->where('receiveStatus', $this->getDefaultHasReceive())->exists();
     }
 
     //========= ========== ========== lấy thông tin ========== ========== ==========
@@ -177,11 +226,12 @@ class QcCompanyStoreCheck extends Model
 
     public function getInfo($checkId = '', $field = '')
     {
-        if (empty($checkId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($checkId)) {
             return QcCompanyStoreCheck::get();
         } else {
             $result = QcCompanyStoreCheck::where('check_id', $checkId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -191,10 +241,11 @@ class QcCompanyStoreCheck extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcCompanyStoreCheck::where('check_id', $objectId)->pluck($column);
+            return QcCompanyStoreCheck::where('check_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -242,13 +293,14 @@ class QcCompanyStoreCheck extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcCompanyStoreCheck::orderBy('check_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->check_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->check_id;
     }
 
     # kiem tra da xac nhan do nghe chua
     public function checkConfirmStatus($checkId = null)
     {
-        return ($this->confirmStatus($checkId) == 1) ? true : false;
+        return ($this->confirmStatus($checkId) == $this->getDefaultHasConfirm()) ? true : false;
     }
 }

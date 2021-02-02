@@ -12,22 +12,6 @@ var qc_work = {
             //qc_main.url_replace(href);
         }
     },
-    changeAccount: function (formObject) {
-        var txtOldAccount = $(formObject).find("input[name='txtOldAccount']");
-        var txtNewAccount = $(formObject).find("input[name='txtNewAccount']");
-
-        if (qc_main.check.inputNull(txtOldAccount, 'Nhập mã truy cập hiện tại')) {
-            $(txtOldAccount).focus();
-            return false;
-        }
-
-        if (qc_main.check.inputNull(txtNewAccount, 'Nhập mã truy cập mới')) {
-            $(txtNewAccount).focus();
-            return false;
-        } else {
-            qc_master_submit.normalForm(formObject);
-        }
-    },
     workAllocation: {
         construction: {
             filter: function (href) {

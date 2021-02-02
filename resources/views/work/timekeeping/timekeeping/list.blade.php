@@ -53,20 +53,13 @@ if ($hFunction->checkCount($dataWork)) {
                                     XIN NGHỈ
                                 </a>
                             </td>
-                            <td style="padding: 0;">
-                                <a class="ac_late_work_action form-control qc-link-green-bold btn btn-default"
-                                   data-href="{!! route('qc.work.timekeeping.lateWork.get') !!}">
-                                    XIN TRỄ
-                                </a>
-                            </td>
-                            <td colspan="3" style="padding: 0;">
+                            <td colspan="4" style="padding: 0;">
                                 <div class="form-control col-sx-12 col-sm-12 col-md-12 col-lg-12"
                                      style="background-color: red;">
                                     <span class="qc-font-bold" style="color: white; padding: 3px; font-size: 1.5em;">
                                             17h30
                                     </span>
-                                    <span class="qc-font-bold"
-                                          style="color: yellow; padding: 3px; font-size: 1.5em;">
+                                    <span class="qc-font-bold" style="color: yellow; padding: 3px; font-size: 1.5em;">
                                         Phải có ảnh báo cáo
                                     </span>
                                     <span class="qc-font-bold"
@@ -378,165 +371,81 @@ if ($hFunction->checkCount($dataWork)) {
                         @endif
                     </table>
                 </div>
-                {{-- xin di tre --}}
-                <div class="row">
-                    <div class="qc-padding-top-10 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <i class="glyphicon glyphicon-calendar"></i>
-                        <b class="qc-color-red" style="font-size: 1.5em;">XIN TRỄ</b>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <tr style="background-color: black; color: white;">
-                            <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Ngày</th>
-                            <th>Ghi chú trễ</th>
-                            <th>Ghi chú Duyệt</th>
-                            <th class="text-center">Duyệt</th>
-                            <th class="text-right"></th>
-                        </tr>
-                        @if($hFunction->checkCount($dataLicenseLateWork))
-                            @foreach($dataLicenseLateWork as $licenseLateWork)
-                                <?php
-                                $licenseLateWorkId = $licenseLateWork->licenseId();
-                                $dateLate = $licenseLateWork->dateLate();
-                                $lateConfirmStatus = $licenseLateWork->confirmStatus();
-                                $lateNote = $licenseLateWork->note();
-                                $lateConfirmNote = $licenseLateWork->confirmNote();
-                                ?>
-                                <tr class="qc_timekeeping_late_work_object"
-                                    data-late-work="{!! $licenseLateWorkId !!}"
-                                    data-href-late-cancel="{!! route('qc.work.timekeeping.lateWork.cancel.get') !!}">
-                                    <td class="text-center">
-                                        {!! $n_o_late = (isset($n_o_late)) ? $n_o_late + 1 : 1 !!}
-                                    </td>
-                                    <td>
-                                        {!! date('d-m-Y ', strtotime($dateLate)) !!}
-                                    </td>
-                                    <td>
-                                        @if(!$hFunction->checkEmpty($lateNote))
-                                            <em class="qc-color-grey">{!! $lateNote !!}</em>
-                                        @else
-                                            <span>---</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if(!$hFunction->checkEmpty($lateConfirmNote))
-                                            <em class="qc-color-grey">{!! $lateConfirmNote !!}</em>
-                                        @else
-                                            <span>---</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        @if(!$licenseLateWork->checkConfirmStatus())
-                                            <em>Chờ duyệt</em>
-                                        @else
-                                            @if($licenseLateWork->checkAgreeStatus())
-                                                <em>Đồng ý</em>
-                                            @else
-                                                <em>Không đồng ý</em>
-                                            @endif
-                                        @endif
-                                    </td>
-                                    <td class="text-right">
-                                        @if(!$licenseLateWork->checkConfirmStatus())
-                                            <a class="ac_late_work_cancel qc-link-red-bold">
-                                                <i class="glyphicon glyphicon-trash" title="Hủy"></i>
-                                            </a>
-                                        @else
-                                            <em>---</em>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td class="text-center" colspan="6">
-                                    Không có thông tin
-                                </td>
-                            </tr>
-                        @endif
-                    </table>
-                </div>
                 {{-- xin nghi --}}
                 <div class="row ">
                     <div class="qc-padding-top-10 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <i class="glyphicon glyphicon-calendar"></i>
                         <b class="qc-color-red" style="font-size: 1.5em;">XIN NGHỈ</b>
                     </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <tr style="background-color: black; color: white;">
-                            <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Ngày</th>
-                            <th>Ghi chú nghỉ</th>
-                            <th>Ghi chú Duyệt</th>
-                            <th class="text-center">Duyệt</th>
-                            <th class="text-right"></th>
-                        </tr>
-                        @if($hFunction->checkCount($dataLicenseOffWork))
-                            @foreach($dataLicenseOffWork as $licenseOffWork)
-                                <?php
-                                $licenseOffWorkId = $licenseOffWork->licenseId();
-                                $dateOff = $licenseOffWork->dateOff();
-                                $offConfirmStatus = $licenseOffWork->confirmStatus();
-                                $offNote = $licenseOffWork->note();
-                                $confirmNote = $licenseOffWork->confirmNote();
-                                ?>
-                                <tr class="qc_timekeeping_off_work_object" data-off-work="{!! $licenseOffWorkId !!}"
-                                    data-href-off-cancel="{!! route('qc.work.timekeeping.offWork.cancel.get') !!}">
-                                    <td class="text-center">
-                                        {!! $n_o_off = (isset($n_o_off)) ? $n_o_off + 1 : 1 !!}
-                                    </td>
-                                    <td>
-                                        {!! $hFunction->convertDateDMYFromDatetime($dateOff) !!}
-                                    </td>
-
-                                    <td>
-                                        @if(!$hFunction->checkEmpty($offNote))
-                                            <em class="qc-color-grey">{!! $offNote !!}</em>
-                                        @else
-                                            <span>---</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if(!$hFunction->checkEmpty($confirmNote))
-                                            <em class="qc-color-grey">{!! $confirmNote !!}</em>
-                                        @else
-                                            <span>---</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        @if(!$licenseOffWork->checkConfirmStatus())
-                                            <em>Chờ duyệt</em>
-                                        @else
-                                            @if($licenseOffWork->checkAgreeStatus())
-                                                <em>Đồng ý</em>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <table class="table table-hover table-bordered">
+                            <tr style="background-color: black; color: white;">
+                                <th class="text-center" style="width: 20px;">STT</th>
+                                <th style="width: 150px;">Ngày</th>
+                                <th>Ghi chú nghỉ</th>
+                            </tr>
+                            @if($hFunction->checkCount($dataLicenseOffWork))
+                                @foreach($dataLicenseOffWork as $licenseOffWork)
+                                    <?php
+                                    $licenseOffWorkId = $licenseOffWork->licenseId();
+                                    $dateOff = $licenseOffWork->dateOff();
+                                    $offConfirmStatus = $licenseOffWork->confirmStatus();
+                                    $offNote = $licenseOffWork->note();
+                                    $confirmNote = $licenseOffWork->confirmNote();
+                                    ?>
+                                    <tr class="qc_timekeeping_off_work_object" data-off-work="{!! $licenseOffWorkId !!}"
+                                        data-href-off-cancel="{!! route('qc.work.timekeeping.offWork.cancel.get') !!}">
+                                        <td class="text-center">
+                                            {!! $n_o_off = (isset($n_o_off)) ? $n_o_off + 1 : 1 !!}
+                                        </td>
+                                        <td>
+                                            <b style="color: blue;">
+                                                {!! $hFunction->convertDateDMYFromDatetime($dateOff) !!}
+                                            </b>
+                                            @if(!$licenseOffWork->checkConfirmStatus())
+                                                <br/>
+                                                <em style="color: grey;">Chờ duyệt</em>
+                                                @if(!$licenseOffWork->checkConfirmStatus())
+                                                    &nbsp;|&nbsp;
+                                                    <a class="ac_off_work_cancel qc-link-red-bold">
+                                                        HỦY
+                                                    </a>
+                                                @endif
                                             @else
-                                                <em>Không đồng ý</em>
+                                                @if($licenseOffWork->checkAgreeStatus())
+                                                    <br/>
+                                                    <i class="glyphicon glyphicon-ok" style="color: green;"></i>
+                                                    <em>Đồng ý</em>
+                                                @else
+                                                    <br/>
+                                                    <i class="glyphicon glyphicon-ok" style="color: red;"></i>
+                                                    <em>Không đồng ý</em>
+                                                @endif
                                             @endif
-                                        @endif
-                                    </td>
-                                    <td class="text-right">
-                                        @if(!$licenseOffWork->checkConfirmStatus())
-                                            <a class="ac_off_work_cancel qc-link-red-bold">
-                                                <i class="glyphicon glyphicon-trash" title="Hủy"></i>
-                                            </a>
-                                        @else
-                                            <em>---</em>
-                                        @endif
+                                        </td>
+                                        <td>
+                                            @if(!$hFunction->checkEmpty($offNote))
+                                                <em class="qc-color-grey">{!! $offNote !!}</em>
+                                            @else
+                                                <span>---</span>
+                                            @endif
+                                            @if(!$hFunction->checkEmpty($confirmNote))
+                                                <br/>
+                                                <em>Duyệt:</em>
+                                                <em class="qc-color-grey">{!! $confirmNote !!}</em>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td class="text-center" colspan="3">
+                                        Không có thông tin
                                     </td>
                                 </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td class="text-center" colspan="6">
-                                    Không có thông tin
-                                </td>
-                            </tr>
-                        @endif
-                    </table>
+                            @endif
+                        </table>
+                    </div>
                 </div>
             </div>
         @else

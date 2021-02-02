@@ -1327,9 +1327,13 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     Route::group(['prefix' => 'staff'], function () {
         Route::group(['prefix' => 'account'], function () {
             //đổi mật khẩu
-            Route::get('change', ['as' => 'qc.work.change-account.get', 'uses' => 'Work\WorkController@getChangeAccount']);
-            Route::post('change', ['as' => 'qc.work.change-account.post', 'uses' => 'Work\WorkController@postChangeAccount']);
+            Route::get('update', ['as' => 'qc.work.staff.account.update.get', 'uses' => 'Work\Staff\StaffController@getUpdateAccount']);
+            Route::post('update', ['as' => 'qc.work.staff.account.update.post', 'uses' => 'Work\Staff\StaffController@postUpdateAccount']);
         });
+        # cap nhat ky nang
+        Route::get('skill-update/{companyStaffWorkId?}/{departmentWorkId?}', ['as' => 'qc.work.staff.skill.update.get', 'uses' => 'Work\Staff\StaffController@getUpdateSkill']);
+        Route::post('skill-update/{companyStaffWorkId?}/{departmentWorkId?}', ['as' => 'qc.work.staff.skill.update.post', 'uses' => 'Work\Staff\StaffController@postUpdateSkill']);
+
         Route::get('/{staffId}', ['as' => 'qc.work.staff.index.get', 'uses' => 'Work\Staff\StaffController@index']);
     });
     // lương

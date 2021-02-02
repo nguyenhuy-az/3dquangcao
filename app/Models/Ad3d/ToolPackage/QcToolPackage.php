@@ -18,6 +18,17 @@ class QcToolPackage extends Model
 
     private $lastId;
 
+    # mac dinh dang hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
 
     #---------- Insert ----------
@@ -26,9 +37,8 @@ class QcToolPackage extends Model
         $hFunction = new \Hfunction();
         $modelCompany = new QcCompany();
         $modelToolPackage = new QcToolPackage();
-        $companyId = (is_int($companyId)) ? $companyId : $companyId[0];
-        $companyNameCode = $modelCompany->nameCode($companyId)[0];
-        $amountInfo = $this->amountOfCompany($companyId) + 1;
+        $companyNameCode = $modelCompany->nameCode($companyId);
+        $amountInfo = (int)$this->amountOfCompany($companyId) + 1;
         $modelToolPackage->name = $companyNameCode . "_" . $amountInfo;
         $modelToolPackage->company_id = $companyId;
         $modelToolPackage->created_at = $hFunction->createdAt();
@@ -48,7 +58,8 @@ class QcToolPackage extends Model
 
     public function checkIdNull($id)
     {
-        return (empty($id)) ? $this->packageId() : $id;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->packageId() : $id;
     }
 
     #----------- update ----------

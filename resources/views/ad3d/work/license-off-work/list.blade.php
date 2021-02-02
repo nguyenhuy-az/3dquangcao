@@ -22,7 +22,7 @@ $indexHref = route('qc.ad3d.work.off-work.get');
 @extends('ad3d.work.license-off-work.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $indexHref !!}">
@@ -49,20 +49,32 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                 </div>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row"
                  data-href-confirm="{!! route('qc.ad3d.work.off-work.confirm.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
                             <th style="width: 150px;">NHÂN VIÊN</th>
-                            <th style="width: 140px;">NGÀY NGHỈ - XIN</th>
+                            <th style="width: 170px;">NGÀY NGHỈ - XIN</th>
                             <th>GHI CHÚ</th>
                         </tr>
                         <tr>
-                            <td></td>
+                            <td style="padding: 0 !important;">
+                                <select class="cbStaffFilter form-control" data-href="{!! $indexHref !!}">
+                                    <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                        Tất cả
+                                    </option>
+                                    @if($hFunction->checkCount($dataStaffFilter))
+                                        @foreach($dataStaffFilter as $staff)
+                                            <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                                    @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </td>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbDayFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="height: 34px; padding: 0;" name="cbDayFilter"
                                         data-href="{!! $indexHref !!}">
                                     <option value="0" @if((int)$dayFilter == 100) selected="selected" @endif >
@@ -73,7 +85,7 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                                                 @if((int)$dayFilter == $i) selected="selected" @endif>{!! $i !!}</option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbMonthFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
                                     <option value="0" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -83,7 +95,7 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                                                 @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbYearFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="height: 34px; padding: 0;" data-href="{!! $indexHref !!}">
                                     <option value="0" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -109,9 +121,12 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                                 $note = $licenseOffWork->note();
                                 $confirmNote = $licenseOffWork->confirmNote();
                                 $createdAd = $licenseOffWork->createdAt();
+                                $staffOffId = $licenseOffWork->staffId();
                                 # thong tin nguoi nghi
                                 $dataStaffOff = $licenseOffWork->staff;
                                 $n_o = $n_o + 1;
+                                # thong tin nghi cung ngay
+                                $dataLicenseOffWorkInDate = $dataCompanyLogin->licenseOffWorkGetAllInfoInDate($dateOff);
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2 == 0) info @endif"
                                     data-object="{!! $licenseId !!}">
@@ -131,8 +146,10 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                                                     </a>
                                                 @else
                                                     @if($licenseOffWork->checkAgreeStatus())
+                                                        <i class="glyphicon glyphicon-ok" style="color: green;"></i>
                                                         <em class="qc-color-grey">Đồng ý</em>
                                                     @else
+                                                        <i class="glyphicon glyphicon-ok" style="color: red;"></i>
                                                         <em class="qc-color-grey">Không đồng ý</em>
                                                     @endif
                                                 @endif
@@ -146,13 +163,59 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                                     </td>
                                     <td class="text-left">
                                         @if(!$hFunction->checkEmpty($note))
-                                            <span class="qc-color-grey">{!! $note !!}</span>
+                                            <span>- {!! $note !!}</span>
                                         @endif
                                         @if(!$hFunction->checkEmpty($confirmNote))
                                             <br/>
-                                            <em style="color: grey;">Đuyệt:</em>
+                                            <em style="color: grey;">- Đuyệt:</em>
                                             <span class="qc-color-grey">{!! $confirmNote !!}</span>
                                         @endif
+                                        <div class="row">
+                                            @if($hFunction->checkCount($dataLicenseOffWorkInDate) && count($dataLicenseOffWorkInDate) >= 2)
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <em style="color: red;">
+                                                        - Có người cùng xin nghỉ
+                                                    </em>
+                                                </div>
+                                                @foreach($dataLicenseOffWorkInDate as $licenseOffWorkInDate)
+                                                    <?php
+                                                    # thong tin nguoi nghi
+                                                    $dataStaffOffInDate = $licenseOffWorkInDate->staff;
+                                                    $staffOffInDateId = $dataStaffOffInDate->staffId();
+                                                    ?>
+                                                    @if($staffOffInDateId != $staffOffId)
+                                                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                                            <div class="media">
+                                                                <a class="pull-left" href="#">
+                                                                    <img class="media-object"
+                                                                         style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                                         src="{!! $dataStaffOffInDate->pathAvatar($dataStaffOffInDate->image()) !!}">
+                                                                </a>
+
+                                                                <div class="media-body">
+                                                                    <h5 class="media-heading">{!! $dataStaffOffInDate->lastName() !!}</h5>
+                                                                    @if(!$licenseOffWorkInDate->checkConfirmStatus())
+                                                                        <a class="qc_confirm qc-link-red-bold">
+                                                                            Chưa duyệt
+                                                                        </a>
+                                                                    @else
+                                                                        @if($licenseOffWorkInDate->checkAgreeStatus())
+                                                                            <i class="glyphicon glyphicon-ok"
+                                                                               style="color: green;"></i>
+                                                                            <em class="qc-color-grey">Đồng ý</em>
+                                                                        @else
+                                                                            <i class="glyphicon glyphicon-ok"
+                                                                               style="color: red;"></i>
+                                                                            <em class="qc-color-grey">Không đồng ý</em>
+                                                                        @endif
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

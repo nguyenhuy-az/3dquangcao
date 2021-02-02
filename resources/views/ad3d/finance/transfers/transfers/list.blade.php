@@ -98,7 +98,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                             <td style="padding: 0;">
                                 <select class="cbTransfersType form-control" name="cbTransfersType"
                                         data-href="{!! $hrefIndex !!}">
-                                    <option value="0" @if($transfersType == 0) selected="selected" @endif>
+                                    <option value="100" @if($transfersType == 100) selected="selected" @endif>
                                         Tất cả
                                     </option>
                                     <option value="{!! $modelTransfers->getDefaultTransferTypeOfBusiness() !!}"

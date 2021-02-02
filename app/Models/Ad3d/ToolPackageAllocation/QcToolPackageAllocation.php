@@ -15,6 +15,23 @@ class QcToolPackageAllocation extends Model
 
     private $lastId;
 
+    # mac dinh co hoat dong
+    public function getDefaultHasAction()
+    {
+        return 1;
+    }
+
+    # mac dinh khong con hoat dong
+    public function getDefaultNotAction()
+    {
+        return 0;
+    }
+
+    # mac dinh nguoi ban giao
+    public function getDefaultAllocationStaffId()
+    {
+        return null;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
     public function insert($allocationStaffId, $workId, $packageId)
@@ -39,14 +56,15 @@ class QcToolPackageAllocation extends Model
         return $this->lastId;
     }
 
-    public function checkIdNull($allocationId)
+    public function checkIdNull($id)
     {
-        return (empty($allocationId)) ? $this->allocationId() : $allocationId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->allocationId() : $id;
     }
 
     public function disableAllocation($allocationId = null)
     {
-        return QcToolPackageAllocation::where('allocation_id', $this->checkIdNull($allocationId))->update(['action' => 0]);
+        return QcToolPackageAllocation::where('allocation_id', $this->checkIdNull($allocationId))->update(['action' => $this->getDefaultNotAction()]);
     }
 
     public function deleteAllocation($allocationId = null)
@@ -76,7 +94,7 @@ class QcToolPackageAllocation extends Model
     public function infoActivityOfWork($workId)
     {
 
-        return QcToolPackageAllocation::where('work_id', $workId)->where('action', 1)->first();
+        return QcToolPackageAllocation::where('work_id', $workId)->where('action',$this->getDefaultHasAction())->first();
     }
 
     # lay thong tin ban giao cua 1 nv
@@ -90,7 +108,7 @@ class QcToolPackageAllocation extends Model
     public function infoActivityOfListWork($listWorkId)
     {
 
-        return QcToolPackageAllocation::whereIn('work_id', $listWorkId)->where('action', 1)->orderBy('allocationDate', 'DESC')->get();
+        return QcToolPackageAllocation::whereIn('work_id', $listWorkId)->where('action', $this->getDefaultHasAction())->orderBy('allocationDate', 'DESC')->get();
     }
 
     # danh sach ma ban giao
@@ -114,13 +132,13 @@ class QcToolPackageAllocation extends Model
     # lay danh sach ma bo do nghe dang duoc cap phat
     public function listPackageIdIsActive()
     {
-        return QcToolPackageAllocation::where('action', 1)->pluck('package_id');
+        return QcToolPackageAllocation::where('action', $this->getDefaultHasAction())->pluck('package_id');
     }
 
     #thong tin ban giao cua 1 tui do nghe
     public function infoIsActiveOfPackage($packageId)
     {
-        return QcToolPackageAllocation::where('action', 1)->where('package_id', $packageId)->first();
+        return QcToolPackageAllocation::where('action', $this->getDefaultHasAction())->where('package_id', $packageId)->first();
     }
 
     //---------- Chi tiết cấp -----------
@@ -169,6 +187,7 @@ class QcToolPackageAllocation extends Model
         $modelToolPackageAllocationDetail = new QcToolPackageAllocationDetail();
         return $modelToolPackageAllocationDetail->infoOfToolAllocationAndTool($allocationId, $toolId);
     }
+
     # thong tin ban giao cua loai do nghe  trong bo do nghe duoc giao, dang hoat hoat dong
     public function infoActivityOfToolAllocationAndTool($allocationId, $toolId)
     {
@@ -189,7 +208,8 @@ class QcToolPackageAllocation extends Model
     //========= ========== ========== lấy thông tin ========== ========== ==========
     public function selectInfoOfListWorkAndDate($listStaffId, $dateFilter = null)
     {
-        if (empty($dateFilter)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcToolPackageAllocation::whereIn('work_id', $listStaffId)->orderBy('allocationDate', 'DESC')->select('*');
         } else {
             return QcToolPackageAllocation::whereIn('work_id', $listStaffId)->where('allocationDate', 'like', "%$dateFilter%")->orderBy('allocationDate', 'DESC')->select('*');
@@ -198,11 +218,12 @@ class QcToolPackageAllocation extends Model
 
     public function getInfo($allocationId = '', $field = '')
     {
-        if (empty($allocationId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($allocationId)) {
             return QcToolPackageAllocation::get();
         } else {
             $result = QcToolPackageAllocation::where('allocation_id', $allocationId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -210,12 +231,14 @@ class QcToolPackageAllocation extends Model
         }
     }
 
+    # lay 1 gia tri
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcToolPackageAllocation::where('allocation_id', $objectId)->pluck($column);
+            return QcToolPackageAllocation::where('allocation_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -253,8 +276,9 @@ class QcToolPackageAllocation extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcToolPackageAllocation::orderBy('allocation_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->allocation_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->allocation_id;
     }
 
 }

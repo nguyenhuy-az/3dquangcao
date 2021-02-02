@@ -67,6 +67,12 @@ class QcTransfers extends Model
     {
         return 0;
     }
+
+    # mac dinh hinh anh
+    public function getDefaultTransferImage()
+    {
+        return null;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- Insert ----------
 

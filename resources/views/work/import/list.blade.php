@@ -17,24 +17,23 @@ $currentMonth = $hFunction->currentMonth();
 # lay trang thai thanh toan mac dinh
 $getDefaultNotPay = $modelImport->getDefaultNotPay(); // chua thanh toan
 $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
+$getDefaultAllPay = $modelImport->getDefaultAllPay();// tat ca trang thai thanh toan
 ?>
 @extends('work.import.index')
 @section('qc_work_import_body')
     <div class="row qc_work_import_wrap">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <tr style="background-color: black;color: yellow;">
                                 <th style="width: 250px;">HÓA ĐƠN</th>
-                                <th style="width: 150px;">SỐ TIỀN</th>
-                                <th class="text-right">ĐÃ THANH TOÁN</th>
-                                <th class="text-right">Chưa thanh toán</th>
+                                <th>SỐ TIỀN</th>
                             </tr>
                             <tr>
                                 <td style="padding: 0 !important;">
-                                    <select class="qc_work_import_day_filter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                    <select class="qc_work_import_day_filter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                             style="padding: 0; height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if($dayFilter == null) selected="selected" @endif>
@@ -46,7 +45,7 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_import_month_filter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                    <select class="qc_work_import_month_filter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                             style="padding: 0; height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
@@ -59,7 +58,7 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="qc_work_import_year_filter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                    <select class="qc_work_import_year_filter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                             style="padding: 0; height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
@@ -75,9 +74,8 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                 </td>
                                 <td class="text-center" style="padding: 0;">
                                     <select class="qc_work_import_pay_status form-control"
-                                            data-href="{!! $hrefIndex !!}"
-                                            style="border: 0;">
-                                        <option value="3" @if($loginPayStatus == 3) selected="selected" @endif>
+                                            data-href="{!! $hrefIndex !!}">
+                                        <option value="{!! $getDefaultAllPay !!}" @if($loginPayStatus == $getDefaultAllPay) selected="selected" @endif>
                                             Tất cả
                                         </option>
                                         <option value="{!! $getDefaultNotPay !!}"
@@ -90,15 +88,11 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                         </option>
                                     </select>
                                 </td>
-                                <td class="text-right"></td>
-                                <td class="text-right"></td>
                             </tr>
                             @if($hFunction->checkCount($dataImport))
                                 <?php
                                 $n_o = 0;
                                 $sumMoney = 0;
-                                $sumPaid = 0;
-                                $sumUnPaid = 0
                                 ?>
                                 @foreach($dataImport as $import)
                                     <?php
@@ -115,6 +109,7 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                     $checkHasExactlyStatus = $import->checkHasExactlyStatus();
                                     # kiem tra da thanh toan chua
                                     $checkHasPayStatus = $import->checkHasPay();
+                                    /*
                                     if ($checkHasPayStatus) { # da thanh toan
                                         $moneyPaid = $totalMoneyOfImport;
                                         $sumPaid = $sumPaid + $moneyPaid;
@@ -124,6 +119,7 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                         $moneyUnPaid = $totalMoneyOfImport;
                                         $sumUnPaid = $sumUnPaid + $moneyUnPaid;
                                     }
+                                    */
 
                                     # thong tin chi tiet nhap
                                     $dataImportDetail = $import->importDetailGetInfo();
@@ -160,11 +156,11 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                                     @endif
                                                     <br/>
                                                     @if(!$checkHasConfirmStatus)
-                                                        <b style="color: red;">CHƯA DUYỆT</b>
+                                                        <b style="color: grey;">CHƯA DUYỆT</b>
                                                     @else
                                                         <i class="glyphicon glyphicon-ok" style="color: green;"></i>
                                                         <em class="qc-color-grey">Đã Duyệt</em>
-                                                        @if(!empty($confirmNote))
+                                                        @if(!$hFunction->checkEmpty($confirmNote))
                                                             <br/>
                                                             <span style="color: grey;">- {!! $confirmNote !!}</span>
                                                         @endif
@@ -205,6 +201,7 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                             @if($checkHasExactlyStatus)
                                                 @if($checkHasPayStatus)
                                                     @if($import->importPayCheckHasConfirm($importId))
+                                                        <i class="glyphicon glyphicon-ok" style="color: green;"></i>
                                                         <em class="qc-color-grey">Đã Nhận tiền</em>
                                                     @else
                                                         <a class="qc_work_import_confirm_pay_act qc-link"
@@ -214,40 +211,24 @@ $getDefaultHasPay = $modelImport->getDefaultHasPay(); // da thanh toan
                                                         </a>
                                                     @endif
                                                 @else
+                                                    <i class="glyphicon glyphicon-ok" style="color: red;"></i>
                                                     <em>Chưa thanh toán</em>
                                                 @endif
                                             @else
                                                 <em class="qc-color-red">Không được chấp nhận</em>
                                             @endif
                                         </td>
-                                        <td class="text-right">
-                                            <span style="color: blue;">
-                                                {!! $hFunction->currencyFormat($moneyPaid)  !!}
-                                            </span>
-                                        </td>
-                                        <td class="text-right">
-                                            <span style="color: red;">
-                                                {!! $hFunction->currencyFormat($moneyUnPaid)  !!}
-                                            </span>
-                                        </td>
                                     </tr>
                                 @endforeach
                                 <tr style="border-top: 2px solid brown;">
-                                    <td class="text-right qc-color-red"
-                                        style="background-color: whitesmoke;" colspan="1"></td>
-                                    <td class="text-right qc-color-red">
-                                        <b>{!! $hFunction->currencyFormat($sumMoney)  !!}</b>
-                                    </td>
-                                    <td class="text-right qc-color-red">
-                                        <b>{!! $hFunction->currencyFormat($sumPaid)  !!}</b>
-                                    </td>
-                                    <td class="text-right qc-color-red">
-                                        <b>{!! $hFunction->currencyFormat($sumUnPaid)  !!}</b>
+                                    <td class="text-right qc-color-red" style="background-color: whitesmoke;"></td>
+                                    <td>
+                                        <b class="qc-color-red">{!! $hFunction->currencyFormat($sumMoney)  !!}</b>
                                     </td>
                                 </tr>
                             @else
                                 <tr>
-                                    <td class="text-right" colspan="4">
+                                    <td colspan="2">
                                         <em class="qc-color-red">Không có thông tin mua</em>
                                     </td>
                                 </tr>

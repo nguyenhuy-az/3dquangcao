@@ -16,7 +16,7 @@ use Request;
 
 class LicenseOffWorkController extends Controller
 {
-    public function index($companyFilterId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $nameFiler = null)
+    public function index($companyFilterId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $staffFilterId = null)
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
@@ -48,17 +48,25 @@ class LicenseOffWorkController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        $selectLicenseOffWork = $modelLicenseOffWork->selectInfoOfListStaffIdAndDate($modelCompany->staffIdOfListCompanyId([$companyFilterId]),$dateFilter);
+        if ($staffFilterId > 0) {
+            $listStaffId = [$staffFilterId];
+        } else {
+            $listStaffId = $modelCompany->staffIdOfListCompanyId([$companyFilterId]);
+        }
+        $selectLicenseOffWork = $modelLicenseOffWork->selectInfoOfListStaffIdAndDate($listStaffId, $dateFilter);
         $dataLicenseOffWork = $selectLicenseOffWork->paginate(30);
-        return view('ad3d.work.license-off-work.list', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataLicenseOffWork', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'nameFiler'));
+        //danh sach NV
+        $dataStaffFilter = $modelCompany->staffInfoActivityOfListCompanyId([$companyFilterId]);
+        return view('ad3d.work.license-off-work.list', compact('modelStaff', 'dataCompany', 'dataStaffFilter', 'dataAccess', 'dataLicenseOffWork', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'staffFilterId'));
 
     }
 
     public function getConfirm($licenseId = null)
     {
+        $hFunction = new \Hfunction();
         $modelLicenseOffWork = new QcLicenseOffWork();
         $dataLicenseOffWork = $modelLicenseOffWork->getInfo($licenseId);
-        if (count($dataLicenseOffWork) > 0) {
+        if ($hFunction->checkCount($dataLicenseOffWork)) {
             return view('ad3d.work.license-off-work.confirm', compact('dataLicenseOffWork'));
         }
     }

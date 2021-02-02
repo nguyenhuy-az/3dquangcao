@@ -7,12 +7,77 @@ use Illuminate\Database\Eloquent\Model;
 class QcCompanyStoreCheckReport extends Model
 {
     protected $table = 'qc_company_store_check_report';
-    protected $fillable = ['report_id', 'useStatus', 'reportImage', 'reportNumber', 'reportDate', 'confirmDate', 'confirmStatus', 'confirmNote', 'created_at', 'store_id', 'check_id', 'confirmStaff_id'];
+    protected $fillable = ['report_id', 'useStatus', 'reportImage', 'reportNumber', 'reportDate', 'confirmRight', 'confirmDate', 'confirmStatus', 'confirmNote', 'created_at', 'store_id', 'check_id', 'confirmStaff_id'];
     protected $primaryKey = 'report_id';
     public $timestamps = false;
 
     private $lastId;
 
+    #mac dinh dung duoc
+    public function getDefaultHasUse()
+    {
+        return 1;
+    }
+
+    # mac dinh khong dung duoc
+    public function getDefaultNotUse()
+    {
+        return 2;
+    }
+
+    # mac dinh da mat
+    public function getDefaultLostUse()
+    {
+        return 3;
+    }
+
+    # mac dinh anh xac nhan
+    public function getDefaultReportImage()
+    {
+        return null;
+    }
+
+    # mac dinh xac nhan dung
+    public function getDefaultHasConfirmRight()
+    {
+        return 1;
+    }
+
+    # mac dinh xac nhan ko dung
+    public function getDefaultNotConfirmRight()
+    {
+        return 0;
+    }
+
+    #mac dinh ngay xac nhan
+    public function getDefaultConfirmDate()
+    {
+        return null;
+    }
+
+    # mac dinh co xac nhan
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    # mac dinh trang thai khong xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
+
+    # mac dinh tat ca trang thai xac nhan
+    public function getDefaultAllConfirm()
+    {
+        return 100;
+    }
+
+    # mac dinh nguoi xac nhan
+    public function getDefaultConfirmStaff()
+    {
+        return null;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
     public function insert($useStatus, $reportImage, $storeId, $checkId, $confirmStatus = 0, $confirmNote = null, $confirmDate = null)
@@ -24,7 +89,6 @@ class QcCompanyStoreCheckReport extends Model
         #ton tai thong tin bao cao
         if ($hFunction->checkCount($dataReport)) {
             $reportNumber = $dataReport->reportNumber();
-            $reportNumber = (is_int($reportNumber)) ? $reportNumber : $reportNumber[0];
         } else {
             $reportNumber = 0; // bao cao lan dau
         }
@@ -53,7 +117,8 @@ class QcCompanyStoreCheckReport extends Model
 
     public function checkNullId($id = null)
     {
-        return (empty($id)) ? $this->detailId() : $id;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->reportId() : $id;
     }
 
     # hinh anh
@@ -70,7 +135,7 @@ class QcCompanyStoreCheckReport extends Model
     # xóa 1 hình ảnh
     public function deleteReportImage($reportId = null)
     {
-        $imageName = $this->reportImage($reportId)[0];
+        $imageName = $this->reportImage($reportId);
         if (QcCompanyStoreCheckReport::where('report_id', $reportId)->update(['reportImage' => null])) {
             $this->dropReportImage($imageName);
         }
@@ -97,8 +162,9 @@ class QcCompanyStoreCheckReport extends Model
     // get path image
     public function pathSmallImage($image)
     {
-        if (empty($image)) {
-            return null;
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
+            return $hFunction->getDefaultNull();
         } else {
             return asset($this->rootPathSmallImage() . '/' . $image);
         }
@@ -106,7 +172,8 @@ class QcCompanyStoreCheckReport extends Model
 
     public function pathFullImage($image)
     {
-        if (empty($image)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($image)) {
             return null;
         } else {
             return asset($this->rootPathFullImage() . '/' . $image);
@@ -125,7 +192,6 @@ class QcCompanyStoreCheckReport extends Model
         $dataReport = $this->getInfo($reportId);
         $storeId = $dataReport->storeId();
         $reportNumber = $dataReport->reportNumber();
-        $reportNumber = (is_int($reportNumber)) ? $reportNumber : $reportNumber[0];
         $getReportNumber = (int)$reportNumber + 1;
         return QcCompanyStoreCheckReport::where('store_id', $storeId)->where('reportNumber', $getReportNumber)->first();
     }
@@ -151,8 +217,9 @@ class QcCompanyStoreCheckReport extends Model
     # lay ma ban giao sau cung cua dung cu trong kho
     public function lastIdOfCompanyStore($storeId)
     {
+        $hFunction = new \Hfunction();
         $lastInfo = $this->lastInfoOfCompanyStore($storeId);
-        return (!empty($lastInfo)) ? $lastInfo->reportId() : null;
+        return (!$hFunction->checkEmpty($lastInfo)) ? $lastInfo->reportId() : null;
     }
 
     # lay thong tin bao cao sau cung cua dung cu trong kho da xac nhan su dung binh thuong
@@ -194,11 +261,12 @@ class QcCompanyStoreCheckReport extends Model
     //========= ========== ========== lấy thông tin ========== ========== ==========
     public function getInfo($reportId = '', $field = '')
     {
-        if (empty($reportId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($reportId)) {
             return QcCompanyStoreCheckReport::get();
         } else {
             $result = QcCompanyStoreCheckReport::where('report_id', $reportId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -208,10 +276,11 @@ class QcCompanyStoreCheckReport extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcCompanyStoreCheckReport::where('report_id', $objectId)->pluck($column);
+            return QcCompanyStoreCheckReport::where('report_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -228,11 +297,11 @@ class QcCompanyStoreCheckReport extends Model
     public function labelUseStatus($reportId = null)
     {
         $useStatus = $this->useStatus($reportId);
-        if ($useStatus == 1) {
+        if ($useStatus == $this->getDefaultHasUse()) {
             return 'Có - dùng được';
-        } elseif ($useStatus == 2) {
+        } elseif ($useStatus == $this->getDefaultNotUse()) {
             return 'Bị hư';
-        } elseif ($useStatus == 3) {
+        } elseif ($useStatus == $this->getDefaultLostUse()) {
             return 'Mất';
         } else {
             return null;
@@ -299,19 +368,20 @@ class QcCompanyStoreCheckReport extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcCompanyStoreCheckReport::orderBy('report_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->report_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->report_id;
     }
 
     //kiem tra xac nhan
     public function checkConfirmStatus($reportId = null)
     {
-        return ($this->confirmStatus($reportId) == 1) ? true : false;
+        return ($this->confirmStatus($reportId) == $this->getDefaultHasConfirm()) ? true : false;
     }
 
     //xac nhan chinh xac hay ko
     public function checkConfirmRight($reportId = null)
     {
-        return ($this->confirmRight($reportId) == 1) ? true : false;
+        return ($this->confirmRight($reportId) == $this->getDefaultHasConfirmRight()) ? true : false;
     }
 }

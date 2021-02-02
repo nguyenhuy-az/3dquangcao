@@ -14,6 +14,11 @@ class QcDepartmentWork extends Model
 
     private $lastId;
 
+    # mac dinh mo ta cong viec
+    public function getDefaultDescription()
+    {
+        return null;
+    }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
     public function insert($name, $description, $departmentId)
@@ -38,6 +43,13 @@ class QcDepartmentWork extends Model
         return $this->lastId;
     }
 
+    # kiem tra ma lam viec
+    public function checkNullId($id)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->workId() : $id;
+    }
+
     #----------- update ----------
     public function updateInfo($workId, $name, $description)
     {
@@ -50,7 +62,7 @@ class QcDepartmentWork extends Model
     # delete
     public function deleteInfo($workId = null)
     {
-        return QcDepartmentWork::where('work_id', $workId)->delete();
+        return QcDepartmentWork::where('work_id', $this->checkNullId($workId))->delete();
     }
 
     #========== ========== ========== RELATION ========== ========== ==========

@@ -14,7 +14,7 @@ use Request;
 
 class TransfersController extends Controller
 {
-    public function index($companyFilterId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $transfersType = 0, $staffFilterId = 0)
+    public function index($companyFilterId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $transfersType = 100, $staffFilterId = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -55,18 +55,20 @@ class TransfersController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
+
         $selectTransfers = $modelTransfers->selectInfoByListTransfersStaffAndDate($listStaffId, $companyFilterId, $dateFilter, $transfersType);
         $dataTransfers = $selectTransfers->paginate(30);
         $totalMoneyTransfers = $modelTransfers->totalMoneyByListInfo($selectTransfers->get());
-        return view('ad3d.finance.transfers.transfers.list', compact('modelStaff','modelTransfers', 'dataCompany', 'dataStaff', 'dataAccess', 'dataTransfers', 'totalMoneyTransfers', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'transfersType', 'staffFilterId', 'totalMoneyTransfers'));
+        return view('ad3d.finance.transfers.transfers.list', compact('modelStaff', 'modelTransfers', 'dataCompany', 'dataStaff', 'dataAccess', 'dataTransfers', 'totalMoneyTransfers', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'transfersType', 'staffFilterId', 'totalMoneyTransfers'));
 
     }
 
     public function view($transfersId)
     {
+        $hFunction = new \Hfunction();
         $modelTransfers = new QcTransfers();
         $dataTransfers = $modelTransfers->getInfo($transfersId);
-        if (count($dataTransfers) > 0) {
+        if ($hFunction->checkCount($dataTransfers)) {
             //return view('ad3d.finance.transfers.view', compact('dataTransfers'));
         }
     }
@@ -98,7 +100,10 @@ class TransfersController extends Controller
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
         $staffId = $modelStaff->loginStaffId();
-        if ($modelTransfers->insert($txtMoney, $hFunction->carbonNow(), $txtReason, null, $staffId, $cbReceiveStaffId, $companyLoginId, 2)) {
+        # lay gia tri mac dinh
+        $transferImage = $modelTransfers->getDefaultTransferImage();
+        $TransferType = $modelTransfers->getDefaultTransferTypeOfInvestment();
+        if ($modelTransfers->insert($txtMoney, $hFunction->carbonNow(), $txtReason, $transferImage, $staffId, $cbReceiveStaffId, $companyLoginId, $TransferType)) {
             return Session::put('notifyAdd', 'Thêm thành công, chọn thông tin và tiếp tục');
         } else {
             return Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
@@ -130,9 +135,10 @@ class TransfersController extends Controller
     //xác nhận đã nhận tiền
     public function getConfirmReceive($transfersId)
     {
+        $hFunction = new \Hfunction();
         $modelTransfers = new QcTransfers();
         $dataTransfers = $modelTransfers->getInfo($transfersId);
-        if (count($dataTransfers) > 0) {
+        if ($hFunction->checkCount($dataTransfers)) {
             return view('ad3d.finance.transfers.confirm-receive', compact('modelStaff', 'dataTransfers'));
         }
     }

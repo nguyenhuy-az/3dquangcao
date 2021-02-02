@@ -56,9 +56,9 @@ $mobileStatus = $mobile->isMobile();
                         <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="text-center form-group form-group-sm">
                                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                                <button type="button" class="qc_save btn btn-sm btn-primary">Thêm</button>
+                                <button type="button" class="qc_save btn btn-sm btn-primary">LƯU</button>
                                 <button type="reset" class="btn btn-sm btn-default">Chọn lại</button>
-                                <button type="button" class="qc_container_close btn btn-sm btn-default">Đóng</button>
+                                <button type="button" class="qc_ad3d_container_close btn btn-sm btn-default">Đóng</button>
                             </div>
                         </div>
                     </div>

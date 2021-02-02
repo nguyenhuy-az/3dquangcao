@@ -147,7 +147,7 @@ $dataOverTimeRequest = $dataCompanyStaffWorkLogin->overTimeRequestGetInfoActivit
             <div class="qc-work-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">
                 <a class="qc-work-panel-icon-link" href="{!! route('qc.work.logout.get') !!}">
                     <i class="glyphicon glyphicon-log-out" style="font-size: 20px;color: grey;"></i> <br/>
-                    Thoát
+                    THOÁT
                 </a>
             </div>
         </div>

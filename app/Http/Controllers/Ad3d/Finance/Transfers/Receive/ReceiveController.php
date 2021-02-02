@@ -14,7 +14,7 @@ use Request;
 
 class ReceiveController extends Controller
 {
-    public function index($companyFilterId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $transfersType = 0, $staffFilterId = 0)
+    public function index($companyFilterId = 0, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $transfersType = 100, $staffFilterId = 0)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();

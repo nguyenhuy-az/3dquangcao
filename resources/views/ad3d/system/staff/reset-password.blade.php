@@ -22,8 +22,7 @@ $mobileStatus = $mobile->isMobile();
             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                 <form class="qc_ad_frm_reset_pass" name="qc_ad_frm_reset_pass" role="form" method="post"
                       action="{!! route('qc.ad3d.system.staff.reset_pass.post') !!}">
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                         @if($mobileStatus) style="padding: 0 0;" @endif>
+                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="frm_notify form-group form-group-sm qc-color-red"></div>
                     </div>
                     <div class="row">

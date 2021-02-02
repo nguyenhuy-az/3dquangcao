@@ -77,9 +77,14 @@ class QcWorkSkill extends Model
     # delete
     public function deleteInfo($skillId = null)
     {
-        return QcWorkSkill::where('skill_id', $skillId)->delete();
+        return QcWorkSkill::where('skill_id', $this->checkNullId())->delete();
     }
 
+    # vo hieu hoa 1 ky nang
+    public function disableInfo($skillId = null)
+    {
+        return QcWorkSkill::where('skill_id', $this->checkNullId($skillId))->update(['action' => $this->getDefaultNotAction()]);
+    }
     #========== ========== ========== RELATION ========== ========== ==========
     #----------- cong viec cua bo phan ------------
     public function departmentWork()
@@ -113,6 +118,17 @@ class QcWorkSkill extends Model
     {
         return QcWorkSkill::where('companyStaffWork_id', $companyStaffWorkId)->where('departmentWork_id', $departmentWorkId)->orderBy('skill_id', 'DESC')->first();
     }
+
+    # lay thong tin ky nang dang hoat dong cua 1 cong viec trong bo phan
+    /*public function getInfoEnableOfCompanyStaffWorkAndWorkAndLevel($companyStaffWorkId, $departmentWorkId, $level)
+    {
+        return QcWorkSkill::where([
+            'companyStaffWork_id' => $companyStaffWorkId,
+            'departmentWork_id' => $departmentWorkId,
+            'level' => $level,
+            'action' => $this->getDefaultHasAction()
+        ])->first();
+    }*/
 
     #============ =========== ============ GET INFO ============= =========== ==========
     public function selectInfoAll()
@@ -194,6 +210,12 @@ class QcWorkSkill extends Model
     # ton tai 1 ky nang dang hoat dong cua 1 nhan vien
     public function existSkillIsActivity($companyStaffWorkId, $departmentWorkId)
     {
-        return QcWorkSkill::where('companyStaffWork_id', $companyStaffWorkId)->where('departmentWork_id', $departmentWorkId)->exists();
+        return QcWorkSkill::where('companyStaffWork_id', $companyStaffWorkId)->where('departmentWork_id', $departmentWorkId)->where('action', $this->getDefaultHasAction())->exists();
+    }
+
+    # ton tai 1 ky nang dang hoat dong cua 1 level cua 1 nhan vien - tre
+    public function existSkillIsActivityOnLevel($companyStaffWorkId, $departmentWorkId, $level)
+    {
+        return QcWorkSkill::where('companyStaffWork_id', $companyStaffWorkId)->where('departmentWork_id', $departmentWorkId)->where('action', $this->getDefaultHasAction())->where('level', $level)->exists();
     }
 }

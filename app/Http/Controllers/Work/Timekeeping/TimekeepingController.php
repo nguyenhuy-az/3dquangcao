@@ -449,15 +449,16 @@ class TimekeepingController extends Controller
         $modelStaff = new QcStaff();
         $modelLicenseOffWork = new QcLicenseOffWork();
         $loginStaffId = $modelStaff->loginStaffId();
-        $workId = Request::input('txtWork');
-
         $dayOff = Request::input('cbDayOff');
         $monthOff = Request::input('cbMonthOff');
         $yearOff = Request::input('cbYearOff');
-        $numberHouse = Request::input('cbNumberOff');
+        $numberOffWork = Request::input('cbNumberOff');
         $note = Request::input('txtNote');
+        $currentDate = $hFunction->currentDate();
         $dateOff = $hFunction->convertStringToDatetime("$monthOff/$dayOff/$yearOff 00:00:00");
-        if (!empty($loginStaffId)) {
+        if ($hFunction->formatDateToYMDHI($currentDate) > $hFunction->formatDateToYMDHI($dateOff)) {
+            return "Ngày nghỉ phải lớn hơn ngày hiện tại";
+        }else{
             $monthOff = (int)$monthOff;
             $dayOff = (int)$dayOff;
             $monthOff = ($monthOff < 10) ? "0$monthOff" : $monthOff;
@@ -466,20 +467,21 @@ class TimekeepingController extends Controller
                 if ($modelLicenseOffWork->existDateOfStaff($loginStaffId, "$monthOff/$dayOff/$yearOff")) {
                     return 'Ngày này đã xin nghỉ, chon ngày khác';
                 } else {
-                    if ($numberHouse > 1) {
-                        for ($i = 0; $i < $numberHouse; $i++) {
-                            $newDate = date('Y-m-d H:i:s', strtotime("+$i day", strtotime($dateOff)));
-                            $modelLicenseOffWork->insert($newDate, $note, $loginStaffId, null);
+                    $confirmStaffId = $modelLicenseOffWork->getDefaultConfirmStaffId();
+                    if ($numberOffWork > 1) {
+                        for ($i = 0; $i <= $numberOffWork; $i++) {
+                            $newDate = $hFunction->datetimePlusDay($dateOff, $i);// date('Y-m-d H:i:s', strtotime("+$i day", strtotime($dateOff)));
+                            $modelLicenseOffWork->insert($newDate, $note, $loginStaffId, $confirmStaffId);
                         }
                     } else {
-                        $modelLicenseOffWork->insert($dateOff, $note, $loginStaffId, null);
+                        $modelLicenseOffWork->insert($dateOff, $note, $loginStaffId, $confirmStaffId);
                     }
                 }
             } else {
                 return "Tháng $monthOff không có ngày $dayOff";
             }
-
         }
+
     }
 
     public function cancelOffWork($licenseId)
@@ -505,7 +507,6 @@ class TimekeepingController extends Controller
         $modelLicenseOffWork = new QcLicenseOffWork();
         $modelLicenseLateWork = new QcLicenseLateWork();
         $loginStaffId = $modelStaff->loginStaffId();
-        $workId = Request::input('txtWork');
 
         $dayLate = Request::input('cbDayLate');
         $monthLate = Request::input('cbMonthLate');

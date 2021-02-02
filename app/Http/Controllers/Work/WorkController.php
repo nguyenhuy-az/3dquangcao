@@ -142,53 +142,5 @@ class WorkController extends Controller
         return view('work.rules.rules', compact('dataRule'));
     }
 
-    //change account
-    public function getChangeAccount()
-    {
-        return view('work.account.change-account');
-    }
-
-    public function postChangeAccount()
-    {
-        $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
-        $txtOldAccount = Request::input('txtOldAccount');
-        $txtNewAccount = Request::input('txtNewAccount');
-        $dataStaffLogin = $modelStaff->infoFromAccount($txtOldAccount);
-        if ($hFunction->checkCount($dataStaffLogin)) {
-            if ($txtOldAccount == $txtNewAccount) {
-                return redirect()->route('qc.work.home');
-            } else {
-                if ($modelStaff->existAccount($txtNewAccount)) {
-                    $changeAccountNotify = [
-                        'status' => false,
-                        'content' => 'Tài khoản này đã được sử dụng'
-                    ];
-
-                } else {
-                    if ($modelStaff->updateAccount($dataStaffLogin->staffId(), $txtNewAccount)) {
-                        $changeAccountNotify = [
-                            'status' => true,
-                            'content' => 'Đã được cập nhật'
-                        ];
-                    } else {
-                        $changeAccountNotify = [
-                            'status' => false,
-                            'content' => 'Tính năng đang bảo trì'
-                        ];
-                    }
-
-                }
-                return view('work.account.change-account', compact('changeAccountNotify'));
-            }
-        } else {
-            $changeAccountNotify = [
-                'status' => false,
-                'content' => 'Tài khoản không tồn tại'
-            ];
-            return view('work.account.change-account', compact('changeAccountNotify'));
-        }
-
-    }
 
 }

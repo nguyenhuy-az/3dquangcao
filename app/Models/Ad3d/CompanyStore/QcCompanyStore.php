@@ -16,6 +16,47 @@ class QcCompanyStore extends Model
 
     private $lastId;
 
+    #mac dinh dung duoc
+    public function getDefaultHasUse()
+    {
+        return 1;
+    }
+
+    # mac dinh khong dung duoc
+    public function getDefaultNotUse()
+    {
+        return 2;
+    }
+
+    # mac dinh da mat
+    public function getDefaultLostUse()
+    {
+        return 3;
+    }
+
+    # mac dinh ma dung cu
+    public function getDefaultToolId()
+    {
+        return null;
+    }
+
+    # mac dinh ma vat tu
+    public function getDefaultSuppliesId()
+    {
+        return null;
+    }
+
+    # mac dinh ma nhap vat tu
+    public function getDefaultImportId()
+    {
+        return null;
+    }
+
+    # mac dinh tui o nghe
+    public function getDefaultPackageId()
+    {
+        return null;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
     public function insert($name, $companyId, $toolId = null, $suppliesId = null, $importId = null, $importPrice = 1000, $packageId = null)
@@ -43,9 +84,10 @@ class QcCompanyStore extends Model
         return $this->lastId;
     }
 
-    public function checkIdNull($storeId)
+    public function checkIdNull($id)
     {
-        return (empty($storeId)) ? $this->storeId() : $storeId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->storeId() : $id;
     }
 
     public function deleteStore($storeId = null)
@@ -65,7 +107,7 @@ class QcCompanyStore extends Model
     public function updateNormalUseStatus($storeId)
     {
         return QcCompanyStore::where('store_id', $storeId)->update([
-            'useStatus' => 1
+            'useStatus' => $this->getDefaultHasUse()
         ]);
     }
     //========== ========= ========= CAC MON QUAN HE ========== ========= ==========
@@ -92,12 +134,13 @@ class QcCompanyStore extends Model
     public function getPublicToolToCheckOfCompany($companyId)
     {
         $modelTool = new QcTool();
-        return QcCompanyStore::where('company_id', $companyId)->where('useStatus', 1)->whereIn('tool_id', $modelTool->publicListId())->get();
+        return QcCompanyStore::where('company_id', $companyId)->where('useStatus', $this->getDefaultHasUse())->whereIn('tool_id', $modelTool->publicListId())->get();
     }
 
     public function selectInfoToolOfListCompanyAndListToolAnd($listCompanyId, $listToolId, $orderBy = 'DESC')
     {
-        if (empty($listToolId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($listToolId)) {
             return QcCompanyStore::whereIn('company_id', $listCompanyId)->whereNotNull('tool_id')->orderBy('store_id', $orderBy)->select();
         } else {
             return QcCompanyStore::whereIn('company_id', $listCompanyId)->whereIn('tool_id', $listToolId)->orderBy('store_id', $orderBy)->select();
@@ -168,14 +211,12 @@ class QcCompanyStore extends Model
 
     public function existOfTool($toolId)
     {
-        $result = QcCompanyStore::where('tool_id', $toolId)->count();
-        return ($result > 0) ? true : false;
+        return QcCompanyStore::where('tool_id', $toolId)->exists();
     }
 
     public function existOfToolAndCompany($toolId, $companyId)
     {
-        $result = QcCompanyStore::where('tool_id', $toolId)->where('company_id', $companyId)->count();
-        return ($result > 0) ? true : false;
+        return QcCompanyStore::where('tool_id', $toolId)->where('company_id', $companyId)->exists();
     }
 
     public function infoOfToolAndCompany($toolId, $companyId)
@@ -213,7 +254,7 @@ class QcCompanyStore extends Model
         $modelToolAllocationDetail = new QcToolPackageAllocationDetail();
         # lay ma do nghe dang cap phat
         $listStoreId = $modelToolAllocationDetail->listStoreIdIsActivity();
-        return QcCompanyStore::whereNotIn('store_id', $listStoreId)->where('useStatus', 1)->where('tool_id', $toolId)->where('company_id', $companyId)->first();
+        return QcCompanyStore::whereNotIn('store_id', $listStoreId)->where('useStatus', $this->getDefaultHasUse())->where('tool_id', $toolId)->where('company_id', $companyId)->first();
     }
 
     #danh sach ma dung cu theo kho
@@ -230,14 +271,12 @@ class QcCompanyStore extends Model
 
     public function existOfSupplies($suppliesId)
     {
-        $result = QcCompanyStore::where('supplies_id', $suppliesId)->count();
-        return ($result > 0) ? true : false;
+        return QcCompanyStore::where('supplies_id', $suppliesId)->exists();
     }
 
     public function existOfSuppliesAndCompany($suppliesId, $companyId)
     {
-        $result = QcCompanyStore::where('supplies_id', $suppliesId)->where('company_id', $companyId)->count();
-        return ($result > 0) ? true : false;
+        $result = QcCompanyStore::where('supplies_id', $suppliesId)->where('company_id', $companyId)->exists();
     }
 
     public function amountOfSupplies($suppliesId)
@@ -265,11 +304,12 @@ class QcCompanyStore extends Model
 
     public function getInfo($storeId = '', $field = '')
     {
-        if (empty($storeId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($storeId)) {
             return QcCompanyStore::get();
         } else {
             $result = QcCompanyStore::where('store_id', $storeId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -277,12 +317,14 @@ class QcCompanyStore extends Model
         }
     }
 
+    # lay 1 gia tri
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcCompanyStore::where('store_id', $objectId)->pluck($column);
+            return QcCompanyStore::where('store_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -309,11 +351,11 @@ class QcCompanyStore extends Model
     public function labelUseStatus($storeId = null)
     {
         $useStatus = $this->useStatus($storeId);
-        if ($useStatus == 1) {
+        if ($useStatus == $this->getDefaultHasUse()) {
             return 'Bình thường';
-        } elseif ($useStatus == 2) {
+        } elseif ($useStatus == $this->getDefaultNotUse()) {
             return 'Hư';
-        } elseif ($useStatus == 3) {
+        } elseif ($useStatus == $this->getDefaultLostUse()) {
             return 'Mất';
         } else {
             return null;
@@ -323,19 +365,19 @@ class QcCompanyStore extends Model
     # kiem tra trang thai do nghe binh thương
     public function checkNormalUseByStatus($useStatus)
     {
-        return ($useStatus == 1) ? true : false;
+        return ($useStatus == $this->getDefaultHasUse()) ? true : false;
     }
 
     # kiem tra trang thai do nghe bị hu
     public function checkBrokenUseByStatus($useStatus)
     {
-        return ($useStatus == 2) ? true : false;
+        return ($useStatus == $this->getDefaultNotUse()) ? true : false;
     }
 
     # kiem tra trang thai do nghe binh thương
     public function checkLostUseByStatus($useStatus)
     {
-        return ($useStatus == 3) ? true : false;
+        return ($useStatus == $this->getDefaultLostUse()) ? true : false;
     }
 
     public function createdAt($storeId = null)
@@ -366,8 +408,9 @@ class QcCompanyStore extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcCompanyStore::orderBy('store_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->store_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->store_id;
     }
 
     # lay src hinh anh cuoi cung cua do nghe

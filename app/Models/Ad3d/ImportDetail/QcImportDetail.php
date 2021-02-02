@@ -7,12 +7,29 @@ use Illuminate\Database\Eloquent\Model;
 class QcImportDetail extends Model
 {
     protected $table = 'qc_import_detail';
-    protected $fillable = ['detail_id', 'price', 'amount', 'totalMoney', 'created_at', 'import_id', 'tool_id', 'supplies_id', 'newName','newUnit', 'product_id'];
+    protected $fillable = ['detail_id', 'price', 'amount', 'totalMoney', 'created_at', 'import_id', 'tool_id', 'supplies_id', 'newName', 'newUnit', 'product_id'];
     protected $primaryKey = 'detail_id';
     public $timestamps = false;
 
     private $lastId;
 
+    # mac dinh ma vat tu
+    public function getDefaultSuppliesId()
+    {
+        return null;
+    }
+
+    # mac dinh ma dung cu
+    public function getDefaultToolId()
+    {
+        return null;
+    }
+
+    # mac dinh ma san pham
+    public function getDefaultProductId()
+    {
+        return null;
+    }
     //========== ========= ========= INSERT && UPDATE ========== ========= =========
     //---------- thêm ----------
     public function insert($price, $amount, $totalMoney, $importId, $toolId = null, $suppliesId = null, $newName = null, $newUnit = null, $productId = null)
@@ -42,7 +59,14 @@ class QcImportDetail extends Model
         return $this->lastId;
     }
 
-    // cập nhật thông tin
+    # kiem tra id
+    public function checkNullId($id)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->detailId() : $id;
+    }
+
+    # cập nhật thông tin
     public function updateInfo($detailId, $price, $amount, $totalMoney, $toolId, $suppliesId, $newName)
     {
         return QcImportDetail::where('detail_id', $detailId)->update([
@@ -57,8 +81,7 @@ class QcImportDetail extends Model
 
     public function deleteDetail($detailId = null)
     {
-        $detailId = (empty($detailId)) ? $this->paymentId() : $detailId;
-        return QcImportDetail::where('detail_id', $detailId)->delete();
+        return QcImportDetail::where('detail_id', $this->checkNullId($detailId))->delete();
     }
     //========== ========= ========= CAC MOI QUAN HE DU LIEU ========== ========= ==========
     //---------- san pham-----------
@@ -104,11 +127,12 @@ class QcImportDetail extends Model
     //========= ========== ========== GET INFO ========== ========== ==========
     public function getInfo($detailId = '', $field = '')
     {
-        if (empty($detailId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($detailId)) {
             return QcImportDetail::get();
         } else {
             $result = QcImportDetail::where('detail_id', $detailId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -116,12 +140,14 @@ class QcImportDetail extends Model
         }
     }
 
+    # lay 1 gia tri
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcImportDetail::where('detail_id', $objectId)->pluck($column);
+            return QcImportDetail::where('detail_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -186,8 +212,9 @@ class QcImportDetail extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcImportDetail::orderBy('detail_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->detail_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->detail_id;
     }
 
     #============ =========== ============ STATISTICAL ============= =========== ==========

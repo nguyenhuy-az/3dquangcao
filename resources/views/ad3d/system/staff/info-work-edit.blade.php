@@ -228,7 +228,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
     </div>
 
     <div class="row qc-padding-top-10 qc-padding-bot-10">
-        <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8 ">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12 ">
             <div class="form-group form-group-sm" style="margin: 0;">
                 <label class="radio-inline" style="color: red;">
                     <input type="radio" checked="checked" name="salaryStatus" value="1">
@@ -236,10 +236,12 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                 </label>
             </div>
         </div>
-        <div class="text-right  col-sx-12 col-sm-12 col-md-4 col-lg-4 ">
+        <div class="text-right  col-sx-12 col-sm-12 col-md-12 col-lg-12 ">
             <div class="form-group form-group-sm" style="margin: 0;">
                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                <button type="button" class="qc_save btn btn-sm btn-primary">Lưu thay đổi</button>
+                <button type="button" class="qc_save btn btn-sm btn-primary">
+                    LƯU THAY ĐỔI
+                </button>
                 <button type="reset" class="btn btn-sm btn-default">Nhập lại</button>
                 <button type="button" class="btn btn-sm btn-default"
                         onclick="qc_main.window_reload();">

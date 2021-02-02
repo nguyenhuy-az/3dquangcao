@@ -47,11 +47,17 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
 ?>
 @extends('work.staff.index')
 @section('qc_work_staff_body')
-    <div class="qc_work_staff_info_wrap qc-padding-bot-30 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="qc_work_staff_info_wrap qc-padding-bot-30 col-xs-12 col-sm-12 col-md-12 col-lg-12"
+         @if($mobileStatus) style="padding: 0;" @endif>
         <div class="row">
-            <div class="qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-9 col-md-10 col-lg-10">
                 {{-- Menu --}}
                 @include('work.staff.menu')
+            </div>
+            <div class="text-right col-xs-12 col-sm-3 col-md-2 col-lg-2">
+                <a class="qc-link-green-bold" href="{!! route('qc.work.staff.account.update.get') !!}">
+                    ĐỔI TÀI KHOẢN
+                </a>
             </div>
         </div>
         <div class="row">
@@ -63,14 +69,13 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
         </div>
         {{--THONG TIN CO BAN--}}
         <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" @if($mobileStatus) style="padding: 0;" @endif>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
                         <label style="font-size: 1.5em; color: red;">THÔNG TIN CÁ NHÂN</label>
                     </div>
                     <div class="panel-body">
-
                         <div class="row">
                             <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                 <div class="row">
@@ -106,85 +111,91 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
                                 </div>
                             </div>
                             <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-condensed" style="margin: 0;">
-                                        <tr>
-                                            <td style="border-top: none;">
-                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                <em>Họ và tên </em>
-                                                <b>{!! $dataStaff->fullName() !!}</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                <em>Mã nhân viên: </em>&nbsp;&nbsp;
-                                                <b>{!! $dataStaff->nameCode() !!}</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                <em>CMND: </em> &nbsp;&nbsp;
-                                                <b>{!! $identityCard !!}</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                <em>Ngày sinh: </em>&nbsp;&nbsp;
-                                                @if(!$hFunction->checkEmpty($birthday))
-                                                    <b>{!! date('d-m-Y', strtotime($birthday)) !!}</b>
-                                                @else
-                                                    <em>.....................</em>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                <em>Điện thoại: </em>
-                                                <b>{!! $phone !!}</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                <em>Địa chỉ: </em>&nbsp;&nbsp;
-                                                <b>{!! $address !!}</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                <em>Email: </em>&nbsp;&nbsp;
-                                                @if(!$hFunction->checkEmpty($email))
-                                                    <b>{!! $email !!}</b>
-                                                @else
-                                                    <em>.....................</em>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                <em>Ngày vào: </em>&nbsp;&nbsp;
-                                                <b>{!! date('d-m-Y', strtotime($dateAdd)) !!}</b>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
+                                <table class="table table-hover table-condensed" style="margin: 0;">
+                                    <tr>
+                                        <td style="width: 100px; border-top: none;">
+                                            <em>Họ và tên </em>
+                                        </td>
+                                        <td style="border-top: none;">
+                                            <b>{!! $dataStaff->fullName() !!}</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <em>Mã nhân viên: </em>
+                                        </td>
+                                        <td>
+                                            <b>{!! $dataStaff->nameCode() !!}</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <em>CMND: </em>
+                                        </td>
+                                        <td>
+                                            <b>{!! $identityCard !!}</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <em>Ngày sinh: </em>
+                                        </td>
+                                        <td>
+                                            @if(!$hFunction->checkEmpty($birthday))
+                                                <b>{!! date('d-m-Y', strtotime($birthday)) !!}</b>
+                                            @else
+                                                <em>.....................</em>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <em>Điện thoại: </em>
+                                        </td>
+                                        <td>
+                                            <b>{!! $phone !!}</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <em>Địa chỉ: </em>&nbsp;&nbsp;
+                                        </td>
+                                        <td>
+                                            <b>{!! $address !!}</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <em>Email: </em>&nbsp;&nbsp;
+                                        </td>
+                                        <td>
+                                            @if(!$hFunction->checkEmpty($email))
+                                                <b>{!! $email !!}</b>
+                                            @else
+                                                <em>.....................</em>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <em>Ngày vào: </em>
+                                        </td>
+                                        <td>
+                                            <b>{!! date('d-m-Y', strtotime($dateAdd)) !!}</b>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
-
                     </div>
 
                 </div>
             </div>
         </div>
-        {{--THONG TIN LAM VIEC--}}
+        {{-- THONG TIN LAM VIEC --}}
         <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            {{--THONG TIN LAM VIEC--}}
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" @if($mobileStatus) style="padding: 0;" @endif>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
@@ -193,6 +204,7 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
                     <div class="panel-body">
                         @if ($companyStaffWorkStatus)
                             <?php
+                            $companyStaffWorkId = $dataCompanyStaffWork->workId();
                             $manageRankId = $modelRank->manageRankId();
                             $staffRankId = $modelRank->staffRankId();
                             # ap dung chuyen doi tu phien ban cua phan tích moi nv chi lam tai 1 cty
@@ -213,23 +225,23 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
                             $dataStaffWorkDepartment = $dataCompanyStaffWork->staffWorkDepartmentGetInfoHasAction();
                             ?>
                             <div class="row" style="margin-bottom: 10px;">
-                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
                                     <em>Công ty:</em> &nbsp;
-                                    <b>{!! $companyName !!}</b>
+                                    <b style="color: blue;">{!! $companyName !!}</b>
                                 </div>
-                                <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                     <em>Cấp Admin: </em>&nbsp;
                                     <b>{!! $level !!}</b>
                                 </div>
-                                <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                     <em>Ngày làm: </em> &nbsp;
                                     <b>{!! date('d-m-Y', strtotime($beginDate)) !!}</b>
                                 </div>
-                                <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                     <em>Hình thức làm: </em> &nbsp;&nbsp;
                                     <b>{!! $workMethodLabel !!}</b>
                                 </div>
-                                <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                     <em>Nội quy: </em> &nbsp;&nbsp;
                                     <b>{!! $applyRuleLabel !!}</b>
                                 </div>
@@ -247,56 +259,60 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
                                             # cong viec trong bo phan
                                             $dataDepartmentWork = $dataDepartment->departmentWorkGetInfo();
                                             ?>
-                                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                <div class="table-responsive">
-                                                    <table class="table table-hover table-condensed">
-                                                        <tr style="border-bottom: 1px solid #d7d7d7;">
-                                                            <td>
-                                                                <i class="glyphicon glyphicon-arrow-right"></i>
-                                                                <em>Bộ phận:</em>
-                                                                <b style="color: blue;">{!! $dataDepartment->name() !!}</b>
-                                                            </td>
-                                                            <td class="text-right">
-                                                                @if($dataRank->checkManageRank())
-                                                                    Cấp quản lý
-                                                                @else
-                                                                    Cấp nhân viên
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                        @if($hFunction->checkCount($dataDepartmentWork))
-                                                            @foreach($dataDepartmentWork as $departmentWork)
-                                                                <?php
-                                                                $departmentWorkId = $departmentWork->workId();
-                                                                # lay ky nang lam viec
-                                                                $dataWorkSkill = $dataCompanyStaffWork->workSkillGetLastInfoOfDepartmentWork($departmentWorkId);
-                                                                ?>
-                                                                <tr>
-                                                                    <td>
-                                                                        &emsp;
-                                                                        <b>{!! $departmentWork->name() !!}</b>
+                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                <table class="table table-hover table-condensed">
+                                                    <tr style="border-bottom: 1px solid #d7d7d7;">
+                                                        <td>
+                                                            <i class="glyphicon glyphicon-arrow-right"></i>
+                                                            <em>Bộ phận:</em>
+                                                            <b style="color: blue;">{!! $dataDepartment->name() !!}</b>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            @if($dataRank->checkManageRank())
+                                                                Cấp quản lý
+                                                            @else
+                                                                Cấp nhân viên
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                    @if($hFunction->checkCount($dataDepartmentWork))
+                                                        @foreach($dataDepartmentWork as $departmentWork)
+                                                            <?php
+                                                            $departmentWorkId = $departmentWork->workId();
+                                                            # lay ky nang lam viec
+                                                            $dataWorkSkill = $dataCompanyStaffWork->workSkillGetLastInfoOfDepartmentWork($departmentWorkId);
+                                                            ?>
+                                                            <tr>
+                                                                <td>
+                                                                    &emsp;
+                                                                    <b>{!! $departmentWork->name() !!}</b>
+                                                                    @if($hFunction->checkCount($dataWorkSkill))
+                                                                        <br/>&emsp;
+                                                                        <em style="color: grey;">
+                                                                            - {!! $hFunction->mp_strtoupper($dataWorkSkill->levelLabel($dataWorkSkill->level())) !!}
+                                                                        </em>
+                                                                    @else
+                                                                        <br/> &emsp;
+                                                                        <em style="color: grey;">
+                                                                            - Không biết
+                                                                        </em>
+                                                                    @endif
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <a class="qc_update_work_skill_get qc-link-red"
+                                                                       data-href="{!! route('qc.work.staff.skill.update.get',"$companyStaffWorkId/$departmentWorkId") !!}">
                                                                         @if($hFunction->checkCount($dataWorkSkill))
-                                                                            <br/>&emsp;
-                                                                            <em style="color: grey;">
-                                                                                - {!! $dataWorkSkill->levelLabel() !!}
-                                                                            </em>
-                                                                        @else
-                                                                            <br/> &emsp;
-                                                                            <em style="color: grey;">
-                                                                                - Không biết
-                                                                            </em>
-                                                                        @endif
-                                                                    </td>
-                                                                    <td class="text-right">
-                                                                        <a class="qc-link-red">
                                                                             Cập nhật
-                                                                        </a>
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        @endif
-                                                    </table>
-                                                </div>
+                                                                        @else
+                                                                            <i class="glyphicon glyphicon-plus"></i>
+                                                                            THÊM
+                                                                        @endif
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @endif
+                                                </table>
                                             </div>
                                         @endforeach
                                     @endif
@@ -306,17 +322,14 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
                     </div>
                 </div>
             </div>
-        </div>
-
-        {{--THONG TIN LƯƠNG--}}
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            {{--THONG TIN LƯƠNG--}}
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" @if($mobileStatus) style="padding: 0;" @endif>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
                         <label style="font-size: 1.5em; color: red;">LƯƠNG</label>
                     </div>
-                    <div class="panel-body">
+                    <div id="staffInfoSalaryContainer" class="panel-body">
                         @if ($companyStaffWorkStatus)
                             <?php
                             $dataStaffWorkSalary = $dataCompanyStaffWork->staffWorkSalaryActivity();
@@ -334,97 +347,100 @@ $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true
                                 ?>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover table-condensed" style="margin: 0;">
-                                                <tr>
-                                                    <td>
-                                                        <i class="glyphicon glyphicon-arrow-right"></i>
-                                                        <em>Tổng lương: </em>
-                                                        <b class="qc-color-red">{!! $hFunction->currencyFormat($totalSalary) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <i class="glyphicon glyphicon-arrow-right"></i>
-                                                        <em>Tổng lương: </em>
-                                                        <b class="qc-color-red">{!! $hFunction->currencyFormat($totalSalary) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <i class="glyphicon glyphicon-arrow-right"></i>
-                                                        <em>Lương cơ bản: </em>
-                                                        <b>{!! $hFunction->currencyFormat($salary) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <i class="glyphicon glyphicon-arrow-right"></i>
-                                                        <em>Phụ cấp trách nhiệm: </em>&nbsp;&nbsp;
-                                                        <b>{!! $hFunction->currencyFormat($responsibility) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <i class="glyphicon glyphicon-arrow-right"></i>
-                                                        <em>Bảo hiểm 21,5% LCB: </em> &nbsp;&nbsp;
-                                                        <b>{!! $hFunction->currencyFormat($insurance) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <i class="glyphicon glyphicon-arrow-right"></i>
-                                                        <em>Phụ cấp điện thoại: </em>&nbsp;&nbsp;
-                                                        <b>{!! $hFunction->currencyFormat($usePhone) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <i class="glyphicon glyphicon-arrow-right"></i>
-                                                        <em>Phụ cấp đi lại: </em>
-                                                        <b>{!! $hFunction->currencyFormat($fuel) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <i class="glyphicon glyphicon-arrow-right"></i>
-                                                        <em>Lương 1 ngày nghỉ : </em>&nbsp;&nbsp;
-                                                        <b>{!! $hFunction->currencyFormat($dateOff) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <i class="glyphicon glyphicon-arrow-right"></i>
-                                                        <em>Phụ cấp tăng ca: </em>&nbsp;&nbsp;
-                                                        <b>{!! $hFunction->currencyFormat($overtimeHour) !!} </b>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
+                                        <table class="table table-hover table-condensed" style="margin: 0;">
+                                            <tr>
+                                                <td style="width: 150px; border-top: none;">
+                                                    <em>Tổng lương: </em>
+                                                </td>
+                                                <td class="text-right" style="border-top: none;">
+                                                    <b class="qc-color-red">{!! $hFunction->currencyFormat($totalSalary) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>Lương cơ bản: </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($salary) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>Phụ cấp trách nhiệm: </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($responsibility) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>Bảo hiểm 21,5% LCB: </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($insurance) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>Phụ cấp điện thoại: </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($usePhone) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>Phụ cấp đi lại: </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($fuel) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>Lương 1 ngày nghỉ : </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($dateOff) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>Phụ cấp tăng ca: </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($overtimeHour) !!} </b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>Số TK: </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    @if($hFunction->checkEmpty($bankAccount))
+                                                        <b>.............</b>
+                                                    @else
+                                                        <b>{!! $bankAccount !!} </b><br>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>Ngân hàng: </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    @if($hFunction->checkEmpty($bankAccount))
+                                                        <b>.............</b>
+                                                    @else
+                                                        <b>{!! $bankName !!} </b>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             @endif
 
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- TAI KHOAN NGAN HANG --}}
-        <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
-                        <label style="font-size: 1.5em; color: red;">TÀI KHOẢN NGÂN HÀNG</label>
-                    </div>
-                    <div class="panel-body">
-                        <i class="glyphicon glyphicon-arrow-right"></i>
-                        @if($hFunction->checkEmpty($bankAccount))
-                            <em>Không có tài khoản</em>
-                        @else
-                            <b>{!! $bankAccount !!} </b>
                         @endif
                     </div>
                 </div>

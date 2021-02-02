@@ -97,6 +97,7 @@ class QcCompany extends Model
     {
         return 1;
     }
+
     # mac dinh chua xac nhan cua he thong
     public function getDefaultValueNotConfirm()
     {
@@ -108,11 +109,13 @@ class QcCompany extends Model
     {
         return 100;
     }
+
     # mac dinh da ket thuc cua he thong
     public function getDefaultValueHasFinish()
     {
         return 1;
     }
+
     # mac dinh chua ket thuc cua he thong
     public function getDefaultValueNotFinish()
     {
@@ -124,6 +127,7 @@ class QcCompany extends Model
     {
         return 1;
     }
+
     public function getDefaultNotRootOfStaff()
     {
         return 0;
@@ -884,6 +888,13 @@ class QcCompany extends Model
         return $modelTimekeepingProvisional->selectInfoByListWorkAndDate($listWorkId, $dateFilter)->get();
     }
     # ---------- ------------ THONG KE THONG TIN CUA 1 CONG TY ---------- -------- -------
+    # tat ca thong tin xin nghi cua 1 cty theo ngay
+    public function licenseOffWorkGetAllInfoInDate($dateFilter, $companyId = null)
+    {
+        $modelLicenseOffWork = new QcLicenseOffWork();
+        return $modelLicenseOffWork->getInfoOffInDateOffCompany($this->checkIdNull($companyId), $dateFilter);
+    }
+
     # thong tin cham cong chua duyet cua thang hien hanh
     public function totalTimekeepingProvisionalUnconfirmed($companyId = null)
     {

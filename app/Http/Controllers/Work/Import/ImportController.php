@@ -16,7 +16,7 @@ use Request;
 
 class ImportController extends Controller
 {
-    public function index($dayFilter = null, $monthFilter = 0, $yearFilter = 0, $loginPayStatus = 3)
+    public function index($dayFilter = null, $monthFilter = 0, $yearFilter = 0, $loginPayStatus = 100)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -54,7 +54,9 @@ class ImportController extends Controller
             $yearFilter = date('Y');
         }
 
-        if ($loginPayStatus == 3) { // lay tat ca thong tin
+        # mac dinh tat ca thanh toan
+        $getDefaultAllPay = $modelImport->getDefaultAllPay();
+        if ($loginPayStatus == $getDefaultAllPay) { // lay tat ca thong tin
             $dataImport = $modelImport->getInfoOfStaff($companyId, $loginStaffId, $dateFilter);
         } else { # theo trang thai thanh toan
             $dataImport = $modelImport->getInfoOfStaffAndPayStatus($companyId, $loginStaffId, $loginPayStatus, $dateFilter);

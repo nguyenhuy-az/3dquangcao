@@ -36,8 +36,8 @@ $dateAdd = $dataStaff->createdAt();
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
             <div class="form-group form-group-sm" style="margin: 0;">
-                <label>Họ <i
-                            class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
+                <label>Họ</label>
+                <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                 <input type="text" class="form-control" name="txtFirstName"
                        placeholder="Nhập họ"
                        value="{!! $firstName !!}">
@@ -45,8 +45,8 @@ $dateAdd = $dataStaff->createdAt();
         </div>
         <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
             <div class="form-group form-group-sm qc-padding-none" style="margin: 0;">
-                <label>Tên <i
-                            class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
+                <label>Tên </label>
+                <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                 <input type="text" class="form-control" name="txtLastName"
                        placeholder="Nhập Tên"
                        value="{!! $lastName !!}">
@@ -54,8 +54,8 @@ $dateAdd = $dataStaff->createdAt();
         </div>
         <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
             <div class="form-group form-group-sm" style="margin: 0;">
-                <label>Chứng minh thư <i
-                            class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
+                <label>Chứng minh thư </label>
+                <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                 <input type="text" class="form-control" name="txtIdentityCard"
                        placeholder="Số chứng minh nhân dân"
                        value="{!! $identityCard !!}">
@@ -92,8 +92,8 @@ $dateAdd = $dataStaff->createdAt();
         </div>
         <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
             <div class="form-group form-group-sm" style="margin: 0;">
-                <label>Điện thoại<i
-                            class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
+                <label>Điện thoại</label>
+                <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                 <input type="text" class="form-control" name="txtPhone"
                        onkeyup="qc_main.showNumberInput(this);"
                        placeholder="Số điện thoại"
@@ -124,7 +124,8 @@ $dateAdd = $dataStaff->createdAt();
     <div class="text-right qc-padding-top-10 qc-padding-bot-10 col-sx-12 col-sm-12 col-md-12 col-lg-12 ">
         <div class="form-group form-group-sm" style="margin: 0;">
             <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-            <button type="button" class="qc_save btn btn-sm btn-primary">Lưu thay đổi
+            <button type="button" class="qc_save btn btn-sm btn-primary">
+                LƯU THAY ĐỔI
             </button>
             <button type="button" class="btn btn-sm btn-default" onclick="qc_main.window_reload();">
                 Đóng

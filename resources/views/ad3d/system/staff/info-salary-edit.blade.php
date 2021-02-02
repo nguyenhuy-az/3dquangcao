@@ -195,7 +195,8 @@ if (count($dataStaffWorkSalary) > 0) {
         <div class="text-right qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12 ">
             <div class="form-group form-group-sm" style="margin: 0;">
                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                <button type="button" class="qc_save btn btn-sm btn-primary">Lưu thay đổi
+                <button type="button" class="qc_save btn btn-sm btn-primary">
+                    LƯU THAY ĐỔI
                 </button>
                 <button type="reset" class="btn btn-sm btn-default">Nhập lại</button>
                 <button type="button" class="frmStaffSalaryEdit_close btn btn-sm btn-default"

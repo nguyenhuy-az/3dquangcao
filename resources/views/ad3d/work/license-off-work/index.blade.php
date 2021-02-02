@@ -17,6 +17,6 @@
 @endsection
 
 @section('qc_js_footer')
-    <script src="{{ url('public/ad3d/work/license-off-work/js/license-off-work.js')}}"></script>
+    <script src="{{ url('public/ad3d/work/license-off-work/js/index.js')}}"></script>
 @endsection
 

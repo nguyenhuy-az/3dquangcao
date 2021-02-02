@@ -138,7 +138,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                 }
                                 $dataWork = $bonus->work;
                                 # thong tin nhan vien
-                                if (!empty($dataWork->companyStaffWorkId())) {
+                                if (!$hFunction->checkEmpty($dataWork->companyStaffWorkId())) {
                                     $dataStaffBonus = $dataWork->companyStaffWork->staff;
                                 } else {
                                     $dataStaffBonus = $dataWork->staff; // phien ban cu

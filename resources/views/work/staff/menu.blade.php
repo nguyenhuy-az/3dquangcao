@@ -34,11 +34,6 @@ if (isset($dataAccess)) {
                     <label>THỐNG KÊ</label>
                 </a>
             </li>
-            <li @if($subObject == 'accountInfo') class="active" @endif>
-                <a href="#" @if($subObject == 'accountInfo') style="background-color: whitesmoke;" @endif>
-                    <label>TÀI KHOẢN</label>
-                </a>
-            </li>
         </ul>
     </div>
 </div>

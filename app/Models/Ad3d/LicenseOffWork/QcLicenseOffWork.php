@@ -15,6 +15,59 @@ class QcLicenseOffWork extends Model
 
     private $lastId;
 
+    # mac dinh ghi chu xin
+    public function getDefaultNote()
+    {
+        return null;
+    }
+
+    #mac dinh co dong y
+    public function getDefaultHasAgree()
+    {
+        return 1;
+    }
+
+    #mac dinh khong dong y
+    public function getDefaultNotAgree()
+    {
+        return 0;
+    }
+
+    #mac dinh co xac nhan
+    public function getDefaultHasConfirm()
+    {
+        return 1;
+    }
+
+    #mac dinh khong xac nhan
+    public function getDefaultNotConfirm()
+    {
+        return 0;
+    }
+
+    # mac dinh tat ca trang thai xac nhan
+    public function getDefaultAllConfirm()
+    {
+        return 100;
+    }
+
+    # mac dinh ghi chu xac nhan
+    public function getDefaultConfirmNote()
+    {
+        return null;
+    }
+
+    #mac dinh ngay xac nhan
+    public function getDefaultConfirmDate()
+    {
+        return null;
+    }
+
+    # mac dinh nguoi xac nhan
+    public function getDefaultConfirmStaffId()
+    {
+        return null;
+    }
     //========== ========== ========== INSERT && UPDATE ========== ========== ==========
     //---------- thêm mới ----------
     public function insert($dateOff, $note, $staffId, $staffConfirmId)
@@ -40,6 +93,13 @@ class QcLicenseOffWork extends Model
         return $this->lastId;
     }
 
+    # kiem tra id
+    public function checkNullId($id)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->licenseId() : $id;
+    }
+
     public function confirmOffWork($licenseId, $agreeStatus, $confirmNote, $confirmStaff)
     {
         $hFunction = new \Hfunction();
@@ -48,15 +108,14 @@ class QcLicenseOffWork extends Model
                 'agreeStatus' => $agreeStatus,
                 'staffConfirm_id' => $confirmStaff,
                 'confirmNote' => $confirmNote,
-                'confirmStatus' => 1,
+                'confirmStatus' => $this->getDefaultHasConfirm(),
                 'confirmDate' => $hFunction->createdAt(),
             ]);
     }
 
     public function deleteInfo($licenseId = null)
     {
-        $licenseId = (empty($licenseId)) ? $this->licenseId() : $licenseId;
-        return QcLicenseOffWork::where('license_id', $licenseId)->delete();
+        return QcLicenseOffWork::where('license_id', $this->checkNullId($licenseId))->delete();
     }
 
     //========== ========== ========== RELATION ========== ========== ==========
@@ -68,7 +127,8 @@ class QcLicenseOffWork extends Model
 
     public function selectInfoOfListStaffIdAndDate($listStaffId, $dateFilter = null, $orderBy = 'DESC')
     {
-        if (empty($dateFilter)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcLicenseOffWork::whereIn('staff_id', $listStaffId)->orderBy('created_at', $orderBy)->select('*');
         } else {
             // phat trien loc theo ngay
@@ -80,16 +140,14 @@ class QcLicenseOffWork extends Model
     public function existDateOfStaff($staffId, $dateYmd)
     {
         $dateYmd = date('Y-m-d', strtotime($dateYmd));
-        $result = QcLicenseOffWork::where('staff_id', $staffId)->where('dateOff', 'like', "%$dateYmd%")->count();
-        return ($result > 0) ? true : false;
+        return QcLicenseOffWork::where('staff_id', $staffId)->where('dateOff', 'like', "%$dateYmd%")->exists();
     }
 
     # kiem tra nv xin nghi theo ngay va duoc duyet
     public function existAcceptedDateOfStaff($staffId, $dateYmd)
     {
         $dateYmd = date('Y-m-d', strtotime($dateYmd));
-        $result = QcLicenseOffWork::where('staff_id', $staffId)->where('dateOff', 'like', "%$dateYmd%")->where('agreeStatus', 1)->count();
-        return ($result > 0) ? true : false;
+        return QcLicenseOffWork::where('staff_id', $staffId)->where('dateOff', 'like', "%$dateYmd%")->where('agreeStatus', $this->getDefaultHasAgree())->exists();
     }
 
     public function infoOfStaffAndDate($staffId, $dateYmd)
@@ -100,12 +158,15 @@ class QcLicenseOffWork extends Model
 
     public function infoOfStaff($staffId, $orderBy = null)
     {
-        $orderBy = (empty($orderBy)) ? 'DESC' : $orderBy;
+        $hFunction = new \Hfunction();
+        $orderBy = ($hFunction->checkEmpty($orderBy)) ? 'DESC' : $orderBy;
         return QcLicenseOffWork::where(['staff_id' => $staffId])->orderBy('dateOff', "$orderBy")->get();
     }
+
+    # xoa tat ca cua 1 nhan vien
     public function disableOfStaff($staffId)
     {
-        return QcLicenseOffWork::where('staff_id', $staffId)->update(['action' => 0]);
+        return false;// QcLicenseOffWork::where('staff_id', $staffId)->delete();
     }
 
     //----------- nhân viên xac nhan ------------
@@ -116,13 +177,23 @@ class QcLicenseOffWork extends Model
 
     //----------- làm việc ------------
     //============ =========== ============ lấy thông tin ============= =========== ==========
+    # lay tat ca thong tin so nguoi nghi trong ngay cua 1 cong ty
+    public function getInfoOffInDateOffCompany($companyId, $dateYmd)
+    {
+        $modelCompany = new QcCompany();
+        $dateYmd = date('Y-m-d', strtotime($dateYmd));
+        $listStaffId = $modelCompany->staffIdOfListCompanyId([$companyId]);
+        return QcLicenseOffWork::whereIn('staff_id', $listStaffId)->where('dateOff', 'like', "%$dateYmd%")->get();
+    }
+
     public function getInfo($licenseId = '', $field = '')
     {
-        if (empty($licenseId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($licenseId)) {
             return QcLicenseOffWork::get();
         } else {
             $result = QcLicenseOffWork::where('license_id', $licenseId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -130,12 +201,14 @@ class QcLicenseOffWork extends Model
         }
     }
 
+    # lay 1 gia tri
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcLicenseOffWork::where('license_id', $objectId)->pluck($column);
+            return QcLicenseOffWork::where('license_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -193,12 +266,12 @@ class QcLicenseOffWork extends Model
     //======= check info =========
     public function checkConfirmStatus($licenseId = null)
     {
-        return ($this->confirmStatus($licenseId) == 0) ? false : true;
+        return ($this->confirmStatus($licenseId) == $this->getDefaultNotConfirm()) ? false : true;
     }
 
     public function checkAgreeStatus($licenseId = null)
     {
-        return ($this->agreeStatus($licenseId) == 0) ? false : true;
+        return ($this->agreeStatus($licenseId) == $this->getDefaultNotAgree()) ? false : true;
     }
 
     //======= statistic info =========
@@ -206,7 +279,7 @@ class QcLicenseOffWork extends Model
     {
         $modelCompany = new QcCompany();
         $listStaffId = $modelCompany->staffIdOfListCompanyId([$companyId]);
-        return QcLicenseOffWork::whereIn('staff_id', $listStaffId)->where('confirmStatus', 0)->count();
+        return QcLicenseOffWork::whereIn('staff_id', $listStaffId)->where('confirmStatus', $this->getDefaultNotConfirm())->count();
     }
 
 }
