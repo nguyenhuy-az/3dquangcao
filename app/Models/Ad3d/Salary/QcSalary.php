@@ -385,9 +385,12 @@ class QcSalary extends Model
             $totalSalaryOnHour = $modelStaffWorkSalary->getDefaultSalaryOnHour();
         }
 
-        $overtime = (is_int($overtime)) ? $overtime : $overtime[0];
-        $moneyOfMainMinute = ($mainMinute / 60) * $totalSalaryOnHour;  # tong luong trong gio lam chinh
-        $moneyOfPlusMinute = ($plusMinute / 60) * 1.5 * $totalSalaryOnHour; # tang ca nhan 1.5  - tong luong cua gio tang ca
+        //$overtime = (is_int($overtime)) ? $overtime : $overtime[0];
+        # tong luong trong gio lam chinh
+        $moneyOfMainMinute = ($mainMinute / 60) * $totalSalaryOnHour;
+        # tang ca nhan 1.5  - tong luong cua gio tang ca
+        $moneyOfPlusMinute = ($plusMinute / 60) * 1.5 * $totalSalaryOnHour;
+        # tien phu cap tang ca
         $allowanceOvertime = ($plusMinute / 60) * $overtime; # tien phu cap tang ca
         return (int)($moneyOfMainMinute + $moneyOfPlusMinute + $allowanceOvertime);
     }

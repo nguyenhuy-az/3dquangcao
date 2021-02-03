@@ -64,6 +64,8 @@ $currentMonth = $hFunction->currentMonth();
                                     <em style="color: white;">(Không tính vật tư)</em>
                                 </th>
                                 <th style="width: 140px;">Tổng lương cơ bản</th>
+                                    <br/>
+                                    <em style="color: white;">(Lương làm việc)</em>
                                 <th>
                                     Thưởng
                                 </th>
@@ -134,7 +136,7 @@ $currentMonth = $hFunction->currentMonth();
                                     if ($hFunction->checkCount($dataCompanyStaffWork)) { # du lieu moi - 1 NV lam nhieu cty
                                         $dataOld = false;
                                         # tong luong co ban
-                                        $totalSalaryBasic = $salary->totalSalaryBasic();
+                                        $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());//$salary->totalSalaryBasic();
                                         # thong tin nhan vien
                                         $dataStaffDetail = $dataWork->companyStaffWork->staff;
                                         # tong tien mua vat tu xac nhan chưa thanh toan

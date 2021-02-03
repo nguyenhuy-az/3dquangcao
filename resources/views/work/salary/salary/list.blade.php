@@ -66,20 +66,20 @@ $hFunction = new Hfunction();
                                     if ($hFunction->checkCount($dataCompanyStaffWork)) { # du lieu moi - 1 NV lam nhieu cty
                                         $dataOld = false;
                                         # tong luong co ban
-                                        $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($workId);
+                                        $totalSalaryBasic = $salary->totalSalaryBasic();//$dataWork->totalSalaryBasicOfWorkInMonth($workId);
                                         $fromDate = $dataWork->fromDate();
                                         $monthOfFromDate = date('m', strtotime($fromDate));
                                         $yearOfFromDate = date('Y', strtotime($fromDate));
                                         # tong tien mua vat tu da duyet chua thanh toan
-                                        $totalMoneyImportOfStaff = 1000;/// $modelStaff->importTotalMoneyHasConfirmNotPay($dataCompanyStaffWork->companyId(), $dataStaff->staffId(), date('Y-m', strtotime($fromDate)));
+                                        $totalMoneyImportOfStaff = $modelStaff->importTotalMoneyHasConfirmNotPay($dataCompanyStaffWork->companyId(), $dataStaff->staffId(), date('Y-m', strtotime($fromDate)));
                                         # luong da thanh toan
                                         $totalPaid = $salary->totalPaid();//totalPayConfirmed();
                                         # luong da ung
-                                        $totalMoneyConfirmedBeforePay = 1000;/// $dataWork->totalMoneyConfirmedBeforePay();
+                                        $totalMoneyConfirmedBeforePay =  $dataWork->totalMoneyConfirmedBeforePay();
                                         # tong tien nhan
                                         $totalSalaryReceive = $totalSalaryBasic + $benefitMoney + $bonusMoney;
                                         # tong can thanh toan
-                                        $totalUnpaid = 0;/// $totalSalaryReceive + $totalMoneyImportOfStaff - $totalMoneyConfirmedBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
+                                        $totalUnpaid = $totalSalaryReceive + $totalMoneyImportOfStaff - $totalMoneyConfirmedBeforePay - $totalKeepMoney - $totalPaid - $minusMoney;
                                     } else {
                                         # du lieu cũ bỏ. 1 NV lam 1 cty
                                         $dataOld = true;
@@ -204,15 +204,6 @@ $hFunction = new Hfunction();
                             @endif
                         </table>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                    <a href="{!! route('qc.work.home') !!}">
-                        <button type="button" class="qc_ad3d_container_close btn btn-sm btn-primary">
-                            Đóng
-                        </button>
-                    </a>
                 </div>
             </div>
         </div>

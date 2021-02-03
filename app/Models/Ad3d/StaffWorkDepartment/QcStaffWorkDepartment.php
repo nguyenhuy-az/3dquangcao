@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class QcStaffWorkDepartment extends Model
 {
     protected $table = 'qc_staff_work_department';
-    protected $fillable = ['detail_id', 'beginDate', 'permission', 'action', 'created_at', 'work_id', 'department_id', 'rank_id'];
+    protected $fillable = ['detail_id', 'beginDate', 'endDate', 'permission', 'action', 'created_at', 'work_id', 'department_id', 'rank_id'];
     protected $primaryKey = 'detail_id';
     public $timestamps = false;
 
@@ -31,6 +31,12 @@ class QcStaffWorkDepartment extends Model
     public function getDefaultNotAction()
     {
         return 0;
+    }
+
+    # mac dinh tat ca trang thai hoat dong
+    public function getDefaultEndDate()
+    {
+        return null;
     }
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     #---------- Insert ----------
@@ -62,7 +68,11 @@ class QcStaffWorkDepartment extends Model
     # vo hieu hoa tai 1 bo phan
     public function disableWorkDepartment($workId, $departmentId)
     {
-        return QcStaffWorkDepartment::where('work_id', $workId)->where('department_id', $departmentId)->update(['action' => $this->getDefaultNotAction()]);
+        $hFunction = new \Hfunction();
+        return QcStaffWorkDepartment::where('work_id', $workId)->where('department_id', $departmentId)->update([
+            'action' => $this->getDefaultNotAction(),
+            'endDate' => $hFunction->carbonNow()
+        ]);
     }
 
     #vo hieu hoa tat ca cac bo phan

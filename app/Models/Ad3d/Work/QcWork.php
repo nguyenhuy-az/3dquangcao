@@ -148,7 +148,6 @@ class QcWork extends Model
                 $workSalaryId = $dataStaffWorkSalary->workSalaryId();
                 # phu cap tang ca
                 $overtimeHour = $dataStaffWorkSalary->overtimeHour($workSalaryId);
-                ///$overtimeHour = (is_int($overtimeHour)) ? $overtimeHour : $overtimeHour[0];
 
                 $totalSalary = (int)($this->totalSalaryBasicOfWorkInMonth($workId) + $totalBonusMoney - $totalBeforePay - $totalMinusMoney);
                 $overtimeMoney = ($plusMinute / 60) * $overtimeHour;
@@ -197,7 +196,6 @@ class QcWork extends Model
     public function totalSalaryBasicOfWorkInMonth($workId = null)
     {
         $hFunction = new \Hfunction();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaffWorkSalary = new QcStaffWorkSalary();
         $workId = $this->checkIdNull($workId);
         $dataWork = $this->getInfo($workId);
@@ -213,28 +211,16 @@ class QcWork extends Model
                 $overtime = $modelStaffWorkSalary->getDefaultOverTimeHour();
                 $totalSalaryOnHour = $modelStaffWorkSalary->getDefaultSalaryOnHour();
             }
-
-
-        } else {
-
-            # truong hop phien ban cu chua cap nhat
-            $staffId = $this->staffIdOld($workId);
-            $dataStaffWorkSalary = $modelCompanyStaffWork->staffWorkSalaryActivityOfStaff($staffId);
-            if ($hFunction->checkCount($dataStaffWorkSalary)) {
-                $overtime = $dataStaffWorkSalary->overtimeHour($dataStaffWorkSalary->workSalaryId());
-                $totalSalaryOnHour = $dataStaffWorkSalary->salaryOnHour(); # lương lam trong 1 gio
-            } else { # theo ban luong phien bang cu
-                $salaryBasic = 100;// $dataWork->staff->salaryBasicOfStaff($staffId);
-                $totalSalaryOnHour = floor($salaryBasic / 208); # lương lam trong 1 gio
-                $overtime = 10;
-            }
+            # tong luong trong gio lam chinh
+            $moneyOfMainMinute = ($mainMinute / 60) * $totalSalaryOnHour;
+            # tang ca nhan 1.5  - tong luong cua gio tang ca
+            $moneyOfPlusMinute = ($plusMinute / 60) * 1.5 * $totalSalaryOnHour;
+            # tien phu cap tang ca
+            $allowanceOvertime = ($plusMinute / 60) * $overtime;
+            return  (int)($moneyOfMainMinute + $moneyOfPlusMinute + $allowanceOvertime);
+        } else{
+            return 0;
         }
-
-        //$overtime = (is_int($overtime)) ? $overtime : $overtime[0];
-        $moneyOfMainMinute = ($mainMinute / 60) * $totalSalaryOnHour;  # tong luong trong gio lam chinh
-        $moneyOfPlusMinute = ($plusMinute / 60) * 1.5 * $totalSalaryOnHour; # tang ca nhan 1.5  - tong luong cua gio tang ca
-        $allowanceOvertime = ($plusMinute / 60) * $overtime; # tien phu cap tang ca
-        return  (int)($moneyOfMainMinute + $moneyOfPlusMinute + $allowanceOvertime);
     }
 
     public function confirmExportSalary($workId = null)

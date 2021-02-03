@@ -255,11 +255,11 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                                             </tr>
                                                             <tr>
                                                                 <td>
-                                                                    <em class="qc-color-grey">Tăng ca *1.5:</em>
+                                                                    <em class="qc-color-grey">Tăng ca đã nhân 1.5:</em>
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    {!! floor(($sumPlusMinute-$sumPlusMinute%60)/60) !!}
-                                                                    <b>h</b> {!! $sumPlusMinute%60 !!}
+                                                                    {!! floor(($sumPlusMinute_1_5-$sumPlusMinute_1_5%60)/60) !!}
+                                                                    <b>h</b> {!! $sumPlusMinute_1_5%60 !!}
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -267,8 +267,8 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                                                     <em class="qc-color-grey">Tổng giờ làm:</em>
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    {!! floor(($sumMainMinute + $sumPlusMinute)/60) !!}
-                                                                    <span>h</span> {!! ($sumMainMinute + $sumPlusMinute)%60 !!}
+                                                                    {!! floor(($sumMainMinute + $sumPlusMinute_1_5)/60) !!}
+                                                                    <span>h</span> {!! ($sumMainMinute + $sumPlusMinute_1_5)%60 !!}
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -316,7 +316,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                             @if($infoSalaryBasic)
                                                 <tr style="color: brown;">
                                                     <td>
-                                                        <em>Tổng lương:</em>
+                                                        <em>Tổng lương cơ bản:</em>
                                                     </td>
                                                     <td class="text-right">
                                                         <b>{!! $hFunction->currencyFormat($totalCurrentSalary) !!}</b>

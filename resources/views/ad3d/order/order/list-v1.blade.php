@@ -12,40 +12,20 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $hrefIndex = route('qc.ad3d.order.order.get');
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-
-$currentYear = $hFunction->currentYear();
-$limitYear = 2017;
-
-if ($staffFilterId > 0) {
-    $listStaffId = [$staffFilterId];
-} else {
-    $listStaffId = $modelStaff->listIdOfCompany($companyFilterId);
-}
-
-if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-    $listCustomerId = $modelCustomer->listIdByKeywordName($orderCustomerFilterName);
-}
 ?>
 @extends('ad3d.order.order.index')
 @section('qc_ad3d_order_order')
     <div class="row">
-        {{-- tiêu đề --}}
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                     style="padding-left: 0;padding-right: 0;">
+                <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     <label class="qc-font-size-20">ĐƠN HÀNG</label>
                 </div>
-            </div>
-        </div>
-        {{-- lọc thông tin --}}
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
-                    <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
+                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
+                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 34px;"
                             data-href-filter="{!! $hrefIndex !!}">
                         {{--@if($dataStaffLogin->checkRootManage())
                             <option value="1000">Tất cả</option>
@@ -64,273 +44,14 @@ if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
                         @endif
                     </select>
                 </div>
-                <div class="text-center col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
-                    <div class="input-group">
-                        <input type="text" class="txtOrderFilterKeyword form-control"
-                               name="txtOrderFilterKeyword"
-                               data-href-check-name="{!! route('qc.ad3d.work.orders.filter.order.check.name') !!}"
-                               placeholder="Tên đơn hàng" value="{!! $orderFilterName !!}">
-                          <span class="input-group-btn">
-                                <button class="btOrderFilterKeyword btn btn-default" type="button"
-                                        data-href="{!! $hrefIndex !!}">
-                                    <i class="glyphicon glyphicon-search"></i>
-                                </button>
-                          </span>
-                    </div>
-                    <div id="qc_order_filter_order_name_suggestions_wrap"
-                         class="qc-display-none col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                         style="border: 1px solid #d7d7d7;">
-                        <a class='pull-right qc-link-red'
-                           onclick="qc_main.hide('#qc_order_filter_order_name_suggestions_wrap');">X</a>
-
-                        <div class="row">
-                            <div id="qc_order_filter_order_name_suggestions_content"
-                                 class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
-                    <div class="input-group">
-                        <input type="text" class="txtOrderCustomerFilterKeyword form-control"
-                               name="txtOrderCustomerFilterKeyword"
-                               data-href-check-name="{!! route('qc.ad3d.work.orders.filter.customer.check.name') !!}"
-                               placeholder="Tên khách hàng" value="{!! $orderCustomerFilterName !!}">
-                          <span class="input-group-btn">
-                            <button class="btOrderCustomerFilterKeyword btn btn-default"
-                                    type="button" data-href="{!! $hrefIndex !!}">
-                                <i class="glyphicon glyphicon-search"></i>
-                            </button>
-                          </span>
-                    </div>
-                    <div id="qc_order_filter_customer_name_suggestions_wrap"
-                         class="qc-display-none col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                         style="border: 1px solid #d7d7d7;">
-                        <a class='pull-right qc-link-red'
-                           onclick="qc_main.hide('#qc_order_filter_customer_name_suggestions_wrap');">X</a>
-
-                        <div class="row">
-                            <div id="qc_order_filter_customer_name_suggestions_content"
-                                 class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
-                    <select class="cbStaffFilterId form-control"
-                            data-href="{!! $hrefIndex !!}">
-                        <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
-                            Tất cả
-                        </option>
-                        @if($hFunction->checkCount($dataStaff))
-                            @foreach($dataStaff as $staff)
-                                <option @if($staff->staffId() == $staffFilterId) selected="selected"
-                                        @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
-                            @endforeach
-                        @endif
-                    </select>
-                </div>
-                <div class="text-center col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
-                    <select class="cbDayFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
-                            style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
-                        <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
-                            Tất cả
-                        </option>
-                        @for($i =1;$i<= 31; $i++)
-                            <option value="{!! $i !!}"
-                                    @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
-                        @endfor
-                    </select>
-                    <select class="cbMonthFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
-                            style="height: 34px; padding: 0;"
-                            data-href="{!! $hrefIndex !!}">
-                        <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
-                            Tất cả
-                        </option>
-                        @for($i =1;$i<= 12; $i++)
-                            <option value="{!! $i !!}"
-                                    @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                        @endfor
-                    </select>
-                    <select class="cbYearFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
-                            style="height: 34px; padding: 0;"
-                            data-href="{!! $hrefIndex !!}">
-                        <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
-                            Tất cả
-                        </option>
-                        @for($i =2017;$i<= 2050; $i++)
-                            <option value="{!! $i !!}"
-                                    @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
-                        @endfor
-                    </select>
-                </div>
-                <div class="text-center col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
-                    <select class="cbPaymentStatus form-control"
-                            data-href="{!! route('qc.ad3d.order.order.get') !!}">
-                        <option value="{!! $modelOrder->getDefaultAllPayment() !!}"
-                                @if($paymentStatus == 2) selected="selected" @endif>Tất cả
-                        </option>
-                        <option value="{!! $modelOrder->getDefaultHasPayment() !!}"
-                                @if($paymentStatus == 1) selected="selected" @endif>
-                            Đã thu xong
-                        </option>
-                        <option value="{!! $modelOrder->getDefaultNotPayment() !!}"
-                                @if($paymentStatus == 0) selected="selected" @endif>
-                            Chưa thu xong
-                        </option>
-                    </select>
-                </div>
             </div>
         </div>
-        {{--thống kê--}}
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="text-center col-xs-6 col-sm-3 col-md-3 col-lg-3" style="padding: 0;">
-                    <div class="panel panel-default" style="margin-bottom: 0;">
-                        <div class="panel-body">
-                            <em>
-                                Tổng ĐH:
-                            </em>
-                            <b>{!! $totalOrders !!}</b>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center col-xs-6 col-sm-3 col-md-3 col-lg-3" style="padding: 0;">
-                    <div class="panel panel-default" style="margin-bottom: 0;">
-                        <div class="panel-body">
-                            <em>
-                                Tổng tiền:
-                            </em>
-                            <b>{!! $totalOrders !!}</b>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center col-xs-6 col-sm-3 col-md-3 col-lg-3" style="padding: 0;">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <em>
-                                Tiền đã thu:
-                            </em>
-                            <b>{!! $totalOrders !!}</b>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center col-xs-6 col-sm-3 col-md-3 col-lg-3" style="padding: 0;">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <em>
-                                Tiền chưa thu:
-                            </em>
-                            <b>{!! $totalOrders !!}</b>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{--Thông tin đơn hàng--}}
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2" style="padding: 0;">
-                    <div class="list-group">
-                        @for($y = $currentYear; $y >= $limitYear; $y = $y - 1)
-                            @if($y == $yearFilter)
-                                <a data-href="#" class="qc-cursor-pointer list-group-item" style="color: red;">
-                                    <i class="glyphicon glyphicon-minus qc-font-size-12"></i>
-                                    {!! $y !!}
-                                    <span style="color: blue;">(100)</span>
-                                </a>
-                                <div class="list-group" style="margin-bottom: 0;">
-                                    @for($m = 1; $m <=12; $m++)
-                                        <?php
-                                        $dateFilter = date('Y-m', strtotime("1-$m-$y"));
-                                        if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-                                            $dataOrderInMonthYear = $modelOrder->selectInfoOfListCustomer($listCustomerId, $dateFilter, $paymentStatus)->get();
-                                        } else {
-                                            $dataOrderInMonthYear = $modelOrder->selectInfoNoCancelAndPayOfListStaffReceive($listStaffId, $dateFilter, $paymentStatus)->get();
-                                        }
-                                        ?>
-                                        @if($hFunction->checkCount($dataOrderInMonthYear))
-                                            <a data-href="#"
-                                               class="qc-cursor-pointer list-group-item @if($m == $monthFilter) qc-link-red @endif"
-                                               style="padding: 0; border-top: none; border-bottom: 0;">
-                                                &emsp;
-                                                <i class="glyphicon glyphicon-minus qc-font-size-12"></i>
-                                                Tháng:{!! $m !!}
-                                                <span class="badge"
-                                                      style="background: none; color: green;">
-                                                    {!! $hFunction->getCount($dataOrderInMonthYear) !!}
-                                                </span>
-                                            </a>
-                                            <div class="list-group" style="margin-bottom: 0;">
-                                                @foreach($dataOrderInMonthYear as $order)
-                                                    <a data-href="#" class="qc-cursor-pointer list-group-item"
-                                                       style="padding-top: 0;padding-bottom: 0; padding-bottom: 0; border-top: none;">
-                                                        &emsp;&emsp;
-                                                        <span>
-                                                            {!! $order->name() !!}
-                                                        </span>
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    @endfor
-                                </div>
-                            @else
-                                <a data-href="#" class="qc-cursor-pointer list-group-item">
-                                    <i class="glyphicon glyphicon-plus qc-font-size-12"></i>
-                                    {!! $y !!}
-                                    <span style="color: blue;">(100)</span>
-                                </a>
-                                <div class="list-group" style="margin-bottom: 0;">
-                                    @for($m = 1; $m <=12; $m++)
-                                        <?php
-                                        $dateFilter = date('Y-m', strtotime("1-$m-$y"));
-                                        if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-                                            $dataOrderInMonthYear = $modelOrder->selectInfoOfListCustomer($listCustomerId, $dateFilter, $paymentStatus)->get();
-                                        } else {
-                                            $dataOrderInMonthYear = $modelOrder->selectInfoNoCancelAndPayOfListStaffReceive($listStaffId, $dateFilter, $paymentStatus)->get();
-                                        }
-                                        ?>
-                                        @if($hFunction->checkCount($dataOrderInMonthYear))
-                                            <a onclick="qc_main.toggle('#container_{!! $m.$y !!}');"
-                                               class="qc-cursor-pointer list-group-item"
-                                               style="padding: 0; border-top: none; border-bottom: none;">
-                                                &emsp;&emsp;
-                                                <i class="glyphicon glyphicon-plus qc-font-size-10"></i>
-                                                Tháng {!! $m !!}
-                                                <span class="label pull-right" style="background: none; color: green;">
-                                                    {!! $hFunction->getCount($dataOrderInMonthYear) !!}
-                                                </span>
-                                            </a>
-                                            <div id="container_{!! $m.$y !!}" class="list-group"
-                                                 style="display: none; margin-bottom: 0;">
-                                                @foreach($dataOrderInMonthYear as $order)
-                                                    <a data-href="#" class="qc-cursor-pointer list-group-item"
-                                                       style="padding-top: 0;padding-bottom: 0; border-top: none; border-bottom: none;">
-                                                        &emsp;&emsp;
-                                                        <span>
-                                                            {!! $order->name() !!}
-                                                        </span>
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    @endfor
-                                </div>
-
-                            @endif
-                        @endfor
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
-
-                </div>
-            </div>
-        </div>
-
-
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="qc_ad3d_list_content qc-ad3d-table-container row">
+        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="qc_ad3d_list_content qc-ad3d-table-container row"
+                 data-="{!! route('qc.ad3d.order.order.confirm.get') !!}"
+                 data-href-view="{!! route('qc.ad3d.order.order.view.get') !!}"
+                 data-href-view-customer="{!! route('qc.ad3d.order.order.view_customer.get') !!}"
+                 data-href-del="{!! route('qc.ad3d.order.order.delete') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
@@ -355,6 +76,154 @@ if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
                             <th class="text-right">
                                 CHƯA THU
                             </th>
+                        </tr>
+                        <tr>
+                            <td class="text-center qc-color-red">
+                                <b>{!! $totalOrders !!}</b>
+                            </td>
+                            <td></td>
+                            <td style="padding: 0px;">
+                                <div class="input-group">
+                                    <input type="text" class="txtOrderFilterKeyword form-control"
+                                           name="txtOrderFilterKeyword"
+                                           data-href-check-name="{!! route('qc.ad3d.work.orders.filter.order.check.name') !!}"
+                                           placeholder="Tên đơn hàng" value="{!! $orderFilterName !!}">
+                                              <span class="input-group-btn">
+                                                    <button class="btOrderFilterKeyword btn btn-default" type="button"
+                                                            style="border: none;" data-href="{!! $hrefIndex !!}">
+                                                        <i class="glyphicon glyphicon-search"></i>
+                                                    </button>
+                                              </span>
+                                </div>
+                                <div id="qc_order_filter_order_name_suggestions_wrap"
+                                     class="qc-display-none col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                                     style="border: 1px solid #d7d7d7;">
+                                    <a class='pull-right qc-link-red'
+                                       onclick="qc_main.hide('#qc_order_filter_order_name_suggestions_wrap');">X</a>
+
+                                    <div class="row">
+                                        <div id="qc_order_filter_order_name_suggestions_content"
+                                             class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="padding: 0px; min-width: 100px;">
+                                <div class="input-group">
+                                    <input type="text" class="txtOrderCustomerFilterKeyword form-control"
+                                           name="txtOrderCustomerFilterKeyword"
+                                           data-href-check-name="{!! route('qc.ad3d.work.orders.filter.customer.check.name') !!}"
+                                           placeholder="Tên khách hàng"
+                                           value="{!! $orderCustomerFilterName !!}">
+                                              <span class="input-group-btn">
+                                                    <button class="btOrderCustomerFilterKeyword btn btn-default"
+                                                            type="button" style="border: none;"
+                                                            data-href="{!! $hrefIndex !!}">
+                                                        <i class="glyphicon glyphicon-search"></i>
+                                                    </button>
+                                              </span>
+                                </div>
+                                <div id="qc_order_filter_customer_name_suggestions_wrap"
+                                     class="qc-display-none col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                                     style="border: 1px solid #d7d7d7;">
+                                    <a class='pull-right qc-link-red'
+                                       onclick="qc_main.hide('#qc_order_filter_customer_name_suggestions_wrap');">X</a>
+
+                                    <div class="row">
+                                        <div id="qc_order_filter_customer_name_suggestions_content"
+                                             class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="padding: 0px;">
+                                <select class="cbStaffFilterId form-control"
+                                        data-href="{!! $hrefIndex !!}">
+                                    <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
+                                        Tất cả
+                                    </option>
+                                    @if($hFunction->checkCount($dataStaff))
+                                        @foreach($dataStaff as $staff)
+                                            <option @if($staff->staffId() == $staffFilterId) selected="selected"
+                                                    @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </td>
+                            <td style="padding: 0px;">
+                                {{--<select class="cbFinishStatus form-control"
+                                        data-href="{!! route('qc.ad3d.order.order.get') !!}">
+                                    <option value="2" @if($paymentStatus == 100) selected="selected" @endif>Tất cả
+                                    </option>
+                                    <option value="1" @if($paymentStatus == 1) selected="selected" @endif>
+                                        Đã kết thút
+                                    </option>
+                                    <option value="0" @if($paymentStatus == 0) selected="selected" @endif>
+                                        Đang triển khai
+                                    </option>
+                                </select>--}}
+                            </td>
+                            <td class="text-center"></td>
+                            <td style="padding: 0;">
+                                <select class="cbDayFilter col-xs-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
+                                    <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($i =1;$i<= 31; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                                <select class="cbMonthFilter col-xs-3 col-sm-3 col-md-3 col-lg-3"
+                                        style="height: 34px; padding: 0;"
+                                        data-href="{!! $hrefIndex !!}">
+                                    <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($i =1;$i<= 12; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                                <select class="cbYearFilter col-xs-6 col-sm-6 col-md-6 col-lg-6"
+                                        style="height: 34px; padding: 0;"
+                                        data-href="{!! $hrefIndex !!}">
+                                    <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
+                                        Tất cả
+                                    </option>
+                                    @for($i =2017;$i<= 2050; $i++)
+                                        <option value="{!! $i !!}"
+                                                @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @endfor
+                                </select>
+                            </td>
+                            <td style="padding: 0px;">
+                                <select class="cbPaymentStatus form-control"
+                                        data-href="{!! route('qc.ad3d.order.order.get') !!}">
+                                    <option value="{!! $modelOrder->getDefaultAllPayment() !!}" @if($paymentStatus == 2) selected="selected" @endif>Tất cả
+                                    </option>
+                                    <option value="{!! $modelOrder->getDefaultHasPayment() !!}" @if($paymentStatus == 1) selected="selected" @endif>
+                                        Đã thu xong
+                                    </option>
+                                    <option value="{!! $modelOrder->getDefaultNotPayment() !!}" @if($paymentStatus == 0) selected="selected" @endif>
+                                        Chưa thu xong
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="text-right" style="color: blue;">
+                                <b>{!! $hFunction->currencyFormat($totalMoneyOrder) !!}</b>
+                            </td>
+                            <td class="text-right">
+                                <b>{!! $hFunction->currencyFormat($totalMoneyDiscountOrder) !!}</b>
+                            </td>
+                            <td class="text-right qc-color-green">
+                                <b>{!! $hFunction->currencyFormat($totalMoneyPaidOrder) !!}</b>
+                            </td>
+                            <td class="text-right qc-color-red">
+                                <b>{!! $hFunction->currencyFormat($totalMoneyUnPaidOrder) !!}</b>
+                            </td>
+
                         </tr>
                         @if($hFunction->checkCount($dataOrder))
                             <?php

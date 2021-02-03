@@ -12,27 +12,39 @@ $workId = $dataWork->workId();
 $totalMoneyMinus = $dataWork->totalMoneyMinus();
 $totalMoneyBeforePay = $dataWork->totalMoneyBeforePay();
 $sumMainMinute = $dataWork->sumMainMinute();
-$sumPlusMinute = $dataWork->sumPlusMinute() * 1.5;
+$sumPlusMinute = $dataWork->sumPlusMinute();
+$sumPlusMinute_1_5 = $sumPlusMinute * 1.5;
 $sumMinusMinute = $dataWork->sumMinusMinute();
 $companyStaffWorkId = $dataWork->companyStaffWorkId();
 $staffId = $dataWork->staffId();
 $infoSalaryBasic = true;
 # phien ban moi - nv lam nhieu cty
-if (!empty($companyStaffWorkId)) {
+if (!$hFunction->checkEmpty($companyStaffWorkId)) {
     $dataStaffWorkSalary = $modelCompanyStaffWork->staffWorkSalaryActivity($companyStaffWorkId);
-    if (count($dataStaffWorkSalary) > 0) { # da co ban luong co ban cua he thong
+    if ($hFunction->checkCount($dataStaffWorkSalary)) { # da co ban luong co ban cua he thong
         $totalSalaryBasic = $dataStaffWorkSalary->totalSalary();
         $salaryBasic = $dataStaffWorkSalary->salary();
         $responsibility = $dataStaffWorkSalary->responsibility();# phu cap trach nhiem /26 ngay
         $usePhone = $dataStaffWorkSalary->usePhone();# phu cap su dung dien thoai
         $fuel = $dataStaffWorkSalary->fuel();# phu cap xang di lai
-        $overtimeHour = $dataStaffWorkSalary->overtimeHour();# phu cap tang ca
-        $sumPlusMinute = $dataWork->sumPlusMinute($workId);
-        $totalMoneyOvertimeHour = ($sumPlusMinute / 60) * $overtimeHour; # tien phu cap an uong tang ca
+        # phu cap tang ca
+        $overtimeHour = $dataStaffWorkSalary->overtimeHour();
+
+        # tien phu cap an uong tang ca
+        $totalMoneyOvertimeHour = ($sumPlusMinute / 60) * $overtimeHour;
+
         $totalMoneyInsurance = $dataStaffWorkSalary->totalMoneyInsurance();# phu cap bao hiem %
+        # tien tren 1 gio
         $salaryOneHour = $dataStaffWorkSalary->salaryOnHour();
-        $totalCurrentSalary = $dataWork->totalSalaryBasicOfWorkInMonth($workId);
-        $totalMoneyBonus = $dataWork->totalMoneyBonus(); # thuong
+        # thuong
+        $totalMoneyBonus = $dataWork->totalMoneyBonus();
+
+
+        # tong luong trong gio lam chinh
+        $moneyOfMainMinute = ($sumMainMinute / 60) * $salaryOneHour;
+        # tang ca nhan 1.5  - tong luong cua gio tang ca
+        $moneyOfPlusMinute = ($sumPlusMinute_1_5 / 60)* $salaryOneHour;
+        $totalCurrentSalary = $moneyOfMainMinute + $moneyOfPlusMinute + $totalMoneyOvertimeHour ;//$dataWork->totalSalaryBasicOfWorkInMonth($workId);
     } else {
         $infoSalaryBasic = false;
     }
@@ -157,15 +169,15 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                 <tr>
                                     <td>Tăng ca *1.5</td>
                                     <td class="text-right">
-                                        {!! floor(($sumPlusMinute-$sumPlusMinute%60)/60) !!}
-                                        <b>h</b> {!! $sumPlusMinute%60 !!}
+                                        {!! floor(($sumPlusMinute_1_5 - $sumPlusMinute_1_5%60)/60) !!}
+                                        <b>h</b> {!! $sumPlusMinute_1_5%60 !!}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Tổng giờ làm</td>
                                     <td class="text-right">
-                                        {!! floor(($sumMainMinute + $sumPlusMinute)/60) !!}
-                                        <span>h</span> {!! ($sumMainMinute + $sumPlusMinute)%60 !!}
+                                        {!! floor(($sumMainMinute + $sumPlusMinute_1_5)/60) !!}
+                                        <span>h</span> {!! ($sumMainMinute + $sumPlusMinute_1_5)%60 !!}
                                     </td>
                                 </tr>
                                 <tr>
@@ -201,19 +213,21 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                 <tr>
                                     <td>Thưởng</td>
                                     <td class="text-right">
-                                        <span>{!! $hFunction->currencyFormat($totalMoneyBonus) !!}</span>
+                                        <span>+ {!! $hFunction->currencyFormat($totalMoneyBonus) !!}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Ứng</td>
                                     <td class="text-right">
-                                        {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}
+                                        <span>- {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Phạt</td>
                                     <td class="text-right">
-                                        {!! $hFunction->currencyFormat($totalMoneyMinus) !!}
+                                        <span>
+                                            - {!! $hFunction->currencyFormat($totalMoneyMinus) !!}
+                                        </span>
                                     </td>
                                 </tr>
                                 <tr>

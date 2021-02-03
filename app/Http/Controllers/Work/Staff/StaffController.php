@@ -4,17 +4,11 @@ namespace App\Http\Controllers\Work\Staff;
 
 use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
-use App\Models\Ad3d\CompanyStaffWorkEnd\QcCompanyStaffWorkEnd;
-use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\DepartmentWork\QcDepartmentWork;
 use App\Models\Ad3d\Rank\QcRank;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
-use App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment;
-use App\Models\Ad3d\StaffWorkMethod\QcStaffWorkMethod;
-use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
 use App\Models\Ad3d\Statistical\QcStatistical;
-use App\Models\Ad3d\ToolPackage\QcToolPackage;
 use App\Models\Ad3d\Work\QcWork;
 use App\Models\Ad3d\WorkSkill\QcWorkSkill;
 use Illuminate\Support\Facades\Session;
@@ -83,7 +77,7 @@ class StaffController extends Controller
 
     }
 
-    //======== ======== THAY DOI MAT KHAU ========= ======
+    //======== ======== THAY DOI TAI KHOAN ========= ======
     public function getUpdateAccount()
     {
         $modelStaff = new QcStaff();
@@ -131,5 +125,126 @@ class StaffController extends Controller
             return view('work.staff.info.update-account', compact('modelStaff', 'changeAccountNotify'));
         }
 
+    }
+
+    //======== ========= THONG KE ========= =========
+    # thong tin thong ke
+    public function getStatistical($monthFilter = null, $yearFilter = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelCompany = new QcCompany();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelStaff = new QcStaff();
+        $modelStatistical = new QcStatistical();
+        $staffLoginId = $modelStaff->loginStaffId();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        # lay gia tri mac dinh
+        $allMonthFilter = $modelCompany->getDefaultValueAllMonth();
+        $allYearFilter = $modelCompany->getDefaultValueAllYear();
+        $dataCompanyStaffWork = $modelCompanyStaffWork->getLastInfoOfStaffInCompany($dataCompanyLogin->companyId(), $staffLoginId);
+        $dataAccess = [
+            'object' => 'staff',
+            'subObject' => 'statisticInfo',
+            'subObjectLabel' => 'Thống kê'
+        ];
+        if ($hFunction->checkEmpty($monthFilter) & $hFunction->checkEmpty($yearFilter)) { #mac dinh
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+        } elseif ($monthFilter == $allMonthFilter && $yearFilter == $allYearFilter) { //xem  trong tháng
+            $dateFilter = $hFunction->getDefaultNull();
+        } elseif ($monthFilter == $allMonthFilter && $yearFilter != $allYearFilter) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+        } elseif ($monthFilter != $allMonthFilter && $yearFilter == $allYearFilter) { //xem tất cả các ngày trong nam
+            $yearFilter = date('Y');
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } elseif ($monthFilter != $allMonthFilter && $yearFilter != $allYearFilter) { //xem tất cả các ngày trong tháng
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+        } else {
+            $dateFilter = date('Y-m');
+            $monthFilter = date('m');
+            $yearFilter = date('Y');
+        }
+        return view('work.staff.statistic.statistic', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataCompanyStaffWork', 'dataAccess', 'monthFilter', 'yearFilter', 'dateFilter'));
+    }
+
+    # chi tiet thong ke thong tin lam viec
+    public function getStatisticalWork($workId)
+    {
+        $modelCompany = new QcCompany();
+        $modelWork = new QcWork();
+        $modelStaff = new QcStaff();
+        $modelStatistical = new QcStatistical();
+        $dataAccess = [
+            'object' => 'staff',
+            'subObject' => 'statisticInfo',
+            'subObjectLabel' => 'Thống kê'
+        ];
+        $dataWork = $modelWork->getInfo($workId);
+        return view('work.staff.statistic.statistic-work', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataAccess', 'dataWork'));
+    }
+
+    # thong tin thuong
+    public function getStatisticalBonus($workId)
+    {
+        $modelCompany = new QcCompany();
+        $modelWork = new QcWork();
+        $modelStaff = new QcStaff();
+        $modelStatistical = new QcStatistical();
+        $dataAccess = [
+            'object' => 'staff',
+            'subObject' => 'statisticInfo',
+            'subObjectLabel' => 'Thống kê'
+        ];
+        $dataWork = $modelWork->getInfo($workId);
+        return view('work.staff.statistic.statistic-bonus', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataAccess', 'dataWork'));
+    }
+
+    # thong tin phat
+    public function getStatisticalMinus($workId)
+    {
+        $modelCompany = new QcCompany();
+        $modelWork = new QcWork();
+        $modelStaff = new QcStaff();
+        $modelStatistical = new QcStatistical();
+        $dataAccess = [
+            'object' => 'staff',
+            'subObject' => 'statisticInfo',
+            'subObjectLabel' => 'Thống kê'
+        ];
+        $dataWork = $modelWork->getInfo($workId);
+        return view('work.staff.statistic.statistic-minus', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataAccess', 'dataWork'));
+    }
+
+    # chi tiet thong ke bo phan thi cong
+    public function getStatisticalConstruction($workId, $constructionStatus = null)
+    {
+        $modelCompany = new QcCompany();
+        $modelWork = new QcWork();
+        $modelStaff = new QcStaff();
+        $modelStatistical = new QcStatistical();
+        $dataAccess = [
+            'object' => 'staff',
+            'subObject' => 'statisticInfo',
+            'subObjectLabel' => 'Thống kê'
+        ];
+        $dataWork = $modelWork->getInfo($workId);
+        return view('work.staff.statistic.statistic-construction', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataAccess', 'dataWork', 'constructionStatus'));
+    }
+
+    # thong ke bo phan kinh doanh
+    public function getStatisticalBusiness($workId, $orderStatus = null)
+    {
+        $modelCompany = new QcCompany();
+        $modelWork = new QcWork();
+        $modelStaff = new QcStaff();
+        $modelStatistical = new QcStatistical();
+        $dataAccess = [
+            'object' => 'staff',
+            'subObject' => 'statisticInfo',
+            'subObjectLabel' => 'Thống kê'
+        ];
+        $dataWork = $modelWork->getInfo($workId);
+        return view('work.staff.statistic.statistic-business', compact('modelCompany', 'modelStatistical', 'modelStaff', 'dataAccess', 'dataWork', 'orderStatus'));
     }
 }

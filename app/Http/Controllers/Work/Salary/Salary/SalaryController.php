@@ -37,6 +37,7 @@ class SalaryController extends Controller
     //thanh toán lương
     public function salaryDetail($salaryId = null)
     {
+        $hFunction =new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelSalary = new QcSalary();
@@ -44,11 +45,11 @@ class SalaryController extends Controller
             'object' => 'salary',
             'subObjectLabel' => 'Chi tiết lương'
         ];
-        if (empty($salaryId)) {
+        if ($hFunction->checkEmpty($salaryId)) {
             return redirect()->route('qc.work.salary');
         } else {
             $dataStaff = $modelStaff->loginStaffInfo();
-            if (count($dataStaff) > 0) {
+            if ($hFunction->checkCount($dataStaff)) {
                 $dataSalary = $modelSalary->getInfo($salaryId);
                 return view('work.salary.salary.detail', compact('dataAccess', 'modelCompanyStaffWork', 'modelStaff', 'dataStaff', 'dataSalary'));
             } else {

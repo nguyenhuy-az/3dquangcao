@@ -25,12 +25,12 @@ if (isset($dataAccess)) {
     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <ul class="nav nav-tabs" role="tablist">
             <li @if($subObject == 'basicInfo') class="active" @endif>
-                <a href="{!! route('qc.work.staff.index.get', $staffLoginId) !!}" @if($subObject == 'basicInfo') style="background-color: whitesmoke;" @endif>
+                <a class="qc-link" href="{!! route('qc.work.staff.index.get', $staffLoginId) !!}" @if($subObject == 'basicInfo') style="background-color: whitesmoke;" @endif>
                     <label>THÔNG TIN</label>
                 </a>
             </li>
             <li @if($subObject == 'statisticInfo') class="active" @endif>
-                <a href="#" @if($subObject == 'statisticInfo') style="background-color: whitesmoke;" @endif>
+                <a class="qc-link" href="{!! route('qc.work.staff.statistical.get') !!}" @if($subObject == 'statisticInfo') style="background-color: whitesmoke;" @endif>
                     <label>THỐNG KÊ</label>
                 </a>
             </li>

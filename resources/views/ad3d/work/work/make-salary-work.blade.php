@@ -18,9 +18,9 @@ $companyStaffWorkId = $dataWork->companyStaffWorkId();
 $staffId = $dataWork->staffId();
 $infoSalaryBasic = true;
 # phien ban moi - nv lam nhieu cty
-if (!empty($companyStaffWorkId)) {
+if (!$hFunction->checkEmpty($companyStaffWorkId)) {
     $dataStaffWorkSalary = $modelCompanyStaffWork->staffWorkSalaryActivity($companyStaffWorkId);
-    if (count($dataStaffWorkSalary) > 0) { # da co ban luong co ban cua he thong
+    if ($hFunction->checkCount($dataStaffWorkSalary)) { # da co ban luong co ban cua he thong
         $totalSalaryBasic = $dataStaffWorkSalary->totalSalary();
         $salaryBasic = $dataStaffWorkSalary->salary();
         $responsibility = $dataStaffWorkSalary->responsibility();# phu cap trach nhiem /26 ngay
@@ -49,15 +49,11 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
             <h3 style="color:red;">XUẤT BẢNG LƯƠNG</h3>
             <em style="color: blue;">(Khi hết tháng hoặc nghỉ làm)</em>
         </div>
-        @if (!empty($companyStaffWorkId))
+        @if (!$hFunction->checkEmpty($companyStaffWorkId))
             <div class="qc-border-none col-sx-12 col-sm-12 col-md-6 col-lg-6">
                 <em>Nhân Viên: </em>
             <span class="qc-font-bold">
-                @if(!empty($companyStaffWorkId))
-                    {!! $dataWork->companyStaffWork->staff->fullName() !!}
-                @else
-                    {!! $dataWork->staff->fullName() !!}
-                @endif
+                {!! $dataWork->companyStaffWork->staff->fullName() !!}
             </span>
             </div>
             <div class="qc-border-none col-sx-12 col-sm-12 col-md-3 col-lg-3">

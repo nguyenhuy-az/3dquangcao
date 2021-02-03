@@ -710,8 +710,8 @@ Route::group(['prefix' => 'ad3d'], function () {
                 Route::get('customer-name/{name?}', ['as' => 'qc.ad3d.work.orders.filter.customer.check.name', 'uses' => 'Ad3d\Order\Order\OrderController@filterCheckCustomerName']);
             });
             # xac nhan don hang duoc dat
-            Route::get('confirm/{orderId?}', ['as' => 'qc.ad3d.order.order.confirm.get', 'uses' => 'Ad3d\Order\Order\OrderController@getConfirm']);
-            Route::post('confirm/{orderId?}', ['as' => 'qc.ad3d.order.order.confirm.post', 'uses' => 'Ad3d\Order\Order\OrderController@postConfirm']);
+            ///Route::get('confirm/{orderId?}', ['as' => 'qc.ad3d.order.order.confirm.get', 'uses' => 'Ad3d\Order\Order\OrderController@getConfirm']);
+            ///Route::post('confirm/{orderId?}', ['as' => 'qc.ad3d.order.order.confirm.post', 'uses' => 'Ad3d\Order\Order\OrderController@postConfirm']);
 
             # thong tin don hang
             Route::get('view/{orderId?}', ['as' => 'qc.ad3d.order.order.view.get', 'uses' => 'Ad3d\Order\Order\OrderController@view']);
@@ -750,8 +750,6 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::post('construction/add/{orderId?}', ['as' => 'qc.ad3d.order.order.construction.add.post', 'uses' => 'Ad3d\Order\Order\OrderController@postOrderConstruction']);
             # huy ban giao
             Route::get('delete-construction/{allocationId?}', ['as' => 'qc.ad3d.order.order.construction.delete', 'uses' => 'Ad3d\Order\Order\OrderController@deleteOrderConstruction']);
-
-            Route::get('delete/{orderId?}', ['as' => 'qc.ad3d.order.order.delete', 'uses' => 'Ad3d\Order\Order\OrderController@deleteOrder']);
 
             Route::get('/{companyId?}/{day?}/{month?}/{year?}/{paymentStatus?}/{orderFilterName?}/{orderCustomerFilterName?}/{staffFilterName?}', ['as' => 'qc.ad3d.order.order.get', 'uses' => 'Ad3d\Order\Order\OrderController@index']);
 
@@ -1325,6 +1323,22 @@ Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function ()
     });
     # thong tin ca nhan ca nhan
     Route::group(['prefix' => 'staff'], function () {
+        #thong ke
+        Route::group(['prefix' => 'statistical'], function () {
+            # cham cong
+            Route::get('work/{workId?}', ['as' => 'qc.work.staff.statistical.work.get', 'uses' => 'Work\Staff\StaffController@getStatisticalWork']);
+            # thong ke thuong
+            Route::get('bonus/{workId?}', ['as' => 'qc.work.staff.statistical.bonus.get', 'uses' => 'Work\Staff\StaffController@getStatisticalBonus']);
+            # thong ke phat
+            Route::get('minus-money/{workId?}', ['as' => 'qc.work.staff.statistical.minus_money.get', 'uses' => 'Work\Staff\StaffController@getStatisticalMinus']);
+            # thong ke - bo phan thi cong
+            Route::get('construction/{workId?}/{constructionStatus?}', ['as' => 'qc.work.staff.statistical.construction.get', 'uses' => 'Work\Staff\StaffController@getStatisticalConstruction']);
+            # thong ke - bo phan kinh doanh
+            Route::get('business/{workId?}/{constructionStatus?}', ['as' => 'qc.work.staff.statistical.business.get', 'uses' => 'Work\Staff\StaffController@getStatisticalBusiness']);
+            # thong ke
+            Route::get('/{monthFilter?}/{yearMonth?}', ['as' => 'qc.work.staff.statistical.get', 'uses' => 'Work\Staff\StaffController@getStatistical']);
+        });
+        # tai khoan
         Route::group(['prefix' => 'account'], function () {
             //đổi mật khẩu
             Route::get('update', ['as' => 'qc.work.staff.account.update.get', 'uses' => 'Work\Staff\StaffController@getUpdateAccount']);

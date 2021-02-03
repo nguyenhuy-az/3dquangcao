@@ -1323,9 +1323,9 @@ class QcStaff extends Model
         $hFunction = new \Hfunction();
         $modelCompany = new QcCompany();
         //$passLog = Hash::make($pass);
-        $nameCode = QcStaff::where('account', $account)->pluck('nameCode');
+        $nameCode = QcStaff::where('account', $account)->pluck('nameCode')[0];
         if ($hFunction->checkCount($nameCode)) {
-            $passLog = $this->createStaffPass($password, $nameCode[0]);
+            $passLog = $this->createStaffPass($password, $nameCode);
             $staff = QcStaff::where('account', $account)->where('password', $passLog)->where('workStatus', $this->getDefaultHasWorkStatus())->first();
             if ($hFunction->checkCount($staff)) { // login success
                 # KIEM TRA DU LIEU TU DONG

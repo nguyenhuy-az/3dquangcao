@@ -65,14 +65,14 @@ class OrderController extends Controller
         }
         # lay thong tin cong ty cung he thong
         $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
-        if (empty($companyFilterId) || $companyFilterId == 1000)  $companyFilterId = $companyLoginId;
+        if ($hFunction->checkEmpty($companyFilterId) || $companyFilterId == 1000)  $companyFilterId = $companyLoginId;
         if ($staffFilterId > 0) {
             $listStaffId = [$staffFilterId];
         } else {
             $listStaffId = $modelStaff->listIdOfCompany($companyFilterId);
         }
 
-        if (!empty($orderCustomerFilterName)) {
+        if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
             $dataOrderSelect = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus);
         } else {
             $dataOrderSelect = $modelOrder->selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $orderFilterName, $dateFilter, $paymentStatus);
@@ -90,7 +90,7 @@ class OrderController extends Controller
 
         //danh sach NV
         $dataStaff = $modelCompany->staffInfoActivityOfCompanyId([$companyFilterId]);
-        return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany','modelOrder', 'dataStaff', 'dataAccess', 'dataOrder', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId'));
+        return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany','modelOrder', 'dataStaff', 'dataAccess', 'dataOrder', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId','dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId'));
 
     }
 
@@ -522,12 +522,4 @@ class OrderController extends Controller
         }
     }
 
-
-    public function deleteOrder($orderId = null)
-    {
-        $modelOrder = new QcOrder();
-        if (!empty($orderId)) {
-            $modelOrder->deleteAction($orderId);
-        }
-    }
 }
