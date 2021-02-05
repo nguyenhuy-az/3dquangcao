@@ -751,7 +751,7 @@ Route::group(['prefix' => 'ad3d'], function () {
             # huy ban giao
             Route::get('delete-construction/{allocationId?}', ['as' => 'qc.ad3d.order.order.construction.delete', 'uses' => 'Ad3d\Order\Order\OrderController@deleteOrderConstruction']);
 
-            Route::get('/{companyId?}/{day?}/{month?}/{year?}/{paymentStatus?}/{orderFilterName?}/{orderCustomerFilterName?}/{staffFilterName?}', ['as' => 'qc.ad3d.order.order.get', 'uses' => 'Ad3d\Order\Order\OrderController@index']);
+            Route::get('/{companyId?}/{day?}/{month?}/{year?}/{paymentStatus?}/{orderFilterName?}/{orderCustomerFilterName?}/{staffFilterName?}/{orderSelectedId?}', ['as' => 'qc.ad3d.order.order.get', 'uses' => 'Ad3d\Order\Order\OrderController@index']);
 
         });
         Route::group(['prefix' => 'allocation'], function () {

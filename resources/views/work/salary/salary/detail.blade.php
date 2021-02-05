@@ -10,6 +10,8 @@
 $hFunction = new Hfunction();
 $dataWork = $dataSalary->work;
 $dataCompanyStaffWork = $dataWork->companyStaffWork;
+# thong tin nhan vien
+$dataStaffWork = $dataCompanyStaffWork->staff;
 # bang luong co ban
 $dataStaffWorkSalary = $dataSalary->staffWorkSalary;
 $benefitMoney = $dataSalary->benefitMoney();
@@ -48,7 +50,7 @@ if ($hFunction->checkCount($dataStaffWorkSalary)) { # da co ban luong co ban cua
     $totalMoneyInsurance = $dataStaffWorkSalary->totalMoneyInsurance();# phu cap bao hiem %
 
     $salaryOneHour = $dataStaffWorkSalary->salaryOnHour();#luong theo gio
-    $totalCurrentSalary = $dataWork->totalSalaryBasicOfWorkInMonth($workId);
+    $totalCurrentSalary = $dataSalary->totalSalaryBasic();
 } else {
     $infoSalaryBasic = false;
     $oldVersion = true;
@@ -64,37 +66,53 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
 @extends('work.index')
 @section('qc_work_body')
     <div class="row">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <a class=" qc-link-red" onclick="qc_main.page_back();">
                     <i class="qc-font-size-14 glyphicon glyphicon-backward"></i>
                     <span class="qc-font-size-16" style="color: blue;">Trởlại</span>
                 </a>
             </div>
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed #C2C2C2;">
-                <h3>CHI TIẾT BẢNG LƯƠNG</h3>
-                <em>Từ ngày: </em>
-                <span class="qc-color-red qc-font-bold">
-                    {!! $hFunction->convertDateDMYFromDatetime($dataWork->fromDate()) !!}
-                </span>
-                <em>Đến ngày: </em>
-                <span class="qc-color-red qc-font-bold">
-                   {!! $hFunction->convertDateDMYFromDatetime($dataWork->toDate()) !!}
-                </span>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <h3 style="color: red;">CHI TIẾT BẢNG LƯƠNG</h3>
             </div>
             {{--phien ban cu - huy--}}
             @if($oldVersion)
-                <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     Dữ liệu cũ chưa cập nhật
                 </div>
             @else
-                <div class="qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="media">
+                                        <a class="pull-left" href="#">
+                                            <img class="media-object"
+                                                 style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 20px;"
+                                                 src="{!! $dataStaffWork->pathAvatar($dataStaffWork->image()) !!}">
+                                        </a>
+
+                                        <div class="media-body">
+                                            <label class="media-heading">{!! $dataStaffWork->lastName() !!}</label>
+                                            <br/>
+                                            <em>Từ: </em>
+                                            <span class="qc-color-red qc-font-bold">
+                                                {!! $hFunction->convertDateDMYFromDatetime($dataWork->fromDate()) !!}
+                                            </span>
+                                            <em>Đến: </em>
+                                            <span class="qc-color-red qc-font-bold">
+                                               {!! $hFunction->convertDateDMYFromDatetime($dataWork->toDate()) !!}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             {{-- Bảng lương cơ bản   --}}
                             <div class="row">
-                                <div class="qc-padding-top-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                    <div class="qc-container-table qc-container-table-border-none table-responsive">
+                                <div class="qc-padding-top-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="table-responsive">
                                         <table class="table table-hover qc-margin-bot-none">
                                             <tr class="qc-link-green" data-toggle="modal"
                                                 data-target="#qc_work_system_info_salary_basic_show">
@@ -213,8 +231,8 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                             </div>
                             {{-- Thong tin lam viec   --}}
                             <div class="row">
-                                <div class="qc-padding-top-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                    <div class="qc-container-table qc-container-table-border-none table-responsive">
+                                <div class="qc-padding-top-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="table-responsive">
                                         <table class="table table-hover qc-margin-bot-none">
                                             <tr class="qc-link-green" data-toggle="modal"
                                                 data-target="#qc_work_system_info_salary_work_statistic_show">
@@ -301,92 +319,90 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                             <div class="row">
                                 {{-- Chi tiết lương   --}}
-                                <div class="qc-container-table  qc-padding-top-5 qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover qc-margin-bot-none">
-                                            <tr style="background-color: whitesmoke;">
-                                                <th colspan="2">
-                                                    <i class="qc-font-size-14 glyphicon glyphicon-usd"></i>
-                                                    <b class="qc-color-red">CHI TIÊT LƯƠNG LÃNH</b>
+                                <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <table class="table table-hover qc-margin-bot-none">
+                                        <tr style="background-color: whitesmoke;">
+                                            <th colspan="2">
+                                                <i class="qc-font-size-14 glyphicon glyphicon-usd"></i>
+                                                <b class="qc-color-red">CHI TIÊT LƯƠNG LÃNH</b>
+                                            </th>
+                                        </tr>
+                                        @if($infoSalaryBasic)
+                                            <tr style="color: brown;">
+                                                <td>
+                                                    <em>Tổng lương cơ bản:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($totalCurrentSalary) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Mua vật tư (Đã duyệt chưa TT):
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>
+                                                        + {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Cộng thêm:
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>+ {!! $hFunction->currencyFormat($benefitMoney) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Thưởng:
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($totalMoneyBonus) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Phạt:
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>- {!! $hFunction->currencyFormat($totalMoneyMinus) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Ứng:
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>- {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr style="border-top: 3px solid brown; color: brown;">
+                                                <td>
+                                                    <em>Lương còn lại:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($totalCurrentSalary + $totalMoneyImportOfStaff + $benefitMoney + $totalMoneyBonus -  $totalMoneyBeforePay - $totalMoneyMinus) !!}</b>
+                                                </td>
+                                            </tr>
+                                        @else
+                                            <tr>
+                                                <th class="text-center qc-color-red" colspan="5">
+                                                    Chưa có bảng lương cơ bản
                                                 </th>
                                             </tr>
-                                            @if($infoSalaryBasic)
-                                                <tr style="color: brown;">
-                                                    <td>
-                                                        <em>Tổng lương cơ bản:</em>
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <b>{!! $hFunction->currencyFormat($totalCurrentSalary) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        Mua vật tư (Đã duyệt chưa TT):
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <b>
-                                                            + {!! $hFunction->currencyFormat($totalMoneyImportOfStaff) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        Cộng thêm:
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <b>+ {!! $hFunction->currencyFormat($benefitMoney) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        Thưởng:
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <b>{!! $hFunction->currencyFormat($totalMoneyBonus) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        Phạt:
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <b>- {!! $hFunction->currencyFormat($totalMoneyMinus) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        Ứng:
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <b>- {!! $hFunction->currencyFormat($totalMoneyBeforePay) !!}</b>
-                                                    </td>
-                                                </tr>
-                                                <tr style="border-top: 3px solid brown; color: brown;">
-                                                    <td>
-                                                        <em>Lương còn lại:</em>
-                                                    </td>
-                                                    <td class="text-right">
-                                                        <b>{!! $hFunction->currencyFormat($totalCurrentSalary + $totalMoneyImportOfStaff + $benefitMoney + $totalMoneyBonus -  $totalMoneyBeforePay - $totalMoneyMinus) !!}</b>
-                                                    </td>
-                                                </tr>
-                                            @else
-                                                <tr>
-                                                    <th class="text-center qc-color-red" colspan="5">
-                                                        Chưa có bảng lương cơ bản
-                                                    </th>
-                                                </tr>
-                                            @endif
-                                        </table>
-                                    </div>
+                                        @endif
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                     {{-- Chi tiết thanh toan lương   --}}
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="table-responsive">
                                 <table class="table table-hover table-bordered">
                                     <tr>
@@ -439,119 +455,93 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                     </div>
 
                     {{-- Chi tiet cham cong   --}}
-                    <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="table-responsive">
+                    @if($hFunction->checkCount($dataTimekeeping))
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <table class="table table-hover table-bordered">
-                                    <tr>
-                                        <th colspan="8">
-                                            <i class="qc-font-size-14 glyphicon glyphicon-list-alt"></i>
-                                            <label class="qc-color-red">CHI TIẾT CHẤM CÔNG</label>
+                                    <tr class="qc-color-red">
+                                        <th colspan="4">
+                                            CHI TIẾT CHẤM CÔNG
                                         </th>
                                     </tr>
-                                    <tr style="background-color: black;color: yellow;">
-                                        <th class="text-center" style="width: 20px;">STT</th>
-                                        <th class="text-center">Giờ vào</th>
-                                        <th class="text-center">Giờ ra</th>
+                                    <tr style="background-color: whitesmoke;">
+                                        <th style="width: 120px;">GIỜ VÀO - RA</th>
+                                        <th class="text-center">GIỜ CHÍNH</th>
+                                        <th class="text-center">TĂNG CA</th>
                                         <th>Ghi chú</th>
-                                        <th class="text-center">Nghỉ có phép</th>
-                                        <th class="text-center">Nghỉ không phép</th>
-                                        <th class="text-center">Giờ chính (h)</th>
-                                        <th class="text-center">Tăng ca (h)</th>
                                     </tr>
-                                    @if($hFunction->checkCount($dataTimekeeping))
-                                        <?php $n_o_timekeeping = 0; ?>
-                                        @foreach($dataTimekeeping as $timekeeping)
-                                            <?php
-                                            $timekeepingId = $timekeeping->timekeepingId();
-                                            $timekeepingConfirmNote = $timekeeping->confirmNote();
-                                            $timekeepingNote = $timekeeping->note();
-                                            ?>
-                                            <tr class="@if($n_o_timekeeping%2) info @endif">
-                                                <td class="text-center ">
-                                                    {!! $n_o_timekeeping += 1 !!}
-                                                </td>
-                                                <td class="text-center">
-                                                    @if(!$timekeeping->checkOff())
-                                                        <span>{!! $hFunction->convertDateDMYFromDatetime($timekeeping->timeBegin()) !!}</span>
-                                                        <b style="color: blue;">
-                                                            - {!! date('H:i',strtotime($timekeeping->timeBegin())) !!}</b>
-                                                    @else
-                                                        <span>---</span>
-                                                    @endif
-                                                </td>
-                                                <td class="text-center">
-                                                    @if(!$timekeeping->checkOff())
-                                                        @if(!$hFunction->checkEmpty($timekeeping->timeEnd()))
-                                                            <span>{!! $hFunction->convertDateDMYFromDatetime($timekeeping->timeEnd()) !!}</span>
-                                                            <b style="color: blue;">
-                                                                - {!! date('H:i',strtotime($timekeeping->timeEnd())) !!}</b>
-                                                        @else
-                                                            <span>Null</span>
+                                    <?php $n_o = 0; ?>
+                                    @foreach($dataTimekeeping as $timekeeping)
+                                        <?php
+                                        $timekeepingId = $timekeeping->timekeepingId();
+                                        ?>
+                                        <tr>
+                                            <td>
+                                                @if(!$timekeeping->checkOff())
+                                                    <span style="color: blue;">{!! date('d-m-Y',strtotime($timekeeping->timeBegin())) !!}</span>
+                                                    <b>
+                                                        {!! date('H:i',strtotime($timekeeping->timeBegin())) !!}
+                                                    </b>
+                                                    @if(!$hFunction->checkEmpty($timekeeping->timeEnd()))
+                                                        <br/>
+                                                        <span style="color: brown;">{!! date('d-m-Y',strtotime($timekeeping->timeEnd())) !!}</span>
+                                                        <b> {!! date('H:i',strtotime($timekeeping->timeEnd())) !!}</b>
+                                                        <br/>
+                                                        @if($timekeeping->checkAfternoonStatus())
+                                                            <em style="color: grey;">Có làm trưa</em>
                                                         @endif
                                                     @else
-                                                        <span>---</span>
+                                                        <br/>
+                                                        <em style="color: grey;">Không có giờ ra</em>
                                                     @endif
-                                                </td>
-                                                <td>
-                                                    <em class="qc-color-grey"> {!! $timekeeping->note() !!}</em>
-                                                    @if(!empty($timekeepingConfirmNote))
-                                                        @if(!empty($timekeepingNote)) <br/> @endif
-                                                        <span>Ghi chú duyệt:</span>
-                                                        <em style="color: brown;">{!! $timekeepingConfirmNote !!}</em>
-                                                    @endif
-                                                </td>
-                                                <td class="text-center">
-                                                    @if($timekeeping->checkOff() && $timekeeping->checkPermissionStatus())
-                                                        <b class="qc-color-red">{!! $hFunction->convertDateDMYFromDatetime($timekeeping->dateOff()) !!}</b>
+                                                @else
+                                                    @if($timekeeping->checkPermissionStatus())
+                                                        <b>{!! date('d-m-Y', strtotime($timekeeping->dateOff())) !!}</b>
+                                                        <br/>
+                                                        <em style="color: grey;">Nghỉ có phép</em>
                                                     @else
-                                                        <span>---</span>
+                                                        <b style="color: red;">{!! date('d-m-Y', strtotime($timekeeping->dateOff())) !!}</b>
+                                                        <br/>
+                                                        <em style="color: grey;">Nghỉ không phép</em>
                                                     @endif
-                                                </td>
-                                                <td class="text-center">
-                                                    @if($timekeeping->checkOff() && !$timekeeping->checkPermissionStatus())
-                                                        <b class="qc-color-red">{!! $hFunction->convertDateDMYFromDatetime($timekeeping->dateOff()) !!}</b>
-                                                    @else
-                                                        <span>---</span>
-                                                    @endif
-                                                </td>
-                                                <td class="text-center">
-                                                    @if(!$timekeeping->checkOff())
-                                                        <b>{!! ($timekeeping->mainMinute() - $timekeeping->mainMinute()%60 )/60 !!}</b>
-                                                        <span>h</span>
-                                                        <b>{!! $timekeeping->mainMinute()%60 !!}</b>
-                                                    @else
-                                                        <span>---</span>
-                                                    @endif
-                                                </td>
-                                                <td class="text-center">
-                                                    @if(!$timekeeping->checkOff())
-                                                        <b>{!! ($timekeeping->plusMinute()-$timekeeping->plusMinute()%60)/60 !!}</b>
-                                                        <span>h</span>
-                                                        <b>{!! $timekeeping->plusMinute()%60 !!}</b>
-                                                    @else
-                                                        <span>---</span>
-                                                    @endif
-                                                </td>
-
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="8">
-                                                Không có thông tin chấm công
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if(!$timekeeping->checkOff())
+                                                    <b style="color: blue;">{!! ($timekeeping->mainMinute() - $timekeeping->mainMinute()%60 )/60 !!}</b>
+                                                    <span>h</span>
+                                                    <b>{!! $timekeeping->mainMinute()%60 !!}</b>
+                                                @else
+                                                    <span>0</span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if(!$timekeeping->checkOff())
+                                                    <b style="color: brown;">{!! ($timekeeping->plusMinute()-$timekeeping->plusMinute()%60)/60 !!}</b>
+                                                    <span>h</span>
+                                                    <b>{!! $timekeeping->plusMinute()%60 !!}</b>
+                                                @else
+                                                    <span>0</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <em class="qc-color-grey"> {!! $timekeeping->note() !!}</em>
                                             </td>
                                         </tr>
-                                    @endif
+                                    @endforeach
                                 </table>
                             </div>
                         </div>
-                    </div>
+                    @else
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <span style="color: blue;">Không có thông tin chấm công</span>
+                        </div>
+                    @endif
 
                     <div class="row">
-                        <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <button type="button" class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                                Đóng
+                                ĐÓNG
                             </button>
                         </div>
                     </div>

@@ -3,13 +3,9 @@
 namespace App\Http\Controllers\Work\Salary\Salary;
 
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
-use App\Models\Ad3d\Rule\QcRules;
 use App\Models\Ad3d\Salary\QcSalary;
-use App\Models\Ad3d\SalaryBeforePayRequest\QcSalaryBeforePayRequest;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
-use App\Models\Ad3d\StaffWorkSalary\QcStaffWorkSalary;
-use App\Models\Ad3d\Work\QcWork;
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\Controller;

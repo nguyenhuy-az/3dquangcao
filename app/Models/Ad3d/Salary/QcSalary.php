@@ -163,6 +163,12 @@ class QcSalary extends Model
         return $this->belongsTo('App\Models\Ad3d\Work\QcWork', 'work_id', 'work_id');
     }
 
+    # lay bang luong cua bang cham cong
+    public function infoOfWork($workId)
+    {
+        return QcSalary::where('work_id', $workId)->first();
+    }
+
     # thong tin bang luong cua bang cham cong
     public function infoOfListWorkId($listWorkId)
     {
@@ -264,7 +270,7 @@ class QcSalary extends Model
         if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcSalary::where('salary_id', $objectId)->pluck($column);
+            return QcSalary::where('salary_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -434,9 +440,9 @@ class QcSalary extends Model
         $benefitMoney = $dataSalary->benefitMoney();
         # tien thuong da ap dung
         $bonusMoney = $dataSalary->bonusMoney();
-        $dataWork = $dataSalary->work;
+        ///$dataWork = $dataSalary->work;
         # tong luong co ban
-        $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
+        $totalSalaryBasic = $dataSalary->totalSalaryBasic();//$dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
         return $totalSalaryBasic + $benefitMoney + $bonusMoney;
     }
     # tong tien luong chua thanh toan cua 1 bang luong

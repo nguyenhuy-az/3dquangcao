@@ -383,6 +383,8 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                 $fuel = $dataStaffWorkSalary->fuel();
                                 $dateOff = $dataStaffWorkSalary->salaryOneDateOff();
                                 $overtimeHour = $dataStaffWorkSalary->overtimeHour();
+                                # tien tren 1 gio
+                                $salaryOneHour = $dataStaffWorkSalary->salaryOnHour();
                                 ?>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -449,6 +451,14 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                                                 </td>
                                                 <td class="text-right">
                                                     <b>{!! $hFunction->currencyFormat($overtimeHour) !!} </b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em>Lương/h: </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($salaryOneHour) !!} </b>
                                                 </td>
                                             </tr>
                                             <tr>

@@ -18,10 +18,19 @@ $sumMinusMinute = $dataWork->sumMinusMinute();
 $companyStaffWorkId = $dataWork->companyStaffWorkId();
 $staffId = $dataWork->staffId();
 $infoSalaryBasic = true;
+# lay bang luong neu da xua
+$dataSalary = $dataWork->salaryInfo();
+if ($hFunction->checkCount($dataSalary)) { # da xuay bang luong
+    $dataStaffWorkSalary = $dataSalary->staffWorkSalary;
+    $totalCurrentSalary = $dataSalary->totalSalaryBasic();
+} else {
+    $dataStaffWorkSalary = $modelCompanyStaffWork->staffWorkSalaryActivity($companyStaffWorkId);
+    $totalCurrentSalary = $dataWork->totalSalaryBasicOfWorkInMonth($workId);
+}
 # phien ban moi - nv lam nhieu cty
 if (!$hFunction->checkEmpty($companyStaffWorkId)) {
-    $dataStaffWorkSalary = $modelCompanyStaffWork->staffWorkSalaryActivity($companyStaffWorkId);
-    if ($hFunction->checkCount($dataStaffWorkSalary)) { # da co ban luong co ban cua he thong
+    if ($hFunction->checkCount($dataStaffWorkSalary)) {
+        # da co ban luong co ban cua he thong
         $totalSalaryBasic = $dataStaffWorkSalary->totalSalary();
         $salaryBasic = $dataStaffWorkSalary->salary();
         $responsibility = $dataStaffWorkSalary->responsibility();# phu cap trach nhiem /26 ngay
@@ -29,7 +38,6 @@ if (!$hFunction->checkEmpty($companyStaffWorkId)) {
         $fuel = $dataStaffWorkSalary->fuel();# phu cap xang di lai
         # phu cap tang ca
         $overtimeHour = $dataStaffWorkSalary->overtimeHour();
-
         # tien phu cap an uong tang ca
         $totalMoneyOvertimeHour = ($sumPlusMinute / 60) * $overtimeHour;
 
@@ -38,13 +46,6 @@ if (!$hFunction->checkEmpty($companyStaffWorkId)) {
         $salaryOneHour = $dataStaffWorkSalary->salaryOnHour();
         # thuong
         $totalMoneyBonus = $dataWork->totalMoneyBonus();
-
-
-        # tong luong trong gio lam chinh
-        $moneyOfMainMinute = ($sumMainMinute / 60) * $salaryOneHour;
-        # tang ca nhan 1.5  - tong luong cua gio tang ca
-        $moneyOfPlusMinute = ($sumPlusMinute_1_5 / 60)* $salaryOneHour;
-        $totalCurrentSalary = $moneyOfMainMinute + $moneyOfPlusMinute + $totalMoneyOvertimeHour ;//$dataWork->totalSalaryBasicOfWorkInMonth($workId);
     } else {
         $infoSalaryBasic = false;
     }
@@ -160,7 +161,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                                     </th>
                                 </tr>
                                 <tr>
-                                    <td >Giờ làm chính</td>
+                                    <td>Giờ làm chính</td>
                                     <td class="text-right">
                                         {!! floor(($sumMainMinute-$sumMainMinute%60)/60) !!}
                                         <b>h</b> {!! $sumMainMinute%60 !!}
@@ -314,7 +315,7 @@ $dataTimekeeping = $dataWork->infoTimekeeping();
                         </div>
                     </div>
                 @else
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <span style="color: blue;">Không có thông tin chấm công</span>
                     </div>
                 @endif

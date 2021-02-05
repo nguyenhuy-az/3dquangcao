@@ -54,7 +54,8 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                         </tr>
                         <tr>
                             <td style="padding: 0 !important;">
-                                <select class="cbStaffFilter form-control" data-href="{!! $hrefIndex !!}" name="cbStaffFilter">
+                                <select class="cbStaffFilter form-control" data-href="{!! $hrefIndex !!}"
+                                        name="cbStaffFilter">
                                     <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
                                         Tất cả
                                     </option>
@@ -86,7 +87,7 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                                     @endfor
                                 </select>
                             </td>
-                            <td ></td>
+                            <td></td>
                         </tr>
                         @if($hFunction->checkCount($dataWork))
                             <?php
@@ -99,14 +100,15 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                                 $workId = $work->workId();
                                 $companyStaffWorkId = $work->companyStaffWorkId();
                                 $dataCompanyStaffWork = $work->companyStaffWork;
-                                if (!empty($companyStaffWorkId)) {
+                                if (!$hFunction->checkEmpty($companyStaffWorkId)) {
                                     $dataStaffWork = $work->companyStaffWork->staff;
                                 } else {
                                     $dataStaffWork = $work->staff;
                                 }
-                                    $n_o = $n_o + 1;
+                                $n_o = $n_o + 1;
                                 ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2 == 0) info @endif" data-object="{!! $workId !!}">
+                                <tr class="qc_ad3d_list_object @if($n_o%2 == 0) info @endif"
+                                    data-object="{!! $workId !!}">
                                     <td>
                                         <div class="media">
                                             <a class="pull-left" href="#">
@@ -114,6 +116,7 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                                                      style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
                                                      src="{!! $dataStaffWork->pathAvatar($dataStaffWork->image()) !!}">
                                             </a>
+
                                             <div class="media-body">
                                                 <h5 class="media-heading">{!! $dataStaffWork->lastName() !!}</h5>
                                                 @if(!$work->checkSalaryStatus())
@@ -145,7 +148,8 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                                 </tr>
                             @endforeach
                             <tr>
-                                <td colspan="3" style="border-left: 5px solid blue; padding-top: 0px;padding-bottom: 0;">
+                                <td colspan="3"
+                                    style="border-left: 5px solid blue; padding-top: 0px;padding-bottom: 0;">
                                     {!! $hFunction->page($dataWork) !!}
                                 </td>
                             </tr>

@@ -25,9 +25,23 @@ if ($staffFilterId > 0) {
 if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
     $listCustomerId = $modelCustomer->listIdByKeywordName($orderCustomerFilterName);
 }
+# thong tin don hang duoc chon
+if ($hFunction->checkCount($dataOrderSelected)) {
+    $orderSelectedId = $dataOrderSelected->orderId();
+    $orderReceiveDate = $dataOrderSelected->receiveDate();
+    $orderMonthSelected = (int)$hFunction->getMonthFromDate($orderReceiveDate);
+} else {
+    $orderSelectedId = $hFunction->getDefaultNull();
+    $orderMonthSelected = $hFunction->getDefaultNull();
+}
 ?>
 @extends('ad3d.order.order.index')
 @section('qc_ad3d_order_order')
+    <style type="text/css">
+        .qc_ad3d_order_selected {
+            background-color: grey;
+        }
+    </style>
     <div class="row">
         {{-- tiêu đề --}}
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -38,6 +52,7 @@ if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
                     <label class="qc-font-size-20">ĐƠN HÀNG</label>
+                    {!! $yearFilter !!}
                 </div>
             </div>
         </div>
@@ -147,9 +162,11 @@ if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
                         <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                             Tất cả
                         </option>
-                        @for($i =1;$i<= 12; $i++)
+                        @for($m =1;$m<= 12; $m++)
                             <option value="{!! $i !!}"
-                                    @if((int)$monthFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                                    @if((int)$monthFilter == $m) selected="selected" @endif>
+                                {!! $m !!}
+                            </option>
                         @endfor
                     </select>
                     <select class="cbYearFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
@@ -158,9 +175,10 @@ if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
                         <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                             Tất cả
                         </option>
-                        @for($i =2017;$i<= 2050; $i++)
-                            <option value="{!! $i !!}"
-                                    @if($yearFilter == $i) selected="selected" @endif>{!! $i !!}</option>
+                        @for($y =2017;$y<= 2050; $y++)
+                            <option value="{!! $y !!}" @if($yearFilter == $y) selected="selected" @endif>
+                                {!! $y !!}
+                            </option>
                         @endfor
                     </select>
                 </div>
@@ -183,10 +201,10 @@ if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
             </div>
         </div>
         {{--thống kê--}}
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
             <div class="row">
                 <div class="text-center col-xs-6 col-sm-3 col-md-3 col-lg-3" style="padding: 0;">
-                    <div class="panel panel-default" style="margin-bottom: 0;">
+                    <div class="panel panel-default" style="margin-bottom: 0; border:1px solid green;">
                         <div class="panel-body">
                             <em>
                                 Tổng ĐH:
@@ -196,7 +214,7 @@ if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
                     </div>
                 </div>
                 <div class="text-center col-xs-6 col-sm-3 col-md-3 col-lg-3" style="padding: 0;">
-                    <div class="panel panel-default" style="margin-bottom: 0;">
+                    <div class="panel panel-default" style="margin-bottom: 0;border:1px solid green;">
                         <div class="panel-body">
                             <em>
                                 Tổng tiền:
@@ -206,7 +224,7 @@ if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
                     </div>
                 </div>
                 <div class="text-center col-xs-6 col-sm-3 col-md-3 col-lg-3" style="padding: 0;">
-                    <div class="panel panel-default">
+                    <div class="panel panel-default" style="border:1px solid green;margin-bottom: 0;">
                         <div class="panel-body">
                             <em>
                                 Tiền đã thu:
@@ -216,7 +234,7 @@ if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
                     </div>
                 </div>
                 <div class="text-center col-xs-6 col-sm-3 col-md-3 col-lg-3" style="padding: 0;">
-                    <div class="panel panel-default">
+                    <div class="panel panel-default" style="border:1px solid green;margin-bottom: 0;">
                         <div class="panel-body">
                             <em>
                                 Tiền chưa thu:
@@ -231,99 +249,156 @@ if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2" style="padding: 0;">
-                    <div class="list-group">
+                    <ul class="list-group">
                         @for($y = $currentYear; $y >= $limitYear; $y = $y - 1)
                             @if($y == $yearFilter)
-                                <a data-href="#" class="qc-cursor-pointer list-group-item" style="color: red;">
-                                    <i class="glyphicon glyphicon-minus qc-font-size-12"></i>
-                                    {!! $y !!}
-                                    <span style="color: blue;">(100)</span>
-                                </a>
-                                <div class="list-group" style="margin-bottom: 0;">
-                                    @for($m = 1; $m <=12; $m++)
-                                        <?php
-                                        $dateFilter = date('Y-m', strtotime("1-$m-$y"));
-                                        if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-                                            $dataOrderInMonthYear = $modelOrder->selectInfoOfListCustomer($listCustomerId, $dateFilter, $paymentStatus)->get();
-                                        } else {
-                                            $dataOrderInMonthYear = $modelOrder->selectInfoNoCancelAndPayOfListStaffReceive($listStaffId, $dateFilter, $paymentStatus)->get();
-                                        }
-                                        ?>
-                                        @if($hFunction->checkCount($dataOrderInMonthYear))
-                                            <a data-href="#"
-                                               class="qc-cursor-pointer list-group-item @if($m == $monthFilter) qc-link-red @endif"
-                                               style="padding: 0; border-top: none; border-bottom: 0;">
-                                                &emsp;
-                                                <i class="glyphicon glyphicon-minus qc-font-size-12"></i>
-                                                Tháng:{!! $m !!}
-                                                <span class="badge"
-                                                      style="background: none; color: green;">
-                                                    {!! $hFunction->getCount($dataOrderInMonthYear) !!}
-                                                </span>
-                                            </a>
-                                            <div class="list-group" style="margin-bottom: 0;">
-                                                @foreach($dataOrderInMonthYear as $order)
-                                                    <a data-href="#" class="qc-cursor-pointer list-group-item"
-                                                       style="padding-top: 0;padding-bottom: 0; padding-bottom: 0; border-top: none;">
-                                                        &emsp;&emsp;
-                                                        <span>
-                                                            {!! $order->name() !!}
-                                                        </span>
+                                <li class="list-group-item" style="padding-right: 0; border-right: none;">
+                                    <a data-href="#" class="qc-cursor-pointer" style="color: red;">
+                                        <i class="glyphicon glyphicon-minus qc-font-size-12"></i>
+                                        {!! $y !!}
+                                    </a>
+                                    <ul class="list-group" style="margin-bottom: 0;">
+                                        @for($m = 1; $m <=12; $m++)
+                                            <?php
+                                            $dateFilter = date('Y-m', strtotime("1-$m-$y"));
+                                            if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
+                                                $dataOrderInMonthYear = $modelOrder->selectInfoOfListCustomer($listCustomerId, $dateFilter, $paymentStatus)->get();
+                                            } else {
+                                                $dataOrderInMonthYear = $modelOrder->selectInfoNoCancelAndPayOfListStaffReceive($listStaffId, $dateFilter, $paymentStatus)->get();
+                                            }
+                                            ?>
+                                            @if($hFunction->checkCount($dataOrderInMonthYear))
+                                                <li class="list-group-item" style="padding-right: 0; border-top: none; border-bottom: none;border-right: none;">
+                                                    <a data-href="#" onclick="qc_main.toggle('#container_{!! $m.$y !!}');"
+                                                       class="qc-cursor-pointer @if($m == $monthFilter) qc-link-red @endif"
+                                                       style="padding: 0; border-top: none; border-bottom: 0; color: black;">
+                                                        <i class="glyphicon glyphicon-plus"></i>
+                                                        Tháng {!! $m !!}
                                                     </a>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    @endfor
-                                </div>
-                            @else
-                                <a data-href="#" class="qc-cursor-pointer list-group-item">
-                                    <i class="glyphicon glyphicon-plus qc-font-size-12"></i>
-                                    {!! $y !!}
-                                    <span style="color: blue;">(100)</span>
-                                </a>
-                                <div class="list-group" style="margin-bottom: 0;">
-                                    @for($m = 1; $m <=12; $m++)
-                                        <?php
-                                        $dateFilter = date('Y-m', strtotime("1-$m-$y"));
-                                        if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-                                            $dataOrderInMonthYear = $modelOrder->selectInfoOfListCustomer($listCustomerId, $dateFilter, $paymentStatus)->get();
-                                        } else {
-                                            $dataOrderInMonthYear = $modelOrder->selectInfoNoCancelAndPayOfListStaffReceive($listStaffId, $dateFilter, $paymentStatus)->get();
-                                        }
-                                        ?>
-                                        @if($hFunction->checkCount($dataOrderInMonthYear))
-                                            <a onclick="qc_main.toggle('#container_{!! $m.$y !!}');"
-                                               class="qc-cursor-pointer list-group-item"
-                                               style="padding: 0; border-top: none; border-bottom: none;">
-                                                &emsp;&emsp;
-                                                <i class="glyphicon glyphicon-plus qc-font-size-10"></i>
-                                                Tháng {!! $m !!}
-                                                <span class="label pull-right" style="background: none; color: green;">
-                                                    {!! $hFunction->getCount($dataOrderInMonthYear) !!}
-                                                </span>
-                                            </a>
-                                            <div id="container_{!! $m.$y !!}" class="list-group"
-                                                 style="display: none; margin-bottom: 0;">
-                                                @foreach($dataOrderInMonthYear as $order)
-                                                    <a data-href="#" class="qc-cursor-pointer list-group-item"
-                                                       style="padding-top: 0;padding-bottom: 0; border-top: none; border-bottom: none;">
-                                                        &emsp;&emsp;
-                                                        <span>
-                                                            {!! $order->name() !!}
-                                                        </span>
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    @endfor
-                                </div>
+                                                    <span class="badge" style="background: none; color: green;">
+                                                        {!! $hFunction->getCount($dataOrderInMonthYear) !!}
+                                                    </span>
+                                                    <ul id="container_{!! $m.$y !!}" class="list-group"
+                                                        style=" margin-bottom: 0;
+                                                        @if($orderMonthSelected != $m) display: none; @endif">
+                                                        @foreach($dataOrderInMonthYear as $order)
+                                                            <?php
+                                                            $orderId = $order->orderId();
+                                                            $orderReceiveDate = $order->receiveDate();
+                                                            $finishStatus = $order->checkFinishStatus();
+                                                            $orderMonth = (int)$hFunction->getMonthFromDate($orderReceiveDate);
+                                                            $orderYear = (int)$hFunction->getYearFromDate($orderReceiveDate);
+                                                            $orderHref = route('qc.ad3d.order.order.get', "null/0/$orderMonth/$orderYear/100/null/null/0/$orderId");
+                                                            ?>
+                                                            <li class="qc-link list-group-item" style="padding-left: 0; padding-right: 0; border-bottom: none;border-right: none;">
+                                                                &ensp;
+                                                                <i class="glyphicon glyphicon-list-alt"></i>
+                                                                <a href="{!! $orderHref !!}">
+                                                                    <span @if($orderSelectedId == $orderId) style="background-color: black;color: yellow; padding: 3px;" @endif>
+                                                                        {!! $order->name() !!}
+                                                                    </span>
+                                                                    @if($finishStatus)
+                                                                        <i class="glyphicon glyphicon-ok"
+                                                                           style="color: green;"></i>
+                                                                    @else
+                                                                        <i class="glyphicon glyphicon-ok"
+                                                                           style="color: red;"></i>
+                                                                    @endif
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </li>
 
+                                            @endif
+                                        @endfor
+                                    </ul>
+                                </li>
+                            @else
+                                <li class=" list-group-item">
+                                    <a data-href="#" class="qc-cursor-pointer" style="color: black;"
+                                       onclick="qc_main.toggle('#container_{!! $y !!}');">
+                                        <i class="glyphicon glyphicon-plus"></i>
+                                        <span>
+                                            {!! $y !!}
+                                        </span>
+                                    </a>
+                                    <ul id="container_{!! $y !!}" class="list-group"
+                                        style="display: none; margin-bottom: 0;">
+                                        @for($m = 1; $m <=12; $m++)
+                                            <?php
+                                            $dateFilter = date('Y-m', strtotime("1-$m-$y"));
+                                            if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
+                                                $dataOrderInMonthYear = $modelOrder->selectInfoOfListCustomer($listCustomerId, $dateFilter, $paymentStatus)->get();
+                                            } else {
+                                                $dataOrderInMonthYear = $modelOrder->selectInfoNoCancelAndPayOfListStaffReceive($listStaffId, $dateFilter, $paymentStatus)->get();
+                                            }
+                                            ?>
+                                            @if($hFunction->checkCount($dataOrderInMonthYear))
+                                                <li class="list-group-item">
+                                                    <a onclick="qc_main.toggle('#container_{!! $m.$y !!}');"
+                                                       class="qc-cursor-pointer"
+                                                       style="padding: 0; border-top: none; border-bottom: none;">
+                                                        <i class="glyphicon glyphicon-plus qc-font-size-10"></i>
+                                                        Tháng {!! $m !!}
+                                                        <span class="label pull-right"
+                                                              style="background: none; color: green;">
+                                                            {!! $hFunction->getCount($dataOrderInMonthYear) !!}
+                                                        </span>
+                                                    </a>
+
+                                                    <ul id="container_{!! $m.$y !!}" class="list-group"
+                                                        style="display: none; margin-bottom: 0;">
+                                                        @foreach($dataOrderInMonthYear as $order)
+                                                            <?php
+                                                            $orderId = $order->orderId();
+                                                            $orderReceiveDate = $order->receiveDate();
+                                                            $finishStatus = $order->checkFinishStatus();
+                                                            $orderMonth = (int)$hFunction->getMonthFromDate($orderReceiveDate);
+                                                            $orderYear = (int)$hFunction->getYearFromDate($orderReceiveDate);
+                                                            $orderHref = route('qc.ad3d.order.order.get', "null/0/$orderMonth/$orderYear/100/null/null/0/$orderId");
+                                                            ?>
+                                                            <li class="list-group-item">
+                                                                <a class="qc-link" href="{!! $orderHref !!}"
+                                                                   style="padding-top: 0;padding-bottom: 0; border-top: none; border-bottom: none;">
+                                                                    <span>
+                                                                        {!! $order->name() !!}
+                                                                    </span>
+                                                                </a>
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </li>
+                                            @endif
+                                        @endfor
+                                    </ul>
+                                </li>
                             @endif
                         @endfor
-                    </div>
+                    </ul>
                 </div>
                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
-
+                    @if($hFunction->checkCount($dataOrderSelected))
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="panel panel-default" style="margin-bottom: 0;">
+                                    <div class="panel-body">
+                                        <b>{!! $dataOrderSelected->name() !!}</b>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="panel panel-default" style="margin-bottom: 0;">
+                                    <span style="color: red;">
+                                        KHÔNG CÓ ĐƠN HÀNG ĐƯỢC CHỌN
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -18,7 +18,7 @@ $currentMonth = $hFunction->currentMonth();
 @extends('work.pay.pay-salary.index')
 @section('qc_work_pay_salary_pay_body')
     <div class="row qc_work_pay_salary_wrap">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <label style="color: blue; font-size: 1.5em;">*** BẢNG LƯƠNG </label>
@@ -136,7 +136,8 @@ $currentMonth = $hFunction->currentMonth();
                                     if ($hFunction->checkCount($dataCompanyStaffWork)) { # du lieu moi - 1 NV lam nhieu cty
                                         $dataOld = false;
                                         # tong luong co ban
-                                        $totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());//$salary->totalSalaryBasic();
+                                        $totalSalaryBasic = $salary->totalSalaryBasic();
+                                        //$totalSalaryBasic = $dataWork->totalSalaryBasicOfWorkInMonth($dataWork->workId());
                                         # thong tin nhan vien
                                         $dataStaffDetail = $dataWork->companyStaffWork->staff;
                                         # tong tien mua vat tu xac nhan chưa thanh toan

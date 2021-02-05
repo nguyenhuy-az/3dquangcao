@@ -217,8 +217,8 @@ class QcWork extends Model
             $moneyOfPlusMinute = ($plusMinute / 60) * 1.5 * $totalSalaryOnHour;
             # tien phu cap tang ca
             $allowanceOvertime = ($plusMinute / 60) * $overtime;
-            return  (int)($moneyOfMainMinute + $moneyOfPlusMinute + $allowanceOvertime);
-        } else{
+            return (int)($moneyOfMainMinute + $moneyOfPlusMinute + $allowanceOvertime);
+        } else {
             return 0;
         }
     }
@@ -473,6 +473,12 @@ class QcWork extends Model
     {
         return $this->hasMany('App\Models\Ad3d\Salary\QcSalary', 'work_id', 'work_id');
     }
+    # thong tin bang luong
+    public function salaryInfo($workId = null)
+    {
+        $modelSalary = new QcSalary();
+        return $modelSalary->infoOfWork($this->checkIdNull($workId));
+    }
 
     //----------- chi tiết ứng lương ------------
     public function salaryBeforePay()
@@ -554,6 +560,7 @@ class QcWork extends Model
         $modelBonus = new QcBonus();
         return $modelBonus->getInfoHasApplyFromListWorkId([$this->checkIdNull($workId)]);
     }
+
     //----------- phạt ------------
     public function minusMoney()
     {
@@ -657,6 +664,7 @@ class QcWork extends Model
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->getInfoHasWorkFromListWork([$this->checkIdNull($workId)]);
     }
+
     # lay ngay khong lam viec - khong cham cong
     public function getInfoNotWorkTimekeeping($workId = null)
     {
@@ -670,6 +678,7 @@ class QcWork extends Model
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->getInfoOffWorkHasPermissionFromListWork([$this->checkIdNull($workId)]);
     }
+
     # ngay nghi  khong phep cua 1 bang cham cong
     public function getInfoOffWorkNotPermissionTimekeeping($workId = null)
     {
@@ -683,6 +692,7 @@ class QcWork extends Model
         $modelTimekeeping = new QcTimekeeping();
         return $modelTimekeeping->getInfoLateWork([$this->checkIdNull($workId)]);
     }
+
     # so ngay cua 1 bang cham cong
     public function getInfoOverTimeWork($workId = null)
     {
@@ -779,7 +789,6 @@ class QcWork extends Model
     {
         return $this->pluck('companyStaffWork_id', $workId);
     }
-
 
     public function staffId($workId = null)
     {

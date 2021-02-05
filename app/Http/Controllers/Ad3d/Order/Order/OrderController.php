@@ -21,7 +21,7 @@ use Request;
 
 class OrderController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = 0)
+    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $paymentStatus = 100, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = 0, $orderSelectedId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -30,42 +30,56 @@ class OrderController extends Controller
         $modelOrder = new QcOrder();
         $currentMonth = $hFunction->currentMonth();
         $currentYear = $hFunction->currentYear();
+        $dayFilter = (int)$dayFilter;
+        /*$monthFilter = (int)$monthFilter;
+        $yearFilter = (int)$yearFilter;*/
         $orderFilterName = ($orderFilterName == 'null') ? null : $orderFilterName;
+        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
         $orderCustomerFilterName = ($orderCustomerFilterName == 'null') ? null : $orderCustomerFilterName;
 
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
-        //dd($dataCompanyLogin);
-
         $dataAccess = [
             'accessObject' => 'order'
         ];
         $dateFilter = null;
-        if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
-            $dayFilter = 100;
-            $monthFilter = date('m');
-            $yearFilter = date('Y');
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
-            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-        } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
-            $monthFilter = $currentMonth;
-            $yearFilter = $currentYear;
-            $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
-        } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
-            $dateFilter = null;
+        # don hang duoc chon
+        if ($hFunction->checkEmpty($orderSelectedId)) {
+            $dataOrderSelected = $hFunction->getDefaultNull();
+            if ($dayFilter == 0 && $monthFilter == 0 && $yearFilter == 0) { //xem  trong tháng
+                $dayFilter = 100;
+                $monthFilter = date('m');
+                $yearFilter = date('Y');
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
+            } elseif ($dayFilter == 100 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
+            } elseif ($dayFilter < 100 && $dayFilter > 0 && $monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
+                $monthFilter = $currentMonth;
+                $yearFilter = $currentYear;
+                $dateFilter = date('Y-m-d', strtotime("$dayFilter-$currentMonth-$currentYear"));
+            } elseif ($dayFilter == 100 && $monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+                $dateFilter = null;
+            } else {
+                $dateFilter = date('Y-m');
+                $dayFilter = 100;
+                $monthFilter = date('m');
+                $yearFilter = date('Y');
+            }
         } else {
-            $dateFilter = date('Y-m');
-            $dayFilter = 100;
-            $monthFilter = date('m');
-            $yearFilter = date('Y');
+            $dataOrderSelected = $modelOrder->getInfo($orderSelectedId);
+            # uu tien theo thang nam cua don hang dc chon
+            $orderReceiveDate = $dataOrderSelected->receiveDate();
+            $monthFilter = (int)$hFunction->getMonthFromDate($orderReceiveDate);
+            $yearFilter = (int)$hFunction->getYearFromDate($orderReceiveDate);
+            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
+
+
         # lay thong tin cong ty cung he thong
         $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
-        if ($hFunction->checkEmpty($companyFilterId) || $companyFilterId == 1000)  $companyFilterId = $companyLoginId;
+        if ($hFunction->checkEmpty($companyFilterId) || $companyFilterId == 1000) $companyFilterId = $companyLoginId;
         if ($staffFilterId > 0) {
             $listStaffId = [$staffFilterId];
         } else {
@@ -73,24 +87,24 @@ class OrderController extends Controller
         }
 
         if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-            $dataOrderSelect = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus);
+            $dataOrderFilterSelect = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus);
         } else {
-            $dataOrderSelect = $modelOrder->selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $orderFilterName, $dateFilter, $paymentStatus);
+            $dataOrderFilterSelect = $modelOrder->selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $orderFilterName, $dateFilter, $paymentStatus);
         }
 
-        $dataMoneyOrder = $dataOrderSelect->get();
+        $dataMoneyOrder = $dataOrderFilterSelect->get();
 
-        $dataOrder = $dataOrderSelect->paginate(30);
+        $dataOrder = $dataOrderFilterSelect->paginate(30);
 
         $totalMoneyOrder = $modelOrder->totalMoneyOfListOrder($dataMoneyOrder); // tong tien
         $totalMoneyDiscountOrder = $modelOrder->totalMoneyDiscountOfListOrder($dataMoneyOrder); // tong tien giam
         $totalMoneyPaidOrder = $modelOrder->totalMoneyPaidOfListOrder($dataMoneyOrder); // tong tien da thanh toan
         $totalMoneyUnPaidOrder = $modelOrder->totalMoneyUnPaidOfListOrder($dataMoneyOrder); // chua thanh toán
-        $totalOrders = count($dataMoneyOrder);
+        $totalOrders = $hFunction->getCount($dataMoneyOrder);
 
         //danh sach NV
         $dataStaff = $modelCompany->staffInfoActivityOfCompanyId([$companyFilterId]);
-        return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany','modelOrder', 'dataStaff', 'dataAccess', 'dataOrder', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId','dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId'));
+        return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany', 'modelOrder', 'dataStaff', 'dataAccess', 'dataOrder', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId', 'dataOrderSelected'));
 
     }
 
