@@ -1110,6 +1110,12 @@ class QcOrder extends Model
         return QcOrder::where('company_id', $companyId)->where('finishStatus', $this->getDefaultNotFinishStatus())->orderBy('name', 'ASC')->get();
     }
 
+    # lay 1 don hang sau cung 1 cong ty
+    public function lastInfoOfCompany($companyId)
+    {
+        return QcOrder::where('company_id', $companyId)->orderBy('order_id', 'DESC')->first();
+    }
+
     //---------- thương trien khai thi cong -----------
     public function bonus()
     {

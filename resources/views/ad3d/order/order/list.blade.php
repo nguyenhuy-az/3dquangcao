@@ -246,7 +246,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
             </div>
         </div>
         {{--Thông tin đơn hàng--}}
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="background-color: whitesmoke;">
             <div class="row">
                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2" style="padding: 0;">
                     <ul class="list-group">
@@ -268,13 +268,25 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                             }
                                             ?>
                                             @if($hFunction->checkCount($dataOrderInMonthYear))
-                                                <li class="list-group-item" style="padding-right: 0; border-top: none; border-bottom: none;border-right: none;">
-                                                    <a data-href="#" onclick="qc_main.toggle('#container_{!! $m.$y !!}');"
-                                                       class="qc-cursor-pointer @if($m == $monthFilter) qc-link-red @endif"
-                                                       style="padding: 0; border-top: none; border-bottom: 0; color: black;">
-                                                        <i class="glyphicon glyphicon-plus"></i>
-                                                        Tháng {!! $m !!}
-                                                    </a>
+                                                <li class="list-group-item"
+                                                    style="padding-right: 0; border-top: none; border-bottom: none;border-right: none;">
+                                                    @if($m == $monthFilter)
+                                                        <a data-href="#"
+                                                           onclick="qc_main.toggle('#container_{!! $m.$y !!}');"
+                                                           class="qc-cursor-pointer qc-link-red"
+                                                           style="padding: 0; border-top: none; border-bottom: 0;">
+                                                            <i class="glyphicon glyphicon-minus"></i>
+                                                            Tháng {!! $m !!}
+                                                        </a>
+                                                    @else
+                                                        <a data-href="#"
+                                                           onclick="qc_main.toggle('#container_{!! $m.$y !!}');"
+                                                           class="qc-cursor-pointer"
+                                                           style="padding: 0; border-top: none; border-bottom: 0; color: black;">
+                                                            <i class="glyphicon glyphicon-plus"></i>
+                                                            Tháng {!! $m !!}
+                                                        </a>
+                                                    @endif
                                                     <span class="badge" style="background: none; color: green;">
                                                         {!! $hFunction->getCount($dataOrderInMonthYear) !!}
                                                     </span>
@@ -290,10 +302,11 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                             $orderYear = (int)$hFunction->getYearFromDate($orderReceiveDate);
                                                             $orderHref = route('qc.ad3d.order.order.get', "null/0/$orderMonth/$orderYear/100/null/null/0/$orderId");
                                                             ?>
-                                                            <li class="qc-link list-group-item" style="padding-left: 0; padding-right: 0; border-bottom: none;border-right: none;">
+                                                            <li class="list-group-item"
+                                                                style="padding-left: 0; padding-right: 0; border-bottom: none;border-right: none;">
                                                                 &ensp;
                                                                 <i class="glyphicon glyphicon-list-alt"></i>
-                                                                <a href="{!! $orderHref !!}">
+                                                                <a class="qc-link" href="{!! $orderHref !!}">
                                                                     <span @if($orderSelectedId == $orderId) style="background-color: black;color: yellow; padding: 3px;" @endif>
                                                                         {!! $order->name() !!}
                                                                     </span>
@@ -315,7 +328,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                     </ul>
                                 </li>
                             @else
-                                <li class=" list-group-item">
+                                <li class="list-group-item" style="padding-right: 0; border-right: none;">
                                     <a data-href="#" class="qc-cursor-pointer" style="color: black;"
                                        onclick="qc_main.toggle('#container_{!! $y !!}');">
                                         <i class="glyphicon glyphicon-plus"></i>
@@ -335,7 +348,8 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                             }
                                             ?>
                                             @if($hFunction->checkCount($dataOrderInMonthYear))
-                                                <li class="list-group-item">
+                                                <li class="list-group-item"
+                                                    style="padding-right: 0; border-top: none; border-bottom: none;border-right: none;">
                                                     <a onclick="qc_main.toggle('#container_{!! $m.$y !!}');"
                                                        class="qc-cursor-pointer"
                                                        style="padding: 0; border-top: none; border-bottom: none;">
@@ -358,7 +372,8 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                             $orderYear = (int)$hFunction->getYearFromDate($orderReceiveDate);
                                                             $orderHref = route('qc.ad3d.order.order.get', "null/0/$orderMonth/$orderYear/100/null/null/0/$orderId");
                                                             ?>
-                                                            <li class="list-group-item">
+                                                            <li class="list-group-item"
+                                                                style="padding-left: 0; padding-right: 0; border-bottom: none;border-right: none;">
                                                                 <a class="qc-link" href="{!! $orderHref !!}"
                                                                    style="padding-top: 0;padding-bottom: 0; border-top: none; border-bottom: none;">
                                                                     <span>
@@ -377,15 +392,320 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                         @endfor
                     </ul>
                 </div>
-                <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
+                <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10"
+                     style="@if($mobileStatus) padding-left: 0; @endif padding-right: 0; border: 1px solid #d7d7d7; min-height: 500px;">
                     @if($hFunction->checkCount($dataOrderSelected))
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <?php
+                        $orderSelectedReceiveStaff = $dataOrderSelected->staffReceive; // thong tin NV nhận
+                        # tong tien chua giam gia
+                        $orderTotalPrice = $dataOrderSelected->totalPrice();
+                        # tong tien giam
+                        $orderTotalDiscount = $dataOrderSelected->totalMoneyDiscount();
+                        # tong tien VAT
+                        $orderTotalVat = $dataOrderSelected->totalMoneyOfVat();
+                        # thong tin san pham
+                        $dataProduct = $dataOrderSelected->productActivityOfOrder();
+                        #anh thiet ke tong quat
+                        $dataOrderImage = $dataOrderSelected->orderImageInfoActivity();
+
+                        # thong tin khach hang
+                        $dataCustomer = $dataOrderSelected->customer;
+                        ?>
+                        <div class="row" style="margin-bottom: 10px;">
+                            {{--thông tin đơn hàng--}}
+                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                 <div class="panel panel-default" style="margin-bottom: 0;">
-                                    <div class="panel-body">
-                                        <b>{!! $dataOrderSelected->name() !!}</b>
+                                    <div class="panel-body" style="padding-top: 0;">
+                                        <h3 style="color: blue;">{!! $dataOrderSelected->name() !!}</h3>
+                                        <table class="table table-hover qc-margin-bot-none">
+                                            <tr>
+                                                <td>
+                                                    <em class=" qc-color-grey">Mã ĐH:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $dataOrderSelected->orderCode() !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Người nhận :</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <img class="media-object"
+                                                         style="background-color: white; width: 30px;height: 30px; border: 1px solid #d7d7d7;border-radius: 15px;"
+                                                         src="{!! $orderSelectedReceiveStaff->pathAvatar($orderSelectedReceiveStaff->image()) !!}">
+                                                    <b>{!! $dataOrderSelected->staffReceive->lastName() !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Ngày nhận:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrderSelected->receiveDate()) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Ngày giao:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrderSelected->deliveryDate()) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Đ/c thi công:</em>
+                                                </td>
+                                                <td class="text-right">
+                                            <span class="pull-right">{!! $dataOrderSelected->constructionAddress() !!}
+                                                - ĐT: {!! $dataOrderSelected->constructionPhone() !!}
+                                                - tên: {!! $dataOrderSelected->constructionContact() !!}
+                                            </span>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
+                            </div>
+                            {{--Thông tin thanh toán--}}
+                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                <div class="panel panel-default" style="margin-bottom: 0;">
+                                    <div class="panel-body" style="padding-top: 0;">
+                                        <table class="table table-hover qc-margin-bot-none">
+                                            <tr>
+                                                <td>
+                                                    <em class=" qc-color-grey">Thành tiền:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $hFunction->currencyFormat($orderTotalPrice) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">
+                                                        Giảm {!! $dataOrderSelected->discount() !!}%:
+                                                    </em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>- {!! $hFunction->currencyFormat($orderTotalDiscount) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Tổng tiền chưa VAT:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b style="color: red;">
+                                                        {!! $hFunction->currencyFormat($orderTotalPrice - $orderTotalDiscount) !!}
+                                                    </b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">VAT {!! $dataOrderSelected->vat() !!}
+                                                        %:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>+ {!! $hFunction->currencyFormat($orderTotalVat) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr style="border-top: 1px solid grey;">
+                                                <td>
+                                                    <em class="qc-color-grey">Tổng tiền có VAT:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b class="qc-color-red">{!! $hFunction->currencyFormat($orderTotalPrice - $orderTotalDiscount + $orderTotalVat ) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Đã thanh toán:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>- {!! $hFunction->currencyFormat($dataOrderSelected->totalPaid()) !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr style="border-top: 1px solid grey;">
+                                                <td>
+                                                    <em class="qc-color-grey">Còn lại:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b class="qc-color-red">{!! $hFunction->currencyFormat($dataOrderSelected->totalMoneyUnpaid()) !!}</b>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{--thông tin khách hàng--}}
+                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                <div class="panel panel-default" style="margin-bottom: 0;">
+                                    <div class="panel-body" style="padding-top: 0;">
+                                        <table class="table table-hover qc-margin-bot-none">
+                                            <tr>
+                                                <th colspan="2">
+                                                    <i class="qc-font-size-16 glyphicon glyphicon-user"></i>
+                                                    <b class="qc-color-red">KHÁCH HÀNG</b>
+                                                </th>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Tên:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $dataCustomer->name() !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Điện thoại:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $dataCustomer->phone() !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">Zalo:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $dataCustomer->zalo() !!}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <em class="qc-color-grey">ĐC\:</em>
+                                                </td>
+                                                <td class="text-right">
+                                                    <b>{!! $dataCustomer->address() !!}</b>
+                                                </td>
+                                            </tr>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        {{--sản phẩm--}}
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                @foreach($dataProduct as $product)
+                                    <?php
+                                    $productId = $product->productId();
+                                    $productWidth = $product->width();
+                                    $productHeight = $product->height();
+                                    $productAmount = $product->amount();
+                                    $productDescription = $product->description();
+                                    $dataWorkAllocation = $product->workAllocationInfoOfProduct();
+                                    $designImage = $product->designImage();
+                                    # thiet ke dang ap dung
+                                    $dataProductDesign = $product->productDesignInfoApplyActivity();
+                                    # thiet ke san pham thi cong
+                                    $dataProductDesignConstruction = $product->productDesignInfoConstructionHasApply();
+                                    # san pham da ket thuc hay chua
+                                    $checkFinishStatus = $product->checkFinishStatus();
+                                    ?>
+                                    <div class="row">
+                                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                            <table class="table table-bordered"
+                                                   style="border: 1px solid grey; background-color: white; ">
+                                                <tr>
+                                                    <td class="text-center" style="width: 100px;">
+                                                        <b style="color: red; font-size: 1.5em;">
+                                                            SP {!! $sp_n_o = (isset($sp_n_o))?$sp_n_o+1:1 !!}
+                                                        </b>
+                                                        @if($hFunction->checkCount($dataProductDesign))
+                                                            <br/>
+                                                            <a class="qc-link qc_work_order_product_design_image_view"
+                                                               data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
+                                                                <img style="width: 100%; height: auto; border: 1px solid grey;"
+                                                                     title="Ảnh thiết kế"
+                                                                     src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
+                                                            </a>
+                                                        @else
+                                                            <br/>
+                                                            <em class="qc-color-grey">Không có thiết kế</em>
+                                                        @endif
+                                                    </td>
+                                                    <td style="width: 300px;">
+                                                        <label style="font-size: 1.5em;">{!! ucwords($product->productType->name()) !!}</label>
+                                                        <br/>
+                                                        <em>- Ngang: </em>
+                                                        <span> {!! $productWidth !!} mm</span>
+                                                        <em>- Cao: </em>
+                                                        <span>{!! $productHeight !!} mm</span>
+                                                        <em>- Số lượng: </em>
+                                                        <span style="color: red;">{!! $productAmount !!}</span>
+                                                        @if(!$hFunction->checkEmpty($productDescription))
+                                                            <br/>
+                                                            <em>- Ghi chú: </em>
+                                                            <em style="color: grey;">- {!! $productDescription !!}</em>
+                                                        @endif
+                                                        <br/>
+                                                        @if(!$checkFinishStatus)
+                                                            <span style="color: blue;">Đang làm</span>
+                                                        @else
+                                                            <em style="color: blue;">Đã xong</em>
+                                                            <em style="color: grey;">-</em>
+                                                            @if($product->productRepairActivityOfProduct())
+                                                                <span style="background-color: red; color: yellow; padding: 3px;">ĐANG SỬA CHỬA</span>
+                                                            @else
+                                                                {{--<a class="qc_product_repair_get qc-link-red-bold"--}}
+                                                                {{--data-href="{!! route('qc.work.orders.construction.detail.repair.get', $productId) !!}">--}}
+                                                                {{--BÁO SỬA CHỮA--}}
+                                                                {{--</a>--}}
+                                                            @endif
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if($hFunction->checkCount($dataProductDesignConstruction))
+                                                            @foreach($dataProductDesignConstruction as $productDesignConstruction)
+                                                                <a class="qc_work_order_product_design_image_view qc-link"
+                                                                   data-href="{!! route('qc.work.orders.product_design.view.get', $productDesignConstruction->designId()) !!}">
+                                                                    <img style="width: 70px; height: auto; margin-bottom: 5px; border: 1px solid grey;"
+                                                                         title="Ảnh thiết kế thi công"
+                                                                         src="{!! $productDesignConstruction->pathSmallImage($productDesignConstruction->image()) !!}">
+                                                                </a>
+                                                            @endforeach
+                                                        @else
+                                                            <span style="background-color: black; color: lime;">Không có TK thi công </span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                @if($hFunction->checkCount($dataWorkAllocation))
+                                                    <tr>
+                                                        <td colspan="3">
+                                                            <ul class="list-group">
+                                                                @foreach($dataWorkAllocation as $workAllocation)
+                                                                    <li class="list-group-item"
+                                                                        style="padding-top: 0;border-top: none; border-bottom: none;">
+                                                                        sdfdsf
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                @else
+                                                    <tr>
+                                                        <td colspan="3" style="border-top: 0;">
+                                                            @if($product->checkFinishStatus())
+                                                                <em class="qc-color-grey">Đã kết thúc</em>
+                                                                <em> - KHÔNG CÓ THI CÔNG</em>
+                                                            @else
+                                                                <em class="qc-color-red"> CHƯA TRIỂN KHAI THI
+                                                                    CÔNG</em>
+                                                            @endif
+                                                        </td>
+                                                    </tr>   
+                                                @endif
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     @else
