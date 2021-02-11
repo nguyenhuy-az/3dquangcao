@@ -9,6 +9,7 @@ use App\Models\Ad3d\ProductRepair\QcProductRepair;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\StaffNotify\QcStaffNotify;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
+use App\Models\Ad3d\WorkAllocationReport\QcWorkAllocationReport;
 use Illuminate\Database\Eloquent\Model;
 
 class QcProduct extends Model
@@ -475,6 +476,20 @@ class QcProduct extends Model
     }
 
     //========= ========== ========== LAY THONG TIN CO BAN ========== ========== ==========
+    # thong tin bao cao thi cong cua 1 san pham
+    public function workAllocationReportInfo($productId = null)
+    {
+        $modelWorkAllocationReport = new QcWorkAllocationReport();
+        return $modelWorkAllocationReport->infoOfProduct($this->checkIdNull($productId));
+    }
+
+    #thong tin bao cao phan viec - TRONG NGAY
+    public function workAllocationReportInfoInDate($date, $productId = null)
+    {
+        $modelWorkAllocationReport = new QcWorkAllocationReport();
+        return $modelWorkAllocationReport->infoOfProductInDate($date, $this->checkIdNull($productId));
+    }
+
     # danh sach sp thu danh sach id
     public function infoFromListId($listProductId)
     {

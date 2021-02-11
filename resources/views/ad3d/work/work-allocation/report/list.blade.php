@@ -153,14 +153,14 @@ $subObject = isset($dataAccess['subObject']) ? $dataAccess['subObject'] : 'workA
                                             </a>
                                         @endforeach
                                     @endif
-                                        @if($hFunction->checkCount($dataTimekeepingProvisionalImage))
-                                            @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
-                                                <a class="qc-link" data-href="#">
-                                                    <img style="margin-right: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;"
-                                                         src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
-                                                </a>
-                                            @endforeach
-                                        @endif
+                                    @if($hFunction->checkCount($dataTimekeepingProvisionalImage))
+                                        @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
+                                            <a class="qc-link" data-href="#">
+                                                <img style="margin-right: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;"
+                                                     src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
+                                            </a>
+                                        @endforeach
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

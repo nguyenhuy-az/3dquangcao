@@ -35,7 +35,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
     Chi tiết thi công sản phẩm
 @endsection
 @section('qc_work_order_body')
-    <div id="qc_order_order_construction_wrap" class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+    <div id="qc_order_order_construction_wrap" class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
          style="padding-bottom: 50px;">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
@@ -44,13 +44,13 @@ $dataProduct = $dataOrder->productActivityOfOrder();
         </div>
         {{-- BÀN GIAO CÔNG TRÌNH --}}
         <div class="row">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <h3 style="color: red;">THI CÔNG: {!! $dataOrder->name() !!}</h3>
             </div>
         </div>
         @if($orderFinishStatus)
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
                      style="background-color: grey; padding-bottom: 10px; padding-top: 10px;">
                     <span style="color: yellow; ">ĐƠN HÀNG ĐÃ XONG</span>
                 </div>
@@ -58,32 +58,32 @@ $dataProduct = $dataOrder->productActivityOfOrder();
         @endif
         {{-- thông tin đơn hàng --}}
         <div class="row">
-            <div class="col-sx-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
                 <em class=" qc-color-grey">Mã ĐH:</em>
                 <b class="pull-right">{!! $dataOrder->orderCode() !!}</b>
             </div>
-            <div class="col-sx-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
                 <em class="qc-color-grey">Ngày nhận:</em>
                 <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->receiveDate()) !!}</b>
             </div>
-            <div class="col-sx-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
                 <em class="qc-color-grey">Ngày giao:</em>
                 <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrder->deliveryDate()) !!}</b>
             </div>
-            <div class="col-sx-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
                 <em class="qc-color-grey">TT thi công:</em>
                 <span class="pull-right">
                     {!! $dataOrder->constructionAddress() !!}
                 </span>
             </div>
-            <div class="col-sx-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
                 <em class="qc-color-grey">Liên hệ:</em>
                 <span class="pull-right">
                     ĐT: {!! $dataOrder->constructionPhone() !!}
                     - tên: {!! $dataOrder->constructionContact() !!}
                 </span>
             </div>
-            <div class="col-sx-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
+            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4" style="border-left: 3px solid grey;">
                 <em class="qc-color-grey">Phụ trách thi công:</em>
                 @if($hFunction->checkCount($dataOrderAllocation))
                     <span class="pull-right">{!! $dataOrderAllocation->receiveStaff->fullName() !!}</span>
@@ -94,13 +94,13 @@ $dataProduct = $dataOrder->productActivityOfOrder();
         </div>
         {{-- THI CONG SAN PHAM --}}
         <div class="row">
-            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <label style="color: blue;font-size: 1.5em;">THI CÔNG SẢN PHẨM</label>
             </div>
         </div>
         @if($hFunction->checkCount($dataProduct))
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
                     @foreach($dataProduct as $product)
                         <?php
                         $productId = $product->productId();
@@ -118,7 +118,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                         $checkFinishStatus = $product->checkFinishStatus();
                         ?>
                         <div class="row">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" style="border: 1px solid grey;">
                                         <tr style="background-color: whitesmoke;">
@@ -307,7 +307,7 @@ $dataProduct = $dataOrder->productActivityOfOrder();
 
         @else
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <em>Sản phẩm bị đã bị hủy hoặc khong có</em>
                 </div>
             </div>

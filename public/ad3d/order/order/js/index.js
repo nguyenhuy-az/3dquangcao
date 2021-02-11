@@ -25,160 +25,6 @@ var qc_ad3d_order_order = {
                 qc_ad3d_submit.ajaxFormHasReload(frm, containNotify, true);
             }
         }
-    },
-    add: {
-        addProduct: function (href) {
-            qc_ad3d_submit.ajaxNotReload(href, '#qc_order_add_product_wrap', false);
-        },
-        save: function (frm) {
-            var txtCustomerName = $(frm).find("input[name='txtCustomerName']");
-            var txtPhone = $(frm).find("input[name='txtPhone']");
-            var txtZalo = $(frm).find("input[name='txtZalo']");
-            var txtAddress = $(frm).find("input[name='txtAddress']");
-
-            // thông in khách hàng
-            if (qc_main.check.inputNull(txtCustomerName, 'Nhập tên khách hàng')) {
-                txtCustomerName.focus();
-                return false;
-            }
-            if (txtPhone.val() == '' && txtZalo.val() == '' && txtAddress.val() == '') {
-                alert('Phải nhập thông tin liên lạc của khách hàng: Điện thoại / Zalo / Địa chỉ');
-                txtPhone.focus();
-                return false;
-            }
-
-            // thông tin sản phẩm
-            if ($('#frmAd3dOrderAdd .qc_ad3d_order_product_add').length > 0) {
-                qc_ad3d_order_order.add.checkProductInput();
-            } else {
-                alert('Nhập sản phẩm');
-                return false;
-            }
-        },
-        checkProductInput: function () {
-            $('#frmAd3dOrderAdd .qc_ad3d_order_product_add').filter(function () {
-                if ($(this).is(':last-child')) {
-                    var cbProductType = $(this).find('.cbProductType');
-                    var txtWidth = $(this).find('.txtWidth');
-                    var txtHeight = $(this).find('.txtHeight');
-                    //var depth = $(this).find('.cbProductType');
-                    var txtAmount = $(this).find('.txtAmount');
-                    var txtPrice = $(this).find('.txtPrice');
-                    if (cbProductType.val() != '' || txtWidth.val() != '' || txtHeight.val() != '' || txtAmount.val() != '') {
-                        if (qc_main.check.inputNull(cbProductType, 'Chọn loại sản phẩm')) {
-                            cbProductType.focus();
-                            return false;
-                        }
-                        if (txtWidth.val() == 0 || txtWidth.val() == '') {
-                            alert('Nhập chiều rộng');
-                            txtWidth.focus();
-                            return false;
-                        }
-
-                        if (txtHeight.val() == 0 || txtHeight.val() == '') {
-                            alert('Nhập chiều cao');
-                            txtHeight.focus();
-                            return false;
-                        }
-                        if (qc_main.check.inputNull(txtAmount, 'Nhập số lượng sản phẩm')) {
-                            txtAmount.focus();
-                            return false;
-                        }
-                        if (qc_main.check.inputNull(txtPrice, 'Nhập giá sản phẩm')) {
-                            txtPrice.focus();
-                            return false;
-                        } else {
-                            qc_ad3d_order_order.add.checkOrder(true);
-                        }
-                    } else {
-                        alert('Nhập thông tin sản phẩm');
-                        return false;
-                    }
-                } else {
-                    var cbProductType = $(this).find('.cbProductType');
-                    var txtWidth = $(this).find('.txtWidth');
-                    var txtHeight = $(this).find('.txtHeight');
-                    //var depth = $(this).find('.cbProductType');
-                    var txtAmount = $(this).find('.txtAmount');
-                    var txtPrice = $(this).find('.txtPrice');
-                    if (cbProductType.val() != '' || txtWidth.val() != '' || txtHeight.val() != '' || txtAmount.val() != '') {
-                        if (qc_main.check.inputNull(cbProductType, 'Chọn loại sản phẩm')) {
-                            cbProductType.focus();
-                            return false;
-                        }
-                        if (txtWidth.val() == 0 || txtWidth.val() == '') {
-                            alert('Nhập chiều rộng');
-                            txtWidth.focus();
-                            return false;
-                        }
-
-                        if (txtHeight.val() == 0 || txtHeight.val() == '') {
-                            alert('Nhập chiều cao');
-                            txtHeight.focus();
-                            return false;
-                        }
-                        if (qc_main.check.inputNull(txtAmount, 'Nhập số lượng sản phẩm')) {
-                            txtAmount.focus();
-                            return false;
-                        }
-                        if (qc_main.check.inputNull(txtPrice, 'Nhập giá sản phẩm')) {
-                            txtPrice.focus();
-                            return false;
-                        }
-                    } else {
-                        alert('Nhập thông tin sản phẩm');
-                        return false;
-                    }
-                }
-
-            });
-        },
-        checkOrder: function (productStatus) {
-            var txtOrderName = $('#frmAd3dOrderAdd').find("input[name='txtOrderName']");
-            var txtDateReceive = $('#frmAd3dOrderAdd').find("input[name='txtDateReceive']");
-            var txtDateDelivery = $('#frmAd3dOrderAdd').find("input[name='txtDateDelivery']");
-            var txtBeforePay = $('#frmAd3dOrderAdd').find("input[name='txtBeforePay']");
-            if (productStatus) {
-                // thông tin đơn hàng
-                if (qc_main.check.inputNull(txtOrderName, 'Nhập tên đơn hàng')) {
-                    txtOrderName.focus();
-                    return false;
-                }
-
-                if (qc_main.check.inputNull(txtDateReceive, 'Nhập ngày nhận')) {
-                    txtDateReceive.focus();
-                    return false;
-                }
-                if (qc_main.check.inputNull(txtDateDelivery, 'Nhập ngày giao')) {
-                    txtDateDelivery.focus();
-                    return false;
-                } else {
-                    if (confirm('Thông tin dã đúng và tạo đơn hàng ?')) {
-                        qc_ad3d_submit.normalForm('#frmAd3dOrderAdd');
-                        //qc_ad3d_submit.ajaxFormHasReload('#frmAd3dOrderAdd', '', false);
-                        //qc_main.scrollTop();
-                    }
-                }
-            } else {
-                alert('Nhập thông tin sản phẩm');
-                return false;
-            }
-        },
-    },
-    edit: {
-        get: function (listObject) {
-            var href = $(listObject).parents('.qc_ad3d_list_content').data('href-edit');
-            var contain = qc_ad3d.bodyIdName();
-            qc_ad3d_submit.ajaxNotReload(href, $('#' + contain), false);
-        },
-        post: function () {
-
-        }
-    },
-    delete: function (listObject) {
-        if (confirm('Bạn muốn hủy đơn hàng này?')) {
-            qc_ad3d_submit.ajaxHasReload($(listObject).parents('.qc_ad3d_list_content').data('href-del') + '/' + $(listObject).data('object'), '', false);
-        }
     }
 }
 /*kiem tra so dt khi nhap don hang*/
@@ -429,35 +275,24 @@ $(document).ready(function () {
         var cbStaffFilterId = $('.cbStaffFilterId').val();
         var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val() + '/' + $(this).val();
         qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' +  txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
-    })
-});
-// ======= ==========    XAC NHAN DON HANG ========== ==========
-/*xac nhan don hang*/
-$(document).ready(function () {
-    $('.qc_ad3d_list_object').on('click', '.qc_confirm', function () {
-        qc_ad3d_order_order.confirm.getForm($(this).parents('.qc_ad3d_list_object'));
-    })
-
-    $('body').on('click', '.frmAd3dOrderConfirm .qc_save', function () {
-        qc_ad3d_order_order.confirm.save($(this).parents('.frmAd3dOrderConfirm'));
-    })
+    });
 });
 
 //====== ======= ====== XEM CHI TIET ====== ======= ======
 $(document).ready(function () {
     //------ xem chi tiet don hang -------
-    $('.qc_ad3d_list_object').on('click', '.qc_view', function () {
+    $('#qc_ad3d_order_order_wrap').on('click', '.qc_view', function () {
         qc_ad3d_order_order.view($(this).parents('.qc_ad3d_list_object'));
     });
 
     //------ xem chi tiet khach hang -------
-    $('.qc_ad3d_list_object').on('click', '.qc_view_customer', function () {
+    $('#qc_ad3d_order_order_wrap').on('click', '.qc_view_customer', function () {
         var href = $(this).parents('.qc_ad3d_list_content').data('href-view-customer') + '/' + $(this).data('customer');
         qc_ad3d_order_order.viewCustomer(href);
     });
 
     //------ xem chi tiet anh bao cao -------
-    $('.qc_ad3d_list_object').on('click', '.qc_work_allocation_report_image_view', function () {
+    $('#qc_ad3d_order_order_wrap').on('click', '.qc_work_allocation_report_image_view', function () {
         qc_ad3d_order_order.viewAllocationReportImage($(this).data('href'));
     });
 
@@ -467,42 +302,9 @@ $(document).ready(function () {
 //====== ======= ====== TRIEN KHAI THI CONG ====== ======= ======
 // huy ban giao
 $(document).ready(function () {
-    $('#qc_ad3d_order_order_construction_wrap').on('click', '.qc_delete_construction', function () {
-        if (confirm('Bạn muốn hủy bàn giao công trình này?')) {
-            qc_ad3d_submit.ajaxHasReload($(this).data('href'), '', false);
-        }
-    });
-    //------ xem chi tiet thi cong san pham -------
-    $('#qc_ad3d_order_order_construction_wrap').on('click', '.qc_work_allocation_view', function () {
-        qc_ad3d_submit.ajaxNotReload($(this).data('href'), $('#' + qc_ad3d.bodyIdName()), false);
-        qc_main.scrollTop();
-    });
     //------ xem chi tiet anh bao cao -------
     $('#qc_ad3d_order_order_construction_wrap').on('click', '.qc_work_allocation_report_image_view', function () {
         qc_ad3d_order_order.viewAllocationReportImage($(this).data('href'));
     });
 });
-//====== ======= ====== XOA DON HANG ====== ======= ======
-$(document).ready(function () {
-    $('.qc_ad3d_list_object').on('click', '.qc_delete', function () {
-        qc_ad3d_order_order.delete($(this).parents('.qc_ad3d_list_object'));
-    })
-});
 
-
-//-------------------- add ------------
-$(document).ready(function () {
-    //add product
-    $('#frmAd3dOrderAdd').on('click', '.qc_order_product_add', function () {
-        qc_ad3d_order_order.add.addProduct($(this).data('href'));
-    })
-    //delete product
-    $('body').on('click', '.qc_ad3d_order_product_add .qc_delete', function () {
-        $(this).parents('.qc_ad3d_order_product_add').remove();
-    })
-
-    //save
-    $('#frmAd3dOrderAdd').on('click', '.qc_save', function () {
-        qc_ad3d_order_order.add.save($(this).parents('#frmAd3dOrderAdd'));
-    })
-});

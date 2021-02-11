@@ -17,12 +17,12 @@ $workId = $dataWork->workId();
 @extends('work.work-allocation.work-allocation.index')
 @section('qc_work_allocation_body')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom: 5px;">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-bottom: 5px;">
             <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
                 Về trang trước
             </a>
         </div>
-        <div class="qc_work_allocation_wrap qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="qc_work_allocation_wrap qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
             @include('work.work-allocation.menu',compact('modelStaff'))
 
             <div class="row">
@@ -35,7 +35,7 @@ $workId = $dataWork->workId();
                     </h4>
                 </div>
             </div>
-            <div class="qc_work_allocation_contain qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="qc_work_allocation_contain qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="row">
                     <div class="table-responsive">
                         <table class="table table-bordered qc-margin-bot-none">
@@ -67,7 +67,7 @@ $workId = $dataWork->workId();
                                 <td></td>
                                 <td></td>
                                 <td style="padding:0;">
-                                    <select class="cbWorkAllocationMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                    <select class="cbWorkAllocationMonthFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                             style="height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
@@ -80,7 +80,7 @@ $workId = $dataWork->workId();
                                             </option>
                                         @endfor
                                     </select>
-                                    <select class="cbWorkAllocationYearFilter col-sx-8 col-sm-8 col-md-8 col-lg-8"
+                                    <select class="cbWorkAllocationYearFilter col-xs-8 col-sm-8 col-md-8 col-lg-8"
                                             style="height: 34px;"
                                             data-href="{!! $hrefIndex !!}">
                                         <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
@@ -232,7 +232,7 @@ $workId = $dataWork->workId();
                                             <em>
                                                 - Ghi chú:
                                             </em>
-                                            @if(!empty($allocationNote))
+                                            @if(!$hFunction->checkEmpty($allocationNote))
                                                 {!! $allocationNote !!}
                                             @else
                                                 <span>Làm theo phân công</span>

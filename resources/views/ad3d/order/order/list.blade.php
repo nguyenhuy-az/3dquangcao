@@ -42,7 +42,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
             background-color: grey;
         }
     </style>
-    <div class="row">
+    <div id="qc_ad3d_order_order_wrap" class="row">
         {{-- tiêu đề --}}
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
@@ -374,6 +374,8 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                             ?>
                                                             <li class="list-group-item"
                                                                 style="padding-left: 0; padding-right: 0; border-bottom: none;border-right: none;">
+                                                                &nbsp;
+                                                                <i class="glyphicon glyphicon-list-alt"></i>
                                                                 <a class="qc-link" href="{!! $orderHref !!}"
                                                                    style="padding-top: 0;padding-bottom: 0; border-top: none; border-bottom: none;">
                                                                     <span>
@@ -415,8 +417,19 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                             {{--thông tin đơn hàng--}}
                             <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                 <div class="panel panel-default" style="margin-bottom: 0;">
-                                    <div class="panel-body" style="padding-top: 0;">
+                                    <div class="panel-heading" style="padding-top: 0; background-color: white;">
                                         <h3 style="color: blue;">{!! $dataOrderSelected->name() !!}</h3>
+                                        <a class="qc-link" title="In đơn hàng"
+                                           href="{!! route('qc.ad3d.order.order.print.get', $orderId) !!}">
+                                            <i class="qc-font-size-14 fa fa-print"></i>
+                                        </a>
+                                        &nbsp;&nbsp;
+                                        <a class="qc-link" title="In nghiệm thu"
+                                           href="{!! route('qc.ad3d.order.order.confirm.print.get', $orderId) !!}">
+                                            <i class="qc-font-size-14 glyphicon glyphicon-list-alt"></i>
+                                        </a>
+                                    </div>
+                                    <div class="panel-body" style="padding-top: 0;">
                                         <table class="table table-hover qc-margin-bot-none">
                                             <tr>
                                                 <td>
@@ -609,9 +622,9 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                     $checkFinishStatus = $product->checkFinishStatus();
                                     ?>
                                     <div class="row">
-                                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                             <table class="table table-bordered"
-                                                   style="border: 1px solid grey; background-color: white; ">
+                                                   style="border: 1px solid grey; background-color: white; border-left: 3px solid grey;">
                                                 <tr>
                                                     <td class="text-center" style="width: 100px;">
                                                         <b style="color: red; font-size: 1.5em;">
@@ -676,15 +689,100 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                     </td>
                                                 </tr>
                                                 @if($hFunction->checkCount($dataWorkAllocation))
+                                                    <?php
+                                                    $dataWorkAllocationReport = $product->workAllocationReportInfo();
+                                                    ?>
                                                     <tr>
                                                         <td colspan="3">
-                                                            <ul class="list-group">
+                                                            <div class="row">
                                                                 @foreach($dataWorkAllocation as $workAllocation)
-                                                                    <li class="list-group-item"
-                                                                        style="padding-top: 0;border-top: none; border-bottom: none;">
-                                                                        sdfdsf
-                                                                    </li>
+                                                                    <?php
+                                                                    $dataStaffReceiveWorkAllocation = $workAllocation->receiveStaff;
+                                                                    ?>
+                                                                    <div class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+                                                                        <img class="media-object"
+                                                                             style="background-color: white; width: 30px;height: 30px; border: 1px solid #d7d7d7;border-radius: 15px;"
+                                                                             src="{!! $dataStaffReceiveWorkAllocation->pathAvatar($dataStaffReceiveWorkAllocation->image()) !!}">
+                                                                        <b>{!! $dataStaffReceiveWorkAllocation->lastName() !!}</b>
+                                                                    </div>
                                                                 @endforeach
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="3">
+                                                            <ul class="list-group"
+                                                                style="border-left: 1px solid #d7d7d7;">
+                                                                @if($hFunction->checkCount($dataWorkAllocationReport))
+                                                                    @foreach($dataWorkAllocationReport as $workAllocationReport)
+                                                                        <?php
+                                                                        $reportDate = $workAllocationReport->reportDate();
+                                                                        $showDate = date('d-m-Y', strtotime($reportDate));
+                                                                        $hasShowDate = true;
+                                                                        if (isset($checkShowDate)) {
+                                                                            if ($checkShowDate == $showDate) $hasShowDate = false;
+                                                                        }
+                                                                        $checkShowDate = $showDate;
+                                                                        $dateWorkAllocationReportInfoInDate = $workAllocationReport->infoOfProductInDate($showDate, $productId);
+                                                                        ?>
+                                                                        @if($hasShowDate)
+                                                                            <li class="list-group-item"
+                                                                                style="padding-top: 0;border-top: none; border-bottom: none;border-right: none;">
+                                                                                <i class="glyphicon glyphicon-minus"></i>
+                                                                                {!! $showDate !!}
+                                                                                <div class="row">
+                                                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                                                        @foreach($dateWorkAllocationReportInfoInDate as $workAllocationReportInfoInDate)
+                                                                                            <?php
+                                                                                            # bao cao truc tiep
+                                                                                            $dataWorkAllocationReportImage = $workAllocationReportInfoInDate->workAllocationReportImageInfo();
+                                                                                            #bao cao khi bao gio ra
+                                                                                            $dataTimekeepingProvisionalImage = $workAllocationReportInfoInDate->timekeepingProvisionalImageInfo();
+                                                                                            ?>
+                                                                                            {{--bao cao tu phan viec--}}
+                                                                                            @if($hFunction->checkCount($dataWorkAllocationReportImage))
+                                                                                                @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
+                                                                                                    <a class="pull-left qc_work_allocation_report_image_view qc-link"
+                                                                                                       title="Click xem chi tiết hình ảnh"
+                                                                                                       style="margin-left: 15px; position: relative;"
+                                                                                                       data-href="{!! route('qc.ad3d.order.order.work_allocation_report_image.view',$workAllocationReportImage->imageId()) !!}">
+                                                                                                        <img class="media-object"
+                                                                                                             style="width: 70px; height: 70px; border: 1px solid #d7d7d7;"
+                                                                                                             src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
+                                                                                                        <em style="position: absolute; bottom: 5px; right: 5px; color: red;">
+                                                                                                            {!! date('H:i',strtotime($reportDate)) !!}
+                                                                                                        </em>
+                                                                                                    </a>
+                                                                                                @endforeach
+                                                                                            @endif
+                                                                                            {{--bao cao tu cham cong--}}
+                                                                                            @if($hFunction->checkCount($dataTimekeepingProvisionalImage))
+                                                                                                @foreach($dataTimekeepingProvisionalImage as $timekeepingProvisionalImage)
+                                                                                                    <a class="pull-left qc_work_allocation_report_image_view qc-link"
+                                                                                                       title="Click xem chi tiết hình ảnh"
+                                                                                                       style="margin-left: 15px;position: relative;"
+                                                                                                       data-href="{!! route('qc.ad3d.order.order.work_allocation_report_timekeeping.image.view',$timekeepingProvisionalImage->imageId()) !!}">
+                                                                                                        <img class="media-object"
+                                                                                                             style="width: 70px; height: 70px; border: 1px solid #d7d7d7;"
+                                                                                                             src="{!! $timekeepingProvisionalImage->pathSmallImage($timekeepingProvisionalImage->name()) !!}">
+                                                                                                        <em style="position: absolute; bottom: 5px; right: 5px; color: red;">
+                                                                                                            {!! date('H:i',strtotime($reportDate)) !!}
+                                                                                                        </em>
+                                                                                                    </a>
+                                                                                                @endforeach
+                                                                                            @endif
+                                                                                        @endforeach
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        @endif
+                                                                    @endforeach
+                                                                @else
+                                                                    <li class="list-group-item"
+                                                                        style="padding-top: 0;border-top: none; border-bottom: none;border-right: none;">
+                                                                        <em style="color: grey;">Không có báo cáo</em>
+                                                                    </li>
+                                                                @endif
                                                             </ul>
                                                         </td>
                                                     </tr>
@@ -699,7 +797,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                                     CÔNG</em>
                                                             @endif
                                                         </td>
-                                                    </tr>   
+                                                    </tr>
                                                 @endif
 
                                             </table>
@@ -719,255 +817,6 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                             </div>
                         </div>
                     @endif
-                </div>
-            </div>
-        </div>
-
-
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="qc_ad3d_list_content qc-ad3d-table-container row">
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <tr style="background-color: black; color: yellow;">
-                            <th class="text-center" style="width:20px;"></th>
-                            <th>Mã</th>
-                            <th style="min-width: 150px;">ĐƠN HÀNG</th>
-                            {{--<th>Thiết kế</th>--}}
-                            <th style="min-width: 150px;">KHÁCH HÀNG</th>
-                            <th style="min-width: 100px;">NHÂN VIÊN</th>
-                            <th>THI CÔNG</th>
-                            <th>TIẾN ĐỘ</th>
-                            <th class="text-center">
-                                TG NHẬN <br/>
-                                GIAO
-                            </th>
-                            <th>THANH TOÁN</th>
-                            <th class="text-right">Tổng tiền</th>
-                            <th class="text-right">Giảm</th>
-                            <th class="text-right">
-                                ĐÃ THU
-                            </th>
-                            <th class="text-right">
-                                CHƯA THU
-                            </th>
-                        </tr>
-                        @if($hFunction->checkCount($dataOrder))
-                            <?php
-                            $perPage = $dataOrder->perPage();
-                            $currentPage = $dataOrder->currentPage();
-                            $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
-                            $sumOrderMoney = 0;
-                            $sumDiscountMoney = 0;
-                            $sumPaidMoney = 0;
-                            $sumUnPaidMoney = 0;
-
-                            ?>
-                            @foreach($dataOrder as $order)
-                                <?php
-                                $orderId = $order->orderId();
-                                $customerId = $order->customerId();
-                                $orderReceiveDate = $order->receiveDate();
-                                $checkFinishPayment = $order->checkFinishPayment();
-                                $finishStatus = $order->checkFinishStatus();
-                                $cancelStatus = $order->checkCancelStatus();
-                                $totalPrice = $order->totalPrice();
-                                $dataReceiveStaff = $order->staffReceive; // thong tin NV nhận
-                                $sumOrderMoney = $sumOrderMoney + $totalPrice;
-                                $totalDiscount = $order->totalMoneyDiscount();
-                                $sumDiscountMoney = $sumDiscountMoney + $totalDiscount;
-                                $totalPaid = $order->totalPaid();
-                                $sumPaidMoney = $sumPaidMoney + $totalPaid;
-                                $totalUnPaid = $totalPrice - $totalDiscount - $totalPaid;//$orders->totalMoneyUnpaid();
-                                $sumUnPaidMoney = $sumUnPaidMoney + $totalUnPaid;
-                                // san pham
-                                $dataProduct = $order->allProductOfOrder();
-
-                                // phan viec tren san pham
-                                $orderWorkAllocationAllInfo = $order->workAllocationOnProduct();
-                                ?>
-                                <tr class="qc_ad3d_list_object @if($n_o%2 == 1) info @endif"
-                                    data-object="{!! $orderId !!}">
-                                    <td class="text-center">
-                                        <b>{!! $n_o += 1 !!}</b>
-                                    </td>
-                                    <td class="text-center">
-                                        <em class="qc-color-grey">{!! $order->orderCode() !!}</em><br/>
-                                        @if($finishStatus)
-                                            <i class="qc-color-green glyphicon glyphicon-ok"></i>
-                                        @else
-                                            <i class="qc-color-red glyphicon glyphicon-ok"></i>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                <a class="qc-link" title="Click xem menu">
-                                                    {!! $order->name() !!}
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                <a class="qc_view qc-link-green">
-                                                    <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
-                                                </a>
-                                                &nbsp;&nbsp;
-                                                <a class="qc-link" title="In đơn hàng"
-                                                   href="{!! route('qc.ad3d.order.order.print.get', $orderId) !!}">
-                                                    <i class="qc-font-size-14 fa fa-print"></i>
-                                                </a>
-                                                @if(!$cancelStatus)
-                                                    @if($order->checkConfirmStatus())
-                                                        &nbsp;&nbsp;
-                                                        <a class="qc-link-green" title="In nghiệm thu"
-                                                           href="{!! route('qc.ad3d.order.order.confirm.print.get', $orderId) !!}">
-                                                            <i class="qc-font-size-16 glyphicon glyphicon-list-alt"></i>
-                                                        </a>
-                                                    @endif
-                                                @endif
-
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a class="qc_view_customer qc-link"
-                                           data-customer="{!! $order->customer->customerId() !!}"
-                                           title="Xem thống kê khách hàng">
-                                            {!! $order->customer->name() !!}
-                                        </a>
-                                    </td>
-                                    <td class="qc-color-grey">
-                                        <a class="qc-link" title="Click xem thống kê NV" target="_blank"
-                                           href="{!! route('qc.ad3d.statistic.revenue.company.staff.get',$dataReceiveStaff->staffId().'/'.$orderReceiveDate) !!}">
-                                            {!! $dataReceiveStaff->lastName() !!}
-                                        </a>
-
-                                    </td>
-                                    <td>
-                                        @if(!$cancelStatus)
-                                            {{--<a class="qc-link-green" title="Click xem chi tiết thi công"
-                                               href="{!! route('qc.ad3d.order.order.construction.get',$orderId) !!}">
-                                                @if(!$finishStatus)
-                                                    Bàn giao công trình
-                                                @else
-                                                    Đã kết thúc
-                                                @endif
-                                            </a>--}}
-                                            @if(count($orderWorkAllocationAllInfo)> 0)
-                                                <br/>
-                                                TC:
-                                                @foreach($orderWorkAllocationAllInfo as $workAllocation)
-                                                    <span>{!! $workAllocation->receiveStaff->lastName() !!}</span>,
-                                                    &nbsp;
-                                                @endforeach
-                                            @else
-                                                <em>Không có triển khai thi công</em>
-                                            @endif
-                                        @else
-                                            <em style=" color: brown;">
-                                                Đã hủy
-                                            </em>
-                                        @endif
-                                        @if($hFunction->checkCount($dataProduct))
-                                            <br/>
-                                        @endif
-                                    </td>
-                                    <td class="qc-color-red">
-                                        @if($hFunction->checkCount($orderWorkAllocationAllInfo))
-                                            <?php
-                                            $dataWorkAllocationReportImage = $order->workAllocationReportImage($orderId, 1);
-                                            ?>
-                                            @if($hFunction->checkCount($dataWorkAllocationReportImage))
-                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                    @foreach($dataWorkAllocationReportImage as $workAllocationReportImage)
-                                                        <div style="position: relative; float: left; margin-right: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
-                                                            <a class="qc_work_allocation_report_image_view qc-link"
-                                                               title="Click xem chi tiết hình ảnh"
-                                                               data-href="{!! route('qc.ad3d.work.work_allocation_report.image.view',$workAllocationReportImage->imageId()) !!}">
-                                                                <img style="max-width: 100%; max-height: 100%;"
-                                                                     src="{!! $workAllocationReportImage->pathSmallImage($workAllocationReportImage->name()) !!}">
-                                                            </a>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                    <a class="qc-link-green" title="Click xem chi tiết thi công"
-                                                       href="{!! route('qc.ad3d.order.order.construction.get',$orderId) !!}">
-                                                        CHI TIET TC
-                                                    </a>
-                                                </div>
-                                            @else
-                                                <em class="qc-color-grey">Không có ảnh BC</em>
-                                            @endif
-                                        @else
-                                            <em class="qc-color-grey">Không có ảnh BC</em>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        {!! $hFunction->convertDateDMYFromDatetime($order->receiveDate()) !!}
-                                        <br/>
-                                        <em class="qc-color-grey">{!! $hFunction->convertDateDMYFromDatetime($order->deliveryDate()) !!}</em>
-                                    </td>
-                                    <td>
-                                        @if(!$cancelStatus)
-                                            @if($checkFinishPayment)
-                                                <em class="qc-color-grey">
-                                                    Đã thanh toán
-                                                </em>
-                                            @else
-                                                <em style="color: red;">
-                                                    Chưa thanh toán xong
-                                                </em>
-                                                {{--<a class="qc-link-red"
-                                                   href="{!! route('qc.ad3d.order.order.payment.get',$orderId) !!}">
-                                                    THANH TOÁN
-                                                    <br/>
-                                                    <img alt="icon"
-                                                         style="margin-bottom: 3px; border: 1px solid #d7d7d7; width: 30px; height: 30px;"
-                                                         src="{!! asset('public/images/icons/paymentIcon.jpg') !!}"/>
-                                                </a>--}}
-                                            @endif
-                                            {{--@if(!$order->checkConfirmStatus())
-                                                <span>|</span>
-                                                <a class="qc_confirm qc-link-green">
-                                                    Xác nhận
-                                                </a>
-                                            @endif--}}
-                                        @else
-                                            <em style="color: brown;">
-                                                Đã hủy
-                                            </em>
-                                        @endif
-                                    </td>
-                                    <td class="text-right" style="color: blue;">
-                                        {!! $hFunction->currencyFormat($order->totalPrice()) !!}
-                                    </td>
-                                    <td class="text-right qc-color-grey">
-                                        {!! $hFunction->currencyFormat($totalDiscount) !!}
-                                    </td>
-                                    <td class="text-right qc-color-green">
-                                        <a class="qc_view qc-link-green" title="Click xem chi tiết" href="#">
-                                            {!! $hFunction->currencyFormat($totalPaid) !!}
-                                        </a>
-                                    </td>
-                                    <td class="text-right qc-color-red">
-                                        {!! $hFunction->currencyFormat($totalUnPaid) !!}
-                                    </td>
-                                </tr>
-                            @endforeach
-                            <tr>
-                                <td class="text-center" colspan="12">
-                                    {!! $hFunction->page($dataOrder) !!}
-                                </td>
-                            </tr>
-                        @else
-                            <tr>
-                                <td class="text-center" colspan="12">
-                                    <em class="qc-color-red">Không tìm thấy thông tin phù hợp</em>
-                                </td>
-                            </tr>
-                        @endif
-                    </table>
                 </div>
             </div>
         </div>

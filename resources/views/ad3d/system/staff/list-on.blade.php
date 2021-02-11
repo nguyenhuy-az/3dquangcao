@@ -20,7 +20,7 @@ $indexHref = route('qc.ad3d.system.staff.get');
 @extends('ad3d.system.staff.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
                     <div class="row">

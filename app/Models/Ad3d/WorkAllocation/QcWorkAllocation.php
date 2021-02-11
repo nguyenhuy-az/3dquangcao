@@ -481,6 +481,11 @@ class QcWorkAllocation extends Model
         return $this->belongsTo('App\Models\Ad3d\Product\QcProduct', 'product_id', 'product_id');
     }
 
+    # danh sach ma phan viec cua 1 san pham
+    public function listIdOfProduct($productId)
+    {
+        return QcWorkAllocation::where('product_id', $productId)->pluck('allocation_id');
+    }
     # kiem tra sam pham co nguoi nhan chin
     public function existMaimRoleActivityOfProduct($productId)
     {

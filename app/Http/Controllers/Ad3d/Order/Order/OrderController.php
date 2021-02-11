@@ -12,6 +12,7 @@ use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use App\Models\Ad3d\WorkAllocationReportImage\QcWorkAllocationReportImage;
 use File;
@@ -141,6 +142,20 @@ class OrderController extends Controller
         }
     }
 
+    # xem anh bao cao
+    public function viewWorkAllocationReportImage($imageId)
+    {
+        $modelImage = new QcWorkAllocationReportImage();
+        $dataWorkAllocationReportImage = $modelImage->getInfo($imageId);
+        return view('ad3d.order.order.view-report-image-direct', compact('dataWorkAllocationReportImage'));
+    }
+
+    public function viewWorkAllocationReportTimekeepingImage($imageId)
+    {
+        $modelImage = new QcTimekeepingProvisionalImage();
+        $dataWorkAllocationReportTimekeepingImage = $modelImage->getInfo($imageId);
+        return view('ad3d.order.order.view-report-timekeeping-image', compact('dataWorkAllocationReportTimekeepingImage'));
+    }
     // ================ LOC DON HÀNG DON HANG ===================
     // theo ten don hang
     public function filterCheckOrderName($name)
@@ -162,7 +177,7 @@ class OrderController extends Controller
         die(json_encode($result));
     }
 
-    // theo ten khach hang
+    #theo ten khach hang
     public function filterCheckCustomerName($name)
     {
         $modelCustomer = new QcCustomer();
@@ -315,225 +330,5 @@ class OrderController extends Controller
         die(json_encode($result));
     }
 
-    //tao don hang
-    public function addProduct()
-    {
-        $modelProductType = new QcProductType();
-        $dataProductType = $modelProductType->infoActivity();
-        return view('ad3d.order.order.add-product', compact('dataProductType'));
-    }
-
-    # them order moi va them san pham
-    public function getAdd($customerId = null, $orderId = null)
-    {
-        $modelStaff = new QcStaff();
-        $modelOrder = new QcOrder();
-        $modelCustomer = new QcCustomer();
-        $modelProductType = new QcProductType();
-        $dataAccess = [
-            'accessObject' => 'order'
-        ];
-        $dataCustomer = (empty($customerId)) ? $customerId : $modelCustomer->getInfo($customerId);
-        $dataOrder = (empty($orderId)) ? $orderId : $modelOrder->getInfo($orderId);
-        $dataProductType = $modelProductType->infoActivity();
-        return view('ad3d.order.order.add', compact('modelStaff', 'dataAccess', 'dataProductType', 'dataCustomer', 'dataOrder'));
-    }
-
-    public function postAdd()
-    {
-        date_default_timezone_set('Asia/Ho_Chi_Minh');
-        $modelCustomer = new QcCustomer();
-        $modelOrder = new QcOrder();
-        $modelOrderPay = new QcOrderPay();
-
-        $modelStaff = new QcStaff();
-
-        $staffLoginId = $modelStaff->loginStaffId();
-        //thong tin khach hang
-        $txtCustomerName = Request::input('txtCustomerName');
-        $txtPhone = Request::input('txtPhone');
-        $txtZalo = Request::input('txtZalo');
-        $txtAddress = Request::input('txtAddress');
-        //thong tin san pham
-        $productType = Request::input('cbProductType');
-        $txtWidth = Request::input('txtWidth');
-        $txtHeight = Request::input('txtHeight');
-        $txtDepth = Request::input('txtDepth');
-        $txtAmount = Request::input('txtAmount');
-        $txtPrice = Request::input('txtPrice');
-        $txtDescription = Request::input('txtDescription');
-        $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
-        $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
-        $txtDepth = (empty($txtDepth)) ? 0 : $txtDepth;
-
-
-        //thong tin don hang
-        $txtOrderName = Request::input('txtOrderName');
-        $txtConstructionAddress = Request::input('txtConstructionAddress');
-        $txtConstructionPhone = Request::input('txtConstructionPhone');
-        $txtConstructionContact = Request::input('txtConstructionContact');
-        $txtBeforePay = Request::input('txtBeforePay');
-        $txtDateReceive = Request::input('txtDateReceive');
-        $txtDateDelivery = Request::input('txtDateDelivery');
-        $cbDiscount = Request::input('cbDiscount');
-        $cbVat = Request::input('cbVat');
-        $oldCustomerId = null;
-        $dataCustomer = null;
-        $txtBeforePay = $txtBeforePay * 1000;
-
-
-        if (!empty($txtPhone)) {
-            #lay thong tin khach hang tu so dien thoai di dong
-            $dataCustomer = $modelCustomer->infoFromPhone($txtPhone);
-        }
-        if (!empty($txtZalo) && count($dataCustomer) <= 0) {
-            # lay thong tin khach hang tu so zalo
-            $dataCustomer = $modelCustomer->infoFromZalo($txtPhone);
-        }
-
-        if (count($dataCustomer) > 0) {
-            # ton tai khach hang - khach hang cu
-            $customerId = $dataCustomer->customerId();
-            $customerName = $dataCustomer->name();
-        } else {
-            # khach hang moi
-            if ($modelCustomer->insert($txtCustomerName, null, null, $txtAddress, $txtPhone, $txtZalo)) {
-                $customerId = $modelCustomer->insertGetId();
-                $customerName = $txtCustomerName;
-            }
-        }
-        if (!empty($customerId)) {
-            #cap nhat thong tin khach hang ne co thay doi dia chi
-            $modelCustomer->updateInfo($customerId, $customerName, null, null, $txtAddress, $txtPhone, $txtZalo);
-            # them don hang
-            $txtConstructionAddress = (empty($txtConstructionAddress)) ? $txtAddress : $txtConstructionAddress;
-            $txtConstructionPhone = (empty($txtConstructionPhone)) ? $txtPhone : $txtConstructionPhone;
-            $txtConstructionContact = (empty($txtConstructionContact)) ? $txtCustomerName : $txtConstructionContact;
-            if ($modelOrder->insert($txtOrderName, $cbDiscount, $cbVat, $txtDateReceive, $txtDateDelivery, $customerId, $staffLoginId, $staffLoginId, null, 1, $txtConstructionAddress, $txtConstructionPhone, $txtConstructionContact)) {
-                $orderId = $modelOrder->insertGetId();
-                if (count($productType) > 0) {
-                    # them san pham
-                    foreach ($productType as $key => $value) {
-                        $typeId = $value;
-                        $width = $txtWidth[$key];
-                        $height = $txtHeight[$key];
-                        $depth = $txtDepth[$key];
-                        $amount = $txtAmount[$key];
-                        $price = $txtPrice[$key] * 1000;
-                        $description = $txtDescription[$key];
-                        $modelProduct = new QcProduct();
-                        $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $typeId, $orderId);
-                    }
-                }
-
-                # thanh toan
-                if ($txtBeforePay > 0) {
-                    # thanh toan don hang
-                    $modelOrderPay->insert($txtBeforePay, null, $txtDateReceive, $orderId, $staffLoginId);
-                }
-                # cap nhat thong tin thanh toan don hang
-                $modelOrder->updateFinishPayment($orderId);
-                return redirect()->route('qc.ad3d.order.order.print.get', $orderId);
-            } else {
-                Session::put('notifyAdd', 'Thêm thất bại, hãy thử lại');
-                return redirect()->back();
-            }
-        }
-
-    }
-
-    public function postEditAddProduct($orderId)
-    {
-        //thong tin san pham
-        $productType = Request::input('cbProductType');
-        $txtWidth = Request::input('txtWidth');
-        $txtHeight = Request::input('txtHeight');
-        $txtDepth = Request::input('txtDepth');
-        $txtAmount = Request::input('txtAmount');
-        $txtPrice = Request::input('txtPrice');
-        $txtDescription = Request::input('txtDescription');
-        $txtWidth = (empty($txtWidth)) ? 0 : $txtWidth;
-        $txtHeight = (empty($txtHeight)) ? 0 : $txtHeight;
-        $txtDepth = (empty($txtDepth)) ? 0 : $txtDepth;
-        if (count($productType) > 0) {
-            # them san pham
-            foreach ($productType as $key => $value) {
-                $typeId = $value;
-                $width = $txtWidth[$key];
-                $height = $txtHeight[$key];
-                $depth = $txtDepth[$key];
-                $amount = $txtAmount[$key];
-                $price = $txtPrice[$key];
-                $description = $txtDescription[$key];
-                $modelProduct = new QcProduct();
-                $modelProduct->insert($width, $height, $depth, $price, $amount, $description, $typeId, $orderId);
-            }
-        }
-        return redirect()->route('qc.ad3d.order.order.print.get', $orderId);
-    }
-
-    # xac nhan don hang
-    public function getConfirm($orderId)
-    {
-        $modelOrder = new QcOrder();
-        $dataAccess = [
-            'accessObject' => 'order'
-        ];
-        $dataOrder = $modelOrder->getInfo($orderId);
-        if (count($dataOrder) > 0) {
-            return view('ad3d.order.order.confirm', compact('dataAccess', 'dataOrder'));
-        }
-    }
-
-    public function postConfirm($orderId)
-    {
-        $modelStaff = new QcStaff();
-        $modelOrder = new QcOrder();
-        $confirmAgree = Request::input('cbConfirmAgree');
-        $staffLoginId = $modelStaff->loginStaffId();
-        $dataOrder = $modelOrder->getInfo($orderId);
-        if (!empty($staffLoginId) && count($dataOrder) > 0) {
-            $modelOrder->confirm($orderId, $confirmAgree, $staffLoginId);
-        }
-
-    }
-
-    // thanh toan don hang
-    public function getPayment($orderId)
-    {
-        $modelStaff = new QcStaff();
-        $modelOrders = new QcOrder();
-        $dataAccess = [
-            'accessObject' => 'order'
-        ];
-        $dataOrder = $modelOrders->getInfo($orderId);
-        if (count($dataOrder) > 0) {
-            return view('ad3d.order.order.payment', compact('modelStaff', 'dataAccess', 'dataOrder'));
-        } else {
-            return redirect()->back();
-        }
-
-    }
-
-    public function postPayment($orderId)
-    {
-        $hFunction = new \Hfunction();
-        $modelStaff = new QcStaff();
-        $modelOrders = new QcOrder();
-        $modelOrderPay = new QcOrderPay();
-        $txtMoney = Request::input('txtMoney');
-        $txtName = Request::input('txtName');
-        $txtPhone = Request::input('txtPhone');
-        $txtNote = Request::input('txtNote');
-        $dataOrder = $modelOrders->getInfo($orderId);
-        if (count($txtMoney) > 0 && count($dataOrder) > 0) {
-            if ($modelOrderPay->insert($txtMoney, $txtNote, $hFunction->carbonNow(), $orderId, $modelStaff->loginStaffId(), $txtName, $txtPhone)) {
-                return redirect()->route('qc.ad3d.order.order.get');
-            }
-        } else {
-            Session::put('notifyAdd', "Phải nhập số tiền thanh toán");
-            return redirect()->back();
-        }
-    }
 
 }

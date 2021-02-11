@@ -41,7 +41,8 @@ class QcWorkAllocationReport extends Model
 
     public function checkIdNull($reportId = null)
     {
-        return (empty($reportId)) ? $this->reportId() : $reportId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($reportId)) ? $this->reportId() : $reportId;
     }
 
     public function deleteReport($reportId = null)
@@ -55,9 +56,11 @@ class QcWorkAllocationReport extends Model
         return $this->belongsTo('App\Models\Ad3d\WorkAllocation\QcWorkAllocation', 'allocation_id', 'allocation_id');
     }
 
+    # thong tin bao cao tu 1 phan viec
     public function infoOfWorkAllocation($allocationId, $take = null)
     {
-        if (empty($take)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($take)) {
             return QcWorkAllocationReport::where('allocation_id', $allocationId)->orderBy('reportDate', 'DESC')->get();
         } else {
             return QcWorkAllocationReport::where('allocation_id', $allocationId)->orderBy('reportDate', 'DESC')->skip(0)->take($take)->get();
@@ -112,9 +115,27 @@ class QcWorkAllocationReport extends Model
     }
 
     //========= ========== ========== lay thong tin ========== ========== ==========
+    # thong tin bao cao cua 1 san pham
+    public function infoOfProduct($productId)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+        $listAllocationId = $modelWorkAllocation->listIdOfProduct($productId);
+        return QcWorkAllocationReport::whereIn('allocation_id', $listAllocationId)->orderBy('reportDate', 'DESC')->get();
+    }
+
+    # thong tin bao cao cua 1 san pham trong ngay
+    public function infoOfProductInDate($date, $productId)
+    {
+        $modelWorkAllocation = new QcWorkAllocation();
+        $date = date('Y-m-d', strtotime($date));
+        $listAllocationId = $modelWorkAllocation->listIdOfProduct($productId);
+        return QcWorkAllocationReport::whereIn('allocation_id', $listAllocationId)->where('reportDate', 'like', "%$date%")->orderBy('reportDate', 'DESC')->get();
+    }
+
     public function selectInfoOfListWorkAllocation($listAllocationId, $dateFilter = null) # tat ca
     {
-        if (empty($dateFilter)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcWorkAllocationReport::whereIn('allocation_id', $listAllocationId)->orderBy('reportDate', 'DESC')->select('*');
         } else {
             return QcWorkAllocationReport::whereIn('allocation_id', $listAllocationId)->where('reportDate', 'like', "%$dateFilter%")->orderBy('reportDate', 'DESC')->select('*');
@@ -123,11 +144,12 @@ class QcWorkAllocationReport extends Model
 
     public function getInfo($reportId = '', $field = '')
     {
-        if (empty($reportId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($reportId)) {
             return QcWorkAllocationReport::get();
         } else {
             $result = QcWorkAllocationReport::where('report_id', $reportId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -135,12 +157,14 @@ class QcWorkAllocationReport extends Model
         }
     }
 
+    # lay  1 gia tri
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcWorkAllocationReport::where('report_id', $objectId)->pluck($column);
+            return QcWorkAllocationReport::where('report_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -173,7 +197,8 @@ class QcWorkAllocationReport extends Model
     // last id
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcWorkAllocationReport::orderBy('report_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->report_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->report_id;
     }
 }

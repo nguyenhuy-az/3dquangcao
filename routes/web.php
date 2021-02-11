@@ -709,14 +709,16 @@ Route::group(['prefix' => 'ad3d'], function () {
                 // loc theo ten khach hang
                 Route::get('customer-name/{name?}', ['as' => 'qc.ad3d.work.orders.filter.customer.check.name', 'uses' => 'Ad3d\Order\Order\OrderController@filterCheckCustomerName']);
             });
-            # xac nhan don hang duoc dat
-            ///Route::get('confirm/{orderId?}', ['as' => 'qc.ad3d.order.order.confirm.get', 'uses' => 'Ad3d\Order\Order\OrderController@getConfirm']);
-            ///Route::post('confirm/{orderId?}', ['as' => 'qc.ad3d.order.order.confirm.post', 'uses' => 'Ad3d\Order\Order\OrderController@postConfirm']);
-
             # thong tin don hang
             Route::get('view/{orderId?}', ['as' => 'qc.ad3d.order.order.view.get', 'uses' => 'Ad3d\Order\Order\OrderController@view']);
             #xem anh thiet ke
             Route::get('view-product-design/{productId?}', ['as' => 'qc.ad3d.order.order.product.design.view', 'uses' => 'Ad3d\Order\Order\OrderController@viewProductDesign']);
+
+            #xem anh bao cao
+            Route::get('view-work-allocation-report-image/{imageId?}', ['as' => 'qc.ad3d.order.order.work_allocation_report_image.view', 'uses' => 'Ad3d\Order\Order\OrderController@viewWorkAllocationReportImage']);
+            #xem anh bao cao
+            Route::get('view-work-allocation-report-timekeeping-image/{imageId?}', ['as' => 'qc.ad3d.order.order.work_allocation_report_timekeeping.image.view', 'uses' => 'Ad3d\Order\Order\OrderController@viewWorkAllocationReportTimekeepingImage']);
+
             # thong tin khach hang
             Route::get('view-customer/{customerId?}', ['as' => 'qc.ad3d.order.order.view_customer.get', 'uses' => 'Ad3d\Order\Order\OrderController@viewCustomer']);
 
@@ -728,17 +730,6 @@ Route::group(['prefix' => 'ad3d'], function () {
 
             # kiem tra khach hang theo so dien thoai
             Route::get('customer/{phone?}', ['as' => 'qc.ad3d.order.order.customer.check.phone', 'uses' => 'Ad3d\Order\Order\OrderController@checkPhoneCustomer']);
-
-            #them san pham vao don hang
-            // Route::get('add/product', ['as' => 'qc.ad3d.order.order.product.get', 'uses' => 'Ad3d\Order\Order\OrderController@addProduct']);
-            //Route::get('add/{customerId?}/{orderId?}', ['as' => 'qc.ad3d.order.order.add.get', 'uses' => 'Ad3d\Order\Order\OrderController@getAdd']);
-            //Route::post('add', ['as' => 'qc.ad3d.order.order.add.post', 'uses' => 'Ad3d\Order\Order\OrderController@postAdd']);
-            # sua don hang
-            //Route::post('edit/{orderId}', ['as' => 'qc.ad3d.order.order.edit.addProduct.post', 'uses' => 'Ad3d\Order\Order\OrderController@postEditAddProduct']);
-
-            #thanh toan don hang
-            Route::get('payment/{orderId?}', ['as' => 'qc.ad3d.order.order.payment.get', 'uses' => 'Ad3d\Order\Order\OrderController@getPayment']);
-            Route::post('payment/{orderId?}', ['as' => 'qc.ad3d.order.order.payment.post', 'uses' => 'Ad3d\Order\Order\OrderController@postPayment']);
 
             #--------- ban giao don hang - cong trinh ---------
             # xem chi tiet thi cong
