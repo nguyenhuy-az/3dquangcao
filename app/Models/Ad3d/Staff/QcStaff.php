@@ -52,6 +52,42 @@ class QcStaff extends Model
 
     }
 
+    # mac dinh ngay sinh
+    public function getDefaultBirthday()
+    {
+        return null;
+    }
+
+    # mac dinh gioi tinh nam
+    public function getDefaultGenderMale()
+    {
+        return 1;
+    }
+
+    # mac dinh anh CMND mat trươc
+    public function getDefaultIdentityCardFront()
+    {
+        return null;
+    }
+
+    # mac dinh anh CMND mat sau
+    public function getDefaultIdentityCardBack()
+    {
+        return null;
+    }
+
+    # mac dinh anh dai dien
+    public function getDefaultImage()
+    {
+        return null;
+    }
+
+    # mac dinh gioi tinh nu
+    public function getDefaultGenderFeMale()
+    {
+        return 0;
+    }
+
     # mac dinh dang lam viec
     public function getDefaultHasWorkStatus()
     {
@@ -100,6 +136,7 @@ class QcStaff extends Model
         return 0;
     }
 
+
     #mac dinh ten tai khoan
     public function getDefaultBankAccount()
     {
@@ -118,6 +155,13 @@ class QcStaff extends Model
         return md5($nameCode . '3DQC') . md5('3DQC' . $password . $nameCode);
     }
 
+    # tạo mật khẩu lần đầu
+    public function createFirstPass($nameCode, $identityCard)
+    {
+        $newPass = "3d$identityCard";
+        return $this->createStaffPass($newPass, $nameCode);
+    }
+
     # lấy lại mật khẫu mặc định
     public function resetPass($staffId)
     {
@@ -131,28 +175,20 @@ class QcStaff extends Model
     }
 
     # thêm mới
-    public function insert($firstName, $lastName, $identityCard, $account, $birthday = null, $gender, $image = null, $identityCardFront, $identityCardBack, $email, $address = null, $phone = null, $level, $bankAccount = null, $bankName = null)
+    public function insert($firstName, $lastName, $identityCard, $account, $birthday = null, $gender, $image = null, $identityCardFront, $identityCardBack, $email, $address = null, $phone = null, $bankAccount = null, $bankName = null)
     {
         $hFunction = new \Hfunction();
         $modelCompany = new QcCompany();
         $modelStaff = new QcStaff();
-        //create code
+        # create code
         $nameCode = $hFunction->getTimeCode();
-        if ($level == $this->getDefaultRootLevel()) {# mac dinh 0 la nhan vien quan ly he thong cua 1 cty
-            $pass = '3dtfquangcao';
-            $newPass = $this->createStaffPass($pass, $nameCode);
-        } else {
-            $newPass = "3d$identityCard";
-            $newPass = $this->createStaffPass($newPass, $nameCode);
-        }
-
         # insert
         $modelStaff->nameCode = $nameCode;
         $modelStaff->firstName = $hFunction->convertValidHTML($firstName);
         $modelStaff->lastName = $hFunction->convertValidHTML($lastName);
         $modelStaff->identityCard = $identityCard;
         $modelStaff->account = $account;
-        $modelStaff->password = $newPass;
+        $modelStaff->password = $this->createFirstPass($nameCode,$identityCard);
         $modelStaff->birthday = $birthday;
         $modelStaff->gender = $gender;
         $modelStaff->image = $image;
@@ -318,7 +354,7 @@ class QcStaff extends Model
 
     }
 
-    // cap nhat thong tin co ban
+    # cap nhat thong tin co ban
     public function updateInfo($staffId, $firstName, $lastName, $identityCard, $birthday = null, $gender, $email, $address = null, $phone = null)
     {
         $hFunction = new \Hfunction();
@@ -485,6 +521,13 @@ class QcStaff extends Model
         return $this->hasMany('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'staff_id', 'staff_id');
     }
 
+    public function level($staffId = null)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $dataCompanyStaffWork = $modelCompanyStaffWork->getLastInfoOfStaff($this->checkIdNull($staffId));
+        return $dataCompanyStaffWork->level();
+    }
+
     # thong tin lam viec sau cung
     public function companyStaffWorkLastInfo($staffId = null)
     {
@@ -504,19 +547,6 @@ class QcStaff extends Model
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->infoActivityOfStaff($this->checkIdNull($staffId));
-    }
-
-    public function level($staffId = null)
-    {
-        $hFunction = new \Hfunction();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $staffId = $this->checkIdNull($staffId);
-        $dataCompanyStaffWork = $modelCompanyStaffWork->getLastInfoOfStaff($staffId);
-        if ($hFunction->checkCount($dataCompanyStaffWork)) { # du lieu phien ban moi
-            return $dataCompanyStaffWork->level();
-        } else { # du lieu phien ban cu
-            return $this->pluck('level', $staffId);
-        }
     }
 
     public function companyId($staffId = null)
@@ -823,14 +853,14 @@ class QcStaff extends Model
         return QcStaff::whereIn('staff_id', $modelCompanyStaffWord->staffIdActivityOfCompany($companyId))->pluck('staff_id');
     }
 
-    //lay danh sách mã Nv lọc theo 1 công ty và tên
+    #lay danh sách mã Nv lọc theo 1 công ty và tên
     public function listIdOfCompanyAndName($companyId, $name)
     {
         $modelCompanyStaffWord = new QcCompanyStaffWork();
         return QcStaff::whereIn('staff_id', $modelCompanyStaffWord->staffIdOfCompany($companyId))->where('lastName', 'like', "%$name%")->pluck('staff_id');
     }
 
-    //danh sách mã Nv lọc theo công ty
+    # danh sách mã Nv lọc theo công ty
     public function listIdOfListCompany($ListCompanyId)
     {
         $modelCompanyStaffWord = new QcCompanyStaffWork();
@@ -1554,31 +1584,31 @@ class QcStaff extends Model
         return QcStaff::where('account', $account)->first();
     }
 
-    //la thong tin nv theo cmnnd
+    # la thong tin nv theo cmnnd
     public function infoFromIdentityCard($identityCard)
     {
         return QcStaff::where('identityCard', $identityCard)->first();
     }
 
-    //danh sach ma nv dang hoat dong
+    # danh sach ma nv dang hoat dong
     public function listStaffIdByName($name)
     {
         return QcStaff::where('lastName', 'like', "%$name%")->pluck('staff_id');
     }
 
-    //danh sach ma nv dang hoat dong
+    # danh sach ma nv dang hoat dong
     public function listStaffIdActivity()
     {
         return QcStaff::where('workStatus', $this->getDefaultHasWorkStatus())->pluck('staff_id');
     }
 
-    // total records
+    # total records
     public function totalRecords()
     {
         return QcStaff::count();
     }
 
-    // last id
+    # last id
     public function lastId()
     {
         $hFunction = new \Hfunction();
@@ -1597,10 +1627,16 @@ class QcStaff extends Model
         return ($this->workStatus($staffId) == $this->getDefaultHasWorkStatus()) ? true : false;
     }
 
-    // exist of account
+    # kiem tra ton tai tai khoan
     public function existAccount($account)
     {
         return QcStaff::where('account', $account)->exists();
+    }
+
+    # kiem tra ton tai cmnd
+    public function existIdentityCard($identityCard)
+    {
+        return QcStaff::where('identityCard', $identityCard)->exists();
     }
 
     public function checkRootStatus($staffId = null)
@@ -1619,21 +1655,21 @@ class QcStaff extends Model
 
     #======== KIEM TRA CAC BO PHAN CUA NV ===============
     #--------- --------- Bo phan QUAN LY ----------- --------
-    // kiểm tra nv thuộc bộ phận quản lý
+    # kiểm tra nv thuộc bộ phận quản lý
     public function checkManageDepartment($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->checkCurrentDepartmentManageOfStaff($this->checkIdNull($staffId));
     }
 
-    // kiem tra nv quan ly cap quan ly
+    # kiem tra nv quan ly cap quan ly
     public function checkManageDepartmentAndManageRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->checkManageDepartmentAndManageRank($this->checkIdNull($staffId));
     }
 
-    // kiểm tra nv thuộc bộ phận quản lý cấp thông thường
+    # kiểm tra nv thuộc bộ phận quản lý cấp thông thường
     public function checkManageDepartmentAndNormalRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -1655,21 +1691,21 @@ class QcStaff extends Model
         return $modelCompanyStaffWork->checkConstructionDepartmentAndManageRank($this->checkIdNull($staffId));
     }
     #--------- --------- Bo phan NHAN SU ----------- --------
-    // kiểm tra nv thuộc bộ phận nhân sự
+    # kiểm tra nv thuộc bộ phận nhân sự
     public function checkPersonnelDepartment($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->checkCurrentDepartmentPersonnelOfStaff($this->checkIdNull($staffId));
     }
 
-    // kiểm tra nv thuộc bộ phận nhân sự cấp quản lý
+    # kiểm tra nv thuộc bộ phận nhân sự cấp quản lý
     public function checkPersonnelDepartmentAndManageRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->checkPersonnelDepartmentAndManageRank($this->checkIdNull($staffId));
     }
 
-    // kiểm tra nv thuộc bộ phận nhân sự cấp thông thường
+    # kiểm tra nv thuộc bộ phận nhân sự cấp thông thường
     public function checkPersonnelDepartmentAndNormalRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -1677,14 +1713,14 @@ class QcStaff extends Model
     }
 
     #--------- --------- Bo phan THIET KE ----------- --------
-    // kiểm tra nv thuộc bộ phận thiết kế
+    # kiểm tra nv thuộc bộ phận thiết kế
     public function checkDesignDepartment($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->checkCurrentDepartmentDesignOfStaff($this->checkIdNull($staffId));
     }
 
-    // kiểm tra nv thuộc bộ phận thiết kế cấp quản lý
+    # kiểm tra nv thuộc bộ phận thiết kế cấp quản lý
     public function checkDesignDepartmentAndManageRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -1706,14 +1742,14 @@ class QcStaff extends Model
         return $modelCompanyStaffWork->checkCurrentDepartmentBusinessOfStaff($this->checkIdNull($staffId));
     }
 
-    // kiểm tra nv thuộc bộ phận kinh doanh
+    # kiểm tra nv thuộc bộ phận kinh doanh
     public function checkBusinessDepartmentAndManageRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->checkBusinessDepartmentAndManageRank($this->checkIdNull($staffId));
     }
 
-    // kiểm tra nv thuộc bộ phận kinh doanh
+    # kiểm tra nv thuộc bộ phận kinh doanh
     public function checkBusinessDepartmentAndNormalRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -1721,21 +1757,21 @@ class QcStaff extends Model
     }
 
     #--------- --------- Bo phan THU QUY ----------- --------
-    //kiem tra bo phan thu quy
+    # kiem tra bo phan thu quy
     public function checkTreasureDepartment($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->checkCurrentDepartmentTreasureOfStaff($this->checkIdNull($staffId));
     }
 
-    // kiem tra bo phan thu quy cap quan ly
+    # kiem tra bo phan thu quy cap quan ly
     public function checkTreasureDepartmentAndManageRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->checkTreasureDepartmentAndManageRank($this->checkIdNull($staffId));
     }
 
-    // kiem tra nv bo phan thu quy cap nhan vien
+    # kiem tra nv bo phan thu quy cap nhan vien
     public function checkTreasureDepartmentAndNormalRank($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -1768,21 +1804,21 @@ class QcStaff extends Model
         return $totalMoneyOrderPay + $totalReceivedMoneyOfStaffAndDate + $totalMoneyImportPaidOfStaff;
     }
 
-    //  tong tien nhan tu thu don hang
+    #  tong tien nhan tu thu don hang
     public function totalReceiveMoneyFromOrderPay($staffId, $date = null)
     {
         $modelOrderPay = new QcOrderPay();
         return $modelOrderPay->totalMoneyOfStaffAndDate($staffId, $date);
     }
 
-    //tong tien nhan tu chuyen tien va da xac nhan
+    # tong tien nhan tu chuyen tien va da xac nhan
     public function totalMoneyReceivedTransferOfStaffAndDate($staffId, $dateFilter = null) // tồng tiền nhận
     {
         $modelTransfers = new QcTransfers();
         return $modelTransfers->totalMoneyConfirmedOfReceivedStaffAndDate($staffId, $dateFilter);
     }
 
-    //  ========== ================= THONG KE CHI ===================
+    #  ========== ================= THONG KE CHI ===================
     # tong chi
     public function totalPaidMoney($staffId, $date = null) # thong tien nv giư cua cty
     {

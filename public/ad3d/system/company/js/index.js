@@ -6,15 +6,21 @@ var qc_ad3d_staff_company = {
         qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-view') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
     },
     add: {
-        save: function (formObject) {
-            var txtName = $(formObject).find("input[name='txtName']");
-            var txtCompanyCode = $(formObject).find("input[name='txtCompanyCode']");
-            var txtNameCode = $(formObject).find("input[name='txtNameCode']");
-            var txtAddress = $(formObject).find("input[name='txtAddress']");
-            var txtPhone = $(formObject).find("input[name='txtPhone']");
-            var txtEmail = $(formObject).find("input[name='txtEmail']");
-            var txtWebsite = $(formObject).find("input[name='txtWebsite']");
+        save: function (frm) {
+            var txtName = $(frm).find("input[name='txtName']");
+            var txtCompanyCode = $(frm).find("input[name='txtCompanyCode']");
+            var txtNameCode = $(frm).find("input[name='txtNameCode']");
+            var txtAddress = $(frm).find("input[name='txtAddress']");
+            var txtPhone = $(frm).find("input[name='txtPhone']");
+            var txtEmail = $(frm).find("input[name='txtEmail']");
+            var txtWebsite = $(frm).find("input[name='txtWebsite']");
 
+            var txtFirstName = $(frm).find("input[name='txtFirstName']");
+            var txtLastName = $(frm).find("input[name='txtLastName']");
+            var txtIdentityCard = $(frm).find("input[name='txtIdentityCard']");
+            var cbGender = $(frm).find("select[name='cbGender']");
+            var txtStaffPhone = $(frm).find("input[name='txtStaffPhone']");
+            var txtStaffEmail = $(frm).find("input[name='txtStaffEmail']");
             if (qc_main.check.inputNull(txtName, 'Nhập tên công ty')) {
                 return false;
             } else {
@@ -30,6 +36,9 @@ var qc_ad3d_staff_company = {
             } else {
                 if (qc_main.check.inputMaxLength(txtNameCode, 30, 'Mã cty dài không quá 30 ký tự')) return false;
             }
+            if (qc_main.check.inputNull(txtPhone, 'Nhập số điện thoại cty')) {
+                return false;
+            }
             if (qc_main.check.inputNull(txtAddress, 'Nhập địa chỉ')) {
                 if (qc_main.check.inputMaxLength(txtAddress, 50, 'Địa chỉ dài quá 50 ký tự')) return false;
                 return false;
@@ -44,7 +53,37 @@ var qc_ad3d_staff_company = {
 
                 }
             }
-            qc_ad3d_submit.ajaxFormHasReload(formObject, '', false);
+
+            if (qc_main.check.inputNull(txtFirstName, 'Nhập họ người quản lý')) {
+                return false;
+            } else {
+                if (qc_main.check.inputMaxLength(txtFirstName, 30, 'Tên không dài quá 30 ký tự')) return false;
+            }
+            if (qc_main.check.inputNull(txtLastName, 'Nhập tên người quản lý')) {
+                return false;
+            } else {
+                if (qc_main.check.inputMaxLength(txtLastName, 20, 'Tên không dài quá 20 ký tự')) return false;
+            }
+            if (qc_main.check.inputNull(txtIdentityCard, 'Nhập chứng minh thư')) {
+                return false;
+            } else {
+                if (qc_main.check.inputMaxLength(txtIdentityCard, 20, 'Chứng minh thư dài không quá 20 ký tự')) return false;
+            }
+            if (qc_main.check.inputNull(cbGender, 'Chọn giới tính')) {
+                return false;
+            }
+            if (qc_main.check.inputNull(txtStaffPhone, 'Nhập số điện thoại người quản lý')) {
+                return false;
+            }
+            if (!qc_main.check.inputNull(txtStaffEmail, '')) {
+                var staffEmailVal = txtStaffEmail.val();
+                if (!qc_main.check.emailJavascript(staffEmailVal)) {
+                    alert('Email không hợp lệ');
+                    txtStaffEmail.focus();
+                    return false;
+                }
+            }
+            qc_ad3d_submit.ajaxFormHasReload(frm, '', false);
             qc_main.scrollTop();
         }
     },

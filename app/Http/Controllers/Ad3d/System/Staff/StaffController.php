@@ -31,7 +31,7 @@ class StaffController extends Controller
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        //$modelWork = new qc
+        # $modelWork = new qc
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
         $companyFilterId = ($companyFilterId == 'null') ? $hFunction->getDefaultNull() : $companyFilterId;
@@ -231,7 +231,7 @@ class StaffController extends Controller
         #thong tin lam viec
         $level = Request::input('cbLevel');
         $companyId = Request::input('cbCompany');
-        //$cbDepartment = Request::input('cbDepartment');
+        # $cbDepartment = Request::input('cbDepartment');
         $cbRank = Request::input('cbRank');
         $cbPermission = Request::input('cbPermission');
         $cbWorkMethod = Request::input('cbWorkMethod');
@@ -245,17 +245,17 @@ class StaffController extends Controller
         $txtSalary = $hFunction->convertCurrencyToInt($txtSalary);
         $txtResponsibility = Request::input('txtResponsibility');
         $txtResponsibility = $hFunction->convertCurrencyToInt($txtResponsibility);
-        $txtInsurance = 21.5;//Request::input('txtInsurance'); //mmac dinh la 21.5%
+        $txtInsurance = $modelStaffWorkSalary->getDefaultInsurancePercent43e();// 21.5;//Request::input('txtInsurance'); //mmac dinh la 21.5%
         $txtUsePhone = Request::input('txtUsePhone');
         $txtUsePhone = $hFunction->convertCurrencyToInt($txtUsePhone);
         $txtFuel = Request::input('txtFuel');
         $txtFuel = $hFunction->convertCurrencyToInt($txtFuel);
         $txtDateOff = $modelStaffWorkSalary->getDefaultDateOff();# so ngay nghi mac dinh
-        //$txtDateOff = $hFunction->convertCurrencyToInt($txtDateOff); //mac dinh 1 ngay
+        # $txtDateOff = $hFunction->convertCurrencyToInt($txtDateOff); //mac dinh 1 ngay
         $txtOvertimeHour = Request::input('txtOvertimeHour');
         $txtOvertimeHour = $hFunction->convertCurrencyToInt($txtOvertimeHour);
 
-        // thong tin thanh toan
+        # thong tin thanh toan
         $txtBankAccount = Request::input('txtBankAccount');
         $cbBankName = Request::input('cbBankName');
 
@@ -270,19 +270,19 @@ class StaffController extends Controller
 
         # lay danh sach bo phan
         $dataDepartment = $modelDepartment->getInfo();
-        if (count($txtImage) > 0) {
+        if ($hFunction->checkCount($txtImage)) {
             $name_img = stripslashes($_FILES['txtImage']['name']);
             $name_img = 'avatar' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtImage']['tmp_name'];
             if (!$modelStaff->uploadImage($source_img, $name_img)) $name_img = $hFunction->getDefaultNull();
         }
-        if (count($txtIdentityCardFront) > 0) {
+        if ($hFunction->checkCount($txtIdentityCardFront)) {
             $name_img_front = stripslashes($_FILES['txtIdentityCardFront']['name']);
             $name_img_front = 'identity_front' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_front);
             $source_img = $_FILES['txtIdentityCardFront']['tmp_name'];
             if (!$modelStaff->uploadImage($source_img, $name_img_front)) $name_img_front = $hFunction->getDefaultNull();
         }
-        if (count($txtIdentityCardBack) > 0) {
+        if ($hFunction->checkCount($txtIdentityCardBack)) {
             $name_img_back = stripslashes($_FILES['txtIdentityCardBack']['name']);
             $name_img_back = 'identity_back' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_back);
             $source_img = $_FILES['txtIdentityCardBack']['tmp_name'];
@@ -307,9 +307,9 @@ class StaffController extends Controller
                             $staffRank = Request::input('chkDepartmentStaffRank_' . $departmentId);
                             if ($staffRank) $rankId = $modelRank->staffRankId();
                         }
-                        // co chon vi tri lam viẹc
+                        # co chon vi tri lam viẹc
                         if (!$hFunction->checkEmpty($rankId)) $modelStaffWorkDepartment->insert($newWorkId, $departmentId, $rankId, $fromDateWork);
-                        // neu la bo phan thi cong thi phat tui do nghe
+                        # neu la bo phan thi cong thi phat tui do nghe
                         if ($modelDepartment->checkConstruction($departmentId)) {
                             # giao do nghe
                             $modelToolPackage->allocationForCompanyStaffWork($newWorkId);
@@ -334,7 +334,7 @@ class StaffController extends Controller
 
     }
 
-    //quan ly thong tin nhan vien
+    # quan ly thong tin nhan vien
     public function getInfo($staffId = null)
     {
         $hFunction = new \Hfunction();

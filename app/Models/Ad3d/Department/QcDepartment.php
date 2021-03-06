@@ -144,7 +144,7 @@ class QcDepartment extends Model
         return QcDepartment::whereIn('department_id', $listId)->get();
     }
 
-    public function getInfo($departmentId = '', $field = '')
+    public function getInfo($departmentId = null, $field = null)
     {
         $hFunction = new \Hfunction();
         if ($hFunction->checkEmpty($departmentId)) {
@@ -173,7 +173,7 @@ class QcDepartment extends Model
         if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcDepartment::where('department_id', $objectId)->pluck($column);
+            return QcDepartment::where('department_id', $objectId)->pluck($column)[0];
         }
     }
 

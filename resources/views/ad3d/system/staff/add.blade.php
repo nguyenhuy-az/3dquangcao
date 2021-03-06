@@ -17,19 +17,19 @@ $companyLoginId = $dataStaffLogin->companyId();
 @extends('ad3d.system.staff.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 0;padding-bottom: 0;">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 0;padding-bottom: 0;">
             <a class="btn btn-primary qc-link-white-bold" onclick="qc_main.page_back_go();">
                 Về trang trước
             </a>
         </div>
-        <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <h3 style="color: red;">THÊM NHÂN VIÊN</h3>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <form id="frmAdd" class="frmAdd" name="frmAdd" role="form" method="post" enctype="multipart/form-data"
                   action="{!! route('qc.ad3d.system.staff.add.post') !!}">
                 <div class="row">
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         @if (Session::has('notifyAdd'))
                             <div class="form-group form-group-sm text-center qc-color-red">
                                 {!! Session::get('notifyAdd') !!}
@@ -40,7 +40,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         @endif
                     </div>
                 </div>
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12"
                              style="padding-top: 5px; color: red; border-bottom: 2px solid black;background-color: whitesmoke;">
@@ -49,21 +49,21 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Họ <i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                                 <input type="text" class="form-control" name="txtFirstName" placeholder="Nhập họ"
                                        value="">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm qc-padding-none" style="margin: 0;">
                                 <label>Tên <i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                                 <input type="text" class="form-control" name="txtLastName" placeholder="Nhập Tên"
                                        value="">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Chứng minh thư <i
                                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -73,7 +73,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Giới tính</label>
                                 <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
@@ -84,7 +84,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Ngày sinh</label>
                                 <input id="txtBirthday" type="text" class="form-control" name="txtBirthday"
@@ -95,7 +95,7 @@ $companyLoginId = $dataStaffLogin->companyId();
 
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Điện thoại<i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                                 <input type="text" class="form-control" name="txtPhone"
@@ -104,7 +104,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8">
+                        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Địa chỉ</label>
                                 <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
@@ -112,7 +112,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                        placeholder="Thông tin địa chỉ" value="">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Email</label>
                                 <input type="text" class="form-control" name="txtEmail" placeholder="Địa chỉ email"
@@ -121,19 +121,19 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Ảnh cá nhân</label>
                                 <input type="file" name="txtImage" title="Ảnh cá nhân" value="">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Ảnh CMND mặt trước</label>
                                 <input type="file" name="txtIdentityCardFront" title="Ảnh CMND mặt trước" value="">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Ảnh CMND mặt sau</label>
                                 <input type="file" name="txtIdentityCardBack" title="Ảnh CMND mặt sau" value="">
@@ -141,7 +141,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                 </div>
-                <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="qc-padding-top-10 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12"
                              style="padding-top: 5px; color: red; border-bottom: 2px solid black;background-color: whitesmoke;">
@@ -150,7 +150,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8">
+                        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>
                                     Công ty
@@ -163,7 +163,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>
                                     Cấp bậc truy cập
@@ -181,7 +181,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>
                                     Ngày vào <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
@@ -192,7 +192,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                 </script>
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>
                                     Hình thức làm<i class="qc-color-red glyphicon glyphicon-star-empty"></i>
@@ -207,7 +207,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>
                                     Áp dụng nội quy<i class="qc-color-red glyphicon glyphicon-star-empty"></i>
@@ -225,7 +225,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                     </div>
                     <div class="row">
                         {{--them bo phan--}}
-                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="table-responsive">
                                 <table class="table table-hover table-condensed">
                                     <tr>
@@ -272,7 +272,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                 </div>
-                <div class="qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="qc-padding-top-10 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12"
                              style="padding-top: 5px; color: red; border-bottom: 2px solid black;background-color: whitesmoke;">
@@ -281,7 +281,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label class="qc-color-red">Tổng lương <i
                                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -290,7 +290,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                        onkeyup="qc_ad3d_staff_staff.add.showInput();" value="0">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Lương cơ bản <i
                                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -298,14 +298,14 @@ $companyLoginId = $dataStaffLogin->companyId();
                                        onkeyup="qc_ad3d_staff_staff.add.showInput();" value="0">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Bảo hiểm 21,5% LCB:</label>
                                 <input type="text" class="form-control" name="txtInsurance" title="Bảo hiểm"
                                        placeholder="Bảo hiêm" disabled="disabled" value="0">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label> Ngày nghỉ tính lương (1 ngày):</label>
                                 <input type="text" class="form-control" name="txtDateOff"
@@ -315,7 +315,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label class="qc-color-red">Tổng Lương còn lại (Không cố định) <i
                                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -323,7 +323,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                        value="0">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-9 col-lg-9">
+                        <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label class="qc-color-red">Mức lương chưa phát <i
                                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -331,7 +331,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                        disabled="disabled" value="0">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>P/C Điện thoại(VNĐ) <i
                                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -341,7 +341,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                        placeholder="VND" value="0">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>P/C Trách nhiệm(VNĐ):</label>
                                 <input type="text" class="form-control" name="txtResponsibility"
@@ -350,7 +350,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                        placeholder="VND" value="0">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>P/C đi lại(VNĐ) <i
                                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -359,7 +359,7 @@ $companyLoginId = $dataStaffLogin->companyId();
                                        onkeyup="qc_ad3d_staff_staff.add.showInputRemain(this);" value="0">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>P/C tăng ca theo giờ(VNĐ) <i
                                             class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
@@ -369,14 +369,14 @@ $companyLoginId = $dataStaffLogin->companyId();
                                        value="{!! $hFunction->currencyFormat(10000) !!}">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-6 col-lg-6">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Số TK nhận lương:</label>
                                 <input type="text" class="form-control" name="txtBankAccount"
                                        title="Số tại khoản ngân hàng" placeholder="Số tại khoản ngân hàng">
                             </div>
                         </div>
-                        <div class="col-sx-12 col-sm-12 col-md-3 col-lg-3">
+                        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <label>Ngân hàng</label>
                                 <select class="form-control" name="cbBankName">
@@ -387,9 +387,9 @@ $companyLoginId = $dataStaffLogin->companyId();
                         </div>
                     </div>
                 </div>
-                <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
-                        <div class="text-center qc-padding-top-10 col-sx-12 col-sm-12 col-md-12 col-lg-12 ">
+                        <div class="text-center qc-padding-top-10 col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
                             <div class="form-group form-group-sm" style="margin: 0;">
                                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                                 <button type="button" class="qc_save btn btn-sm btn-primary">Lưu</button>

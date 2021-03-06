@@ -162,7 +162,6 @@ class QcJobApplicationInterview extends Model
             $add_identityFront = $hFunction->getDefaultNull();
             $add_identityBack = $hFunction->getDefaultNull();
             $add_account = $identityCard;
-            $add_level = $modelCompanyStaffWork->getDefaultLevel(); # mac dinh binh thuong
             $add_rankId = $departmentWorkRank; # cap bac lam viec tai 1 bo phan
             $add_totalSalary = $totalSalary;
             $add_usePhone = $modelStaffWorkSalary->getDefaultUsePhone();
@@ -189,10 +188,10 @@ class QcJobApplicationInterview extends Model
             #mac dinh
             $bankAccount = $modelStaff->getDefaultBankAccount();
             $bankName = $modelStaff->getDefaultBankName();
-            if ($modelStaff->insert($firstName, $lastName, $identityCard, $add_account, $birthday, $gender, $add_image, $add_identityFront, $add_identityBack, $email, $address, $phone, $add_level, $bankAccount, $bankName)) {
+            if ($modelStaff->insert($firstName, $lastName, $identityCard, $add_account, $birthday, $gender, $add_image, $add_identityFront, $add_identityBack, $email, $address, $phone, $bankAccount, $bankName)) {
                 $newStaffId = $modelStaff->insertGetId();
                 #them vao cong ty lam viec
-                if ($modelCompanyStaffWork->insert($workBeginDate, $add_level, $newStaffId, $confirmStaffId, $companyId)) {
+                if ($modelCompanyStaffWork->insert($workBeginDate, $modelCompanyStaffWork->getDefaultLevel(), $newStaffId, $confirmStaffId, $companyId)) {
                     $newWorkId = $modelCompanyStaffWork->insertGetId();
                     # them vi tri lam viec
                     $modelStaffWorkDepartment->insert($newWorkId, $departmentId, $add_rankId, $workBeginDate);
@@ -208,7 +207,7 @@ class QcJobApplicationInterview extends Model
                     # them bang cham cong theo thang
                     $toDateWork = $hFunction->lastDateOfMonthFromDate($workBeginDate);
                     $modelWork->insert($workBeginDate, $toDateWork, $newWorkId);
-                    
+
                     # them ky nang lam viec
                     if ($hFunction->checkCount($dataJobApplicationWork)) {
                         foreach ($dataJobApplicationWork as $jobApplicationWork) {
