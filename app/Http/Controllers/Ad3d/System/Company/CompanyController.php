@@ -21,11 +21,12 @@ class CompanyController extends Controller
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
         $dataAccess = [
-            'accessObject' => 'company'
+            'accessObject' => 'company',
+            'subObject' => 'company'
         ];
         # lay thong tin cong ty cung he thong
         $dataCompany = $modelCompany->selectInfoSameSystemOfCompany($companyLoginId)->paginate(30);
-        return view('ad3d.system.company.list', compact('modelStaff', 'modelCompany', 'dataCompany', 'dataAccess'));
+        return view('ad3d.system.company.company.list', compact('modelStaff', 'modelCompany', 'dataCompany', 'dataAccess'));
 
     }
 
@@ -33,10 +34,8 @@ class CompanyController extends Controller
     public function view($companyId)
     {
         $modelCompany = new QcCompany();
-        if (!empty($companyId)) {
-            $dataCompany = $modelCompany->getInfo($companyId);
-            return view('ad3d.system.company.view', compact('dataCompany'));
-        }
+        $dataCompany = $modelCompany->getInfo($companyId);
+        return view('ad3d.system.company.company.view', compact('dataCompany'));
     }
 
     # lay link tuyen dung
@@ -44,17 +43,17 @@ class CompanyController extends Controller
     {
         $modelCompany = new QcCompany();
         $dataCompany = $modelCompany->getInfo($companyId);
-        return view('ad3d.system.company.get-link', compact('dataCompany'));
+        return view('ad3d.system.company.company.get-link', compact('dataCompany'));
     }
 
-    //them cong cty
+    #them cong cty
     public function getAdd()
     {
         $modelStaff = new QcStaff();
         $dataAccess = [
             'accessObject' => 'company'
         ];
-        return view('ad3d.system.company.add', compact('modelStaff', 'dataAccess'));
+        return view('ad3d.system.company.company.add', compact('modelStaff', 'dataAccess'));
     }
 
     public function postAdd()
@@ -71,11 +70,11 @@ class CompanyController extends Controller
         $website = Request::input('txtWebsite');
         $logo = Request::file('txtLogo');;
         $companyType = Request::input('cbCompanyType');;// chi nhanh
-        // kiem tra ten cty da ton tai
+        # kiem tra ten cty da ton tai
         if ($modelCompany->existName($name)) {
             Session::put('notifyAdd', "Thêm thất bại <b>'$name'</b> đã tồn tại.");
         } else {
-            if (count($logo) > 0) {
+            if ($hFunction->checkCount($logo)) {
                 $imageName = $logo->getClientOriginalName();
                 $imageName = "$companyCode-" . $hFunction->getTimeCode() . "." . $hFunction->getTypeImg($imageName);
                 $source_img = $_FILES['txtLogo']['tmp_name'];
@@ -87,7 +86,7 @@ class CompanyController extends Controller
             if ($hFunction->checkCount($dataCompanyLogin)) {
                 $parentId = $dataCompanyLogin->companyId();
             } else {
-                $parentId = null;
+                $parentId = $modelCompany->getDefaultParentId();
             }
             if ($modelCompany->insert($companyCode, $name, $txtNameCode, $address, $phone, $email, $website, $companyType, $imageName, $parentId)) {
                 Session::put('notifyAdd', 'Thêm thành công, Nhập thông tin để tiếp tục');
@@ -97,14 +96,15 @@ class CompanyController extends Controller
         }
     }
 
-    //edit
+    # edit
     public function getEdit($companyId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $dataCompany = $modelCompany->getInfo($companyId);
-        if (count($dataCompany) > 0) {
-            return view('ad3d.system.company.edit', compact('modelStaff', 'dataCompany'));
+        if ($hFunction->checkCount($dataCompany)) {
+            return view('ad3d.system.company.company.edit', compact('modelStaff', 'dataCompany'));
         }
     }
 
@@ -128,24 +128,24 @@ class CompanyController extends Controller
             $notifyContent = "Tên <b>'$name'</b> đã tồn tại.";
         }
         if ($modelCompany->existEditCompanyCode($companyId, $companyCode)) {
-            if (empty($notifyContent)) {
+            if ($hFunction->checkEmpty($notifyContent)) {
                 $notifyContent = "Mã số thuế <b>'$companyCode'</b> đã tồn tại.";
             } else {
                 $notifyContent = $notifyContent . "<br/> Mã số thuế <b>'$companyCode'</b> đã tồn tại.";
             }
         }
         if ($modelCompany->existEditNameCode($companyId, $txtNameCode)) {
-            if (empty($notifyContent)) {
+            if ($hFunction->checkEmpty($notifyContent)) {
                 $notifyContent = "Mã Cty <b>'$txtNameCode'</b> đã tồn tại.";
             } else {
                 $notifyContent = $notifyContent . "<br/> Mã Cty <b>'$txtNameCode'</b> đã tồn tại.";
             }
         }
-        if (!empty($notifyContent)) {
+        if (!$hFunction->checkEmpty($notifyContent)) {
             return $notifyContent;
         } else {
             $oldLogo = $modelCompany->logo($companyId);
-            if (count($txtNewLogo) > 0) {
+            if ($hFunction->checkCount($txtNewLogo)) {
                 $imageName = $txtNewLogo->getClientOriginalName();
                 $imageName = "$companyCode-" . $hFunction->getTimeCode() . "." . $hFunction->getTypeImg($imageName);
                 $source_img = $_FILES['txtNewLogo']['tmp_name'];
@@ -159,12 +159,10 @@ class CompanyController extends Controller
         }
     }
 
-    // delete
+    # delete
     public function deleteCompany($companyId)
     {
-        if (!empty($companyId)) {
-            $modelCompany = new QcCompany();
-            $modelCompany->actionDelete($companyId);
-        }
+        $modelCompany = new QcCompany();
+        $modelCompany->actionDelete($companyId);
     }
 }

@@ -382,16 +382,16 @@ Route::group(['prefix' => 'ad3d'], function () {
     });
 
     Route::group(['prefix' => 'system', 'middleware' => 'Ad3dMiddleware'], function () {
-        //rule
+        # rule
         Route::group(['prefix' => 'rules'], function () {
-            Route::get('view/{rulesId?}', ['as' => 'qc.ad3d.system.rules.view.get', 'uses' => 'Ad3d\System\Rules\RulesController@view']);
+           // Route::get('view/{rulesId?}', ['as' => 'qc.ad3d.system.rules.view.get', 'uses' => 'Ad3d\System\Rules\RulesController@view']);
 
-            //edit
+            # edit
             Route::get('edit/{rulesId?}', ['as' => 'qc.ad3d.system.rules.edit.get', 'uses' => 'Ad3d\System\Rules\RulesController@getEdit']);
             Route::post('edit/{rulesId?}', ['as' => 'qc.ad3d.system.rules.edit.post', 'uses' => 'Ad3d\System\Rules\RulesController@postEdit']);
 
-            //off work
-            Route::get('add', ['as' => 'qc.ad3d.system.rules.add.get', 'uses' => 'Ad3d\System\Rules\RulesController@getAdd']);
+            # off work
+            Route::get('add/{parentId?}', ['as' => 'qc.ad3d.system.rules.add.get', 'uses' => 'Ad3d\System\Rules\RulesController@getAdd']);
             Route::post('add', ['as' => 'qc.ad3d.system.rules.add.post', 'uses' => 'Ad3d\System\Rules\RulesController@postAdd']);
 
             Route::get('del/{rulesId?}', ['as' => 'qc.ad3d.system.rules.del', 'uses' => 'Ad3d\System\Rules\RulesController@deleteDelete']);
@@ -399,20 +399,20 @@ Route::group(['prefix' => 'ad3d'], function () {
             Route::get('/', ['as' => 'qc.ad3d.system.rules.get', 'uses' => 'Ad3d\System\Rules\RulesController@index']);
         });
 
-        //cong ty
+        # cong ty
         Route::group(['prefix' => 'company'], function () {
             # xem chi tiet
             Route::get('view/{companyId?}', ['as' => 'qc.ad3d.system.company.view.get', 'uses' => 'Ad3d\System\Company\CompanyController@view']);
             # lay link tuyen dung
             Route::get('link/{companyId?}', ['as' => 'qc.ad3d.system.company.recruitment_link.get', 'uses' => 'Ad3d\System\Company\CompanyController@getRecruitmentLink']);
-            //sua thong tin
+            # sua thong tin
             Route::get('edit/{companyId?}', ['as' => 'qc.ad3d.system.company.edit.get', 'uses' => 'Ad3d\System\Company\CompanyController@getEdit']);
             Route::post('edit/{companyId?}', ['as' => 'qc.ad3d.system.company.post.get', 'uses' => 'Ad3d\System\Company\CompanyController@postEdit']);
 
-            //them cty
+            # them cty
             Route::get('add', ['as' => 'qc.ad3d.system.company.add.get', 'uses' => 'Ad3d\System\Company\CompanyController@getAdd']);
             Route::post('add', ['as' => 'qc.ad3d.system.company.add.post', 'uses' => 'Ad3d\System\Company\CompanyController@postAdd']);
-            // trang chinh
+            # trang chinh
             Route::get('/', ['as' => 'qc.ad3d.system.company.get', 'uses' => 'Ad3d\System\Company\CompanyController@index']);
         });
 
@@ -711,9 +711,9 @@ Route::group(['prefix' => 'ad3d'], function () {
             });
             # thong tin don hang
             Route::get('view/{orderId?}', ['as' => 'qc.ad3d.order.order.view.get', 'uses' => 'Ad3d\Order\Order\OrderController@view']);
-            #xem anh thiet ke
-            Route::get('view-product-design/{productId?}', ['as' => 'qc.ad3d.order.order.product.design.view', 'uses' => 'Ad3d\Order\Order\OrderController@viewProductDesign']);
 
+            #xem anh thiet ke
+            Route::get('view-product-design/{designId?}', ['as' => 'qc.ad3d.order.order.product.design.view', 'uses' => 'Ad3d\Order\Order\OrderController@viewProductDesign']);
             #xem anh bao cao
             Route::get('view-work-allocation-report-image/{imageId?}', ['as' => 'qc.ad3d.order.order.work_allocation_report_image.view', 'uses' => 'Ad3d\Order\Order\OrderController@viewWorkAllocationReportImage']);
             #xem anh bao cao

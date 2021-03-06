@@ -13,7 +13,8 @@ $mobileStatus = $mobile->isMobile();
 $hrefIndex = route('qc.ad3d.order.order.get');
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 
-$currentYear = $hFunction->currentYear();
+$currentMonth = (int)$hFunction->currentMonth();
+$currentYear = (int)$hFunction->currentYear();
 $limitYear = 2017;
 
 if ($staffFilterId > 0) {
@@ -34,6 +35,10 @@ if ($hFunction->checkCount($dataOrderSelected)) {
     $orderSelectedId = $hFunction->getDefaultNull();
     $orderMonthSelected = $hFunction->getDefaultNull();
 }
+# trang thai thanh toan mac dinh
+$getDefaultAllPaymentStatus = $modelOrder->getDefaultAllPayment();
+$getDefaultHasPaymentStatus = $modelOrder->getDefaultHasPayment();
+$getDefaultNotPaymentStatus = $modelOrder->getDefaultNotPayment();
 ?>
 @extends('ad3d.order.order.index')
 @section('qc_ad3d_order_order')
@@ -62,9 +67,6 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                 <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
                     <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
                             data-href-filter="{!! $hrefIndex !!}">
-                        {{--@if($dataStaffLogin->checkRootManage())
-                            <option value="1000">Tất cả</option>
-                        @endif--}}
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
                                 @if($dataStaffLogin->checkRootManage())
@@ -151,9 +153,11 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                         <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                             Tất cả
                         </option>
-                        @for($i =1;$i<= 31; $i++)
-                            <option value="{!! $i !!}"
-                                    @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
+                        @for($d =1;$d<= 31; $d++)
+                            <option value="{!! $d !!}"
+                                    @if((int)$dayFilter == $d) selected="selected" @endif >
+                                {!! $d !!}
+                            </option>
                         @endfor
                     </select>
                     <select class="cbMonthFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
@@ -163,7 +167,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                             Tất cả
                         </option>
                         @for($m =1;$m<= 12; $m++)
-                            <option value="{!! $i !!}"
+                            <option value="{!! $m !!}"
                                     @if((int)$monthFilter == $m) selected="selected" @endif>
                                 {!! $m !!}
                             </option>
@@ -185,15 +189,16 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                 <div class="text-center col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
                     <select class="cbPaymentStatus form-control"
                             data-href="{!! route('qc.ad3d.order.order.get') !!}">
-                        <option value="{!! $modelOrder->getDefaultAllPayment() !!}"
-                                @if($paymentStatus == 2) selected="selected" @endif>Tất cả
+                        <option value="{!! $getDefaultAllPaymentStatus !!}"
+                                @if($paymentStatus == $getDefaultAllPaymentStatus) selected="selected" @endif>
+                            Tất cả
                         </option>
-                        <option value="{!! $modelOrder->getDefaultHasPayment() !!}"
-                                @if($paymentStatus == 1) selected="selected" @endif>
+                        <option value="{!! $getDefaultHasPaymentStatus !!}"
+                                @if($paymentStatus == $getDefaultHasPaymentStatus) selected="selected" @endif>
                             Đã thu xong
                         </option>
-                        <option value="{!! $modelOrder->getDefaultNotPayment() !!}"
-                                @if($paymentStatus == 0) selected="selected" @endif>
+                        <option value="{!! $getDefaultNotPaymentStatus !!}"
+                                @if($paymentStatus == $getDefaultNotPaymentStatus) selected="selected" @endif>
                             Chưa thu xong
                         </option>
                     </select>
@@ -219,7 +224,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                             <em>
                                 Tổng tiền:
                             </em>
-                            <b>{!! $totalOrders !!}</b>
+                            <b>{!! $hFunction->currencyFormat($totalMoneyOrder) !!}</b>
                         </div>
                     </div>
                 </div>
@@ -229,7 +234,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                             <em>
                                 Tiền đã thu:
                             </em>
-                            <b>{!! $totalOrders !!}</b>
+                            <b>{!! $hFunction->currencyFormat($totalMoneyPaidOrder) !!}</b>
                         </div>
                     </div>
                 </div>
@@ -239,7 +244,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                             <em>
                                 Tiền chưa thu:
                             </em>
-                            <b>{!! $totalOrders !!}</b>
+                            <b>{!! $hFunction->currencyFormat($totalMoneyUnPaidOrder) !!}</b>
                         </div>
                     </div>
                 </div>
@@ -258,7 +263,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                         {!! $y !!}
                                     </a>
                                     <ul class="list-group" style="margin-bottom: 0;">
-                                        @for($m = 1; $m <=12; $m++)
+                                        @for($m = $currentMonth; $m >= 1; $m--)
                                             <?php
                                             $dateFilter = date('Y-m', strtotime("1-$m-$y"));
                                             if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
@@ -300,7 +305,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                             $finishStatus = $order->checkFinishStatus();
                                                             $orderMonth = (int)$hFunction->getMonthFromDate($orderReceiveDate);
                                                             $orderYear = (int)$hFunction->getYearFromDate($orderReceiveDate);
-                                                            $orderHref = route('qc.ad3d.order.order.get', "null/0/$orderMonth/$orderYear/100/null/null/0/$orderId");
+                                                            $orderHref = route('qc.ad3d.order.order.get', "null/0/$orderMonth/$orderYear/$getDefaultAllPaymentStatus/null/null/0/$orderId");
                                                             ?>
                                                             <li class="list-group-item"
                                                                 style="padding-left: 0; padding-right: 0; border-bottom: none;border-right: none;">
@@ -322,7 +327,18 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                         @endforeach
                                                     </ul>
                                                 </li>
-
+                                            @else
+                                                <li class="list-group-item"
+                                                    style="padding-right: 0; border-top: none; border-bottom: none;border-right: none;">
+                                                    <a data-href="#"
+                                                       style="padding: 0; border-top: none; border-bottom: 0; color: black;">
+                                                        <i class="glyphicon glyphicon-minus"></i>
+                                                        Tháng {!! $m !!}
+                                                    </a>
+                                                    <span class="badge" style="background: none; color: green;">
+                                                        0
+                                                    </span>
+                                                </li>
                                             @endif
                                         @endfor
                                     </ul>
@@ -355,12 +371,10 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                        style="padding: 0; border-top: none; border-bottom: none;">
                                                         <i class="glyphicon glyphicon-plus qc-font-size-10"></i>
                                                         Tháng {!! $m !!}
-                                                        <span class="label pull-right"
-                                                              style="background: none; color: green;">
-                                                            {!! $hFunction->getCount($dataOrderInMonthYear) !!}
-                                                        </span>
                                                     </a>
-
+                                                    <span class="badge" style="background: none; color: green;">
+                                                        {!! $hFunction->getCount($dataOrderInMonthYear) !!}
+                                                    </span>
                                                     <ul id="container_{!! $m.$y !!}" class="list-group"
                                                         style="display: none; margin-bottom: 0;">
                                                         @foreach($dataOrderInMonthYear as $order)
@@ -370,7 +384,7 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                             $finishStatus = $order->checkFinishStatus();
                                                             $orderMonth = (int)$hFunction->getMonthFromDate($orderReceiveDate);
                                                             $orderYear = (int)$hFunction->getYearFromDate($orderReceiveDate);
-                                                            $orderHref = route('qc.ad3d.order.order.get', "null/0/$orderMonth/$orderYear/100/null/null/0/$orderId");
+                                                            $orderHref = route('qc.ad3d.order.order.get', "null/0/$orderMonth/$orderYear/$getDefaultAllPaymentStatus/null/null/0/$orderId");
                                                             ?>
                                                             <li class="list-group-item"
                                                                 style="padding-left: 0; padding-right: 0; border-bottom: none;border-right: none;">
@@ -381,10 +395,29 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                                     <span>
                                                                         {!! $order->name() !!}
                                                                     </span>
+                                                                    @if($finishStatus)
+                                                                        <i class="glyphicon glyphicon-ok"
+                                                                           style="color: green;"></i>
+                                                                    @else
+                                                                        <i class="glyphicon glyphicon-ok"
+                                                                           style="color: red;"></i>
+                                                                    @endif
                                                                 </a>
                                                             </li>
                                                         @endforeach
                                                     </ul>
+                                                </li>
+                                            @else
+                                                <li class="list-group-item"
+                                                    style="padding-right: 0; border-top: none; border-bottom: none;border-right: none;">
+                                                    <a data-href="#"
+                                                       style="padding: 0; border-top: none; border-bottom: 0; color: black;">
+                                                        <i class="glyphicon glyphicon-minus"></i>
+                                                        Tháng {!! $m !!}
+                                                    </a>
+                                                    <span class="badge" style="background: none; color: green;">
+                                                        0
+                                                    </span>
                                                 </li>
                                             @endif
                                         @endfor
@@ -420,12 +453,12 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                     <div class="panel-heading" style="padding-top: 0; background-color: white;">
                                         <h3 style="color: blue;">{!! $dataOrderSelected->name() !!}</h3>
                                         <a class="qc-link" title="In đơn hàng"
-                                           href="{!! route('qc.ad3d.order.order.print.get', $orderId) !!}">
+                                           href="{!! route('qc.ad3d.order.order.print.get', $orderSelectedId) !!}">
                                             <i class="qc-font-size-14 fa fa-print"></i>
                                         </a>
                                         &nbsp;&nbsp;
                                         <a class="qc-link" title="In nghiệm thu"
-                                           href="{!! route('qc.ad3d.order.order.confirm.print.get', $orderId) !!}">
+                                           href="{!! route('qc.ad3d.order.order.confirm.print.get', $orderSelectedId) !!}">
                                             <i class="qc-font-size-14 glyphicon glyphicon-list-alt"></i>
                                         </a>
                                     </div>
@@ -613,7 +646,6 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                     $productAmount = $product->amount();
                                     $productDescription = $product->description();
                                     $dataWorkAllocation = $product->workAllocationInfoOfProduct();
-                                    $designImage = $product->designImage();
                                     # thiet ke dang ap dung
                                     $dataProductDesign = $product->productDesignInfoApplyActivity();
                                     # thiet ke san pham thi cong
@@ -632,8 +664,8 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                         </b>
                                                         @if($hFunction->checkCount($dataProductDesign))
                                                             <br/>
-                                                            <a class="qc-link qc_work_order_product_design_image_view"
-                                                               data-href="{!! route('qc.work.orders.product_design.view.get', $dataProductDesign->designId()) !!}">
+                                                            <a class="qc-link qc_product_design_image_view"
+                                                               data-href="{!! route('qc.ad3d.order.order.product.design.view', $dataProductDesign->designId()) !!}">
                                                                 <img style="width: 100%; height: auto; border: 1px solid grey;"
                                                                      title="Ảnh thiết kế"
                                                                      src="{!! $dataProductDesign->pathSmallImage($dataProductDesign->image()) !!}">
@@ -676,8 +708,8 @@ if ($hFunction->checkCount($dataOrderSelected)) {
                                                     <td>
                                                         @if($hFunction->checkCount($dataProductDesignConstruction))
                                                             @foreach($dataProductDesignConstruction as $productDesignConstruction)
-                                                                <a class="qc_work_order_product_design_image_view qc-link"
-                                                                   data-href="{!! route('qc.work.orders.product_design.view.get', $productDesignConstruction->designId()) !!}">
+                                                                <a class="qc_product_design_image_view qc-link"
+                                                                   data-href="{!! route('qc.ad3d.order.order.product.design.view', $productDesignConstruction->designId()) !!}">
                                                                     <img style="width: 70px; height: auto; margin-bottom: 5px; border: 1px solid grey;"
                                                                          title="Ảnh thiết kế thi công"
                                                                          src="{!! $productDesignConstruction->pathSmallImage($productDesignConstruction->image()) !!}">

@@ -54,6 +54,12 @@ class QcCompanyStaffWork extends Model
         return 3;
     }
 
+    # mac dinh cap bac cap cao nhat
+    public function getDefaultLevelRoot()
+    {
+        return 0;
+    }
+
     # mac dinh gioi hạn truy cap admin
     public function getDefaultLimitAdmin()
     {
@@ -574,7 +580,7 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::where('staff_id', $staffId)->where('action', $this->getDefaultHasAction())->pluck('work_id');
     }
 
-    //lay thong tin dang lam viec cua NV
+    # lay thong tin dang lam viec cua NV
     public function infoActivityOfStaff($staffId)
     {
         return QcCompanyStaffWork::where(['staff_id' => $staffId, 'action' => $this->getDefaultHasAction()])->first();
@@ -730,7 +736,7 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    // kiem tra nv co thuoc bo phan thi cong cap quan ly hay khong
+    # kiem tra nv co thuoc bo phan thi cong cap quan ly hay khong
     public function checkConstructionDepartmentAndManageRank($staffId)
     {
         $hFunction = new \Hfunction();
@@ -757,7 +763,7 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    //kiem tra nv thuoc bo phan thiet ke
+    # kiem tra nv thuoc bo phan thiet ke
     public function checkDesignDepartment($staffId)
     {
         $hFunction = new \Hfunction();
@@ -770,7 +776,7 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    //kiem tra nv thuoc bo phan thiet ke cap quan ly hay khong
+    # kiem tra nv thuoc bo phan thiet ke cap quan ly hay khong
     public function checkDesignDepartmentAndManageRank($staffId)
     {
         $hFunction = new \Hfunction();
@@ -783,7 +789,7 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    //kiem tra nv thuoc bo phan thiet ke cap thong thuong
+    # kiem tra nv thuoc bo phan thiet ke cap thong thuong
     public function checkDesignDepartmentAndNormalRank($staffId)
     {
         $hFunction = new \Hfunction();
@@ -863,7 +869,7 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    // kiem tra nv theo cap bac nhan su
+    # kiem tra nv theo cap bac nhan su
     public function checkPersonnelDepartment($staffId)
     {
         $hFunction = new \Hfunction();
@@ -876,7 +882,7 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    //kiem tran nv thuoc bo phan nhan su cap quan ly
+    # kiem tran nv thuoc bo phan nhan su cap quan ly
     public function checkPersonnelDepartmentAndManageRank($staffId)
     {
         $hFunction = new \Hfunction();
@@ -889,7 +895,7 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    //kiem tran nv thuoc bo phan nhan su cap thong thuong
+    # kiem tran nv thuoc bo phan nhan su cap thong thuong
     public function checkPersonnelDepartmentAndNormalRank($staffId)
     {
         $hFunction = new \Hfunction();
@@ -916,7 +922,7 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    //kiem tra nv thuoc bp thu quy
+    # kiem tra nv thuoc bp thu quy
     public function checkTreasureDepartment($staffId)
     {
         $hFunction = new \Hfunction();
@@ -929,7 +935,7 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    //kiem tra nv thuoc bo phan thu quy cap quan ly hay khong
+    # kiem tra nv thuoc bo phan thu quy cap quan ly hay khong
     public function checkTreasureDepartmentAndManageRank($staffId)
     {
         $hFunction = new \Hfunction();
@@ -942,7 +948,7 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    //kiem tra nv thuoc bo phan thu quy cap thong thuong
+    # kiem tra nv thuoc bo phan thu quy cap thong thuong
     public function checkTreasureDepartmentAndNormalRank($staffId)
     {
         $hFunction = new \Hfunction();
@@ -955,10 +961,22 @@ class QcCompanyStaffWork extends Model
         return $resultStatus;
     }
 
-    //---------- cong ty -----------
+    # ---------- cong ty -----------
     public function company()
     {
         return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
+    }
+
+    # thong tin cap cao nhat cua 1 cty dang hoat dong
+    public function getActivityInfoLevelRootOfCompany($companyId)
+    {
+        return QcCompanyStaffWork::where('company_id', $companyId)->where('level', $this->getDefaultLevelRoot())->where('action', $this->getDefaultHasAction())->first();
+    }
+
+    # kiem tra phai level cao nhat
+    public function checkLevelRoot($workId = null)
+    {
+        return ($this->level($this->checkIdNull($workId) == $this->getDefaultLevelRoot()) ? true : false);
     }
 
     # lay danh sach thong tin chua ban giao tui do nghe
@@ -1083,35 +1101,35 @@ class QcCompanyStaffWork extends Model
         }
     }
 
-    // lay danh sach ma nv cua bo phan quan ly cua 1 cty
+    # lay danh sach ma nv cua bo phan quan ly cua 1 cty
     public function listStaffIdManage($companyId, $level = 100)
     {
         $modelDepartment = new QcDepartment();
         return $this->listStaffIdActivityHasFilter($companyId, $modelDepartment->manageDepartmentId(), $level);
     }
 
-    //lay danh sach ma nv cua bo phan thu quy cua 1 cty
+    # lay danh sach ma nv cua bo phan thu quy cua 1 cty
     public function listStaffIdTreasure($companyId, $level = 100)
     {
         $modelDepartment = new QcDepartment();
         return $this->listStaffIdActivityHasFilter($companyId, $modelDepartment->treasurerDepartmentId(), $level);
     }
 
-    // lay danh sach ma nv cua bo phan thi thi cong
+    # lay danh sach ma nv cua bo phan thi thi cong
     public function listConstructionStaffId()
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();
         return QcCompanyStaffWork::whereIn('work_id', $modelStaffWorkDepartment->listConstructionWorkId())->pluck('staff_id');
     }
 
-    //lay danh sach ma nv cua bo phan thi thi cong cua 1 cty
+    # lay danh sach ma nv cua bo phan thi thi cong cua 1 cty
     public function listStaffIdConstruction($companyId, $level = 100)
     {
         $modelDepartment = new QcDepartment();
         return $this->listStaffIdActivityHasFilter($companyId, $modelDepartment->constructionDepartmentId(), $level);
     }
 
-    // lay danh sach ma nv cua bo phan thiet ke
+    # lay danh sach ma nv cua bo phan thiet ke
     public function listDesignStaffId()
     {
         $modelStaffWorkDepartment = new QcStaffWorkDepartment();

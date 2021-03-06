@@ -9,38 +9,35 @@
  *$dataCompany
  */
 $hFunction = new Hfunction();
-$dataStaffLogin = $modelStaff->loginStaffInfo();
+$dataStaffLogin = $modelStaff->loginStaffInfo();//checkRoot
+$dataCompanyLogin = $dataStaffLogin->companyInfoActivity();
 ?>
-@extends('ad3d.system.company.index')
+@extends('ad3d.system.company.company.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <label class="qc-font-size-20">CÔNG TY</label>
-                </div>
-            </div>
-        </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row"
                  data-href-view="{!! route('qc.ad3d.system.company.view.get') !!}"
                  data-href-edit="{!! route('qc.ad3d.system.company.edit.get') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr>
-                            <td colspan="5"></td>
-                            <td class="text-right">
-                                <a class="qc-font-size-16 qc-link-green-bold" title="Thêm"
-                                   href="{!! route('qc.ad3d.system.company.add.get') !!}">
-                                    <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
-                                    Thêm
-                                </a>
-                            </td>
-                        </tr>
+                        {{--cong ty me moi duoc them chi nhanh--}}
+                        @if($dataCompanyLogin->checkParent())
+                            <tr>
+                                <td colspan="6" style="padding: 0;">
+                                    <a class="form-control qc-font-size-16 qc-link-white-bold btn btn-primary"
+                                       title="Thêm"
+                                       href="{!! route('qc.ad3d.system.company.add.get') !!}">
+                                        <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
+                                        THÊM CHI NHÁNH
+                                    </a>
+                                </td>
+                            </tr>
+                        @endif
                         <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Logo</th>
                             <th>Tên</th>
+                            <th>Logo</th>
                             <th>Thông tin liên lạc</th>
                             <th>Hình thức hoạt động</th>
                             <th class="text-center">Link tuyển dụng</th>
@@ -55,7 +52,8 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 <?php
                                 $companyId = $company->companyId();
                                 $logo = $company->logo();
-                                //  $recruitmentLink = route('qc.work.recruitment.login.get',$companyId );
+                                # thong tin nguoi lanh dao
+                                $dataCompanyStaffWorkRoot = $company->companyStaffWorkLevelRoot();
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"
                                     data-object="{!! $companyId !!}">
@@ -63,15 +61,19 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        @if(!$hFunction->checkEmpty($logo))
-                                            <img alt="..." src="{!! $company->pathSmallImage($logo) !!}"
-                                                 style="max-width: 70px;">
+                                        <label>{!! $company->name() !!}</label>
+                                        <br/>
+                                        <em style="color: grey;">Quản lý:</em>
+                                        @if($hFunction->checkCount($dataCompanyStaffWorkRoot))
+                                            <?php
+                                            $dataStaff = $dataCompanyStaffWorkRoot->staff;
+                                            ?>
+                                            <img style="background-color: white; width: 30px;height: 30px; border: 1px solid #d7d7d7;border-radius: 15px;"
+                                                 src="{!! $dataStaff->pathAvatar($dataStaff->image()) !!}">
+                                            <b>{!! $dataStaff->lastName() !!}</b>
                                         @else
-                                            <em class="qc-color-grey">Chưa có</em>
+                                            <span>Chưa có</span>
                                         @endif
-                                    </td>
-                                    <td>
-                                        {!! $company->name() !!}
                                         <br/>
                                         <a class="qc_view qc-link" href="#" title="Xem chi tiết">
                                             <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
@@ -84,6 +86,14 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                         <a class="qc_delete qc-link-red" href="#" title="Xóa">
                                             <i class="qc-font-size-14 glyphicon glyphicon-trash"></i>
                                         </a>
+                                    </td>
+                                    <td>
+                                        @if(!$hFunction->checkEmpty($logo))
+                                            <img alt="..." src="{!! $company->pathSmallImage($logo) !!}"
+                                                 style="max-width: 70px;">
+                                        @else
+                                            <em class="qc-color-grey">Chưa có</em>
+                                        @endif
                                     </td>
                                     <td>
                                         <em class="qc-text-under">- Địa chỉ:</em>

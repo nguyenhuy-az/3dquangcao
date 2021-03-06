@@ -110,6 +110,7 @@ class OrdersController extends Controller
     # thong tin chi tiet
     public function viewOrders($orderId)
     {
+        $hFunction = new \Hfunction();
         $modelOrder = new QcOrder();
         $dataAccess = [
             'object' => 'orders',
@@ -117,7 +118,7 @@ class OrdersController extends Controller
         ];
 
         $dataOrders = $modelOrder->getInfo($orderId);
-        if (count($dataOrders) > 0) {
+        if ($hFunction->checkCount($dataOrders)) {
             return view('work.orders.orders.view', compact('dataAccess', 'dataOrders'));
         }
     }
@@ -166,9 +167,10 @@ class OrdersController extends Controller
     # xem thong tin khach hang
     public function viewCustomer($customerId)
     {
+        $hFunction = new \Hfunction();
         $modelCustomer = new QcCustomer();
         $dataCustomer = $modelCustomer->getInfo($customerId);
-        if (count($dataCustomer) > 0) {
+        if ($hFunction->checkCount($dataCustomer)) {
             $dataOrders = $modelCustomer->orderInfoAllOfCustomer($dataCustomer->customerId());
             return view('work.orders.customer.view', compact('dataCustomer', 'dataOrders'));
         }
@@ -177,10 +179,11 @@ class OrdersController extends Controller
     // theo ten don hang
     public function filterCheckOrderName($name)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $dataOrder = $modelOrder->infoFromSuggestionNameOffReceiveStaff($modelStaff->loginStaffId(), $name);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             $result = array(
                 'status' => 'exist',
                 'content' => $dataOrder
@@ -197,9 +200,10 @@ class OrdersController extends Controller
     // theo ten khach hang
     public function filterCheckCustomerName($name)
     {
+        $hFunction = new \Hfunction();
         $modelCustomer = new QcCustomer();
         $dataCustomer = $modelCustomer->infoFromSuggestionName($name);
-        if (count($dataCustomer) > 0) {
+        if ($hFunction->checkCount($dataCustomer)) {
             $result = array(
                 'status' => 'exist',
                 'content' => $dataCustomer
@@ -217,9 +221,10 @@ class OrdersController extends Controller
     #kiem tra khach hang qua sđt
     public function checkCustomerPhone($phone)
     {
+        $hFunction = new \Hfunction();
         $modelCustomer = new QcCustomer();
         $dataCustomer = $modelCustomer->infoFromSuggestionPhone($phone);
-        if (count($dataCustomer) > 0) {
+        if ($hFunction->checkCount($dataCustomer)) {
             $result = array(
                 'status' => 'exist',
                 'content' => $dataCustomer
@@ -235,9 +240,10 @@ class OrdersController extends Controller
 
     public function checkCustomerName($name)
     {
+        $hFunction = new \Hfunction();
         $modelCustomer = new QcCustomer();
         $dataCustomer = $modelCustomer->infoFromSuggestionName($name);
-        if (count($dataCustomer) > 0) {
+        if ($hFunction->checkCount($dataCustomer)) {
             $result = array(
                 'status' => 'exist',
                 'content' => $dataCustomer
@@ -254,9 +260,10 @@ class OrdersController extends Controller
     // tim ten don hang
     public function checkOrderName($name)
     {
+        $hFunction = new \Hfunction();
         $modelOrder = new QcOrder();
         $dataOrder = $modelOrder->infoFromSuggestionName($name);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             $result = array(
                 'status' => 'exist',
                 'content' => $dataOrder

@@ -112,13 +112,13 @@ class QcStaff extends Model
         return null;
     }
     //---------- Insert ----------
-    //tạo mật khẩu cho người dùng
+    # tạo mật khẩu cho người dùng
     public function createStaffPass($password, $nameCode)
     {
         return md5($nameCode . '3DQC') . md5('3DQC' . $password . $nameCode);
     }
 
-    //lấy lại mật khẫu mặc định
+    # lấy lại mật khẫu mặc định
     public function resetPass($staffId)
     {
         $hFunction = new \Hfunction();
@@ -130,7 +130,7 @@ class QcStaff extends Model
         }
     }
 
-    // thêm mới
+    # thêm mới
     public function insert($firstName, $lastName, $identityCard, $account, $birthday = null, $gender, $image = null, $identityCardFront, $identityCardBack, $email, $address = null, $phone = null, $level, $bankAccount = null, $bankName = null)
     {
         $hFunction = new \Hfunction();
@@ -146,7 +146,7 @@ class QcStaff extends Model
             $newPass = $this->createStaffPass($newPass, $nameCode);
         }
 
-        // insert
+        # insert
         $modelStaff->nameCode = $nameCode;
         $modelStaff->firstName = $hFunction->convertValidHTML($firstName);
         $modelStaff->lastName = $hFunction->convertValidHTML($lastName);
@@ -174,7 +174,7 @@ class QcStaff extends Model
         }
     }
 
-    // lấy id mới thêm
+    # lấy id mới thêm
     public function insertGetId()
     {
         return $this->lastId;
@@ -346,7 +346,7 @@ class QcStaff extends Model
         return $this->login($this->account($staffId), $password);
     }
 
-    // delete
+    # delete
     public function actionDelete($staffId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
@@ -356,7 +356,7 @@ class QcStaff extends Model
         }
     }
 
-    // up hinh anh
+    # up hinh anh
     public function rootPathFullImage()
     {
         return 'public/images/staff/full';
@@ -367,7 +367,7 @@ class QcStaff extends Model
         return 'public/images/staff/small';
     }
 
-    //upload image
+    # upload image
     public function uploadImage($file, $imageName, $size = 500)
     {
         $hFunction = new \Hfunction();
@@ -378,7 +378,7 @@ class QcStaff extends Model
         return $hFunction->uploadSaveByFileName($file, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $size);
     }
 
-    //drop image
+    # drop image
     public function dropImage($imageName)
     {
         if (is_file($this->rootPathSmallImage() . '/' . $imageName)) unlink($this->rootPathSmallImage() . '/' . $imageName);
@@ -410,7 +410,7 @@ class QcStaff extends Model
         return asset('public/images/icons/people.jpeg');
     }
 
-    // up hinh anh
+    # up hinh anh
     public function pathDefaultNotImage()
     {
         return asset('public/images/icons/not-image.png');
@@ -441,14 +441,14 @@ class QcStaff extends Model
             return $this->pathFullImage($image);
         }
     }
-    //========== ========= ========= mối quan hệ ========== ========= ==========
-    //---------- phan hoi phat -----------
+    # ========== ========= ========= mối quan hệ ========== ========= ==========
+    # ---------- phan hoi phat -----------
     public function minusMoneyFeedback()
     {
         return $this->hasMany('App\Models\Ad3d\MinusMoneyFeedback\QcMinusMoneyFeedback', 'confirmStaff_id', 'staff_id');
     }
 
-    //---------- thong tin bao cao kiem tra do nghe dung chung -----------
+    # ---------- thong tin bao cao kiem tra do nghe dung chung -----------
     public function companyStoreCheckReport()
     {
         return $this->hasMany('App\Models\Ad3d\CompanyStoreCheckReport\QcCompanyStoreCheckReport', 'confirmStaff_id', 'staff_id');
@@ -511,7 +511,7 @@ class QcStaff extends Model
         $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $staffId = $this->checkIdNull($staffId);
-        $dataCompanyStaffWork = $modelCompanyStaffWork->infoActivityOfStaff($staffId);
+        $dataCompanyStaffWork = $modelCompanyStaffWork->getLastInfoOfStaff($staffId);
         if ($hFunction->checkCount($dataCompanyStaffWork)) { # du lieu phien ban moi
             return $dataCompanyStaffWork->level();
         } else { # du lieu phien ban cu
@@ -523,12 +523,11 @@ class QcStaff extends Model
     {
         $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $staffId = $this->checkIdNull($staffId);
-        $dataCompanyStaffWork = $modelCompanyStaffWork->infoActivityOfStaff($staffId);
+        $dataCompanyStaffWork = $modelCompanyStaffWork->getLastInfoOfStaff($this->checkIdNull($staffId));
         if ($hFunction->checkCount($dataCompanyStaffWork)) {
             return $dataCompanyStaffWork->companyId();
         } else { # du lieu cu
-            return $this->pluck('company_id', $staffId);
+            return null;
         }
     }
 
@@ -881,8 +880,9 @@ class QcStaff extends Model
     # kiem tra co ap dung noi quy cho NV hay khong
     public function checkApplyRule($staffId = null)
     {
+        $hFunction = new \Hfunction();
         $dataStaffWorkMethod = $this->infoActivityStaffWorkMethod($staffId);
-        if (count($dataStaffWorkMethod) > 0) {
+        if ($hFunction->checkCount($dataStaffWorkMethod)) {
             return $dataStaffWorkMethod->checkApplyRule();
         } else {
             return true; # mac dinh ap dung noi quy
@@ -980,21 +980,21 @@ class QcStaff extends Model
         return $modelOrder->infoOfStaffReceive($this->checkIdNull($staffId), $date, $confirmStatus, $orderKeyword);
     }
 
-    // lay thong tin don hang da thanh toan hoac chưa thanh toan theo tg
+    # lay thong tin don hang da thanh toan hoac chưa thanh toan theo tg
     public function orderAndPayInfoOfStaffReceive($staffId = null, $date = null, $paymentStatus = null, $orderKeyword = null)
     {
         $modelOrder = new QcOrder();
         return $modelOrder->infoAndPayOfStaffReceive($this->checkIdNull($staffId), $date, $paymentStatus, $orderKeyword);
     }
 
-    // lay thong tin don hang da thanh toan hoac chưa thanh toan theo tg - khong huy
+    # lay thong tin don hang da thanh toan hoac chưa thanh toan theo tg - khong huy
     public function selectOrderNoCancelAndPayInfoOfStaffReceive($staffId = null, $date = null, $paymentStatus = null, $finishStatus = null, $orderKeyword = null)
     {
         $modelOrder = new QcOrder();
         return $modelOrder->selectInfoNoCancelAndPayOfStaffReceive($this->checkIdNull($staffId), $date, $paymentStatus, $finishStatus, $orderKeyword);
     }
 
-    // lay thong tin don hang da thanh toan hoac chưa thanh toan theo tg - khong huy cua 1 hoac nhieu nguoi
+    # lay thong tin don hang da thanh toan hoac chưa thanh toan theo tg - khong huy cua 1 hoac nhieu nguoi
     public function selectOrderNoCancelAndPayInfoOfListStaffReceive($listStaffId, $date = null, $paymentStatus = null, $finishStatus = null, $orderKeyword = null)
     {
         $modelOrder = new QcOrder();
@@ -1008,21 +1008,21 @@ class QcStaff extends Model
         return $modelOrder->infoNoCancelAndPayOfStaffReceive($this->checkIdNull($staffId), $date, $paymentStatus, $orderKeyword);
     }
 
-    // lay thong tin don hang bao gia
+    # lay thong tin don hang bao gia
     public function orderProvisionAndPayInfoOfStaffReceive($staffId = null, $date = null, $provisionalConfirm = null, $orderKeyword = null)
     {
         $modelOrder = new QcOrder();
         return $modelOrder->infoProvisionalOfStaffReceive($this->checkIdNull($staffId), $date, $provisionalConfirm, $orderKeyword);
     }
 
-    // lay thong tin don hang bao gia - khong huy
+    # lay thong tin don hang bao gia - khong huy
     public function orderProvisionNoCancelAndPayInfoOfStaffReceive($staffId = null, $date = null, $provisionalConfirm = null, $orderKeyword = null)
     {
         $modelOrder = new QcOrder();
         return $modelOrder->infoProvisionalNoCancelOfStaffReceive($this->checkIdNull($staffId), $date, $provisionalConfirm, $orderKeyword);
     }
 
-    //---------- san pham -----------
+    #---------- san pham -----------
     public function product()
     {
         return $this->hasMany('App\Models\Ad3d\Product\QcProduct', 'staff_id', 'confirmStaff_id');
@@ -1323,14 +1323,14 @@ class QcStaff extends Model
         $hFunction = new \Hfunction();
         $modelCompany = new QcCompany();
         //$passLog = Hash::make($pass);
-        $nameCode = QcStaff::where('account', $account)->pluck('nameCode')[0];
-        if ($hFunction->checkCount($nameCode)) {
-            $passLog = $this->createStaffPass($password, $nameCode);
-            $staff = QcStaff::where('account', $account)->where('password', $passLog)->where('workStatus', $this->getDefaultHasWorkStatus())->first();
-            if ($hFunction->checkCount($staff)) { // login success
+        $dataStaff = QcStaff::where('account', $account)->first();
+        if ($hFunction->checkCount($dataStaff)) {
+            $passLog = $this->createStaffPass($password, $dataStaff->nameCode());
+            $dataStaffLogin = QcStaff::where('account', $account)->where('password', $passLog)->where('workStatus', $this->getDefaultHasWorkStatus())->first();
+            if ($hFunction->checkCount($dataStaffLogin)) { // login success
                 # KIEM TRA DU LIEU TU DONG
                 $modelCompany->checkAutoInfo();
-                Session::put('loginStaff', $staff);
+                Session::put('loginStaff', $dataStaffLogin);
                 return true;
             } else {
                 return false;
@@ -1340,7 +1340,7 @@ class QcStaff extends Model
         }
     }
 
-    // kiem tra dang nhap
+    # kiem tra dang nhap
     public function checkLogin()
     {
         if (Session::has('loginStaff')) {
@@ -1350,8 +1350,8 @@ class QcStaff extends Model
         }
     }
 
-    // thong tin NV dang nhap
-    public function loginStaffInfo($field = '')
+    # thong tin NV dang nhap
+    public function loginStaffInfo($field = null)
     {
         $hFunction = new \Hfunction();
         if (Session::has('loginStaff')) {//da dang nhap
@@ -1366,7 +1366,7 @@ class QcStaff extends Model
         }
     }
 
-    // thong tin dang lam viec cua NV dang nhap
+    # thong tin dang lam viec cua NV dang nhap
     public function loginCompanyStaffWork()
     {
         $hFunction = new \Hfunction();
@@ -1384,7 +1384,7 @@ class QcStaff extends Model
         return $this->loginStaffInfo('staff_id');
     }
 
-    // thong tin cty dang nhap
+    # thong tin cty dang nhap
     public function companyLogin()
     {
         $hFunction = new \Hfunction();
@@ -1477,11 +1477,11 @@ class QcStaff extends Model
         return QcStaff::whereIn('staff_id', $listStaffId)->get();
     }
 
-    public function getInfo($staffId = '', $field = '')
+    public function getInfo($staffId = null, $field = null)
     {
         $hFunction = new \Hfunction();
         if ($hFunction->checkEmpty($staffId)) {
-            return QcStaff::where('workStatus', $this->getDefaultHasWorkStatus())->get();
+            return QcStaff::get();
         } else {
             $result = QcStaff::where('staff_id', $staffId)->first();
             if ($hFunction->checkEmpty($field)) {
@@ -1492,13 +1492,24 @@ class QcStaff extends Model
         }
     }
 
+    # get a value
+    public function pluck($column, $objectId = null)
+    {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
+            return $this->$column;
+        } else {
+            return QcStaff::where('staff_id', $objectId)->pluck($column)[0];
+        }
+    }
+
     public function getInfoActivityOrderByName($orderBy = 'ASC')
     {
         return QcStaff::where('workStatus', $this->getDefaultHasWorkStatus())->orderBy('lastName', $orderBy)->get();
     }
 
-    // tao danh muc chon dang select box
-    public function getOption($selected = '')
+    # tao danh muc chon dang select box
+    public function getOption($selected = null)
     {
         $hFunction = new \Hfunction();
         $dataStaff = DB::select("select staff_id as optionKey, CONCAT(firstName,lastName) as optionValue from tf_staffs ");
@@ -1560,17 +1571,6 @@ class QcStaff extends Model
     {
         return QcStaff::where('workStatus', $this->getDefaultHasWorkStatus())->pluck('staff_id');
     }
-
-    public function pluck($column, $objectId = null)
-    {
-        $hFunction = new \Hfunction();
-        if ($hFunction->checkEmpty($objectId)) {
-            return $this->$column;
-        } else {
-            return QcStaff::where('staff_id', $objectId)->pluck($column)[0];
-        }
-    }
-
 
     // total records
     public function totalRecords()
@@ -1870,16 +1870,17 @@ class QcStaff extends Model
 
     public function staffPaidInfo($listCompanyId, $dateFilter = null)
     {
+        $hFunction = new \Hfunction();
         $modelPayment = new QcPayment();
         $listStaffId = $modelPayment->infoStaffPayment($listCompanyId, $dateFilter);
-        if (count($listStaffId) > 0) {
+        if ($hFunction->checkCount($listStaffId)) {
             return QcStaff::whereIn('staff_id', $listStaffId)->get();
         } else {
             return null;
         }
     }
 
-    // ứng lương
+    # ứng lương
     public function totalSalaryBeforeOfCompany($listCompanyId, $dateFilter = null)
     {
         $modelSalaryBeforePay = new QcSalaryBeforePay();
@@ -1892,7 +1893,7 @@ class QcStaff extends Model
         return $modelSalaryBeforePay->totalSalaryBeforeOfCompanyStaffDate($listCompanyId, $staffId, $dateFilter);
     }
 
-    // thanh toán lương
+    # thanh toán lương
     public function totalSalaryPaidOfCompany($listCompanyId, $dateFilter = null)
     {
         $modelSalaryPay = new QcSalaryPay();
@@ -1905,12 +1906,13 @@ class QcStaff extends Model
         return $modelSalaryPay->totalSalaryPaidOfCompanyStaffDate($listCompanyId, $staffId, $dateFilter);
     }
 
-    //doanh thu
+    # doanh thu
     public function staffOrderPayInfo($listCompanyId, $dateFilter = null)
     {
+        $hFunction = new \Hfunction();
         $modelOrderPay = new QcOrderPay();
         $listStaffId = $modelOrderPay->infoStaffOrderPay($listCompanyId, $dateFilter);
-        if (count($listStaffId) > 0) {
+        if ($hFunction->checkCount($listStaffId)) {
             return QcStaff::whereIn('staff_id', $listStaffId)->get();
         } else {
             return null;

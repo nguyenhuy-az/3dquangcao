@@ -109,7 +109,6 @@ $dataProduct = $dataOrder->productActivityOfOrder();
                         $productAmount = $product->amount();
                         $productDescription = $product->description();
                         $dataWorkAllocation = $product->workAllocationInfoOfProduct();
-                        $designImage = $product->designImage();
                         # thiet ke dang ap dung
                         $dataProductDesign = $product->productDesignInfoApplyActivity();
                         # thiet ke san pham thi cong

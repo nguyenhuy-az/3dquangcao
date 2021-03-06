@@ -8,7 +8,7 @@
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 ?>
-@extends('ad3d.system.company.index')
+@extends('ad3d.system.company.company.index')
 @section('qc_ad3d_index_content')
     <div class="row">
         <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
@@ -56,7 +56,7 @@ $mobileStatus = $mobile->isMobile();
                                     </label>
                                     <select class="form-control" name="cbCompanyType">
                                         <option value="1" selected="selected">Chi nhánh</option>
-                                        <option value="0" >Trụ sở</option>
+                                        {{--<option value="0" >Trụ sở</option>--}}
                                     </select>
                                 </div>
                             </div>

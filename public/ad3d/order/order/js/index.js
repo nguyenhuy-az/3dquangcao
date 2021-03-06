@@ -13,6 +13,10 @@ var qc_ad3d_order_order = {
         qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
         qc_main.scrollTop();
     },
+    viewProductDesignImage: function (href) {
+        qc_ad3d_submit.ajaxNotReload(href, $('#' + qc_ad3d.bodyIdName()), false);
+        qc_main.scrollTop();
+    },
     confirm: {
         getForm: function (listObject) {
             qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-confirm') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
@@ -302,9 +306,9 @@ $(document).ready(function () {
 //====== ======= ====== TRIEN KHAI THI CONG ====== ======= ======
 // huy ban giao
 $(document).ready(function () {
-    //------ xem chi tiet anh bao cao -------
-    $('#qc_ad3d_order_order_construction_wrap').on('click', '.qc_work_allocation_report_image_view', function () {
-        qc_ad3d_order_order.viewAllocationReportImage($(this).data('href'));
+    //------ xem chi tiet anh thiet ke -------
+    $('#qc_ad3d_order_order_wrap').on('click', '.qc_product_design_image_view', function () {
+        qc_ad3d_order_order.viewProductDesignImage($(this).data('href'));
     });
 });
 

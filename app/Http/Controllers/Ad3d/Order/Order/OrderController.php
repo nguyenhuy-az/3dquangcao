@@ -8,6 +8,7 @@ use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\Product\QcProduct;
+use App\Models\Ad3d\ProductDesign\QcProductDesign;
 use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ use Request;
 
 class OrderController extends Controller
 {
-    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $paymentStatus = 100, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = 0, $orderSelectedId = null)
+    public function index($companyFilterId = null, $dayFilter = 0, $monthFilter = 0, $yearFilter = 0, $paymentStatus = 3, $orderFilterName = null, $orderCustomerFilterName = null, $staffFilterId = 0, $orderSelectedId = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -76,7 +77,7 @@ class OrderController extends Controller
             $yearFilter = (int)$hFunction->getYearFromDate($orderReceiveDate);
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
-
+        //dd($dateFilter);
 
         # lay thong tin cong ty cung he thong
         $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
@@ -88,24 +89,25 @@ class OrderController extends Controller
         }
 
         if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-            $dataOrderFilterSelect = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus);
+            $dataOrderFilterStatistic = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus)->get();
         } else {
-            $dataOrderFilterSelect = $modelOrder->selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $orderFilterName, $dateFilter, $paymentStatus);
+            $dataOrderFilterStatistic = $modelOrder->selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $orderFilterName, $dateFilter, $paymentStatus)->get();
+            //dd($paymentStatus);
         }
 
-        $dataMoneyOrder = $dataOrderFilterSelect->get();
+        //$dataMoneyOrder = $dataOrderFilterStatistic->get();
 
-        $dataOrder = $dataOrderFilterSelect->paginate(30);
+        #$dataOrder = $dataOrderFilterStatistic->paginate(30);
 
-        $totalMoneyOrder = $modelOrder->totalMoneyOfListOrder($dataMoneyOrder); // tong tien
-        $totalMoneyDiscountOrder = $modelOrder->totalMoneyDiscountOfListOrder($dataMoneyOrder); // tong tien giam
-        $totalMoneyPaidOrder = $modelOrder->totalMoneyPaidOfListOrder($dataMoneyOrder); // tong tien da thanh toan
-        $totalMoneyUnPaidOrder = $modelOrder->totalMoneyUnPaidOfListOrder($dataMoneyOrder); // chua thanh toán
-        $totalOrders = $hFunction->getCount($dataMoneyOrder);
+        $totalMoneyOrder = $modelOrder->totalMoneyOfListOrder($dataOrderFilterStatistic); // tong tien
+        $totalMoneyDiscountOrder = $modelOrder->totalMoneyDiscountOfListOrder($dataOrderFilterStatistic); // tong tien giam
+        $totalMoneyPaidOrder = $modelOrder->totalMoneyPaidOfListOrder($dataOrderFilterStatistic); // tong tien da thanh toan
+        $totalMoneyUnPaidOrder = $modelOrder->totalMoneyUnPaidOfListOrder($dataOrderFilterStatistic); // chua thanh toán
+        $totalOrders = $hFunction->getCount($dataOrderFilterStatistic);
 
         //danh sach NV
         $dataStaff = $modelCompany->staffInfoActivityOfCompanyId([$companyFilterId]);
-        return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany', 'modelOrder', 'dataStaff', 'dataAccess', 'dataOrder', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId', 'dataOrderSelected'));
+        return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany','modelCustomer', 'modelOrder', 'dataStaff', 'dataAccess', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId', 'dataOrderSelected'));
 
     }
 
@@ -126,8 +128,14 @@ class OrderController extends Controller
     }
 
     # xem anh thiet ke san pham
-    public function viewProductDesign($productId)
+    public function viewProductDesign($designId)
     {
+        $hFunction = new \Hfunction();
+        $modelProductDesign = new QcProductDesign();
+        $dataProductDesign = $modelProductDesign->getInfo($designId);
+        if ($hFunction->checkCount($dataProductDesign)) {
+            return view('ad3d.order.order.view-product-design-image', compact('dataProductDesign'));
+        }
 
     }
 

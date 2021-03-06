@@ -50,19 +50,12 @@ class QcOrder extends Model
         return 0;
     }
 
-    # mac dinh da thanh toan
+    # mac dinh da thanh toan xong
     public function getDefaultHasPayment()
     {
         return 1;
     }
-
-    # mac dinh tat ca trang thai ket thut
-    public function getDefaultAllFinish()
-    {
-        return 100;
-    }
-
-    # mac dinh chua thanh toan
+    # mac dinh chua thanh toan xong
     public function getDefaultNotPayment()
     {
         return 0;
@@ -73,6 +66,14 @@ class QcOrder extends Model
     {
         return 3;
     }
+
+    # mac dinh tat ca trang thai ket thut
+    public function getDefaultAllFinish()
+    {
+        return 100;
+    }
+
+
 
     # mac dinh da xac nhan
     public function getDefaultHasConfirm()

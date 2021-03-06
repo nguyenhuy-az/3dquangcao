@@ -12,7 +12,7 @@ $hFunction = new Hfunction();
 ?>
 @extends('ad3d.components.container.container-10')
 @section('qc_ad3d_container_content')
-    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
         <div class="panel panel-default">
             <div class="panel-heading text-right" style="background-color: white;">
                 <button type="button" class="qc_ad3d_container_close btn btn-sm btn-default qc-color-red">

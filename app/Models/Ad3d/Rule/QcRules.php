@@ -7,20 +7,27 @@ use Illuminate\Database\Eloquent\Model;
 class QcRules extends Model
 {
     protected $table = 'qc_rules';
-    protected $fillable = ['rules_id', 'title', 'content', 'created_at'];
+    protected $fillable = ['rules_id', 'title', 'content', 'created_at', 'company_id'];
     protected $primaryKey = 'rules_id';
     public $timestamps = false;
 
     private $lastId;
 
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
+    public function checkNullId($id = null)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->rulesId() : $id;
+    }
+
     #---------- Insert ----------
-    public function insert($title, $content)
+    public function insert($title, $content, $companyId)
     {
         $hFunction = new \Hfunction();
         $modelRules = new QcRules();
         $modelRules->title = $title;
         $modelRules->content = $content;
+        $modelRules->company_id = $companyId;
         $modelRules->created_at = $hFunction->createdAt();
         if ($modelRules->save()) {
             $this->lastId = $modelRules->rules_id;
@@ -48,18 +55,18 @@ class QcRules extends Model
     # delete
     public function actionDelete($rulesId = null)
     {
-        if (empty($rulesId)) $rulesId = $this->rulesId();
-        return QcRules::where('rules_id', $rulesId)->delete();
+        return QcRules::where('rules_id', $this->checkNullId($rulesId))->delete();
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
-    public function getInfo($rulesId = '', $field = '')
+    public function getInfo($rulesId = null, $field = null)
     {
-        if (empty($rulesId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($rulesId)) {
             return QcRules::get();
         } else {
             $result = QcRules::where('rules_id', $rulesId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -67,12 +74,14 @@ class QcRules extends Model
         }
     }
 
+
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcRules::where('rules_id', $objectId)->pluck($column);
+            return QcRules::where('rules_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -103,16 +112,25 @@ class QcRules extends Model
         return QcRules::count();
     }
 
+    # ---------- cong ty -----------
+    public function company()
+    {
+        return $this->belongsTo('App\Models\Ad3d\Company\QcCompany', 'company_id', 'company_id');
+    }
+
+    public function getInfoOfCompany($companyId)
+    {
+        return QcRules::where('company_id', $companyId)->first();
+    }
+
     # exist name (add new)
     public function existTitle($title)
     {
-        $result = QcRules::where('title', $title)->count();
-        return ($result > 0) ? true : false;
+        return QcRules::where('title', $title)->exists();
     }
 
     public function existEditTitle($rulesId, $title)
     {
-        $result = QcRules::where('title', $title)->where('rules_id', '<>', $rulesId)->count();
-        return ($result > 0) ? true : false;
+        return QcRules::where('title', $title)->where('rules_id', '<>', $rulesId)->exists();
     }
 }

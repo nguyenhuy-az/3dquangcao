@@ -15,29 +15,32 @@ class LoginController extends Controller
 {
     public function getLogin()
     {
-       return view('ad3d.login.login');
+        $modelStaff = new QcStaff();
+       // dd($modelStaff->loginStaffId());
+        return view('ad3d.login.login');
     }
 
     public function postLogin()
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $account = Request::input('txtAccount');
         $pass = Request::input('txtPass');
-        if(empty($account) || empty($pass)){
+        if ($hFunction->checkEmpty($account) || $hFunction->checkEmpty($pass)) {
             Session::put('notifyLogin', "Tài khoản hoặc mật khẩu không đúng.");
             return redirect()->back();
-        }else{
+        } else {
             if ($modelStaff->login($account, $pass)) {
-               return redirect()->route('qc.ad3d');
+                return redirect()->route('qc.ad3d');
             } else {
-               Session::put('notifyLogin', "Tài khoản hoặc mật khẩu không đúng.");
+                Session::put('notifyLogin', "Tài khoản hoặc mật khẩu không đúng.");
                 return redirect()->back();
             }
         }
 
     }
 
-    //exit
+    # exit
     public function getExit()
     {
         $modelStaff = new QcStaff();

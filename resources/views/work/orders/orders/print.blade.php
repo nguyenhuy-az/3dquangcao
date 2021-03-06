@@ -42,7 +42,7 @@ $staffOrderPhone = ($hFunction->checkEmpty($staffOrderPhone)) ? '-----------' : 
     <div class="row">
         <div style="width: 547px;">
             <div id="qc_work_order_print_wrap" class="row" style="padding-top: 10px;">
-                <div class="qc-container-table qc-container-table-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="qc-container-table qc-container-table-border-none col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <table class="table" style="margin: 0;">
                         <tr>
                             <td class="text-center" style="width: 200px;">
@@ -93,7 +93,7 @@ $staffOrderPhone = ($hFunction->checkEmpty($staffOrderPhone)) ? '-----------' : 
                                         </tr>
                                         <tr>
                                             <td>
-                                                <em class="qc-color-grey">Phụ trách SX TC:</em>
+                                                <em class="qc-color-grey">Phụ trách xs TC:</em>
                                             </td>
                                             <td class="text-right">
                                                 <b>ĐT: {!! $hotlinePhone !!}</b>
@@ -138,7 +138,7 @@ $staffOrderPhone = ($hFunction->checkEmpty($staffOrderPhone)) ? '-----------' : 
                         </tr>
                     </table>
                 </div>
-                <div class="qc-margin-bot-10 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="qc-margin-bot-10 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
                         <div class="qc-container-table col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="table-responsive">
@@ -252,7 +252,7 @@ $staffOrderPhone = ($hFunction->checkEmpty($staffOrderPhone)) ? '-----------' : 
                     </div>
                 </div>
                 {{-- Thông tin thanh toán --}}
-                <div class="qc-padding-bot-5 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="qc-padding-bot-5 col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row">
                         <div class="qc-container-table qc-container-table-border-none col-xs-8 col-sm-6 col-md-6-lg-6"
                              style="float: right;">
@@ -333,7 +333,7 @@ $staffOrderPhone = ($hFunction->checkEmpty($staffOrderPhone)) ? '-----------' : 
                         </div>
                     </div>
                 </div>
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="row text-center">
                         <div class="qc-padding-top-5 qc-padding-bot-5 col-xs-6 col-sm-6 col-md-6 col-lg-6">
                             <b>Khách hàng</b>
@@ -381,16 +381,13 @@ $staffOrderPhone = ($hFunction->checkEmpty($staffOrderPhone)) ? '-----------' : 
 
 
                 <div id="qc_work_order_order_print_wrap_act" class="row">
-                    <div class="qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="qc-border-none text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <a class="qc_work_order_order_print btn btn-sm btn-primary">
-                            In
+                            IN
                         </a>
-                        {{--<a class="btn btn-sm btn-default" href="{!! route('qc.work.orders.info.get',$orderId) !!}">
-                            Sửa
-                        </a>--}}
                         <a class="btn btn-sm btn-default"
                            onclick="window.location.replace('{!! route('qc.work.orders.get') !!}');">
-                            Đóng
+                            ĐÓNG
                         </a>
                     </div>
                 </div>

@@ -2,18 +2,15 @@
 
 namespace App\Models\Ad3d\Company;
 
-use App\Models\Ad3d\BonusDepartment\QcBonusDepartment;
 use App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork;
 use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Import\QcImport;
-use App\Models\Ad3d\ImportImage\QcImportImage;
 use App\Models\Ad3d\ImportPay\QcImportPay;
 use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
 use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
-use App\Models\Ad3d\OrderBonusBudget\QcOrderBonusBudget;
 use App\Models\Ad3d\OrderCancel\QcOrderCancel;
 use App\Models\Ad3d\OrderPay\QcOrderPay;
 use App\Models\Ad3d\OverTimeRequest\QcOverTimeRequest;
@@ -21,13 +18,13 @@ use App\Models\Ad3d\PayActivityDetail\QcPayActivityDetail;
 use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductTypePrice\QcProductTypePrice;
 use App\Models\Ad3d\Rank\QcRank;
+use App\Models\Ad3d\Rule\QcRules;
 use App\Models\Ad3d\SalaryBeforePay\QcSalaryBeforePay;
 use App\Models\Ad3d\SalaryBeforePayRequest\QcSalaryBeforePayRequest;
 use App\Models\Ad3d\SalaryPay\QcSalaryPay;
 use App\Models\Ad3d\Staff\QcStaff;
 use App\Models\Ad3d\SystemDateOff\QcSystemDateOff;
 use App\Models\Ad3d\TimekeepingProvisional\QcTimekeepingProvisional;
-use App\Models\Ad3d\TimekeepingProvisionalImage\QcTimekeepingProvisionalImage;
 use App\Models\Ad3d\Transfers\QcTransfers;
 use App\Models\Ad3d\Work\QcWork;
 use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
@@ -36,11 +33,23 @@ use Illuminate\Database\Eloquent\Model;
 class QcCompany extends Model
 {
     protected $table = 'qc_companies';
-    protected $fillable = ['company_id', 'root_id', 'companyCode', 'name', 'nameCode', 'address', 'phone', 'email', 'website', 'logo', 'companyType', 'action', 'created_at', 'parent_id'];
+    protected $fillable = ['company_id', 'root_id', 'companyCode', 'name', 'nameCode', 'address', 'phone', 'email', 'website', 'logo', 'rootStatus', 'companyType', 'action', 'created_at', 'parent_id'];
     protected $primaryKey = 'company_id';
     public $timestamps = false;
 
     private $lastId;
+
+    # mac dinh la cty cua he thong
+    public function getDefaultHasRootStatus()
+    {
+        return 1;
+    }
+
+    # mac dinh khong la cty cua he thong
+    public function getDefaultNotRootStatus()
+    {
+        return 0;
+    }
 
     # mac dinh co hoat dong
     public function getDefaultHasAction()
@@ -132,6 +141,12 @@ class QcCompany extends Model
     {
         return 0;
     }
+
+    # mac dinh ma cty me
+    public function getDefaultParentId()
+    {
+        return null;
+    }
     #========== ========== ========== TU DONG KIEM TRA DU LIEU CUA HE THONG ========== ========== ==========
     # KIEM TRA DU LIEU TU DONG
     /*
@@ -210,7 +225,14 @@ class QcCompany extends Model
             ]
         );
     }
+
     #========== ========== ========== THEM && CAP NHAT ========== ========== ==========
+    public function checkIdNull($id = null)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->companyId() : $id;
+    }
+
     #---------- thêm ----------
     public function insert($companyCode, $name, $nameCode, $address, $phone, $email, $website, $companyType = 1, $logo = null, $parentId = null)
     {
@@ -241,10 +263,6 @@ class QcCompany extends Model
         return $this->lastId;
     }
 
-    public function checkIdNull($companyId)
-    {
-        return (empty($companyId)) ? $this->companyId() : $companyId;
-    }
 
     #------ ------ lay gia tri mac dinh cua he thong ------ ----
     # thoi gian vao lam viec mac dinh cua ngay hien tai
@@ -343,8 +361,7 @@ class QcCompany extends Model
     # delete
     public function actionDelete($companyId = null)
     {
-        if (empty($companyId)) $companyId = $this->companyId();
-        return QcCompany::where('company_id', $companyId)->delete();
+        return QcCompany::where('company_id', $this->checkIdNull($companyId))->delete();
     }
 
     public function rootPathFullImage()
@@ -367,14 +384,14 @@ class QcCompany extends Model
         return $hFunction->uploadSaveByFileName($source_img, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $resize);
     }
 
-    public function deleteImage($imageId = null)
+    /*public function deleteImage($imageId = null)
     {
         if (empty($imageId)) $imageId = $this->imageId();
         $imageName = $this->name($imageId)[0];
         if (QcCompany::where('company_id', $imageId)->delete()) {
             $this->dropImage($imageName);
         }
-    }
+    }*/
     #========== ========== ========== cac moi quan he ========== ========== ==========
 
     #============================= begin new ===============================
@@ -383,6 +400,18 @@ class QcCompany extends Model
     {
         return $this->hasManyThrough('App\Models\Ad3d\StaffWorkDepartment\QcStaffWorkDepartment', 'App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'company_id','work_id','detail_id');
     }*/
+
+    #----------- cong ty me------------
+    public function rules()
+    {
+        return $this->hasMany('App\Models\Ad3d\Rule\QcRules', 'company_id', 'company_id');
+    }
+
+    public function rulesGetInfoOfCompany($companyId = null)
+    {
+        $modelRule = new QcRules();
+        return $modelRule->getInfoOfCompany($this->checkIdNull($companyId));
+    }
 
     #----------- cong ty me------------
     public function parent()
@@ -442,12 +471,18 @@ class QcCompany extends Model
         return $this->hasMany('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'company_id', 'company_id');
     }
 
+    # lay thong tin vi tri lam viec cao nhat (level = 0)
+    public function companyStaffWorkLevelRoot($companyId = null)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        return $modelCompanyStaffWork->getActivityInfoLevelRootOfCompany($this->checkIdNull($companyId));
+    }
     #----------- nhân viên cũ ------------ x
     # danh sach tat ca nhan vien cua 1 cong ty
     public function staffOfCompany($companyId = null)
     {
         $modelStaff = new QcStaff();
-        return $modelStaff->infoOfCompany((empty($companyId) ? $this->companyId() : $companyId));
+        return $modelStaff->infoOfCompany($this->checkIdNull($companyId));
     }
 
     # lay TAT CA danh sach ma nv theo danh sach cty
@@ -689,7 +724,7 @@ class QcCompany extends Model
     }
 
     # thong tin cua 1 cong ty hoac tat ca cong ty
-    public function getInfo($companyId = '', $field = '')
+    public function getInfo($companyId = null, $field = null)
     {
         $hFunction = new \Hfunction();
         if ($hFunction->checkEmpty($companyId)) {
@@ -710,20 +745,21 @@ class QcCompany extends Model
     }
 
     # create option
-    public function getOption($selected = '')
+    public function getOption($selected = null)
     {
         $hFunction = new \Hfunction();
         $result = QcCompany::select('company_id as optionKey', 'name as optionValue')->get()->toArray();
         return $hFunction->option($result, $selected);
     }
 
+    # get a value
     public function pluck($column, $objectId = null)
     {
         $hFunction = new \Hfunction();
         if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcCompany::where('company_id', $objectId)->pluck($column);
+            return QcCompany::where('company_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -778,6 +814,11 @@ class QcCompany extends Model
         return $this->pluck('logo', $companyId);
     }
 
+    public function rootStatus($companyId = null)
+    {
+        return $this->pluck('rootStatus', $companyId);
+    }
+
     public function companyType($companyId = null)
     {
         return $this->pluck('companyType', $companyId);
@@ -789,13 +830,17 @@ class QcCompany extends Model
         return $this->pluck('created_at', $companyId);
     }
 
+    public function parentId($companyId = null)
+    {
+        return $this->pluck('parent_id', $companyId);
+    }
     # total record
     public function totalRecords()
     {
         return QcCompany::count();
     }
 
-    //lay hinh anh
+    # lay hinh anh
     public function pathSmallImage($image)
     {
         $hFunction = new \Hfunction();
@@ -834,6 +879,12 @@ class QcCompany extends Model
 
     # kiem tra cty co phai cong ty me hay khong
     public function checkRoot($companyId = null)
+    {
+        return ($this->rootStatus($companyId) == $this->getDefaultHasRootStatus()) ? true : false;
+    }
+
+    # kiem tra cty co phai cong ty me hay khong
+    public function checkParent($companyId = null)
     {
         return ($this->companyType($companyId) == $this->getDefaultParentCompanyType()) ? true : false;
     }
