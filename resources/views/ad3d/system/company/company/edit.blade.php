@@ -9,16 +9,18 @@
  */
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$companyType = $dataCompany->companyType();
 ?>
 @extends('ad3d.components.container.container-10')
 @section('qc_ad3d_container_content')
     <div class="qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
             <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-                <h3>SỬA</h3>
+                <h3 style="color: red;">CẬP NHẬT THÔNG TIN</h3>
             </div>
             <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <form class="frmEdit" name="frmEdit" role="form" method="post" action="{!! route('qc.ad3d.system.company.post.get', $dataCompany->companyId()) !!}">
+                <form class="frmEdit" name="frmEdit" role="form" method="post"
+                      action="{!! route('qc.ad3d.system.company.post.get', $dataCompany->companyId()) !!}">
                     <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="row">
                             <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
@@ -50,8 +52,9 @@ $mobileStatus = $mobile->isMobile();
                                         Loại hình
                                     </label>
                                     <select class="form-control" name="cbCompanyType">
-                                        <option value="1"  @if($dataCompany->companyType() == 1) selected="selected"  @endif>Chi nhánh</option>
-                                        <option value="0" @if($dataCompany->companyType() == 0) selected="selected"  @endif>Trụ sở</option>
+                                        <option value="{!! $companyType !!}">
+                                            {!! $dataCompany->companyTypeLabel($companyType) !!}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -79,7 +82,8 @@ $mobileStatus = $mobile->isMobile();
                                     <label>
                                         Điện thoại <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                     </label>
-                                    <input type="text" name="txtPhone" class="form-control" placeholder="Nhập số diện thoại"
+                                    <input type="text" name="txtPhone" class="form-control"
+                                           placeholder="Nhập số diện thoại"
                                            value="{!! $dataCompany->phone() !!}">
                                 </div>
                             </div>
@@ -119,9 +123,9 @@ $mobileStatus = $mobile->isMobile();
                     </div>
                     <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
                         <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                        <button type="button" class="qc_save btn btn-sm btn-primary">Lưu</button>
-                        <button type="reset" class=" btn btn-sm btn-default">NHập lại</button>
-                        <button type="button" class="qc_ad3d_container_close btn btn-sm btn-default">Đóng</button>
+                        <button type="button" class="qc_save btn btn-sm btn-primary">CẬP NHẬT</button>
+                        <button type="reset" class=" btn btn-sm btn-default">NHẬP LẠI</button>
+                        <button type="button" class="qc_ad3d_container_close btn btn-sm btn-default">ĐÓNG</button>
                     </div>
                 </form>
             </div>

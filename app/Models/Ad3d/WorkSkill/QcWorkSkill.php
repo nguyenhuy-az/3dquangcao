@@ -136,7 +136,7 @@ class QcWorkSkill extends Model
         return QcWorkSkill::select('*');
     }
 
-    public function getInfo($skillId = '', $field = '')
+    public function getInfo($skillId = null, $field = null)
     {
         $hFunction = new \Hfunction();
         if ($hFunction->checkEmpty($skillId)) {

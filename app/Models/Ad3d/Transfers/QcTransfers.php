@@ -233,6 +233,29 @@ class QcTransfers extends Model
         }
     }
 
+    # tong tien da nhan va chua xac nhan cua 1 cong ty
+    public function sumReceiveUnconfirmedOfCompany($companyId, $date = null)
+    {
+        $hFunction = new \Hfunction();
+        # chua xac nhan
+        $notConfirm = $this->getDefaultNotConfirmReceive();
+        if (!$hFunction->checkEmpty($date)) {
+            return QcTransfers::where('company_id', $companyId)->where('confirmReceive', $notConfirm)->where('transfersDate', 'like', "%$date%")->count();
+        } else {
+            return QcTransfers::where('company_id', $companyId)->where('confirmReceive', $notConfirm)->count();
+        }
+
+    }
+
+    # chon thong tin chuyen tien theo 1 danh sach ma nhan vien / cong ty theo ngay thang
+    public function selectInfoOfCompanyAndDate($companyId, $date, $transfersType = 100)
+    {
+        if ($transfersType == $this->getDefaultAllTransferType()) {
+            return QcTransfers::where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->orderBy('transfersDate', 'DESC')->select('*');
+        } else {
+            return QcTransfers::where('transfersDate', 'like', "%$date%")->where('company_id', $companyId)->where('transferType', $transfersType)->orderBy('transfersDate', 'DESC')->select('*');
+        }
+    }
     //---------- transfers - staff -----------
     public function transfersStaff()
     {
@@ -280,7 +303,7 @@ class QcTransfers extends Model
 
     }
 
-    // tong tien da giao va chua xac nhan
+    # tong tien da giao va chua xac nhan
     public function totalMoneyUnConfirmOfTransferStaff($staffId, $date = null)
     {
         $hFunction = new \Hfunction();
@@ -294,7 +317,7 @@ class QcTransfers extends Model
 
     }
 
-    // tong tien da giao va da duoc xac nhan
+    # tong tien da giao va da duoc xac nhan
     public function totalMoneyConfirmedOfTransferStaffAndDate($staffId, $date = null)
     {
         $hFunction = new \Hfunction();
@@ -308,7 +331,7 @@ class QcTransfers extends Model
 
     }
 
-    // tong tien da giao va da duoc xac nhan dong y
+    # tong tien da giao va da duoc xac nhan dong y
     public function totalMoneyConfirmedAndAcceptedOfTransferStaff($staffId, $date = null)
     {
         $hFunction = new \Hfunction();
@@ -324,7 +347,7 @@ class QcTransfers extends Model
 
     }
 
-    // tong tien nop cho cong ty cua 1 nhan vien - nop cho thu quy cap quan ly
+    # tong tien nop cho cong ty cua 1 nhan vien - nop cho thu quy cap quan ly
     public function totalMoneyConfirmedTransfersForTreasurerManage($staffId, $date = null)
     {
         $hFunction = new \Hfunction();
@@ -357,7 +380,7 @@ class QcTransfers extends Model
 
     }
 
-    // tong tien da nhan va da duoc xac nhan
+    # tong tien da nhan va da duoc xac nhan
     public function infoConfirmedOfReceiveStaff($staffId, $date)
     {
         $hFunction = new \Hfunction();
@@ -424,7 +447,7 @@ class QcTransfers extends Model
         }
     }
 
-    // tong tien da nhan va chua xac nhan cua 1 nhan vien
+    # tong tien da nhan va chua xac nhan cua 1 nhan vien
     public function sumReceiveUnconfirmedOfStaff($staffId, $date)
     {
         $hFunction = new \Hfunction();
@@ -604,13 +627,13 @@ class QcTransfers extends Model
         return $this->pluck('company_id', $transfersId);
     }
 
-    // total records
+    # total records
     public function totalRecords()
     {
         return QcTransfers::count();
     }
 
-    // last id
+    # last id
     public function lastId()
     {
         $hFunction = new \Hfunction();

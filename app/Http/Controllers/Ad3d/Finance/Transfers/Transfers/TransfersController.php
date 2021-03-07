@@ -26,11 +26,7 @@ class TransfersController extends Controller
         if ($companyFilterId == 0) {
             $companyFilterId = $companyLoginId;
         }
-        if ($staffFilterId > 0) {
-            $listStaffId = [$staffFilterId];
-        } else {
-            $listStaffId = $modelStaff->listIdOfCompany($companyFilterId);
-        }
+
         # lay thong tin cong ty cung he thong
         $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         //danh sach NV
@@ -56,7 +52,14 @@ class TransfersController extends Controller
             $yearFilter = date('Y');
         }
 
-        $selectTransfers = $modelTransfers->selectInfoByListTransfersStaffAndDate($listStaffId, $companyFilterId, $dateFilter, $transfersType);
+        if ($staffFilterId > 0) {
+            #$listStaffId = [$staffFilterId];
+            $selectTransfers = $modelTransfers->selectInfoByListTransfersStaffAndDate([$staffFilterId], $companyFilterId, $dateFilter, $transfersType);
+        } else {
+            #$listStaffId = $modelStaff->listIdOfCompany($companyFilterId);
+            $selectTransfers = $modelTransfers->selectInfoOfCompanyAndDate($companyFilterId, $dateFilter, $transfersType);
+        }
+
         $dataTransfers = $selectTransfers->paginate(30);
         $totalMoneyTransfers = $modelTransfers->totalMoneyByListInfo($selectTransfers->get());
         return view('ad3d.finance.transfers.transfers.list', compact('modelStaff', 'modelTransfers', 'dataCompany', 'dataStaff', 'dataAccess', 'dataTransfers', 'totalMoneyTransfers', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'transfersType', 'staffFilterId', 'totalMoneyTransfers'));

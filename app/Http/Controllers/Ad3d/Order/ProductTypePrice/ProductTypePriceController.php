@@ -3,14 +3,11 @@
 namespace App\Http\Controllers\Ad3d\Order\ProductTypePrice;
 
 use App\Models\Ad3d\Company\QcCompany;
-use App\Models\Ad3d\Order\QcOrder;
-use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\ProductTypePrice\QcProductTypePrice;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Ad3d\WorkAllocation\QcWorkAllocation;
 use Illuminate\Support\Facades\Session;
 use File;
 use Request;
@@ -25,18 +22,22 @@ class ProductTypePriceController extends Controller
         $modelCompany = new QcCompany();
         $modelProductType = new QcProductType();
         $modelProductTypePrice = new QcProductTypePrice();
-        $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
         $dataAccess = [
             'accessObject' => 'productTypePrice'
         ];
-        if ($hFunction->checkEmpty($companyFilterId)) {
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
+        if ($hFunction->checkEmpty($companyFilterId) || $companyFilterId == 1000) $companyFilterId = $companyLoginId;
+        /*if ($hFunction->checkEmpty($companyFilterId)) {
             $companyFilterId = $dataStaffLogin->companyId();
         }
         if ($dataStaffLogin->checkRootManage()) {
             $dataCompany = $modelCompany->getInfo();
         } else {
             $dataCompany = $modelCompany->selectInfo($dataStaffLogin->companyId())->get();
-        }
+        }*/
 
         if (!$hFunction->checkEmpty($nameFilter)) {
             $listProductTypeId = $modelProductType->listIdActivityByName($nameFilter);
@@ -54,6 +55,8 @@ class ProductTypePriceController extends Controller
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
         $dataAccess = [
             'accessObject' => 'productTypePrice'
         ];
@@ -62,7 +65,9 @@ class ProductTypePriceController extends Controller
         } else {
             $dataCompanySelected = $modelCompany->getInfo($companySelectedId);
         }
-        $dataCompany = $modelCompany->infoActivity();
+        # lay thong tin cong ty cung he thong
+        $dataCompany = $modelCompany->getInfoForCopyPriceOfCompany55($companyLoginId);
+        //$dataCompany = $modelCompany->infoActivity();
         return view('ad3d.order.product-type-price.copy-price', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataCompanySelected'));
     }
 

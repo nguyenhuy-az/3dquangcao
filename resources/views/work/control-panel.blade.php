@@ -11,6 +11,7 @@ $hFunction = new Hfunction();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $staffLoginId = $dataStaffLogin->staffId();
 $dataCompanyLogin = $modelStaff->companyLogin();
+$companyLoginId = $dataCompanyLogin->companyId();
 $dataCompanyStaffWorkLogin = $modelStaff->loginCompanyStaffWork();
 # thong tin yeu cau tang ca
 $dataOverTimeRequest = $dataCompanyStaffWorkLogin->overTimeRequestGetInfoActivity();
@@ -133,7 +134,7 @@ $dataOverTimeRequest = $dataCompanyStaffWorkLogin->overTimeRequestGetInfoActivit
                 </a>
             </div>
             <div class="qc-work-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">
-                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.rules') !!}">
+                <a class="qc-work-panel-icon-link" href="{!! route('qc.work.rules',$companyLoginId) !!}">
                     <i class="glyphicon glyphicon-warning-sign" style="font-size: 20px;color: orangered;"></i> <br/>
                     NỘI QUY
                 </a>

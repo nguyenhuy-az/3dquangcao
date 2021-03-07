@@ -384,7 +384,7 @@ Route::group(['prefix' => 'ad3d'], function () {
     Route::group(['prefix' => 'system', 'middleware' => 'Ad3dMiddleware'], function () {
         # rule
         Route::group(['prefix' => 'rules'], function () {
-           // Route::get('view/{rulesId?}', ['as' => 'qc.ad3d.system.rules.view.get', 'uses' => 'Ad3d\System\Rules\RulesController@view']);
+            // Route::get('view/{rulesId?}', ['as' => 'qc.ad3d.system.rules.view.get', 'uses' => 'Ad3d\System\Rules\RulesController@view']);
 
             # edit
             Route::get('edit/{rulesId?}', ['as' => 'qc.ad3d.system.rules.edit.get', 'uses' => 'Ad3d\System\Rules\RulesController@getEdit']);
@@ -850,7 +850,7 @@ Route::group(['prefix' => 'tuyendung'], function () { //recruitment
 Route::get('work-login/', ['as' => 'qc.work.login.get', 'uses' => 'Work\WorkController@getLogin']);
 Route::post('work-login/', ['as' => 'qc.work.login.post', 'uses' => 'Work\WorkController@login']);
 # noi quy lam viec
-Route::get('work-rules/{code?}', ['as' => 'qc.work.rules', 'uses' => 'Work\WorkController@rules']);
+Route::get('work-rules/{companyId?}', ['as' => 'qc.work.rules', 'uses' => 'Work\WorkController@rules']);
 # trang chinh
 Route::group(['prefix' => 'work', 'middleware' => 'CheckWorkLogin'], function () {
     //thoát

@@ -43,7 +43,7 @@ $dataCompanyLogin = $modelStaff->companyLogin();
                     </div>
                 @else
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <p>Chi nhánh chưa có nội quy</p>
+                        <p style="color: red;">Chưa có nội quy</p>
                         <a class="qc-link-green-bold"
                            href="{!! route('qc.ad3d.system.rules.add.get') !!}">
                             <i class="glyphicon glyphicon-plus"></i>

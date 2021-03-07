@@ -12,6 +12,8 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $staffId = $dataStaff->staffId();
+$companyId = $dataStaff->companyId();
+        /*
 $firstName = $dataStaff->firstName();
 $lastName = $dataStaff->lastName();
 $identityCard = $dataStaff->identityCard();
@@ -26,8 +28,9 @@ $email = $dataStaff->email();
 $bankAccount = $dataStaff->bankAccount();
 $bankName = $dataStaff->bankName();
 $dateAdd = $dataStaff->createdAt();
+*/
 # lay thong tin lam viec tai cty
-$dataCompanyStaffWork = $dataStaff->companyStaffWorkInfoActivity();
+$dataCompanyStaffWork = $dataStaff->companyStaffWorkLastInfoInCompany($companyId);//$dataStaff->companyStaffWorkInfoActivity();
 $companyStaffWorkStatus = ($hFunction->checkCount($dataCompanyStaffWork)) ? true : false; # co dang lam cho 1 cty hay ko
 if ($companyStaffWorkStatus) {
     $manageRankId = $modelRank->manageRankId();
@@ -67,13 +70,13 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
 ?>
 <form id="frmStaffInfoWorkEdit" class="frmStaffInfoWorkEdit" name="frmStaffInfoWorkEdit" role="form" method="post"
       action="{!! route('qc.ad3d.system.staff_info.work.edit.post', $staffId) !!}">
-    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="frm_work_notify form-group form-group-sm qc-color-red"></div>
     </div>
 
     {{--cty --}}
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8">
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
             <div class="form-group form-group-sm" style="margin: 0;">
                 <label>
                     Công ty
@@ -85,45 +88,45 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
             </div>
         </div>
         @if($dataStaff->level() > 0)
-            <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                 <div class="form-group form-group-sm" style="margin: 0;">
                     <label>
-                        Cấp bậc truy cập
+                        Cấp bậc truy cập trang quảng lý
                         <i class="qc-color-red glyphicon glyphicon-star-empty"></i></label>
                     <em style="color: brown;">Cấp < 4 sẽ truy cập vào trang quản lý</em>
                     <select class="form-control" name="cbLevel">
                         <option value="1"
                                 @if($dataStaff->level() == 1) selected="selected" @endif>
-                            1
+                            1 Có
                         </option>
                         <option value="2"
                                 @if($dataStaff->level() == 2) selected="selected" @endif>
-                            2
+                            2 Có
                         </option>
                         <option value="3"
                                 @if($dataStaff->level() == 3) selected="selected" @endif>
-                            3
+                            3 Có
                         </option>
                         <option value="4"
                                 @if($dataStaff->level() == 4) selected="selected" @endif>
-                            4
+                            4 Không
                         </option>
                         <option value="5"
                                 @if($dataStaff->level() == 5) selected="selected" @endif>
-                            5
+                            5 Không
                         </option>
                     </select>
                 </div>
             </div>
         @else
-            <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                 <div class="form-group form-group-sm" style="margin: 0;">
                     <input type="hidden" name="cbLevel"
                            value="{!! $dataStaff->level() !!}">
                 </div>
             </div>
         @endif
-        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
             <div class="form-group form-group-sm" style="margin: 0;">
                 <label>Ngày vào</label>
                 <input id="txtDateWork" type="text" class="form-control"
@@ -134,7 +137,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                 </script>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
             <div class="form-group form-group-sm" style="margin: 0;">
                 <label>
                     Hình thức làm<i
@@ -150,7 +153,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
                 </select>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
             <div class="form-group form-group-sm" style="margin: 0;">
                 <label>
                     Áp dụng nội quy<i
@@ -228,15 +231,7 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
     </div>
 
     <div class="row qc-padding-top-10 qc-padding-bot-10">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12 ">
-            <div class="form-group form-group-sm" style="margin: 0;">
-                <label class="radio-inline" style="color: red;">
-                    <input type="radio" checked="checked" name="salaryStatus" value="1">
-                    Theo bảng lương cũ khi thay đổi công ty
-                </label>
-            </div>
-        </div>
-        <div class="text-right  col-sx-12 col-sm-12 col-md-12 col-lg-12 ">
+        <div class="text-right  col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
             <div class="form-group form-group-sm" style="margin: 0;">
                 <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                 <button type="button" class="qc_save btn btn-sm btn-primary">

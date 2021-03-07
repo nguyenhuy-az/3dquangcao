@@ -32,10 +32,10 @@ class RegisterController extends Controller
         $modelCompany = new QcCompany();
         $modelDepartment = new QcDepartment();
         $dataDepartmentWork = null;
-        if (empty($phoneNumber)) {
+        if ($hFunction->checkEmpty($phoneNumber)) {
             return redirect()->route('qc.work.recruitment.login.get', $companyId);
         } else {
-            if (empty($departmentSelectedId)) {
+            if ($hFunction->checkEmpty($departmentSelectedId)) {
                 # lay mac dinh la bo phan thi cong
                 $dataDepartmentSelected = null;// $modelDepartment->getInfo($modelDepartment->constructionDepartmentId());
             } else {
@@ -78,19 +78,19 @@ class RegisterController extends Controller
         if ($hFunction->checkCount($dataJobApplication)) {
             return view('work.recruitment.info.index', compact('dataJobApplication'));
         } else {
-            if (count($image) > 0) {
+            if ($hFunction->checkCount($image)) {
                 $name_img = stripslashes($_FILES['txtImage']['name']);
                 $name_img = 'avatar' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
                 $source_img = $_FILES['txtImage']['tmp_name'];
                 if (!$modelJobApplication->uploadImage($source_img, $name_img)) $name_img = null;
             }
-            if (count($identityCardFront) > 0) {
+            if ($hFunction->checkCount($identityCardFront)) {
                 $name_img_front = stripslashes($_FILES['txtIdentityCardFront']['name']);
                 $name_img_front = 'identity_front' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_front);
                 $source_img = $_FILES['txtIdentityCardFront']['tmp_name'];
                 if (!$modelJobApplication->uploadImage($source_img, $name_img_front)) $name_img_front = null;
             }
-            if (count($identityCardBack) > 0) {
+            if ($hFunction->checkCount($identityCardBack)) {
                 $name_img_back = stripslashes($_FILES['txtIdentityCardBack']['name']);
                 $name_img_back = 'identity_back' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_back);
                 $source_img = $_FILES['txtIdentityCardBack']['tmp_name'];

@@ -6,10 +6,7 @@ use App\Models\Ad3d\Company\QcCompany;
 use App\Models\Ad3d\Customer\QcCustomer;
 use App\Models\Ad3d\Order\QcOrder;
 use App\Models\Ad3d\OrderAllocation\QcOrderAllocation;
-use App\Models\Ad3d\OrderPay\QcOrderPay;
-use App\Models\Ad3d\Product\QcProduct;
 use App\Models\Ad3d\ProductDesign\QcProductDesign;
-use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\Staff\QcStaff;
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -77,7 +74,6 @@ class OrderController extends Controller
             $yearFilter = (int)$hFunction->getYearFromDate($orderReceiveDate);
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         }
-        //dd($dateFilter);
 
         # lay thong tin cong ty cung he thong
         $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);

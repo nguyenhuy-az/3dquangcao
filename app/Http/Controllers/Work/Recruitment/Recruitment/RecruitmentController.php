@@ -18,7 +18,7 @@ class RecruitmentController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelJobApplication = new QcJobApplication();
-        if (empty($jobApplicationId)) {
+        if ($hFunction->checkEmpty($jobApplicationId)) {
             $dataJobApplication = $modelJobApplication->loginJobApplicationInfo();
         } else {
             $dataJobApplication = $modelJobApplication->getInfo($jobApplicationId);
@@ -47,7 +47,7 @@ class RecruitmentController extends Controller
         $phoneNumber = Request::input('txtPhoneNumber');
         # lay thong tin ho so theo cong ty va so dien thoai
         $dataJobApplication = $modelJobApplication->infoByPhoneAndCompany($phoneNumber, $companyId);
-        if (empty($phoneNumber)) {
+        if ($hFunction->checkEmpty($phoneNumber)) {
             Session::put('notifyRecruitmentLogin', "Bạn phải nhập số điện thoại");
             return redirect()->back();
         } else {

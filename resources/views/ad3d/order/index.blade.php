@@ -9,8 +9,12 @@
  * $dataAccess
  */
 $accessObject = (isset($dataAccess['accessObject'])) ? $dataAccess['accessObject'] : null;
-$dataLogin = $modelStaff->loginStaffInfo();
-$dataCompanyLogin = $dataLogin->companyInfoActivity();
+$dataStaffLogin = $modelStaff->loginStaffInfo();
+$dataCompanyLogin = $dataStaffLogin->companyInfoActivity();
+
+# kiem tra bo phan truy cap
+$manageDepartmentStatus = $dataStaffLogin->checkManageDepartment();
+$businessDepartmentStatus = $dataStaffLogin->checkBusinessDepartment();
 ?>
 @extends('ad3d.index')
 @section('qc_ad3d_header')
@@ -37,31 +41,33 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <li @if($accessObject == 'order') class="active" @endif>
-                                <a href="{!! route('qc.ad3d.order.order.get') !!}">
-                                    Đơn hàng
-                                </a>
-                            </li>
-                            <li @if($accessObject == 'orderProvisional') class="active" @endif>
-                                <a href="#">
-                                    Báo giá
-                                </a>
-                            </li>
-                            <li @if($accessObject == 'orderAllocation') class="active" @endif>
-                                <a href="{!! route('qc.ad3d.order.allocation.get') !!}">
-                                    ĐH bàn giao
-                                </a>
-                            </li>
-                            <li @if($accessObject == 'product') class="active" @endif>
-                                <a href="{!! route('qc.ad3d.order.product.get') !!}">
-                                    Sản Phẩm
-                                </a>
-                            </li>
-                            <li @if($accessObject == 'productType') class="active" @endif>
-                                <a href="{!! route('qc.ad3d.order.product-type.get') !!}">
-                                    Loại sản phẩm
-                                </a>
-                            </li>
+                            @if($manageDepartmentStatus)
+                                <li @if($accessObject == 'order') class="active" @endif>
+                                    <a href="{!! route('qc.ad3d.order.order.get') !!}">
+                                        Đơn hàng
+                                    </a>
+                                </li>
+                                <li @if($accessObject == 'orderProvisional') class="active" @endif>
+                                    <a href="#">
+                                        Báo giá
+                                    </a>
+                                </li>
+                                <li @if($accessObject == 'orderAllocation') class="active" @endif>
+                                    <a href="{!! route('qc.ad3d.order.allocation.get') !!}">
+                                        ĐH bàn giao
+                                    </a>
+                                </li>
+                                <li @if($accessObject == 'product') class="active" @endif>
+                                    <a href="{!! route('qc.ad3d.order.product.get') !!}">
+                                        Sản Phẩm
+                                    </a>
+                                </li>
+                                <li @if($accessObject == 'productType') class="active" @endif>
+                                    <a href="{!! route('qc.ad3d.order.product-type.get') !!}">
+                                        Loại sản phẩm
+                                    </a>
+                                </li>
+                            @endif
                             <li @if($accessObject == 'productTypePrice') class="active" @endif>
                                 <a href="{!! route('qc.ad3d.order.product_type_price.get') !!}">
                                     Bảng giá

@@ -125,12 +125,12 @@ class CompanyController extends Controller
                     $bankName = $modelStaff->getDefaultBankName();
                     if ($modelStaff->insert($txtFirstName, $txtLastName, $txtIdentityCard, $staffAccount, $staffBirthday, $cbGender, $staffImage, $identityCardFront, $identityCardBack, $txtStaffEmail, $txtStaffAddress, $txtStaffPhone, $bankAccount, $bankName)) {
                         $newStaffId = $modelStaff->insertGetId();
-                        #them vao cong ty lam viec
+                        # them vao cong ty lam viec
                         $fromDateWork = $hFunction->carbonNow();
                         $level = $modelCompanyStaffWork->getDefaultLevelRoot();
                         if ($modelCompanyStaffWork->insert($fromDateWork, $level, $newStaffId, $staffLoginId, $newCompanyId)) {
                             $newWorkId = $modelCompanyStaffWork->insertGetId();
-                            #cap quan ly
+                            # cap quan ly
                             $rankId = $modelRank->manageRankId();
                             # bo phan quan ly
                             $departmentId = $modelDepartment->manageDepartmentId();

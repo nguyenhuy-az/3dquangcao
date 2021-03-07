@@ -41,21 +41,23 @@ class StaffController extends Controller
         # dang hoat dong
         $hasAction = $modelCompanyStaffWork->getDefaultHasAction();
         # lay thong tin cong ty cung he thong
-        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
+        $dataListCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         # lay thong tin lam viec cua nv tai cty dang truy cap
         $dataCompanyStaffWork = $modelCompanyStaffWork->selectInfoOfCompanyAndActionStatus($companyFilterId, $actionStatus)->paginate(30);
+        # thong tin cong ty truy cap
+        $dataCompanySelected = $modelCompany->getInfo($companyFilterId);
         if ($actionStatus == $hasAction) {
             $dataAccess = [
                 'accessObject' => 'staff',
                 'subObject' => 'staffOn'
             ];
-            return view('ad3d.system.staff.list-on', compact('modelStaff', 'dataCompanyStaffWork', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
+            return view('ad3d.system.staff.list-on', compact('modelStaff', 'dataCompanySelected','dataCompanyStaffWork', 'dataListCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
         } else {
             $dataAccess = [
                 'accessObject' => 'staff',
                 'subObject' => 'staffOff'
             ];
-            return view('ad3d.system.staff.list-off', compact('modelStaff', 'dataCompanyStaffWork', 'dataCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
+            return view('ad3d.system.staff.list-off', compact('modelStaff', 'dataCompanySelected','dataCompanyStaffWork', 'dataListCompany', 'dataAccess', 'dataStaff', 'companyFilterId', 'actionStatus'));
         }
 
 
@@ -290,7 +292,7 @@ class StaffController extends Controller
         }
         if ($modelStaff->insert($firstName, $lastName, $txtIdentityCard, $account, $birthDay, $gender, $name_img, $name_img_front, $name_img_back, $email, $address, $phone, $level, $txtBankAccount, $cbBankName)) {
             $newStaffId = $modelStaff->insertGetId();
-            #them vao cong ty lam viec
+            # them vao cong ty lam viec
             if ($modelCompanyStaffWork->insert($fromDateWork, $level, $newStaffId, $staffLoginId, $companyId)) {
                 $newWorkId = $modelCompanyStaffWork->insertGetId();
                 # them vi tri lam viec
@@ -414,7 +416,6 @@ class StaffController extends Controller
         $cbDepartment = Request::input('cbDepartment');
         $cbRank = Request::input('cbRank');
         $cbPermission = Request::input('cbPermission');
-        //$salaryStatus = Request::input('salaryStatus');
         $cbWorkMethod = Request::input('cbWorkMethod');
         $cbApplyRule = Request::input('cbApplyRule');
 
@@ -496,6 +497,8 @@ class StaffController extends Controller
                     }
                 }
             } else {
+                /*
+                 * TRƯỜNG HỢP CÓ THAY ĐỔI CTY - PHIÊN BẢN CŨ
                 # thay doi cty lam viec
                 $oldDataStaffWorkSalary = $modelStaffWorkSalary->infoActivityOfWork($oldCompanyStaffWorkId); # bang luong cu cua cty o cty cu
                 if ($modelCompanyStaffWork->updateEndWork($oldCompanyStaffWorkId)) { # vo hieu hoa lam viec o cty cu
@@ -545,6 +548,7 @@ class StaffController extends Controller
                     }
 
                 }
+                */
             }
 
         } else {
@@ -554,8 +558,8 @@ class StaffController extends Controller
             $oldDataWork = $modelWork->infoActivityOfStaff($staffId);
             if ($modelCompanyStaffWork->insert($txtDateWork, $level, $staffId, $staffLoginId, $companyId)) {
                 $newCompanyStaffWorkId = $modelCompanyStaffWork->insertGetId();
-                //them bo phan cho NV
-                if (count($cbDepartment) > 0) {
+                # them bo phan cho NV
+                if ($hFunction->checkCount($cbDepartment)) {
                     foreach ($cbDepartment as $key => $value) {
                         $departmentId = $value;
                         $rankId = $cbRank[$key];
@@ -569,7 +573,7 @@ class StaffController extends Controller
                 $toDateWork = $hFunction->lastDateOfMonthFromDate($currentDate);
                 $modelWork->insert($currentDate, $toDateWork, $newCompanyStaffWorkId);
                 # TINH LUONG PHIEN BAN CU NEU CO
-                if (count($oldDataWork) > 0) {
+                if ($hFunction->checkCount($oldDataWork)) {
                     $modelWork->endWork($oldDataWork->workId()); # vo hieu hoa bang cham cong cu
                 }
                 #Them luong cho nhan vien
@@ -679,7 +683,7 @@ class StaffController extends Controller
         }
     }
 
-    // thay đổi tài khoản
+    # thay đổi tài khoản
     public function getChangeAccount()
     {
         $modelStaff = new QcStaff();
@@ -710,7 +714,7 @@ class StaffController extends Controller
         }
     }
 
-    //lấy lại mật khẩu mặc định
+    # lấy lại mật khẩu mặc định
     public function resetPassWord($staffId)
     {
         $modelStaff = new QcStaff();
@@ -738,7 +742,7 @@ class StaffController extends Controller
         return $modelCompanyStaffWork->restoreWork($companyStaffWorkId);
     }
 
-    //them hinh anh
+    # them hinh anh
     public function getAddImage($staffId)
     {
         $modelStaff = new QcStaff();
@@ -755,7 +759,7 @@ class StaffController extends Controller
         $txtIdentityCardBack = Request::file('txtIdentityCardBack');
         $dataStaff = $modelStaff->getInfo($staffId);
         if ($modelStaff->checkLogin()) {
-            if (count($txtImage) > 0) {
+            if ($hFunction->checkCount($txtImage)) {
                 $name_img = stripslashes($_FILES['txtImage']['name']);
                 $name_img = 'avatar' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img);
                 $source_img = $_FILES['txtImage']['tmp_name'];
@@ -768,7 +772,7 @@ class StaffController extends Controller
                     }
                 }
             }
-            if (count($txtIdentityCardFront) > 0) {
+            if ($hFunction->checkCount($txtIdentityCardFront)) {
                 $name_img_front = stripslashes($_FILES['txtIdentityCardFront']['name']);
                 $name_img_front = 'identity_front' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_front);
                 $source_img = $_FILES['txtIdentityCardFront']['tmp_name'];
@@ -781,7 +785,7 @@ class StaffController extends Controller
                     }
                 }
             }
-            if (count($txtIdentityCardBack) > 0) {
+            if ($hFunction->checkCount($txtIdentityCardBack)) {
                 $name_img_back = stripslashes($_FILES['txtIdentityCardBack']['name']);
                 $name_img_back = 'identity_back' . $hFunction->getTimeCode() . '.' . $hFunction->getTypeImg($name_img_back);
                 $source_img = $_FILES['txtIdentityCardBack']['tmp_name'];
@@ -797,7 +801,7 @@ class StaffController extends Controller
         }
     }
 
-    // xoa hinh anh
+    # xoa hinh anh
     public function deleteImage($staffId, $type)
     {
         $hFunction = new \Hfunction();
@@ -815,7 +819,7 @@ class StaffController extends Controller
         }
     }
 
-    //xóa
+    # xóa
     public function deleteStaff($staffId = null)
     {
         $hFunction = new \Hfunction();

@@ -18,60 +18,62 @@ $productTypePrice_href_get = route('qc.work.product_type_price.get');
 @extends('work.index')
 @section('qc_work_body')
     <div class="row qc_work_product_type_wrap">
-        <div class="qc-padding-bot-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="qc-padding-bot-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <a class="qc-link-green-bold" href="{!! $productTypePrice_href_get !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <label class="qc-font-size-20">BẢNG BÁO GIÁ</label>
+                    <label class="qc-font-size-20" style="color: red;">BẢNG GIÁ</label>
                 </div>
             </div>
             {{-- chi tiêt --}}
-            <div class="row qc-margin-bot-5">
+            <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                     <div class="input-group">
                         <input type="text" class="qc_work_textNameFilter form-control" name="textNameFilter"
-                               placeholder="Tìm theo tên" style="height: 25px;" value="{!! $nameFilter !!}">
+                               placeholder="Tìm theo tên" style="height: 30px;" value="{!! $nameFilter !!}">
                               <span class="input-group-btn">
                                     <button class="btFilterName btn btn-sm btn-default" type="button"
-                                            style="height: 25px;"
+                                            style="height: 30px;"
                                             data-href="{!! $productTypePrice_href_get !!}">Tìm
                                     </button>
                               </span>
                     </div>
                 </div>
             </div>
-            <div class="qc_container_table row">
+            <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
-                            <tr style="background-color: whitesmoke;">
-                                <th class="text-center">STT</th>
+                            <tr style="background-color: black; color: yellow;">
                                 <th>Loại sản phẩm</th>
                                 <th>Mô tả SP</th>
-                                <th class="text-right">Giá</th>
-                                <th class="text-center">Đơn vị</th>
                                 <th>Ghi chú</th>
                             </tr>
-                            @if(count($dataProductTypePrice) > 0)
+                            @if($hFunction->checkCount($dataProductTypePrice))
                                 @foreach($dataProductTypePrice as $productTypePrice)
                                     <?php
                                     $priceId = $productTypePrice->priceId();
                                     $productType = $productTypePrice->productType;
                                     $dataProductTypeImage = $productType->infoProductTypeImage();
+                                    $n_o = (isset($n_o)) ? $n_o + 1 : 1;
                                     ?>
                                     <tr>
-                                        <td class="text-center">
-                                            {!! $n_o = (isset($n_o)) ? $n_o + 1 : 1 !!}
-                                        </td>
                                         <td>
-                                            {!!  $productType->name() !!}
+                                            <em>{!! $n_o !!}). </em>
+                                            <b>{!!  $productType->name() !!}</b>
+                                            <br/>&emsp;
+                                            <span style="color: red;">
+                                                {!! $hFunction->currencyFormat($productTypePrice->price()) !!}
+                                            </span>
+                                            <em>/</em>
+                                            <span style="color: grey;">{!!  $productType->unit() !!}</span>
                                         </td>
                                         <td class="qc-color-grey">
                                             {!!  $productType->description() !!}
                                             <br/>
-                                            @if(count($dataProductTypeImage) > 0)
+                                            @if($hFunction->checkCount($dataProductTypeImage))
                                                 <a class="qc-link-red"
                                                    onclick="qc_main.toggle('#qc_image_container_{!! $priceId !!}');">
                                                     Xem ảnh mẫu
@@ -91,12 +93,6 @@ $productTypePrice_href_get = route('qc.work.product_type_price.get');
                                                 </div>
                                             @endif
                                         </td>
-                                        <td class="text-right qc-color-red">
-                                            {!! $hFunction->currencyFormat($productTypePrice->price()) !!}
-                                        </td>
-                                        <td class="text-center">
-                                            {!!  $productType->unit() !!}
-                                        </td>
                                         <td class="qc-color-grey">
                                             {!!  $productTypePrice->note() !!}
                                         </td>
@@ -104,7 +100,7 @@ $productTypePrice_href_get = route('qc.work.product_type_price.get');
                                 @endforeach
                             @else
                                 <tr>
-                                    <td class="text-center qc-color-red" colspan="6">
+                                    <td class="text-center qc-color-red" colspan="3">
                                         Không có thông tin giá
                                     </td>
                                 </tr>
@@ -115,7 +111,7 @@ $productTypePrice_href_get = route('qc.work.product_type_price.get');
             </div>
 
             <div class="row">
-                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="qc-padding-top-20 qc-padding-bot-20 qc-border-none text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <a class="btn btn-sm btn-primary" href="{!! route('qc.work.home') !!}">Đóng</a>
                 </div>
             </div>

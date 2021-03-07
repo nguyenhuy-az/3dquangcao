@@ -7,6 +7,8 @@ use App\Models\Ad3d\CompanyStore\QcCompanyStore;
 use App\Models\Ad3d\Department\QcDepartment;
 use App\Models\Ad3d\Import\QcImport;
 use App\Models\Ad3d\ImportPay\QcImportPay;
+use App\Models\Ad3d\JobApplication\QcJobApplication;
+use App\Models\Ad3d\JobApplicationInterview\QcJobApplicationInterview;
 use App\Models\Ad3d\LicenseLateWork\QcLicenseLateWork;
 use App\Models\Ad3d\LicenseOffWork\QcLicenseOffWork;
 use App\Models\Ad3d\Order\QcOrder;
@@ -723,6 +725,20 @@ class QcCompany extends Model
         return QcCompany::where('parent_id', $companyId)->orWhere('company_id', $companyId)->get();
     }
 
+    # lay he thong cty de sao chep bang gia tu cong ty dang nhap
+    public function getInfoForCopyPriceOfCompany($companyId)
+    {
+        # la cong ty me
+        if ($this->checkParent($companyId)) {
+            $parentId = $companyId;
+        } else {
+            # lay ma cong ty me
+            $parentId = $this->parentId($companyId);
+
+        }
+        return QcCompany::where('parent_id', $parentId)->orWhere('company_id', $parentId)->orWhere('company_id', $companyId)->get();
+    }
+
     # thong tin cua 1 cong ty hoac tat ca cong ty
     public function getInfo($companyId = null, $field = null)
     {
@@ -824,6 +840,16 @@ class QcCompany extends Model
         return $this->pluck('companyType', $companyId);
     }
 
+    public function companyTypeLabel($companyType)
+    {
+        if ($companyType == $this->getDefaultParentCompanyType()) {
+            return "Trụ sở";
+        } elseif ($companyType == $this->getDefaultBranchCompanyType()) {
+            return "Chi nhánh";
+        } else {
+            return "Chưa xác định";
+        }
+    }
 
     public function createdAt($companyId = null)
     {
@@ -834,6 +860,7 @@ class QcCompany extends Model
     {
         return $this->pluck('parent_id', $companyId);
     }
+
     # total record
     public function totalRecords()
     {
@@ -864,10 +891,17 @@ class QcCompany extends Model
     # lay ma cty ty me (Tru so)
     public function rootCompanyId()
     {
-        return QcCompany::where('companyType', $this->getDefaultParentCompanyType())->pluck('company_id');
+        return QcCompany::where('rootStatus', $this->getDefaultHasRootStatus())->where('companyType', $this->getDefaultParentCompanyType())->pluck('company_id');
     }
 
     #============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
+    # kiem tra nv co dang lam viec tai cty hay ko
+    public function checkStaffWorkingOfCompany($staffId, $companyId = null)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        return $modelCompanyStaffWork->checkExistActivityStaffOfCompany($staffId, $this->checkIdNull($companyId));
+    }
+
     # kiem tra thong bao nhan vien kiem tra thong tin truoc khi xuat bang luong - cuoi thang
     public function checkNotifyForEndOfMonth()
     {
@@ -967,10 +1001,32 @@ class QcCompany extends Model
         return $modelLicenseLateWork->totalNewInfo($this->checkIdNull($companyId));
     }
 
+    # tong tien ung chua duyet
     public function totalSalaryBeforePayRequestUnconfirmed($companyId = null)
     {
         $modelRequest = new QcSalaryBeforePayRequest();
         return $modelRequest->totalNewRequest($this->checkIdNull($companyId));
+    }
+
+    # lay tong so luong ho so tuyen dung chua duyet
+    public function totalJobApplicationUnconfirmed($companyId = null)
+    {
+        $modelJobApplication = new QcJobApplication();
+        return $modelJobApplication->totalUnconfirmedOfCompany($this->checkIdNull($companyId));
+    }
+
+    # lay tong so luong ho so phong van chua duyet
+    public function totalJobApplicationInterviewUnconfirmed($companyId = null)
+    {
+        $modelJobApplicationInterview = new QcJobApplicationInterview();
+        return $modelJobApplicationInterview->totalUnconfirmedOfCompany($this->checkIdNull($companyId));
+    }
+
+    # tong so lan nhan tien chua xac nhan cua 1 cong ty
+    public function sumReceiveMoneyUnconfirmedOfStaff($companyId = null, $date = null)
+    {
+        $modelTransfer = new QcTransfers();
+        return $modelTransfer->sumReceiveUnconfirmedOfCompany($this->checkIdNull($companyId), $date);
     }
     #============ =========== ============ THONG KE TIEN CUA 1 NHAN VIEN ============= =========== ==========
     # thong ke tong tien dang giua cua 1 thu quy trong cty
@@ -1126,14 +1182,14 @@ class QcCompany extends Model
     }
 
     #============ =========== ============ QUAN LY THU - CHI ============= =========== ==========
-    //tong thu theo dơn hang
+    # tong thu theo dơn hang
     public function totalOrderPayOfCompany($listCompanyId, $dateFilter = null)
     {
         $modelOrderPay = new QcOrderPay();
         return $modelOrderPay->totalOrderPayOfCompany($listCompanyId, $dateFilter);
     }
 
-    // tong thu theo don hang cua nhan vien
+    # tong thu theo don hang cua nhan vien
     public function totalOrderPayOfCompanyStaffDate($listCompanyId, $staffId, $dateFilter = null)
     {
         $modelOrderPay = new QcOrderPay();

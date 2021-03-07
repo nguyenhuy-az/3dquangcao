@@ -146,7 +146,7 @@ class QcJobApplication extends Model
         return ($hFunction->checkNull($jobApplicationId)) ? $this->jobApplicationId() : $jobApplicationId;
     }
 
-    // up hinh anh
+    # up hinh anh
     public function rootPathFullImage()
     {
         return 'public/images/job-application/full';
@@ -157,7 +157,7 @@ class QcJobApplication extends Model
         return 'public/images/job-application/small';
     }
 
-    //upload image
+    # upload image
     public function uploadImage($file, $imageName, $size = 500)
     {
         $hFunction = new \Hfunction();
@@ -168,7 +168,7 @@ class QcJobApplication extends Model
         return $hFunction->uploadSaveByFileName($file, $imageName, $pathSmallImage . '/', $pathFullImage . '/', $size);
     }
 
-    //drop image
+    # drop image
     public function dropImage($imageName)
     {
         if (is_file($this->rootPathSmallImage() . '/' . $imageName)) unlink($this->rootPathSmallImage() . '/' . $imageName);
@@ -223,6 +223,12 @@ class QcJobApplication extends Model
         return QcJobApplication::where('company_id', $companyId)->pluck('jobApplication_id');
     }
 
+    # lay tong so luong ho so tuyen dung chua duyet cua 1 cong ty
+    public function totalUnconfirmedOfCompany($companyId)
+    {
+        return QcJobApplication::where('company_id', $companyId)->where('confirmStatus', $this->getDefaultNotConfirm())->count();
+    }
+
     #----------- nguoi duyet ho so------------
     public function staff()
     {
@@ -272,7 +278,7 @@ class QcJobApplication extends Model
         return QcJobApplication::where('phone', $phone)->where('company_id', $companyId)->first();
     }
 
-    public function getInfo($id = '', $field = '')
+    public function getInfo($id = null, $field = null)
     {
         $hFunction = new \Hfunction();
         if ($hFunction->checkEmpty($id)) {

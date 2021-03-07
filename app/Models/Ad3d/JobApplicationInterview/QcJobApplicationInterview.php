@@ -268,7 +268,7 @@ class QcJobApplicationInterview extends Model
         return QcJobApplicationInterview::select('*');
     }
 
-    public function getInfo($interviewId = '', $field = '')
+    public function getInfo($interviewId = null, $field = null)
     {
         $hFunction = new \Hfunction();
         if ($hFunction->checkEmpty($interviewId)) {
@@ -350,6 +350,14 @@ class QcJobApplicationInterview extends Model
     public function totalUnconfirmed()
     {
         return QcJobApplicationInterview::where('interviewConfirm', $this->getDefaultNotConfirm())->count();
+    }
+
+    # tong ho so chua phong van cua 1 cong ty
+    public function totalUnconfirmedOfCompany($companyId)
+    {
+        $modelJobApplication = new QcJobApplication();
+        $listJobApplicationId = $modelJobApplication->listIdByCompany($companyId);
+        return QcJobApplicationInterview::whereIn('jobApplication_id', $listJobApplicationId)->where('interviewConfirm', $this->getDefaultNotConfirm())->count();
     }
 
 }

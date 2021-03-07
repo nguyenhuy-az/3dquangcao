@@ -34,7 +34,7 @@ class QcStaffWorkMethod extends Model
     # mac dinh lam phu
     public function getDefaultMethodNotMain()
     {
-        return 1;
+        return 2;
     }
 
     #mac dinh co hoat dong
@@ -79,7 +79,7 @@ class QcStaffWorkMethod extends Model
     }
 
     //========== ========= ========= quan he cac bang ========== ========= ==========
-    //----------  nhan vien ap dung -----------
+    #----------  nhan vien ap dung -----------
     public function staff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
@@ -135,7 +135,8 @@ class QcStaffWorkMethod extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
             return QcStaffWorkMethod::where('method_id', $objectId)->pluck($column)[0];
@@ -190,7 +191,7 @@ class QcStaffWorkMethod extends Model
         return $this->pluck('staff_id', $methodId);
     }
 
-    // lay id cuoi
+    # lay id cuoi
     public function lastId()
     {
         $hFunction = new \Hfunction();

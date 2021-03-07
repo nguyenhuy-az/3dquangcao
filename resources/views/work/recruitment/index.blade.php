@@ -40,7 +40,7 @@ $hFunction = new Hfunction();
                             <div class="form-group form-group-sm qc-padding-none">
                                 <span style="color: red; font-size: 1.5em;">Lưu ý xem</span>
                                 <a class="qc-link-green-bold" style="font-size: 2em;"
-                                   href="{!! route('qc.work.rules') !!}"> NỘI QUY</a>
+                                   href="{!! route('qc.work.rules',$companyId) !!}"> NỘI QUY</a>
                                 <span style="color: red; font-size: 1.5em;">trước khi ứng tuyển</span>
                             </div>
                             <div class="form-group form-group-sm qc-padding-none text-center">

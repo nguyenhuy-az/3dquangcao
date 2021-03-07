@@ -53,26 +53,27 @@ class WorkController extends Controller
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
         } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
             $dateFilter = null;
-        }elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả
+        } elseif ($monthFilter == 100 && $yearFilter > 100) { //xem tất cả
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } else {
             $dateFilter = date('Y-m');
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-        $dataStaffNotify = $dataStaffLogin->infoStaffNotifyOfStaff($dataStaffLogin->staffId(),$dateFilter);
-        return view('work.news.notify.index', compact('modelCompany', 'modelStaff', 'sysInfoObject','dataStaffNotify','monthFilter','yearFilter'));
+        $dataStaffNotify = $dataStaffLogin->infoStaffNotifyOfStaff($dataStaffLogin->staffId(), $dateFilter);
+        return view('work.news.notify.index', compact('modelCompany', 'modelStaff', 'sysInfoObject', 'dataStaffNotify', 'monthFilter', 'yearFilter'));
     }
 
-    public function dateOff($yearFilter = 0){
+    public function dateOff($yearFilter = 0)
+    {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $sysInfoObject = 'home_systemDateOff';
         $dateFilter = null;
-        if ($yearFilter == 0)  $yearFilter = date('Y');
+        if ($yearFilter == 0) $yearFilter = date('Y');
         $dataSystemDateOff = $modelCompany->systemDateOfFOfCompanyAndDate($dataStaffLogin->companyId(), $yearFilter);
-        return view('work.news.date-off.index', compact('modelCompany', 'modelStaff', 'sysInfoObject','dataSystemDateOff','yearFilter'));
+        return view('work.news.date-off.index', compact('modelCompany', 'modelStaff', 'sysInfoObject', 'dataSystemDateOff', 'yearFilter'));
     }
 
     //làm việc
@@ -123,7 +124,7 @@ class WorkController extends Controller
         }
     }
 
-    //thoát
+    # thoát
     public function logout()
     {
         $modelStaff = new QcStaff();
@@ -134,11 +135,11 @@ class WorkController extends Controller
         }
     }
 
-    //nội qui
-    public function rules($loginCode = null)
+    # nội qui
+    public function rules($companyId)
     {
         $modelRules = new QcRules();
-        $dataRule = $modelRules->getInfo();
+        $dataRule = $modelRules->getInfoOfCompany($companyId);
         return view('work.rules.rules', compact('dataRule'));
     }
 
