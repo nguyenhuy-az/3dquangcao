@@ -1646,11 +1646,15 @@ class QcStaff extends Model
 
     public function checkRootManage($staffId = null)
     {
-        if ($this->checkRootStatus($staffId) && $this->level($staffId) == $this->getDefaultRootLevel()) {
-            return true;
-        } else {
+        $hFunction = new \Hfunction();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $dataCompanyStaffWork = $modelCompanyStaffWork->infoActivityOfStaff($this->checkIdNull($staffId));
+        if($hFunction->checkCount($dataCompanyStaffWork)){
+            return $dataCompanyStaffWork->checkLevelRoot() ;
+        }else{
             return false;
         }
+
     }
 
     #======== KIEM TRA CAC BO PHAN CUA NV ===============

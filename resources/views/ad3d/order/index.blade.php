@@ -62,17 +62,19 @@ $businessDepartmentStatus = $dataStaffLogin->checkBusinessDepartment();
                                         Sản Phẩm
                                     </a>
                                 </li>
+                            @endif
+                            @if($manageDepartmentStatus | $businessDepartmentStatus)
                                 <li @if($accessObject == 'productType') class="active" @endif>
                                     <a href="{!! route('qc.ad3d.order.product-type.get') !!}">
                                         Loại sản phẩm
                                     </a>
                                 </li>
+                                <li @if($accessObject == 'productTypePrice') class="active" @endif>
+                                    <a href="{!! route('qc.ad3d.order.product_type_price.get') !!}">
+                                        Bảng giá
+                                    </a>
+                                </li>
                             @endif
-                            <li @if($accessObject == 'productTypePrice') class="active" @endif>
-                                <a href="{!! route('qc.ad3d.order.product_type_price.get') !!}">
-                                    Bảng giá
-                                </a>
-                            </li>
                         </ul>
 
                         <ul class="nav navbar-nav navbar-right">

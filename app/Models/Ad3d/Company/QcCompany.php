@@ -41,13 +41,13 @@ class QcCompany extends Model
 
     private $lastId;
 
-    # mac dinh la cty cua he thong
+    # mac dinh la cty cua he thong 3D
     public function getDefaultHasRootStatus()
     {
         return 1;
     }
 
-    # mac dinh khong la cty cua he thong
+    # mac dinh khong la cty cua he thong 3D
     public function getDefaultNotRootStatus()
     {
         return 0;
@@ -471,6 +471,13 @@ class QcCompany extends Model
     public function companyStaffWork()
     {
         return $this->hasMany('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'company_id', 'company_id');
+    }
+
+    # lay danh sach thong tin dang lam viec cua 1 cong ty
+    public function companyStaffWorkActivityOfCompany($companyId = null)
+    {
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        return $modelCompanyStaffWork->selectInfoOfCompanyAndActionStatus($this->checkIdNull($companyId), $modelCompanyStaffWork->getDefaultHasAction())->get();
     }
 
     # lay thong tin vi tri lam viec cao nhat (level = 0)

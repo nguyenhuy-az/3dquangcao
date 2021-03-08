@@ -412,6 +412,11 @@ Route::group(['prefix' => 'ad3d'], function () {
             # them cty
             Route::get('add', ['as' => 'qc.ad3d.system.company.add.get', 'uses' => 'Ad3d\System\Company\CompanyController@getAdd']);
             Route::post('add', ['as' => 'qc.ad3d.system.company.add.post', 'uses' => 'Ad3d\System\Company\CompanyController@postAdd']);
+
+            # cap nhat nguoi quan ly
+            Route::get('update-manager/{companyId?}/{selectObject?}', ['as' => 'qc.ad3d.system.company.update_manager.get', 'uses' => 'Ad3d\System\Company\CompanyController@getUpdateManager']);
+            Route::post('update-manager/{companyId?}', ['as' => 'qc.ad3d.system.company.update_manager.post', 'uses' => 'Ad3d\System\Company\CompanyController@postUpdateManager']);
+
             # trang chinh
             Route::get('/', ['as' => 'qc.ad3d.system.company.get', 'uses' => 'Ad3d\System\Company\CompanyController@index']);
         });

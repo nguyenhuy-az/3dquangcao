@@ -36,6 +36,33 @@ class CompanyController extends Controller
 
     }
 
+    # cap nhat nguoi quan lý
+    public function getUpdateManager($companyId, $selectObject = null)
+    {
+        $hFunction = new \Hfunction();
+        $modelCompany = new QcCompany();
+        $modelStaff = new QcStaff();
+        $dataAccess = [
+            'accessObject' => 'company',
+            'subObject' => 'company'
+        ];
+        $dataCompany = $modelCompany->getInfo($companyId);
+        $selectObject = ($hFunction->checkNull($selectObject)) ? 'selectSystem' : $selectObject;
+        if ($hFunction->checkCount($companyId) && !$hFunction->checkEmpty($selectObject)) {
+            $dataCompanyStaffWork = $dataCompany->companyStaffWorkActivityOfCompany();
+            return view('ad3d.system.company.company.add-manager', compact('modelStaff', 'dataAccess', 'dataCompany', 'dataCompanyStaffWork','selectObject'));
+        } else {
+            return redirect()->back();
+        }
+
+    }
+
+    # cap nhat nguoi quan lý
+    public function postUpdateManager($companyId)
+    {
+
+    }
+
     # xem chi tiet
     public function view($companyId)
     {

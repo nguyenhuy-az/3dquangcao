@@ -110,9 +110,10 @@ class QcProductType extends Model
         ]);
     }
 
-    public function checkIdNull($typeId)
+    public function checkIdNull($id)
     {
-        return (empty($typeId)) ? $this->typeId() : $typeId;
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->typeId() : $id;
     }
 
     public function confirmApplyStatus($typeId, $applyStatusId)
@@ -177,9 +178,16 @@ class QcProductType extends Model
     {
         $modelProductTypePrice = new QcProductTypePrice();
         $listTypeIdActivityOfCompany = $modelProductTypePrice->listTypeIdActivityOfCompany($companyId);
-        return QcProductType::whereNotIn('type_id', $listTypeIdActivityOfCompany)->where('action', 1)->orderBy('name', 'ASC')->get();
+        return QcProductType::whereNotIn('type_id', $listTypeIdActivityOfCompany)->where('confirmStatus', $this->getDefaultHasConfirm())->where('applyStatus', $this->getDefaultHasApply())->where('action', $this->getDefaultHasAction())->orderBy('name', 'ASC')->get();
     }
 
+    # chon thong tin dang hoat dong - dung phan trang
+    public function selectInfoActivity()
+    {
+        return QcProductType::where('action', $this->getDefaultHasAction())->orderBy('name', 'ASC')->select('*');
+    }
+
+    # lay thong tin dang hoat dong
     public function infoActivity()
     {
         return QcProductType::where('action', $this->getDefaultHasAction())->orderBy('name', 'ASC')->get();
@@ -200,7 +208,7 @@ class QcProductType extends Model
         return QcProductType::where('name', 'like', "%$name%")->orderBy('name', $orderBy)->pluck('type_id');
     }
 
-    public function getInfo($typeId = '', $field = '')
+    public function getInfo($typeId = null, $field = null)
     {
         $hFunction = new \Hfunction();
         if ($hFunction->checkEmpty($typeId)) {
@@ -216,7 +224,7 @@ class QcProductType extends Model
     }
 
     # tạo select box
-    public function getOption($selected = '')
+    public function getOption($selected = null)
     {
         $hFunction = new \Hfunction();
         $result = QcProductType::select('type_id as optionKey', 'name as optionValue')->get()->toArray();
@@ -316,7 +324,7 @@ class QcProductType extends Model
 
     public function existEditName($typeId, $name)
     {
-        return QcProductType::where('name', $name)->where('type_id', '<>', $typeId)->exists();
+        return QcProductType::where('name', $name)->where('type_id', '<>', $typeId)->where('confirmStatus', $this->getDefaultHasConfirm())->where('action', $this->getDefaultHasAction())->exists();
     }
 
     public function existTypeCode($typeCode)

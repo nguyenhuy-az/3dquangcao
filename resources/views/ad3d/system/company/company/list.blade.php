@@ -10,7 +10,14 @@
  */
 $hFunction = new Hfunction();
 $dataStaffLogin = $modelStaff->loginStaffInfo();//checkRoot
+$dataStaffLogin = $modelStaff->loginStaffInfo();
 $dataCompanyLogin = $dataStaffLogin->companyInfoActivity();
+# nhan su
+# kiem tra bo phan truy cap
+##$manageDepartmentStatus = $dataStaffLogin->checkManageDepartment();
+##$businessDepartmentStatus = $dataStaffLogin->checkBusinessDepartment();
+# kiem tra cong ty dang nhap phai cty me hay ko
+$companyParentStatus = $dataCompanyLogin->checkParent();
 ?>
 @extends('ad3d.system.company.company.index')
 @section('qc_ad3d_index_content')
@@ -21,7 +28,7 @@ $dataCompanyLogin = $dataStaffLogin->companyInfoActivity();
                  data-href-edit="{!! route('qc.ad3d.system.company.edit.get') !!}">
                 <table class="table table-hover table-bordered">
                     {{--cong ty me moi duoc them chi nhanh--}}
-                    @if($dataCompanyLogin->checkParent())
+                    @if($companyParentStatus)
                         <tr>
                             <td style="padding: 0;">
                                 <a class="form-control qc-font-size-16 qc-link-white-bold btn btn-primary"
@@ -59,7 +66,7 @@ $dataCompanyLogin = $dataStaffLogin->companyInfoActivity();
                                             <label>{!! $company->name() !!}</label>
                                             <br/> &emsp;
                                             @if($company->checkBranch())
-                                                <em>Chi Nhánh</em>
+                                                <em>C.Nhánh</em>
                                             @else
                                                 <em>Trụ sở</em>
                                             @endif
@@ -74,6 +81,13 @@ $dataCompanyLogin = $dataStaffLogin->companyInfoActivity();
                                                 <b>{!! $dataStaff->lastName() !!}</b>
                                             @else
                                                 <span>Chưa có</span>
+                                            @endif
+                                            @if($companyParentStatus)
+                                                <span>&nbsp;|&nbsp;</span>
+                                                <a class="qc-link"
+                                                   href="{!! route('qc.ad3d.system.company.update_manager.get',$companyId) !!}">
+                                                    - CẬP NHẬT QL
+                                                </a>
                                             @endif
                                             <br/>&emsp;
                                             <a class="qc_view qc-link" href="#" title="Xem chi tiết">

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Ad3d\Order\ProductType;
 //use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Ad3d\Company\QcCompany;
-use App\Models\Ad3d\ConstructionWork\QcConstructionWork;
 use App\Models\Ad3d\DepartmentWork\QcDepartmentWork;
 use App\Models\Ad3d\ProductType\QcProductType;
 use App\Models\Ad3d\ProductTypeConstruction\QcProductTypeConstruction;
@@ -23,10 +22,11 @@ class ProductTypeController extends Controller
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
+        $modelProductType = new QcProductType();
         $dataAccess = [
             'accessObject' => 'productType'
         ];
-        $dataProductType = QcProductType::where('action', 1)->orderBy('name', 'ASC')->select('*')->paginate(30);
+        $dataProductType = $modelProductType->selectInfoActivity()->paginate(30);
         return view('ad3d.order.product-type.list', compact('modelStaff', 'modelCompany', 'dataProductType', 'dataAccess'));
 
     }
@@ -34,13 +34,11 @@ class ProductTypeController extends Controller
     public function view($typeId)
     {
         $modelProductType = new QcProductType();
-        if (!empty($typeId)) {
-            $dataProductType = $modelProductType->getInfo($typeId);
-            return view('ad3d.order.product-type.view', compact('dataProductType'));
-        }
+        $dataProductType = $modelProductType->getInfo($typeId);
+        return view('ad3d.order.product-type.view', compact('dataProductType'));
     }
 
-    //add
+    # add
     public function getAdd()
     {
         $modelStaff = new QcStaff();
@@ -66,20 +64,20 @@ class ProductTypeController extends Controller
         $txtImage_1 = Request::file('txtImage_1');
         $txtImage_2 = Request::file('txtImage_2');
         $txtImage_3 = Request::file('txtImage_3');
-        // check exist of name
+        # check exist of name
         if ($modelProductType->existName($name)) {
             Session::put('notifyAdd', "Thêm thất bại <b>'$name'</b> đã tồn tại.");
         } else {
             if ($modelProductType->insert($name, $txtDescription, $txtUnit, 1, 1, $txtWarrantyTime)) {
                 $newTypeId = $modelProductType->insertGetId();
                 # them danh muc thi cong
-                if (!empty($cbDepartmentWork)) {
+                if (!$hFunction->checkEmpty($cbDepartmentWork)) {
                     foreach ($cbDepartmentWork as $value) {
                         $modelProductTypeConstruction->insert($newTypeId, $value);
                     }
                 }
                 # anh bao cao 1
-                if (!empty($txtImage_1)) {
+                if (!$hFunction->checkEmpty($txtImage_1)) {
                     $name_img = stripslashes($_FILES['txtImage_1']['name']);
                     $name_img = $hFunction->getTimeCode() . '_1.' . $hFunction->getTypeImg($name_img);
                     $source_img = $_FILES['txtImage_1']['tmp_name'];
@@ -88,7 +86,7 @@ class ProductTypeController extends Controller
                     }
                 }
                 # anh bao cao 2
-                if (!empty($txtImage_2)) {
+                if (!$hFunction->checkEmpty($txtImage_2)) {
                     $name_img = stripslashes($_FILES['txtImage_2']['name']);
                     $name_img = $hFunction->getTimeCode() . '_2.' . $hFunction->getTypeImg($name_img);
                     $source_img = $_FILES['txtImage_2']['tmp_name'];
@@ -98,7 +96,7 @@ class ProductTypeController extends Controller
                 }
 
                 # anh bao cao 3
-                if (!empty($txtImage_3)) {
+                if (!$hFunction->checkEmpty($txtImage_3)) {
                     $name_img = stripslashes($_FILES['txtImage_3']['name']);
                     $name_img = $hFunction->getTimeCode() . '_3.' . $hFunction->getTypeImg($name_img);
                     $source_img = $_FILES['txtImage_3']['tmp_name'];
@@ -113,7 +111,7 @@ class ProductTypeController extends Controller
         }
     }
 
-    //edit
+    # edit
     public function getEdit($typeId)
     {
         $hFunction = new \Hfunction();
@@ -128,6 +126,7 @@ class ProductTypeController extends Controller
 
     public function postEdit($typeId)
     {
+        $hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
         $modelProductTypeConstruction = new QcProductTypeConstruction();
         $name = Request::input('txtName');
@@ -137,16 +136,13 @@ class ProductTypeController extends Controller
         $cbDepartmentWork = Request::input('cbDepartmentWork');
         $notifyContent = null;
         if ($modelProductType->existEditName($typeId, $name)) {
-            $notifyContent = "Tên <b>'$name'</b> đã tồn tại.";
-        }
-        if (!empty($notifyContent)) {
-            return $notifyContent;
+            return "Tên <b>'$name'</b> đã tồn tại.";
         } else {
             $modelProductType->updateInfo($typeId, $name, $txtDescription, $txtUnit, $txtWarrantyTime);
-            // xoa thong tin ton tai
+            # xoa thong tin ton tai
             $modelProductTypeConstruction->deleteInfoOfType($typeId);
             # them danh mục thi cong
-            if (!empty($cbDepartmentWork)) {
+            if (!$hFunction->checkEmpty($cbDepartmentWork)) {
                 foreach ($cbDepartmentWork as $value) {
                     $modelProductTypeConstruction->insert($typeId, $value);
                 }
@@ -157,9 +153,10 @@ class ProductTypeController extends Controller
     #xac nhan loai san pham
     public function getConfirm($typeId)
     {
+        $hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
         $dataProductType = $modelProductType->getInfo($typeId);
-        if (count($dataProductType) > 0) {
+        if ($hFunction->checkCount($dataProductType)) {
             return view('ad3d.order.product-type.confirm-type', compact('dataProductType'));
         }
     }
@@ -178,12 +175,13 @@ class ProductTypeController extends Controller
         return $modelProductTypeImage->actionDelete($imageId);
     }
 
-    // ANH MAU
+    # ANH MAU
     public function getAddImage($typeId)
     {
+        $hFunction = new \Hfunction();
         $modelProductType = new QcProductType();
         $dataProductType = $modelProductType->getInfo($typeId);
-        if (count($dataProductType) > 0) {
+        if ($hFunction->checkCount($dataProductType)) {
             return view('ad3d.order.product-type.add-image', compact('dataProductType'));
         }
     }
@@ -195,7 +193,7 @@ class ProductTypeController extends Controller
         $txtImage_1 = Request::file('txtImage_1');
         $txtImage_2 = Request::file('txtImage_2');
         $txtImage_3 = Request::file('txtImage_3');
-        if (!empty($txtImage_1)) {
+        if (!$hFunction->checkEmpty($txtImage_1)) {
             $name_img = stripslashes($_FILES['txtImage_1']['name']);
             $name_img = $hFunction->getTimeCode() . '_1.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtImage_1']['tmp_name'];
@@ -204,7 +202,7 @@ class ProductTypeController extends Controller
             }
         }
         # anh bao cao 2
-        if (!empty($txtImage_2)) {
+        if (!$hFunction->checkEmpty($txtImage_2)) {
             $name_img = stripslashes($_FILES['txtImage_2']['name']);
             $name_img = $hFunction->getTimeCode() . '_2.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtImage_2']['tmp_name'];
@@ -214,7 +212,7 @@ class ProductTypeController extends Controller
         }
 
         # anh bao cao 3
-        if (!empty($txtImage_3)) {
+        if (!$hFunction->checkEmpty($txtImage_3)) {
             $name_img = stripslashes($_FILES['txtImage_3']['name']);
             $name_img = $hFunction->getTimeCode() . '_3.' . $hFunction->getTypeImg($name_img);
             $source_img = $_FILES['txtImage_3']['tmp_name'];
@@ -226,17 +224,19 @@ class ProductTypeController extends Controller
 
     public function viewImage($imageId)
     {
+        $hFunction = new \Hfunction();
         $modelProductTypeImage = new QcProductTypeImage();
-        if (!empty($imageId)) {
+        if (!$hFunction->checkEmpty($imageId)) {
             $dataProductTypeImage = $modelProductTypeImage->getInfo($imageId);
             return view('ad3d.order.product-type.view-image', compact('dataProductTypeImage'));
         }
     }
 
-    // delete
+    # delete
     public function deleteType($typeId)
     {
-        if (!empty($typeId)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($typeId)) {
             $dataProductType = new QcProductType();
             $dataProductType->actionDelete($typeId);
         }

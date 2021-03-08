@@ -17,7 +17,26 @@ $hrefIndex = route('qc.ad3d.order.product-type.get');
 @extends('ad3d.order.product-type.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
+                        <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
+                    </a>
+                    <label class="qc-font-size-20" style="color: red;">LOẠI SẢN PHẨM</label>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    @if($dataStaffLogin->checkRootStatus())
+                        <a class="btn btn-primary btn-sm form-control"
+                           href="{!! route('qc.ad3d.order.product_type.add.get') !!}">
+                            <i class="glyphicon glyphicon-plus qc-font-size-16"></i>
+                            <span class="qc-font-size-14">THÊM</span>
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row"
                  data-href-view="{!! route('qc.ad3d.order.product_type.view.get') !!}"
                  data-href-edit="{!! route('qc.ad3d.order.product_type.edit.get') !!}"
@@ -25,37 +44,11 @@ $hrefIndex = route('qc.ad3d.order.product-type.get');
                  data-href-del="{!! route('qc.ad3d.order.product_type.delete') !!}">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
-                        <tr>
-                            <th colspan="7">
-                                <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
-                                    <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
-                                </a>
-                                <label class="qc-font-size-20" style="color: red;">LOẠI SẢN PHẨM</label>
-                            </th>
-                            <th class="text-center" colspan="3" style="padding: 0;">
-                                @if($dataStaffLogin->checkRootStatus())
-                                    <a class="btn btn-primary btn-sm form-control"
-                                       href="{!! route('qc.ad3d.order.product_type.add.get') !!}">
-                                        <i class="glyphicon glyphicon-plus qc-font-size-16"></i>
-                                        <span class="qc-font-size-14">THÊM</span>
-                                    </a>
-                                @endif
-                            </th>
-                        </tr>
                         <tr style="background-color: black; color: yellow;">
-                            <th class="text-center" style="width: 20px;">STT</th>
-                            <th class="text-center">Mã loại</th>
                             <th>Tên</th>
                             <th style="max-width: 400px !important;">Mô tả</th>
-                            <th>Danh mục thi công</th>
-                            <th class="text-center">
-                                Bảo Hành <br/>
-                                <em>(Tháng)</em>
-                            </th>
                             <th>Ảnh mẫu</th>
-                            <th class="text-center">Đơn vị tính</th>
-                            <th class="text-center">Áp dụng</th>
-                            <th class="text-center">Duyệt</th>
+                            <th>Danh mục thi công</th>
                         </tr>
                         @if($hFunction->checkCount($dataProductType))
                             <?php
@@ -70,35 +63,48 @@ $hrefIndex = route('qc.ad3d.order.product-type.get');
                                 $unit = $productType->unit();
                                 $description = $productType->description();
                                 $dataProductTypeImage = $productType->infoProductTypeImage();
-                                // danh muc thi cong
+                                # danh muc thi cong
                                 $dataConstructionWorkSelected = $productType->constructionWorkInfo();
+                                $n_o += 1;
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $typeId !!}">
-                                    <td class="text-center">
-                                        {!! $n_o += 1 !!}
-                                    </td>
-                                    <td class="text-center" style="color: blue;">
-                                        @if(!empty($typeCode))
-                                            {!! $typeCode !!}
-                                        @else
-                                            <em class="qc-color-grey">---</em>
-                                        @endif
-                                    </td>
                                     <td>
+                                        <em>{!! $n_o !!}). </em>
                                         <label>{!! $productType->name() !!}</label>
-                                        <br/>
+                                        <br/>&emsp;
+                                        <em style="color: grey;">Bảo hành:</em>
+                                        <span>{!! $productType->warrantyTime() !!} tháng</span>
+                                        &emsp;
+                                        <em style="color: grey;">Đơn vị tính:</em>
+                                        @if($hFunction->checkEmpty($unit))
+                                            <span>Chưa xác định</span>
+                                        @else
+                                            <span>{!! $unit !!}</span>
+                                        @endif
+                                        <br/>&emsp;
                                         <a class="qc_view qc-link" title="Xem chi tiết">
                                             <i class="glyphicon glyphicon-eye-open"></i>
                                         </a>
-                                        @if($dataStaffLogin->checkRootStatus())
-                                            <span>|</span>
-                                            <a class="qc_edit qc-link-green" href="#" title="Sửa">
-                                                <i class="glyphicon glyphicon-pencil"></i>
+                                        <span>&nbsp;|&nbsp;</span>
+                                        <a class="qc_edit qc-link-green" href="#" title="Sửa">
+                                            <i class="glyphicon glyphicon-pencil"></i>
+                                        </a>
+                                        <span>&nbsp;|&nbsp;</span>
+                                        <a class="qc_delete qc-link-red" href="#" title="Xóa">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </a>
+                                        @if(!$productType->checkConfirmStatus())
+                                            <span>&nbsp;|&nbsp;</span>
+                                            <a class="qc_confirm_apply qc-link-red-bold"
+                                               data-href="{!! route('qc.ad3d.order.product_type.confirm.get',$typeId) !!}"
+                                               title="Click để xác nhận">
+                                                DUYỆT
                                             </a>
-                                            <span>|</span>
-                                            <a class="qc_delete qc-link-red" href="#" title="Xóa">
-                                                <i class="glyphicon glyphicon-trash"></i>
-                                            </a>
+                                        @else
+                                            @if(!$productType->checkApplyStatus())
+                                                <span>&nbsp;|&nbsp;</span>
+                                                <em>Không áp dụng</em>
+                                            @endif
                                         @endif
                                     </td>
                                     <td class="qc-color-grey" style="max-width: 400px;">
@@ -107,18 +113,6 @@ $hrefIndex = route('qc.ad3d.order.product-type.get');
                                         @else
                                             <em class="qc-color-grey">---</em>
                                         @endif
-                                    </td>
-                                    <td style="max-width: 400px;">
-                                        @if($hFunction->checkCount($dataConstructionWorkSelected))
-                                            @foreach($dataConstructionWorkSelected as $constructionWorkSelected)
-                                                <span>{!! $constructionWorkSelected->name() !!},</span>
-                                            @endforeach
-                                        @else
-                                            <em class="qc-color-grey">Không có</em>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        {!! $productType->warrantyTime() !!}
                                     </td>
                                     <td style="padding: 5px;">
                                         @if($hFunction->checkCount($dataProductTypeImage))
@@ -137,54 +131,33 @@ $hrefIndex = route('qc.ad3d.order.product-type.get');
                                             @endforeach
                                             <div class="text-center"
                                                  style="position: relative; float: left; margin: 5px 10px 5px 10px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
-                                                <a class="qc-link-green qc_add_image_action">+Thêm ảnh</a>
+                                                <a class="qc-link-green qc_add_image_action">+THÊM ẢNH</a>
                                             </div>
                                             <br/>
                                         @else
-                                            <a class="qc-link-green-bold qc_add_image_action">+Thêm ảnh</a>
+                                            <a class="qc-link-green-bold qc_add_image_action">+THÊM ẢNH</a>
                                         @endif
 
                                     </td>
-                                    <td class="text-center">
-                                        @if(!$hFunction->checkEmpty($unit))
-                                            {!! $unit !!}
+                                    <td style="max-width: 400px;">
+                                        @if($hFunction->checkCount($dataConstructionWorkSelected))
+                                            @foreach($dataConstructionWorkSelected as $constructionWorkSelected)
+                                                <span>{!! $constructionWorkSelected->name() !!},</span>
+                                            @endforeach
                                         @else
-                                            <em class="qc-color-grey">---</em>
-                                        @endif
-                                    </td>
-                                    <td class="text-center qc-color-grey">
-                                        @if($productType->checkApplyStatus())
-                                            <i class="qc-color-red glyphicon glyphicon-ok-circle"
-                                               title="Được sử dụng"></i>
-                                        @else
-                                            <i class="qc-color-grey glyphicon glyphicon-ok-circle"
-                                               title="Không được sử dụng"></i>
-                                        @endif
-                                    </td>
-                                    <td class="text-center qc-color-grey">
-                                        @if($productType->checkConfirmStatus())
-                                            <i class="qc-color-green glyphicon glyphicon-ok-circle"
-                                               title="Đã duyệt"></i>
-                                        @else
-                                            <i class="qc-color-grey glyphicon glyphicon-ok-circle"
-                                               title="Chưa duyệt"></i>
-                                            <a class="qc_confirm_apply qc-link-green-bold"
-                                               data-href="{!! route('qc.ad3d.order.product_type.confirm.get',$typeId) !!}"
-                                               title="Click để xác nhận">
-                                                Duyệt
-                                            </a>
+                                            <em class="qc-color-grey">Không có</em>
                                         @endif
                                     </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="10">
+                                <td class="text-center" colspan="4">
                                     {!! $hFunction->page($dataProductType) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center" colspan="10">
+                                <td class="text-center" colspan="4">
                                     Chưa có thông tin
                                 </td>
                             </tr>

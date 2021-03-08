@@ -66,7 +66,7 @@ class ProductTypePriceController extends Controller
             $dataCompanySelected = $modelCompany->getInfo($companySelectedId);
         }
         # lay thong tin cong ty cung he thong
-        $dataCompany = $modelCompany->getInfoForCopyPriceOfCompany55($companyLoginId);
+        $dataCompany = $modelCompany->getInfoForCopyPriceOfCompany($companyLoginId);
         //$dataCompany = $modelCompany->infoActivity();
         return view('ad3d.order.product-type-price.copy-price', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataCompanySelected'));
     }
