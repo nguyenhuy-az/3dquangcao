@@ -13,7 +13,32 @@ class QcPayActivityList extends Model
 
     private $lastId;
 
-    #---------- them moi ----------
+    #mac dinh mo ta
+    public function getDefaultDescription()
+    {
+        return null;
+    }
+
+    # mac dinh phi co dinh
+    public function getDefaultTypeHasPermanent()
+    {
+        return 1;
+    }
+
+    # mac dinh bien phi
+    public function getDefaultTypeNotPermanent()
+    {
+        return 2;
+    }
+
+    ##---------- them moi ----------
+    # kiem tra id
+    public function checkIdNull($payListId)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($payListId)) ? $this->payListId() : $payListId;
+    }
+
     public function insert($name, $description, $type)
     {
         $hFunction = new \Hfunction();
@@ -34,12 +59,6 @@ class QcPayActivityList extends Model
     public function insertGetId()
     {
         return $this->lastId;
-    }
-
-    # kiem tra id
-    public function checkIdNull($payListId)
-    {
-        return (empty($payListId)) ? $this->payListId() : $payListId;
     }
 
     #----------- cap nhat thong tin ----------
@@ -70,13 +89,14 @@ class QcPayActivityList extends Model
         return QcPayActivityList::orderBy('name', $orderBy)->select('*');
     }
 
-    public function getInfo($payListId = '', $field = '')
+    public function getInfo($payListId = null, $field = null)
     {
-        if (empty($payListId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($payListId)) {
             return QcPayActivityList::get();
         } else {
             $result = QcPayActivityList::where('payList_id', $payListId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -85,7 +105,7 @@ class QcPayActivityList extends Model
     }
 
     # create option
-    public function getOption($selected = '')
+    public function getOption($selected = null)
     {
         $hFunction = new \Hfunction();
         $result = QcPayActivityList::select('payList_id as optionKey', 'name as optionValue')->get()->toArray();
@@ -94,10 +114,11 @@ class QcPayActivityList extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcPayActivityList::where('payList_id', $objectId)->pluck($column);
+            return QcPayActivityList::where('payList_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -148,13 +169,13 @@ class QcPayActivityList extends Model
     # kiem tra lai loai phi khong co đinh
     public function checkTypeVariable($payListId = null)
     {
-        return ($this->type($payListId) == 2) ? true : false;
+        return ($this->type($payListId) == $this->getDefaultTypeNotPermanent()) ? true : false;
     }
 
     # kiem tra lai loai phi la co đinh
     public function checkTypePermanent($payListId = null)
     {
-        return ($this->type($payListId) == 1) ? true : false;
+        return ($this->type($payListId) == $this->getDefaultTypeNotPermanent()) ? true : false;
     }
     #============ =========== ============ KIEM TRA THONG TIN ============= =========== ==========
     #TON TAI TEN

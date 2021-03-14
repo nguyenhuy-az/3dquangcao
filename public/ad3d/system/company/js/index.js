@@ -5,6 +5,55 @@ var qc_ad3d_staff_company = {
     view: function (listObject) {
         qc_ad3d_submit.ajaxNotReload($(listObject).parents('.qc_ad3d_list_content').data('href-view') + '/' + $(listObject).data('object'), $('#' + qc_ad3d.bodyIdName()), false);
     },
+    manager: {
+        saveAdd: function (frm) {
+            var txtSelectObject = $(frm).find("input[name='txtSelectObject']").val();
+            if (txtSelectObject == 'selectNew') {
+                var txtFirstName = $(frm).find("input[name='txtFirstName']");
+                var txtLastName = $(frm).find("input[name='txtLastName']");
+                var txtIdentityCard = $(frm).find("input[name='txtIdentityCard']");
+                var cbGender = $(frm).find("select[name='cbGender']");
+                var txtStaffPhone = $(frm).find("input[name='txtStaffPhone']");
+                var txtStaffEmail = $(frm).find("input[name='txtStaffEmail']");
+                if (qc_main.check.inputNull(txtFirstName, 'Nhập họ người quản lý')) {
+                    return false;
+                } else {
+                    if (qc_main.check.inputMaxLength(txtFirstName, 30, 'Tên không dài quá 30 ký tự')) return false;
+                }
+                if (qc_main.check.inputNull(txtLastName, 'Nhập tên người quản lý')) {
+                    return false;
+                } else {
+                    if (qc_main.check.inputMaxLength(txtLastName, 20, 'Tên không dài quá 20 ký tự')) return false;
+                }
+                if (qc_main.check.inputNull(txtIdentityCard, 'Nhập chứng minh thư')) {
+                    return false;
+                } else {
+                    if (qc_main.check.inputMaxLength(txtIdentityCard, 20, 'Chứng minh thư dài không quá 20 ký tự')) return false;
+                }
+                if (qc_main.check.inputNull(cbGender, 'Chọn giới tính')) {
+                    return false;
+                }
+
+                if (!qc_main.check.inputNull(txtStaffEmail, '')) {
+                    var staffEmailVal = txtStaffEmail.val();
+                    if (!qc_main.check.emailJavascript(staffEmailVal)) {
+                        alert('Email không hợp lệ');
+                        txtStaffEmail.focus();
+                        return false;
+                    }
+                }
+                if (qc_main.check.inputNull(txtStaffPhone, 'Nhập số điện thoại người quản lý')) {
+                    return false;
+                } else {
+                    qc_ad3d_submit.normalForm(frm);
+                }
+
+            } else {
+                qc_ad3d_submit.normalForm(frm);
+            }
+
+        }
+    },
     add: {
         save: function (frm) {
             var txtName = $(frm).find("input[name='txtName']");
@@ -179,9 +228,16 @@ $(document).ready(function () {
     });
 });
 
-//-------------------- them moi ------------
+//-------------------- them cong ty moi ------------
 $(document).ready(function () {
     $('.qc_ad3d_index_content').on('click', '.frmAdd .qc_save', function () {
         qc_ad3d_staff_company.add.save($(this).parents('.frmAdd'));
+    });
+});
+
+//-------------------- them quan lý moi ------------
+$(document).ready(function () {
+    $('.frmAddManager').on('click', '.qc_save', function () {
+        qc_ad3d_staff_company.manager.saveAdd($(this).parents('.frmAddManager'));
     });
 });

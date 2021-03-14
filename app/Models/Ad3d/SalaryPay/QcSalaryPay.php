@@ -15,7 +15,6 @@ class QcSalaryPay extends Model
     public $timestamps = false;
 
     private $lastId;
-
     #========== ========== ========== INSERT && UPDATE ========== ========== ==========
     # mac dinh co xac nhan
     public function getDefaultHasConfirm()
@@ -30,6 +29,12 @@ class QcSalaryPay extends Model
     }
 
     #---------- Insert ----------
+    public function checkIdNull($id)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->payId() : $id;
+    }
+
     public function insert($money, $datePay, $salaryId, $staffPayId)
     {
         $hFunction = new \Hfunction();
@@ -59,7 +64,7 @@ class QcSalaryPay extends Model
         # khong con lam
         if (!$dataStaff->checkWorkStatus()) {
             # tu dong xac nhan da nhan luong
-            $this->confirmReceiveOfSalary($payId);
+            $this->confirmReceive($payId);
         }
     }
 
@@ -68,7 +73,13 @@ class QcSalaryPay extends Model
         return QcSalaryPay::where('pay_id', $payId)->delete();
     }
 
-    //---------- nhan vien xac nhan -----------
+    # xac nhan da nhan tien
+    public function confirmReceive($payId = null)
+    {
+        return QcSalaryPay::where('pay_id', $this->checkIdNull($payId))->update(['confirmStatus' => $this->getDefaultHasConfirm()]);
+    }
+
+    # ---------- nhan vien xac nhan -----------
     public function staff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
@@ -76,7 +87,8 @@ class QcSalaryPay extends Model
 
     public function infoOfStaffAndDate($staffId, $date = null)
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcSalaryPay::where('staff_id', $staffId)->where('datePay', 'like', "%$date%")->orderBy('datePay', 'DESC')->get();
         } else {
             return QcSalaryPay::where('staff_id', $staffId)->orderBy('datePay', 'DESC')->get();
@@ -85,16 +97,18 @@ class QcSalaryPay extends Model
 
     public function infoConfirmedOfStaffAndDate($staffId, $date = null)
     {
-        if (!empty($date)) {
-            return QcSalaryPay::where('staff_id', $staffId)->where('confirmStatus', 1)->where('datePay', 'like', "%$date%")->orderBy('datePay', 'DESC')->get();
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
+            return QcSalaryPay::where('staff_id', $staffId)->where('confirmStatus', $this->getDefaultHasConfirm())->where('datePay', 'like', "%$date%")->orderBy('datePay', 'DESC')->get();
         } else {
-            return QcSalaryPay::where('staff_id', $staffId)->where('confirmStatus', 1)->orderBy('datePay', 'DESC')->get();
+            return QcSalaryPay::where('staff_id', $staffId)->where('confirmStatus', $this->getDefaultNotConfirm())->orderBy('datePay', 'DESC')->get();
         }
     }
 
     public function totalMoneyOfStaffAndDate($staffId, $date)
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcSalaryPay::where('staff_id', $staffId)->where('datePay', 'like', "%$date%")->sum('money');
         } else {
             return QcSalaryPay::where('staff_id', $staffId)->sum('money');
@@ -104,17 +118,19 @@ class QcSalaryPay extends Model
 
     public function totalMoneyConfirmedOfStaffAndDate($staffId, $date)
     {
-        if (!empty($date)) {
-            return QcSalaryPay::where('staff_id', $staffId)->where('confirmStatus', 1)->where('datePay', 'like', "%$date%")->sum('money');
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
+            return QcSalaryPay::where('staff_id', $staffId)->where('confirmStatus', $this->getDefaultHasConfirm())->where('datePay', 'like', "%$date%")->sum('money');
         } else {
-            return QcSalaryPay::where('staff_id', $staffId)->where('confirmStatus', 1)->sum('money');
+            return QcSalaryPay::where('staff_id', $staffId)->where('confirmStatus', $this->getDefaultHasConfirm())->sum('money');
         }
 
     }
 
     public function totalMoneyOfListStaffAndDate($listStaffId, $date)
     {
-        if (!empty($date)) {
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
             return QcSalaryPay::whereIn('staff_id', $listStaffId)->where('datePay', 'like', "%$date%")->sum('money');
         } else {
             return QcSalaryPay::whereIn('staff_id', $listStaffId)->sum('money');
@@ -124,10 +140,11 @@ class QcSalaryPay extends Model
 
     public function totalMoneyConfirmedOfListStaffAndDate($listStaffId, $date)
     {
-        if (!empty($date)) {
-            return QcSalaryPay::whereIn('staff_id', $listStaffId)->where('confirmStatus', 1)->where('datePay', 'like', "%$date%")->sum('money');
+        $hFunction = new \Hfunction();
+        if (!$hFunction->checkEmpty($date)) {
+            return QcSalaryPay::whereIn('staff_id', $listStaffId)->where('confirmStatus', $this->getDefaultHasConfirm())->where('datePay', 'like', "%$date%")->sum('money');
         } else {
-            return QcSalaryPay::whereIn('staff_id', $listStaffId)->where('confirmStatus', 1)->sum('money');
+            return QcSalaryPay::whereIn('staff_id', $listStaffId)->where('confirmStatus', $this->getDefaultHasConfirm())->sum('money');
         }
 
     }
@@ -141,7 +158,7 @@ class QcSalaryPay extends Model
     # thong tin thanh toan chua xac nhan cua nhieu bang luong
     public function getInfoUnConfirmOfListSalaryId($listSalaryId)
     {
-        return QcSalaryPay::whereIn('salary_id', $listSalaryId)->where('confirmStatus', 0)->get();
+        return QcSalaryPay::whereIn('salary_id', $listSalaryId)->where('confirmStatus', $this->getDefaultNotConfirm())->get();
     }
 
     # thong tin thanh toan chua xac nhan cua 1 bang luong
@@ -154,7 +171,6 @@ class QcSalaryPay extends Model
     {
         return QcSalaryPay::where('salary_id', $salaryId)->where('confirmStatus', $this->getDefaultNotConfirm())->update(['confirmStatus' => $this->getDefaultHasConfirm()]);
     }
-
 
     public function infoOfSalary($salaryId)
     {
@@ -177,13 +193,14 @@ class QcSalaryPay extends Model
     }
 
     #============ =========== ============ GET INFO ============= =========== ==========
-    public function getInfo($payId = '', $field = '')
+    public function getInfo($payId = null, $field = null)
     {
-        if (empty($payId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($payId)) {
             return QcSalaryPay::get();
         } else {
             $result = QcSalaryPay::where('pay_id', $payId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -193,10 +210,11 @@ class QcSalaryPay extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcSalaryPay::where('pay_id', $objectId)->pluck($column);
+            return QcSalaryPay::where('pay_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -244,12 +262,12 @@ class QcSalaryPay extends Model
 
     public function totalSalaryPaidOfCompany($listCompanyId, $dateFilter = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelWork = new QcWork();
         $modelSalary = new QcSalary();
-
         $listSalaryId = $modelSalary->listIdOfListWorkId($modelWork->listIdOfListStaffId($modelStaff->listIdOfListCompanyAndName($listCompanyId, null)));
-        if (empty($dateFilter)) {
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcSalaryPay::whereIn('salary_id', $listSalaryId)->sum('money');
         } else {
             return QcSalaryPay::whereIn('salary_id', $listSalaryId)->where('datePay', 'like', "%$dateFilter%")->sum('money');
@@ -258,11 +276,12 @@ class QcSalaryPay extends Model
 
     public function totalSalaryPaidOfCompanyStaffDate($listCompanyId, $staffId, $dateFilter = null)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelWork = new QcWork();
         $modelSalary = new QcSalary();
         $listSalaryId = $modelSalary->listIdOfListWorkId($modelWork->listIdOfListStaffId($modelStaff->listIdOfListCompanyAndName($listCompanyId, null)));
-        if (empty($dateFilter)) {
+        if ($hFunction->checkEmpty($dateFilter)) {
             return QcSalaryPay::whereIn('salary_id', $listSalaryId)->where('staff_id', $staffId)->sum('money');
         } else {
             return QcSalaryPay::whereIn('salary_id', $listSalaryId)->where('staff_id', $staffId)->where('datePay', 'like', "%$dateFilter%")->sum('money');

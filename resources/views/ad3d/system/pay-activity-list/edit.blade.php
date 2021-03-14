@@ -9,18 +9,21 @@
  */
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$type = $dataPayActivityList->type();
+$notPermanent = $modelPayActivityList->getDefaultTypeNotPermanent();
+$hasPermanent = $modelPayActivityList->getDefaultTypeHasPermanent();
 ?>
 @extends('ad3d.components.container.container-6')
 @section('qc_ad3d_container_content')
-    <div class="qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="qc-padding-bot-30 col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="row">
-            <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-                <h3>SỬA</h3>
+            <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <h3 style="color: red;">CẬP NHẬT THÔNG TIN</h3>
             </div>
-            <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                <form class="frmEdit" name="frmEdit" role="form" method="post" action="{!! route('qc.ad3d.system.pay_activity_list.post.get', $dataPayActivityList->payListId()) !!}">
-                    <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8"
-                         @if($mobileStatus) style="padding: 0 0;" @endif>
+            <div class="qc-padding-top-20 col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <form class="frmEdit" name="frmEdit" role="form" method="post"
+                      action="{!! route('qc.ad3d.system.pay_activity_list.post.get', $dataPayActivityList->payListId()) !!}">
+                    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                         <div class="form-group form-group-sm">
                             <label>
                                 Tên danh mục chi:
@@ -30,28 +33,32 @@ $mobileStatus = $mobile->isMobile();
                                    value="{!! $dataPayActivityList->name() !!}">
                         </div>
                     </div>
-                    <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4"
-                         @if($mobileStatus) style="padding: 0 0;" @endif>
+                    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                         <div class="form-group form-group-sm">
                             <label>Loại chi phí</label>
                             <select class="form-control" name="cbType">
-                                <option value="2" @if($dataPayActivityList->type() == 2) selected="selected" @endif>Không cố định</option>
-                                <option value="1" @if($dataPayActivityList->type() == 1) selected="selected" @endif>Cố định</option>
+                                <option value="{!! $notPermanent !!}"
+                                        @if($type == $notPermanent) selected="selected" @endif>
+                                    Không cố định
+                                </option>
+                                <option value="{!! $hasPermanent !!}"
+                                        @if($type == $hasPermanent) selected="selected" @endif>
+                                    Cố định
+                                </option>
                             </select>
                         </div>
                     </div>
-                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-                         @if($mobileStatus) style="padding: 0 0;" @endif>
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="form-group form-group-sm">
                             <label>Mô tả</label>
                             <input type="text" name="txtDescription" class="form-control" placeholder="Mô tả"
                                    value="{!! $dataPayActivityList->description() !!}">
                         </div>
                     </div>
-                    <div class="text-center col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                        <button type="button" class="qc_save btn btn-primary">Lưu</button>
-                        <button type="button" class="qc_ad3d_container_close btn btn-default">Đóng</button>
+                        <button type="button" class="qc_save btn btn-primary">CẬP NHẬT</button>
+                        <button type="button" class="qc_ad3d_container_close btn btn-default">ĐÓNG</button>
                     </div>
                 </form>
             </div>

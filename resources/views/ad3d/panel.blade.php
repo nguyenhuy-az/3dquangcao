@@ -191,11 +191,16 @@ $businessDepartmentStatus = $dataStaffLogin->checkBusinessDepartment();
                     @endif
                     @if($manageDepartmentStatus || $businessDepartmentStatus)
                         <?php
-                        if ($businessDepartmentStatus) {
-                            # di  vao bang gia
-                            $orderHref = route('qc.ad3d.order.product_type_price.get');
-                        } else {
+                        if ($businessDepartmentStatus && $manageDepartmentStatus) {
                             $orderHref = route('qc.ad3d.order.order.get');
+                        } else {
+                            # chi la bo phan kinh doanh => đi vao bang gia
+                            if ($businessDepartmentStatus) {
+                                # di  vao bang gia
+                                $orderHref = route('qc.ad3d.order.product_type_price.get');
+                            } else {
+                                $orderHref = route('qc.ad3d.order.order.get');
+                            }
                         }
                         ?>
                         <div class="qc-ad3d-panel col-xs-6 col-sm-4 col-md-4 col-lg-4">

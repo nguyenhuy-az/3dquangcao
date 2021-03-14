@@ -28,21 +28,23 @@ class PayActivityListController extends Controller
 
     public function view($payListId)
     {
+        $hFunction = new \Hfunction();
         $modelPayActivityList = new QcPayActivityList();
-        if (!empty($payListId)) {
+        if (!$hFunction->checkEmpty($payListId)) {
             $dataPayActivityList = $modelPayActivityList->getInfo($payListId);
             return view('ad3d.system.pay-activity-list.view', compact('dataPayActivityList'));
         }
     }
 
-    //add
+    # add
     public function getAdd()
     {
+        $modelPayActivityList = new QcPayActivityList();
         $modelStaff = new QcStaff();
         $dataAccess = [
             'accessObject' => 'paymentType'
         ];
-        return view('ad3d.system.pay-activity-list.add', compact('modelStaff','dataAccess'));
+        return view('ad3d.system.pay-activity-list.add', compact('modelStaff', 'modelPayActivityList', 'dataAccess'));
     }
 
     public function postAdd()
@@ -51,7 +53,7 @@ class PayActivityListController extends Controller
         $name = Request::input('txtName');
         $cbType = Request::input('cbType');
         $txtDescription = Request::input('txtDescription');
-        // check exist of name
+        # check exist of name
         if ($modelPayActivityList->existName($name)) {
             Session::put('notifyAdd', "Thêm thất bại <b>'$name'</b> đã tồn tại.");
         } else {
@@ -63,14 +65,15 @@ class PayActivityListController extends Controller
         }
     }
 
-    //edit
+    # edit
     public function getEdit($payListId)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelPayActivityList = new QcPayActivityList();
         $dataPayActivityList = $modelPayActivityList->getInfo($payListId);
-        if (count($dataPayActivityList) > 0) {
-            return view('ad3d.system.pay-activity-list.edit', compact('modelStaff','dataPayActivityList'));
+        if ($hFunction->checkCount($dataPayActivityList)) {
+            return view('ad3d.system.pay-activity-list.edit', compact('modelStaff','modelPayActivityList', 'dataPayActivityList'));
         }
     }
 
@@ -88,7 +91,7 @@ class PayActivityListController extends Controller
 
     }
 
-    // delete
+    # delete
     public function deletePayList($payListId)
     {
         $modelPayActivityList = new QcPayActivityList();

@@ -87,7 +87,7 @@ class QcStaffWorkDepartment extends Model
         return $this->belongsTo('App\Models\Ad3d\CompanyStaffWork\QcCompanyStaffWork', 'work_id', 'work_id');
     }
 
-    //1 NV co the co the lam nhieu bo phan
+    #1 NV co the co the lam nhieu bo phan
     public function infoActivityOfWork($workId)
     {
         return QcStaffWorkDepartment::where(['work_id' => $workId, 'action' => $this->getDefaultHasAction()])->get();

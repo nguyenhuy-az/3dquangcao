@@ -10,11 +10,15 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $hrefIndex = route('qc.ad3d.finance.keep_money.get');
+$dataCompanyLogin = $modelStaff->companyLogin();
+# dang nhap vao cty dang lam - cua minh
+$actionStatus = true;
+if ($companyFilterId != $dataCompanyLogin->companyId()) $actionStatus = false;
 ?>
 @extends('ad3d.finance.keep-money.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
@@ -27,7 +31,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                             data-href-filter="{!! $hrefIndex !!}">
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
+                                @if($dataCompanyLogin->checkParent())
                                     <option value="{!! $company->companyId() !!}"
                                             @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
                                 @else
@@ -41,7 +45,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                 </div>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
@@ -57,7 +61,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                         <tr>
                             <td></td>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbDayFilter col-xs-3 col-sm-3 col-md-3 col-lg-3"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
@@ -70,7 +74,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-3 col-sm-3 col-md-3 col-lg-3"
+                                <select class="cbMonthFilter col-xs-3 col-sm-3 col-md-3 col-lg-3"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -82,7 +86,7 @@ $hrefIndex = route('qc.ad3d.finance.keep_money.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                <select class="cbYearFilter col-xs-6 col-sm-6 col-md-6 col-lg-6"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"

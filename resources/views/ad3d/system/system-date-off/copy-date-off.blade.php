@@ -30,21 +30,21 @@ if ($hFunction->checkCount($dataCompanySelected)) {
 @endsection
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <a class=" qc-link-red" onclick="qc_main.page_back();">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <a class="qc-link-white-bold btn btn-primary" onclick="qc_main.page_back();">
                 <i class="qc-font-size-16 glyphicon glyphicon-backward"></i>
-                <span class="qc-font-size-16" style="color: blue;">Trởlại</span>
+                <span class="qc-font-size-16">Trởlại</span>
             </a>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
-            <h3>SAO CHÉP LỊCH NGHỈ</h3>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 2px dashed brown;">
+            <h3 style="color: red;">SAO CHÉP LỊCH NGHỈ</h3>
         </div>
-        <div class="qc-padding-top-20 col-sx-12 col-sm-12 col-md-12 col-lg-10">
+        <div class="qc-padding-top-20 col-xs-12 col-sm-12 col-md-12 col-lg-10">
             <form class="frmAd3dSystemDateOffCopy" name="frmAd3dSystemDateOffCopy" role="form" method="post"
                   action="{!! route('qc.ad3d.system.system_date_off.copy.post') !!}">
                 @if (Session::has('notifyAdd'))
                     <div class="row">
-                        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="form-group form-group-sm text-center">
                                 <span class="qc-color-red qc-font-size-16">{!! Session::get('notifyAdd') !!}</span>
                                 <?php
@@ -53,7 +53,7 @@ if ($hFunction->checkCount($dataCompanySelected)) {
                                 <br/><br/>
                                 <a class="btn btn-primary"
                                    href="{!! route('qc.ad3d.system.system_date_off.get') !!}">
-                                    <span class="qc-font-size-16">Đóng</span>
+                                    <span class="qc-font-size-16">ĐÓNG</span>
                                 </a>
                             </div>
                         </div>
@@ -105,68 +105,66 @@ if ($hFunction->checkCount($dataCompanySelected)) {
                     @if($hFunction->checkCount($dataSystemDateOffObligatory) || $hFunction->checkCount($dataSystemDateOffOptional))
                         @if($hFunction->checkCount($dataSystemDateOffObligatory) || $hFunction->checkCount($dataSystemDateOffOptional))
                             <div class="row">
-                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <span class="qc-color-red qc-font-size-16">
                                         CHỈ SAO CHÉP NHỮNG NGÀY NGHỈ CHƯA CÓ TRONG HỆ THỐNG
                                     </span>
                                 </div>
-                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                                     <button type="button" class="qc_save btn btn-sm btn-primary">
-                                        Sao chép
+                                        SAO CHÉP
                                     </button>
                                 </div>
                             </div>
                         @endif
                         <div class="qc-ad3d-table-container row" style="margin-top: 10px;">
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <i class="glyphicon glyphicon-list-alt qc-font-size-16"></i>
                                 <label class="qc-font-size-16">Ngày nghỉ cố định</label>
                             </div>
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-bordered">
-                                        <tr style="background-color: whitesmoke;">
-                                            <th class="text-center" style="width: 20px;">STT</th>
-                                            <th>Ngày</th>
-                                            <th>Ghi chú</th>
-                                        </tr>
-                                        @if($hFunction->checkCount($dataSystemDateOffObligatory))
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <table class="table table-hover table-bordered">
+                                    <tr style="background-color: whitesmoke;">
+                                        <th class="text-center" style="width: 20px;">STT</th>
+                                        <th>Ngày</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                    @if($hFunction->checkCount($dataSystemDateOffObligatory))
+                                        <?php
+                                        $n_o = 0;
+                                        ?>
+                                        @foreach($dataSystemDateOffObligatory as $systemDateOffObligatory)
                                             <?php
-                                            $n_o = 0;
+                                            $dateOff = $systemDateOffObligatory->dateOff();
                                             ?>
-                                            @foreach($dataSystemDateOffObligatory as $systemDateOffObligatory)
-                                                <?php
-                                                $dateOff = $systemDateOffObligatory->dateOff();
-                                                ?>
-                                                <tr class="@if($systemDateOffObligatory->checkExistsDateOfCompany($companyLoginId,$dateOff)) danger @endif">
-                                                    <td class="text-center">
-                                                        {!! $n_o += 1 !!}
-                                                    </td>
-                                                    <td>
-                                                        {!! $hFunction->convertDateDMYFromDatetime($dateOff) !!}
-                                                    </td>
-                                                    <td>
-                                                        {!! $systemDateOffObligatory->description() !!}
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @else
-                                            <tr>
-                                                <td class="qc-color-red" colspan="3">
-                                                    <b>KHÔNG CÓ NGÀY NGHỈ</b>
+                                            <tr class="@if($systemDateOffObligatory->checkExistsDateOfCompany($companyLoginId,$dateOff)) danger @endif">
+                                                <td class="text-center">
+                                                    {!! $n_o += 1 !!}
+                                                </td>
+                                                <td>
+                                                    {!! $hFunction->convertDateDMYFromDatetime($dateOff) !!}
+                                                </td>
+                                                <td>
+                                                    {!! $systemDateOffObligatory->description() !!}
                                                 </td>
                                             </tr>
-                                        @endif
-                                    </table>
-                                </div>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td class="qc-color-red" colspan="3">
+                                                <b>KHÔNG CÓ NGÀY NGHỈ</b>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                </table>
                             </div>
 
-                            <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <i class="glyphicon glyphicon-list-alt qc-font-size-16"></i>
                                 <label class="qc-font-size-16">Ngày nghỉ không cố định</label>
                             </div>
-                            <div class="qc-padding-bot-20 qc-border-none col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="qc-padding-bot-20 qc-border-none col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <div class="table-responsive">
                                     <table class="table table-hover table-bordered">
                                         <tr style="background-color: whitesmoke;">

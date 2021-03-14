@@ -480,8 +480,8 @@ class QcCompany extends Model
         return $modelCompanyStaffWork->selectInfoOfCompanyAndActionStatus($this->checkIdNull($companyId), $modelCompanyStaffWork->getDefaultHasAction())->get();
     }
 
-    # lay thong tin vi tri lam viec cao nhat (level = 0)
-    public function companyStaffWorkLevelRoot($companyId = null)
+    # lay thong tin vi tri lam viec cao nhat dang hoat dong cua 1 cong ty (level = 0)
+    public function companyStaffWorkActivityLevelRoot($companyId = null)
     {
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         return $modelCompanyStaffWork->getActivityInfoLevelRootOfCompany($this->checkIdNull($companyId));
@@ -723,13 +723,30 @@ class QcCompany extends Model
     # chon thong tin cong ty cung he thong
     public function selectInfoSameSystemOfCompany($companyId)
     {
-        return QcCompany::where('parent_id', $companyId)->orWhere('company_id', $companyId)->select();
+        # la cong ty me
+        if ($this->checkParent($companyId)) {
+            return QcCompany::where('parent_id', $companyId)->orWhere('company_id', $companyId)->select();
+        } else {
+            # lay ma cong ty me
+            $parentId = $this->parentId($companyId);
+            return QcCompany::where('parent_id', $parentId)->orWhere('company_id', $parentId)->select();
+
+        }
+
     }
 
     # lay he thong cty lien quan cua 1 cty dang nhap
     public function getInfoSameSystemOfCompany($companyId)
     {
-        return QcCompany::where('parent_id', $companyId)->orWhere('company_id', $companyId)->get();
+        # la cong ty me
+        if ($this->checkParent($companyId)) {
+            return QcCompany::where('parent_id', $companyId)->orWhere('company_id', $companyId)->get();
+        } else {
+            # lay ma cong ty me
+            $parentId = $this->parentId($companyId);
+            return QcCompany::where('parent_id', $parentId)->orWhere('company_id', $parentId)->get();
+
+        }
     }
 
     # lay he thong cty de sao chep bang gia tu cong ty dang nhap

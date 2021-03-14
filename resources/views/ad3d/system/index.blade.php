@@ -146,15 +146,17 @@ $dataCompanyLogin = $dataLogin->companyInfoActivity();
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a class="qc-link-bold" href="{!! route('qc.ad3d.system.kpi.get') !!}">
+                                        {{--<a class="qc-link-bold" href="{!! route('qc.ad3d.system.kpi.get') !!}">
                                             Danh mục KPI
-                                        </a>
+                                        </a>--}}
+                                        <a style="color: grey;">Danh mục KPI</a>
                                     </li>
                                     <li>
-                                        <a class="qc-link-bold"
+                                        {{--<a class="qc-link-bold"
                                            href="{!! route('qc.ad3d.system.construction_work.get') !!}">
                                             Danh mục Thi công
-                                        </a>
+                                        </a>--}}
+                                        <a style="color: grey;">Danh mục Thi công</a>
                                     </li>
                                 </ul>
                             </li>

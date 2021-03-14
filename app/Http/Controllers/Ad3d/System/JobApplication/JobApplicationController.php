@@ -19,13 +19,14 @@ class JobApplicationController extends Controller
 {
     public function index($companyFilterId = null, $confirmStatusFilter = 100)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelJobApplication = new QcJobApplication();
         $modelCompany = new QcCompany();
-        $modelCompanyStaffWork = new QcCompanyStaffWork();
-        $modelDepartment = new QcDepartment();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
-        $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
+        $companyFilterId = ($companyFilterId == 'null') ? $hFunction->getDefaultNull() : $companyFilterId;
         $dataAccess = [
             'accessObject' => 'recruitment',
             'subObject' => 'jobApplication'
@@ -34,11 +35,12 @@ class JobApplicationController extends Controller
         if ($companyFilterId == null || $companyFilterId == 0) {
             $companyFilterId = $dataStaffLogin->companyId();
         }
-        $dataCompany = $modelCompany->getInfo();
+        # lay thong tin cong ty cung he thong
+        $dataListCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         # danh sach ho so
         $selectJobApplication = $modelJobApplication->selectInfoByCompany($companyFilterId, $confirmStatusFilter);
         $dataJobApplication = $selectJobApplication->paginate(30);
-        return view('ad3d.system.recruitment.job-application.list', compact('modelStaff', 'dataJobApplication', 'dataCompany', 'dataAccess', 'companyFilterId', 'confirmStatusFilter'));
+        return view('ad3d.system.recruitment.job-application.list', compact('modelStaff', 'modelJobApplication', 'dataJobApplication', 'dataListCompany', 'dataAccess', 'companyFilterId', 'confirmStatusFilter'));
 
     }
 

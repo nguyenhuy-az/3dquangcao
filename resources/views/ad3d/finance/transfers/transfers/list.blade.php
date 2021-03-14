@@ -11,14 +11,18 @@ $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $staffLoginId = $dataStaffLogin->staffId();
 $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
+$dataCompanyLogin = $modelStaff->companyLogin();
+# dang nhap vao cty dang lam - cua minh
+$actionStatus = true;
+if ($companyFilterId != $dataCompanyLogin->companyId()) $actionStatus = false;
 ?>
 @extends('ad3d.finance.transfers.transfers.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding-left: 0;">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-left: 0;">
             @include('ad3d.finance.transfers.menu')
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
@@ -36,7 +40,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                         data-href-filter="{!! $hrefIndex !!}">
                                     @if($hFunction->checkCount($dataCompany))
                                         @foreach($dataCompany as $company)
-                                            @if($dataStaffLogin->checkRootManage())
+                                            @if($dataCompanyLogin->checkParent())
                                                 <option value="{!! $company->companyId() !!}"
                                                         @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
                                             @else
@@ -60,7 +64,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                         </tr>
                         <tr>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbDayFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
@@ -71,7 +75,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                                 @if((int)$dayFilter == $i) selected="selected" @endif >{!! $i !!}</option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbMonthFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
@@ -84,7 +88,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbYearFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     @for($i =2017;$i<= 2050; $i++)
@@ -164,7 +168,7 @@ $hrefIndex = route('qc.ad3d.finance.transfers.transfers.get');
                                             <em style="color: brown;">Chờ xác nhận</em>
                                             @if($transfersStaffId == $staffLoginId)
                                                 {{--chuyen dau tu--}}
-                                                @if($transfers->checkTransferInvestment())
+                                                @if($actionStatus && $transfers->checkTransferInvestment())
                                                     <span> | </span>
                                                     <a class="qc_delete qc-link-red qc-font-size-14"
                                                        data-href="{!! route('qc.ad3d.finance.transfers.transfers.delete',$transfersId) !!}">

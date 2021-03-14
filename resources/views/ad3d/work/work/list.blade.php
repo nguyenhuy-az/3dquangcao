@@ -10,11 +10,15 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $hrefIndex = route('qc.ad3d.work.work.get');
+$dataCompanyLogin = $modelStaff->companyLogin();
+# dang nhap vao cty dang lam - cua minh
+$actionStatus = true;
+if ($companyFilterId != $dataCompanyLogin->companyId()) $actionStatus = false;
 ?>
 @extends('ad3d.work.work.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
@@ -27,7 +31,7 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                             data-href-filter="{!! $hrefIndex !!}">
                         @if($hFunction->checkCount($dataCompany)> 0)
                             @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
+                                @if($dataCompanyLogin->checkParent())
                                     <option value="{!! $company->companyId() !!}"
                                             @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
                                 @else
@@ -41,7 +45,7 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                 </div>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row"
                  data-href-view="{!! route('qc.ad3d.work.work.view.get') !!}"
                  data-href-end="{!! route('qc.ad3d.work.work.make_salary.get') !!}">
@@ -68,7 +72,7 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                                 </select>
                             </td>
                             <td class="text-center" style="padding: 0;">
-                                <select class="cbMonthFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                <select class="cbMonthFilter col-xs-6 col-sm-6 col-md-6 col-lg-6"
                                         style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                     @for($m =1;$m<= 12; $m++)
                                         <option value="{!! $m !!}"
@@ -77,7 +81,7 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                <select class="cbYearFilter col-xs-6 col-sm-6 col-md-6 col-lg-6"
                                         style="height: 34px; padding: 0;" data-href="{!! $hrefIndex !!}">
                                     @for($y =2019;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
@@ -120,9 +124,11 @@ $hrefIndex = route('qc.ad3d.work.work.get');
                                             <div class="media-body">
                                                 <h5 class="media-heading">{!! $dataStaffWork->lastName() !!}</h5>
                                                 @if(!$work->checkSalaryStatus())
-                                                    <a class="qc_end qc-link-red-bold" style="color: red;">
-                                                        TÍNH LƯƠNG
-                                                    </a>
+                                                    @if($actionStatus)
+                                                        <a class="qc_end qc-link-red-bold" style="color: red;">
+                                                            TÍNH LƯƠNG
+                                                        </a>
+                                                    @endif
                                                 @else
                                                     <em class="qc-color-grey">
                                                         Đã Tính lương

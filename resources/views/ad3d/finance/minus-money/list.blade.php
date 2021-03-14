@@ -10,11 +10,15 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $hrefIndex = route('qc.ad3d.finance.minus-money.get');
+$dataCompanyLogin = $modelStaff->companyLogin();
+# dang nhap vao cty dang lam - cua minh
+$actionStatus = true;
+if ($companyFilterId != $dataCompanyLogin->companyId()) $actionStatus = false;
 ?>
 @extends('ad3d.finance.minus-money.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row"
                  data-href-cancel="{!! route('qc.ad3d.finance.minus-money.cancel') !!}">
                 <div class="table-responsive">
@@ -39,7 +43,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                         data-href-filter="{!! $hrefIndex !!}">
                                     @if($hFunction->checkCount($dataCompany))
                                         @foreach($dataCompany as $company)
-                                            @if($dataStaffLogin->checkRootManage())
+                                            @if($dataCompanyLogin->checkParent())
                                                 <option value="{!! $company->companyId() !!}"
                                                         @if($companyFilterId == $company->companyId()) selected="selected" @endif >
                                                     {!! $company->name() !!}
@@ -67,7 +71,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                         </tr>
                         <tr>
                             <td style="padding:0 ;">
-                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbDayFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -79,7 +83,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbMonthFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -91,7 +95,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbYearFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -175,7 +179,7 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                             <em style="color: grey;">Đã hủy</em>
                                         @else
                                             {{--chi hien khi khong co phan hoi--}}
-                                            @if(!$checkMinusMoneyLostToolStatus && $minusMoney->checkHasAction())
+                                            @if($actionStatus && !$checkMinusMoneyLostToolStatus && $minusMoney->checkHasAction())
                                                 <a class="qc_cancel_act qc-link-red-bold">HỦY</a>
                                             @endif
                                         @endif
@@ -194,12 +198,13 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                                 <br/>
                                                 <a class="qc_view_image qc-link"
                                                    data-href="{!! route('qc.ad3d.finance.minus_money.feedback.image.view',$feedbackId) !!}">
-                                                    <img style="max-width: 200px; max-height: 200px; border: 1px solid grey;" alt="..."
+                                                    <img style="max-width: 200px; max-height: 200px; border: 1px solid grey;"
+                                                         alt="..."
                                                          src="{!! $dataMinusMoneyFeedback->pathSmallImage($feedbackImage) !!}">
                                                 </a>
                                             @endif
                                             {{--chi duyet phan hoi bao mat do nghe--}}
-                                            @if($minusMoney->checkMinusMoneyLostTool())
+                                            @if($actionStatus && $minusMoney->checkMinusMoneyLostTool())
                                                 <?php
                                                 $checkMinusMoneyLostToolStatus = true;
                                                 ?>
@@ -237,7 +242,8 @@ $hrefIndex = route('qc.ad3d.finance.minus-money.get');
                                             <br/>
                                             <a class="qc_view_image qc-link"
                                                data-href="{!! route('qc.ad3d.finance.minus_money.image.view', $minusId) !!}">
-                                                <img style="max-width: 200px; max-height: 200px; border: 1px solid grey;" alt="..."
+                                                <img style="max-width: 200px; max-height: 200px; border: 1px solid grey;"
+                                                     alt="..."
                                                      src="{!! $minusMoney ->pathSmallImage($reasonImage) !!}">
                                             </a>
                                         @endif

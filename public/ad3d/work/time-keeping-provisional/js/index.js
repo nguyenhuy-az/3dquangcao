@@ -79,11 +79,9 @@ $(document).ready(function () {
     //khi chọn công ty...
     $('body').on('change', '.cbCompanyFilter', function () {
         var companyId = $(this).val();
-        //var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val();
-        var dateFilter = 0 + '/' + 0 + '/' + 0;
         var href = $(this).data('href-filter');
         if (companyId != '') {
-            href = href + '/' + companyId + '/' + dateFilter;
+            href = href + '/' + companyId;
         }
         qc_main.url_replace(href);
     })

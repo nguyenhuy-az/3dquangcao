@@ -17,15 +17,18 @@ class SystemDateOffController extends Controller
 {
     public function index($companyFilterId = null, $monthFilter = 0, $yearFilter = 0)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelSystemDateOff = new QcSystemDateOff();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
         $dataAccess = [
             'accessObject' => 'systemDateOff'
         ];
-        $dataCompany = $modelCompany->getInfo();
-        if (empty($companyFilterId)) {
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
+        if ($hFunction->checkEmpty($companyFilterId)) {
             $companyFilterId = $dataStaffLogin->companyId();
         }
         $dateFilter = null;
@@ -37,7 +40,7 @@ class SystemDateOffController extends Controller
             $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
         } elseif ($monthFilter > 0 && $monthFilter < 100 && $yearFilter > 100) { //xem tất cả các ngày trong tháng
             $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        }  elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
+        } elseif ($monthFilter == 100 && $yearFilter == 100) { //xem tất cả
             $dateFilter = null;
             $monthFilter = 100;
             $yearFilter = 100;
@@ -46,31 +49,22 @@ class SystemDateOffController extends Controller
             $monthFilter = date('m');
             $yearFilter = date('Y');
         }
-/*
-        if (empty($yearFilter)) { // may mac dinh
-            $dateFilter = date('Y');
-            $monthFilter = 0;
-            $yearFilter = date('Y');
-        } elseif ($monthFilter == 0) {
-            $dateFilter = date('Y', strtotime("1-1-$yearFilter"));
-        } else {
-            $dateFilter = date('Y-m', strtotime("1-$monthFilter-$yearFilter"));
-        }*/
         $dataSystemDateOff = $modelSystemDateOff->selectInfoOfCompanyAndDate($companyFilterId, $dateFilter)->paginate(30);
         return view('ad3d.system.system-date-off.list', compact('modelStaff', 'dataSystemDateOff', 'dataAccess', 'dataCompany', 'companyFilterId', 'monthFilter', 'yearFilter'));
     }
 
-    //------- -------  them ------- ------
+    #------- -------  them ------- ------
     public function getAdd()
     {
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
+        $modelSystemDateOff = new QcSystemDateOff();
         $dataAccess = [
             'accessObject' => 'systemDateOff'
         ];
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $dataCompany = $modelCompany->getInfo($dataStaffLogin->companyId());
-        return view('ad3d.system.system-date-off.add', compact('modelStaff', 'dataAccess', 'dataCompany'));
+        return view('ad3d.system.system-date-off.add', compact('modelStaff','modelSystemDateOff', 'dataAccess', 'dataCompany'));
     }
 
     public function getAddDate()
@@ -90,7 +84,7 @@ class SystemDateOffController extends Controller
         $cbType = Request::input('cbType');
         $txtDescription = Request::input('txtDescription');
         $loginStaffId = $modelStaff->loginStaffId();
-        if (count($cbDay) > 0) {
+        if ($hFunction->checkCount($cbDay)) {
             foreach ($cbDay as $key => $value) {
                 $day = $value;
                 $month = $cbMonth[$key];
@@ -137,12 +131,14 @@ class SystemDateOffController extends Controller
         $modelSystemDateOff->updateInfo($dateOffId, $cbType, $txtDescription);
     }
 
-    //------- ------- Sao chep ngay nghỉ ------- --------
+    #------- ------- Sao chep ngay nghỉ ------- --------
     public function getCopyDateOff($companySelectedId = null, $yearSelected = null)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
         $dataAccess = [
             'accessObject' => 'systemDateOff'
         ];
@@ -152,7 +148,7 @@ class SystemDateOffController extends Controller
         } else {
             $dataCompanySelected = $modelCompany->getInfo($companySelectedId);
         }
-        $dataCompany = $modelCompany->infoActivity();
+        $dataCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         return view('ad3d.system.system-date-off.copy-date-off', compact('modelStaff', 'dataCompany', 'dataAccess', 'dataCompanySelected', 'yearSelected'));
     }
 
@@ -160,14 +156,13 @@ class SystemDateOffController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
-        $modelCompany = new QcCompany();
         $modelSystemDateOff = new QcSystemDateOff();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
         $companyLoginId = $dataStaffLogin->companyId();
         $companyId = Request::input('cbCompanyCopy');
         $cbYearCopy = Request::input('cbYearCopy');
         $insertStatus = false;
-        #ngay nghi co dinh
+        # ngay nghi co dinh
         $dataSystemDateOffObligatory = $modelSystemDateOff->infoDateObligatoryOfCompanyAndDate($companyId, $cbYearCopy);
         if ($hFunction->checkCount($dataSystemDateOffObligatory)) {
             foreach ($dataSystemDateOffObligatory as $systemDateOffObligatory) {
@@ -182,7 +177,7 @@ class SystemDateOffController extends Controller
             }
         }
 
-        #ngay nghi khong co dinh
+        # ngay nghi khong co dinh
         $dataSystemDateOffOptional = $modelSystemDateOff->infoDateOptionalOfCompanyAndDate($companyId, $cbYearCopy);
         if ($hFunction->checkCount($dataSystemDateOffOptional)) {
             foreach ($dataSystemDateOffOptional as $systemDateOffOptional) {
@@ -204,7 +199,7 @@ class SystemDateOffController extends Controller
 
     }
 
-    // xoa
+    # xoa
     public function deleteDateOff($dateOffId)
     {
         $modelSystemDateOff = new QcSystemDateOff();

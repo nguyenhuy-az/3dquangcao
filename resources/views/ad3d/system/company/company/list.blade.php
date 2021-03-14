@@ -53,8 +53,8 @@ $companyParentStatus = $dataCompanyLogin->checkParent();
                             <?php
                             $companyId = $company->companyId();
                             $logo = $company->logo();
-                            # thong tin nguoi lanh dao
-                            $dataCompanyStaffWorkRoot = $company->companyStaffWorkLevelRoot();
+                            # thong tin nguoi lanh dao dang hoat dong
+                            $dataCompanyStaffWorkRoot = $company->companyStaffWorkActivityLevelRoot();
                             $n_o += 1;
                             ?>
                             <tr class="qc_ad3d_list_object @if($n_o%2) info @endif"

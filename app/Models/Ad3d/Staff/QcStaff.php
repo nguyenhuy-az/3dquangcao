@@ -1639,18 +1639,20 @@ class QcStaff extends Model
         return QcStaff::where('identityCard', $identityCard)->exists();
     }
 
+    # admin toan he thong
     public function checkRootStatus($staffId = null)
     {
         return ($this->rootStatus($staffId) == $this->getDefaultHasRootStatus()) ? true : false;
     }
 
+    # admin cao nhat tai 1 cty
     public function checkRootManage($staffId = null)
     {
         $hFunction = new \Hfunction();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
         $dataCompanyStaffWork = $modelCompanyStaffWork->infoActivityOfStaff($this->checkIdNull($staffId));
         if($hFunction->checkCount($dataCompanyStaffWork)){
-            return $dataCompanyStaffWork->checkLevelRoot() ;
+            return  $dataCompanyStaffWork->checkLevelRoot();
         }else{
             return false;
         }

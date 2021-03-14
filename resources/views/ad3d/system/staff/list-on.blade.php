@@ -13,10 +13,12 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
 $staffLoginId = $dataStaffLogin->staffId();
+$dataCompanyLogin = $modelStaff->companyLogin();
 $loginCompanyStaffWork = $modelStaff->loginCompanyStaffWork();
 # chi duoc them - xoa - sua khi thuoc NV cua cty
 $actionStatus = $dataCompanySelected->checkStaffWorkingOfCompany($staffLoginId);
 $indexHref = route('qc.ad3d.system.staff.get');
+$dataStaffLogin->checkRootManage();
 ?>
 @section('titlePage')
     Nhân viên đang làm
@@ -47,7 +49,7 @@ $indexHref = route('qc.ad3d.system.staff.get');
                         @if($hFunction->checkCount($dataListCompany))
                             @foreach($dataListCompany as $company)
                                 <?php $companyId = $company->companyId(); ?>
-                                @if($dataStaffLogin->checkRootManage())
+                                @if($dataCompanyLogin->checkParent())
                                     <option value="{!! $companyId !!}"
                                             @if($companyFilterId == $companyId) selected="selected" @endif >
                                         {!! $company->name() !!}
@@ -115,7 +117,7 @@ $indexHref = route('qc.ad3d.system.staff.get');
                                                 <a class="pull-left"
                                                    href="{!! route('qc.ad3d.system.staff.info.get', $staffId) !!}">
                                                     <img class="media-object img-circle"
-                                                         style="background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;"
+                                                         style="    background-color: white; width: 40px;height: 40px; border: 1px solid #d7d7d7;"
                                                          src="{!! $src !!}">
                                                 </a>
 

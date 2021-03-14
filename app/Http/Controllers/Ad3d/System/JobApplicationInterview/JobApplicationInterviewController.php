@@ -22,6 +22,8 @@ class JobApplicationInterviewController extends Controller
         $modelJobApplicationInterview = new QcJobApplicationInterview();
         $modelCompany = new QcCompany();
         $dataStaffLogin = $modelStaff->loginStaffInfo();
+        $dataCompanyLogin = $modelStaff->companyLogin();
+        $companyLoginId = $dataCompanyLogin->companyId();
         $companyFilterId = ($companyFilterId == 'null') ? null : $companyFilterId;
         $dataAccess = [
             'accessObject' => 'recruitment',
@@ -29,13 +31,14 @@ class JobApplicationInterviewController extends Controller
         ];
 
         if ($companyFilterId == null || $companyFilterId == 0) {
-            $companyFilterId = $dataStaffLogin->companyId();
+            $companyFilterId = $companyLoginId;
         }
-        $dataCompany = $modelCompany->getInfo();
+        # lay thong tin cong ty cung he thong
+        $dataListCompany = $modelCompany->getInfoSameSystemOfCompany($companyLoginId);
         # danh sach ho so
         $selectJobApplicationInterview = $modelJobApplicationInterview->selectInfoByCompany($companyFilterId, $confirmStatusFilter);
         $dataJobApplicationInterview = $selectJobApplicationInterview->paginate(30);
-        return view('ad3d.system.recruitment.job-application-interview.list', compact('modelStaff', 'dataJobApplicationInterview', 'dataCompany', 'dataAccess', 'companyFilterId', 'confirmStatusFilter'));
+        return view('ad3d.system.recruitment.job-application-interview.list', compact('modelStaff', 'dataJobApplicationInterview', 'dataListCompany', 'dataAccess', 'companyFilterId', 'confirmStatusFilter'));
     }
 
     # thong tin ho so

@@ -41,6 +41,7 @@ class CompanyController extends Controller
     {
         $hFunction = new \Hfunction();
         $modelCompany = new QcCompany();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
         $modelStaff = new QcStaff();
         $dataAccess = [
             'accessObject' => 'company',
@@ -48,9 +49,17 @@ class CompanyController extends Controller
         ];
         $dataCompany = $modelCompany->getInfo($companyId);
         $selectObject = ($hFunction->checkNull($selectObject)) ? 'selectSystem' : $selectObject;
-        if ($hFunction->checkCount($companyId) && !$hFunction->checkEmpty($selectObject)) {
-            $dataCompanyStaffWork = $dataCompany->companyStaffWorkActivityOfCompany();
-            return view('ad3d.system.company.company.add-manager', compact('modelStaff', 'dataAccess', 'dataCompany', 'dataCompanyStaffWork','selectObject'));
+        if ($hFunction->checkCount($dataCompany) && !$hFunction->checkEmpty($selectObject)) {
+            # nguoi quan ly hien tai
+            $dataOldCompanyStaffWorkRoot = $dataCompany->companyStaffWorkActivityLevelRoot();
+            if ($hFunction->checkCount($dataOldCompanyStaffWorkRoot)) {
+                $oldRootWorkId[] = $dataOldCompanyStaffWorkRoot->workId();
+            } else {
+                # chua co lanh dao
+                $oldRootWorkId = $hFunction->getDefaultNull();
+            }
+            $dataCompanyStaffWork = $modelCompanyStaffWork->getActivityInfoOfCompanyAndExceptListWork($companyId, $oldRootWorkId);
+            return view('ad3d.system.company.company.add-manager', compact('modelStaff', 'dataAccess', 'dataCompany', 'dataCompanyStaffWork', 'selectObject'));
         } else {
             return redirect()->back();
         }
@@ -60,6 +69,101 @@ class CompanyController extends Controller
     # cap nhat nguoi quan lý
     public function postUpdateManager($companyId)
     {
+        $hFunction = new \Hfunction();
+        $modelCompany = new QcCompany();
+        $modelCompanyStaffWork = new QcCompanyStaffWork();
+        $modelDepartment = new QcDepartment();
+        $modelRank = new QcRank();
+        $modelStaffWorkDepartment = new QcStaffWorkDepartment();
+        $modelStaff = new QcStaff();
+        $modelWork = new QcWork();
+        $modelStaffWorkMethod = new QcStaffWorkMethod();
+        $staffLoginId = $modelStaff->loginStaffId();
+        # thong tin nguoi lanh dao cu cua cty
+        $dataOldCompanyStaffWorkRoot = $modelCompany->companyStaffWorkActivityLevelRoot($companyId);
+        # cap quan ly
+        $manageRankId = $modelRank->manageRankId();
+        # bo phan quan ly
+        $manageDepartmentId = $modelDepartment->manageDepartmentId();
+        $txtSelectObject = Request::input('txtSelectObject');
+        if ($txtSelectObject == 'selectNew') {
+            # thong tin nguoi quan ly
+            $txtFirstName = Request::input('txtFirstName');
+            $txtLastName = Request::input('txtLastName');
+            $txtIdentityCard = Request::input('txtIdentityCard');
+            $cbGender = Request::input('cbGender');
+            $txtStaffPhone = Request::input('txtStaffPhone');
+            $txtStaffAddress = Request::input('txtStaffAddress');
+            $txtStaffEmail = Request::input('txtStaffEmail');
+            if ($modelStaff->existIdentityCard($txtIdentityCard)) {
+                Session::put('notifyAdd', "Chứng minh thư <b>'$txtIdentityCard'</b> đã tồn tại.");
+                return redirect()->back();
+            } else {
+                $staffAccount = $txtIdentityCard;
+                # lay gia tri mac dinh
+                $staffBirthday = $modelStaff->getDefaultBirthday();
+                $staffImage = $modelStaff->getDefaultImage();
+                $identityCardFront = $modelStaff->getDefaultIdentityCardFront();
+                $identityCardBack = $modelStaff->getDefaultIdentityCardBack();
+                $bankAccount = $modelStaff->getDefaultBankAccount();
+                $bankName = $modelStaff->getDefaultBankName();
+                if ($modelStaff->insert($txtFirstName, $txtLastName, $txtIdentityCard, $staffAccount, $staffBirthday, $cbGender, $staffImage, $identityCardFront, $identityCardBack, $txtStaffEmail, $txtStaffAddress, $txtStaffPhone, $bankAccount, $bankName)) {
+                    $newStaffId = $modelStaff->insertGetId();
+                    # them vao cong ty lam viec
+                    $fromDateWork = $hFunction->carbonNow();
+                    $level = $modelCompanyStaffWork->getDefaultLevelRoot();
+                    if ($modelCompanyStaffWork->insert($fromDateWork, $level, $newStaffId, $staffLoginId, $companyId)) {
+                        $newWorkId = $modelCompanyStaffWork->insertGetId();
+                        # them bo phan lam viec
+                        if ($modelStaffWorkDepartment->insert($newWorkId, $manageDepartmentId, $manageRankId, $fromDateWork)) {
+                            # neu ton tai lanh dao cu
+                            if ($hFunction->checkCount($dataOldCompanyStaffWorkRoot)) $modelCompanyStaffWork->downLevelRoot($dataOldCompanyStaffWorkRoot->workId());
+                        }
+
+                        # them thong tin bang cham cong
+                        $toDateWork = $hFunction->lastDateOfMonthFromDate($fromDateWork);
+                        $modelWork->insert($fromDateWork, $toDateWork, $newWorkId);
+                    }
+
+                    # them phương thuc lam viec
+                    $modelStaffWorkMethod->insert($modelStaffWorkMethod->getDefaultMethodHasMain(), $modelStaffWorkMethod->getDefaultNotApplyRule(), $newStaffId, $staffLoginId);
+                    return redirect()->route('qc.ad3d.system.company.get');
+                }
+            }
+        } elseif ($txtSelectObject == 'selectSystem') {
+            $radSelectWorkId = Request::input('radSelectWork');
+            if ($hFunction->checkEmpty($radSelectWorkId)) {
+                Session::put('notifyAdd', "PHẢI CHỌN 1 NGƯỜI QUẢN LÝ.");
+                return redirect()->back();
+            } else {
+                $updateStatus = true;
+                # khong co lam trong bo phan quan ly
+                if (!$modelStaffWorkDepartment->checkExistWorkOfDepartment($radSelectWorkId, $manageDepartmentId)) {
+                    # them bo phan lam viec
+                    if (!$modelStaffWorkDepartment->insert($radSelectWorkId, $manageDepartmentId, $manageRankId, $hFunction->carbonNow())) {
+                        $updateStatus = false;
+                    };
+                }
+                if ($updateStatus) {
+                    # nang len root level
+                    if ($modelCompanyStaffWork->upLevelRoot($radSelectWorkId)) {
+                        # neu ton tai lanh dao cu
+                        if ($hFunction->checkCount($dataOldCompanyStaffWorkRoot)) $modelCompanyStaffWork->downLevelRoot($dataOldCompanyStaffWorkRoot->workId());
+                        return redirect()->route('qc.ad3d.system.company.get');
+                    } else {
+                        Session::put('notifyAdd', "HỆ THỐNG ĐANG CẬP NHẬT TÍNH NĂNG.");
+                        return redirect()->back();
+                    }
+                } else {
+                    Session::put('notifyAdd', "HỆ THỐNG ĐANG CẬP NHẬT TÍNH NĂNG.");
+                    return redirect()->back();
+                }
+
+            }
+        } else {
+            Session::put('notifyAdd', "HỆ THỐNG ĐANG CẬP NHẬT TÍNH NĂNG.");
+            return redirect()->back();
+        }
 
     }
 
@@ -144,6 +248,7 @@ class CompanyController extends Controller
                 if ($modelCompany->insert($companyCode, $name, $txtNameCode, $address, $phone, $email, $website, $companyType, $imageName, $parentId)) {
                     $newCompanyId = $modelCompany->insertGetId();
                     $staffAccount = $txtIdentityCard;
+                    # lay gia tri mac dinh
                     $staffBirthday = $modelStaff->getDefaultBirthday();
                     $staffImage = $modelStaff->getDefaultImage();
                     $identityCardFront = $modelStaff->getDefaultIdentityCardFront();
@@ -249,5 +354,16 @@ class CompanyController extends Controller
     {
         $modelCompany = new QcCompany();
         $modelCompany->actionDelete($companyId);
+    }
+
+    #========= ========= PARTNER =========== ============
+    public function indexPartner()
+    {
+        $modelStaff = new QcStaff();
+        $dataAccess = [
+            'accessObject' => 'company',
+            'subObject' => 'partner'
+        ];
+        return view('ad3d.system.company.partner.list', compact('modelStaff', 'modelCompany', 'dataAccess'));
     }
 }

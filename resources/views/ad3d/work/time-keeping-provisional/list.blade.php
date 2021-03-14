@@ -15,12 +15,16 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
+$hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get');
+$dataCompanyLogin = $modelStaff->companyLogin();
+# dang nhap vao cty dang lam - cua minh
+$actionStatus = true;
+if ($companyFilterId != $dataCompanyLogin->companyId()) $actionStatus = false;
 ?>
 @extends('ad3d.work.time-keeping-provisional.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
@@ -33,7 +37,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                             data-href-filter="{!! $hrefIndex !!}">
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
+                                @if($dataCompanyLogin->checkParent())
                                     <option value="{!! $company->companyId() !!}"
                                             @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}
                                     </option>
@@ -48,7 +52,7 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                 </div>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row ">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
@@ -132,10 +136,12 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                                         @if($timekeepingProvisional->checkConfirmStatus())
                                                             <em style="color: grey;">Đã duyệt</em>
                                                         @else
-                                                            <a class="qc_confirm qc-link-red qc-font-size-14"
-                                                               data-href="{!! route('qc.ad3d.work.time_keeping_provisional.confirm.get', $timekeepingProvisionalId) !!}">
-                                                                XÁC NHẬN
-                                                            </a>
+                                                            @if($actionStatus)
+                                                                <a class="qc_confirm qc-link-red qc-font-size-14"
+                                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.confirm.get', $timekeepingProvisionalId) !!}">
+                                                                    XÁC NHẬN
+                                                                </a>
+                                                            @endif
                                                         @endif
                                                     @endif
                                                 @else
@@ -151,10 +157,12 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                        <a class="qc_warning_time_begin qc-link-red" title="Cảnh báo chấm sai"
-                                           data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_begin.get',$timekeepingProvisionalId) !!}">
-                                            <i class="glyphicon glyphicon-warning-sign qc-font-size-14"></i>
-                                        </a>
+                                        @if($actionStatus)
+                                            <a class="qc_warning_time_begin qc-link-red" title="Cảnh báo chấm sai"
+                                               data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_begin.get',$timekeepingProvisionalId) !!}">
+                                                <i class="glyphicon glyphicon-warning-sign qc-font-size-14"></i>
+                                            </a>
+                                        @endif
                                         <em class="qc-color-grey">
                                             {!! $hFunction->getTimeFromDate($createdAt) !!} -
                                         </em>
@@ -165,21 +173,27 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                             {{--chi bao tang ca khi chua bao gio ra--}}
                                             @if($hFunction->checkCount($dataOverTimeRequest))
                                                 <span style="background-color: red; color: yellow; padding: 3px;">Đã báo Tăng ca</span>
-                                                <a class="qc_over_time_request_cancel qc-link-red qc-font-size-12"
-                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.over_time.cancel',$dataOverTimeRequest->requestId()) !!}">
-                                                    - HỦY
-                                                </a>
+                                                @if($actionStatus)
+                                                    <a class="qc_over_time_request_cancel qc-link-red qc-font-size-12"
+                                                       data-href="{!! route('qc.ad3d.work.time_keeping_provisional.over_time.cancel',$dataOverTimeRequest->requestId()) !!}">
+                                                        - HỦY
+                                                    </a>
+                                                @endif
                                             @else
-                                                <a class="qc_over_time_request_get qc-link-red qc-font-size-14"
-                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.over_time.get',$companyStaffWorkId) !!}">
-                                                    BÁO TĂNG CA
-                                                </a>
+                                                @if($actionStatus)
+                                                    <a class="qc_over_time_request_get qc-link-red qc-font-size-14"
+                                                       data-href="{!! route('qc.ad3d.work.time_keeping_provisional.over_time.get',$companyStaffWorkId) !!}">
+                                                        BÁO TĂNG CA
+                                                    </a>
+                                                @endif
                                             @endif
                                         @else
-                                            <a class="qc_warning_time_end qc-link-red" title="Cảnh báo chấm sai"
-                                               data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_end.get',$timekeepingProvisionalId) !!}">
-                                                <i class="glyphicon glyphicon-warning-sign qc-font-size-14"></i>
-                                            </a>
+                                            @if($actionStatus)
+                                                <a class="qc_warning_time_end qc-link-red" title="Cảnh báo chấm sai"
+                                                   data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_end.get',$timekeepingProvisionalId) !!}">
+                                                    <i class="glyphicon glyphicon-warning-sign qc-font-size-14"></i>
+                                                </a>
+                                            @endif
                                             <em style="color: grey">
                                                 {!! $hFunction->getTimeFromDate($updatedAt) !!} -
                                             </em>
@@ -213,11 +227,13 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                                     @else
                                                         <br/>
                                                         <em style="color: grey;">Đã gửi CẢNH BÁO GIỜ VÀO</em>
-                                                        <span>|</span>
-                                                        <a class="qc_warning_time_begin_cancel qc-link-red qc-font-size-14"
-                                                           data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_timekeeping.cancel',$warningId) !!}">
-                                                            HỦY
-                                                        </a>
+                                                        @if($actionStatus)
+                                                            <span>|</span>
+                                                            <a class="qc_warning_time_begin_cancel qc-link-red qc-font-size-14"
+                                                               data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_timekeeping.cancel',$warningId) !!}">
+                                                                HỦY
+                                                            </a>
+                                                        @endif
                                                     @endif
                                                     {{--canh bao gio ra--}}
                                                 @endif
@@ -229,14 +245,17 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                                         <span class="qc-font-bold">{!! date('H:i', strtotime($warningUpdate)) !!}</span>
                                                     @else
                                                         <br/>
-                                                        <a class="qc_warning_time_end qc-link" data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_end.get',$timekeepingProvisionalId) !!}">
+                                                        <a class="qc_warning_time_end qc-link"
+                                                           data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_end.get',$timekeepingProvisionalId) !!}">
                                                             Đã gửi CẢNH BÁO RA
                                                         </a>
-                                                        <span>|</span>
-                                                        <a class="qc_warning_time_end_cancel qc-link-red qc-font-size-14"
-                                                           data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_timekeeping.cancel',$warningId) !!}">
-                                                            HỦY
-                                                        </a>
+                                                        @if($actionStatus)
+                                                            <span>|</span>
+                                                            <a class="qc_warning_time_end_cancel qc-link-red qc-font-size-14"
+                                                               data-href="{!! route('qc.ad3d.work.time_keeping_provisional.warning_timekeeping.cancel',$warningId) !!}">
+                                                                HỦY
+                                                            </a>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             @endforeach
@@ -245,14 +264,14 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                     <td style="padding: 3px; ">
                                         {{--Bao cao tien do buoi sang--}}
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInMorning))
-                                            <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                                 <div class="row">
-                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         <em style="color: grey; padding: 3px;">
                                                             Sáng:
                                                         </em>
                                                     </div>
-                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         @foreach($dataTimekeepingProvisionalImageInMorning as $timekeepingProvisionalImage)
                                                             <div style="background-color: white; position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                                 <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
@@ -272,14 +291,14 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                         @endif
                                         {{--Bao cao tien do buoi chieu--}}
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInAfternoon))
-                                            <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                                 <div class="row">
-                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         <em style="color: grey; padding: 3px;">
                                                             Chiều:
                                                         </em>
                                                     </div>
-                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         @foreach($dataTimekeepingProvisionalImageInAfternoon as $timekeepingProvisionalImage)
                                                             <div style="background-color: white; position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">
                                                                 <a class="qc_ad3d_timekeeping_provisional_image_view qc-link"
@@ -298,14 +317,14 @@ $hrefIndex = route('qc.ad3d.work.time_keeping_provisional.get')
                                         @endif
                                         {{--Bao cao tien tang ca--}}
                                         @if($hFunction->checkCount($dataTimekeepingProvisionalImageInEvening))
-                                            <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
+                                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                                                 <div class="row">
-                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         <em style="color: grey; padding: 3px;">
                                                             Tăng ca:
                                                         </em>
                                                     </div>
-                                                    <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
+                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
                                                          style="padding: 0;">
                                                         @foreach($dataTimekeepingProvisionalImageInEvening as $timekeepingProvisionalImage)
                                                             <div style="background-color: white; position: relative; float: left; margin-left: 5px; width: 70px; height: 70px; border: 1px solid #d7d7d7;">

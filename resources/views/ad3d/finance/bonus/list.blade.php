@@ -9,12 +9,16 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$dataCompanyLogin = $modelStaff->companyLogin();
 $hrefIndex = route('qc.ad3d.finance.bonus.get');
+# dang nhap vao cty dang lam - cua minh
+$actionStatus = true;
+if ($companyFilterId != $dataCompanyLogin->companyId()) $actionStatus = false;
 ?>
 @extends('ad3d.finance.bonus.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
@@ -30,7 +34,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                         @endif--}}
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
+                                @if($dataCompanyLogin->checkParent())
                                     <option value="{!! $company->companyId() !!}"
                                             @if($companyFilterId == $company->companyId()) selected="selected" @endif >
                                         {!! $company->name() !!}
@@ -46,7 +50,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                 </div>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
@@ -57,7 +61,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                         </tr>
                         <tr>
                             <td style="padding:0 ;">
-                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbDayFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0; height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$dayFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -69,7 +73,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbMonthFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -81,7 +85,7 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbYearFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     <option value="100" @if((int)$yearFilter == 100) selected="selected" @endif >
                                         Tất cả
@@ -161,13 +165,17 @@ $hrefIndex = route('qc.ad3d.finance.bonus.get');
                                             @endif
                                             @if(!$hFunction->checkEmpty($cancelImage))
                                                 <br/>
-                                                <img alt="huy_thuong" style="border: 1px solid grey; width: 70px;" src="{!! $bonus->pathSmallImage($cancelImage) !!}">
+                                                <img alt="huy_thuong" style="border: 1px solid grey; width: 70px;"
+                                                     src="{!! $bonus->pathSmallImage($cancelImage) !!}">
                                             @endif
                                         @else
-                                            <br/>
-                                            <a class="qc_cancel_act qc-font-size-12 qc-link-red-bold" data-href="{!! route('qc.ad3d.finance.bonus.cancel.get',$bonusId) !!}">
-                                                HỦY
-                                            </a>
+                                            @if($actionStatus)
+                                                <br/>
+                                                <a class="qc_cancel_act qc-font-size-12 qc-link-red-bold"
+                                                   data-href="{!! route('qc.ad3d.finance.bonus.cancel.get',$bonusId) !!}">
+                                                    HỦY
+                                                </a>
+                                            @endif
                                         @endif
                                     </td>
                                     <td>

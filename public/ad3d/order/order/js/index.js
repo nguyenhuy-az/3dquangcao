@@ -98,7 +98,7 @@ $(document).ready(function () {
         var companyId = $(this).val();
         var href = $(this).data('href-filter');
         if (companyId != '') {
-            href = href + '/' + companyId +  '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword +'/' + cbStaffFilterId;
+            href = href + '/' + companyId + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId;
         }
         qc_main.url_replace(href);
     });
@@ -108,23 +108,22 @@ $(document).ready(function () {
         var txtOrderCustomerFilterKeyword = null;
         var cbStaffFilterId = $('.cbStaffFilterId').val();
         var dateFilter = $(this).val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val() + '/' + $('.cbPaymentStatus').val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' +  txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
     });
     $('body').on('change', '.cbMonthFilter', function () {
         var txtOrderFilterKeyword = null;
         var txtOrderCustomerFilterKeyword = null;
         var cbStaffFilterId = $('.cbStaffFilterId').val();
         var dateFilter = $('.cbDayFilter').val() + '/' + $(this).val() + '/' + $('.cbYearFilter').val() + '/' + $('.cbPaymentStatus').val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' +  txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
     });
     $('body').on('change', '.cbYearFilter', function () {
         var txtOrderFilterKeyword = null;
         var txtOrderCustomerFilterKeyword = null;
         var cbStaffFilterId = $('.cbStaffFilterId').val();
         var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $(this).val() + '/' + $('.cbPaymentStatus').val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' +  txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
     });
-
 
 
     //----- ----- tim theo ten don hang ----- -----
@@ -192,7 +191,7 @@ $(document).ready(function () {
             $('.textOrderFilterName').focus();
             return false;
         } else {
-            qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + 100 + '/' + 100 + '/' + 100 + '/' + + $('.cbPaymentStatus').val() + '/' + orderName + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
+            qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + 100 + '/' + 100 + '/' + 100 + '/' + +$('.cbPaymentStatus').val() + '/' + orderName + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
         }
     });
 
@@ -260,7 +259,7 @@ $(document).ready(function () {
         } else {
             var href = $(this).data('href');
             //100 tim tat ca thoi gian
-            qc_main.url_replace($(this).data('href') + '/'+ 1000+ '/' + 100 + '/' + 100 + '/' + 100 + '/' + $('.cbPaymentStatus').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword);
+            qc_main.url_replace($(this).data('href') + '/' + 1000 + '/' + 100 + '/' + 100 + '/' + 100 + '/' + $('.cbPaymentStatus').val() + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword);
         }
     });
 
@@ -268,7 +267,7 @@ $(document).ready(function () {
     $('body').on('change', '.cbStaffFilterId', function () {
         var txtOrderFilterKeyword = null;
         var txtOrderCustomerFilterKeyword = null;
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' +  txtOrderCustomerFilterKeyword + '/' + $(this).val());
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + $(this).val());
     });
 
 
@@ -278,7 +277,7 @@ $(document).ready(function () {
         var txtOrderCustomerFilterKeyword = null;
         var cbStaffFilterId = $('.cbStaffFilterId').val();
         var dateFilter = $('.cbDayFilter').val() + '/' + $('.cbMonthFilter').val() + '/' + $('.cbYearFilter').val() + '/' + $(this).val();
-        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' +  txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
+        qc_main.url_replace($(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + dateFilter + '/' + txtOrderFilterKeyword + '/' + txtOrderCustomerFilterKeyword + '/' + cbStaffFilterId);
     });
 });
 
@@ -286,7 +285,11 @@ $(document).ready(function () {
 $(document).ready(function () {
     //------ xem chi tiet don hang -------
     $('#qc_ad3d_order_order_wrap').on('click', '.qc_view', function () {
-        qc_ad3d_order_order.view($(this).parents('.qc_ad3d_list_object'));
+        var container = $(this).parents('.qc_order_content');
+        var href = $(this).data('href');
+        qc_main.hide('.qc_order_detail');
+        qc_ad3d_submit.ajaxNotReload(href, container, false);
+        //qc_ad3d_order_order.view($(this).parents('.qc_ad3d_list_object'));
     });
 
     //------ xem chi tiet khach hang -------

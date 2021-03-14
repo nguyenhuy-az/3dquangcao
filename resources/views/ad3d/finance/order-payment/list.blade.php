@@ -11,12 +11,13 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$dataCompanyLogin = $modelStaff->companyLogin();
 $hrefIndex = route('qc.ad3d.finance.order-payment.get');
 ?>
 @extends('ad3d.finance.order-payment.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
@@ -32,7 +33,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                         @endif--}}
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
+                                @if($dataCompanyLogin->checkParent())
                                     <option value="{!! $company->companyId() !!}"
                                             @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
                                 @else
@@ -46,7 +47,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                 </div>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content qc-order-order-object row"
                  data-href-view="{!! route('qc.ad3d.finance.order-payment.view.get') !!}"
                  data-href-del="{!! route('qc.ad3d.finance.order-payment.delete') !!}">
@@ -64,7 +65,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                         </tr>
                         <tr>
                             <td style="padding: 0;">
-                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbDayFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
@@ -77,7 +78,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbMonthFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     @for($m =1;$m<= 12; $m++)
                                         <option value="{!! $m !!}"
@@ -86,7 +87,7 @@ $hrefIndex = route('qc.ad3d.finance.order-payment.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbYearFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;" data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"

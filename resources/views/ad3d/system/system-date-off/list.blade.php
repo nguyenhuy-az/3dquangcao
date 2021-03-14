@@ -10,70 +10,76 @@
  */
 $hFunction = new Hfunction();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$dataCompanyLogin = $modelStaff->companyLogin();
+# dang nhap vao cty dang lam - cua minh
+$actionStatus = true;
+if ($companyFilterId != $dataCompanyLogin->companyId()) $actionStatus = false;
 $indexHref = route('qc.ad3d.system.system_date_off.get');
 ?>
 @extends('ad3d.system.system-date-off.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top: 10px; padding-bottom: 10px; border-bottom: 2px dashed brown;">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green"
                        href="{!! $indexHref !!}">
                         <i class="glyphicon glyphicon-refresh qc-font-size-20"></i>
                     </a>
-                    <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
-                    <label class="qc-font-size-20">NGÀY NGHỈ</label>
-                </div>
-                <div class="text-right col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
-                    <select class="cbCompanyFilter" name="cbCompanyFilter" style="margin-top: 5px; height: 25px;"
-                            data-href-filter="{!! $indexHref !!}">
-                        @if($hFunction->checkCount($dataCompany))
-                            @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
-                                    <option value="{!! $company->companyId() !!}"
-                                            @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
-                                @else
-                                    @if($companyFilterId == $company->companyId())
-                                        <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
-                                    @endif
-                                @endif
-                            @endforeach
-                        @endif
-                    </select>
+                    <label class="qc-font-size-20" style="color: red;">NGÀY NGHỈ</label>
                 </div>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <a class="qc-link-red" title="Sao chép ngày nghỉ từ công ty khác"
-                       href="{!! route('qc.ad3d.system.system_date_off.copy.get') !!}">
-                        <i class="qc-font-size-16 glyphicon glyphicon-download-alt"></i>
-                        Sao chép lịch nghỉ
-                    </a>
-                    &nbsp;|&nbsp;
-                    <a class="qc-link-green" href="{!! route('qc.ad3d.system.system_date_off.add.get') !!}">
-                        <i class="glyphicon glyphicon-plus"></i>
-                        Thêm
-                    </a>
-                </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                <select class="cbCompanyFilter form-control" name="cbCompanyFilter"
+                        style="height: 30px;"
+                        data-href-filter="{!! $indexHref !!}">
+                    @if($hFunction->checkCount($dataCompany))
+                        @foreach($dataCompany as $company)
+                            @if($dataCompanyLogin->checkParent())
+                                <option value="{!! $company->companyId() !!}"
+                                        @if($companyFilterId == $company->companyId()) selected="selected" @endif >
+                                    {!! $company->name() !!}
+                                </option>
+                            @else
+                                @if($companyFilterId == $company->companyId())
+                                    <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
+                                @endif
+                            @endif
+                        @endforeach
+                    @endif
+                </select>
             </div>
+            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                <a class="qc-link-white-bold form-control btn btn-primary"
+                   href="{!! route('qc.ad3d.system.system_date_off.add.get') !!}">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    THÊM
+                </a>
+            </div>
+            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                <a class="qc-link-red-bold form-control btn btn" title="Sao chép ngày nghỉ từ công ty khác"
+                   href="{!! route('qc.ad3d.system.system_date_off.copy.get') !!}">
+                    <i class="qc-font-size-16 glyphicon glyphicon-download-alt"></i>
+                    Sao chép lịch nghỉ
+                </a>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
                             <th class="text-center" style="width: 20px;">STT</th>
-                            <th>Ngày</th>
+                            <th style="width: 150px;">Ngày</th>
                             <th>Mô tả</th>
-                            <th>Hình thức nghỉ</th>
-                            <th></th>
                         </tr>
                         <tr>
                             <td></td>
                             <td style="padding: 0px;">
-                                <select class="cbMonthFilter" style="height: 30px;" data-href="{!! $indexHref !!}">
+                                <select class="cbMonthFilter col-xs-6 col-sm-6 col-md-6 col-lg-6" style="height: 30px; padding: 0;"
+                                        data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -84,7 +90,8 @@ $indexHref = route('qc.ad3d.system.system_date_off.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter" style="height: 30px;" data-href="{!! $indexHref !!}">
+                                <select class="cbYearFilter col-xs-6 col-sm-6 col-md-6 col-lg-6" style="height: 30px; padding: 0;"
+                                        data-href="{!! $indexHref !!}">
                                     <option value="100" @if((int)$monthFilter == 100) selected="selected" @endif >
                                         Tất cả
                                     </option>
@@ -95,8 +102,6 @@ $indexHref = route('qc.ad3d.system.system_date_off.get');
                                     @endfor
                                 </select>
                             </td>
-                            <td></td>
-                            <td></td>
                             <td></td>
                         </tr>
                         @if($hFunction->checkCount($dataSystemDateOff))
@@ -116,39 +121,39 @@ $indexHref = route('qc.ad3d.system.system_date_off.get');
                                         {!! $n_o += 1 !!}
                                     </td>
                                     <td>
-                                        {!! $hFunction->convertDateDMYFromDatetime($systemDateOff->dateOff()) !!}
-                                    </td>
-                                    <td class="qc-link-grey">
-                                        @if(!$hFunction->checkEmpty($description))
-                                            {!! $description !!}
-                                        @else
-                                            <em>---</em>
+                                        <b>{!! $hFunction->convertDateDMYFromDatetime($systemDateOff->dateOff()) !!}</b>
+                                        @if($actionStatus)
+                                            <br/>
+                                            <a class="qc_edit qc-link" title="Sửa"
+                                               data-href="{!! route('qc.ad3d.system.system_date_off.edit.get', $dateOffId) !!}">
+                                                <i class="glyphicon glyphicon-pencil qc-font-size-14"></i>
+                                            </a>
+                                            <span>&nbsp;|&nbsp;</span>
+                                            <a class="qc_delete qc-link-red" title="Hủy"
+                                               data-href="{!! route('qc.ad3d.system.system_date_off.delete', $dateOffId) !!}">
+                                                <i class="glyphicon glyphicon-trash qc-font-size-14"></i>
+                                            </a>
                                         @endif
                                     </td>
                                     <td>
-                                        {!! $systemDateOff->typeLabel($dateOffId) !!}
-                                    </td>
-                                    <td class="text-right">
-                                        <a class="qc_edit qc-link" title="Sửa"
-                                           data-href="{!! route('qc.ad3d.system.system_date_off.edit.get', $dateOffId) !!}">
-                                            <i class="glyphicon glyphicon-pencil"></i>
-                                        </a>
-                                        <span>|</span>
-                                        <a class="qc_delete qc-link-red" title="Hủy"
-                                           data-href="{!! route('qc.ad3d.system.system_date_off.delete', $dateOffId) !!}">
-                                            <i class="glyphicon glyphicon-trash qc-font-size-16"></i>
-                                        </a>
+                                        <span>{!! $systemDateOff->typeLabel($dateOffId) !!}</span>
+                                        @if(!$hFunction->checkEmpty($description))
+                                            <br/>
+                                            <em style="color: grey;">
+                                                - {!! $description !!}
+                                            </em>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="5">
+                                <td class="text-center" colspan="3">
                                     {!! $hFunction->page($dataSystemDateOff) !!}
                                 </td>
                             </tr>
                         @else
                             <tr>
-                                <td class="text-center qc-color-red" colspan="5">
+                                <td class="text-center qc-color-red" colspan="3">
                                     Không có thông tin nghỉ
                                 </td>
                             </tr>

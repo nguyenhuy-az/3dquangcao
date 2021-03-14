@@ -18,6 +18,9 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 $dataCompanyLogin = $modelStaff->companyLogin();
 $totalNewLicenseOffWork = $dataCompanyLogin->totalLicenseOffWorkUnconfirmed();
 $indexHref = route('qc.ad3d.work.off-work.get');
+# dang nhap vao cty dang lam - cua minh
+$actionStatus = true;
+if ($companyFilterId != $dataCompanyLogin->companyId()) $actionStatus = false;
 ?>
 @extends('ad3d.work.license-off-work.index')
 @section('qc_ad3d_index_content')
@@ -35,9 +38,10 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                             data-href-filter="{!! $indexHref !!}">
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
+                                @if($dataCompanyLogin->checkParent())
                                     <option value="{!! $company->companyId() !!}"
-                                            @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
+                                            @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}
+                                    </option>
                                 @else
                                     @if($companyFilterId == $company->companyId())
                                         <option value="{!! $company->companyId() !!}">{!! $company->name() !!}</option>
@@ -55,7 +59,7 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
-                            <th style="width: 150px;">NHÂN VIÊN</th>
+                            <th >NHÂN VIÊN</th>
                             <th style="width: 170px;">NGÀY NGHỈ - XIN</th>
                             <th>GHI CHÚ</th>
                         </tr>
@@ -141,9 +145,11 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                                             <div class="media-body">
                                                 <h5 class="media-heading">{!! $dataStaffOff->lastName() !!}</h5>
                                                 @if(!$licenseOffWork->checkConfirmStatus())
-                                                    <a class="qc_confirm qc-link-red-bold">
-                                                        XÁC NHẬN
-                                                    </a>
+                                                    @if($actionStatus)
+                                                        <a class="qc_confirm qc-link-red-bold">
+                                                            XÁC NHẬN
+                                                        </a>
+                                                    @endif
                                                 @else
                                                     @if($licenseOffWork->checkAgreeStatus())
                                                         <i class="glyphicon glyphicon-ok" style="color: green;"></i>
@@ -167,7 +173,7 @@ $indexHref = route('qc.ad3d.work.off-work.get');
                                         @endif
                                         @if(!$hFunction->checkEmpty($confirmNote))
                                             <br/>
-                                            <em style="color: grey;">- Đuyệt:</em>
+                                            <em style="color: grey;">- Duyệt:</em>
                                             <span class="qc-color-grey">{!! $confirmNote !!}</span>
                                         @endif
                                         <div class="row">

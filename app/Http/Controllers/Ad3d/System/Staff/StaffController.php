@@ -31,7 +31,6 @@ class StaffController extends Controller
         $modelStaff = new QcStaff();
         $modelCompany = new QcCompany();
         $modelCompanyStaffWork = new QcCompanyStaffWork();
-        # $modelWork = new qc
         $dataCompanyLogin = $modelStaff->companyLogin();
         $companyLoginId = $dataCompanyLogin->companyId();
         $companyFilterId = ($companyFilterId == 'null') ? $hFunction->getDefaultNull() : $companyFilterId;

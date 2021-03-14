@@ -12,6 +12,7 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$dataCompanyLogin = $modelStaff->companyLogin();
 $indexHref = route('qc.ad3d.order.product_type_price.get');
 ?>
 @extends('ad3d.order.product-type-price.index')
@@ -41,7 +42,7 @@ $indexHref = route('qc.ad3d.order.product_type_price.get');
                                     data-href-filter="{!! $indexHref !!}">
                                 @if($hFunction->checkCount($dataCompany))
                                     @foreach($dataCompany as $company)
-                                        @if($dataStaffLogin->checkRootManage())
+                                        @if($dataCompanyLogin->checkParent())
                                             <option value="{!! $company->companyId() !!}"
                                                     @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
                                         @else

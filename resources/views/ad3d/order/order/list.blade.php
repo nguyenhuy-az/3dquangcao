@@ -12,17 +12,15 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $hrefIndex = route('qc.ad3d.order.order.get');
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-
+$dataCompanyLogin = $modelStaff->companyLogin();
 $currentMonth = (int)$hFunction->currentMonth();
 $currentYear = (int)$hFunction->currentYear();
 $limitYear = 2017;
-
 if ($staffFilterId > 0) {
     $listStaffId = [$staffFilterId];
 } else {
     $listStaffId = $modelStaff->listIdOfCompany($companyFilterId);
 }
-
 if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
     $listCustomerId = $modelCustomer->listIdByKeywordName($orderCustomerFilterName);
 }
@@ -56,8 +54,7 @@ $getDefaultNotPaymentStatus = $modelOrder->getDefaultNotPayment();
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
                         <i class="qc-font-size-20 glyphicon glyphicon-refresh"></i>
                     </a>
-                    <label class="qc-font-size-20">ĐƠN HÀNG</label>
-                    {!! $yearFilter !!}
+                    <label class="qc-font-size-20" style="color: red;">ĐƠN HÀNG</label>
                 </div>
             </div>
         </div>
@@ -69,7 +66,7 @@ $getDefaultNotPaymentStatus = $modelOrder->getDefaultNotPayment();
                             data-href-filter="{!! $hrefIndex !!}">
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
+                                @if($dataCompanyLogin->checkParent())
                                     <option value="{!! $company->companyId() !!}"
                                             @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
                                 @else
@@ -113,12 +110,12 @@ $getDefaultNotPaymentStatus = $modelOrder->getDefaultNotPayment();
                                name="txtOrderCustomerFilterKeyword"
                                data-href-check-name="{!! route('qc.ad3d.work.orders.filter.customer.check.name') !!}"
                                placeholder="Tên khách hàng" value="{!! $orderCustomerFilterName !!}">
-                          <span class="input-group-btn">
-                            <button class="btOrderCustomerFilterKeyword btn btn-default"
-                                    type="button" data-href="{!! $hrefIndex !!}">
-                                <i class="glyphicon glyphicon-search"></i>
-                            </button>
-                          </span>
+                              <span class="input-group-btn">
+                                    <button class="btOrderCustomerFilterKeyword btn btn-default"
+                                            type="button" data-href="{!! $hrefIndex !!}">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                    </button>
+                              </span>
                     </div>
                     <div id="qc_order_filter_customer_name_suggestions_wrap"
                          class="qc-display-none col-xs-12 col-sm-12 col-md-12 col-lg-12"
@@ -134,17 +131,35 @@ $getDefaultNotPaymentStatus = $modelOrder->getDefaultNotPayment();
                     </div>
                 </div>
                 <div class="text-center col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
-                    <select class="cbStaffFilterId form-control"
-                            data-href="{!! $hrefIndex !!}">
+                    <select class="cbStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
                         <option value="0" @if($staffFilterId == 0) selected="selected" @endif>
-                            Tất cả
+                            Tất cả nhân viên
                         </option>
                         @if($hFunction->checkCount($dataStaff))
                             @foreach($dataStaff as $staff)
                                 <option @if($staff->staffId() == $staffFilterId) selected="selected"
-                                        @endif  value="{!! $staff->staffId() !!}">{!! $staff->lastName() !!}</option>
+                                        @endif  value="{!! $staff->staffId() !!}">
+                                    {!! $staff->lastName() !!}
+                                </option>
                             @endforeach
                         @endif
+                    </select>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
+                    <select class="cbPaymentStatus form-control"
+                            data-href="{!! route('qc.ad3d.order.order.get') !!}">
+                        <option value="{!! $getDefaultAllPaymentStatus !!}"
+                                @if($paymentStatus == $getDefaultAllPaymentStatus) selected="selected" @endif>
+                            Tất cả
+                        </option>
+                        <option value="{!! $getDefaultHasPaymentStatus !!}"
+                                @if($paymentStatus == $getDefaultHasPaymentStatus) selected="selected" @endif>
+                            Đã thu xong
+                        </option>
+                        <option value="{!! $getDefaultNotPaymentStatus !!}"
+                                @if($paymentStatus == $getDefaultNotPaymentStatus) selected="selected" @endif>
+                            Chưa thu xong
+                        </option>
                     </select>
                 </div>
                 <div class="text-center col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
@@ -186,23 +201,7 @@ $getDefaultNotPaymentStatus = $modelOrder->getDefaultNotPayment();
                         @endfor
                     </select>
                 </div>
-                <div class="text-center col-xs-6 col-sm-6 col-md-2 col-lg-2" style="padding: 0;">
-                    <select class="cbPaymentStatus form-control"
-                            data-href="{!! route('qc.ad3d.order.order.get') !!}">
-                        <option value="{!! $getDefaultAllPaymentStatus !!}"
-                                @if($paymentStatus == $getDefaultAllPaymentStatus) selected="selected" @endif>
-                            Tất cả
-                        </option>
-                        <option value="{!! $getDefaultHasPaymentStatus !!}"
-                                @if($paymentStatus == $getDefaultHasPaymentStatus) selected="selected" @endif>
-                            Đã thu xong
-                        </option>
-                        <option value="{!! $getDefaultNotPaymentStatus !!}"
-                                @if($paymentStatus == $getDefaultNotPaymentStatus) selected="selected" @endif>
-                            Chưa thu xong
-                        </option>
-                    </select>
-                </div>
+
             </div>
         </div>
         {{--thống kê--}}
@@ -224,7 +223,7 @@ $getDefaultNotPaymentStatus = $modelOrder->getDefaultNotPayment();
                             <em>
                                 Tổng tiền:
                             </em>
-                            <b>{!! $hFunction->currencyFormat($totalMoneyOrder) !!}</b>
+                            <b style="color: blue;">{!! $hFunction->currencyFormat($totalMoneyOrder) !!}</b>
                         </div>
                     </div>
                 </div>
@@ -234,7 +233,7 @@ $getDefaultNotPaymentStatus = $modelOrder->getDefaultNotPayment();
                             <em>
                                 Tiền đã thu:
                             </em>
-                            <b>{!! $hFunction->currencyFormat($totalMoneyPaidOrder) !!}</b>
+                            <b style="color: green;">{!! $hFunction->currencyFormat($totalMoneyPaidOrder) !!}</b>
                         </div>
                     </div>
                 </div>
@@ -244,7 +243,7 @@ $getDefaultNotPaymentStatus = $modelOrder->getDefaultNotPayment();
                             <em>
                                 Tiền chưa thu:
                             </em>
-                            <b>{!! $hFunction->currencyFormat($totalMoneyUnPaidOrder) !!}</b>
+                            <b style="color: red;">{!! $hFunction->currencyFormat($totalMoneyUnPaidOrder) !!}</b>
                         </div>
                     </div>
                 </div>
@@ -252,6 +251,109 @@ $getDefaultNotPaymentStatus = $modelOrder->getDefaultNotPayment();
         </div>
         {{--Thông tin đơn hàng--}}
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="background-color: whitesmoke;">
+            <div class="row">
+                <table class="table table-hover table-bordered" style="margin-bottom: 100px;">
+                    @if($hFunction->checkCount($dataListOrders))
+                        <?php
+                        $perPage = $dataListOrders->perPage();
+                        $currentPage = $dataListOrders->currentPage();
+                        $n_o = ($currentPage == 1) ? 0 : ($currentPage - 1) * $perPage; // set row number
+                        ?>
+                        @foreach($dataListOrders as $orders)
+                            <?php
+                            $n_o = $n_o + 1;
+                            $orderId = $orders->orderId();
+                            # tong tien don hang
+                            $totalPrice = $orders->totalMoney();
+                            # tong tien da thanh toan
+                            $totalPaid = $orders->totalPaid();
+                            # tong so lan thanh toan
+                            $amountOrderPay = $hFunction->getCount($orders->infoOrderPayOfOrder($orderId));
+                            # tien chua thu
+                            $totalUnPaid = $orders->totalMoneyUnpaid();
+                            $totalUnPaid = ($totalUnPaid < 0) ? 0 : $totalUnPaid;
+                            # thu tien trong thang cua don hang
+                            $paidMoneyInDate = $orders->totalPaidInDate($orderId, $dateFilter);
+                            # trang thai ket thuc
+                            $finishStatus = $orders->checkFinishStatus();
+                            $cancelStatus = $orders->checkCancelStatus();
+                            ?>
+                            <tr class=" @if($n_o%2) info @endif" data-object="{!! $orderId !!}">
+                                <td>
+                                    <div class="qc_order_content row">
+                                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                            <em>{!! $n_o !!}). </em>
+                                            <b>
+                                                {!! $orders->name() !!}
+                                            </b>
+                                            <br/>&emsp;
+                                            @if($cancelStatus)
+                                                <span class="qc-color-red pull-right">Đã hủy</span>
+                                            @else
+                                                @if($finishStatus)
+                                                    <i class="glyphicon glyphicon-ok qc-font-size-14"
+                                                       style="color: green;"></i>
+                                                @else
+                                                    <i class="glyphicon glyphicon-ok qc-font-size-14"
+                                                       style="color: red;"></i>
+                                                @endif
+                                            @endif
+                                            <span>&nbsp;|&nbsp;</span>
+                                            <a class="qc_view qc-link-green"
+                                               data-href="{!! route('qc.ad3d.order.order.detail.get',$orderId) !!}">CHI
+                                                TIẾT</a>
+                                            {{--<span>&nbsp;|&nbsp;</span>
+                                            <span class="qc-link-grey">THI CÔNG</span>--}}
+                                            <span>&nbsp;|&nbsp;</span>
+                                            <a class="qc-link-green"
+                                               href="{!! route('qc.ad3d.order.order.print.get', $orderId) !!}">IN</a>
+                                            {{--<span>&nbsp;|&nbsp;</span>
+                                            <span class="qc-link-grey">THANH TOÁN</span>--}}
+                                            <span>&nbsp;|&nbsp;</span>
+                                            <em style="color: grey;">
+                                                {!! date('d/m/Y', strtotime($orders->receiveDate())) !!}
+                                            </em>
+                                        </div>
+                                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                                    <em style="color: grey;">Tổng tiền:</em>
+                                                    <span class="pull-right" style="color: blue;">{!! $hFunction->currencyFormat($totalPrice) !!}</span>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                                    <em style="color: grey;">Đã thu ({!! $amountOrderPay !!}):</em>
+                                                    <span class="pull-right" style="color: green;">{!! $hFunction->currencyFormat($totalPaid) !!}</span>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                                    <em style="color: grey;">Còn lại:</em>
+                                                    <span class="pull-right" style="color: red;">{!! $hFunction->currencyFormat($totalUnPaid) !!}</span>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                                    <em style="color: grey;">Doanh thu:</em>
+                                                    <span class="pull-right"    >{!! $hFunction->currencyFormat($paidMoneyInDate) !!}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td>
+                                <span>
+                                    KHÔNG CÓ ĐƠN HÀNG
+                                </span>
+                            </td>
+                        </tr>
+                    @endif
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="background-color: whitesmoke;">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
+                <h1>CŨ --> XÓA</h1>
+            </div>
             <div class="row">
                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2" style="padding: 0;">
                     <ul class="list-group">

@@ -27,7 +27,7 @@ $subObject = (isset($dataAccess['subObject'])) ? $dataAccess['subObject'] : null
             </li>
             @if($companyLogin->checkRoot() && $companyLogin->checkParent())
                 <li @if($subObject == 'partner') class="active" @endif>
-                    <a class="qc-link" href="{!! route('qc.ad3d.finance.transfers.receive.get') !!}"
+                    <a class="qc-link" href="{!! route('qc.ad3d.system.company.partner.get') !!}"
                        @if($subObject == 'partner') style="background-color: whitesmoke;" @endif>
                         <i class="qc-font-size-16 glyphicon glyphicon-refresh"></i>
                         ĐỐI TÁC

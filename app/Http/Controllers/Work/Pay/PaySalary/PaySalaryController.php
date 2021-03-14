@@ -34,11 +34,12 @@ class PaySalaryController extends Controller
             'subObjectLabel' => 'Thanh toán lương'
         ];
         $loginStaffId = $modelStaff->loginStaffId();
-        if (empty($filterMonth) && empty($filterYear)) {
+        if ($hFunction->checkEmpty($filterMonth) && $hFunction->checkEmpty($filterYear)) {
             $dateFilter = date('Y-m');
             $filterMonth = date('m');
             $filterYear = date('Y');
-        } elseif ($filterMonth == 0) { //xem tat ca cac thang
+        } elseif ($filterMonth == 0) {
+            # xem tat ca cac thang
             $dateFilter = date('Y', strtotime("1-1-$filterYear"));
         } else {
             $dateFilter = date('Y-m', strtotime("1-$filterMonth-$filterYear"));
@@ -51,7 +52,7 @@ class PaySalaryController extends Controller
             $listCompanyStaffWorkId = $modelCompanyStaffWork->listIdOfListCompanyAndListStaff($searchCompanyFilterId);
             $listWorkId = $modelWork->listIdOfListCompanyStaffWorkBeginDate($listCompanyStaffWorkId, $dateFilter);
         }
-        #thong tin bang lương
+        # thong tin bang lương
         $dataSalary = $modelSalary->selectInfoByListWork($listWorkId)->get();
         # thong tin thanh toan trong tháng
         $dataSalaryPay = $modelSalaryPay->infoOfStaffAndDate($loginStaffId, $dateFilter);
@@ -115,7 +116,7 @@ class PaySalaryController extends Controller
         $staffId = $dataStaff->staffId();
         # ma cong ty
         $companyId = $dataWork->companyStaffWork->companyId();
-        // danh sach mua vat tu dc xac nhan va chua thanh toan
+        # danh sach mua vat tu dc xac nhan va chua thanh toan
         $totalMoneyImportUnpaid = $dataStaff->importTotalMoneyHasConfirmNotPay($companyId, $staffId, date('Y-m', strtotime($fromDate)));
         return view('work.pay.pay-salary.add-payment', compact('modelStaff', 'dataSalary', 'totalMoneyImportUnpaid'));
     }
@@ -160,7 +161,7 @@ class PaySalaryController extends Controller
         }
     }
 
-    //huy thong tin thanh toan
+    # huy thong tin thanh toan
     public function deletePay($payId)
     {
         $modelSalary = new QcSalary();

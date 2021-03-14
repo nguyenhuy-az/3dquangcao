@@ -10,12 +10,16 @@ $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $hrefIndex = route('qc.ad3d.finance.pay_activity.get');
 $dataStaffLogin = $modelStaff->loginStaffInfo();
-$companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dang nhap
+$dataCompanyLogin = $modelStaff->companyLogin();
+$companyLoginId = $dataStaffLogin->companyId();
+# dang nhap vao cty dang lam - cua minh
+$actionStatus = true;
+if ($companyFilterId != $companyLoginId) $actionStatus = false;
 ?>
 @extends('ad3d.finance.pay.pay-activity.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <a class="qc-link-green-bold" href="{!! $hrefIndex !!}">
@@ -31,7 +35,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                         @endif--}}
                         @if($hFunction->checkCount($dataCompany))
                             @foreach($dataCompany as $company)
-                                @if($dataStaffLogin->checkRootManage())
+                                @if($dataCompanyLogin->checkParent())
                                     <option value="{!! $company->companyId() !!}"
                                             @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
                                 @else
@@ -45,7 +49,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                 </div>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row"
                  data-href-view="{!! route('qc.ad3d.finance.pay_activity.view.get') !!}">
                 <div class="table-responsive">
@@ -59,7 +63,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                         </tr>
                         <tr>
                             <td style="padding: 0 !important;">
-                                <select class="cbDayFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbDayFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$dayFilter == 0) selected="selected" @endif >
@@ -72,7 +76,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbMonthFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbMonthFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if($monthFilter == 0) selected="selected" @endif>
@@ -85,7 +89,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-4 col-sm-4 col-md-4 col-lg-4"
+                                <select class="cbYearFilter col-xs-4 col-sm-4 col-md-4 col-lg-4"
                                         style="padding: 0;height: 34px;"
                                         data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
@@ -159,7 +163,7 @@ $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dan
                                     <td>
                                         <b style="color: blue;">{!! date('d-m-Y',strtotime($payDate))  !!}</b>
                                         @if(!$confirmStatus)
-                                            @if($payCompanyId == $companyLoginId)
+                                            @if($actionStatus)
                                                 <br/>
                                                 <a class="qc_confirm_get qc-font-size-14 qc-link-red-bold"
                                                    data-href="{!! route('qc.ad3d.finance.pay_activity.confirm.get', $payId) !!}">

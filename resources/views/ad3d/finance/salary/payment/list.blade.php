@@ -9,14 +9,15 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $dataStaffLogin = $modelStaff->loginStaffInfo();
+$dataCompanyLogin = $modelStaff->companyLogin();
 $companyLoginId = $dataStaffLogin->companyId(); # id cua cong nhan vien dang dang nhap
 $hrefIndex = route('qc.ad3d.finance.salary.payment.get');
-// dd($dataSalary);
+
 ?>
 @extends('ad3d.finance.salary.payment.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-12 col-lg-12"
                      style="padding-left: 0;padding-right: 0;">
@@ -27,7 +28,7 @@ $hrefIndex = route('qc.ad3d.finance.salary.payment.get');
                 </div>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="qc_ad3d_list_content row"
                  data-href-view="{!! route('qc.ad3d.finance.salary.payment.view.get') !!}"
                  data-href-add="{!! route('qc.ad3d.finance.salary.payment.add.get') !!}">
@@ -35,7 +36,7 @@ $hrefIndex = route('qc.ad3d.finance.salary.payment.get');
                     <table class="table table-hover table-bordered">
                         <tr>
                             <td colspan="2" style="padding: 0;">
-                                <select class="cbMonthFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                <select class="cbMonthFilter col-xs-6 col-sm-6 col-md-6 col-lg-6"
                                         style="padding: 0; height: 34px; color: red;" data-href="{!! $hrefIndex !!}">
                                     <option value="0" @if((int)$monthFilter == 0) selected="selected" @endif >
                                         Tất cả
@@ -47,7 +48,7 @@ $hrefIndex = route('qc.ad3d.finance.salary.payment.get');
                                         </option>
                                     @endfor
                                 </select>
-                                <select class="cbYearFilter col-sx-6 col-sm-6 col-md-6 col-lg-6"
+                                <select class="cbYearFilter col-xs-6 col-sm-6 col-md-6 col-lg-6"
                                         style="padding: 0; height: 34px; color: red;" data-href="{!! $hrefIndex !!}">
                                     @for($y =2017;$y<= 2050; $y++)
                                         <option value="{!! $y !!}"
@@ -60,7 +61,7 @@ $hrefIndex = route('qc.ad3d.finance.salary.payment.get');
                                         data-href-filter="{!! $hrefIndex !!}">
                                     @if($hFunction->checkCount($dataCompany))
                                         @foreach($dataCompany as $company)
-                                            @if($dataStaffLogin->checkRootManage())
+                                            @if($dataCompanyLogin->checkParent())
                                                 <option value="{!! $company->companyId() !!}"
                                                         @if($companyFilterId == $company->companyId()) selected="selected" @endif >{!! $company->name() !!}</option>
                                             @else

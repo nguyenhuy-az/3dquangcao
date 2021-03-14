@@ -8,152 +8,106 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
-$orderId = $dataOrders->orderId();
+$orderId = $dataOrder->orderId();
 # tong tien chua giam gia
-$orderTotalPrice = $dataOrders->totalPrice();
+$orderTotalPrice = $dataOrder->totalPrice();
 # tong tien giam
-$orderTotalDiscount = $dataOrders->totalMoneyDiscount();
+$orderTotalDiscount = $dataOrder->totalMoneyDiscount();
 # tong tien VAT
-$orderTotalVat = $dataOrders->totalMoneyOfVat();
+$orderTotalVat = $dataOrder->totalMoneyOfVat();
 # thong tin san pham
-$dataProduct = $dataOrders->productActivityOfOrder();
+$dataProduct = $dataOrder->productActivityOfOrder();
 #anh thiet ke tong quat
-$dataOrderImage = $dataOrders->orderImageInfoActivity();
+$dataOrderImage = $dataOrder->orderImageInfoActivity();
 ?>
-@extends('work.orders.index')
-@section('titlePage')
-    Chi tiết đơn hàng
-@endsection
-@section('qc_work_order_body')
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <a class="btn btn-sm btn-primary" onclick="qc_main.page_back();">
-                Về trang trước
-            </a>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <h3>{!! $dataOrders->name() !!}</h3>
-            </div>
-            {{-- thông tin đơn hàng --}}
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-                <div class="table-responsive">
+<div class="qc_order_detail col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <table class="table" style="border-left: 4px solid black;">
+        <tr>
+            <td>
+                {{-- thông tin đơn hàng --}}
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
                     <table class="table table-hover qc-margin-bot-none">
                         <tr>
-                            <td>
+                            <td style="padding-top: 2px; padding-bottom: 2px;">
                                 <em class=" qc-color-grey">Mã ĐH:</em>
-                            </td>
-                            <td class="text-right">
-                                <b>{!! $dataOrders->orderCode() !!}</b>
+                                <b class="pull-right">{!! $dataOrder->orderCode() !!}</b>
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style="padding-top: 2px; padding-bottom: 2px;">
                                 <em class="qc-color-grey">Người nhận :</em>
-                            </td>
-                            <td class="text-right">
-                                <b>{!! $dataOrders->staffReceive->fullName() !!}</b>
+                                <b class="pull-right">{!! $dataOrder->staffReceive->fullName() !!}</b>
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style="padding-top: 2px; padding-bottom: 2px;">
                                 <em class="qc-color-grey">Ngày nhận:</em>
-                            </td>
-                            <td class="text-right">
-                                <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->receiveDate()) !!}</b>
+                                <b class="pull-right">{!! $hFunction->convertDateDMYFromDatetime($dataOrder->receiveDate()) !!}</b>
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style="padding-top: 2px; padding-bottom: 2px;">
                                 <em class="qc-color-grey">Ngày giao:</em>
-                            </td>
-                            <td class="text-right">
-                                <b>{!! $hFunction->convertDateDMYFromDatetime($dataOrders->deliveryDate()) !!}</b>
+                                <b class="pull-right">{!! $hFunction->convertDateDMYFromDatetime($dataOrder->deliveryDate()) !!}</b>
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style="padding-top: 2px; padding-bottom: 2px;">
                                 <em class="qc-color-grey">Đ/c thi công:</em>
-                            </td>
-                            <td class="text-right">
-                                    <span class="pull-right">{!! $dataOrders->constructionAddress() !!}
-                                        - ĐT: {!! $dataOrders->constructionPhone() !!}
-                                        - tên: {!! $dataOrders->constructionContact() !!}</span>
+                                <span class="pull-right">{!! $dataOrder->constructionAddress() !!}
+                                    - ĐT: {!! $dataOrder->constructionPhone() !!}
+                                    - tên: {!! $dataOrder->constructionContact() !!}</span>
                             </td>
                         </tr>
                     </table>
                 </div>
-            </div>
 
-            {{-- thông tin khách hàng --}}
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-                <div class="table-responsive">
+                {{-- thông tin khách hàng --}}
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
                     <table class="table table-hover qc-margin-bot-none">
                         <tr style="background-color: whitesmoke;">
-                            <th colspan="2">
+                            <th style="padding-top: 2px; padding-bottom: 2px;">
                                 <i class="qc-font-size-16 glyphicon glyphicon-user"></i>
                                 <b class="qc-color-red">KHÁCH HÀNG</b>
                             </th>
                         </tr>
                         <tr>
-                            <td>
+                            <td style="padding-top: 2px; padding-bottom: 2px;">
                                 <em class="qc-color-grey">Tên:</em>
-                            </td>
-                            <td class="text-right">
-                                <b>{!! $dataOrders->customer->name() !!}</b>
+                                <b class="pull-right">{!! $dataOrder->customer->name() !!}</b>
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style="padding-top: 2px; padding-bottom: 2px;">
                                 <em class="qc-color-grey">Điện thoại:</em>
-                            </td>
-                            <td class="text-right">
-                                <b>{!! $dataOrders->customer->phone() !!}</b>
+                                <b class="pull-right">{!! $dataOrder->customer->phone() !!}</b>
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style="padding-top: 2px; padding-bottom: 2px;">
                                 <em class="qc-color-grey">Zalo:</em>
-                            </td>
-                            <td class="text-right">
-                                <b>{!! $dataOrders->customer->zalo() !!}</b>
+                                <b class="pull-right">{!! $dataOrder->customer->zalo() !!}</b>
                             </td>
                         </tr>
                         <tr>
-                            <td>
+                            <td style="padding-top: 2px; padding-bottom: 2px;">
                                 <em class="qc-color-grey">ĐC\:</em>
-                            </td>
-                            <td class="text-right">
-                                <b>{!! $dataOrders->customer->address() !!}</b>
+                                <b class="pull-right">{!! $dataOrder->customer->address() !!}</b>
                             </td>
                         </tr>
 
                     </table>
                 </div>
-            </div>
 
-            {{-- thong tin san pham --}}
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
-                <div class="row">
-                    <div class=" col-xs-12 col-sm-12 col-dm-12 col-lg-12">
-                        <i class="qc-font-size-16 glyphicon glyphicon-shopping-cart"></i>
-                        <label class="qc-color-red qc-font-size-16">SẢM PHẨM</label>
-                        @if($dataOrders->checkCancelStatus())
-                            <span class="qc-color-red pull-right">Đã hủy</span>
-                        @endif
-                    </div>
-                </div>
-                <div id="qc_work_order_info_product_show" class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="table-responsive">
+                {{-- thong tin san pham --}}
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;">
+                    <div id="qc_work_order_info_product_show" class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <table class="table table-bordered" style="margin-bottom: 0px;">
                                 <tr style="background-color: black; color: yellow;">
-                                    <th style="width: 300px;">SẢN PHẨM</th>
-                                    <th>
-                                        GIÁ/SP(VNĐ)
-                                    </th>
-                                    <th>TK SP</th>
-                                    <th>TK THI CÔNG</th>
+                                    <th style="width: 300px; padding-top: 2px; padding-bottom: 2px;">SẢN PHẨM</th>
+                                    <th style="padding-top: 2px; padding-bottom: 2px;">TK SP</th>
+                                    <th style="padding-top: 2px; padding-bottom: 2px;">TK THI CÔNG</th>
                                 </tr>
                                 @if($hFunction->checkCount($dataProduct))
                                     <?php
@@ -174,8 +128,11 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                         <tr>
                                             <td>
                                                 <b>{!! $product->productType->name()  !!}</b>
+                                                <b class="pull-right" style="color: red;">
+                                                    $. {!! $hFunction->currencyFormat($product->price()) !!}
+                                                </b>
                                                 <br/>
-                                                <em>{!! $hFunction->convertDateDMYFromDatetime($product->createdAt()) !!}</em>
+                                                <em style="color: grey;">{!! $hFunction->convertDateDMYFromDatetime($product->createdAt()) !!}</em>
                                                 <br/>
                                                 <em>- Ngang: </em>
                                                 <span> {!! $productWidth !!} mm</span>
@@ -195,11 +152,6 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                                 @else
                                                     <em style="color: grey;">Đã hủy</em>
                                                 @endif
-                                            </td>
-                                            <td>
-                                                <b style="color: blue;">
-                                                    {!! $hFunction->currencyFormat($product->price()) !!}
-                                                </b>
                                             </td>
                                             <td style="padding-top: 5px !important;">
                                                 @if($hFunction->checkCount($dataProductDesign))
@@ -233,7 +185,7 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td class="text-center" colspan="4">
+                                        <td class="text-center">
                                             Không có sản phẩm
                                         </td>
                                     </tr>
@@ -241,29 +193,20 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                             </table>
                         </div>
                     </div>
-                </div>
 
-            </div>
-            {{-- thong tin thanh toan --}}
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-dm-12 col-lg-12">
-                        <i class="qc-font-size-16 glyphicon glyphicon-credit-card"></i>
-                        <label class="qc-color-red qc-font-size-16">THANH TOÁN</label>
-                    </div>
                 </div>
-                <div id="qc_work_order_info_payment_show" class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <div class="table-responsive">
+                {{-- thong tin thanh toan --}}
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
+                    <div id="qc_work_order_info_payment_show" class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <table class="table table-bordered" style="margin-bottom: 0px;">
                                 <tr style="background-color: black; color: yellow;">
-                                    <th>Ngày</th>
-                                    <th>Số tiền</th>
-                                    <th>Người thu</th>
-                                    <th>Tên người nộp</th>
+                                    <th style="padding-top: 2px; padding-bottom: 2px;">THANH TOÁN</th>
+                                    <th style="padding-top: 2px; padding-bottom: 2px;">Người thu</th>
+                                    <th style="padding-top: 2px; padding-bottom: 2px;">Tên người nộp</th>
                                 </tr>
                                 <?php
-                                $dataOrderPay = $dataOrders->infoOrderPayOfOrder();
+                                $dataOrderPay = $dataOrder->infoOrderPayOfOrder();
                                 ?>
                                 @if($hFunction->checkCount($dataOrderPay))
                                     @foreach($dataOrderPay as $orderPay)
@@ -275,20 +218,15 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                         ?>
                                         <tr>
                                             <td>
-                                                {!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}
-                                            </td>
-                                            <td>
-                                                <label style="color: blue;">{!! $hFunction->currencyFormat($orderPay->money()) !!}</label>
-                                                @if($hFunction->checkEmpty($payNote))
-                                                    <br/>
-                                                    <em style="color: red;">{!! $payNote  !!}</em>
-                                                @endif
+                                                <b style="color: blue;">$.{!! $hFunction->currencyFormat($orderPay->money()) !!}</b>
+                                                <br/>
+                                                <em style="color: grey;">{!! $hFunction->convertDateDMYFromDatetime($orderPay->datePay())  !!}</em>
                                             </td>
                                             <td>
                                                 <div class="media">
                                                     <a class="pull-left" href="#">
-                                                        <img class="media-object"
-                                                             style="max-width: 40px;height: 40px; border: 1px solid #d7d7d7;border-radius: 10px;"
+                                                        <img class="img-circle media-object"
+                                                             style="max-width: 40px;height: 40px; border: 1px solid grey;"
                                                              src="{!! $dataReceiveStaff->pathAvatar($dataReceiveStaff->image()) !!}">
                                                     </a>
 
@@ -298,20 +236,24 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                                 </div>
                                             </td>
                                             <td>
-                                                @if(!empty($orderPay->payerName()))
+                                                @if(!$hFunction->checkEmpty($orderPay->payerName()))
                                                     <span>{!! $orderPay->payerName() !!}</span>
-                                                    @if(!empty($orderPay->payerPhone()))
+                                                    @if(!$hFunction->checkEmpty($orderPay->payerPhone()))
                                                         <br/>
                                                         <em style="color: grey;">ĐT:</em>
                                                         <span> {!! $orderPay->payerPhone() !!}</span>
                                                     @endif
                                                 @else
                                                     <span>{!! $orderPay->order->customer->name() !!}</span>
-                                                    @if(empty($orderPay->payerPhone()))
+                                                    @if($hFunction->checkEmpty($orderPay->payerPhone()))
                                                         <br/>
                                                         <em style="color: grey;">ĐT:</em>
                                                         <span>{!! $orderPay->order->customer->phone() !!}</span>
                                                     @endif
+                                                @endif
+                                                @if($hFunction->checkEmpty($payNote))
+                                                    <br/>
+                                                    <em style="color: red;">{!! $payNote  !!}</em>
                                                 @endif
 
                                             </td>
@@ -319,7 +261,7 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td class="text-center" colspan="4">
+                                        <td class="text-center">
                                             Không có thông tin thanh toán
                                         </td>
                                     </tr>
@@ -328,97 +270,86 @@ $dataOrderImage = $dataOrders->orderImageInfoActivity();
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                <div class="row">
-                    <div class="qc-container-table-border-none col-xs-12 col-sm-12 col-dm-12 col-lg-12">
-                        <div class="table-responsive">
-                            <table class="table table-hover qc-margin-bot-none">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div class="row">
+                        <div class="qc-container-table-border-none col-xs-12 col-sm-12 col-dm-12 col-lg-12">
+                            <table class="table">
                                 <tr>
-                                    <td>
-                                        <em class=" qc-color-grey">Thành tiền:</em>
-                                    </td>
-                                    <td class="text-right">
-                                        <b>{!! $hFunction->currencyFormat($orderTotalPrice) !!}</b>
+                                    <td style="padding-top: 2px; padding-bottom: 2px;">
+                                        <a class=" qc-color-grey">Thành tiền:</a>
+                                        <b class="pull-right">{!! $hFunction->currencyFormat($orderTotalPrice) !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <em class="qc-color-grey">Giảm {!! $dataOrders->discount() !!}%:</em>
-                                    </td>
-                                    <td class="text-right">
-                                        <b>- {!! $hFunction->currencyFormat($orderTotalDiscount) !!}</b>
+                                    <td style="padding-top: 2px; padding-bottom: 2px;">
+                                        <a class="qc-color-grey">Giảm {!! $dataOrder->discount() !!}%:</a>
+                                        <b class="pull-right">- {!! $hFunction->currencyFormat($orderTotalDiscount) !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <em class="qc-color-grey">Tổng tiền chưa VAT:</em>
-                                    </td>
-                                    <td class="text-right">
-                                        <b style="color: red;">
+                                    <td style="padding-top: 2px; padding-bottom: 2px;">
+                                        <a class=" qc-color-grey">Tổng tiền chưa VAT:</a>
+                                        <b class="pull-right" style="color: red;">
                                             {!! $hFunction->currencyFormat($orderTotalPrice - $orderTotalDiscount) !!}
                                         </b>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <em class="qc-color-grey">VAT {!! $dataOrders->vat() !!}%:</em>
-                                    </td>
-                                    <td class="text-right">
-                                        <b>+ {!! $hFunction->currencyFormat($orderTotalVat) !!}</b>
-                                    </td>
-                                </tr>
-                                <tr style="border-top: 1px solid grey;">
-                                    <td>
-                                        <em class="qc-color-grey">Tổng tiền có VAT:</em>
-                                    </td>
-                                    <td class="text-right">
-                                        <b class="qc-color-red">{!! $hFunction->currencyFormat($orderTotalPrice - $orderTotalDiscount + $orderTotalVat ) !!}</b>
+                                    <td style="padding-top: 2px; padding-bottom: 2px;">
+                                        <a class="qc-color-grey">VAT {!! $dataOrder->vat() !!}%:</a>
+                                        <b class="pull-right">+ {!! $hFunction->currencyFormat($orderTotalVat) !!}</b>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <em class="qc-color-grey">Đã thanh toán:</em>
-                                    </td>
-                                    <td class="text-right">
-                                        <b>- {!! $hFunction->currencyFormat($dataOrders->totalPaid()) !!}</b>
+                                    <td style="padding-top: 2px; padding-bottom: 2px;">
+                                        <a class="qc-color-grey">Tổng tiền có VAT:</a>
+                                        <b class="pull-right qc-color-red">{!! $hFunction->currencyFormat($orderTotalPrice - $orderTotalDiscount + $orderTotalVat ) !!}</b>
                                     </td>
                                 </tr>
-                                <tr style="border-top: 1px solid grey;">
-                                    <td>
-                                        <em class="qc-color-grey">Còn lại:</em>
+                                <tr>
+                                    <td style="padding-top: 2px; padding-bottom: 2px;">
+                                        <a class="qc-color-grey">Đã thanh toán:</a>
+                                        <b class="pull-right">- {!! $hFunction->currencyFormat($dataOrder->totalPaid()) !!}</b>
                                     </td>
-                                    <td class="text-right">
-                                        <b class="qc-color-red">{!! $hFunction->currencyFormat($dataOrders->totalMoneyUnpaid()) !!}</b>
+                                </tr>
+                                <tr>
+                                    <td style="padding-top: 2px; padding-bottom: 2px; border-top: 1px solid grey !important;">
+                                        <a class="qc-color-grey">Còn lại:</a>
+                                        <b class="pull-right qc-color-red">{!! $hFunction->currencyFormat($dataOrder->totalMoneyUnpaid()) !!}</b>
                                     </td>
                                 </tr>
                             </table>
                         </div>
                     </div>
                 </div>
-            </div>
-            {{-- thiet ke tong the --}}
-            <div class="row">
+                {{-- thiet ke tong the --}}
                 <div class="qc-container-table-border-none col-xs-12 col-sm-12 col-dm-12 col-lg-12">
-                    <div class="table-responsive" style="margin: 0;">
-                        <table class="table table-bordered" style="margin-bottom: 0px;">
-                            @if($hFunction->checkCount($dataOrderImage))
-                                @foreach($dataOrderImage as $orderImage)
-                                    <tr>
-                                        <td style="padding-top: 5px !important;">
-                                            <a class="qc-link">
-                                                <img style="width: 100%; margin-bottom: 5px;" title="Thiết kế tổng quát"
-                                                     src="{!! $orderImage->pathFullImage($orderImage->image()) !!}">
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </table>
-                    </div>
+                    <table class="table table-bordered" style="margin-bottom: 0px;">
+                        @if($hFunction->checkCount($dataOrderImage))
+                            @foreach($dataOrderImage as $orderImage)
+                                <tr>
+                                    <td style="padding-top: 5px !important;">
+                                        <a class="qc-link">
+                                            <img style="width: 100%; margin-bottom: 5px;"
+                                                 title="Thiết kế tổng quát"
+                                                 src="{!! $orderImage->pathFullImage($orderImage->image()) !!}">
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </table>
                 </div>
-            </div>
-        </div>
-    </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 0; border: none;">
+                <button class="form-control btn btn-primary qc-link-white-bold"
+                        onclick="qc_main.hide('.qc_order_detail');">ĐÓNG
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>
 
-@endsection
+

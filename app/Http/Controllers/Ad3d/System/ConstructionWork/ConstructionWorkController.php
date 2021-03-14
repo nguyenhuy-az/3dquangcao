@@ -24,7 +24,7 @@ class ConstructionWorkController extends Controller
             'accessSubObject' => 'constructionWork'
         ];
         $dataConstructionWork = $modelConstructionWork->selectActivityInfo()->paginate(30);
-        return view('ad3d.system.construction-work.list', compact('modelStaff', 'dataConstructionWork', 'dataAccess'));
+        //return view('ad3d.system.construction-work.list', compact('modelStaff', 'dataConstructionWork', 'dataAccess'));
 
     }
 

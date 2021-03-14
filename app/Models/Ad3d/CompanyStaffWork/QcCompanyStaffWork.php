@@ -132,6 +132,18 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::where('work_id', $this->checkIdNull($workId))->update(['level' => $level]);
     }
 
+    # nang len root level
+    public function upLevelRoot($workId = null)
+    {
+        return $this->updateLevel($this->getDefaultLevelRoot(), $workId);
+    }
+
+    # ha root level
+    public function downLevelRoot($workId = null)
+    {
+        return $this->updateLevel($this->getDefaultLevelAdmin(), $workId);
+    }
+
     # mo bang cham cong mơi
     public function openWork($companyStaffWorkId)
     {
@@ -973,10 +985,10 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::where('company_id', $companyId)->where('level', $this->getDefaultLevelRoot())->where('action', $this->getDefaultHasAction())->first();
     }
 
-    # kiem tra phai level cao nhat
+    # kiem tra phai level cao nhat cua cong ty
     public function checkLevelRoot($workId = null)
     {
-        return ($this->level($this->checkIdNull($workId) == $this->getDefaultLevelRoot()) ? true : false);
+        return ($this->level($this->checkIdNull($workId)) == $this->getDefaultLevelRoot()) ? true : false;
     }
 
     # lay danh sach thong tin chua ban giao tui do nghe
@@ -1048,7 +1060,18 @@ class QcCompanyStaffWork extends Model
         return QcCompanyStaffWork::where('company_id', $companyId)->pluck('staff_id');
     }
 
-    # lay danh sach thong tin theo 1 cty va trang thai lam viẹc
+    # lay thong tin dang lam viec cua 1 cty và loại tru theo id
+    public function getActivityInfoOfCompanyAndExceptListWork($companyId, $listWorkId = null) // mac dinh chon tat ca = 100
+    {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($listWorkId)) {
+            return QcCompanyStaffWork::where('company_id', $companyId)->where('action', $this->getDefaultHasAction())->get();
+        } else {
+            return QcCompanyStaffWork::where('company_id', $companyId)->whereNotIn('work_id', $listWorkId)->where('action', $this->getDefaultHasAction())->get();
+        }
+    }
+
+    # chon danh sach thong tin theo 1 cty va trang thai lam viẹc
     public function selectInfoOfCompanyAndActionStatus($companyId, $actionStatus = 100) // mac dinh chon tat ca = 100
     {
         if ($actionStatus == $this->getDefaultAllAction()) {

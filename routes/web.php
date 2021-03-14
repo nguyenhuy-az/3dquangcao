@@ -401,6 +401,11 @@ Route::group(['prefix' => 'ad3d'], function () {
 
         # cong ty
         Route::group(['prefix' => 'company'], function () {
+            Route::group(['prefix' => 'partner'], function () {
+                # trang chinh
+                Route::get('/', ['as' => 'qc.ad3d.system.company.partner.get', 'uses' => 'Ad3d\System\Company\CompanyController@indexPartner']);
+            });
+
             # xem chi tiet
             Route::get('view/{companyId?}', ['as' => 'qc.ad3d.system.company.view.get', 'uses' => 'Ad3d\System\Company\CompanyController@view']);
             # lay link tuyen dung
@@ -715,7 +720,7 @@ Route::group(['prefix' => 'ad3d'], function () {
                 Route::get('customer-name/{name?}', ['as' => 'qc.ad3d.work.orders.filter.customer.check.name', 'uses' => 'Ad3d\Order\Order\OrderController@filterCheckCustomerName']);
             });
             # thong tin don hang
-            Route::get('view/{orderId?}', ['as' => 'qc.ad3d.order.order.view.get', 'uses' => 'Ad3d\Order\Order\OrderController@view']);
+            Route::get('detail/{orderId?}', ['as' => 'qc.ad3d.order.order.detail.get', 'uses' => 'Ad3d\Order\Order\OrderController@detail']);
 
             #xem anh thiet ke
             Route::get('view-product-design/{designId?}', ['as' => 'qc.ad3d.order.order.product.design.view', 'uses' => 'Ad3d\Order\Order\OrderController@viewProductDesign']);

@@ -13,8 +13,33 @@ class QcSystemDateOff extends Model
 
     private $lastId;
 
+    #========= =========  MAC DINH ========== =========
+    #mac dinh mo ta
+    public function getDefaultDescription()
+    {
+        return null;
+    }
+
+    #mac dinh nghi co dinh
+    public function getDefaultTypeHasMain()
+    {
+        return 1;
+    }
+
+    #mac dinh khong co dinh
+    public function getDefaultTypeNotMain()
+    {
+        return 2;
+    }
+
     //========== ========= =========  THEM MOI VA CAP NHAT========== ========= =========
-    // them moi
+    public function checkIdNull($id = null)
+    {
+        $hFunction = new \Hfunction();
+        return ($hFunction->checkEmpty($id)) ? $this->dateOffId() : $id;
+    }
+
+    # them moi
     public function insert($dateOff, $description, $type = 1, $staffId, $companyId)
     {
         $hFunction = new \Hfunction();
@@ -33,7 +58,7 @@ class QcSystemDateOff extends Model
         }
     }
 
-    //lay id moi them
+    # lay id moi them
     public function insertGetId()
     {
         return $this->lastId;
@@ -48,15 +73,14 @@ class QcSystemDateOff extends Model
         ]);
     }
 
-    //xoa ngay nghi
+    # xoa ngay nghi
     public function deleteDateOff($dateOffId = null)
     {
-        $dateOffId = (empty($dateOffId)) ? $this->dateOffId() : $dateOffId;
-        return QcSystemDateOff::where('dateOff_id', $dateOffId)->delete();
+        return QcSystemDateOff::where('dateOff_id', $this->checkIdNull($dateOffId))->delete();
     }
 
     //========== ========= ========= CAC MOI QUAN HE DU LIEU ========== ========= ==========
-    //---------- nha vien chi -----------
+    #---------- nha vien chi -----------
     public function staff()
     {
         return $this->belongsTo('App\Models\Ad3d\Staff\QcStaff', 'staff_id', 'staff_id');
@@ -76,10 +100,11 @@ class QcSystemDateOff extends Model
     # ngay bat buoc nghi
     public function infoDateObligatoryOfCompanyAndDate($companyId, $dateOff = null)
     {
-        if (empty($dateOff)) {
-            return QcSystemDateOff::where('company_id', $companyId)->where('type', 1)->orderBy('dateOff', 'DESC')->get();
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateOff)) {
+            return QcSystemDateOff::where('company_id', $companyId)->where('type', $this->getDefaultTypeHasMain())->orderBy('dateOff', 'DESC')->get();
         } else {
-            return QcSystemDateOff::where('company_id', $companyId)->where('type', 1)->where('dateOff', 'like', "%$dateOff%")->orderBy('dateOff', 'DESC')->get();
+            return QcSystemDateOff::where('company_id', $companyId)->where('type', $this->getDefaultTypeHasMain())->where('dateOff', 'like', "%$dateOff%")->orderBy('dateOff', 'DESC')->get();
         }
 
     }
@@ -87,17 +112,19 @@ class QcSystemDateOff extends Model
     # ngay khong bat buoc nghi
     public function infoDateOptionalOfCompanyAndDate($companyId, $dateOff = null)
     {
-        if (empty($dateOff)) {
-            return QcSystemDateOff::where('company_id', $companyId)->where('type', 2)->orderBy('dateOff', 'DESC')->get();
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateOff)) {
+            return QcSystemDateOff::where('company_id', $companyId)->where('type', $this->getDefaultTypeNotMain())->orderBy('dateOff', 'DESC')->get();
         } else {
-            return QcSystemDateOff::where('company_id', $companyId)->where('type', 2)->where('dateOff', 'like', "%$dateOff%")->orderBy('dateOff', 'DESC')->get();
+            return QcSystemDateOff::where('company_id', $companyId)->where('type', $this->getDefaultTypeNotMain())->where('dateOff', 'like', "%$dateOff%")->orderBy('dateOff', 'DESC')->get();
         }
 
     }
 
     public function selectInfoOfCompanyAndDate($companyId, $dateOff = null)
     {
-        if (empty($dateOff)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateOff)) {
             return QcSystemDateOff::where('company_id', $companyId)->orderBy('dateOff', 'DESC')->select('*');
         } else {
             return QcSystemDateOff::where('dateOff', 'like', "%$dateOff%")->where('company_id', $companyId)->orderBy('dateOff', 'DESC')->select('*');
@@ -105,15 +132,15 @@ class QcSystemDateOff extends Model
 
     }
 
-//========= ========== ========== LAY THONG TIN========== ========== ==========
-
-    public function getInfo($dateOffId = '', $field = '')
+    //========= ========== ========== LAY THONG TIN========== ========== ==========
+    public function getInfo($dateOffId = null, $field = null)
     {
-        if (empty($dateOffId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($dateOffId)) {
             return QcSystemDateOff::get();
         } else {
             $result = QcSystemDateOff::where('dateOff_id', $dateOffId)->first();
-            if (empty($field)) {
+            if ($hFunction->checkEmpty($field)) {
                 return $result;
             } else {
                 return $result->$field;
@@ -123,10 +150,11 @@ class QcSystemDateOff extends Model
 
     public function pluck($column, $objectId = null)
     {
-        if (empty($objectId)) {
+        $hFunction = new \Hfunction();
+        if ($hFunction->checkEmpty($objectId)) {
             return $this->$column;
         } else {
-            return QcSystemDateOff::where('dateOff_id', $objectId)->pluck($column);
+            return QcSystemDateOff::where('dateOff_id', $objectId)->pluck($column)[0];
         }
     }
 
@@ -170,20 +198,21 @@ class QcSystemDateOff extends Model
 
     public function typeLabel($dateOffId = null)
     {
-        return ($this->type($dateOffId)[0] == 1) ? 'Cố dịnh' : 'Không cố định';
+        return ($this->type($dateOffId) == $this->getDefaultTypeHasMain()) ? 'Cố dịnh' : 'Không cố định';
     }
 
-// tong so thanh toan
+    # tong so thanh toan
     public function totalRecords()
     {
         return QcSystemDateOff::count();
     }
 
-// lay id cuoi
+    # lay id cuoi
     public function lastId()
     {
+        $hFunction = new \Hfunction();
         $result = QcSystemDateOff::orderBy('dateOff_id', 'DESC')->first();
-        return (empty($result)) ? 0 : $result->dateOff_id;
+        return ($hFunction->checkEmpty($result)) ? 0 : $result->dateOff_id;
     }
 
 }

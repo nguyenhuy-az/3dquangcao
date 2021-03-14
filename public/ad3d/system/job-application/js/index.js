@@ -35,11 +35,11 @@ var qc_ad3d_system_job_application = {
 
 //-------------------- loc thong tin ------------
 $(document).ready(function () {
-    $('.qc_ad3d_list_content').on('change', '.cbCompanyFilter', function () {
+    $('#qc_ad3d_container_content').on('change', '.cbCompanyFilter', function () {
         var href = $(this).data('href') + '/' + $(this).val() + '/' + $('.cbConfirmStatusFilter').val();
         qc_ad3d_system_job_application.filter(href);
     });
-    $('.qc_ad3d_list_content').on('change', '.cbConfirmStatusFilter', function () {
+    $('#qc_ad3d_container_content').on('change', '.cbConfirmStatusFilter', function () {
         var href = $(this).data('href') + '/' + $('.cbCompanyFilter').val() + '/' + $(this).val();
         qc_ad3d_system_job_application.filter(href);
     });

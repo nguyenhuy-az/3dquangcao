@@ -11,6 +11,10 @@
 $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
+$dataCompanyLogin = $modelStaff->companyLogin();
+# dang nhap vao cty dang lam - cua minh
+$actionStatus = true;
+if ($dataJobApplication->companyId() != $dataCompanyLogin->companyId()) $actionStatus = false;
 $currentDay = (int)date('d');
 $currentMonth = (int)date('m');
 $currentYear = (int)date('Y');
@@ -46,102 +50,105 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
 @extends('ad3d.system.recruitment.job-application.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="qc_ad3d_recruitment_info qc-padding-top-10 qc-padding-bot-30 col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="qc_ad3d_recruitment_info qc-padding-top-10 qc-padding-bot-30 col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="col-sx-6 col-sm-6 col-md-6 col-lg-6">
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                     <a class="qc-link-white-bold btn btn-primary" onclick="qc_main.page_back_go();">Về trang trước</a>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <label style="color: red; font-size: 3em;">HỒ SƠ ỨNG TUYỂN</label>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8" style="background-color: grey; padding: 10px;">
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" style="background-color: grey; padding: 10px;">
                     @if(!$dataJobApplication->checkConfirmStatus())
-                        <form class="ad3dFrmConfirmJobApplication form-horizontal" name="ad3dFrmConfirmJobApplication"
-                              role="form" method="post" enctype="multipart/form-data"
-                              action="{!! route('qc.ad3d.system.job-application.confirm.post',$jobApplicationId) !!}">
-                            <div class="form-group form-group-sm" style="margin-bottom: 0;">
-                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                    <select class="cbAgreeStatus form-control" name="cbAgreeStatus"
-                                            style="height: 34px; color: red;">
-                                        <option value="1" selected="selected">
-                                            ĐỒNG Ý VÀ HẸN PHỎNG VẤN
-                                        </option>
-                                        <option value="0">
-                                            KHÔNG ĐỒNG Ý HỒ SƠ NÀY
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div id="jobApplicationInterview" class="form-group form-group-sm">
-                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                    <label style="color: yellow;">Ngày phỏng vấn:</label>
-                                </div>
-                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                    <select class="col-xs-2 col-sm-2 col-md-2 col-lg-2" name="cbDay"
-                                            style="height: 34px;">
-                                        <option value="">Ngày</option>
-                                        @for($d = 1;$d<= 31; $d++)
-                                            <option value="{!! $d !!}">
-                                                {!! $d !!}
+                        @if($actionStatus)
+                            <form class="ad3dFrmConfirmJobApplication form-horizontal"
+                                  name="ad3dFrmConfirmJobApplication"
+                                  role="form" method="post" enctype="multipart/form-data"
+                                  action="{!! route('qc.ad3d.system.job-application.confirm.post',$jobApplicationId) !!}">
+                                <div class="form-group form-group-sm" style="margin-bottom: 0;">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <select class="cbAgreeStatus form-control" name="cbAgreeStatus"
+                                                style="height: 34px; color: red;">
+                                            <option value="1" selected="selected">
+                                                ĐỒNG Ý VÀ HẸN PHỎNG VẤN
                                             </option>
-                                        @endfor
-                                    </select>
-                                    <select class="col-xs-2 col-sm-2 col-md-2 col-lg-2" name="cbMonth"
-                                            style="height: 34px;">
-                                        @for($m = 1;$m<= 12; $m++)
-                                            <option value="{!! $m !!}"
-                                                    @if($currentMonth == $m) selected="selected" @endif>
-                                                {!! $m !!}
+                                            <option value="0">
+                                                KHÔNG ĐỒNG Ý HỒ SƠ NÀY
                                             </option>
-                                        @endfor
-                                    </select>
-                                    <select class="col-xs-4 col-sm-4 col-md-4 col-lg-4" name="cbYear"
-                                            style="height: 34px;">
-                                        <option value="{!! $currentYear !!}" selected="selected">
-                                            {!! $currentYear !!}
-                                        </option>
-                                        <option value="{!! $currentYear +1 !!}">
-                                            {!! $currentYear+1 !!}
-                                        </option>
-                                    </select>
-                                    <select class="col-xs-2 col-sm-2 col-md-2 col-lg-2" name="cbHours"
-                                            style="height: 34px; color: red;">
-                                        @for($h =8;$h<= 24; $h++)
-                                            <option value="{!! $h !!}" @if($h == 8) selected="selected" @endif >
-                                                {!! $h !!}
-                                            </option>
-                                        @endfor
-                                    </select>
-                                    <select class="col-xs-2 col-sm-2 col-md-2 col-lg-2" name="cbMinute"
-                                            style="height: 34px; color: red;">
-                                        <option value="0">00</option>
-                                        <option value="30">30</option>
-                                    </select>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            @if (Session::has('confirmJobApplicationNotify'))
-                                <div class="form-group form-group-sm text-center" style="color: yellow;">
+                                <div id="jobApplicationInterview" class="form-group form-group-sm">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <label style="color: yellow;">Ngày phỏng vấn:</label>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <select class="col-xs-2 col-sm-2 col-md-2 col-lg-2" name="cbDay"
+                                                style="height: 34px;">
+                                            <option value="">Ngày</option>
+                                            @for($d = 1;$d<= 31; $d++)
+                                                <option value="{!! $d !!}">
+                                                    {!! $d !!}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <select class="col-xs-2 col-sm-2 col-md-2 col-lg-2" name="cbMonth"
+                                                style="height: 34px;">
+                                            @for($m = 1;$m<= 12; $m++)
+                                                <option value="{!! $m !!}"
+                                                        @if($currentMonth == $m) selected="selected" @endif>
+                                                    {!! $m !!}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <select class="col-xs-4 col-sm-4 col-md-4 col-lg-4" name="cbYear"
+                                                style="height: 34px;">
+                                            <option value="{!! $currentYear !!}" selected="selected">
+                                                {!! $currentYear !!}
+                                            </option>
+                                            <option value="{!! $currentYear +1 !!}">
+                                                {!! $currentYear+1 !!}
+                                            </option>
+                                        </select>
+                                        <select class="col-xs-2 col-sm-2 col-md-2 col-lg-2" name="cbHours"
+                                                style="height: 34px; color: red;">
+                                            @for($h =8;$h<= 24; $h++)
+                                                <option value="{!! $h !!}" @if($h == 8) selected="selected" @endif >
+                                                    {!! $h !!}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <select class="col-xs-2 col-sm-2 col-md-2 col-lg-2" name="cbMinute"
+                                                style="height: 34px; color: red;">
+                                            <option value="0">00</option>
+                                            <option value="30">30</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                @if (Session::has('confirmJobApplicationNotify'))
+                                    <div class="form-group form-group-sm text-center" style="color: yellow;">
                                     <span style="font-size: 2em;">
                                         {!! Session::get('confirmJobApplicationNotify') !!}
                                     </span>
-                                    <?php
-                                    Session::forget('confirmJobApplicationNotify');
-                                    ?>
+                                        <?php
+                                        Session::forget('confirmJobApplicationNotify');
+                                        ?>
+                                    </div>
+                                @endif
+                                <div class="form-group form-group-sm" style="margin-bottom: 0;">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <input type="hidden" name="_token" value="{!! csrf_token() !!}">
+                                        <button type="button" class="qc_save btn btn-sm btn-primary form-control">
+                                            XÁC NHẬN
+                                        </button>
+                                    </div>
                                 </div>
-                            @endif
-                            <div class="form-group form-group-sm" style="margin-bottom: 0;">
-                                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
-                                    <input type="hidden" name="_token" value="{!! csrf_token() !!}">
-                                    <button type="button" class="qc_save btn btn-sm btn-primary form-control">
-                                        XÁC NHẬN
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        @endif
                     @else
                         @if(!$dataJobApplication->checkAgreeStatus())
                             <span style="color: yellow; font-size: 2em;">ĐÃ DUYỆT VÀ KHÔNG ĐƯỢC ĐỒNG Ý</span>
@@ -166,7 +173,7 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                 </div>
             </div>
             <div class="row">
-                <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered">
                             {{--THONG TIN CO BAN--}}
@@ -179,52 +186,48 @@ $dataJobApplicationWork = $dataJobApplication->jobApplicationWorkGetInfo();
                             <tr>
                                 <td id="staffInfoBasicContainer">
                                     <div class="row">
-                                        <div class="col-sx-12 col-sm-12 col-md-4 col-lg-4">
-                                            <div class="row">
-                                                <div class="table-responsive">
-                                                    <table class="table table-hover table-bordered"
-                                                           style="margin-bottom: 0;">
-                                                        <tr>
-                                                            <td class="text-center" style="border: none;" colspan="2">
-                                                                @if(!empty($image))
-                                                                    <div style="position: relative; margin: 5px 10px 5px 10px; width: 100%; height: 100%;">
-                                                                        <a class="qc-link" data-href="#">
-                                                                            <img style="max-width: 100%;height: 190px;"
-                                                                                 src="{!! $dataJobApplication->pathFullImage($image) !!}">
-                                                                        </a>
-                                                                    </div>
-                                                                @else
-                                                                    <span>Ảnh</span>
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="text-center" style="border: none;">
-                                                                @if(!empty($identityFront))
-                                                                    <a class="qc-link" data-href="#">
-                                                                        <img style="width: 100px;height: 90px;"
-                                                                             src="{!! $dataJobApplication->pathFullImage($identityFront) !!}">
-                                                                    </a>
-                                                                @else
-                                                                    <span>Mặt trước CMND</span>
-                                                                @endif
-                                                            </td>
-                                                            <td class="text-center" style="border: none;">
-                                                                @if(!empty($identityBack))
-                                                                    <a class="qc-link" data-href="#">
-                                                                        <img style="width: 150px; height: 90px;"
-                                                                             src="{!! $dataJobApplication->pathFullImage($identityBack) !!}">
-                                                                    </a>
-                                                                @else
-                                                                    <span>Mặt sau CMND</span>
-                                                                @endif
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                            <table class="table table-hover table-bordered"
+                                                   style="margin-bottom: 0;">
+                                                <tr>
+                                                    <td class="text-center" style="border: none;" colspan="2">
+                                                        @if(!$hFunction->checkEmpty($image))
+                                                            <div style="position: relative; margin: 5px 10px 5px 10px; width: 100%; height: 100%;">
+                                                                <a class="qc-link" data-href="#">
+                                                                    <img style="max-width: 100%;height: 190px;"
+                                                                         src="{!! $dataJobApplication->pathFullImage($image) !!}">
+                                                                </a>
+                                                            </div>
+                                                        @else
+                                                            <span>Ảnh</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center" style="border: none;">
+                                                        @if(!$hFunction->checkEmpty($identityFront))
+                                                            <a class="qc-link" data-href="#">
+                                                                <img style="width: 100px;height: 90px;"
+                                                                     src="{!! $dataJobApplication->pathFullImage($identityFront) !!}">
+                                                            </a>
+                                                        @else
+                                                            <span>Mặt trước CMND</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center" style="border: none;">
+                                                        @if(!$hFunction->checkEmpty($identityBack))
+                                                            <a class="qc-link" data-href="#">
+                                                                <img style="width: 150px; height: 90px;"
+                                                                     src="{!! $dataJobApplication->pathFullImage($identityBack) !!}">
+                                                            </a>
+                                                        @else
+                                                            <span>Mặt sau CMND</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </div>
-                                        <div class="col-sx-12 col-sm-12 col-md-8 col-lg-8">
+                                        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                                             <div class="table-responsive">
                                                 <table class="table table-hover" style="margin: 0;">
                                                     <tr>

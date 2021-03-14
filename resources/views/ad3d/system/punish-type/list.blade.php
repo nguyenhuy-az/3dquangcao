@@ -14,27 +14,22 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
 @extends('ad3d.system.punish-type.index')
 @section('qc_ad3d_index_content')
     <div class="row">
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12"
-             style="margin-bottom: 10px; padding-top: 10px; padding-bottom: 10px; border-bottom: 2px dashed brown;">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
                 <div class="text-left col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding-left: 0;padding-right: 0;">
                     <i class="qc-font-size-20 glyphicon glyphicon-list-alt"></i>
-                    <label class="qc-font-size-20">LĨNH PHẠT</label>
+                    <label class="qc-font-size-20" style="color: red;">LĨNH PHẠT</label>
                 </div>
             </div>
         </div>
-        <div class="col-sx-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 2px 0 2px 0; ">
-                    <div class="row">
-                        <div class="text-right col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <a class="qc-font-size-16 qc-link-green-bold" title="Thêm mới"
-                               href="{!! route('qc.ad3d.system.punish-type.add.get') !!}">
-                                <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
-                                Thêm
-                            </a>
-                        </div>
-                    </div>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0;">
+                    <a class="form-control btn btn-primary qc-font-size-16 qc-link-white-bold" title="Thêm mới"
+                       href="{!! route('qc.ad3d.system.punish-type.add.get') !!}">
+                        <i class="qc-font-size-16 glyphicon glyphicon-plus"></i>
+                        THÊM
+                    </a>
                 </div>
             </div>
             <div class="qc_ad3d_list_content qc-ad3d-table-container row"
@@ -44,9 +39,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered">
                         <tr style="background-color: black; color: yellow;">
-                            <th class="text-center" style="width: 20px;">STT</th>
                             <th>Tên</th>
-                            <th></th>
                         </tr>
                         @if($hFunction->checkCount($dataPunishType))
                             <?php
@@ -57,15 +50,13 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                             @foreach($dataPunishType as $paymentType)
                                 <?php
                                 $typeId = $paymentType->typeId();
+                                $n_o += 1
                                 ?>
                                 <tr class="qc_ad3d_list_object @if($n_o%2) info @endif" data-object="{!! $typeId !!}">
-                                    <td class="text-center">
-                                        {!! $n_o += 1 !!}
-                                    </td>
                                     <td>
-                                        {!! $paymentType->name() !!}
-                                    </td>
-                                    <td class="text-right">
+                                        <em>{!! $n_o !!}). </em>
+                                        <b>{!! $paymentType->name() !!}</b>
+                                        <br/>&emsp;
                                         <a class="qc_view qc-link" href="#" title="Xem chi tiết">
                                             <i class="qc-font-size-14 glyphicon glyphicon-eye-open"></i>
                                         </a>
@@ -81,7 +72,7 @@ $dataStaffLogin = $modelStaff->loginStaffInfo();
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="text-center" colspan="3">
+                                <td class="text-center">
                                     {!! $hFunction->page($dataPunishType) !!}
                                 </td>
                             </tr>

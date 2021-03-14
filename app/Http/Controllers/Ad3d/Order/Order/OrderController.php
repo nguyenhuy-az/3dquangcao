@@ -85,30 +85,28 @@ class OrderController extends Controller
         }
 
         if (!$hFunction->checkEmpty($orderCustomerFilterName)) {
-            $dataOrderFilterStatistic = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus)->get();
+            $dataOrderFilterStatistic = $modelOrder->selectInfoOfListCustomer($modelCustomer->listIdByKeywordName($orderCustomerFilterName), $dateFilter, $paymentStatus);
         } else {
-            $dataOrderFilterStatistic = $modelOrder->selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $orderFilterName, $dateFilter, $paymentStatus)->get();
-            //dd($paymentStatus);
+            $dataOrderFilterStatistic = $modelOrder->selectInfoByListStaffAndNameAndDateAndPayment($listStaffId, $orderFilterName, $dateFilter, $paymentStatus);
         }
 
-        //$dataMoneyOrder = $dataOrderFilterStatistic->get();
 
-        #$dataOrder = $dataOrderFilterStatistic->paginate(30);
+        $dataListOrders = $dataOrderFilterStatistic->paginate(30);
 
-        $totalMoneyOrder = $modelOrder->totalMoneyOfListOrder($dataOrderFilterStatistic); // tong tien
-        $totalMoneyDiscountOrder = $modelOrder->totalMoneyDiscountOfListOrder($dataOrderFilterStatistic); // tong tien giam
-        $totalMoneyPaidOrder = $modelOrder->totalMoneyPaidOfListOrder($dataOrderFilterStatistic); // tong tien da thanh toan
-        $totalMoneyUnPaidOrder = $modelOrder->totalMoneyUnPaidOfListOrder($dataOrderFilterStatistic); // chua thanh toán
-        $totalOrders = $hFunction->getCount($dataOrderFilterStatistic);
-
-        //danh sach NV
+        $dataMoneyOrder = $dataOrderFilterStatistic->get();
+        $totalMoneyOrder = $modelOrder->totalMoneyOfListOrder($dataMoneyOrder); // tong tien
+        $totalMoneyDiscountOrder = $modelOrder->totalMoneyDiscountOfListOrder($dataMoneyOrder); // tong tien giam
+        $totalMoneyPaidOrder = $modelOrder->totalMoneyPaidOfListOrder($dataMoneyOrder); // tong tien da thanh toan
+        $totalMoneyUnPaidOrder = $modelOrder->totalMoneyUnPaidOfListOrder($dataMoneyOrder); // chua thanh toán
+        $totalOrders = $hFunction->getCount($dataMoneyOrder);
+        # danh sach NV
         $dataStaff = $modelCompany->staffInfoActivityOfCompanyId([$companyFilterId]);
-        return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany','modelCustomer', 'modelOrder', 'dataStaff', 'dataAccess', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId', 'dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId', 'dataOrderSelected'));
+        return view('ad3d.order.order.list', compact('modelStaff', 'dataCompany', 'modelCustomer', 'modelOrder', 'dataStaff', 'dataAccess', 'dataListOrders', 'totalOrders', 'totalMoneyOrder', 'totalMoneyDiscountOrder', 'totalMoneyPaidOrder', 'totalMoneyUnPaidOrder', 'companyFilterId','dateFilter', 'dayFilter', 'monthFilter', 'yearFilter', 'paymentStatus', 'orderFilterName', 'orderCustomerFilterName', 'staffFilterId', 'dataOrderSelected'));
 
     }
 
     # thong tin chi tiet don hang
-    public function view($orderId)
+    public function detail($orderId)
     {
         $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
@@ -118,7 +116,7 @@ class OrderController extends Controller
         ];
         $dataOrder = $modelOrder->getInfo($orderId);
         if ($hFunction->checkCount($dataOrder)) {
-            return view('ad3d.order.order.view', compact('modelStaff', 'dataAccess', 'dataOrder'));
+            return view('ad3d.order.order.detail', compact('modelStaff', 'dataAccess', 'dataOrder'));
         }
 
     }
@@ -138,9 +136,10 @@ class OrderController extends Controller
     # xem thong tin khach hang
     public function viewCustomer($customerId)
     {
+        $hFunction = new \Hfunction();
         $modelCustomer = new QcCustomer();
         $dataCustomer = $modelCustomer->getInfo($customerId);
-        if (count($dataCustomer) > 0) {
+        if ($hFunction->checkCount($dataCustomer)) {
             $dataOrders = $modelCustomer->orderInfoAllOfCustomer($dataCustomer->customerId());
             return view('ad3d.order.order.view-customer', compact('dataCustomer', 'dataOrders'));
         }
@@ -161,13 +160,14 @@ class OrderController extends Controller
         return view('ad3d.order.order.view-report-timekeeping-image', compact('dataWorkAllocationReportTimekeepingImage'));
     }
     // ================ LOC DON HÀNG DON HANG ===================
-    // theo ten don hang
+    # theo ten don hang
     public function filterCheckOrderName($name)
     {
+        $hFunction = new \Hfunction();
         $modelStaff = new QcStaff();
         $modelOrder = new QcOrder();
         $dataOrder = $modelOrder->infoFromSuggestionNameOffReceiveStaff($modelStaff->loginStaffId(), $name);
-        if (count($dataOrder) > 0) {
+        if ($hFunction->checkCount($dataOrder)) {
             $result = array(
                 'status' => 'exist',
                 'content' => $dataOrder
@@ -184,9 +184,10 @@ class OrderController extends Controller
     #theo ten khach hang
     public function filterCheckCustomerName($name)
     {
+        $hFunction = new \Hfunction();
         $modelCustomer = new QcCustomer();
         $dataCustomer = $modelCustomer->infoFromSuggestionName($name);
-        if (count($dataCustomer) > 0) {
+        if ($hFunction->checkCount($dataCustomer)) {
             $result = array(
                 'status' => 'exist',
                 'content' => $dataCustomer
@@ -247,9 +248,10 @@ class OrderController extends Controller
     #xem anh ban cao thi cong san pham
     public function viewReportImage($imageId)
     {
+        $hFunction = new \Hfunction();
         $modelWorkAllocationReportImage = new QcWorkAllocationReportImage();
         $dataWorkAllocationReportImage = $modelWorkAllocationReportImage->getInfo($imageId);
-        if (count($dataWorkAllocationReportImage) > 0) {
+        if ($hFunction->checkCount($dataWorkAllocationReportImage)) {
             return view('ad3d.order.order.view-construction-report-image', compact('dataWorkAllocationReportImage'));
         }
     }
@@ -318,9 +320,10 @@ class OrderController extends Controller
     #kiem tra khach hang qua sđt
     public function checkPhoneCustomer($phone)
     {
+        $hFunction = new \Hfunction();
         $modelCustomer = new QcCustomer();
         $dataCustomer = $modelCustomer->infoFromPhone($phone);
-        if (count($dataCustomer) > 0) {
+        if ($hFunction->checkCount($dataCustomer)) {
             $result = array(
                 'status' => 'exist',
                 'customerId' => $dataCustomer->customerId()

@@ -9,27 +9,61 @@ $hFunction = new Hfunction();
 $mobile = new Mobile_Detect();
 $mobileStatus = $mobile->isMobile();
 $companyId = $dataCompany->companyId();
-
+# thong tin nguoi lanh dao cu cua cty
+/*
+$dataOldCompanyStaffWorkRoot = $dataCompany->companyStaffWorkActivityLevelRoot();
+if ($hFunction->checkCount($dataOldCompanyStaffWorkRoot)) {
+    $oldRootWorkId = $dataOldCompanyStaffWorkRoot->workId();
+} else {
+    # chua co lanh dao
+    $oldRootWorkId = $hFunction->getDefaultNull();
+}
+*/
 ?>
 @extends('ad3d.system.company.company.index')
 @section('qc_ad3d_index_content')
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <h3 style="color:red;">CẬP NHẬT NGƯỜI QUẢN LÝ</h3>
+            <h3 style="color:red;">CẬP NHẬT NGƯỜI QUẢN LÝ - {!! $dataCompany->name() !!}</h3>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <span style="background-color: red; color: yellow; padding: 5px;">
+            <span style="background-color: black; color: lime; padding: 5px 10px;">
                 Mỗi chi nhánh chỉ chỉ có 1 người lãnh đạo cao nhất
             </span>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <form class="frmAdd" name="frmAdd" role="form" method="post"
-                  action="{!! route('qc.ad3d.system.company.add.post') !!}">
+            <form class="frmAddManager" name="frmAddManager" role="form" method="post"
+                  action="{!! route('qc.ad3d.system.company.update_manager.post',$companyId) !!}">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
+                        <div class="form-group">
+                            <a class="qc-font-size-16"
+                               href="{!! route('qc.ad3d.system.company.update_manager.get',"$companyId/selectNew") !!}">
+                                @if($selectObject == 'selectNew')
+                                    <i class="qc-font-size-16 glyphicon glyphicon-check" style="color: blue;"></i>
+                                @else
+                                    <i class="qc-font-size-16 glyphicon glyphicon-unchecked" style="color: grey;"></i>
+                                @endif
+                                Thêm mới
+                            </a>
+                            <br/>
+                            <a class="qc-font-size-16"
+                               href="{!! route('qc.ad3d.system.company.update_manager.get',"$companyId/selectSystem") !!}">
+                                @if($selectObject == 'selectSystem')
+                                    <i class="qc-font-size-16 glyphicon glyphicon-check" style="color: blue;"></i>
+                                @else
+                                    <i class="qc-font-size-16 glyphicon glyphicon-unchecked" style="color: grey;"></i>
+                                @endif
+                                Chọn nhân viên của công ty
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 @if (Session::has('notifyAdd'))
                     <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                            <div class="form-group qc-font-size-16" style="background-color: red; color: yellow;">
-                                {!! Session::get('notifyAdd') !!}
+                            <div class="form-group" style="background-color: red; color: yellow;padding: 5px 10px;">
+                                <span class="qc-font-size-16">{!! Session::get('notifyAdd') !!}</span>
                                 <?php
                                 Session::forget('notifyAdd');
                                 ?>
@@ -37,51 +71,46 @@ $companyId = $dataCompany->companyId();
                         </div>
                     </div>
                 @endif
-                <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
-                        <div class="form-group">
-                            <a class="qc-font-size-16" href="{!! route('qc.ad3d.system.company.update_manager.get',"$companyId/selectNew") !!}">
-                                @if($selectObject == 'selectNew')
-                                    <i class="qc-font-size-16 glyphicon glyphicon-check"  style="color: blue;"></i>
-                                @else
-                                    <i class="qc-font-size-16 glyphicon glyphicon-unchecked"  style="color: grey;" ></i>
-                                @endif
-                                Thêm mới
-                            </a>
-                            <br/>
-                            <a class="qc-font-size-16" href="{!! route('qc.ad3d.system.company.update_manager.get',"$companyId/selectSystem") !!}">
-                                @if($selectObject == 'selectSystem')
-                                    <i class="qc-font-size-16 glyphicon glyphicon-check"  style="color: blue;"></i>
-                                @else
-                                    <i class="qc-font-size-16 glyphicon glyphicon-unchecked"  style="color: grey;" ></i>
-                                @endif
-                                Chọn nhân viên của công ty
-                            </a>
-                        </div>
-                    </div>
-                </div>
                 @if($selectObject == 'selectSystem')
                     <div id="qc_container_select_system" class="row">
                         {{--thông tin người quản lý--}}
-                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="border-left: 3px solid grey;">
-                            <div class="form-group form-group-sm">
+                        <div class="col-xs-12 col-sm-6 col-md-12 col-lg-12"
+                             style="border-left: 3px solid grey; max-height: 400px; overflow: auto;">
+                            <table class="table">
                                 @if($hFunction->checkCount($dataCompanyStaffWork))
                                     @foreach($dataCompanyStaffWork as $companyStaffWork)
-                                        <div class="radio">
-                                            <label>
-                                                <input type="radio" name="radSelectStaff"
-                                                       onclick="qc_main.show('#qc_container_select_system');qc_main.hide('#qc_container_add_new');"
-                                                       value="select_system">
-                                                Từ Danh sách nhân viên
-                                            </label>
-                                        </div>
+                                        <?php
+                                        $workId = $companyStaffWork->workId();
+                                        $dataStaff = $companyStaffWork->staff;
+                                        ?>
+                                        <tr>
+                                            <td style="width: 30px; padding: 5px 0 5px 0;">
+                                                <div class="radio" style="margin: 0;">
+                                                    <label>
+                                                        <input type="radio" name="radSelectWork"
+                                                               onclick="qc_main.show('#qc_container_select_system');qc_main.hide('#qc_container_add_new');"
+                                                               value="{!! $workId !!}">
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 5px 0 5px 0;">
+                                                <img class="img-circle"
+                                                     style="background-color: white; width: 30px;height: 30px; border: 1px solid #d7d7d7;"
+                                                     src="{!! $dataStaff->pathAvatar($dataStaff->image()) !!}">
+                                                <b>{!! $dataStaff->fullName() !!}</b>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 @else
-                                    <h4 style="color: blue;">
-                                        Không có nhân viên
-                                    </h4>
+                                    <tr>
+                                        <td colspan="2">
+                                            <h4 style="color: blue;">
+                                                KHÔNG CÓ NHÂN SỰ
+                                            </h4>
+                                        </td>
+                                    </tr>
                                 @endif
-                            </div>
+                            </table>
                         </div>
                     </div>
 
@@ -92,7 +121,7 @@ $companyId = $dataCompany->companyId();
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
                                     <div class="form-group form-group-sm">
-                                        <h4>
+                                        <h4 style="color: blue;">
                                             THÔNG TIN NGƯỜI MỚI
                                         </h4>
                                     </div>
@@ -104,8 +133,7 @@ $companyId = $dataCompany->companyId();
                                         <label>Họ :</label>
                                         <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                         <input type="text" class="form-control" name="txtFirstName"
-                                               placeholder="Nhập họ"
-                                               value="">
+                                               placeholder="Nhập họ" value="">
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -113,8 +141,7 @@ $companyId = $dataCompany->companyId();
                                         <label>Tên :</label>
                                         <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                         <input type="text" class="form-control" name="txtLastName"
-                                               placeholder="Nhập Tên"
-                                               value="">
+                                               placeholder="Nhập Tên" value="">
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -131,9 +158,11 @@ $companyId = $dataCompany->companyId();
                                         <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                         <select class="form-control" name="cbGender">
                                             <option value="">Chọn giới tính</option>
-                                            <option value="{!! $modelStaff->getDefaultGenderMale() !!}">Nam
+                                            <option value="{!! $modelStaff->getDefaultGenderMale() !!}">
+                                                Nam
                                             </option>
-                                            <option value="{!! $modelStaff->getDefaultGenderFeMale() !!}">Nữ
+                                            <option value="{!! $modelStaff->getDefaultGenderFeMale() !!}">
+                                                Nữ
                                             </option>
                                         </select>
                                     </div>
@@ -144,8 +173,7 @@ $companyId = $dataCompany->companyId();
                                         <i class="qc-color-red glyphicon glyphicon-star-empty"></i>
                                         <input type="text" class="form-control" name="txtStaffPhone"
                                                onkeyup="qc_main.showNumberInput(this);"
-                                               placeholder="Số điện thoại"
-                                               value="">
+                                               placeholder="Số điện thoại" value="">
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -170,11 +198,15 @@ $companyId = $dataCompany->companyId();
 
 
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top: 10px;">
                         <div class="form-group form-group-sm">
                             <span style="color: red;">
                                 NGƯỜI ĐƯỢC CHỌN SẼ ĐƯỢC THÊM VÀO BỘ PHẬN QUẢN LÝ CẤP CAO NHẤT
                             </span>
+                            <br/>
+                            <em style="color: blue;">
+                                Quản lý cũ sẽ chuyển xuống cấp thấp hơn NẾU CÓ
+                            </em>
                         </div>
 
                     </div>
@@ -182,6 +214,7 @@ $companyId = $dataCompany->companyId();
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div class="form-group form-group-sm">
+                            <input type="hidden" name="txtSelectObject" value="{!! $selectObject !!}">
                             <input type="hidden" name="_token" value="{!! csrf_token() !!}">
                             <button type="button" class="qc_save btn btn-sm btn-primary">THÊM</button>
                             <button type="reset" class="btn btn-sm btn-default">NHẬP LẠI</button>

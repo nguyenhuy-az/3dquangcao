@@ -59,6 +59,15 @@ if ($hFunction->checkCount($dataStaffWorkMethod)) {
     $applyRule = $dataStaffWorkMethod->applyRule();
     $workMethodLabel = $dataStaffWorkMethod->methodLabel($workMethod);
     $applyRuleLabel = $dataStaffWorkMethod->applyRuleLabel($applyRule);
+    /*
+    $workMethod = $dataStaffWorkMethod->method();
+    $applyRule = $dataStaffWorkMethod->applyRule();
+    $workMethodLabel = $dataStaffWorkMethod->methodLabel($workMethod);
+    $applyRuleLabel = $dataStaffWorkMethod->applyRuleLabel($applyRule);
+    */
+}else{
+    $applyRuleLabel = "Chưa xác định";
+    $workMethodLabel = "Chưa xác định";
 }
 # chi duoc them - xoa - sua khi thuoc NV cua cty
 $actionStatus = $dataCompanyLogin->checkStaffWorkingOfCompany($staffId);
@@ -87,7 +96,7 @@ $actionStatus = $dataCompanyLogin->checkStaffWorkingOfCompany($staffId);
             @endif
             {{--THONG TIN CO BAN--}}
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" @if($mobileStatus) style="padding: 0;" @endif>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <i class="glyphicon glyphicon-record" style="font-size: 1.5em;"></i>
@@ -274,11 +283,7 @@ $actionStatus = $dataCompanyLogin->checkStaffWorkingOfCompany($staffId);
                                 $dataStaffWorkDepartment = $dataCompanyStaffWork->staffWorkDepartmentInfoActivity();
                                 $dataStaffWorkSalary = $dataCompanyStaffWork->staffWorkSalaryActivity();
                                 # hinh thuc lam viec
-                                $dataStaffWorkMethod = $dataStaff->staffWorkMethodLastInfo();
-                                $workMethod = $dataStaffWorkMethod->method();
-                                $applyRule = $dataStaffWorkMethod->applyRule();
-                                $workMethodLabel = $dataStaffWorkMethod->methodLabel($workMethod);
-                                $applyRuleLabel = $dataStaffWorkMethod->applyRuleLabel($applyRule);
+                                //$dataStaffWorkMethod = $dataStaff->staffWorkMethodLastInfo();
                                 # bo phan lam viec
                                 $dataStaffWorkDepartment = $dataCompanyStaffWork->staffWorkDepartmentGetInfoHasAction();
                                 ?>

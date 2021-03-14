@@ -31,9 +31,9 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
             <div class="qc_work_orders_list_content row"
                  data-href-view-pay="{!! route('qc.work.orders.order_pay.view.get') !!}">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered" style="margin-bottom: 100px;">
-                            <tr>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered" style="margin-bottom: 100px;">
+                                <tr>
                                 <td colspan="2" style="padding: 0;">
                                     <select class="qcWorkOrdersStaffFilterId form-control" data-href="{!! $hrefIndex !!}">
                                         @if($manageStatus)
@@ -238,15 +238,15 @@ if ($dataStaffLogin->checkBusinessDepartmentAndManageRank()) $manageStatus = tru
                                     $orderDeliveryDate = $orders->deliveryDate();
                                     $orderFinishDate = $orders->finishDate();
                                     $createdAt = $orders->createdAt();
-                                    $totalPrice = $orders->totalMoney();// $orders->totalPrice();
+                                    $totalPrice = $orders->totalMoney();# $orders->totalPrice();
                                     $sumOrderMoney = $sumOrderMoney + $totalPrice;
                                     $totalPaid = $orders->totalPaid();
                                     $sumPaidMoney = $sumPaidMoney + $totalPaid;
-                                    $amountOrderPay = count($orders->infoOrderPayOfOrder($orderId));
+                                    $amountOrderPay = $hFunction->getCount($orders->infoOrderPayOfOrder($orderId));
                                     $totalUnPaid = $orders->totalMoneyUnpaid();
                                     $totalUnPaid = ($totalUnPaid < 0) ? 0 : $totalUnPaid;
                                     $sumUnPaidMoney = $sumUnPaidMoney + $totalUnPaid;
-                                    $paidMoneyInDate = $orders->totalPaidInDate($orderId, $dateFilter); // thu tien trong thang cua don hang
+                                    $paidMoneyInDate = $orders->totalPaidInDate($orderId, $dateFilter); # thu tien trong thang cua don hang
                                     $sumPaidMoneyInDate = $sumPaidMoneyInDate + $paidMoneyInDate;
                                     //kiem tra don hang truoc
                                     $checkDateOfSort = $hFunction->firstDateOfMonthFromDate(date('Y/m/d', strtotime("1-$monthFilter-$yearFilter")));
